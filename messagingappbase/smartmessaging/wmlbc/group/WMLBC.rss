@@ -1,0 +1,150 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Resource definitions for project WMLBC
+*
+*/
+
+
+
+
+
+//  RESOURCE IDENTIFIER
+
+NAME    WMLB
+
+//  INCLUDES
+#include <eikon.rh>
+#include <avkon.rsg>
+#include <avkon.rh>
+#include <avkon.mbg>
+#include "WMLBC.hrh"
+#include "eikon.rsg"
+#include <avkon.loc>
+#include <wmlbc.loc>	// Localisable text
+
+#include <avkon.hrh>
+
+
+//  CONSTANTS  
+
+//  MACROS  
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    WMLBC.rss
+//    
+//
+// ---------------------------------------------------------
+//
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE EIK_APP_INFO
+    {
+    }
+
+//-----------------------------------------------------------------
+// TITLE
+//-----------------------------------------------------------------
+
+RESOURCE TBUF r_qtn_sm_title_one_bookmark 
+    {
+    buf=qtn_sm_title_one_bookmark;
+    }
+
+//-----------------------------------------------------------------
+// NOTES
+//-----------------------------------------------------------------
+
+RESOURCE TBUF r_qtn_sm_note_bookmark_copied
+    {
+    buf=qtn_sm_note_bookmark_copied;
+    }
+//-----------------------------------------------------------------
+// MENU ITEMS
+//-----------------------------------------------------------------
+
+RESOURCE TBUF r_qtn_sm_add_bookmarks 
+    {
+    buf=qtn_sm_add_bookmarks;
+    }
+
+//-----------------------------------------------------------------
+// VIEW LABELS AND VALUES
+//-----------------------------------------------------------------
+
+// Bookmark view labels ---------------------------------------------
+
+RESOURCE TBUF r_qtn_sm_bm_title
+    {
+    buf=qtn_sm_bm_title;
+    }
+
+RESOURCE TBUF r_qtn_sm_bm_address
+    {
+    buf=qtn_sm_bm_address;
+    }
+
+//------------------------------------------------------------------
+// DEFAULT NAMES
+//------------------------------------------------------------------
+
+RESOURCE TBUF r_qtn_sm_bookmark_name
+    {
+    buf=qtn_sm_bookmark_name;
+    }
+
+//-----------------------------------------------------------------
+// From other specifications
+//-----------------------------------------------------------------
+
+// From Folders spec ----------------------------------------------
+
+RESOURCE TBUF r_qtn_fldr_rename_query
+	{
+	buf=qtn_fldr_rename_query;
+	}
+
+// Dialogs etc. ----------------------------------------------
+
+// Name query for bookmark
+RESOURCE DIALOG r_wmlbc_query_bm_name
+    {
+    flags = EEikDialogFlagWait|EEikDialogFlagNoDrag | EEikDialogFlagNoTitleBar | EEikDialogFlagCbaButtons | EEikDialogFlagNoShadow;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control= AVKON_DATA_QUERY
+                {
+                    layout = EDataLayout;
+                    label = qtn_fldr_item_name_prmpt;
+                    control=EDWIN 
+                        {
+                        flags= EEikEdwinNoHorizScrolling; //| EEikEdwinResizable; 
+                        maxlength=50;
+                        width=16;
+                        lines=1;
+                        };
+                };
+            }
+        };
+    }
+
+// End of File

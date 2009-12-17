@@ -1,0 +1,217 @@
+EXPORTS
+	??0CMsgBaseControl@@QAE@AAVMMsgBaseControlObserver@@@Z @ 1 NONAME ; public: __thiscall CMsgBaseControl::CMsgBaseControl(class MMsgBaseControlObserver &)
+	??0CMsgBaseControl@@QAE@XZ @ 2 NONAME ; public: __thiscall CMsgBaseControl::CMsgBaseControl(void)
+	??0CMsgExpandableControl@@QAE@AAVMMsgBaseControlObserver@@@Z @ 3 NONAME ; public: __thiscall CMsgExpandableControl::CMsgExpandableControl(class MMsgBaseControlObserver &)
+	??0CMsgExpandableControl@@QAE@XZ @ 4 NONAME ; public: __thiscall CMsgExpandableControl::CMsgExpandableControl(void)
+	??0CMsgExpandableControlEditor@@QAE@AAKPAVMMsgBaseControlObserver@@@Z @ 5 NONAME ; public: __thiscall CMsgExpandableControlEditor::CMsgExpandableControlEditor(unsigned long &,class MMsgBaseControlObserver *)
+	??0CMsgExpandableControlEditor@@QAE@PBVCCoeControl@@AAKPAVMMsgBaseControlObserver@@@Z @ 6 NONAME ; public: __thiscall CMsgExpandableControlEditor::CMsgExpandableControlEditor(class CCoeControl const *,unsigned long &,class MMsgBaseControlObserver *)
+	??1CMsgBaseControl@@UAE@XZ @ 7 NONAME ; public: virtual __thiscall CMsgBaseControl::~CMsgBaseControl(void)
+	??1CMsgEditorView@@UAE@XZ @ 8 NONAME ; public: virtual __thiscall CMsgEditorView::~CMsgEditorView(void)
+	??1CMsgExpandableControl@@UAE@XZ @ 9 NONAME ; public: virtual __thiscall CMsgExpandableControl::~CMsgExpandableControl(void)
+	??1CMsgExpandableControlEditor@@UAE@XZ @ 10 NONAME ; public: virtual __thiscall CMsgExpandableControlEditor::~CMsgExpandableControlEditor(void)
+	??ACMsgRecipientList@@QBEPAVCMsgRecipientItem@@H@Z @ 11 NONAME ; public: class CMsgRecipientItem * __thiscall CMsgRecipientList::operator[](int)const 
+	?ActivateL@CMsgExpandableControlEditor@@MAEXXZ @ 12 NONAME ; protected: virtual void __thiscall CMsgExpandableControlEditor::ActivateL(void)
+	?AddControlFromResourceL@CMsgEditorView@@QAEHHHHW4TMsgFormComponent@@@Z @ 13 NONAME ; public: int __thiscall CMsgEditorView::AddControlFromResourceL(int,int,int,enum TMsgFormComponent)
+	?AddControlL@CMsgEditorView@@QAEXPAVCMsgBaseControl@@HHW4TMsgFormComponent@@@Z @ 14 NONAME ; public: void __thiscall CMsgEditorView::AddControlL(class CMsgBaseControl *,int,int,enum TMsgFormComponent)
+	?AddRecipientL@CMsgAddressControl@@QAEXABVTDesC16@@0JH@Z @ 15 NONAME ABSENT
+	?AddRecipientsL@CMsgAddressControl@@QAEXABVCMsgRecipientList@@@Z @ 16 NONAME ; public: void __thiscall CMsgAddressControl::AddRecipientsL(class CMsgRecipientList const &)
+	?Address@CMsgRecipientItem@@QAEPAVHBufC16@@XZ @ 17 NONAME ; public: class HBufC16 * __thiscall CMsgRecipientItem::Address(void)
+	?AdjustLineHeightL@CMsgExpandableControlEditor@@QAEXXZ @ 18 NONAME ; public: void __thiscall CMsgExpandableControlEditor::AdjustLineHeightL(void)
+	?AppendL@CMsgRecipientList@@QAEXPAVCMsgRecipientItem@@@Z @ 19 NONAME ; public: void __thiscall CMsgRecipientList::AppendL(class CMsgRecipientItem *)
+	?At@CMsgRecipientList@@QBEPAVCMsgRecipientItem@@H@Z @ 20 NONAME ; public: class CMsgRecipientItem * __thiscall CMsgRecipientList::At(int)const 
+	?BaseConstructL@CMsgBaseControl@@IAEXXZ @ 21 NONAME ; protected: void __thiscall CMsgBaseControl::BaseConstructL(void)
+	?Caption@CMsgExpandableControl@@QBEAAVCEikLabel@@XZ @ 22 NONAME ; public: class CEikLabel & __thiscall CMsgExpandableControl::Caption(void)const 
+	?CcpuCanCopy@CMsgExpandableControlEditor@@UBEHXZ @ 23 NONAME ; public: virtual int __thiscall CMsgExpandableControlEditor::CcpuCanCopy(void)const 
+	?CcpuCanCut@CMsgExpandableControlEditor@@UBEHXZ @ 24 NONAME ; public: virtual int __thiscall CMsgExpandableControlEditor::CcpuCanCut(void)const 
+	?CcpuCanPaste@CMsgExpandableControlEditor@@UBEHXZ @ 25 NONAME ; public: virtual int __thiscall CMsgExpandableControlEditor::CcpuCanPaste(void)const 
+	?CcpuCanUndo@CMsgExpandableControlEditor@@UBEHXZ @ 26 NONAME ; public: virtual int __thiscall CMsgExpandableControlEditor::CcpuCanUndo(void)const 
+	?CcpuCopyL@CMsgExpandableControlEditor@@UAEXXZ @ 27 NONAME ; public: virtual void __thiscall CMsgExpandableControlEditor::CcpuCopyL(void)
+	?CcpuCutL@CMsgExpandableControlEditor@@UAEXXZ @ 28 NONAME ; public: virtual void __thiscall CMsgExpandableControlEditor::CcpuCutL(void)
+	?CcpuPasteL@CMsgExpandableControlEditor@@UAEXXZ @ 29 NONAME ; public: virtual void __thiscall CMsgExpandableControlEditor::CcpuPasteL(void)
+	?CcpuUndoL@CMsgExpandableControlEditor@@UAEXXZ @ 30 NONAME ; public: virtual void __thiscall CMsgExpandableControlEditor::CcpuUndoL(void)
+	?CheckEditPermission@CMsgExpandableControlEditor@@UBEKXZ @ 31 NONAME ; public: virtual unsigned long __thiscall CMsgExpandableControlEditor::CheckEditPermission(void)const 
+	?ClipboardL@CMsgBodyControl@@UAEXW4TMsgClipboardFunc@@@Z @ 32 NONAME ABSENT
+	?ClipboardL@CMsgExpandableControl@@UAEXW4TMsgClipboardFunc@@@Z @ 33 NONAME ABSENT
+	?ComponentControl@CMsgBaseControl@@MBEPAVCCoeControl@@H@Z @ 34 NONAME ; protected: virtual class CCoeControl * __thiscall CMsgBaseControl::ComponentControl(int)const 
+	?ComponentControl@CMsgExpandableControl@@MBEPAVCCoeControl@@H@Z @ 35 NONAME ; protected: virtual class CCoeControl * __thiscall CMsgExpandableControl::ComponentControl(int)const 
+	?ConstructFromResourceL@CMsgBaseControl@@UAEXH@Z @ 36 NONAME ; public: virtual void __thiscall CMsgBaseControl::ConstructFromResourceL(int)
+	?ConstructFromResourceL@CMsgExpandableControlEditor@@UAEXAAVTResourceReader@@@Z @ 37 NONAME ; public: virtual void __thiscall CMsgExpandableControlEditor::ConstructFromResourceL(class TResourceReader &)
+	?ConstructL@CMsgExpandableControlEditor@@UAEXXZ @ 38 NONAME ; public: virtual void __thiscall CMsgExpandableControlEditor::ConstructL(void)
+	?ControlById@CMsgEditorView@@QBEPAVCMsgBaseControl@@H@Z @ 39 NONAME ; public: class CMsgBaseControl * __thiscall CMsgEditorView::ControlById(int)const 
+	?ControlId@CMsgBaseControl@@QBEHXZ @ 40 NONAME ; public: int __thiscall CMsgBaseControl::ControlId(void)const 
+	?CopyDocumentContentL@CMsgBodyControl@@QAEXAAVCGlobalText@@0@Z @ 41 NONAME ABSENT
+	?CopyDocumentContentL@CMsgExpandableControl@@QAEXAAVCGlobalText@@0@Z @ 42 NONAME ABSENT
+	?Count@CMsgRecipientList@@QBEHXZ @ 43 NONAME ; public: int __thiscall CMsgRecipientList::Count(void)const 
+	?CountComponentControls@CMsgBaseControl@@MBEHXZ @ 44 NONAME ; protected: virtual int __thiscall CMsgBaseControl::CountComponentControls(void)const 
+	?CountComponentControls@CMsgExpandableControl@@MBEHXZ @ 45 NONAME ; protected: virtual int __thiscall CMsgExpandableControl::CountComponentControls(void)const 
+	?CurrentLineRect@CMsgBodyControl@@UAE?AVTRect@@XZ @ 46 NONAME ABSENT
+	?CurrentLineRect@CMsgExpandableControl@@UAE?AVTRect@@XZ @ 47 NONAME ABSENT
+	?CurrentLineRectL@CMsgExpandableControlEditor@@QAE?AVTRect@@XZ @ 48 NONAME ; public: class TRect  __thiscall CMsgExpandableControlEditor::CurrentLineRectL(void)
+	?CursorInFirstLine@CMsgExpandableControlEditor@@QAEHXZ @ 49 NONAME ; public: int __thiscall CMsgExpandableControlEditor::CursorInFirstLine(void)
+	?CursorInLastLine@CMsgExpandableControlEditor@@QAEHXZ @ 50 NONAME ; public: int __thiscall CMsgExpandableControlEditor::CursorInLastLine(void)
+	?DefaultHeight@CMsgExpandableControlEditor@@UBEHXZ @ 51 NONAME ; public: virtual int __thiscall CMsgExpandableControlEditor::DefaultHeight(void)const 
+	?DistanceFromComponentAbove@CMsgBaseControl@@QBEHXZ @ 52 NONAME ; public: int __thiscall CMsgBaseControl::DistanceFromComponentAbove(void)const 
+	?Draw@CMsgCaptionedHighlight@@MBEXABVTRect@@@Z @ 53 NONAME ; protected: virtual void __thiscall CMsgCaptionedHighlight::Draw(class TRect const &)const 
+	?Draw@CMsgExpandableControl@@MBEXABVTRect@@@Z @ 54 NONAME ; protected: virtual void __thiscall CMsgExpandableControl::Draw(class TRect const &)const 
+	?EditL@CMsgBodyControl@@UAEXW4TMsgEditFunc@@@Z @ 55 NONAME ABSENT
+	?EditL@CMsgExpandableControl@@UAEXW4TMsgEditFunc@@@Z @ 56 NONAME ABSENT
+	?EditPermission@CMsgBodyControl@@UBEKXZ @ 57 NONAME ABSENT
+	?EditPermission@CMsgExpandableControl@@UBEKXZ @ 58 NONAME ABSENT
+	?Editor@CMsgBodyControl@@QBEAAVCEikRichTextEditor@@XZ @ 59 NONAME ; public: class CEikRichTextEditor & __thiscall CMsgBodyControl::Editor(void)const 
+	?Editor@CMsgExpandableControl@@QBEAAVCEikRichTextEditor@@XZ @ 60 NONAME ; public: class CEikRichTextEditor & __thiscall CMsgExpandableControl::Editor(void)const 
+	?ExecuteL@CMsgEditorView@@QAEXABVTRect@@H@Z @ 61 NONAME ; public: void __thiscall CMsgEditorView::ExecuteL(class TRect const &,int)
+	?FocusChanged@CMsgBaseControl@@MAEXW4TDrawNow@@@Z @ 62 NONAME ; protected: virtual void __thiscall CMsgBaseControl::FocusChanged(enum TDrawNow)
+	?FocusChanged@CMsgExpandableControl@@MAEXW4TDrawNow@@@Z @ 63 NONAME ; protected: virtual void __thiscall CMsgExpandableControl::FocusChanged(enum TDrawNow)
+	?FocusedControl@CMsgEditorView@@QBEPAVCMsgBaseControl@@XZ @ 64 NONAME ; public: class CMsgBaseControl * __thiscall CMsgEditorView::FocusedControl(void)const 
+	?FormComponent@CMsgEditorView@@QBEAAVCCoeControl@@W4TMsgFormComponent@@@Z @ 65 NONAME ; public: class CCoeControl & __thiscall CMsgEditorView::FormComponent(enum TMsgFormComponent)const 
+	?GetFirstUnverifiedStringL@CMsgAddressControl@@QAEHAAPAVHBufC16@@@Z @ 66 NONAME ; public: int __thiscall CMsgAddressControl::GetFirstUnverifiedStringL(class HBufC16 * &)
+	?GetNextUnverifiedStringL@CMsgAddressControl@@QAEHAAPAVHBufC16@@@Z @ 67 NONAME ; public: int __thiscall CMsgAddressControl::GetNextUnverifiedStringL(class HBufC16 * &)
+	?GetRecipientsL@CMsgAddressControl@@QAEPAV?$CArrayPtrFlat@VCMsgRecipientItem@@@@XZ @ 68 NONAME ; public: class CArrayPtrFlat<class CMsgRecipientItem> * __thiscall CMsgAddressControl::GetRecipientsL(void)
+	?GetSizeOfAddresses@CMsgAddressControl@@QAEXAAH0@Z @ 69 NONAME ; public: void __thiscall CMsgAddressControl::GetSizeOfAddresses(int &,int &)
+	?HandleControlEventL@CMsgBodyControl@@UAEXPAVCCoeControl@@W4TCoeEvent@MCoeControlObserver@@@Z @ 70 NONAME ABSENT
+	?HandleControlEventL@CMsgExpandableControl@@UAEXPAVCCoeControl@@W4TCoeEvent@MCoeControlObserver@@@Z @ 71 NONAME ; public: virtual void __thiscall CMsgExpandableControl::HandleControlEventL(class CCoeControl *,enum MCoeControlObserver::TCoeEvent)
+	?HandleEdwinEventL@CMsgBodyControl@@UAEXPAVCEikEdwin@@W4TEdwinEvent@MEikEdwinObserver@@@Z @ 72 NONAME ABSENT
+	?HandleEdwinEventL@CMsgExpandableControl@@UAEXPAVCEikEdwin@@W4TEdwinEvent@MEikEdwinObserver@@@Z @ 73 NONAME ABSENT
+	?HandleEdwinSizeEventL@CMsgBodyControl@@UAEHPAVCEikEdwin@@W4TEdwinSizeEvent@MEikEdwinSizeObserver@@VTSize@@@Z @ 74 NONAME ABSENT
+	?HandleEdwinSizeEventL@CMsgExpandableControl@@UAEHPAVCEikEdwin@@W4TEdwinSizeEvent@MEikEdwinSizeObserver@@VTSize@@@Z @ 75 NONAME ABSENT
+	?HandleScreenSizeChangeL@CMsgEditorView@@QAEXABVTRect@@@Z @ 76 NONAME ; public: void __thiscall CMsgEditorView::HandleScreenSizeChangeL(class TRect const &)
+	?HighlightUnvalidatedStringL@CMsgAddressControl@@QAEHXZ @ 77 NONAME ; public: int __thiscall CMsgAddressControl::HighlightUnvalidatedStringL(void)
+	?HighlightUnverifiedStringL@CMsgAddressControl@@QAEHXZ @ 78 NONAME ; public: int __thiscall CMsgAddressControl::HighlightUnverifiedStringL(void)
+	?Id@CMsgRecipientItem@@QAEJXZ @ 79 NONAME ; public: long __thiscall CMsgRecipientItem::Id(void)
+	?InputCapabilities@CMsgBodyControl@@UBE?AVTCoeInputCapabilities@@XZ @ 80 NONAME ; public: virtual class TCoeInputCapabilities  __thiscall CMsgBodyControl::InputCapabilities(void)const 
+	?InputCapabilities@CMsgExpandableControl@@UBE?AVTCoeInputCapabilities@@XZ @ 81 NONAME ; public: virtual class TCoeInputCapabilities  __thiscall CMsgExpandableControl::InputCapabilities(void)const 
+	?InsertCharacterL@CMsgBodyControl@@QAEXABVTChar@@@Z @ 82 NONAME ; public: void __thiscall CMsgBodyControl::InsertCharacterL(class TChar const &)
+	?InsertL@CMsgRecipientList@@QAEXHPAVCMsgRecipientItem@@@Z @ 83 NONAME ; public: void __thiscall CMsgRecipientList::InsertL(int,class CMsgRecipientItem *)
+	?InsertTextL@CMsgBodyControl@@QAEXABVTDesC16@@@Z @ 84 NONAME ; public: void __thiscall CMsgBodyControl::InsertTextL(class TDesC16 const &)
+	?IsAnyControlModified@CMsgEditorView@@QBEHXZ @ 85 NONAME ; public: int __thiscall CMsgEditorView::IsAnyControlModified(void)const 
+	?IsCursorLocation@CMsgBodyControl@@UBEHW4TMsgCursorLocation@@@Z @ 86 NONAME ABSENT
+	?IsCursorLocation@CMsgExpandableControl@@UBEHW4TMsgCursorLocation@@@Z @ 87 NONAME ABSENT
+	?IsFocusChangePossible@CMsgBodyControl@@UBEHW4TMsgFocusDirection@@@Z @ 88 NONAME ; public: virtual int __thiscall CMsgBodyControl::IsFocusChangePossible(enum TMsgFocusDirection)const 
+	?IsFocusChangePossible@CMsgExpandableControl@@UBEHW4TMsgFocusDirection@@@Z @ 89 NONAME ; public: virtual int __thiscall CMsgExpandableControl::IsFocusChangePossible(enum TMsgFocusDirection)const 
+	?IsModified@CMsgBaseControl@@UBEHXZ @ 90 NONAME ; public: virtual int __thiscall CMsgBaseControl::IsModified(void)const 
+	?IsPlainTextMode@CMsgBodyControl@@QBEHXZ @ 91 NONAME ABSENT
+	?IsPlainTextMode@CMsgExpandableControl@@QBEHXZ @ 92 NONAME ABSENT
+	?IsPriorCharSemicolonL@CMsgAddressControl@@QBEHXZ @ 93 NONAME ; public: int __thiscall CMsgAddressControl::IsPriorCharSemicolonL(void)const 
+	?IsReadOnly@CMsgBaseControl@@QBEHXZ @ 94 NONAME ; public: int __thiscall CMsgBaseControl::IsReadOnly(void)const 
+	?IsValidated@CMsgRecipientItem@@QAEHXZ @ 95 NONAME ; public: int __thiscall CMsgRecipientItem::IsValidated(void)
+	?IsVerified@CMsgRecipientItem@@QAEHXZ @ 96 NONAME ; public: int __thiscall CMsgRecipientItem::IsVerified(void)
+	?LabelFontL@CMsgBaseControl@@IBEPBVCFont@@XZ @ 97 NONAME ; protected: class CFont const * __thiscall CMsgBaseControl::LabelFontL(void)const 
+	?Margins@CMsgBaseControl@@QBE?AVTMargins@@XZ @ 98 NONAME ; public: class TMargins  __thiscall CMsgBaseControl::Margins(void)const 
+	?MinimumSize@CMsgExpandableControl@@UAE?AVTSize@@XZ @ 99 NONAME ; public: virtual class TSize  __thiscall CMsgExpandableControl::MinimumSize(void)
+	?MopNext@CMsgEditorView@@UAEPAVMObjectProvider@@XZ @ 100 NONAME ; public: virtual class MObjectProvider * __thiscall CMsgEditorView::MopNext(void)
+	?Name@CMsgRecipientItem@@QAEPAVHBufC16@@XZ @ 101 NONAME ; public: class HBufC16 * __thiscall CMsgRecipientItem::Name(void)
+	?NewL@CMsgBodyControl@@SAPAV1@PAVCCoeControl@@@Z @ 102 NONAME ; public: static class CMsgBodyControl * __cdecl CMsgBodyControl::NewL(class CCoeControl *)
+	?NewL@CMsgEditorView@@SAPAV1@AAVMMsgEditorObserver@@K@Z @ 103 NONAME ; public: static class CMsgEditorView * __cdecl CMsgEditorView::NewL(class MMsgEditorObserver &,unsigned long)
+	?NewL@CMsgRecipientItem@@SAPAV1@ABVTDesC16@@0@Z @ 104 NONAME ; public: static class CMsgRecipientItem * __cdecl CMsgRecipientItem::NewL(class TDesC16 const &,class TDesC16 const &)
+	?NewL@CMsgRecipientList@@SAPAV1@XZ @ 105 NONAME ; public: static class CMsgRecipientList * __cdecl CMsgRecipientList::NewL(void)
+	?NewLC@CMsgRecipientItem@@SAPAV1@ABVTDesC16@@0@Z @ 106 NONAME ; public: static class CMsgRecipientItem * __cdecl CMsgRecipientItem::NewLC(class TDesC16 const &,class TDesC16 const &)
+	?NormalTextFontL@CMsgBaseControl@@IBEPBVCFont@@XZ @ 107 NONAME ; protected: class CFont const * __thiscall CMsgBaseControl::NormalTextFontL(void)const 
+	?NotifyViewEvent@CMsgBaseControl@@UAEXW4TMsgViewEvent@@H@Z @ 108 NONAME ; public: virtual void __thiscall CMsgBaseControl::NotifyViewEvent(enum TMsgViewEvent,int)
+	?OfferKeyEventL@CMsgBodyControl@@UAE?AW4TKeyResponse@@ABUTKeyEvent@@W4TEventCode@@@Z @ 109 NONAME ; public: virtual enum TKeyResponse  __thiscall CMsgBodyControl::OfferKeyEventL(struct TKeyEvent const &,enum TEventCode)
+	?OfferKeyEventL@CMsgEditorView@@UAE?AW4TKeyResponse@@ABUTKeyEvent@@W4TEventCode@@@Z @ 110 NONAME ; public: virtual enum TKeyResponse  __thiscall CMsgEditorView::OfferKeyEventL(struct TKeyEvent const &,enum TEventCode)
+	?OfferKeyEventL@CMsgExpandableControl@@UAE?AW4TKeyResponse@@ABUTKeyEvent@@W4TEventCode@@@Z @ 111 NONAME ; public: virtual enum TKeyResponse  __thiscall CMsgExpandableControl::OfferKeyEventL(struct TKeyEvent const &,enum TEventCode)
+	?OfferKeyEventL@CMsgExpandableControlEditor@@UAE?AW4TKeyResponse@@ABUTKeyEvent@@W4TEventCode@@@Z @ 112 NONAME ; public: virtual enum TKeyResponse  __thiscall CMsgExpandableControlEditor::OfferKeyEventL(struct TKeyEvent const &,enum TEventCode)
+	?ReadIniFile@CMsgEditorView@@QAEHABVTDesC16@@0AAH@Z @ 113 NONAME ABSENT
+	?ReadIniFile@CMsgEditorView@@QAEHABVTDesC16@@0AAVTPtrC16@@@Z @ 114 NONAME ABSENT
+	?RefreshL@CMsgAddressControl@@QAEHABV?$CArrayPtrFlat@VCMsgRecipientItem@@@@@Z @ 115 NONAME ; public: int __thiscall CMsgAddressControl::RefreshL(class CArrayPtrFlat<class CMsgRecipientItem> const &)
+	?RemoveControlL@CMsgEditorView@@QAEPAVCMsgBaseControl@@H@Z @ 116 NONAME ; public: class CMsgBaseControl * __thiscall CMsgEditorView::RemoveControlL(int)
+	?ReplaceUnverifiedStringL@CMsgAddressControl@@QAEHAAV?$CArrayPtrFlat@VCMsgRecipientItem@@@@@Z @ 117 NONAME ; public: int __thiscall CMsgAddressControl::ReplaceUnverifiedStringL(class CArrayPtrFlat<class CMsgRecipientItem> &)
+	?Reset@CMsgAddressControl@@UAEXXZ @ 118 NONAME ; public: virtual void __thiscall CMsgAddressControl::Reset(void)
+	?Reset@CMsgBaseControl@@UAEXXZ @ 119 NONAME ; public: virtual void __thiscall CMsgBaseControl::Reset(void)
+	?Reset@CMsgBodyControl@@UAEXXZ @ 120 NONAME ; public: virtual void __thiscall CMsgBodyControl::Reset(void)
+	?Reset@CMsgExpandableControl@@UAEXXZ @ 121 NONAME ; public: virtual void __thiscall CMsgExpandableControl::Reset(void)
+	?Reset@CMsgExpandableControlEditor@@QAEXXZ @ 122 NONAME ; public: void __thiscall CMsgExpandableControlEditor::Reset(void)
+	?ResetControls@CMsgEditorView@@QAEXW4TMsgFormComponent@@@Z @ 123 NONAME ; public: void __thiscall CMsgEditorView::ResetControls(enum TMsgFormComponent)
+	?ResetControls@CMsgEditorView@@QAEXXZ @ 124 NONAME ; public: void __thiscall CMsgEditorView::ResetControls(void)
+	?ResetL@CMsgAddressControl@@QAEHXZ @ 125 NONAME ; public: int __thiscall CMsgAddressControl::ResetL(void)
+	?SetAddressL@CMsgRecipientItem@@QAEXABVTDesC16@@@Z @ 126 NONAME ; public: void __thiscall CMsgRecipientItem::SetAddressL(class TDesC16 const &)
+	?SetAndGetSizeL@CMsgBodyControl@@UAEXAAVTSize@@@Z @ 127 NONAME ; public: virtual void __thiscall CMsgBodyControl::SetAndGetSizeL(class TSize &)
+	?SetAndGetSizeL@CMsgExpandableControl@@UAEXAAVTSize@@@Z @ 128 NONAME ; public: virtual void __thiscall CMsgExpandableControl::SetAndGetSizeL(class TSize &)
+	?SetAndGetSizeL@CMsgExpandableControlEditor@@UAEXAAVTSize@@@Z @ 129 NONAME ; public: virtual void __thiscall CMsgExpandableControlEditor::SetAndGetSizeL(class TSize &)
+	?SetBaseControlObserver@CMsgBaseControl@@UAEXAAVMMsgBaseControlObserver@@@Z @ 130 NONAME ; public: virtual void __thiscall CMsgBaseControl::SetBaseControlObserver(class MMsgBaseControlObserver &)
+	?SetBaseControlObserver@CMsgExpandableControlEditor@@QAEXAAVMMsgBaseControlObserver@@@Z @ 131 NONAME ; public: void __thiscall CMsgExpandableControlEditor::SetBaseControlObserver(class MMsgBaseControlObserver &)
+	?SetContainerWindowL@CMsgExpandableControl@@UAEXABVCCoeControl@@@Z @ 132 NONAME ; public: virtual void __thiscall CMsgExpandableControl::SetContainerWindowL(class CCoeControl const &)
+	?SetControlId@CMsgBaseControl@@QAEXH@Z @ 133 NONAME ; public: void __thiscall CMsgBaseControl::SetControlId(int)
+	?SetControlsModified@CMsgEditorView@@QAEXH@Z @ 134 NONAME ; public: void __thiscall CMsgEditorView::SetControlsModified(int)
+	?SetDistanceFromComponentAbove@CMsgBaseControl@@QAEXH@Z @ 135 NONAME ; public: void __thiscall CMsgBaseControl::SetDistanceFromComponentAbove(int)
+	?SetFocus@CMsgEditorView@@QAEXH@Z @ 136 NONAME ; public: void __thiscall CMsgEditorView::SetFocus(int)
+	?SetId@CMsgRecipientItem@@QAEXJ@Z @ 137 NONAME ; public: void __thiscall CMsgRecipientItem::SetId(long)
+	?SetMargins@CMsgBaseControl@@QAEXABVTMargins@@@Z @ 138 NONAME ; public: void __thiscall CMsgBaseControl::SetMargins(class TMargins const &)
+	?SetMaxNumberOfChars@CMsgExpandableControl@@QAEXH@Z @ 139 NONAME ABSENT
+	?SetModified@CMsgBaseControl@@UAEXH@Z @ 140 NONAME ; public: virtual void __thiscall CMsgBaseControl::SetModified(int)
+	?SetNameL@CMsgRecipientItem@@QAEXABVTDesC16@@@Z @ 141 NONAME ; public: void __thiscall CMsgRecipientItem::SetNameL(class TDesC16 const &)
+	?SetPlainTextMode@CMsgBodyControl@@QAEXH@Z @ 142 NONAME ABSENT
+	?SetPlainTextMode@CMsgExpandableControl@@QAEXH@Z @ 143 NONAME ABSENT
+	?SetReadOnly@CMsgBaseControl@@QAEXH@Z @ 144 NONAME ; public: void __thiscall CMsgBaseControl::SetReadOnly(int)
+	?SetTextContentL@CMsgBodyControl@@QAEXAAVCRichText@@@Z @ 145 NONAME ; public: void __thiscall CMsgBodyControl::SetTextContentL(class CRichText &)
+	?SetTextContentL@CMsgExpandableControl@@QAEXAAVCRichText@@@Z @ 146 NONAME ; public: void __thiscall CMsgExpandableControl::SetTextContentL(class CRichText &)
+	?SetTextContentL@CMsgExpandableControlEditor@@QAEXAAVCRichText@@@Z @ 147 NONAME ; public: void __thiscall CMsgExpandableControlEditor::SetTextContentL(class CRichText &)
+	?SetValidated@CMsgRecipientItem@@QAEXH@Z @ 148 NONAME ; public: void __thiscall CMsgRecipientItem::SetValidated(int)
+	?SetVerified@CMsgRecipientItem@@QAEXH@Z @ 149 NONAME ; public: void __thiscall CMsgRecipientItem::SetVerified(int)
+	?SizeChanged@CMsgBaseControl@@MAEXXZ @ 150 NONAME ; protected: virtual void __thiscall CMsgBaseControl::SizeChanged(void)
+	?SizeChanged@CMsgExpandableControl@@MAEXXZ @ 151 NONAME ; protected: virtual void __thiscall CMsgExpandableControl::SizeChanged(void)
+	?TextContent@CMsgBodyControl@@QBEAAVCRichText@@XZ @ 152 NONAME ABSENT
+	?TextContent@CMsgExpandableControl@@QBEAAVCRichText@@XZ @ 153 NONAME ABSENT
+	?TextContentStrippedL@CMsgExpandableControl@@QAEXAAVTDes16@@HH@Z @ 154 NONAME ; public: void __thiscall CMsgExpandableControl::TextContentStrippedL(class TDes16 &,int,int)
+	?TextFont@CMsgExpandableControlEditor@@MBEPBVCFont@@XZ @ 155 NONAME ; protected: virtual class CFont const * __thiscall CMsgExpandableControlEditor::TextFont(void)const 
+	?VirtualHeight@CMsgBaseControl@@UAEHXZ @ 156 NONAME ; public: virtual int __thiscall CMsgBaseControl::VirtualHeight(void)
+	?VirtualHeight@CMsgExpandableControlEditor@@QAEHXZ @ 157 NONAME ; public: int __thiscall CMsgExpandableControlEditor::VirtualHeight(void)
+	?VirtualVisibleTop@CMsgBaseControl@@UAEHXZ @ 158 NONAME ; public: virtual int __thiscall CMsgBaseControl::VirtualVisibleTop(void)
+	?VirtualVisibleTop@CMsgExpandableControlEditor@@QAEHXZ @ 159 NONAME ; public: int __thiscall CMsgExpandableControlEditor::VirtualVisibleTop(void)
+	?AknItemFinder@CMsgEditorView@@QAEPAVCAknItemFinder@@XZ @ 160 NONAME ABSENT
+	?AddressFieldAutoHighlight@CMsgAddressControl@@QAEHXZ @ 161 NONAME ; int CMsgAddressControl::AddressFieldAutoHighlight(void)
+	?SetAddressFieldAutoHighlight@CMsgAddressControl@@QAEXH@Z @ 162 NONAME ; void CMsgAddressControl::SetAddressFieldAutoHighlight(int)
+	?AknItemFinder@CMsgExpandableControlEditor@@QBEPAVCAknItemFinder@@XZ @ 163 NONAME ABSENT
+	?AutomaticFind@CMsgBaseControl@@UAEPAVCAknItemFinder@@XZ @ 164 NONAME ABSENT
+	?SetupAutomaticFindAfterFocusChangeL@CMsgBaseControl@@UAEXH@Z @ 165 NONAME ; public: virtual void __thiscall CMsgBaseControl::SetupAutomaticFindAfterFocusChangeL(int)
+	?FocusChanged@CMsgExpandableControlEditor@@MAEXW4TDrawNow@@@Z @ 166 NONAME ; protected: virtual void __thiscall CMsgExpandableControlEditor::FocusChanged(enum TDrawNow)
+	?MopSupplyObject@CMsgEditorView@@UAE?AVPtr@TTypeUid@@V3@@Z @ 167 NONAME ; public: virtual class TTypeUid::Ptr  __thiscall CMsgEditorView::MopSupplyObject(class TTypeUid)
+	?IsFirstLineVisible@CMsgExpandableControlEditor@@QAEHXZ @ 168 NONAME ; public: int __thiscall CMsgExpandableControlEditor::IsFirstLineVisible(void)
+	?IsLastLineVisible@CMsgExpandableControlEditor@@QAEHXZ @ 169 NONAME ; public: int __thiscall CMsgExpandableControlEditor::IsLastLineVisible(void)
+	?AddAttachmentsL@CMsgAttachmentControl@@QAEXABVCMsgAttachmentModel@@@Z @ 170 NONAME ; void CMsgAttachmentControl::AddAttachmentsL(class CMsgAttachmentModel const &)
+	?AddAttachmentsL@CMsgAttachmentControl@@QAEXABVMDesC16Array@@@Z @ 171 NONAME ; void CMsgAttachmentControl::AddAttachmentsL(class MDesC16Array const &)
+	?AppendAttachmentL@CMsgAttachmentControl@@QAEXABVTDesC16@@@Z @ 172 NONAME ; void CMsgAttachmentControl::AppendAttachmentL(class TDesC16 const &)
+	?Attachment@CMsgAttachmentControl@@QBE?AVTPtrC16@@H@Z @ 173 NONAME ; class TPtrC16 CMsgAttachmentControl::Attachment(int) const
+	?Count@CMsgAttachmentControl@@QBEHXZ @ 174 NONAME ; int CMsgAttachmentControl::Count(void) const
+	?InsertAttachmentL@CMsgAttachmentControl@@QAEXABVTDesC16@@H@Z @ 175 NONAME ; void CMsgAttachmentControl::InsertAttachmentL(class TDesC16 const &, int)
+	?NewL@CMsgAttachmentControl@@SAPAV1@AAVMMsgBaseControlObserver@@AAVCMsgEditorView@@@Z @ 176 NONAME ; class CMsgAttachmentControl * CMsgAttachmentControl::NewL(class MMsgBaseControlObserver &, class CMsgEditorView &)
+	?Reset@CMsgAttachmentControl@@UAEXXZ @ 177 NONAME ; void CMsgAttachmentControl::Reset(void)
+	?AddRecipientL@CMsgAddressControl@@QAEXABVTDesC16@@0HPAVMVPbkContactLink@@@Z @ 178 NONAME ; void CMsgAddressControl::AddRecipientL(class TDesC16 const &, class TDesC16 const &, int, class MVPbkContactLink *)
+	?ContactLink@CMsgRecipientItem@@QAEPBVMVPbkContactLink@@XZ @ 179 NONAME ; class MVPbkContactLink const * CMsgRecipientItem::ContactLink(void)
+	?SetContactLink@CMsgRecipientItem@@QAEXPBVMVPbkContactLink@@@Z @ 180 NONAME ; void CMsgRecipientItem::SetContactLink(class MVPbkContactLink const *)
+	?HandleResourceChange@CMsgBaseControl@@UAEXH@Z @ 181 NONAME ; void CMsgBaseControl::HandleResourceChange(int)
+	?ScrollL@CMsgBaseControl@@UAEHHW4TMsgScrollDirection@@@Z @ 182 NONAME ; int CMsgBaseControl::ScrollL(int, enum TMsgScrollDirection)
+	?SetEdwinObserverL@CMsgEditorView@@QAEXPAVMEikEdwinObserver@@@Z @ 183 NONAME ; void CMsgEditorView::SetEdwinObserverL(class MEikEdwinObserver *)
+	?RemoveAttachmentL@CMsgAttachmentControl@@QAEXABVTDesC16@@@Z @ 184 NONAME ; void CMsgAttachmentControl::RemoveAttachmentL(class TDesC16 const &)
+	?RemoveAttachmentL@CMsgAttachmentControl@@QAEXH@Z @ 185 NONAME ; void CMsgAttachmentControl::RemoveAttachmentL(int)
+	?NewL@CMsgXhtmlBodyControl@@SAPAV1@AAVCMsgEditorView@@PAVMMsgAsyncControlObserver@@@Z @ 186 NONAME ; class CMsgXhtmlBodyControl * CMsgXhtmlBodyControl::NewL(class CMsgEditorView &, class MMsgAsyncControlObserver *)
+	?DeleteControlL@CMsgEditorView@@QAEXH@Z @ 187 NONAME ; void CMsgEditorView::DeleteControlL(int)
+	?ActivateL@CMsgExpandableControl@@MAEXXZ @ 188 NONAME ; void CMsgExpandableControl::ActivateL(void)
+	?HandleResourceChange@CMsgExpandableControl@@UAEXH@Z @ 189 NONAME ; void CMsgExpandableControl::HandleResourceChange(int)
+	?SetTextContentL@CMsgExpandableControl@@QAEXABVTDesC16@@@Z @ 190 NONAME ; void CMsgExpandableControl::SetTextContentL(class TDesC16 const &)
+	?ItemFinder@CMsgBaseControl@@UAEPAVCItemFinder@@XZ @ 191 NONAME ; class CItemFinder * CMsgBaseControl::ItemFinder(void)
+	?ItemFinder@CMsgEditorView@@QAEPAVCItemFinder@@XZ @ 192 NONAME ; class CItemFinder * CMsgEditorView::ItemFinder(void)
+	?ItemFinder@CMsgExpandableControlEditor@@QBEPAVCItemFinder@@XZ @ 193 NONAME ; class CItemFinder * CMsgExpandableControlEditor::ItemFinder(void) const
+	??0CMsgExpandableTextEditorControl@@QAE@AAVMMsgBaseControlObserver@@@Z @ 194 NONAME ; CMsgExpandableTextEditorControl::CMsgExpandableTextEditorControl(class MMsgBaseControlObserver &)
+	??0CMsgExpandableTextEditorControl@@QAE@XZ @ 195 NONAME ; CMsgExpandableTextEditorControl::CMsgExpandableTextEditorControl(void)
+	??1CMsgExpandableTextEditorControl@@UAE@XZ @ 196 NONAME ; CMsgExpandableTextEditorControl::~CMsgExpandableTextEditorControl(void)
+	?CopyDocumentContentL@CMsgExpandableTextEditorControl@@UAEXAAVCGlobalText@@0@Z @ 197 NONAME ; void CMsgExpandableTextEditorControl::CopyDocumentContentL(class CGlobalText &, class CGlobalText &)
+	?IsPlainTextMode@CMsgExpandableTextEditorControl@@UBEHXZ @ 198 NONAME ; int CMsgExpandableTextEditorControl::IsPlainTextMode(void) const
+	?SetCursorPosL@CMsgExpandableTextEditorControl@@UAEXH@Z @ 199 NONAME ; void CMsgExpandableTextEditorControl::SetCursorPosL(int)
+	?SetMaxNumberOfChars@CMsgExpandableTextEditorControl@@UAEXH@Z @ 200 NONAME ; void CMsgExpandableTextEditorControl::SetMaxNumberOfChars(int)
+	?SetPlainTextMode@CMsgExpandableTextEditorControl@@UAEXH@Z @ 201 NONAME ; void CMsgExpandableTextEditorControl::SetPlainTextMode(int)
+	?TextContent@CMsgExpandableTextEditorControl@@UBEAAVCRichText@@XZ @ 202 NONAME ; class CRichText & CMsgExpandableTextEditorControl::TextContent(void) const
+	?ActivateL@CMsgExpandableTextEditorControl@@UAEXXZ @ 203 NONAME ; void CMsgExpandableTextEditorControl::ActivateL(void)
+	?ClipboardL@CMsgExpandableTextEditorControl@@UAEXW4TMsgClipboardFunc@@@Z @ 204 NONAME ; void CMsgExpandableTextEditorControl::ClipboardL(enum TMsgClipboardFunc)
+	?CurrentLineRect@CMsgExpandableTextEditorControl@@UAE?AVTRect@@XZ @ 205 NONAME ; class TRect CMsgExpandableTextEditorControl::CurrentLineRect(void)
+	?EditL@CMsgExpandableTextEditorControl@@UAEXW4TMsgEditFunc@@@Z @ 206 NONAME ; void CMsgExpandableTextEditorControl::EditL(enum TMsgEditFunc)
+	?EditPermission@CMsgExpandableTextEditorControl@@UBEKXZ @ 207 NONAME ; unsigned long CMsgExpandableTextEditorControl::EditPermission(void) const
+	?HandleControlEventL@CMsgExpandableTextEditorControl@@MAEXPAVCCoeControl@@W4TCoeEvent@MCoeControlObserver@@@Z @ 208 NONAME ; void CMsgExpandableTextEditorControl::HandleControlEventL(class CCoeControl *, enum MCoeControlObserver::TCoeEvent)
+	?IsCursorLocation@CMsgExpandableTextEditorControl@@UBEHW4TMsgCursorLocation@@@Z @ 209 NONAME ; int CMsgExpandableTextEditorControl::IsCursorLocation(enum TMsgCursorLocation) const
+	?ScrollL@CMsgExpandableTextEditorControl@@UAEHHW4TMsgScrollDirection@@@Z @ 210 NONAME ; int CMsgExpandableTextEditorControl::ScrollL(int, enum TMsgScrollDirection)
+	?SetBaseControlObserver@CMsgExpandableTextEditorControl@@UAEXAAVMMsgBaseControlObserver@@@Z @ 211 NONAME ; void CMsgExpandableTextEditorControl::SetBaseControlObserver(class MMsgBaseControlObserver &)
+	?VirtualHeight@CMsgExpandableTextEditorControl@@UAEHXZ @ 212 NONAME ; int CMsgExpandableTextEditorControl::VirtualHeight(void)
+	?VirtualVisibleTop@CMsgExpandableTextEditorControl@@UAEHXZ @ 213 NONAME ; int CMsgExpandableTextEditorControl::VirtualVisibleTop(void)
+	?HandleEdwinSizeEventL@CMsgExpandableTextEditorControl@@UAEHPAVCEikEdwin@@W4TEdwinSizeEvent@MEikEdwinSizeObserver@@VTSize@@@Z @ 214 NONAME ; int CMsgExpandableTextEditorControl::HandleEdwinSizeEventL(class CEikEdwin *, enum MEikEdwinSizeObserver::TEdwinSizeEvent, class TSize)
+	?HandleEdwinEventL@CMsgExpandableTextEditorControl@@UAEXPAVCEikEdwin@@W4TEdwinEvent@MEikEdwinObserver@@@Z @ 215 NONAME ; void CMsgExpandableTextEditorControl::HandleEdwinEventL(class CEikEdwin *, enum MEikEdwinObserver::TEdwinEvent)
+

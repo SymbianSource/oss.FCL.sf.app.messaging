@@ -1,0 +1,66 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   File that exports the files belonging to 
+:                Messaging Editor API
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+
+../inc/MsgEditorView.h                          APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorView.h)
+../inc/MsgEditorAppUi.hrh                       APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorAppUi.hrh)
+../inc/MsgEditorAppUi.h                         APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorAppUi.h)
+../inc/MsgViewAttachmentsDialog.h               APP_LAYER_PLATFORM_EXPORT_PATH(MsgViewAttachmentsDialog.h)
+../inc/MsgBodyControl.h                         APP_LAYER_PLATFORM_EXPORT_PATH(MsgBodyControl.h)
+../inc/MsgAttachmentInfo.h                      APP_LAYER_PLATFORM_EXPORT_PATH(MsgAttachmentInfo.h)
+../inc/MsgCheckNames.h                          APP_LAYER_PLATFORM_EXPORT_PATH(MsgCheckNames.h)
+../inc/MsgEditorAppUiExtension.h                APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorAppUiExtension.h)
+../inc/MsgAddressControl.inl                    APP_LAYER_PLATFORM_EXPORT_PATH(MsgAddressControl.inl)
+../inc/MsgEditor.rh                             APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditor.rh)
+../inc/MsgAttachmentControl.h                   APP_LAYER_PLATFORM_EXPORT_PATH(MsgAttachmentControl.h)
+../inc/MsgEditorModelObserver.h                 APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorModelObserver.h)
+../inc/MsgEditorView.inl                        APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorView.inl)
+../inc/MsgCheckNames.inl                        APP_LAYER_PLATFORM_EXPORT_PATH(MsgCheckNames.inl)
+../inc/MsgEditorFlags.h                         APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorFlags.h)
+../inc/MsgEditorObserver.h                      APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorObserver.h)
+../inc/MsgBaseControl.h                         APP_LAYER_PLATFORM_EXPORT_PATH(MsgBaseControl.h)
+../inc/MsgNaviPaneControl.h                     APP_LAYER_PLATFORM_EXPORT_PATH(MsgNaviPaneControl.h)
+../inc/MsgAddressControl.h                      APP_LAYER_PLATFORM_EXPORT_PATH(MsgAddressControl.h)
+../inc/MsgEditorBaseUi.h                        APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorBaseUi.h)
+../inc/MsgEditorLauncher.h                      APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorLauncher.h)
+../inc/MsgExpandableControl.h                   APP_LAYER_PLATFORM_EXPORT_PATH(MsgExpandableControl.h)
+../inc/MsgExpandableTextEditorControl.h         APP_LAYER_PLATFORM_EXPORT_PATH(MsgExpandableTextEditorControl.h)
+../inc/MsgAttachmentModel.h                     APP_LAYER_PLATFORM_EXPORT_PATH(MsgAttachmentModel.h)
+../inc/MsgEditorSettingCacheUpdatePlugin.h      APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorSettingCacheUpdatePlugin.h)
+../inc/MsgEditorDocument.h                      APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorDocument.h)
+../inc/MsgFormComponent.h                       APP_LAYER_PLATFORM_EXPORT_PATH(MsgFormComponent.h)
+../inc/MsgExpandableControlEditor.h             APP_LAYER_PLATFORM_EXPORT_PATH(MsgExpandableControlEditor.h)
+../inc/MsgBaseControlObserver.h                 APP_LAYER_PLATFORM_EXPORT_PATH(MsgBaseControlObserver.h)
+../inc/MsgAttachmentUtils.h                     APP_LAYER_PLATFORM_EXPORT_PATH(MsgAttachmentUtils.h)
+../inc/MsgAttachmentInfo.inl                    APP_LAYER_PLATFORM_EXPORT_PATH(MsgAttachmentInfo.inl)
+../inc/MsgAttachmentModelObserver.h             APP_LAYER_PLATFORM_EXPORT_PATH(MsgAttachmentModelObserver.h)
+../inc/MsgRecipientItem.h                       APP_LAYER_PLATFORM_EXPORT_PATH(MsgRecipientItem.h)
+../inc/MsgEditorCommon.h                        APP_LAYER_PLATFORM_EXPORT_PATH(MsgEditorCommon.h)
+../inc/MsgNaviPaneControlObserver.h             APP_LAYER_PLATFORM_EXPORT_PATH(MsgNaviPaneControlObserver.h)
+../inc/MsgBaseControl.inl                       APP_LAYER_PLATFORM_EXPORT_PATH(MsgBaseControl.inl)
+../inc/MsgAttachmentItemDrawer.h                APP_LAYER_PLATFORM_EXPORT_PATH(MsgAttachmentItemDrawer.h)
+../inc/MsgAttachmentsListBox.h                  APP_LAYER_PLATFORM_EXPORT_PATH(MsgAttachmentsListBox.h)
+../inc/MsgAttaListItemArray.h                   APP_LAYER_PLATFORM_EXPORT_PATH(MsgAttaListItemArray.h)

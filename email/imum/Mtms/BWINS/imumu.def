@@ -1,0 +1,7 @@
+EXPORTS
+	?NewIMPIMtmUiDataLayerL@@YAPAVCBaseMtmUiData@@AAVCRegisteredMtmDll@@@Z @ 1 NONAME ; class CBaseMtmUiData * NewIMPIMtmUiDataLayerL(class CRegisteredMtmDll &)
+	?NewIMPUMtmUiL@@YAPAVCBaseMtmUi@@AAVCBaseMtm@@AAVCRegisteredMtmDll@@@Z @ 2 NONAME ; class CBaseMtmUi * NewIMPUMtmUiL(class CBaseMtm &, class CRegisteredMtmDll &)
+	?NewPP3IMtmUiDataLayerL@@YAPAVCBaseMtmUiData@@AAVCRegisteredMtmDll@@@Z @ 3 NONAME ; class CBaseMtmUiData * NewPP3IMtmUiDataLayerL(class CRegisteredMtmDll &)
+	?NewPP3UMtmUiL@@YAPAVCBaseMtmUi@@AAVCBaseMtm@@AAVCRegisteredMtmDll@@@Z @ 4 NONAME ; class CBaseMtmUi * NewPP3UMtmUiL(class CBaseMtm &, class CRegisteredMtmDll &)
+	?NewSMTIMtmUiDataLayerL@@YAPAVCBaseMtmUiData@@AAVCRegisteredMtmDll@@@Z @ 5 NONAME ; class CBaseMtmUiData * NewSMTIMtmUiDataLayerL(class CRegisteredMtmDll &)
+	?NewSMTUMtmUiL@@YAPAVCBaseMtmUi@@AAVCBaseMtm@@AAVCRegisteredMtmDll@@@Z @ 6 NONAME ; class CBaseMtmUi * NewSMTUMtmUiL(class CBaseMtm &, class CRegisteredMtmDll &)

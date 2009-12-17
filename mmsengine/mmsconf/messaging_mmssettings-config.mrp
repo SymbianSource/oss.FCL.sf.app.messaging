@@ -1,0 +1,15 @@
+component	messaging_mmssettings-config
+
+# configuration files - source in is messaging_mmssettings, and
+# the exports are disowned by that MRP file.
+
+source  \sf\app\messaging\mmsengine\mmsconf
+binary	\sf\app\messaging\mmsengine\mmsconf	all
+exports	\sf\app\messaging\mmsengine\mmsconf
+
+notes_source	\component_defs\release.src
+
+
+
+ipr E 
+

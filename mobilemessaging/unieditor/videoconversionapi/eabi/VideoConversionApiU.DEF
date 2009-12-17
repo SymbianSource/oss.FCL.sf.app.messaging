@@ -1,0 +1,8 @@
+EXPORTS
+	_ZN22CVideoConversionPlugin4NewLE4TUid @ 1 NONAME
+	_ZN22CVideoConversionPluginD0Ev @ 2 NONAME
+	_ZN22CVideoConversionPluginD1Ev @ 3 NONAME
+	_ZN22CVideoConversionPluginD2Ev @ 4 NONAME
+	_ZTI22CVideoConversionPlugin @ 5 NONAME ; #<TI>#
+	_ZTV22CVideoConversionPlugin @ 6 NONAME ; #<VT>#
+

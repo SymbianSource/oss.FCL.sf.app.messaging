@@ -1,0 +1,6 @@
+component           messaging_metadata
+source   \sf\app\messaging\messaging_info\messaging_metadata 
+source   \sf\app\messaging\package_definition.xml
+source   \sf\app\messaging\distribution.policy.s60
+notes_source      \component_defs\release.src
+ipr T 

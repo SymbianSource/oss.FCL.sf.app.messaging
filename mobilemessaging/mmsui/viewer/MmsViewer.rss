@@ -1,0 +1,871 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME    MMSV // 4 letter ID
+
+//  INCLUDES
+#include <bldvariant.hrh>
+
+#include <eikon.rh>
+#include <eikon.rsg>
+#include <avkon.rh>
+#include <avkon.rsg>
+#include <avkon.mbg>
+#include <avkon.hrh>
+
+#include <aknsconstants.hrh>    // EAknsMajorGeneric etc.
+
+#include <finditem.hrh>
+
+#include <MsgEditor.rh>
+
+#include <avkon.loc>
+#include <drmcommon.loc>
+#include <messaging.loc>
+
+#include <appinfo.rh>
+#include <data_caging_paths_strings.hrh>
+
+#include <MsgEditor.hrh>   
+#include "MmsViewer.hrh"
+#include <mmsui.loc>
+
+#include <mmsui.mbg>           // title icon
+#include <muiu.mbg>           // title icon
+
+// RESOURCES
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF { buf = ""; }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    eik_app_info
+//    Application resource info
+//
+// ---------------------------------------------------------
+//
+
+RESOURCE EIK_APP_INFO
+    {
+    menubar     = r_mmsviewer_menu;
+    status_pane = r_mmsviewer_status_pane;
+    cba         = r_mmsviewer_softkeys_options_back_empty;
+    custom_app_info_extension = r_mmsviewer_app_info_extension;
+    }
+
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_app_info_extension
+//    Application resource info extension
+//
+// ---------------------------------------------------------
+//
+RESOURCE EIK_APP_INFO_EXT r_mmsviewer_app_info_extension
+    {
+    popup_toolbar = r_mmsviewer_app_toolbar;
+    }
+    
+    
+//----------------------------------------------------
+//   
+//    r_mmsviewer_app_toolbar - CAknToolbar
+//    Application toolbar
+//
+//----------------------------------------------------
+//
+// Needed by skinning. In toolbar resource definition skin support and bitmap methods are used, in case skin
+// does not support toolbar icons
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_mmsviewer_reply_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgReply; 
+    } 
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_mmsviewer_forward_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgForward; 
+    } 
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_mmsviewer_delete_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiMgTbDelete; 
+    } 
+
+
+RESOURCE AVKON_TOOLBAR r_mmsviewer_app_toolbar
+    {
+    flags = KAknToolbarFixed; 
+    items =
+        {
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EMmsViewerToolbarReply;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_mms_tb_tooltip_reply;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_tb_msg_reply;
+                        bmpmask = EMbmMuiuQgn_indi_tb_msg_reply_mask;
+                        extension = r_mmsviewer_reply_button_state_extension; 
+                        }  
+                    };            
+                };
+            },
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EMmsViewerToolbarForward;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_mms_tb_tooltip_forward;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_tb_msg_forward;
+                        bmpmask = EMbmMuiuQgn_indi_tb_msg_forward_mask;
+                        extension = r_mmsviewer_forward_button_state_extension; 
+                        }  
+                    };            
+                };
+            },
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EMmsViewerToolbarDelete;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_mms_tb_tooltip_delete;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_mg_tb_delete;
+                        bmpmask = EMbmMuiuQgn_indi_mg_tb_delete;
+                        extension = r_mmsviewer_delete_button_state_extension; 
+                        }  
+                    };            
+                };
+            }
+        };
+    }
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    Default Viewer CBA
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA r_mmsviewer_softkeys_options_back_empty
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=0; txt = text_softkey_empty; }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    MSK CBA buttons
+//
+// ---------------------------------------------------------
+//
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_context_menu
+    {
+    id = EAknSoftkeyContextOptions;
+    txt = text_softkey_option;
+    }
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_play_audio
+    {
+    id = EMmsViewerPlayAudio;
+    txt = qtn_msk_play;
+    }
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_play_video
+    {
+    id = EMmsViewerPlayVideo;
+    txt = qtn_msk_play;
+    }
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_open_image
+    {
+    id = EMmsViewerViewImage;
+    txt = qtn_msk_open;
+    }
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_play_presentation
+    {
+    id = EMmsViewerShowPresentation;
+    txt = qtn_msk_play;
+    }
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_open_objects
+    {
+    id = EMmsViewerObjects;
+    txt = qtn_msk_objects;
+    }
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_stop_audio
+    {
+    id = EMmsViewerSoftStopAudio;
+    txt = text_softkey_empty;
+    }
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_stop_video
+    {
+    id = EMmsViewerSoftStopVideo;
+    txt = text_softkey_empty;
+    }
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_no_command_empty_text
+    {
+    id = 0;
+    txt = text_softkey_empty;
+    }
+
+
+#ifdef RD_SVGT_IN_MESSAGING
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_play_svg
+    {
+    id = EMmsViewerPlaySvg;
+    txt = qtn_msk_play;
+    }
+
+
+RESOURCE CBA_BUTTON r_mmsviewer_msk_button_stop_svg
+    {
+    id = EMmsViewerSoftStopSvg;
+    txt = text_softkey_empty;
+    }
+    
+#endif    
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_localisable_app_info
+//    Application resource info
+//
+// ---------------------------------------------------------
+//
+RESOURCE LOCALISABLE_APP_INFO r_mmsviewer_localisable_app_info
+    {
+    short_caption = qtn_apps_mmsviewer_grid;
+    caption_and_icon = 
+    CAPTION_AND_ICON_INFO
+        {
+        caption = qtn_apps_mmsviewer_list;
+#ifdef __SCALABLE_ICONS
+        number_of_icons = 1;
+		icon_file = APP_BITMAP_DIR"\\mmsviewer_aif.mif";
+#else
+        number_of_icons = 1;
+		icon_file = APP_BITMAP_DIR"\\mmsviewer_aif.mbm";
+#endif
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_status_pane - statuspane
+//    Status pane for MMS Viewer
+//
+// ---------------------------------------------------------
+//
+RESOURCE STATUS_PANE_APP_MODEL r_mmsviewer_status_pane
+{
+    layout = R_AVKON_STATUS_PANE_LAYOUT_USUAL;
+    panes=
+        {
+        SPANE_PANE
+            {
+            id = EEikStatusPaneUidTitle;
+            type = EAknCtTitlePane;
+            resource = r_mmsviewer_app_name;
+            }
+        };
+}
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_app_name - titlepane
+//    Title pane for MMS Viewer
+//
+// ---------------------------------------------------------
+//
+RESOURCE TITLE_PANE r_mmsviewer_app_name
+    {
+    txt = qtn_mms_title_mms_shorter;
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_menu - menubar
+//    Options mainmenu titles
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_mmsviewer_menu
+    {
+    titles =
+        {
+        MENU_TITLE { menu_pane = r_mmsviewer_optionsmenu; }
+        };
+    }
+
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_selectmenu
+//    This menubar is shown when selection key is pressed. 
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_mmsviewer_selectmenu
+    {
+    titles =
+        {
+        MENU_TITLE { menu_pane = r_mmsviewer_selectionmenu; }
+        };
+    }
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_optionsmenu - menupane
+//    Options mainmenu items
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_mmsviewer_optionsmenu
+    {
+    items =
+        {
+        MENU_ITEM { command = EMmsViewerViewImage;          txt = qtn_mms_om_view_image; },
+        MENU_ITEM { command = EMmsViewerPlayAudio;          txt = qtn_mms_om_play_audio; },
+        MENU_ITEM { command = EMmsViewerPlayVideo;          txt = qtn_mms_om_play_video; },
+        MENU_ITEM { command = EMmsViewerShowPresentation;   txt = qtn_mms_om_show_presentation; },
+#ifdef RD_SVGT_IN_MESSAGING        
+        MENU_ITEM { command = EMmsViewerPlaySvg;   txt = qtn_mms_om_show_presentation; },
+#endif        
+        MENU_ITEM { command = EMmsViewerReplyMenu;          txt = qtn_mms_om_reply; 
+                    cascade = r_mmsviewer_reply_submenu; },
+        MENU_ITEM { command = EMmsViewerUpload;             txt = qtn_options_send_via; },
+        MENU_ITEM { command = EMmsViewerForward;            txt = qtn_mms_om_forward; },
+        MENU_ITEM { command = EMmsViewerDelete;             txt = qtn_msg_om_delete; },
+        MENU_ITEM { command = EFindItemMenuPlaceHolder;     txt = ""; },
+        MENU_ITEM { command = EMmsViewerSaveObject;         txt = qtn_mms_om_save_object; },
+ 
+        MENU_ITEM { command = EMmsViewerShowMessage;        txt = qtn_mms_om_play_message; },
+        MENU_ITEM { command = EMmsViewerObjects;            txt = qtn_mms_om_objects; },
+        MENU_ITEM { command = EMmsViewerMessageInfo;        txt = qtn_msg_om_message_info; },
+        MENU_ITEM { command = EMmsViewerDeliveryStatus;     txt = qtn_msg_om_delivery_status; },
+        MENU_ITEM { command = EMmsViewerMove;               txt = qtn_mms_om_move_to_folder; },
+        MENU_ITEM   { command = EMmsViewerSubmenuZoomCommands;  
+                        txt = qtn_options_text_size;
+                        cascade = r_mmsviewer_zoom_submenu;
+                    },
+        MENU_ITEM { command = EAknCmdHelp;                  txt = qtn_options_help; },
+        MENU_ITEM { command = EAknCmdExit;                  txt = qtn_mms_om_exit; }
+        };
+    }
+
+
+//  RESOURCE DEFINITIONS 
+//----------------------------------------------------
+//
+//    r_mmsviewer_zoom_submenu
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_mmsviewer_zoom_submenu
+    {
+    items=
+        {
+        
+        MENU_ITEM   { command = EMsgDispSizeAutomatic; 
+                    txt = qtn_options_auto;
+                    flags = EEikMenuItemRadioStart;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeLarge; 
+                    txt = qtn_options_large;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeNormal; 
+                    txt = qtn_options_normal;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeSmall;
+                    txt = qtn_options_small;
+                    flags = EEikMenuItemRadioEnd;
+                    }
+        }; 
+    }
+
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_reply_submenu - menupane
+//    Options mainmenu's submenu containing reply functions
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_mmsviewer_reply_submenu
+    {
+    items=
+        {
+        MENU_ITEM { command = EMmsViewerReplyToSender;      txt = qtn_mms_sm_to_sender; },
+        MENU_ITEM { command = EMmsViewerReplyToAll;         txt = qtn_mms_sm_to_all; },
+        MENU_ITEM { command = EMmsViewerReplyViaAudio;      txt = qtn_msg_reply_via_audio_message; },
+        MENU_ITEM { command = EMmsViewerReplyViaMail;       txt = qtn_mms_sm_via_mail; }
+        };
+    }
+    
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_selectionmenu - menupane
+//    Options mainmenu when selection key is pressed
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_mmsviewer_selectionmenu
+        {
+    items=
+        {
+        MENU_ITEM
+        	{ 
+        	command = EFindItemContextMenuPlaceHolder;  
+        	txt = ""; 
+        	}
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_from - msgeditoraddresscontrol
+//    Address control for received messages
+//
+// ---------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mmsviewer_from
+    {
+    prompt = qtn_msg_from;
+    id = EMsgComponentIdFrom;
+    distance = 0;
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_to - msgeditoraddresscontrol
+//    Address control for sent messages
+//
+// ---------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mmsviewer_to
+    {
+    prompt = qtn_msg_to;
+    id = EMsgComponentIdTo;
+    distance = 0;
+    }
+     
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_cc - msgeditoraddresscontrol
+//    Address control for sent messages
+//
+// ---------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mmsviewer_cc
+    {
+    prompt = qtn_msg_cc;
+    id = EMsgComponentIdCc;
+    distance = 0;
+    }
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_bcc - msgeditoraddresscontrol
+//    Address control for sent messages
+//
+// ---------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mmsviewer_bcc
+    {
+    prompt = qtn_msg_bcc;
+    id = EMsgComponentIdBcc;
+    distance = 0;
+    }
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_subject - msgeditorexpandablecontrol
+//    Subject control
+//
+// ---------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_EXPANDABLE_CONTROL r_mmsviewer_subject
+    {
+    prompt = qtn_msg_subject;
+    id = EMsgComponentIdSubject;
+    distance = 0;
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_softkeys_empty_stop_stopvideo - softkeys
+//    Softkeys while video is playing
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA r_mmsviewer_softkeys_empty_stopvideo
+    {
+    buttons =
+        {
+        CBA_BUTTON { txt = text_softkey_empty; },
+        CBA_BUTTON { id = EMmsViewerSoftStopVideo; txt = qtn_skrs_stop_scroll; },
+        CBA_BUTTON { id = EMmsViewerSoftStopVideo; txt = text_softkey_empty; }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_softkeys_empty_stop - softkeys
+//    Softkeys while audio is playing
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA r_mmsviewer_softkeys_empty_stop
+    {
+    buttons =
+        {
+        CBA_BUTTON { txt = text_softkey_empty; },
+        CBA_BUTTON { id = EMmsViewerSoftStopAudio; txt = qtn_mms_rsk_stop; },
+        CBA_BUTTON { id = EMmsViewerSoftStopAudio; txt = text_softkey_empty; }
+        };
+    }
+    
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_confirmation_query - dialog
+//    Confirmation query template
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_mmsviewer_confirmation_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                layout = EConfirmationLayout;
+                label = "";
+                };
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_confirmation_query_ok_empty - dialog
+//    Confirmation query template with softkeys ok/empty
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_mmsviewer_confirmation_query_ok_empty
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_OK_EMPTY__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                layout = EConfirmationLayout;
+                label = "";
+                animation = R_QGN_NOTE_INFO_ANIM;
+                };
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_wait_loading - dialog
+//    Wait note. Displayed while loading a message. 
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_mmsviewer_wait_loading
+{
+    flags=  EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+    {
+        DLG_LINE
+        {
+            type    = EAknCtNote;
+            id      = 1;
+            control = AVKON_NOTE 
+            { 
+                layout      = EWaitLayout;
+                singular_label = qtn_mms_wait_animation_load;
+                animation   = R_QGN_GRAF_WAIT_BAR_ANIM;
+            };
+        }
+    };
+}
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_mmsviewer_wait_opening_page - dialog
+//    Wait note. Displayed while opening a page. 
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_mmsviewer_wait_opening_page
+{
+    flags=  EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+    {
+        DLG_LINE
+        {
+            type    = EAknCtNote;
+            id      = 1;
+            control = AVKON_NOTE 
+            { 
+                layout      = EWaitLayout;
+                singular_label = ""; //set dynamically
+                animation   = R_QGN_GRAF_WAIT_BAR_ANIM;
+            };
+        }
+    };
+}
+
+
+
+//
+// "Upload" list query
+//
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_mmsviewer_upload_list_query
+    {
+    flags = EGeneralQueryFlags;
+    softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+    items =
+        {
+        AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+            {
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = AVKON_LIST_QUERY_LIST
+                    {
+                    array_id = 0;
+                    };
+                heading = qtn_query_heading_send; // from "Messaging.loc"
+                };
+            }
+        };
+    }
+
+
+//  RESOURCE DEFINITIONS - LOGICAL STRINGS
+// ---------------------------------------------------------
+//  Logical strings  
+// 
+//  "Forward not possible" strings
+//----------------------------------------------------
+
+RESOURCE TBUF r_mmsviewer_cannot_fw_objects         { buf = qtn_mms_err_cannot_fw_objects ; }
+RESOURCE TBUF r_mmsviewer_rmode_cannot_fw_objects   { buf = qtn_mms_err_rmode_cannot_fw_objects ; }
+
+RESOURCE TBUF r_mmsviewer_cannot_fw_pres            { buf = qtn_mms_err_cannot_fw_pres ; }
+RESOURCE TBUF r_mmsviewer_rmode_cannot_fw_pres      { buf = qtn_mms_err_rmode_cannot_fw_pres ; }
+
+RESOURCE TBUF r_mmsviewer_cannot_fw_drm             { buf = qtn_drm_forw_forbid ; }
+RESOURCE TBUF r_mmsviewer_cannot_fw_big             { buf = qtn_mms_err_cannot_fw_big ; }
+
+RESOURCE TBUF r_mmsviewer_drm_preview_rights        { buf = qtn_drm_preview_msg ; }
+
+// handled by DrmHelper, media control knows the error code
+RESOURCE TBUF r_mmsviewer_drm_error                 { buf = "" ; }
+    
+//  RESOURCE DEFINITIONS 
+//----------------------------------------------------
+//   
+//    r_mmsviewer_cannot_display_objects - buffer
+//    Buffer for information note wrapper
+//    Shown when message cannot be displayed in preview mode
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF r_mmsviewer_cannot_display_objects  { buf = qtn_mms_info_fwd_cannot_display ; }
+
+//  RESOURCE DEFINITIONS 
+//----------------------------------------------------
+//   
+//    r_mmsviewer_drm_object_removed - buffer
+//    Buffer for information note wrapper
+//    Shown when a DRM object is removed from the message
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF r_mmsviewer_drm_object_removed  { buf = qtn_drm_fl_info_item_discard ; }
+
+//  RESOURCE DEFINITIONS 
+//----------------------------------------------------
+//   
+//    r_mmsviewer_object_corrupted_string - buffer
+//    Buffer for information note wrapper
+//    Shown when message cannot be displayed as intended
+//    because of corrupted object
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF r_qtn_mms_cannot_open_corrupted    { buf = qtn_mms_cannot_open_corrupted; }
+
+// // From Messaging.loc
+RESOURCE TBUF r_mmsviewer_error_msg_corrupt    { buf = qtn_msg_err_cannot_open_msg; }
+
+RESOURCE TBUF r_mmsviewer_plain_music_prohibited     { buf = qtn_mp_info_tone_no_drm; }
+
+RESOURCE TBUF r_mmsviewer_quest_delete_message { buf = qtn_mms_quest_delete_msg; }
+
+RESOURCE TBUF r_mmsviewer_quest_send_every_wo_rights { buf = qtn_drm_send_wo_rights_sd;}
+
+RESOURCE TBUF r_mmsviewer_quest_send_one_wo_rights { buf = qtn_drm_send_wo_rights_sd_1;}
+
+RESOURCE TBUF r_mmsviewer_quest_send_some_wo_rights  { buf = qtn_drm_send_wo_rights_misc;}
+
+RESOURCE TBUF r_mmsviewer_quest_guided_inc_obj { buf = qtn_mms_conf_guid_incl_object; }
+
+RESOURCE TBUF r_mmsviewer_quest_guided_inc_objs { buf = qtn_mms_conf_guid_incl_objects; }
+
+RESOURCE TBUF r_mmsviewer_quest_guided_presentation { buf = qtn_mms_conf_guid_present; }
+
+// texts to be shown in title pane
+RESOURCE TBUF r_mmsviewer_upper_row { buf = qtn_mms_title_mms_shorter ; }
+
+RESOURCE TBUF r_mmsviewer_opening_page { buf = qtn_mms_wait_opening_page; }
+
+
+//----------------------------------------------------
+//   
+//    r_mmsviewer_ordinal_number - tbuf
+//    Ordinal number of current message in navipane
+//    (in 16 characters theres space for 9999999 messages plus
+//    two characters for the separator e.g. 1000000/9999999)
+//
+//----------------------------------------------------
+//
+#ifndef RD_MSG_NAVIPANE_IMPROVEMENT
+RESOURCE TBUF r_mmsviewer_ordinal_number  { buf = qtn_stat_msg_number ; }
+#endif
+
+//-----------------------------------------------------   
+//
+//    r_mmsviewer_move_text
+//    Text in "Move to" selection dialog
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_mmsviewer_move_text   { buf = qtn_mms_popup_text_move_to; }
+
+//-----------------------------------------------------   
+//
+//    DRM notes for S60 3.0
+//
+//-----------------------------------------------------
+//   
+RESOURCE TBUF r_qtn_drm_gen_rights_exp  { buf = qtn_drm_gen_rights_exp; }
+RESOURCE TBUF r_qtn_drm_no_rights_for_some  { buf = qtn_drm_no_rights_for_some; }
+
+// ---------------------------------------------------------
+//    r_mms_file_saved_to
+//    File foo.bar saved to Photo album
+//
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_mms_file_saved_to               { buf = qtn_fldr_file_saved_to; }
+
+// Silent mode
+RESOURCE TBUF r_qtn_mms_obey_silent_mode { buf = qtn_mms_qry_play_audio; }
+
+//  RESOURCE DEFINITIONS 
+//----------------------------------------------------
+//   
+//    r_mmsviewer_cannot_play_videocall_ongoing - buffer
+//    Buffer for information note wrapper
+//    Shown when media cannot be played during video call
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF r_mmsviewer_cannot_play_videocall_ongoing  { buf = qtn_mms_info_video_call_ongoing_no_media ; }
+
+
+// End of File

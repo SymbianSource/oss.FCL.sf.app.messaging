@@ -1,0 +1,35 @@
+;
+; Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+; All rights reserved.
+; This component and the accompanying materials are made available
+; under the terms of "Eclipse Public License v1.0"
+; which accompanies this distribution, and is available
+; at the URL "http://www.eclipse.org/legal/epl-v10.html".
+;
+; Initial Contributors:
+; Nokia Corporation - initial contribution.
+;
+; Contributors:
+;
+; Description:  Mcesettings_stub.pkg;
+&EN
+
+; standard SIS file header
+#{"MceSettings"},(0x101F868D),10,0,0,TYPE=SA
+
+;Supports Series 60 v 3.0
+[0x101F7961], 0, 0, 0, {"Series60ProductID"}
+
+;Localized Vendor Name
+%{"Nokia"}
+	
+;Unique Vendor name
+:"Nokia"
+
+
+;MCESettings
+""-"z:\sys\bin\MceSettings.dll"
+""-"z:\resource\MceSettings.r*"
+""-"z:\resource\MceSettingsEmailSel.rsc"
+
+

@@ -1,0 +1,7 @@
+EXPORTS
+	?ImplementationGroupProxy@@YAPBUTImplementationProxy@@AAH@Z @ 1 NONAME ; struct TImplementationProxy const * ImplementationGroupProxy(int &)
+	?ConvertFromUnicode@CSmsstrictImplementation@@UAEHW4TEndianness@CCnvCharacterSetConverter@@ABVTDesC8@@AAVTDes8@@ABVTDesC16@@AAVTArrayOfAscendingIndices@3@@Z @ 2 NONAME ; int CSmsstrictImplementation::ConvertFromUnicode(enum CCnvCharacterSetConverter::TEndianness, class TDesC8 const &, class TDes8 &, class TDesC16 const &, class CCnvCharacterSetConverter::TArrayOfAscendingIndices &)
+	?ConvertToUnicode@CSmsstrictImplementation@@UAEHW4TEndianness@CCnvCharacterSetConverter@@AAVTDes16@@ABVTDesC8@@AAH33@Z @ 3 NONAME ; int CSmsstrictImplementation::ConvertToUnicode(enum CCnvCharacterSetConverter::TEndianness, class TDes16 &, class TDesC8 const &, int &, int &, int &)
+	?IsInThisCharacterSetL@CSmsstrictImplementation@@UAEHAAH0ABVTDesC8@@@Z @ 4 NONAME ; int CSmsstrictImplementation::IsInThisCharacterSetL(int &, int &, class TDesC8 const &)
+	?ReplacementForUnconvertibleUnicodeCharacters@CSmsstrictImplementation@@UAEABVTDesC8@@XZ @ 5 NONAME ; class TDesC8 const & CSmsstrictImplementation::ReplacementForUnconvertibleUnicodeCharacters(void)
+

@@ -1,0 +1,39 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains CAPTION resources for the Mce.
+*
+*/
+
+
+
+//  INCLUDES
+#include <mce.loc>
+#include <ApCaptionFile.rh>
+
+
+//  RESOURCE DEFINITIONS
+// ---------------------------------------------------------
+//
+//    CAPTION_DATA
+//
+// ---------------------------------------------------------
+//
+RESOURCE CAPTION_DATA
+    {
+    caption = qtn_apps_messaging_list;
+    shortcaption = qtn_apps_messaging_grid;
+    }
+
+// End of File

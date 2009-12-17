@@ -1,0 +1,11 @@
+component	messaging_obex
+source	\sf\app\messaging\messagingappbase\obexmtms
+binary	\sf\app\messaging\messagingappbase\obexmtms\Group	all
+exports	\sf\app\messaging\messagingappbase\obexmtms\Group
+
+notes_source	\component_defs\release.src
+
+
+ipr E 
+ipr T \sf\app\messaging\messagingappbase\obexmtms\TObexMTM
+

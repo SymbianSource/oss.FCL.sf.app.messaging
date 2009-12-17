@@ -1,0 +1,76 @@
+/*
+* Copyright (c) 2005-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Project definition file for project audiomessageui
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+TARGET          audiomessageui.dll 
+TARGETTYPE      dll
+UID             0x10004845 0x10207459
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_GENERAL_DLL
+VERSION 	10.0
+PAGED
+
+APP_LAYER_SYSTEMINCLUDE
+START RESOURCE  ../data/audiomessageregistry.rss 
+TARGET          audiomessageregistry.rsc 
+TARGETPATH      MTM_INFO_FILE_DIR
+LANGUAGE_IDS
+END
+
+START RESOURCE  ../data/audiomessagemtm.rss
+TARGETPATH      MTM_RESOURCE_DIR  
+HEADER
+LANGUAGE_IDS
+END
+
+TARGETPATH  	/system/libs
+SOURCEPATH  	../uisrc
+
+SOURCE 			audiomessageuidll.cpp 
+SOURCE 			audiomessageui.cpp 
+SOURCE 			audiomessageuidata.cpp
+
+USERINCLUDE     ../uiinc 
+USERINCLUDE     ../inc 
+
+SYSTEMINCLUDE   ../../../inc
+SYSTEMINCLUDE   /epoc32/include/cshelp
+
+LIBRARY 		euser.lib   
+LIBRARY 		mtur.lib
+LIBRARY 		muiu.lib
+LIBRARY 		apgrfx.lib
+LIBRARY 		apparc.lib
+LIBRARY 		msgs.lib
+LIBRARY 		commonengine.lib
+LIBRARY	 		mmsserversettings.lib
+LIBRARY			mmssettings.lib
+LIBRARY 		featmgr.lib
+DEBUGLIBRARY    flogger.lib
+
+#if defined( ARMCC )
+deffile         ./eabi.def
+#elif defined( WINS )
+deffile         ./Wins.def
+#else
+deffile         ./marm.def
+#endif
+

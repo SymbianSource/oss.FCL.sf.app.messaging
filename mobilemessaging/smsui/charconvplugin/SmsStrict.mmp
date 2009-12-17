@@ -1,0 +1,53 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   
+*  Char conv plugin for Sms editor PRIVATE use.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+TARGET               SmsStrict.DLL
+TARGETTYPE           PLUGIN
+CAPABILITY           CAP_ECOM_PLUGIN
+
+uid                  0x10009D8D 0x1020724C
+VENDORID             VID_DEFAULT
+VERSION 	     10.0
+PAGED
+
+SOURCEPATH           .
+SOURCE               SmsStrict.cpp
+SOURCE               G_SmsStrict.cpp
+
+SYSTEMINCLUDE        ../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+LIBRARY              EUSER.LIB
+LIBRARY              CHARCONV.LIB
+LIBRARY              ECOM.LIB
+
+start resource       1020724C.rss
+target               SmsStrict.RSC
+end
+
+#if defined(ARMCC)
+DEFFILE ../eabi/ 
+#elif defined( WINSCW )
+DEFFILE ../bwins/ 
+#endif
+
+//end of file

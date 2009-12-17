@@ -1,0 +1,85 @@
+/*
+* Copyright (c) 2005-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME    UMTM
+
+//  INCLUDES
+#include <eikon.rh>
+#include <mtud.rh>
+#include <MtmExtendedCapabilities.hrh>
+#include <unieditor.loc>
+#include <avkon.loc>
+#include <messaging.loc>
+
+//  CONSTANTS  
+
+//  MACROS  
+
+//  RESOURCE DEFINITIONS 
+
+    RESOURCE RSS_SIGNATURE { }
+
+    RESOURCE TBUF { buf="UniEditor"; }
+
+    // Message Info
+    RESOURCE TBUF r_msgtype_text_sms    { buf = qtn_sms_minfo_type_sms ; }
+
+    RESOURCE TBUF r_msgtype_text_mms    { buf = qtn_mms_msginfo_mms ; }
+    
+    RESOURCE TBUF r_msg_size_kb         { buf = qtn_size_kb; }
+    
+    // MMS priority in Message Info
+    RESOURCE TBUF r_uni_mms_message_priority_low	 { buf = qtn_mms_message_priority_low; }
+    RESOURCE TBUF r_uni_mms_message_priority_normal  { buf = qtn_mms_message_priority_normal; }
+    RESOURCE TBUF r_uni_mms_message_priority_high    { buf = qtn_mms_message_priority_high; }
+        
+    RESOURCE MTUD_FUNCTION_ARRAY r_uni_mtm_function_array
+    {
+    functions =
+         {
+         MTUD_FUNCTION 
+             {
+             functiontext = qtn_mce_info;
+             command = KMtmUiFunctionMessageInfo;
+             flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+             },
+         MTUD_FUNCTION 
+             {
+             functiontext = qtn_query_send_via_msg;
+             command = KMtmUiFunctionSendAs;
+             flags = EMtudCommandSendAs;
+             },
+         MTUD_FUNCTION 
+             {
+             functiontext = qtn_mce_write_msg;
+             command = KMtmUiMceWriteMessageSubmenu;
+             flags = EMtudCommandTransferSend;
+             },
+         MTUD_FUNCTION 
+             {
+             functiontext = qtn_mce_pop_up_message;
+             command = KMtmUiMceWriteMessagePopup;
+             flags = EMtudCommandTransferSend;
+             }
+         };
+     }
+
+// End of File

@@ -1,0 +1,7 @@
+EXPORTS
+	_ZN11CICalEngine14CreateEntryUILERK6TDesC8 @ 1 NONAME
+	_ZN11CICalEngine22ParseStreamToCalEntryLER15RFileReadStream @ 2 NONAME
+	_ZN11CICalEngine24ConvertRichTextToStreamLEP9CRichTextR15RFileReadStream @ 3 NONAME
+	_ZN11CICalEngine29ResolveAttachmentsVisibilityLER21MMsvAttachmentManagerR13RPointerArrayI14CMsvAttachmentEi @ 4 NONAME
+	_ZN11CICalEngine4NewLEv @ 5 NONAME
+

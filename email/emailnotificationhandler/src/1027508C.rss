@@ -1,0 +1,45 @@
+/*
+* Copyright (c) 1027 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*		ECom resource
+*
+*/
+
+
+#include <ecom/registryinfo.rh>
+
+RESOURCE REGISTRY_INFO EmailNotificationHandlerInfo
+	{
+	dll_uid = 0x1027508C;
+	interfaces = 
+		{
+		INTERFACE_INFO
+			{
+			// KUidPushHandlerBase - CPushHandlerBase UID
+			interface_uid = 0x101F3E5A;
+			implementations = 
+				{
+				IMPLEMENTATION_INFO
+					{
+					implementation_uid = 0x1027508C;
+					version_no = 1;
+					display_name = "";
+					default_data = "x-wap-application:emn.ua||0x00000009";//taken from http://www.wapforum.com/tech/omna/omna-push-app-id.htm
+					opaque_data = " ";
+					}
+				};
+			}
+		};
+	}
+

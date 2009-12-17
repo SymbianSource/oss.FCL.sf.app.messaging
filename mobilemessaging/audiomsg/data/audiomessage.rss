@@ -1,0 +1,1053 @@
+/*
+* Copyright (c) 2005-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Resource definitions for project audiomessage
+*
+*/
+
+
+
+
+NAME    AUDI   // 4 letter id resource file. 
+
+#include <bldvariant.hrh>
+#include <AvkonIcons.hrh>
+#include <finditem.hrh>
+#include <eikon.rh>
+#include <avkon.rh>
+#include <MsgEditor.rh>
+#include <avkon.rsg>
+#include <avkon.mbg>
+#include <audiomessage.mbg>
+#include <avkon.loc>
+#include <DRMCommon.loc>
+#include <Messaging.loc>
+#include <appinfo.rh>
+#include <data_caging_paths_strings.hrh>
+#include "audiomessage.hrh"
+#include <muiu.mbg> 
+#include <aknsconstants.hrh>
+#include <audiomessage.loc>
+
+RESOURCE RSS_SIGNATURE { }
+RESOURCE TBUF { buf = ""; }
+
+
+// ---------------------------------------------------------------------------
+//    eik_app_info
+//    Application resource info
+// ---------------------------------------------------------------------------
+//
+RESOURCE EIK_APP_INFO
+    {
+    menubar      = r_audiomessage_menubar;
+    cba          = r_audiomessage_options_empty;
+    status_pane  = r_audiomessage_status_pane;
+    }
+
+
+// ---------------------------------------------------------------------------
+//    r_mmseditor_localisable_app_info
+//    Application resource info
+// ---------------------------------------------------------------------------
+//
+RESOURCE LOCALISABLE_APP_INFO r_audiomessage_localisable_app_info
+    {
+    short_caption = qtn_title_audio_message;
+    caption_and_icon = 
+    CAPTION_AND_ICON_INFO
+        {
+        caption = qtn_title_audio_message;
+#ifdef __SCALABLE_ICONS
+        number_of_icons = 1;
+  	    icon_file = APP_BITMAP_DIR"\\audiomessage_aif.mif";
+#else
+      	number_of_icons = 2;
+		icon_file = APP_BITMAP_DIR"\\audiomessage_aif.mbm";
+#endif	// __SCALABLE_ICONS
+        };
+    }
+
+// Status pane resource
+RESOURCE STATUS_PANE_APP_MODEL r_audiomessage_status_pane
+	{
+    panes=
+        {
+        SPANE_PANE
+            {
+            id = EEikStatusPaneUidTitle;
+            type = EAknCtTitlePane;
+            resource = r_audiomessage_app_name;
+            }
+        };
+	}
+
+// App name
+RESOURCE TITLE_PANE r_audiomessage_app_name
+    {
+    txt = qtn_title_audio_message;
+    }
+    
+// Title
+RESOURCE TBUF r_audiomessage_title { buf = qtn_title_audio_message; }
+
+// ======== main view ========
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_to - address control
+// ---------------------------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_audiomessage_to
+	{
+    prompt      = qtn_msg_to;
+    id          = EMsgComponentIdTo;
+    distance    = 0;
+    default_case            = EAknEditorLowerCase;
+    allowed_case_modes      = EAknEditorAllCaseModes;
+    default_input_mode      = EAknEditorNumericInputMode;
+    allowed_input_modes     = EAknEditorTextInputMode |
+    							EAknEditorNumericInputMode;
+    numeric_keymap          = EAknEditorStandardNumberModeKeymap;
+    avkon_flags             = EAknEditorFlagNoT9 | 
+    							EAknEditorFlagUseSCTNumericCharmap;
+	}
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_from - address control
+//    Address control for received messages
+// ---------------------------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_audiomessage_viewer_from
+	{
+    prompt      = qtn_msg_from;
+    id          = EMsgComponentIdFrom;
+    distance    = 0;
+	}
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_to - address control
+//    Address control for sent messages
+// ---------------------------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_audiomessage_viewer_to
+    {
+    prompt = qtn_msg_to;
+    id = EMsgComponentIdTo;
+    distance = 0;
+    }
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_subject 
+//    subject control
+// ---------------------------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_EXPANDABLE_CONTROL r_audiomessage_subject
+    {
+    prompt = qtn_msg_subject;
+    id = EMsgComponentIdSubject;
+    distance = 0;
+    }
+
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_menubar - menubar
+//    Main views options menu
+// ---------------------------------------------------------------------------
+//
+RESOURCE MENU_BAR r_audiomessage_menubar
+	{
+    titles =
+    	{
+        MENU_TITLE  { menu_pane = r_audiomessage_main_menu; }
+    	};
+	} 
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_viewer_selectmenu - menubar
+//    This menubar is shown when selection key is pressed
+//	  in viewer and focus is not in icon. 
+// ---------------------------------------------------------------------------
+//
+RESOURCE MENU_BAR r_audiomessage_viewer_selectmenu
+    {
+    titles =
+        {
+        MENU_TITLE { menu_pane = r_audiomessage_viewer_context_menu; }
+        };
+    }
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_main_menu - menupane
+//    Main views options menu items
+// ---------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_audiomessage_main_menu
+    {
+    items = 
+        {
+        MENU_ITEM   { command = EAmsEditorCmdSend;                
+        					txt = qtn_msg_om_send; }
+        ,
+        MENU_ITEM   { command = EAmsEditorCmdAddRecipient;        
+        					txt = qtn_msg_om_add_recipient; }
+        ,
+        MENU_ITEM   { command = EAmsEditorSubmenuInsertAudioCommands;  
+        					txt =qtn_audio_messaging_insert_audio;
+                            cascade = r_audiomessage_insert_audio_submenu; }
+        ,
+        MENU_ITEM   { command = EAmsEditorSubmenuReplaceAudioCommands;  
+        					txt = qtn_audiomessaging_replace_audio;
+                            cascade = r_audiomessage_replace_audio_submenu; }
+        ,
+        MENU_ITEM	{ command = EAmsEditorCmdSaveAudio;				
+        					txt = qtn_audio_messaging_save_audio; }
+        ,
+        MENU_ITEM   { command = EAmsEditorCmdPlayAudio;      		
+        					txt = qtn_audio_messaging_play_audio; }
+        ,
+        MENU_ITEM   { command = EAmsViewerCmdSubmenuReply;			
+        					txt = qtn_sms_reply;
+							    cascade = r_audiomessage_reply_submenu; }
+        ,
+	    MENU_ITEM   { command = EAmsViewerCmdForward;
+	    					txt = qtn_sms_forward; }
+	    ,
+	    MENU_ITEM	{ command = EAmsViewerCmdSaveAudio;
+	    					txt = qtn_audio_messaging_save_audio; }
+        ,
+        MENU_ITEM	{ command = EAmsViewerCmdRemoveAudio;
+        					txt = qtn_msg_om_delete; }
+        ,
+        MENU_ITEM   { command = EFindItemMenuPlaceHolder; 
+        					txt = ""; }
+	    ,
+        MENU_ITEM   { command = EAmsEditorCmdChangePriority;  
+                            txt = qtn_msg_om_priority;  }
+	    ,
+	    MENU_ITEM   { command = EAmsEditorCmdMessageInfo;
+	    				    txt = qtn_msg_om_message_info; }
+        , 
+	      
+	    MENU_ITEM   { command = EAmsViewerCmdDeliveryStatus;
+	    					txt = qtn_msg_om_delivery_status; }
+	    ,
+	    MENU_ITEM   { command = EAmsViewerCmdMoveToFolder;
+	    					txt = qtn_fldr_move_to_folder; }
+        ,
+        /*MENU_ITEM   { command = EAmsSubmenuZoomCommands;  
+                            txt = qtn_options_text_size;
+                            cascade = r_audiomessage_zoom_submenu; }
+	    ,*/
+        MENU_ITEM   { command = EAknCmdHelp;
+        					txt = qtn_options_help; }
+        ,
+        MENU_ITEM   { command = EAknCmdExit;
+        					txt = qtn_options_exit; }       
+        };
+    }
+
+
+//----------------------------------------------------
+//
+//    r_audiomessage_zoom_submenu - menupane
+//    text zoom level
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_audiomessage_zoom_submenu
+    {
+    items=
+        {
+        MENU_ITEM   
+            { 
+            command = EAmsDispSizeAutomatic; 
+            txt = qtn_options_auto;
+            flags = EEikMenuItemRadioStart;
+            },
+        MENU_ITEM   
+            { 
+            command = EAmsDispSizeLarge; 
+            txt = qtn_options_large;
+            flags = EEikMenuItemRadioMiddle;
+            },
+        MENU_ITEM   
+            { 
+            command = EAmsDispSizeNormal; 
+            txt = qtn_options_normal;
+            flags = EEikMenuItemRadioMiddle;
+            },
+        MENU_ITEM   
+            {
+            command = EAmsDispSizeSmall;
+            txt = qtn_options_small;
+            flags = EEikMenuItemRadioEnd;
+            }
+        }; 
+    }
+
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_insert_audio_submenu - menupane
+//    Main views Options menu's submenu containing new multimedia item
+//    insertion.
+// ---------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_audiomessage_insert_audio_submenu
+	{
+    items =
+    	{
+        MENU_ITEM   { command = EAmsEditorCmdRecordAudio;           
+        					txt = qtn_audio_messaging_record_audio; } 
+        ,
+        MENU_ITEM   { command = EAmsEditorCmdFromGallery;           
+        					txt = qtn_msg_insert_from_gallery; } 
+    	};
+	}
+
+// ---------------------------------------------------------------------------
+//	  r_audiomessage_replace_audio_submenu 
+//    Main views Options menu's submenu containing new multimedia item
+//    insertion.
+// ---------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_audiomessage_replace_audio_submenu
+	{
+    items =
+    	{
+        MENU_ITEM   { command = EAmsEditorCmdReRecordAudio; 
+        					txt = qtn_audio_messaging_rerecordaudio; }
+        ,
+        MENU_ITEM   { command = EAmsEditorCmdFromGallery2; 
+        					txt = qtn_msg_insert_from_gallery; }
+    	};
+	}
+
+// ---------------------------------------------------------------------------
+//	  r_audiomessage_reply_submenu 
+//    Main views Options menu's submenu containing reply via
+//    editor opening.
+// ---------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_audiomessage_reply_submenu
+{
+    items =
+    {
+        MENU_ITEM   { command = EAmsViewerCmdReplyToSender; 
+        					txt = qtn_audio_messaging_sm_to_sender; }
+        ,
+        MENU_ITEM   { command = EAmsViewerCmdReplyToAll; 
+        					txt = qtn_audio_messaging_sm_to_all; }
+        ,
+         
+        MENU_ITEM   { command = EAmsViewerCmdReplyViaMessage; 
+        					txt = qtn_mms_sm_via_message; }        
+       					
+    };
+}
+
+// ======== Context sensitive option menus ========
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_viewer_context_menu - menupane
+//    Menu shown when selection key is pressed and focus is in 
+//    to field.
+// ---------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_audiomessage_viewer_context_menu
+    {
+    items=
+        {
+        MENU_ITEM   { command = EAmsViewerCmdSubmenuReply; 
+        		txt = qtn_sms_reply;
+        		cascade = r_audiomessage_reply_submenu; }
+        ,
+        MENU_ITEM   { command = EAmsViewerCmdRemoveAudio; 
+        					txt = qtn_mms_om_delete; },
+        					
+        MENU_ITEM 	{ command = EFindItemContextMenuPlaceHolder; txt = ""; }
+        //,
+        /*MENU_ITEM   { command = EAmsEditorCmdPlayAudio; 
+        					txt = qtn_audio_messaging_play_audio; }
+        ,*/
+        /*MENU_ITEM   { command = EAmsViewerCmdForward; 
+        					txt = qtn_sms_forward; }
+        ,*/
+       
+        };
+    }    
+ 
+ 
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_amsviewer_reply_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgReply; 
+    } 
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_amsviewer_forward_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgForward; 
+    } 
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_amsviewer_delete_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgDelete; 
+    } 
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_amsviewer_send_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgSend; 
+    } 
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_amsviewer_rec_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiCamsTbRec; 
+    } 
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_amsviewer_add_recipient_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbAddRecipient; 
+    }
+ 
+        
+//----------------------------------------------------
+//   
+//    r_amsviewer_app_toolbar - CAknToolbar
+//    Application toolbar
+//
+//----------------------------------------------------
+//
+RESOURCE AVKON_TOOLBAR r_amsviewer_app_toolbar
+    {
+    flags = KAknToolbarFixed; 
+    items =
+        {
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EAmsViewerToolbarReply;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_audio_messaging_tb_tooltip_reply;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_tb_msg_reply;
+                        bmpmask = EMbmMuiuQgn_indi_tb_msg_reply_mask;
+                        extension = r_amsviewer_reply_button_state_extension;
+                        }  
+                    };            
+                };
+            },
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EAmsViewerToolbarForward;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_audio_messaging_tb_tooltip_forward;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_tb_msg_forward; 
+                        bmpmask = EMbmMuiuQgn_indi_tb_msg_forward_mask;
+                        extension = r_amsviewer_forward_button_state_extension;
+                        }  
+                    };            
+                };
+            },
+        TBAR_CTRL 
+            {
+            type = EAknCtButton;
+            id = EAmsViewerToolbarDelete;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_audio_messaging_tb_tooltip_delete;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_mg_tb_delete;
+                        bmpmask = EMbmMuiuQgn_indi_mg_tb_delete;
+                        extension = r_amsviewer_delete_button_state_extension;
+                        }  
+                    };            
+                };
+            }
+        };
+    }
+ 
+ //----------------------------------------------------
+//   
+//    r_amsviewer_app_toolbar - CAknToolbar
+//    Application toolbar
+//
+//----------------------------------------------------
+//
+RESOURCE AVKON_TOOLBAR r_amseditor_app_toolbar
+    {
+    flags = KAknToolbarFixed; 
+    items =
+        {
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EAmsEditorToolbarSend;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_audio_messaging_tb_tooltip_send;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_tb_msg_send;
+                        bmpmask = EMbmMuiuQgn_indi_tb_msg_send_mask;        
+                        extension = r_amsviewer_send_button_state_extension;
+                        }  
+                    };            
+                };
+            },
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EAmsEditorToolbarRecord;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_audio_messaging_tb_tooltip_record;
+                        bmpfile = BITMAP_DIR"\\audiomessage.mif";
+                        bmpid   = EMbmAudiomessageQgn_indi_cams_tb_rec;
+                        bmpmask = EMbmAudiomessageQgn_indi_cams_tb_rec_mask;          
+                        extension = r_amsviewer_rec_button_state_extension;
+                        }  
+                    };            
+                };
+            },
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EAmsEditorToolbarAddRecipient;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_audio_messaging_tb_tooltip_add_recipient;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_tb_add_recipient;
+                        bmpmask = EMbmMuiuQgn_indi_tb_add_recipient_mask;
+                        extension = r_amsviewer_add_recipient_button_state_extension;
+                        }  
+                    };            
+                };
+            }
+        };
+    }
+ 
+
+ 
+// ---------------------------------------------------------------------------
+//    r_amsviewer_move_text
+//    Text in "Move to" selection dialog
+// ---------------------------------------------------------------------------
+//
+RESOURCE TBUF r_amsviewer_move_text   { buf = qtn_fldr_move_to_prmpt; }
+
+// ======== templates for wait notes ========
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_wait_note
+// ---------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_audiomessage_wait_note
+    {
+    flags   = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+        {
+        DLG_LINE
+            {
+            type    = EAknCtNote;
+            id      = EAmsWaitNoteId;
+            control = AVKON_NOTE
+                {
+                layout         = EWaitLayout;
+                animation      = R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_wait_note_icon
+// ---------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_audiomessage_wait_note_icon
+    {
+    flags   = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+        {
+        DLG_LINE
+            {
+            type    = EAknCtNote;
+            id      = EAmsWaitNoteId;
+            control = AVKON_NOTE
+                {
+                layout         = EWaitLayout;
+                animation      = R_QGN_GRAF_WAIT_BAR_ANIM;
+                imagefile   = AVKON_ICON_FILE;
+                imageid     = EMbmAvkonQgn_note_mms;
+                imagemask   = EMbmAvkonQgn_note_mms_mask;
+                };
+            }
+        };
+    }
+
+// ======== texts for wait notes ========
+
+RESOURCE TBUF r_qtn_audiomessage_wait_send_message
+    {
+    buf = qtn_audio_messaging_sending_wait_note;
+    }
+
+RESOURCE TBUF r_qtn_wait_msg_saved_outbox
+    {
+    buf = qtn_wait_offline_outbox;
+    }
+
+RESOURCE TBUF r_qtn_audiomessage_wait_inserting
+    {
+    buf = qtn_gen_note_inserting;
+    }
+
+RESOURCE TBUF r_qtn_audiomessage_wait_opening_editor
+    {
+    buf = qtn_gen_note_opening;
+    }
+    
+RESOURCE TBUF r_qtn_audiomessage_wait_saving_message_new
+    {
+    buf = qtn_wait_saving_message_new;
+    }
+
+RESOURCE TBUF r_qtn_audiomessage_wait_saving_message
+    {
+    buf = qtn_gen_note_saving;
+    }
+
+// ======== information and confirmation notes ========
+
+// Using notewrappers so only notetexts here.
+RESOURCE TBUF r_audiomessage_info_deleted
+    {
+    buf = qtn_sms_info_deleted;
+    }
+
+RESOURCE TBUF r_audiomessage_info_object_too_big
+    {
+    buf = qtn_mms_info_not_inserted;
+    }
+
+RESOURCE TBUF r_audiomessage_info_invalid_object 
+    {
+    buf = qtn_mms_poca_info_unsupported;
+    }
+    
+RESOURCE TBUF r_audiomessage_info_unsupported_object 
+    {
+    buf = qtn_mms_info_object_not_supported;
+    }
+RESOURCE TBUF r_audiomessage_info_corrupted_object 
+    {
+    buf = qtn_mms_info_object_corrupted;
+    }
+
+RESOURCE TBUF r_audiomessage_info_send_forbid
+    {
+    buf = qtn_drm_send_forbid;
+    }
+
+RESOURCE TBUF r_audiomessage_info_no_rights
+    {
+    buf = qtn_drm_no_rights_for_some;
+    }
+    
+RESOURCE TBUF r_audiomessage_error_msg_corrupt
+    {
+    buf = qtn_msg_err_cannot_open_msg;
+    }
+
+RESOURCE TBUF r_audiomessage_info_cannot_send
+    {  
+    buf = qtn_audio_messaging_cannot_send;
+    }
+
+RESOURCE TBUF r_audiomessage_info_max_rec_time
+    {  
+    buf = qtn_audio_messaging_recording_stopped;
+    }
+    
+RESOURCE TBUF r_audiomessage_info_fail_recipient 
+    { 
+    buf = qtn_audiomessage_info_fail_recipient;
+    }
+    
+RESOURCE TBUF r_audiomessage_info_fail_recipient_no_alias
+    {
+    buf = qtn_audiomessage_info_recipient_no_alias; 
+    }
+    
+RESOURCE TBUF r_audiomessage_info_unable_to_insert_drm
+	{
+	buf = qtn_audio_messaging_unable_to_insert_drm;
+	}    
+    
+RESOURCE TBUF r_audiomessage_info_size_exceeded
+	{    
+    buf = qtn_audio_messaging_size_exceeded;
+	}
+
+RESOURCE TBUF r_audiomessage_inserted
+	{    
+    buf = qtn_audio_messaging_audio_inserted;
+	}
+	
+RESOURCE TBUF r_audiomessage_unable_to_insert_multiple_files
+	{    
+    buf = qtn_mms_poca_info_many_files;
+	}
+
+// Priority stuff
+
+RESOURCE TBUF r_audiomessage_priority_title 
+    {
+    buf = qtn_msg_qry_priority;
+    }
+	
+// ======== query dlgs ========
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_confirmation_query - dialog
+//    Confirmation query template. The actual text string
+//    should be set dynamically.
+// ---------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_audiomessage_confirmation_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO;
+    items=
+        {
+        DLG_LINE
+            {
+            type    = EAknCtQuery;
+            id      = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY 
+                { 
+                    layout  = EConfirmationLayout;
+                    label   = "";
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_viewer_ordinal_number - tbuf
+//    Ordinal number of current message in navipane
+//    (in 16 characters theres space for 9999999 messages plus
+//    two characters for the separator e.g. 1000000/9999999)
+// ---------------------------------------------------------------------------
+//
+RESOURCE TBUF r_audiomessage_viewer_ordinal_number  
+	{ 
+	buf = qtn_stat_msg_number; 
+	}
+
+RESOURCE TBUF r_audiomessage_quest_send_forbid
+    {
+    buf = qtn_drm_query_send_forbid;
+    }
+
+RESOURCE TBUF r_audiomessage_quest_delete_message
+    {
+    buf = qtn_mms_quest_delete_msg;
+    }
+RESOURCE TBUF r_audiomessage_info_clip_deleted
+	{
+   	buf = qtn_audio_messaging_audio_removed;
+	}
+
+RESOURCE TBUF r_audiomessage_quest_remove_audio
+    {
+    buf = qtn_audio_messaging_remove_audio;
+    }
+
+RESOURCE TBUF r_audiomessage_quest_send_wo_rights
+    {
+    buf = qtn_drm_send_wo_rights_sd_1;
+    }
+
+RESOURCE TBUF r_audiomessage_quest_send_wo_rights_mix
+    {
+    buf = qtn_drm_send_wo_rights_misc;
+    }
+
+RESOURCE TBUF r_audiomessage_quest_close_ood
+    {
+    buf = qtn_mail_close_nosave;
+    }
+
+RESOURCE TBUF r_audiomessage_progress_paused
+    {
+    buf = qtn_audio_messaging_paused;
+    }
+
+RESOURCE TBUF r_audiomessage_progress_playing
+    {
+    buf = qtn_audio_messaging_playing;
+    }
+
+RESOURCE TBUF r_audiomessage_progress_recording
+    {
+    buf = qtn_audio_messaging_recording;
+    }
+
+RESOURCE TBUF r_audiomessage_clip_duration
+	{
+	buf = qtn_audio_messaging_length;
+	}
+
+
+RESOURCE TBUF r_audiomessage_error_cannot_open
+    {
+    buf = qtn_mms_err_restricted_cannot_open;
+    }
+RESOURCE TBUF r_qtn_vorec_first_memo_name
+    {
+    buf = qtn_vorec_first_memo_name;
+    }    
+    
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_options_empty
+// ---------------------------------------------------------------------------
+//
+RESOURCE CBA r_audiomessage_options_empty
+    {
+    buttons =
+        {
+        CBA_BUTTON
+            {
+            id = EAknSoftkeyOptions;
+            txt = text_softkey_option;
+            },
+        CBA_BUTTON
+            {
+            id = EAknSoftkeyEmpty;
+            txt=text_softkey_empty;
+            }
+        };
+    }
+    
+RESOURCE CBA r_audiomessage_options_add_close
+    {
+    buttons =
+        {
+        CBA_BUTTON { id = EAknSoftkeyOptions;  txt = text_softkey_option;  },
+        CBA_BUTTON { id = EAknSoftkeyClose; txt = text_softkey_close; },
+        CBA_BUTTON { id = EAmsSoftkeyAdd; txt = qtn_msk_add; }
+        };
+    } 
+
+RESOURCE CBA r_audiomessage_options_play_close
+    {
+    buttons =
+        {
+        CBA_BUTTON { id = EAknSoftkeyOptions;  txt = text_softkey_option;  },
+        CBA_BUTTON { id = EAknSoftkeyClose; txt = text_softkey_close; },
+        CBA_BUTTON { id = EAmsSoftkeyPlay; txt = qtn_msk_play; }
+        };
+    } 
+    
+RESOURCE CBA r_audiomessage_options_play_back
+    {
+    buttons =
+        {
+        CBA_BUTTON { id = EAknSoftkeyOptions;  txt = text_softkey_option;  },
+        CBA_BUTTON { id = EAknSoftkeyClose; txt = text_softkey_back; },
+        CBA_BUTTON { id = EAmsSoftkeyPlay; txt = qtn_msk_play; }
+        };
+    }     
+           
+RESOURCE CBA r_audiomessage_options_record_close
+    {
+    buttons =
+        {
+        CBA_BUTTON { id = EAknSoftkeyOptions;  txt = text_softkey_option;  },
+        CBA_BUTTON { id = EAknSoftkeyClose; txt = text_softkey_close; },
+        CBA_BUTTON { id = EAmsSoftkeyRecord; txt = qtn_msk_record_audio; }
+        };
+    }     
+
+
+RESOURCE TBUF r_audiomessage_reply_prefix   
+	{ 
+	buf = qtn_msg_mail_re; 
+	}
+
+RESOURCE TBUF r_audiomessage_forward_prefix 
+	{ 
+	buf = qtn_msg_mail_fwd; 
+	}
+
+RESOURCE CBA r_softkeys_pause_stop
+    {
+    buttons =
+        {
+        CBA_BUTTON{id=EAmsSoftkeyPause; txt=text_softkey_pause; },
+        CBA_BUTTON{id=EAmsSoftkeyStop; txt=text_softkey_stop; },
+        CBA_BUTTON{id=EAmsSoftkeyPause; txt=text_softkey_pause; }
+        };
+    }
+    
+RESOURCE CBA r_softkeys_continue_stop
+    {
+    buttons =
+        {
+        CBA_BUTTON{id=EAmsSoftkeyContinue; txt=text_softkey_continue; },
+        CBA_BUTTON{id=EAmsSoftkeyStop; txt=text_softkey_stop; },
+        CBA_BUTTON{id=EAmsSoftkeyContinue; txt=text_softkey_continue; }
+        };
+    }
+
+RESOURCE CBA r_softkeys_to_loudspeaker_stop
+    {
+    buttons =
+        {
+        CBA_BUTTON{id=EAmsSoftkeyToLoudspeaker; txt=text_softkey_to_loudspeaker; },
+        CBA_BUTTON{id=EAmsSoftkeyStop; txt=text_softkey_stop; },
+        CBA_BUTTON{id=EAmsSoftkeyToLoudspeaker; txt=text_softkey_to_loudspeaker; }
+        };
+    }
+
+RESOURCE CBA r_softkeys_to_earpiece_stop
+    {
+    buttons =
+        {
+        CBA_BUTTON{id=EAmsSoftkeyToEarpiece; txt=text_softkey_to_earpiece; },
+        CBA_BUTTON{id=EAmsSoftkeyStop; txt=text_softkey_stop; },
+        CBA_BUTTON{id=EAmsSoftkeyToEarpiece; txt=text_softkey_to_earpiece; }
+        };
+    }
+
+RESOURCE CBA r_softkeys_to_empty_stop
+    {
+    buttons =
+        {
+        CBA_BUTTON{id=EAknSoftkeyEmpty; txt=text_softkey_empty; },
+        CBA_BUTTON{id=EAmsSoftkeyStop; txt=text_softkey_stop; }
+        };
+    }
+       
+    
+ RESOURCE CBA r_audiomessage_options_contextoptions_close
+    {
+    buttons =
+        {
+        CBA_BUTTON { id = EAknSoftkeyOptions;  txt = text_softkey_option;  },
+        CBA_BUTTON { id = EAknSoftkeyClose; txt = text_softkey_close; },
+        CBA_BUTTON { id = EAknSoftkeyContextOptions; txt = text_softkey_option; }
+        };
+    }  
+    
+ RESOURCE CBA r_audiomessage_options_contextoptions_back
+    {
+    buttons =
+        {
+        CBA_BUTTON { id = EAknSoftkeyOptions;  txt = text_softkey_option;  },
+        CBA_BUTTON { id = EAknSoftkeyClose; txt = text_softkey_back; },
+        CBA_BUTTON { id = EAknSoftkeyContextOptions; txt = text_softkey_option; }
+        };
+    }          
+    
+
+// ---------------------------------------------------------------------------
+//    r_audiomessage_voice_speak_dialog
+//    main recording and playing dialog
+//    "Recording...\n0:00 / 1:00"
+// ---------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_audiomessage_voice_speak_dialog
+	{
+    flags=EAknProgressNoteFlags | EEikDialogFlagWait ;
+    buttons= r_softkeys_pause_stop;
+    items=
+        {
+        DLG_LINE
+            {
+            
+            type=EAknCtNote;
+            id=EVoiceProgressNoteId;
+            control= AVKON_NOTE 
+                { 
+                    layout = EProgressLayout;
+                    singular_label = qtn_audio_messaging_recording;
+                    plural_label = "";
+              		animation=0;
+                };
+            }
+        };
+	}
+ 
+// ---------------------------------------------------------------------------
+//   r_audiomessage_smil
+// ---------------------------------------------------------------------------
+//
+RESOURCE  TBUF r_audiomessage_smil
+    {
+	  buf = "<smil><head><layout><root-layout width=\"%0N\" height=\"%1N\"/></layout></head><body><par dur=\"%2Nms\"><audio src=\"%3U\"/></par></body></smil>"; 
+    }
+    
+ // Silent mode
+RESOURCE TBUF r_qtn_audiomessage_obey_silent_mode { buf = qtn_mms_qry_play_audio; }   
+
+RESOURCE ARRAY r_audiomessage_priority_list
+    {
+    items=
+    	{
+    	LBUF {txt=qtn_msg_qry_high_priority; },
+      LBUF {txt=qtn_msg_qry_normal_priority; },
+    	LBUF {txt=qtn_msg_qry_low_priority; }
+    	};
+    }

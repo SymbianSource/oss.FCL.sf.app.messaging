@@ -1,0 +1,28 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  SendnormResources.iby*
+*/
+
+#ifndef __SENDNORM_RESOURCES_IBY__
+#define __SENDNORM_RESOURCES_IBY__
+
+#ifdef __DRM_OMA2
+data=DATAZ_\resource\DrmLinkSenderUi.rsc    resource\DrmLinkSenderUi.rsc
+#endif // __DRM_OMA2
+
+#ifdef __SENDUI_MMS_UPLOAD
+data=DATAZ_\resource\MmsDirectUploadUi.rsc    resource\MmsDirectUploadUi.rsc
+#endif // __SENDUI_MMS_UPLOAD
+
+#endif

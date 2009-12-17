@@ -1,0 +1,34 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: Loc file for AlwaysOnlineEmailPlugin.
+*     
+*
+*/
+
+
+//d: when username or password is incorrect and automatic retrieval setting is enabled, this note is shown after failed connection attempt
+//l: popup_note_window
+#define qtn_mce_settings_always_incorrect  "Cannot make connection. Check Connection settings for mailbox %U. Automatic retrieval setting set to \"Off\"."
+
+//d: On every connect diskspace is checked. If critical limit reached, this note is shown
+//l: popup_note_window
+#define qtn_mce_auto_out_of_disk  "Disk Full. Automatic retrieval settings of mailbox %U set to \"Off\"."
+
+// d: Softkey to finish the mailbox settings
+// l: popup_note_window
+// w:
+// r: 3.0
+//
+#define qtn_mce_new_mail_in_mailbox "Could not update mailbox %U. Check mailbox settings."
+

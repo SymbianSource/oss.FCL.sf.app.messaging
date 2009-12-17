@@ -1,0 +1,99 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*    BLD.INF file for all the modules in MmsUi directory. 
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+// Help exports
+#include "../help/group/bld.inf"
+
+PRJ_EXPORTS
+
+// SettingsHandler API
+../settingsinc/MmsApSelect.h            |../../../inc/mmsapselect.h
+../settingsinc/MmsSettingsDefs.h        |../../../inc/mmssettingsdefs.h
+../settingsinc/MmsSettingsDialog.h      |../../../inc/mmssettingsdialog.h
+../settingsinc/MmsSettingsHandler.h     |../../../inc/mmssettingshandler.h
+
+// MmsUi - NO PUBLIC API's
+// MmsViewer - NO PUBLIC API'S 
+// NotUi     - NO PUBLIC API's
+// NotViewer - NO PUBLIC API'S 
+
+// IBY
+../rom/MmsUi.iby            CORE_APP_LAYER_IBY_EXPORT_PATH(MmsUi.iby)
+../rom/MmsUiResources.iby   LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(MmsUiResources.iby)
+
+// LOC
+../loc/MmsUi.loc            APP_LAYER_LOC_EXPORT_PATH(mmsui.loc)
+
+//Stub sis
+../stub_sis/stub_mmsviewer.sis 		/epoc32/data/z/system/install/stub_mmsviewer.sis
+../stub_sis/stub_notviewer.sis 		/epoc32/data/z/system/install/stub_notviewer.sis
+PRJ_EXTENSIONS
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE mmsui.mif
+OPTION HEADERFILE mmsui.mbg
+OPTION SOURCEFILE ../data/MmsUi_IconList.txt
+END
+
+#ifdef __SCALABLE_ICONS
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE mmsviewer_aif.mif
+OPTION SOURCES -c8,8 qgn_menu_mce
+END
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE notviewer_aif.mif
+OPTION SOURCES -c8,8 qgn_menu_mce
+END
+#else
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE mmsviewer_aif.mbm
+OPTION SOURCES -c8,8 qgn_menu_mce_cxt
+END
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE notviewer_aif.mbm
+OPTION SOURCES -c8,8 qgn_menu_mce_cxt
+END
+#endif
+
+
+PRJ_MMPFILES
+
+../settings/MmsSettings.mmp
+../mtm/MmsUi.mmp
+../notmtm/NotUi.mmp
+../notviewer/NotViewer.mmp
+../viewer/MmsViewer.mmp
+
+PRJ_TESTMMPFILES
+// [<mmp path><mmp file>] {tidy} {ignore} {manual} {support}
+// {MAKEFILE} [<path><makefile>] {tidy} {ignore} {manual} {support}
+
+
+/* End of File */
+

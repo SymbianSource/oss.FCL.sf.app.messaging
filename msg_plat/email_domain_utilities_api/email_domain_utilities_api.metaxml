@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<api id="99f8f5265f0f3d310c2c3c51a447dc49" dataversion="2.0">
+  <name>Email Domain Utilities API</name>
+  <description>A collection of email utilities for clients outside messaging domain</description>
+  <type>c++</type>
+  <collection>email</collection>
+  <libs>
+    <lib name="imumda.lib" />
+  </libs>
+  <release category="platform"/>
+  <attributes>
+     <!-- This indicates wether the api provedes separate html documentation -->
+     <!-- or is the additional documentation generated from headers. -->
+     <!-- If you are unsuere then the value is "no" -->
+     <htmldocprovided>no</htmldocprovided>
+     <adaptation>no</adaptation>
+  </attributes>
+</api>

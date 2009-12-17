@@ -1,0 +1,22 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Vrec.iby*
+*/
+
+#ifndef __VREC_IBY__
+#define __VREC_IBY__
+
+ECOM_PLUGIN(vrec.dll, 101F4CF5.rsc)
+
+#endif //__VREC_IBY__

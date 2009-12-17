@@ -1,0 +1,10 @@
+EXPORTS
+	_ZN17CSmilTextRenderer7GetTextEv @ 1 NONAME
+	_ZN23CSmilPlayerMediaFactory12GetRenderersEv @ 2 NONAME
+	_ZN23CSmilPlayerMediaFactory4NewLER7CCoeEnvP16CGraphicsContextP21MMediaFactoryFileInfo @ 3 NONAME
+	_ZTI23CSmilPlayerMediaFactory @ 4 NONAME ; #<TI>#
+	_ZTV23CSmilPlayerMediaFactory @ 5 NONAME ; #<VT>#
+	_ZN16CSmilSVGRenderer17ActivateRendererLEv @ 6 NONAME
+	_ZN22CSmilMediaRendererBase17ActivateRendererLEv @ 7 NONAME
+	_ZNK22CSmilMediaRendererBase9MediaTypeEv @ 8 NONAME
+

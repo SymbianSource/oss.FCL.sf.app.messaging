@@ -1,0 +1,17 @@
+EXPORTS
+	_Z9LibEntryLR13CTestModuleIf @ 1 NONAME
+	_ZTI12CMsgDerAppUi @ 2 NONAME ; #<TI>#
+	_ZTI15CDerApplication @ 3 NONAME ; #<TI>#
+	_ZTI16CMsgEditorEngine @ 4 NONAME ; #<TI>#
+	_ZTI18CDerEditorDocument @ 5 NONAME ; #<TI>#
+	_ZTI19CMsgFlagsnUtilsTest @ 6 NONAME ; #<TI>#
+	_ZTI19TTestObjectObserver @ 7 NONAME ; #<TI>#
+	_ZTV12CMsgDerAppUi @ 8 NONAME ; #<VT>#
+	_ZTV15CDerApplication @ 9 NONAME ; #<VT>#
+	_ZTV16CMsgEditorEngine @ 10 NONAME ; #<VT>#
+	_ZTV18CDerEditorDocument @ 11 NONAME ; #<VT>#
+	_ZTV19CMsgFlagsnUtilsTest @ 12 NONAME ; #<VT>#
+	_ZTV19TTestObjectObserver @ 13 NONAME ; #<VT>#
+	_ZTI31CTestEditorViewAttachmentDialog @ 14 NONAME ; #<TI>#
+	_ZTV31CTestEditorViewAttachmentDialog @ 15 NONAME ; #<VT>#
+

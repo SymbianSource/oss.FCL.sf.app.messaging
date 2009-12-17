@@ -1,0 +1,4 @@
+EXPORTS
+	?NewBioMtmUiDataL@@YAPAVCBaseMtmUiData@@AAVCRegisteredMtmDll@@@Z @ 1 NONAME ; class CBaseMtmUiData * __cdecl NewBioMtmUiDataL(class CRegisteredMtmDll &)
+	?NewBioMtmUiL@@YAPAVCBaseMtmUi@@AAVCBaseMtm@@AAVCRegisteredMtmDll@@@Z @ 2 NONAME ; class CBaseMtmUi * __cdecl NewBioMtmUiL(class CBaseMtm &,class CRegisteredMtmDll &)
+

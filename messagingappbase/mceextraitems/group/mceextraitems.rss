@@ -1,0 +1,50 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module Mce.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME MCE
+
+//  INCLUDES
+#include <data_caging_paths_strings.hrh>
+#include <eikon.rh>
+#include <avkon.rh>
+#include <avkon.loc>
+#include <eikon.rsg>
+#include <avkon.rsg>
+#include <avkon.mbg>
+#include <mceextraicons.mbg>
+#include "MceExtraItems.rh"
+#include <mceextraitems.loc>
+
+#include <bldvariant.hrh>
+
+
+NAME MCEX
+RESOURCE RSS_SIGNATURE { }
+RESOURCE TBUF16 { buf=""; }
+
+RESOURCE MCE_EXTRA_ITEMS_ARRAY r_mce_extra_items
+    {
+    items = 
+        {
+       };
+    }
+    
+// End of File

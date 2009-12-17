@@ -1,0 +1,436 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*     This file contains all the string resources for the module Imum.
+*
+*
+*/
+
+
+//  RESOURCE IDENTIFIER
+//  INCLUDES
+//  CONSTANTS
+//  MACROS
+//  RESOURCE DEFINITIONS
+
+RESOURCE TBUF r_imum_settings_mail_no_delete
+    {
+    buf = qtn_mce_settings_mail_no_delete;
+    }
+
+RESOURCE TBUF r_imum_settings_mail_no_edit
+    {
+    buf = qtn_mce_settings_mail_no_edit;
+    }
+
+RESOURCE TBUF r_imum_common_conf_delete
+    {
+    buf = qtn_query_common_conf_delete;
+    }
+
+RESOURCE TBUF r_imum_settings_mail_quest_del
+    {
+    buf = qtn_mce_settings_mail_quest_del;
+    }
+
+RESOURCE TBUF r_imum_settings_mail_quest_d
+    {
+    buf = qtn_mce_settings_mail_quest_d;
+    }
+
+RESOURCE TBUF r_imum_settings_rename_query
+    {
+    buf = qtn_fldr_rename_query;
+    }
+
+// WIZARD
+
+// Button: Options
+RESOURCE TBUF r_imum_wizard_button_option
+    {
+    buf = text_softkey_option;
+    }
+
+// Button: Next
+RESOURCE TBUF r_imum_wizard_button_next
+    {
+    buf = text_softkey_next;
+    }
+
+// Button: Back
+RESOURCE TBUF r_imum_wizard_button_cancel
+    {
+    buf = text_softkey_cancel;
+    }
+
+// Button: Start
+RESOURCE TBUF r_imum_wizard_button_start
+    {
+    buf = qtn_mbxs_settings_mail_newbox_startwiz;
+    }
+
+RESOURCE TBUF r_imum_wizard_insert_email
+    {
+    buf = qtn_mbxs_setting_mail_newbox_addr_qry;
+    }
+
+RESOURCE TBUF r_imum_wizard_insert_server_address
+    {
+    buf = qtn_mbxs_settings_mail_newbox_srvr_qry;
+    }
+
+RESOURCE TBUF r_imum_wizard_insert_protocol
+    {
+    buf = qtn_mbxs_setting_mail_newbox_ap_qry;
+    }
+
+RESOURCE TBUF r_imum_wizard_help_screen
+    {
+    buf = qtn_mbxs_settings_newbox_txt1;
+    }
+
+RESOURCE TBUF r_imum_settings_unix_path
+    {
+    buf = qtn_mbxs_settings_unixpath;
+    }
+
+RESOURCE TBUF r_imum_settings_always_promptmail_srvr_pswd
+    {
+    buf = qtn_mce_settings_always_promptmail_srvr_pswd;
+    }
+
+RESOURCE TBUF r_imum_settings_always_omaemn_already
+    {
+    buf = qtn_mbxs_settings_oma_promptmail;
+    }
+
+RESOURCE TBUF r_mbxs_settings_mail_newbox_name_qry
+    {
+    buf = qtn_mbxs_settings_mail_newbox_name_qry;
+    }
+
+RESOURCE TBUF r_mbxs_settings_mail_newbox_rename_qry
+    {
+    buf = qtn_mbxs_settings_mail_newbox_rename_qry;
+    }
+
+RESOURCE TBUF r_mce_settings_always_define_ap
+    {
+    buf = qtn_mce_settings_always_define_ap;
+    }
+
+// Information note (no buttons)
+RESOURCE TBUF r_mbxs_settings_mail_srvr_prompt
+    {
+    buf = qtn_mbxs_settings_mail_srvr_prompt;
+    }
+
+RESOURCE TBUF r_mce_settings_mail_all_mails_fet
+    {
+    buf = qtn_mce_settings_mail_all_mails_fet;
+    }
+
+RESOURCE TBUF r_mce_new_mail_in_mailbox
+    {
+    buf = qtn_mce_new_mail_in_mailbox;
+    }
+
+RESOURCE TBUF r_mbxs_settings_aol_off_qry
+    {
+    buf = qtn_mbxs_settings_aol_off_qry;
+    }
+
+RESOURCE TBUF r_mbxs_settings_oma_off_qry
+    {
+    buf = qtn_mbxs_settings_oma_off_qry;
+    }
+
+RESOURCE TBUF r_mce_settings_always_promptacc
+    {
+    buf = qtn_mce_settings_always_promptacc;
+    }
+
+RESOURCE TBUF r_mce_auto_conn_incorrect_ap
+    {
+    buf = qtn_mce_auto_conn_incorrect_ap;
+    }
+
+RESOURCE TBUF r_mce_settings_always_maxlimit
+    {
+    buf = qtn_mce_settings_always_maxlimit;
+    }
+
+RESOURCE TBUF r_mce_settings_mail_enabling_cost
+    {
+    buf = qtn_mce_settings_mail_enabling_cost;
+    }
+
+RESOURCE TBUF r_mce_settings_mail_all_mails_fet2
+    {
+    buf = qtn_mce_settings_mail_all_mails_fet2;
+    }
+
+RESOURCE TBUF r_mce_always_changeprompt
+    {
+    buf = qtn_mce_always_changeprompt;
+    }
+
+RESOURCE TBUF r_mbxs_settings_new_box_exit_query
+    {
+    buf = qtn_mbxs_settings_new_box_exit_query;
+    }
+// user prefs mail deletion setting info note
+RESOURCE TBUF r_imum_header_will_remain_phone
+    {
+    buf = qtn_mce_info_delete_from_phone;
+    }
+
+// WIZARD
+
+RESOURCE TBUF r_mbxs_settings_mail_newbox_final
+    {
+    buf = qtn_mbxs_settings_mail_newbox_final;
+    }
+
+// SETTINGS
+
+RESOURCE TBUF r_mbxs_settings_mail_newbox_pages
+    {
+    buf = qtn_mbxs_settings_mail_newbox_pages;
+    }
+
+RESOURCE TBUF r_netw_sett_iap_pref_prompt
+    {
+    buf = qtn_netw_sett_iap_pref_prompt;
+    }
+
+// Popup: Mailbox type
+RESOURCE TBUF r_imum_popup_mailbox_type
+    {
+    buf = qtn_mbxs_settings_newbox_txt2;
+    }
+
+// Popup: My e-mail address
+RESOURCE TBUF r_imum_popup_my_email_address
+    {
+    buf = qtn_mbxs_settings_newbox_txt3;
+    }
+
+// Popup: Incoming server
+RESOURCE TBUF r_imum_popup_incoming_server
+    {
+    buf = qtn_mbxs_settings_newbox_txt4;
+    }
+
+// Popup: Outgoing server
+RESOURCE TBUF r_imum_popup_outgoing_server
+    {
+    buf = qtn_mbxs_settings_newbox_txt5;
+    }
+
+// Popup: Defining access point
+RESOURCE TBUF r_imum_popup_defining_access_point
+    {
+    buf = qtn_mbxs_settings_newbox_txt6v3;
+    }
+
+// Popup: Mailbox name
+RESOURCE TBUF r_imum_popup_mailbox_name
+    {
+    buf = qtn_mbxs_settings_newbox_txt7;
+    }
+
+// New mailbox
+RESOURCE TBUF r_mbxs_settings_new_box
+    {
+    buf = qtn_mbxs_settings_mail_new;
+    }
+
+RESOURCE TBUF r_mbxs_settings_mail_save_pswrd_qry
+    {
+    buf = qtn_mbxs_settings_mail_save_pswrd_qry;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_day_list_all
+    {
+    buf = qtn_mce_settings_always_alldays;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_between_format
+    {
+    buf = qtn_mce_settings_always_between2;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_intervals_first
+    {
+    buf = qtn_mce_settings_always_5min;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_intervals_second
+    {
+    buf = qtn_mce_settings_always_15min;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_intervals_third
+    {
+    buf = qtn_mce_settings_always_30min;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_intervals_fourth
+    {
+    buf = qtn_mce_settings_always_60min;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_intervals_fifth
+    {
+    buf = qtn_mce_settings_always_2hours;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_intervals_sixth
+    {
+    buf = qtn_mce_settings_always_4hours;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_intervals_seventh
+    {
+    buf = qtn_mce_settings_always_6hours;
+    }
+
+RESOURCE TBUF r_imum_edit_protocol_error_text
+    {
+    buf = qtn_mce_settings_no_protocol;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_day_list_userdefined
+    {
+    buf = qtn_mce_settings_always_seldays;
+    }
+
+RESOURCE TBUF r_imum_edit_own_email_address_error_text
+    {
+    buf = qtn_mce_error_missing_character;
+    }
+
+RESOURCE TBUF32 r_imas_settings_dialog_always_allhours
+    {
+    buf = qtn_mce_settings_always_allhours;
+    }
+
+RESOURCE TBUF32 r_imum_selec_sett_val_field_none
+    {
+    buf = qtn_selec_sett_val_field_none;
+    }
+
+RESOURCE TBUF r_netw_conset_options_default_connection
+    {
+    buf = qtn_netw_conset_sett_default_connection;
+    }
+// COMMON CODE
+
+RESOURCE TBUF16 r_imas_message_info_kb
+    {
+    buf = qtn_size_kb;
+    }
+
+RESOURCE TBUF r_imas_message_info_priority_low	
+    { 
+    buf = qtn_mms_message_priority_low; 
+    }
+
+RESOURCE TBUF r_imas_message_info_priority_normal	
+    { 
+    buf = qtn_mms_message_priority_normal; 
+    }
+
+RESOURCE TBUF r_imas_message_info_priority_high	
+    { 
+    buf = qtn_mms_message_priority_high; 
+    }
+
+RESOURCE NUMBER_INT32 r_email_retrieve_extra_memory_needed_in_k
+    {
+    value = 10;
+    }
+
+RESOURCE TBUF256 r_email_retrieve_no_memory_text
+    {
+    buf = qtn_memlo_ram_out_of_mem;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_mailset_discon
+    {
+    buf = qtn_mce_mailset_discon;
+    }
+
+RESOURCE TBUF r_imum_offline_not_possible
+    {
+    buf = qtn_offline_not_possible; //from avkon
+    }
+
+RESOURCE TBUF r_imas_settings_mail_fetch_less_value
+    {
+    buf = qtn_mce_settings_mail_fetch_less_value;
+    }
+
+RESOURCE TBUF32 r_imas_settings_dialog_fetch_headers_all
+    {
+    buf = qtn_mce_settings_mail_fetch_all;
+    }
+
+RESOURCE TBUF r_imas_settings_dialog_subs_empty_text
+    {
+    buf = qtn_mce_settings_mail_subs_empty_text;
+    }
+
+RESOURCE TBUF r_email_connecting_server
+    {
+    buf = qtn_mce_progress_connecting;
+    }
+    
+RESOURCE TBUF r_imas_msk_open
+    {
+    buf = qtn_msk_open;
+    }
+
+RESOURCE TBUF r_imas_msk_change
+    {
+    buf = qtn_msk_change;
+    }
+    
+RESOURCE TBUF r_imas_msk_mark
+    {
+    buf = qtn_msk_mark;
+    }
+    
+RESOURCE TBUF r_imas_msk_unmark
+    {
+    buf = qtn_msk_unmark;
+    }        
+    
+RESOURCE TBUF r_imas_msk_empty
+    {
+    buf = text_softkey_empty;
+    }    
+
+RESOURCE TBUF r_imum_main_separator           
+    { 
+    buf = qtn_memc_main_separator; 
+    }
+
+RESOURCE TBUF r_imum_main_end           
+    { 
+    buf = qtn_memc_main_end;
+    }
+
+// End of File

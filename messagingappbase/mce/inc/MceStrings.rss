@@ -1,0 +1,361 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all string resources for the module.
+*     File for string resources (included by mce.rss).
+*
+*/
+
+
+
+
+//  RESOURCE IDENTIFIER
+// not needed here, it is included by mce.rss
+
+//  MACROS
+#include <avkon.loc>
+
+RESOURCE TBUF r_mce_text_no_items
+    { 
+    buf = qtn_mce_no_messages; 
+    }
+
+RESOURCE TBUF r_mce_text_no_email
+    { 
+    buf = qtn_mce_no_mail; 
+    }
+
+RESOURCE TBUF r_mce_main_view_title
+    { 
+    buf = qtn_mce_title_messages; 
+    }
+
+RESOURCE TBUF32 r_mce_main_view_write_message           
+    { 
+    buf = qtn_mce_list_write; 
+    }
+
+RESOURCE TBUF32 r_mce_main_view_delivery_reports        
+    { 
+    buf = qtn_mce_dr; 
+    }
+
+RESOURCE TBUF32 r_mce_main_view_delivery_information 
+    { 
+    buf = qtn_mce_delivery_information; 
+    }
+
+RESOURCE TBUF32 r_mce_main_view_no_mailboxes            
+    { 
+    buf = qtn_mce_mailbox; 
+    }
+
+RESOURCE TBUF32 r_mce_main_view_no_mailboxes_defined
+    { 
+    buf = qtn_mce_no_mailboxes_defined; 
+    }
+
+RESOURCE TBUF r_mce_move_messages                     
+    { 
+    buf = qtn_mce_move_move_to; 
+    }
+
+RESOURCE TBUF r_mce_copy_messages                     
+    { 
+    buf = qtn_mce_copy_copy_to; 
+    }
+
+RESOURCE TBUF r_mce_default_folder_name
+    { 
+    buf = qtn_fldr_name_default;
+    }
+
+RESOURCE TBUF r_mce_duplicate_folder_text
+    { 
+    buf = qtn_fldr_name_already_used;
+    }
+
+RESOURCE TBUF r_mce_connection_on_text
+    { 
+    buf = qtn_mce_connection_on;
+    }
+RESOURCE TBUF r_mce_connection_on_many_text
+    { 
+    buf = qtn_mce_connection_on_many;
+    }
+
+RESOURCE TBUF r_mce_close_connection_text
+    { 
+    buf = qtn_mce_list_close; 
+    }
+
+RESOURCE TBUF r_mce_delivery_reports_view_title
+    { 
+    buf = qtn_mce_sent_dr; 
+    }
+
+#ifdef RD_MSG_NAVIPANE_IMPROVEMENT
+RESOURCE TBUF80 r_mce_doc_no_messages
+    { 
+    buf = qtn_mce_number_no_messages; 
+    }
+#endif // RD_MSG_NAVIPANE_IMPROVEMENT
+
+RESOURCE TBUF80 r_mce_doc_amount
+    { 
+    buf = qtn_mce_doc_amount; 
+    }
+
+RESOURCE TBUF80 r_mce_doc_amount_many
+    { 
+    buf = qtn_mce_doc_amount_many; 
+    }
+
+RESOURCE TBUF80 r_mce_doc_amount_temp
+    { 
+    buf = qtn_mce_doc_amount_temp; 
+    }
+
+RESOURCE TBUF80 r_mce_doc_amount_temps
+    { 
+    buf = qtn_mce_doc_amount_temps; 
+    }
+    
+RESOURCE TBUF256 r_mce_number_one_message
+    { 
+    buf = qtn_mce_number_one_message; 
+    }
+
+RESOURCE TBUF80 r_mce_number_of_msgs
+    { 
+    buf = qtn_mce_number_of_msgs; 
+    }
+
+RESOURCE TBUF r_mce_query_common_conf_delete_me
+    { 
+    buf = qtn_query_common_conf_delete_me; 
+    }
+
+RESOURCE TBUF r_mce_query_common_conf_delete_ms
+    { 
+    buf = qtn_query_common_conf_delete_ms; 
+    }
+
+RESOURCE TBUF r_mce_query_common_conf_delete_fo
+    { 
+    buf = qtn_query_common_conf_delete; 
+    }
+
+RESOURCE TBUF r_mce_wait_delete_folder
+    { 
+    buf = qtn_mce_wait_delete_folder; 
+    }
+
+RESOURCE TBUF r_mce_mark_as_read_progress           
+    { 
+    buf = qtn_gen_note_processing; 
+    }
+
+RESOURCE TBUF r_mce_general_settings_text
+    { 
+    buf = qtn_mce_settings_gen; 
+    }
+
+RESOURCE TBUF r_mce_cbs_settings_text
+    { 
+    buf = qtn_mce_title_settings_cb; 
+    }
+
+RESOURCE TBUF r_mce_offline_not_possible           
+    { 
+    buf = qtn_offline_not_possible; 
+    }
+
+RESOURCE TBUF r_mce_settings_always_lasttime           
+    { 
+    buf = qtn_mce_settings_always_lasttime; 
+    }
+
+RESOURCE TBUF r_mce_settings_always_lasttime2           
+    { 
+    buf = qtn_mce_settings_always_lasttime2; 
+    }
+
+RESOURCE TBUF80 r_mce_mailbox_amount_folder_mail
+    { 
+    buf = qtn_mce_mailbox_amount_folder_mail; 
+    }
+
+RESOURCE TBUF80 r_mce_mailbox_amount_folders_mail
+    { 
+    buf = qtn_mce_mailbox_amount_folders_mail; 
+    }
+
+RESOURCE TBUF80 r_mce_mailbox_amount_folder_mails
+    { 
+    buf = qtn_mce_mailbox_amount_folder_mails; 
+    }
+
+RESOURCE TBUF80 r_mce_mailbox_amount_folders_mails
+    { 
+    buf = qtn_mce_mailbox_amount_folders_mails; 
+    }
+
+RESOURCE TBUF r_memc_main_separator           
+    { 
+    buf = qtn_memc_main_separator; 
+    }
+
+RESOURCE TBUF r_memc_main_end           
+    { 
+    buf = qtn_memc_main_end; 
+    }
+
+RESOURCE TBUF r_mms_info_cannot_move_notif           
+    { 
+    buf = qtn_mms_info_cannot_move_notif; 
+    }
+
+RESOURCE TBUF80 r_mms_info_remote_del_failed_many
+    { 
+    buf = qtn_mms_info_remote_del_failed_many; 
+    }
+
+RESOURCE TBUF r_mms_info_remote_del_failed           
+    { 
+    buf = qtn_mms_info_remote_del_failed; 
+    }
+
+RESOURCE TBUF R_QTN_OFFLINE_NOT_POSSIBLE_SAP
+	{
+	buf = qtn_offline_not_possible_sap;
+	}
+
+RESOURCE TBUF r_mce_info_cannot_move
+	{
+	buf = qtn_mce_info_cannot_move;
+	}
+
+RESOURCE TBUF r_mce_push_inbox_sender_unkw
+    {
+    buf = qtn_mce_push_inbox_sender_unkw;
+    }
+	
+
+RESOURCE TBUF r_msg_list_subtitle_today
+    {
+    buf = qtn_msg_list_subtitle_today;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_yesterday
+    {
+    buf = qtn_msg_list_subtitle_yesterday;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_monday
+    {
+    buf = qtn_msg_list_subtitle_monday;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_tuesday
+    {
+    buf = qtn_msg_list_subtitle_tuesday;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_wednesday
+    {
+    buf = qtn_msg_list_subtitle_wednesday;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_thursday
+    {
+    buf = qtn_msg_list_subtitle_thursday;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_friday
+    {
+    buf = qtn_msg_list_subtitle_friday;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_saturday
+    {
+    buf = qtn_msg_list_subtitle_saturday;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_sunday
+    {
+    buf = qtn_msg_list_subtitle_sunday;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_last_week
+    {
+    buf = qtn_msg_list_subtitle_last_week;
+    }
+
+RESOURCE TBUF r_msg_list_subtitle_older
+    {
+    buf = qtn_msg_list_subtitle_older;
+    }
+
+RESOURCE TBUF80 r_mce_mailbox_amount_mail_1row
+    {
+    buf = qtn_mce_mailbox_amount_mail_1row;
+    }
+
+RESOURCE TBUF80 r_mce_mailbox_amount_mails_1row
+    {
+    buf = qtn_mce_mailbox_amount_mails_1row;
+    }
+
+RESOURCE TBUF80 r_mce_sync_inbox_1row
+    {
+    buf = qtn_mce_sync_inbox_1row;
+    }
+
+RESOURCE TBUF80 r_mce_sync_sent_1row
+    {
+    buf = qtn_mce_sync_sent_1row;
+    }
+
+RESOURCE TBUF80 r_mce_sync_outbox_1row
+    {
+    buf = qtn_mce_sync_outbox_1row;
+    }
+
+RESOURCE TBUF80 r_mce_doc_amount_1row
+    {
+    buf = qtn_mce_doc_amount_1row;
+    }
+
+RESOURCE TBUF80 r_mce_doc_amount_many_1row
+    {
+    buf = qtn_mce_doc_amount_many_1row;
+    }
+
+RESOURCE TBUF80 r_mce_doc_amount_temp_1row
+    {
+    buf = qtn_mce_doc_amount_temp_1row;
+    }
+
+RESOURCE TBUF80 r_mce_doc_amount_temps_1row
+    {
+    buf = qtn_mce_doc_amount_temps_1row;
+    }
+
+RESOURCE TBUF80 r_mce_doc_temp_folder_1row
+    {
+    buf = qtn_mce_doc_temp_folder_1row;
+    }
+		
+// End of File

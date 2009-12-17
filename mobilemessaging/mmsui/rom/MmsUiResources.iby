@@ -1,0 +1,58 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  MmsUiResources.iby*
+*/
+
+#ifndef __MMSUIRES_IBY__
+#define __MMSUIRES_IBY__
+
+#ifdef __MMS // Take only registration away
+
+// ----------------------------------
+// DLL Resources START
+// ----------------------------------
+
+data=DATAZ_\RESOURCE_FILES_DIR\mmssettings.rsc                  RESOURCE_FILES_DIR\MmsSettings.rsc
+
+// ----------------------------------
+// DLL Resources END
+// ----------------------------------
+
+// ----------------------------------
+// MTM Resources START
+// ----------------------------------
+
+data=DATAZ_\MTM_RESOURCE_DIR\mmsui.rsc                          MTM_RESOURCE_DIR\MmsUi.rsc
+data=DATAZ_\MTM_INFO_FILE_DIR\mms.rsc                           MTM_INFO_FILE_DIR\Mms.rsc
+
+data=DATAZ_\MTM_RESOURCE_DIR\notui.rsc                          MTM_RESOURCE_DIR\NotUi.rsc
+data=DATAZ_\MTM_INFO_FILE_DIR\not.rsc                           MTM_INFO_FILE_DIR\Not.rsc
+
+// ----------------------------------
+// MTM Resources END
+// ----------------------------------
+
+// ----------------------------------
+// Application Resources START
+// ----------------------------------
+
+data=DATAZ_\APP_RESOURCE_DIR\mmsviewer.rsc                      APP_RESOURCE_DIR\MmsViewer.rsc
+data=DATAZ_\APP_RESOURCE_DIR\notviewer.rsc                      APP_RESOURCE_DIR\NotViewer.rsc
+
+// ----------------------------------
+// Application Resources END
+// ----------------------------------
+
+#endif // __MMS
+#endif // __MMSUIRES_IBY__

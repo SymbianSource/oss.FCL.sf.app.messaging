@@ -1,0 +1,7 @@
+EXPORTS
+	?ConvertRichTextToStreamL@CICalEngine@@QAEHPAVCRichText@@AAVRFileReadStream@@@Z @ 1 NONAME ; int CICalEngine::ConvertRichTextToStreamL(class CRichText *, class RFileReadStream &)
+	?CreateEntryUIL@CICalEngine@@QAEPAVMAgnEntryUi@@ABVTDesC8@@@Z @ 2 NONAME ; class MAgnEntryUi * CICalEngine::CreateEntryUIL(class TDesC8 const &)
+	?NewL@CICalEngine@@SAPAV1@XZ @ 3 NONAME ; class CICalEngine * CICalEngine::NewL(void)
+	?ParseStreamToCalEntryL@CICalEngine@@QAEPAVCCalEntry@@AAVRFileReadStream@@@Z @ 4 NONAME ; class CCalEntry * CICalEngine::ParseStreamToCalEntryL(class RFileReadStream &)
+	?ResolveAttachmentsVisibilityL@CICalEngine@@QAEXAAVMMsvAttachmentManager@@AAV?$RPointerArray@VCMsvAttachment@@@@H@Z @ 5 NONAME ; void CICalEngine::ResolveAttachmentsVisibilityL(class MMsvAttachmentManager &, class RPointerArray<class CMsvAttachment> &, int)
+

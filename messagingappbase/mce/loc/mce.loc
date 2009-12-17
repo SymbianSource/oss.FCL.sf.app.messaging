@@ -1,0 +1,737 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains the localised strings for Mce.
+*
+*/
+
+
+
+//  LOCALISATION STRINGS
+
+// d: Command in options list in Mce. 
+// d: Opens currently selected item.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_open "Open"
+
+// d: Command in options list in Mce. 
+// d: Opens submenu of different message types
+// l: list_single_pane_t1_cp2/opt3
+//
+#define qtn_mce_write "Write message"
+
+// d: Command in options list in Mce. 
+// d: Opens connection to remote mailbox.
+// d: Visible when remote mailbox selected.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_connect "Connect"
+
+// d: Command in options list in Mce. 
+// d: Closes connection to remote mailbox.
+// d: Visible if connection to remote mailbox is on. 
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_rm_close "Close connection"
+
+// d: Opens "Fetch" submenu if remote mailbox connection is on and user has
+// d: opened the remote mailbox view.
+// l: list_single_pane_t1_cp2/opt3
+//
+#define qtn_mce_rm_fetch "Retrieve mail"
+
+// d: Command in options list in Mce main view. 
+// d: Launches Cellular broadcast application.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_cb "Cell broadcast"
+
+// d: Command in options list in Mce main view. 
+// d: Launches USSD editor application.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_service_command_editor "Service command editor"
+
+// d: Command in options list in Mce. 
+// d: Launches Settings dialog.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_settings "Settings"
+
+// d: Command in options list in Mce. 
+// d: Exits Mce application.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_exit "Exit"
+
+// d: Command in options list in Mce.
+// d: Deletes selected item(s).
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_delete "Delete"
+
+// d: Command in options list in Mce.
+// d: Undeletes selected mail message(s).
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_undelete "Undelete"
+
+// d: Command in options list in Mce.
+// d: Moves selected message(s).
+// d: Launches Folder selection dialog first and if that is accepted
+// d: moves selected messages.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_move "Move"
+
+// d: Command in options list in Mce.
+// d: Only available in Outbox to cancel sending of the message(s) and
+// d: move them back to Drafts folder for editing
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_move_to_drafts "Move to Drafts"
+
+// d: Command in options list in Mce.
+// d: Copies selected message(s). Same functionality as Move.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_copy "Copy"
+
+// d: Query text to confirm to delete one message. 
+// d: Filled to qtn_query_common_conf_delete string.
+// l: popup_note_window
+//
+#define qtn_query_common_conf_delete_me "Delete message?"
+
+// d: Query text to confirm to delete more than one messages.
+// d: Filled to qtn_query_common_conf_delete string.
+// l: popup_note_window
+//
+#define qtn_query_common_conf_delete_ms "Delete %N messages?"
+
+// d: Mce application name, visible in title pane
+// l: title_pane_t2/opt12
+//
+#define qtn_mce_title_messages "Messages"
+
+//d: Mce application long name, for application shell list
+//l: list_single_large_graphic_pane_t1
+//
+#define qtn_apps_messaging_list "Messages"
+
+//d: Mce application short name, for application shell grid
+//l: cell_app_pane_t1
+//
+#define qtn_apps_messaging_grid "Messages"
+
+
+// d: Displayed when opened empty folder.
+// l: main_list_empty_pane
+//
+#define qtn_mce_no_messages "No messages"
+
+// d: Displayed when opened empty remote mailbox.
+// l: main_list_empty_pane
+//
+#define qtn_mce_no_mail "No e-mails"
+
+// d: Main view list item. When selected opens the unified editor.
+// l: list_double_large_graphic_pane_t1
+//
+#define qtn_mce_list_write "Write message"
+
+// d: Displayed in mce main view if no remote mailboxes defined.
+// d: If selected opens remote mailbox settings dialog to define
+// d: new remote mailbox.
+// l: list_double_large_graphic_pane_t1
+//
+#define qtn_mce_mailbox "Mailbox"
+
+// d: Displayed as the second line of Mailbox item if no remote mailboxes defined.
+// l: list_double_large_graphic_pane_t2
+//
+#define qtn_mce_no_mailboxes_defined "Create new"
+
+// d: Mce main view list item. If selected opens delivery reports view.
+// l: list_double_large_graphic_pane_t1
+//
+#define qtn_mce_dr "Delivery reports"
+
+// d: Displayed as the second line for delivery reports item in Mce main view
+// l: list_double_large_graphic_pane_t2
+//
+#define qtn_mce_delivery_information "Delivery information"
+
+// d: Title of the list query to select folder to move messages.
+// l: heading_pane_t1
+//
+#define qtn_mce_move_move_to "Move to:"
+
+// d: Title of the list query to select folder to copy messages.
+// l: heading_pane_t1
+//
+#define qtn_mce_copy_copy_to "Copy to:"
+
+// d: Opens list handling submenu (Mark, Unmark, Mark all, Unmark all).
+// l: list_single_pane_t1_cp2/opt3
+//
+#define qtn_mce_edit "Mark/Unmark"
+
+// d: Submenu item to fetch all the new messages in remote mailbox.
+// d: Visible only when remote mailbox is opened and connection on.
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_rm_fetch_new "New"
+
+// d: Submenu item to fetch selected messages in remote mailbox.
+// d: Visible only when remote mailbox is opened and connection on.
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_rm_fetch_selected "Selected"
+
+// d: Submenu item to fetch all the messages in remote mailbox.
+// d: Visible only when remote mailbox is opened and connection on.
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_rm_fetch_all "All"
+
+// d: Submenu item to mark selected item.
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_mark "Mark"
+
+// d: Submenu item to unmark selected item.
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_unmark "Unmark"
+
+// d: Submenu item to mark all items.
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_mark_all "Mark all"
+
+// d: Submenu item to unmark all items.
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_unmark_all "Unmark all"
+
+// d: Submenu item to create new folder under "Documents"
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_org_new_folder "New folder"
+
+// d: Submenu item to rename selected folder. Visible only if folder selected.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_org_rename_folder "Rename folder"
+
+// d: Query text to confirm if user wants to define new remote mailbox.
+// d: Query dialog cannot divide this to many lines. Bug in query dialog?
+// l: popup_note_window
+//
+#define qtn_mce_conf_no_mailboxes "No Remote mailboxes defined.\nDo you want to define it now?"            
+
+
+// d: Query text to confirm to create online remote mailbox connection.
+// l: popup_note_window
+//
+#define qtn_mce_conf_connect_to_server "Connect to server?"
+
+// d: Command in options list in Mce's outbox. 
+// d: Suspends sending of the message.
+// d: Visible when message is not suspended.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_suspend "Suspend"
+
+// d: Command in options list in Mce's outbox. 
+// d: Starts sending of the message.
+// d: Visible when message is not being sent.
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_start "Start"
+
+// d: Query to make sure user wants to exit mce application if mailbox connection is on. 
+// d: Also informs user that connection to mailbox is closed if mce application is closed.
+// d: This query is shown if only one mailbox connected.
+// l: popup_note_window
+//
+#define qtn_mce_connection_on "Exiting will disconnect active mailbox connection. Exit anyway?"
+
+// d: Query to make sure user wants to exit mce application if mailbox connection is on. 
+// d: Also informs user that connection to mailbox is closed if mce application is closed.
+// d: This query is shown if more than one mailbox connected.
+// l: popup_note_window
+//
+#define qtn_mce_connection_on_many "Exiting will disconnect active mailbox connections. Exit anyway?"
+
+// d: Title of the query for user to selected mailbox to close.
+// l: heading_pane_t1
+//
+#define qtn_mce_list_close "Close connection into:"
+
+// d: Displayed in title pane when delivery reports open
+// l: title_pane_t2/opt12
+//
+#define qtn_mce_sent_dr "Delivery reports"
+
+// d:Displayed in message list to show how many messages folder has.
+// l:list_double_graphic_pane_t2
+// w:
+// r:5.0
+//
+#define qtn_mce_number_no_messages "No messages"
+
+// d: Displayed in message list to show how many messages folder has.
+// l: list_double_graphic_pane_t2
+//
+#define qtn_mce_doc_amount "1 Message"
+
+// d: Displayed in message list to show how many messages folder has.
+// d: Is this ok for 0 (zero) messages?
+// l: list_double_graphic_pane_t2
+//
+#define qtn_mce_doc_amount_many "%N Messages"
+
+// d: Displayed in message list to show how many templates folder has.
+// l: list_double_graphic_pane_t2
+//
+#define qtn_mce_doc_amount_temp "1 Template"
+
+// d: Displayed in message list to show how many templates folder has.
+// d: Is this ok for 0 (zero) templates?
+// l: list_double_graphic_pane_t2
+//
+#define qtn_mce_doc_amount_temps "%N Templates"
+
+// d: Displayed in main list view to show how many messages folder has.
+// l: list_double_large_graphic_pane_t2
+// r: 5.0
+// 
+#define qtn_mce_number_one_message      "1 Message"
+
+// d: Displayed in main list view to show how many messages folder has.
+// l: list_double_large_graphic_pane_t2
+// r: 5.0
+//
+#define qtn_mce_number_of_msgs      "%N Messages"
+
+//d:In case user has selected to use Delivery reports but "No log" is selected
+//d:from Log settings to deny using logs, than delivery reports can’t also be 
+//d:seen. User is informed about this with information note.
+//l:popup_note_window
+//
+#define qtn_mce_dr_log_no_reports "No delivery reports. \"No log\" -setting is in use in Log application"
+
+//d:After note’s time-out is ended or user interrupts the note, Delivery
+//d:reports folder is opened and <qtn_mce_sent_dr_no_reports> "No reports"
+//d:string is seen in the beginning of a list.
+//l:main_list_empty_pane
+//
+#define qtn_mce_sent_dr_no_reports "No reports"
+
+// d: List item in Settings dialog. 
+// d. When selected opens CBS settings dialog.
+// l: list_double_pane_t1
+//
+#define qtn_mce_title_settings_cb "Cell Broadcast"
+
+//d: Menu item in Delivery reports view. Creates call to the phone number shown.
+//l: list_single_pane_t1_cp2
+//
+#define qtn_mce_call "Call"
+
+// d: Progress note when deleting folder from Documents. 
+// d: %U filled with folder name
+// l: popup_note_wait_window
+//
+#define qtn_mce_wait_delete_folder "Deleting %U"
+
+// d: Command in options list in Mce.
+// d: Sorts mail messages
+// l: list_single_pane_t1_cp2/opt3
+//
+#define qtn_mce_rm_sort_messages "Sort messages by"
+// d: Command in sort suboptions list in Mce.
+// d: Sorts by date
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_rm_sort_date "Date"
+// d: Command in sort suboptions list in Mce.
+// d: Sorts by subject
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_rm_sort_subject "Subject"
+// d: Command in sort suboptions list in Mce.
+// d: Sorts by sender
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_rm_sort_sender "Sender"
+// d: Command in sort suboptions list in Mce.
+// d: Sorts by recipient
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_rm_sort_recipient "Recipient"
+
+// d: Command in options list in Mce.
+// d: Replies to the received message
+// l: list_single_pane_t1_cp2/opt3
+//
+#define qtn_mce_reply "Reply"
+
+// d: Command in options list in Mce.
+// d: Marks as read the selected mail messages
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_rm_mark_read "Mark as read"
+
+// d: Command in options list in Mce.
+// d: Marks as unread the selected mail messages
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_rm_mark_unread "Mark as unread"
+
+// d: information note, when MMC is not accessible
+// l: popup_note_window
+//
+#define qtn_memc_mce_note2 "Memory card is not accessible! Messages are stored to phone memory."
+
+// d: information note, when selected memory is not accessible
+// l: popup_note_window
+//
+#define qtn_mce_memory_not_accessible "Unable to access selected memory. Messages will be stored to phone memory."
+
+// d: Query text to confirm mail connection.
+// d: This is asked when always remote mailbox is not connected.
+// l: popup_note_window
+//
+#define qtn_mce_settings_always_lasttime "Last time connected to mailbox at %U. Connect now?"
+
+// d: Query text to confirm mail connection.
+// d: This is asked when always remote mailbox is not connected.
+// l: popup_note_window
+//
+#define qtn_mce_settings_always_lasttime2 "Mailbox connected on %0U at %1U. Connect now?"
+
+// d: Displayed in remote mailbox to show how many folders and messages folder has.
+// d: Is this ok for 0 (zero) messages?
+// l: list_double_graphic_pane_t2
+//
+#define qtn_mce_mailbox_amount_folder_mail "%0N folder, %1N mail"
+
+// d: Displayed in remote mailbox to show how many folders and messages folder has.
+// d: Is this ok for 0 (zero) messages?
+// l: list_double_graphic_pane_t2
+//
+#define qtn_mce_mailbox_amount_folders_mail "%0N folders, %1N mail"
+
+// d: Displayed in remote mailbox to show how many folders and messages folder has.
+// d: Is this ok for 0 (zero) messages?
+// l: list_double_graphic_pane_t2
+//
+#define qtn_mce_mailbox_amount_folder_mails "%0N folder, %1N mails"
+
+// d: Displayed in remote mailbox to show how many folders and messages folder has.
+// d: Is this ok for 0 (zero) messages?
+// l: list_double_graphic_pane_t2
+//
+#define qtn_mce_mailbox_amount_folders_mails "%0N folders, %1N mails"
+
+//d:Separates folder icons in navipane when subfolders are browsed.
+//d:
+//l:list_cale_time_pane_t2/opt10
+//
+#define qtn_memc_main_separator                     "\\"
+
+//d:End character for navipane when subfolders are browsed beyond the maximum
+//d:navigation depth
+//l:list_cale_time_pane_t2/opt10
+//
+#define qtn_memc_main_end                           "..."
+
+// d: information note, when mms notifications cannot be moved
+// l: popup_note_window
+//
+#define qtn_mms_info_cannot_move_notif              "Multimedia notifications cannot be moved" 
+
+// d: Command in options list in Mce.
+// d: Opens remote mailbox settings
+// l: list_single_pane_t1_cp2
+//
+#define qtn_mce_mail_settings "Mail settings"
+
+// d: Displayed when several mms notifications delete fails
+// d: 
+// l: popup_note_window
+//
+#define qtn_mms_info_remote_del_failed_many "Could not delete %0N/%1N messages from MMbox"
+
+// d: Displayed when one mms notification delete fails
+// d: 
+// l: popup_note_window
+#define qtn_mms_info_remote_del_failed "Could not delete message from MMbox"
+
+// d: Command in sort suboptions list in Mce.
+// d: Sorts by type
+// l: list_single_popup_submenu_pane_t1
+//
+#define qtn_mce_rm_sort_type "Message type"
+
+//d: Command in options list in mce.
+//d: Info pop-up note telling that the mail messages cannot be copied/moved between the folders.
+//l: popup_note_window
+//w:
+//r:3.1
+//
+#define qtn_mce_info_cannot_move "Mail messages can not be moved"
+
+// d: Command in options list in Mce.
+// d: Forwards to the sent message
+// l: list_single_pane_t1_cp2
+// w:
+// r: 3.2
+//
+#define qtn_mce_forward "Forward"
+
+// d: Message sender text.
+// d: Text is shown when sender is unknown
+// l: list_double_graphic_pane_t1
+// w:
+// r: 3.2
+//
+#define qtn_mce_push_inbox_sender_unkw "Unknown"
+
+// d: Submenu item to mark all read items.
+// d: mark all read msgs 
+// l: list_single_popup_submenu_pane_t1
+// w:
+// r: 5.0
+//
+#define qtn_options_list_mark_read "Mark read msgs"
+
+// d:Mce settings is opened from Messaging Centre and
+// d:Settings cannot be opened from General Settings simultaneously
+// l:popup_note_window
+// r:5.0
+//
+#define qtn_mce_note_settings_open_gs "Cannot access settings. Settings already open in General Settings."
+
+// d: Displayed in one row message list subtitle to show a day of the week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_today         "Today %U"
+
+// d: Displayed in one row message list subtitle to show a day of the week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_yesterday     "Yesterday %U"
+
+// d: Displayed in one row message list subtitle to show a day of the week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_monday        "Monday %U"
+
+// d: Displayed in one row message list subtitle to show a day of the week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_tuesday       "Tuesday %U"
+
+// d: Displayed in one row message list subtitle to show a day of the week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_wednesday     "Wednesday %U"
+
+// d: Displayed in one row message list subtitle to show a day of the week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_thursday      "Thursday %U"
+
+// d: Displayed in one row message list subtitle to show a day of the week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_friday        "Friday %U"
+
+// d: Displayed in one row message list subtitle to show a day of the week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_saturday      "Saturday %U"
+
+// d: Displayed in one row message list subtitle to show a day of the week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_sunday        "Sunday %U"
+
+// d: Displayed in one row message list subtitle for messages older than week.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_last_week     "Last week"
+
+// d: Displayed in one row message list subtitle for messages older than two weeks.
+// l: list_single_2heading_msg_pane_t1/opt2
+// w:
+// r: 5.0
+//
+#define qtn_msg_list_subtitle_older         "Older"
+
+// d: Command in options list in Mce. 
+// d: Expands hierachical list item when subtitle row is selected
+// d: Visible if subtitle row is selected and item is not already expanded.
+// l: list_single_pane_t1_cp2
+// w:
+// r: 5.0
+//
+#define qtn_options_expand                  "Expand"
+
+// d: Command in options list in Mce. 
+// d: Collapses hierachical list item 
+// d: Visible if subtitle is already expanded.
+// l: list_single_pane_t1_cp2
+// w:
+// r: 5.0
+//
+#define qtn_options_collapse                "Collapse"
+
+// d: Command in permanent tool bar in Inbox
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_mce_inbox_tb_tooltip_reply "Reply"
+
+// d: Command in permanent tool bar in Inbox
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_mce_inbox_tb_tooltip_delete "Delete"
+
+// d: Command in permanent tool bar in Inbox
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_mce_inbox_tb_tooltip_new "Create new message"
+
+// d: Command in permanent tool bar in Mailbox Inbox
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_mce_mail_tb_tooltip_reply "Reply"
+
+// d: Command in permanent tool bar in Mailbox Inbox
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_mce_mail_tb_tooltip_delete "Delete" 
+
+// d: Command in permanent tool bar in Mailbox Inbox
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_mce_mail_tb_tooltip_new "Create new email" 
+
+// d: Command in options menu to mark a unread message as read.
+// l: list_single_pane_t1_cp2
+// r: 5.0
+#define qtn_mce_rm_mark_read_message "Mark msg. as read"
+
+// d: Command in options menu to mark a read message as unread.
+// l: list_single_pane_t1_cp2
+// r: 5.0
+#define qtn_mce_rm_mark_unread_message "Mark msg. as unread"
+
+// d: Command in options menu to mark more than one unread messages as read.
+// l: list_single_pane_t1_cp2
+// r: 5.0
+#define qtn_mce_rm_mark_read_messages "Mark msgs. as read"
+
+// d: Command in options menu to mark more than one read messages as unread.
+// l: list_single_pane_t1_cp2
+// r: 5.0
+#define qtn_mce_rm_mark_unread_messages "Mark msgs. as unread"
+
+// d: Command in options menu to mark more than one unread emails as read.
+// l: list_single_pane_t1_cp2
+// r: 5.0
+#define qtn_mce_rm_mark_read_emails "Mark e-mails as read"
+
+// d: Command in options menu to mark more than one read emails as unread.
+// l: list_single_pane_t1_cp2
+// r: 5.0
+#define qtn_mce_rm_mark_unread_emails "Mark e-mails as unread"
+
+// d: Mailbox folder information when one row list in use
+// l: list_single_2heading_msg_pane_t3/opt5
+// r: 5.0
+#define qtn_mce_mailbox_amount_mail_1row "1 e-mail"
+
+// d: Mailbox folder information when one row list in use
+// l: list_single_2heading_msg_pane_t3/opt5
+// r: 5.0
+#define qtn_mce_mailbox_amount_mails_1row "%N e-mails"
+
+// d: Synch mailbox inbox folder when one row list in use
+// l: list_single_2heading_msg_pane_t3/opt5
+// r: 5.0
+#define qtn_mce_sync_inbox_1row "Inbox"
+
+// d: Synch mailbox inbox folder when one row list in use
+// l: list_single_2heading_msg_pane_t3/opt5
+// r: 5.0
+#define qtn_mce_sync_sent_1row "Sent"
+
+// d: Synch mailbox Outbox folder when one row list in use
+// l: list_single_2heading_msg_pane_t3/opt5
+// r: 5.0
+#define qtn_mce_sync_outbox_1row "Outbox"
+
+// d: Message amount info for folders when one row list in use
+// l: list_single_2heading_msg_pane_t3/opt5
+// r: 5.0
+#define qtn_mce_doc_amount_1row "1 message"
+
+// d: Message amount info for folders when one row list in use
+// l: list_single_2heading_msg_pane_t3/opt5
+// r: 5.0
+#define qtn_mce_doc_amount_many_1row "%N messages"
+
+// d: Additional info for template folder when one row list in use
+// l: list_single_2heading_msg_pane_t3/opt5
+// r: 5.0
+#define qtn_mce_doc_amount_temp_1row "1 template"
+
+// d: Additional info for template folder when one row list in use
+// l: list_single_2heading_msg_pane_t3/opt5
+// r: 5.0
+#define qtn_mce_doc_amount_temps_1row "%N templates"
+
+// d: Templates folder name when one row list in use 
+// l: list_single_2heading_msg_pane_t2/opt5
+// r: 5.0
+#define qtn_mce_doc_temp_folder_1row  "Templates"
+
+
+// End of File

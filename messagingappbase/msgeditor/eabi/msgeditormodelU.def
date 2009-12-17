@@ -1,0 +1,131 @@
+EXPORTS
+	_ZN15TMsgEditorFlags12InternalizeLER11RReadStream @ 1 NONAME
+	_ZN15TMsgEditorFlags3SetEm @ 2 NONAME
+	_ZN15TMsgEditorFlags5ClearEm @ 3 NONAME
+	_ZN15TMsgEditorFlagsC1ERKS_ @ 4 NONAME
+	_ZN15TMsgEditorFlagsC1Em @ 5 NONAME
+	_ZN15TMsgEditorFlagsC1Ev @ 6 NONAME
+	_ZN15TMsgEditorFlagsC2ERKS_ @ 7 NONAME
+	_ZN15TMsgEditorFlagsC2Em @ 8 NONAME
+	_ZN15TMsgEditorFlagsC2Ev @ 9 NONAME
+	_ZN15TMsgEditorFlagsaSERKS_ @ 10 NONAME
+	_ZN16MsgEditorCommons11MsgBodyPaneEv @ 11 NONAME
+	_ZN16MsgEditorCommons11MsgDataPaneEv @ 12 NONAME
+	_ZN16MsgEditorCommons11MsgMainPaneEv @ 13 NONAME
+	_ZN16MsgEditorCommons11ScreenWidthEv @ 14 NONAME
+	_ZN16MsgEditorCommons12ScreenHeigthEv @ 15 NONAME
+	_ZN16MsgEditorCommons13MaxBodyHeightEv @ 16 NONAME
+	_ZN16MsgEditorCommons13MsgHeaderPaneEv @ 17 NONAME
+	_ZN16MsgEditorCommons15EditorViewWidthEv @ 18 NONAME
+	_ZN16MsgEditorCommons16EditorViewHeigthEv @ 19 NONAME
+	_ZN16MsgEditorCommons16MsgBaseLineDeltaEv @ 20 NONAME
+	_ZN16MsgEditorCommons17MsgBaseLineOffsetEv @ 21 NONAME
+	_ZN18CMsgAttachmentInfo10ConstructLERK9TDataTypeNS_12TDRMDataTypeE @ 22 NONAME
+	_ZN18CMsgAttachmentInfo10SetFetchedEi @ 23 NONAME
+	_ZN18CMsgAttachmentInfo11SetDataTypeERK9TDataType @ 24 NONAME
+	_ZN18CMsgAttachmentInfo11SetFileNameERK4TBufILi256EE @ 25 NONAME
+	_ZN18CMsgAttachmentInfo12SetSeparatorEi @ 26 NONAME
+	_ZN18CMsgAttachmentInfo12SetSupportedEi @ 27 NONAME
+	_ZN18CMsgAttachmentInfo14SetDRMDataTypeENS_12TDRMDataTypeE @ 28 NONAME
+	_ZN18CMsgAttachmentInfo15SetAttachmentIdEj @ 29 NONAME
+	_ZN18CMsgAttachmentInfo22SetAttachedThisSessionEi @ 30 NONAME
+	_ZN18CMsgAttachmentInfoC1ER19CMsgAttachmentModelRK4TBufILi256EEiii @ 31 NONAME
+	_ZN18CMsgAttachmentInfoC2ER19CMsgAttachmentModelRK4TBufILi256EEiii @ 32 NONAME
+	_ZN18CMsgAttachmentInfoD0Ev @ 33 NONAME
+	_ZN18CMsgAttachmentInfoD1Ev @ 34 NONAME
+	_ZN18CMsgAttachmentInfoD2Ev @ 35 NONAME
+	_ZN18CMsgEditorDocument10ConstructLEv @ 36 NONAME
+	_ZN18CMsgEditorDocument11OpCompletedER19CMsvSingleOpWatcheri @ 37 NONAME
+	_ZN18CMsgEditorDocument11PrepareMtmLE4TUid @ 38 NONAME
+	_ZN18CMsgEditorDocument12CreateReplyLEljR14TRequestStatus @ 39 NONAME
+	_ZN18CMsgEditorDocument13NotifyChangesEN27MMsgAttachmentModelObserver21TMsgAttachmentCommandEP18CMsgAttachmentInfo @ 40 NONAME
+	_ZN18CMsgEditorDocument14ChangeContextLERK17TEditorParameters @ 41 NONAME
+	_ZN18CMsgEditorDocument14CreateForwardLEljR14TRequestStatus @ 42 NONAME
+	_ZN18CMsgEditorDocument15PrepareContextLEl @ 43 NONAME
+	_ZN18CMsgEditorDocument16PrepareToLaunchLEP18MMsgEditorLauncher @ 44 NONAME
+	_ZN18CMsgEditorDocument17LaunchParametersLERK17TEditorParameters @ 45 NONAME
+	_ZN18CMsgEditorDocument18GetAttachmentFileLEj @ 46 NONAME
+	_ZN18CMsgEditorDocument19AddSingleOperationLEP13CMsvOperationP19CMsvSingleOpWatcher @ 47 NONAME
+	_ZN18CMsgEditorDocument22SetEditorModelObserverEP23MMsgEditorModelObserver @ 48 NONAME
+	_ZN18CMsgEditorDocument25CreateNewAttachmentModelLEi @ 49 NONAME
+	_ZN18CMsgEditorDocument28SetEntryWithoutNotificationLEl @ 50 NONAME
+	_ZN18CMsgEditorDocument8RestoreLERK12CStreamStoreRK17CStreamDictionary @ 51 NONAME
+	_ZN18CMsgEditorDocument9GetOperIdER13CMsvOperation @ 52 NONAME
+	_ZN18CMsgEditorDocument9SetEntryLEl @ 53 NONAME
+	_ZN18CMsgEditorDocumentC2ER15CEikApplication @ 54 NONAME
+	_ZN18CMsgEditorDocumentD0Ev @ 55 NONAME
+	_ZN18CMsgEditorDocumentD1Ev @ 56 NONAME
+	_ZN18CMsgEditorDocumentD2Ev @ 57 NONAME
+	_ZN18MsgAttachmentUtils10FetchFileLENS_23TMsgAttachmentFetchTypeER12CDesC16ArrayP20CAiwGenericParamListiiP16MMGFetchVerifier @ 58 NONAME
+	_ZN18MsgAttachmentUtils10FetchFileLENS_23TMsgAttachmentFetchTypeER4TBufILi256EER12CDesC16ArrayiiP16MMGFetchVerifier @ 59 NONAME
+	_ZN18MsgAttachmentUtils10FetchFileLENS_23TMsgAttachmentFetchTypeER4TBufILi256EERK4TUidi @ 60 NONAME
+	_ZN18MsgAttachmentUtils10FetchFileLENS_23TMsgAttachmentFetchTypeER4TBufILi256EEi @ 61 NONAME
+	_ZN18MsgAttachmentUtils13CombineIconsLEPK10CFbsBitmapS2_S2_ @ 62 NONAME
+	_ZN18MsgAttachmentUtils17FileSizeToStringLER6TDes16ii @ 63 NONAME
+	_ZN18MsgAttachmentUtils20GetMsgEditorTempPathER4TBufILi256EEPK7TDesC16 @ 64 NONAME
+	_ZN18MsgAttachmentUtils21GetFileNameFromBufferER4TBufILi256EERK7TDesC16iPS4_ @ 65 NONAME
+	_ZN19CMsgAttachmentModel10ConstructLEv @ 66 NONAME
+	_ZN19CMsgAttachmentModel10IsReadOnlyEv @ 67 NONAME
+	_ZN19CMsgAttachmentModel11SetModifiedEi @ 68 NONAME
+	_ZN19CMsgAttachmentModel11SetObserverEP27MMsgAttachmentModelObserver @ 69 NONAME
+	_ZN19CMsgAttachmentModel14AddAttachmentLERK7TDesC16ijiRK9TDataTypei @ 70 NONAME
+	_ZN19CMsgAttachmentModel14AddAttachmentLERK7TDesC16ijii @ 71 NONAME
+	_ZN19CMsgAttachmentModel14BitmapForFileLER18CMsgAttachmentInfo @ 72 NONAME
+	_ZN19CMsgAttachmentModel14LoadResourcesLEv @ 73 NONAME
+	_ZN19CMsgAttachmentModel15ViewAttachmentLEi @ 74 NONAME
+	_ZN19CMsgAttachmentModel16DeleteAttachmentEi @ 75 NONAME
+	_ZN19CMsgAttachmentModel18GetAttachmentFileLEi @ 76 NONAME
+	_ZN19CMsgAttachmentModel4NewLEi @ 77 NONAME
+	_ZN19CMsgAttachmentModel5ResetEv @ 78 NONAME
+	_ZN19CMsgAttachmentModelC1Ei @ 79 NONAME
+	_ZN19CMsgAttachmentModelC2Ei @ 80 NONAME
+	_ZN19CMsgAttachmentModelD0Ev @ 81 NONAME
+	_ZN19CMsgAttachmentModelD1Ev @ 82 NONAME
+	_ZN19CMsgAttachmentModelD2Ev @ 83 NONAME
+	_ZNK15TMsgEditorFlags12ExternalizeLER12RWriteStream @ 84 NONAME
+	_ZNK15TMsgEditorFlags5IsSetEm @ 85 NONAME
+	_ZNK18CMsgAttachmentInfo10SizeStringEv @ 86 NONAME
+	_ZNK18CMsgAttachmentInfo11DRMDataTypeEv @ 87 NONAME
+	_ZNK18CMsgAttachmentInfo11IsSeparatorEv @ 88 NONAME
+	_ZNK18CMsgAttachmentInfo11IsSupportedEv @ 89 NONAME
+	_ZNK18CMsgAttachmentInfo12AttachmentIdEv @ 90 NONAME
+	_ZNK18CMsgAttachmentInfo21IsAttachedThisSessionEv @ 91 NONAME
+	_ZNK18CMsgAttachmentInfo4IconEv @ 92 NONAME
+	_ZNK18CMsgAttachmentInfo4SizeEv @ 93 NONAME
+	_ZNK18CMsgAttachmentInfo8DataTypeEv @ 94 NONAME
+	_ZNK18CMsgAttachmentInfo8FileNameEv @ 95 NONAME
+	_ZNK18CMsgAttachmentInfo9IsFetchedEv @ 96 NONAME
+	_ZNK18CMsgEditorDocument12CurrentEntryEv @ 97 NONAME
+	_ZNK18CMsgEditorDocument14MediaAvailableEv @ 98 NONAME
+	_ZNK18CMsgEditorDocument15AttachmentModelEv @ 99 NONAME
+	_ZNK18CMsgEditorDocument3MtmEv @ 100 NONAME
+	_ZNK18CMsgEditorDocument5EntryEv @ 101 NONAME
+	_ZNK18CMsgEditorDocument5MtmUiEv @ 102 NONAME
+	_ZNK18CMsgEditorDocument7SessionEv @ 103 NONAME
+	_ZNK18CMsgEditorDocument8HasModelEv @ 104 NONAME
+	_ZNK18CMsgEditorDocument9MtmUiDataEv @ 105 NONAME
+	_ZNK19CMsgAttachmentModel10IsModifiedEv @ 106 NONAME
+	_ZNK19CMsgAttachmentModel12IsIdAttachedEj @ 107 NONAME
+	_ZNK19CMsgAttachmentModel13NumberOfItemsEv @ 108 NONAME
+	_ZNK19CMsgAttachmentModel14IsFileAttachedERK7TDesC16 @ 109 NONAME
+	_ZNK19CMsgAttachmentModel16AttachmentInfoAtEi @ 110 NONAME
+	_ZTI15CMsgEditorModel @ 111 NONAME ; #<TI>#
+	_ZTI18CMsgAttachmentInfo @ 112 NONAME ; #<TI>#
+	_ZTI18CMsgEditorDocument @ 113 NONAME ; #<TI>#
+	_ZTI19CMsgAttachmentModel @ 114 NONAME ; #<TI>#
+	_ZTV15CMsgEditorModel @ 115 NONAME ; #<VT>#
+	_ZTV18CMsgAttachmentInfo @ 116 NONAME ; #<VT>#
+	_ZTV18CMsgEditorDocument @ 117 NONAME ; #<VT>#
+	_ZTV19CMsgAttachmentModel @ 118 NONAME ; #<VT>#
+	_ZThn40_N18CMsgEditorDocument11OpCompletedER19CMsvSingleOpWatcheri @ 119 NONAME ; #<thunk>#
+	_ZThn44_N18CMsgEditorDocument13NotifyChangesEN27MMsgAttachmentModelObserver21TMsgAttachmentCommandEP18CMsgAttachmentInfo @ 120 NONAME ; #<thunk>#
+	_ZThn44_N18CMsgEditorDocument18GetAttachmentFileLEj @ 121 NONAME ; #<thunk>#
+	_ZN19CMsgAttachmentModel14AddAttachmentLERK7TDesC16ijiRK9TDataTypeN18CMsgAttachmentInfo12TDRMDataTypeEi @ 122 NONAME
+	_ZN18MsgAttachmentUtils13FetchAnyFileLER4TBufILi256EER7CCoeEnvP25MAknFileSelectionObserverP14MAknFileFilter @ 123 NONAME
+	_ZN18CMsgAttachmentInfo8SetSavedEi @ 124 NONAME
+	_ZNK18CMsgAttachmentInfo7IsSavedEv @ 125 NONAME
+	_ZNK18CMsgEditorDocument10MtmUiDataLEv @ 126 NONAME
+	_ZNK18CMsgEditorDocument6MtmUiLEv @ 127 NONAME
+	_ZN16MsgEditorCommons15RoundToNextLineERii @ 128 NONAME
+	_ZN16MsgEditorCommons19RoundToPreviousLineERii @ 129 NONAME
+

@@ -1,0 +1,10 @@
+EXPORTS
+	?NewSmsMtmUiDataL@@YAPAVCBaseMtmUiData@@AAVCRegisteredMtmDll@@@Z @ 1 NONAME ; class CBaseMtmUiData * NewSmsMtmUiDataL(class CRegisteredMtmDll &)
+	?NewSmsMtmUiL@@YAPAVCBaseMtmUi@@AAVCBaseMtm@@AAVCRegisteredMtmDll@@@Z @ 2 NONAME ; class CBaseMtmUi * NewSmsMtmUiL(class CBaseMtm &, class CRegisteredMtmDll &)
+	?NewL@CSmumMainSettingsDialog@@SAPAV1@AAVCSmsSettings@@HAAH1PAVCSmsHeader@@@Z @ 3 NONAME ; class CSmumMainSettingsDialog * CSmumMainSettingsDialog::NewL(class CSmsSettings &, int, int &, int &, class CSmsHeader *)
+	?FindDefaultNameForSCL@SmumUtil@@SAXAAVTDes16@@HPAVCDesC16ArrayFlat@@@Z @ 4 NONAME ; void SmumUtil::FindDefaultNameForSCL(class TDes16 &, int, class CDesC16ArrayFlat *)
+	?NewL@CMsgSimOperation@@SAPAV1@AAVTRequestStatus@@@Z @ 5 NONAME ; class CMsgSimOperation * CMsgSimOperation::NewL(class TRequestStatus &)
+	?CheckEmailOverSmsSupportL@SmumUtil@@SAHXZ @ 6 NONAME ; int SmumUtil::CheckEmailOverSmsSupportL(void)
+	?ReadEmailOverSmsSettingsL@SmumUtil@@SAHAAVTDes16@@0AAH@Z @ 7 NONAME ; int SmumUtil::ReadEmailOverSmsSettingsL(class TDes16 &, class TDes16 &, int &)
+	?WriteEmailOverSmsSettingsL@SmumUtil@@SAHABVTDes16@@0ABH@Z @ 8 NONAME ; int SmumUtil::WriteEmailOverSmsSettingsL(class TDes16 const &, class TDes16 const &, int const &)
+

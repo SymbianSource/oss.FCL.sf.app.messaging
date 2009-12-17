@@ -1,0 +1,548 @@
+/*
+* Copyright (c) 2005-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Localization strings for project audiomessage
+*
+*/
+
+
+
+/*
+  The syntax of a logical name entry in this file is the following:
+
+  // d:context description (line 1)
+  // d:context description (line N)
+  // l:layout id
+  // w:
+  // r:release information
+  //
+  #define qtn_<?feature_or_application>_?freetext "?text"
+
+  where
+      "qtn_" starts a logical name.  Note: "text_" has been used in
+           old logical names, but is deprecated.
+      "?feature/application" is 2-5 lower-case characters and/or numbers
+           identifying the larger context of the display text.
+      "?freetext" is the free text portion of the logical name.
+           It may contain only lower-case letters ('a' to 'z'), numbers
+           ('0' to '9'), and the underscore ('_').  The total length of
+           the logical name does must not exceed 50 characters.
+      "d:" Starts a description line clarifying the entry's context with
+           information like:
+           - Is a word a verb in imperative or is it a noun?  (For instance,
+             what does "Set" mean?)
+           - What will replace %U (unicode text parameter) or %N (number
+             parameter) included in texts?  (For instance, is it a phone
+             number or an e-mail address?)
+      "l:" Starts a layout id information (one line).
+           "P" and "No" are symbols in LAF's information table
+                - "P" is parent pane or current pane
+                - "No" is reference number in table
+      "r:" Starts a release information: one line indicating in which
+           S60 release the text was used for the first time.
+
+  Refer to the S60 localization instructions for more information.
+
+  Examples:
+
+// d:Command in options list in short term memories.
+// d:Opens the call list view that is focused.
+// l:list_single_popup_menu_pane_1
+// r:3.1
+//
+#define text_logs_stm_cmd_open "Open"
+
+// d:Title pane text in converter main state.
+// l:title_pane_1
+// r:3.0
+//
+#define qtn_cnv_title "Converter"
+
+// d:Prompt text for currency data query in converter.
+// l:popup_query_data_window_1
+// r:4.0
+//
+#define qtn_cnv_edit_name_prompt "Currency name"
+
+// d:Active call is terminated and a held call becomes active.
+// d:Operation is confirmed with this info note.
+// d:%U stands for the call identification of the activated call.
+// l:popup_note_window_1
+// r:3.1
+//
+#define qtn_multc_unhold_done_note "%U active"
+
+*/
+
+//d: app name in list
+//l: list_single_large_graphic_pane_1
+//w:
+//r: 3.1u
+//#define qtn_apps_audiomessage_list "Audio message"
+
+//d: app name in grid
+//l: cell_app_pane_1
+//w:
+//r: 3.1u
+//#define qtn_apps_audiomessage_grid "Audio message"
+
+
+////////////////////////////////////////////////////////////////////////////
+//  Main view
+////////////////////////////////////////////////////////////////////////////
+
+//d: Name shown in title pane when application is running
+//l: title_pane_t2/opt12
+//w:
+//r: 3.1u
+#define qtn_title_audio_message 		"Audio message" 
+
+
+////////////////////////////////////////////////////////////////////////////
+// Options menu
+////////////////////////////////////////////////////////////////////////////
+
+//d: Command in options menu.
+//d: 
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.1u
+#define qtn_sms_forward 			"Forward" 
+
+//d: Command in options menu.
+//d: 
+//l: list_single_pane_t1_cp2/opt3
+//w:
+//r: 3.1u
+#define qtn_sms_reply 			"Reply" 
+
+
+//d: Submenu command in "Reply" submenu 
+//l: list_single_popup_submenu_pane_t1
+//w:
+// r:3.1u
+#define qtn_mms_sm_via_message 	 	"Via message"  
+
+//d: Submenu command in "Reply" submenu 
+//l: list_single_popup_submenu_pane_t1
+//w:
+// r:3.1u  
+#define qtn_msg_reply_via_audio_message 	"Via audio message" 
+
+//d: Submenu command in "Reply" submenu 
+//l: list_single_popup_submenu_pane_t1
+//w:
+// r:3.1u
+#define qtn_audio_messaging_sm_to_all           "To all"
+
+//d: Submenu command in "Reply" submenu 
+//l: list_single_popup_submenu_pane_t1
+//w:
+// r:3.1u
+#define qtn_audio_messaging_sm_to_sender           "To sender"
+
+//d: Submenu title in options menu.
+//d: Submenu for Replace audio functions. 
+//l: list_single_pane_t1_cp2/opt3
+//w:
+//r: 3.1u
+#define qtn_audiomessaging_replace_audio 	"Replace audio" 
+
+//d: Submenu command in "Replace audio" submenu 
+//d: Opens audio recording progress dialog
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_rerecordaudio 	"Re-record audio" 
+
+//d: Submenu command in "Replace audio" submenu 
+//d: Opens audio clip fetch dialog where user can choose
+//d: amr to be inserted in message
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.1u
+#define qtn_msg_insert_from_gallery 		"From Gallery" 
+
+//d: Submenu title in options menu.
+//d: Submenu for Replace audio functions. 
+//l: list_single_pane_t1_cp2/opt3
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_insert_audio 	"Insert audio" 
+
+//d: Submenu command in "Insert audio" submenu                 
+//d: Opens audio recording progress dialog
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_record_audio 	"Record audio" 
+
+//d: Command in options menu.
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_play_audio 		"Play audio" 
+
+//d: Command in options menu.
+//d: 
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_save_audio 		"Save audio" 
+
+//d: Command in options menu.
+//d: delivery
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.1u
+#define qtn_msg_om_delivery_status      	"Delivery status"
+
+//d: Submenu title in options menu.
+//d: Submenu for call functions. 
+//l: list_single_pane_t1_cp2/opt3
+//w:
+//r: 3.1u
+#define qtn_stm_om_call                    "Call"
+
+//d: Submenu command in "Call" submenu 
+//d: Opens audio recording progress dialog
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.1u
+#define qtn_call_sub_voice 								"Voice call" 
+
+//d: Submenu command in "Call" submenu 
+//d: Opens audio recording progress dialog
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.1u
+#define qtn_call_sub_video 								"Video call"
+
+//d: Options menu item.
+//d: Shows priority selection list
+//l: list_single_pane_t1_cp2
+//w:
+//r:3.2
+#define qtn_msg_om_priority               "Priority"
+
+//d: Title heading for priority popup 
+//l: heading_pane_t1
+//w:
+//r: 3.2
+#define qtn_msg_qry_priority                     "Message priority:"
+
+//d: Item in the priority popup
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.2
+#define qtn_msg_qry_high_priority                "High"
+
+//d: Item in the priority popup
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.2
+#define qtn_msg_qry_normal_priority                "Normal"
+
+//d: Item in the priority popup
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.2
+#define qtn_msg_qry_low_priority                "Low"
+
+
+////////////////////////////////////////////////////////////////////////////
+//  INFORMATION NOTES
+////////////////////////////////////////////////////////////////////////////
+
+//d: Information note
+//d: Note shown when the user try to send without inserted audio clip
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_cannot_send 	"Message cannot be sent without an audio clip"  
+
+//d: Information note.
+//d: Note shown when user presses Back key and has emptied the message
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_sms_info_deleted 			"Message deleted"        
+
+//d: Information note.
+//d: recording phase:If the message is not stopped 
+//d: before the maximum allowed time defined by.
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_recording_stopped 	"Maximum audio clip length reached. Recording stopped" 
+
+//d:Note when message cannot be forwarded because of unsupported objects
+//d:Information note
+//l:popup_note_window
+//w:
+//r: 3.1u
+#define qtn_mms_err_cannot_fw_objects 		"Message includes objects that cannot be forwarded."
+
+//d:The heading of "Close message" list query
+//d:Shown when user presses "Close" softkey
+//l:heading_pane_t1
+//w:
+//r: 3.1u
+#define qtn_msg_qry_close_title 		"Closing message:"   
+
+//d:An entry in "Close message" list query        
+//d:Message will be saved and editor exited when this option is selected.
+//l:list_single_pane_t1_cp2
+//w:
+//r: 3.1u
+#define qtn_msg_qry_save_to_drafts 		"Save to drafts"
+
+//d: Information note.
+//d: When user tries to insert a file which is too big.
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_size_exceeded 	"Unable to insert. Audio clip exceeds the maximum allowed size"
+
+//d: Information note.
+//d: When user tries to insert protected audio clip.
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_unable_to_insert_drm  "Unable to insert DRM protected audio"
+
+//d:Note when message cannot be forwarded because of message size
+//d:Information note
+//l:popup_note_window
+//w:
+//r: 3.1u
+#define qtn_mms_err_cannot_fw_big 		"Cannot forward. Message size too big."
+
+//d:Note when audio clip is removed
+//d:Information note
+//l:popup_note_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_audio_removed 	"Audio clip removed"
+
+//d: Information note.
+//d: audio clip is selected and user select send via audio message or
+//d: user inserts clip from gallery
+//d: user record new clip
+//d: after successful insert note is displayed
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_audio_inserted 	"Audio clip inserted"
+
+//d: Information note.
+//d: When user tries to insert a file which format is not supported.
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_mms_poca_info_unsupported        	"Unable to insert. Format not supported."
+
+//d: Information note.
+//d: When user tries to insert multiple audio clips thru send via.
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_mms_poca_info_many_files        	"Unable to insert multiple files."
+
+//d: Information note.
+//d: When user checks name in To- field and name is in the phonebook with invalid details
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_audiomessage_info_fail_recipient	"Invalid contact details:\n %0U %1U"
+
+//d: Information note.
+//d: When user checks name in To- field and it's not in the phonebook
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_audiomessage_info_recipient_no_alias	"Invalid contact details:\n %U"
+
+////////////////////////////////////////////////////////////////////////////
+//  QUERY DIALOGS
+////////////////////////////////////////////////////////////////////////////
+
+//d: Confirmation query. (viewer mode, and "c" key presses)
+//d: Confirmation asked when deleting whole message
+//d: YES/NO
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_mms_quest_delete_msg 		"Delete message?" 
+
+//d: Confirmation query. 
+//d: Confirmation asked when the user selects Delete from options menu, or
+//d: Confirmation asked when the user presses clear key when audio is inserted?  
+//d: YES/NO
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_remove_audio 	"Remove audio clip?" 
+
+//d: Confirmation query. (editor/viewer mode)
+//d: Confirmation asked when the user selects play audio and phon is in silent mode
+//d: YES/NO
+//l: popup_note_window
+//w:
+//r: 3.1u
+#define qtn_mms_qry_play_audio 			"Phone is on silent profile. Play audio anyway?"
+
+////////////////////////////////////////////////////////////////////////////
+//  WAIT NOTES
+////////////////////////////////////////////////////////////////////////////
+
+//d: Wait note
+//d: Shown when sending a message  
+//l: popup_note_wait_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_sending_wait_note 	"Sending audio message"
+
+//d: Wait note
+//d: Shown when saving message first time to draft folder 
+//l: popup_note_wait_window
+//w:
+//r: 3.1u
+#define qtn_wait_saving_message_new 		"Saving message to Drafts" 
+
+////////////////////////////////////////////////////////////////////////////
+//  PROGRESS BAR
+////////////////////////////////////////////////////////////////////////////
+
+
+//d:Progress note
+//d:Shown when audio clip is recording
+//l:popup_note_wait_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_recording 		"Recording\n%0U / %1U"
+
+//d:Progress note
+//d:Shown when audio clip is playing
+//l:popup_note_wait_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_playing 		"Playing\n%0U / %1U"
+
+
+//d:Progress note
+//d:Shown when audio clip is playing
+//l:popup_note_wait_window
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_paused			"Paused\n%0U / %1U"
+
+
+
+////////////////////////////////////////////////////////////////////////////
+//  SOFTKEYS
+////////////////////////////////////////////////////////////////////////////
+
+//d:Command for the softkey 'To loudspeaker'
+//d:toggles voice between loudspeaker and earpiece
+//l:control_pane_t1/opt7
+//w:
+//r: 3.1u
+#define text_softkey_to_loudspeaker		"To loudspeaker"  
+
+//d:Command for the softkey 'To earpiece'
+//d:toggles voice between loudspeaker and earpiece
+//l:control_pane_t1/opt7
+//w:
+//r: 3.1u
+#define text_softkey_to_earpiece		"To earpiece"  
+
+//d:Command for the softkey 'Continue'
+//d:toggles voice between loudspeaker and earpiece
+//l:control_pane_t1/opt7
+//w:
+//r: 3.1u
+#define text_softkey_continue		"Continue"  
+
+
+////////////////////////////////////////////////////////////////////////////
+//Mtm
+////////////////////////////////////////////////////////////////////////////
+
+//d: Submenu item in mce application that starts writing a audio message
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.1u
+#define qtn_mce_write_audio     "Audio message"
+
+//d: Popup query item in mce application that starts writing a audio message.
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.1u
+#define qtn_mce_pop_up_audio          "Audio message"
+
+////////////////////////////////////////////////////////////////////////////
+//navipanel
+////////////////////////////////////////////////////////////////////////////
+
+//d: length of audio message
+//l: navi_text_pane_t1
+//w:
+//r: 3.1u
+#define qtn_audio_messaging_length		"%U"
+
+//d: Messages ordinal number in navipane text
+//l: tabs_2_active_pane_t1/opt1
+//w:
+//r: 3.1u
+#define qtn_stat_msg_number           "%0N/%1N"
+
+// d: Default file name created by VoiceRec application.
+// d: The first memo will be assigned with this name.
+// d: The maximum length for the name is 20 characters 
+// d: The filename extension (.amr) is NOT included in the translation.
+// l: vorec_t1
+// w:
+// r: 1.0
+#define qtn_vorec_first_memo_name		"Sound clip"
+
+
+// d: Tooltip in permanent tool bar in Viewer
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_audio_messaging_tb_tooltip_reply "Reply"
+
+// d: Tooltip in permanent tool bar in Viewer
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_audio_messaging_tb_tooltip_delete "Delete"
+
+// d: Tooltip in permanent tool bar in Viewer
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_audio_messaging_tb_tooltip_forward "Forward"
+
+// d: Tooltip in permanent tool bar in Editor
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_audio_messaging_tb_tooltip_send "Send"
+
+// d: Tooltip in permanent tool bar in Editor
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_audio_messaging_tb_tooltip_record "Record" 
+
+// d: Tooltip in permanent tool bar in Editor
+// l: popup_preview_text_window_t1
+// r: 5.0
+#define qtn_audio_messaging_tb_tooltip_add_recipient "Add recipient" 

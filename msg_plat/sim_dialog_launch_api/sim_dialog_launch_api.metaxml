@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<api id="29c3652650081f89f5d3c88c76e5abfb" dataversion="1.0">
+<name>sim_dialog_launch_api</name>
+<description>This is a platform API for providing operator specific sim dialog, as a plugin.</description>
+<type>c++</type>
+<subsystem>mobilemessaging</subsystem>
+<libs></libs>
+<release category="platform"/>
+<attributes>
+<htmldocprovided>no</htmldocprovided>
+<adaptation>no</adaptation>
+</attributes>
+</api>

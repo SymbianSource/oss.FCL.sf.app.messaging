@@ -1,0 +1,33 @@
+/*
+* Copyright (c) 2005-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Build information file for sub-project msgnotifiers
+*
+*/
+
+
+
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+../../rom/MsgNotifiers.iby              CORE_APP_LAYER_IBY_EXPORT_PATH( MsgNotifiers.iby )
+../../rom/MsgNotifiersResources.iby     LANGUAGE_APP_LAYER_IBY_EXPORT_PATH( MsgNotifiersResources.iby )
+../loc/MsgNotifiers.loc                 APP_LAYER_LOC_EXPORT_PATH( MsgNotifiers.loc )
+
+PRJ_MMPFILES
+./MsgNotifiers.mmp
+./MsgNotifiersWrapper.mmp
+
+// End of File

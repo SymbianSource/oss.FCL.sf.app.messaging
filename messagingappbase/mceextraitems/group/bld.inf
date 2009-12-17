@@ -1,0 +1,60 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*	 This file provides the information required for building the
+*    whole of a Mce application.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+// specify the platforms your component needs to be built for here
+// defaults to WINS MARM so you can ignore this if you just build these
+DEFAULT
+
+
+PRJ_EXPORTS
+// Specify the source file followed by its destination here
+// copy will be used to copy the source file to its destination
+// If there's no destination then the source file will be copied
+// to the same name in /epoc32/include
+
+../rom/mceextraitems.iby            CUSTOMER_APP_LAYER_IBY_EXPORT_PATH(mceextraitems.iby)
+../rom/mceextraitems_resource.iby   CUSTOMER_APP_LAYER_IBY_EXPORT_PATH(mceextraitems_resource.iby)
+../loc/mceextraitems.loc            APP_LAYER_LOC_EXPORT_PATH(mceextraitems.loc)
+
+PRJ_EXTENSIONS
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE mceextraicons.mif
+OPTION HEADERFILE mceextraicons.mbg
+OPTION SOURCEFILE ExtraIconlist_Scalable.txt
+END
+
+PRJ_MMPFILES
+// Specify the .mmp files required for building the important component
+// releasables. Note that you should specify any .mmp files for test
+// programs further down the file.
+//
+// Specify "tidy" if the component you need to build doesn't need to be
+// released to the rest of the company
+// specify "ignore" if the MMP file exists but should be
+// ignored.
+
+../group/mceextraitems.mmp
+
+// End of File

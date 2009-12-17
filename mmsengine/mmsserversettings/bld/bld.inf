@@ -1,0 +1,45 @@
+/*
+* Copyright (c) 2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*    This file provides the information required for building
+*    mmsserversettings.dll
+*
+*/
+
+
+
+
+PRJ_PLATFORMS
+// specify the platforms your component needs to be built for here
+DEFAULT
+
+PRJ_EXPORTS
+// Specify the source file followed by its destination here
+// copy will be used to copy the source file to its destination
+// If there's no destination then the source file will be copied
+// to the same name in /epoc32/include
+
+PRJ_MMPFILES
+// Specify the .mmp files required for building the important component
+// releasables. Note that you should specify any .mmp files for test
+// programs further down the file.
+//
+// Specify "tidy" if the component you need to build doesn't need to be
+// released to the rest of the company
+// specify "ignore" if the MMP file exists but should be ignored.
+../../../mmsengine/mmsserversettings/bld/mmsserversettings.mmp
+
+PRJ_TESTMMPFILES
+
+// End of File

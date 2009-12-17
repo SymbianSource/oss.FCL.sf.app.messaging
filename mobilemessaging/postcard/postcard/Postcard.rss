@@ -1,0 +1,1073 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME    PCAP // 4 letter ID
+ 
+//  INCLUDES
+//Eikon
+#include <eikon.rh>
+#include <eikon.rsg>
+//Avkon
+#include <avkon.rsg>
+#include <avkon.rh>
+#include <avkon.mbg>
+//Uikon
+#include <uikon.hrh>
+//Appframework
+#include <appinfo.rh>
+#include <data_caging_paths_strings.hrh>
+//LOC Files
+#include <DRMCommon.loc>
+#include <Messaging.loc>
+#include <avkon.loc>
+
+#include <AiwCommon.rh>
+#include <AiwGenericParam.hrh>
+
+// Local ones
+#include <Postcard.loc>
+#include <Postcard_branded.loc>
+#include "Postcard.hrh"
+
+//  RESOURCE DEFINITIONS 
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF { buf = ""; }
+
+
+// ---------------------------------------------------------
+//   
+//    eik_app_info
+//    Application resource info
+//
+// ---------------------------------------------------------
+//
+RESOURCE EIK_APP_INFO
+    {
+    menubar      = r_postcard_main_menubar;
+    cba          = r_postcard_options_close;
+    status_pane  = r_postcard_status_pane;
+    }
+
+// Status pane resource
+RESOURCE STATUS_PANE_APP_MODEL r_postcard_status_pane
+    {
+    layout = R_AVKON_STATUS_PANE_LAYOUT_USUAL;
+    panes=
+        {
+        SPANE_PANE
+            {
+            id = EEikStatusPaneUidTitle;
+            type = EAknCtTitlePane;
+            resource = r_postcard_app_name;
+            }
+        };
+    }
+
+RESOURCE TITLE_PANE r_postcard_app_name
+    {
+    txt = qtn_title_mms_postcard;
+    }
+
+RESOURCE CBA r_postcard_options_close
+    {
+    buttons =
+        {
+        CBA_BUTTON
+            {
+            id = EAknSoftkeyOptions;
+            txt = text_softkey_option;
+            },
+        CBA_BUTTON
+            {
+            id = EAknSoftkeyClose;
+            txt = text_softkey_close;
+            }
+        };
+    }
+
+RESOURCE CBA r_postcard_softkeys_ok_back__ok
+    {
+    buttons =
+        {
+        CBA_BUTTON
+            {
+            id = EAknSoftkeyOk;
+            txt = text_softkey_ok;
+            },
+        CBA_BUTTON
+            {
+            id = EAknSoftkeyBack;
+            txt = text_softkey_back;
+            },
+        CBA_BUTTON
+            {
+            id = EAknSoftkeyOk;
+            txt = text_softkey_ok;
+            }
+        };
+    }
+
+RESOURCE CBA_BUTTON r_postcard_msk_button_edit
+    {
+    id = EAknSoftkeyEdit;
+    txt = qtn_msk_edit;
+    }
+
+RESOURCE CBA_BUTTON r_postcard_msk_button_replace
+    {
+    id = EAknSoftkeyEdit;
+    txt = qtn_msk_replace;
+    }
+
+RESOURCE CBA_BUTTON r_postcard_msk_button_add
+    {
+    id = EPostcardCmdAdd;
+    txt = qtn_msk_add;
+    }
+
+RESOURCE CBA_BUTTON r_postcard_msk_button_open
+    {
+    id = EAknSoftkeyOpen;
+    txt = qtn_msk_open;
+    }
+
+RESOURCE CBA_BUTTON r_postcard_msk_button_options
+    {
+    id = EAknSoftkeyContextOptions;
+    txt = text_softkey_option;
+    }
+
+RESOURCE CBA_BUTTON r_postcard_msk_button_empty
+    {
+    id = 0;
+    txt = text_softkey_empty;
+    }
+
+// ---------------------------------------------------------
+//   
+//    r_postcard_localisable_app_info
+//    Application resource info
+//
+// ---------------------------------------------------------
+//
+RESOURCE LOCALISABLE_APP_INFO r_postcard_localisable_app_info
+    {
+    short_caption = qtn_mms_poca_msginfo_type;
+    caption_and_icon = 
+    CAPTION_AND_ICON_INFO
+        {
+        caption = qtn_mms_poca_msginfo_type;
+#ifdef __SCALABLE_ICONS
+        number_of_icons = 1;
+  	    icon_file = APP_BITMAP_DIR"\\postcard_aif.mif";
+#else
+        number_of_icons = 2;
+  	    icon_file = APP_BITMAP_DIR"\\postcard_aif.mbm";
+#endif	// __SCALABLE_ICONS
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_text_dialog - Greeting Text Editing Dialog
+// ---------------------------------------------------------
+//
+
+RESOURCE DIALOG r_postcard_text_dialog
+    {
+    flags = EEikDialogFlagNoDrag | 
+            EEikDialogFlagNoTitleBar | 
+            EEikDialogFlagFillAppClientRect | 
+            EEikDialogFlagCbaButtons | 
+			EEikDialogFlagNotifyEsc |
+            EEikDialogFlagWait;
+    buttons = R_AVKON_SOFTKEYS_OPTIONS_DONE;
+    }
+
+// ---------------------------------------------------------
+// Resource for postcard address editing view
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_postcard_address_dialog
+	{
+	flags = EEikDialogFlagNoDrag | EEikDialogFlagNoTitleBar | 
+            EEikDialogFlagFillAppClientRect | EEikDialogFlagCbaButtons | 
+            EEikDialogFlagWait;
+	buttons = R_AVKON_SOFTKEYS_OPTIONS_DONE;
+	form = r_postcard_address_form;
+	}
+
+RESOURCE TBUF r_postcard_address_name
+	{
+	buf = qtn_postcard_name_control;
+	}
+
+RESOURCE TBUF r_postcard_address_info
+	{
+	buf = qtn_poca_extended_address_info;
+	}
+
+RESOURCE TBUF r_postcard_address_street
+	{
+	buf = qtn_postcard_street_control;
+	}
+
+RESOURCE TBUF r_postcard_address_zip
+	{
+	buf = qtn_postcard_postal_code_control;
+	}
+
+RESOURCE TBUF r_postcard_address_city
+	{
+	buf = qtn_postcard_city_control;
+	}
+
+RESOURCE TBUF r_postcard_address_state
+	{
+	buf = qtn_postcard_state_control;
+	}
+
+RESOURCE TBUF r_postcard_address_country
+	{
+	buf = qtn_postcard_country_control;
+	}
+
+RESOURCE FORM r_postcard_address_form
+    {
+    flags = EEikFormShowBitmaps | EEikFormUseDoubleSpacedFormat;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EEikCtEdwin;
+            prompt = qtn_postcard_name_control;
+            id = EPostcardAddressName;
+            itemflags = EEikDlgItemTakesEnterKey;
+            control = EDWIN
+                {
+                flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable |
+                        EEikEdwinNoAutoSelection | EEikEdwinJustAutoCurEnd;
+                default_case = EAknEditorTextCase;
+                allowed_case_modes = EAknEditorAllCaseModes;
+                numeric_keymap = EAknEditorAlphanumericNumberModeKeymap;
+                special_character_table=
+                                R_AVKON_SPECIAL_CHARACTER_TABLE_DIALOG;
+                avkon_flags = EAknEditorFlagDefault;
+                };
+            },
+        DLG_LINE
+            {
+            type = EEikCtEdwin;
+            prompt = qtn_poca_extended_address_info;
+            id = EPostcardAddressInfo;
+            itemflags = EEikDlgItemTakesEnterKey;
+            control = EDWIN
+                {
+                flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable |
+                        EEikEdwinNoAutoSelection | EEikEdwinJustAutoCurEnd;
+                default_case = EAknEditorTextCase;
+                allowed_case_modes = EAknEditorAllCaseModes;
+                numeric_keymap = EAknEditorAlphanumericNumberModeKeymap;
+                special_character_table=
+                                R_AVKON_SPECIAL_CHARACTER_TABLE_DIALOG;
+                avkon_flags = EAknEditorFlagDefault;
+                };
+            },
+        DLG_LINE
+            {
+            type = EEikCtEdwin;
+            prompt = qtn_postcard_street_control;
+            id = EPostcardAddressStreet;
+            itemflags = EEikDlgItemTakesEnterKey;
+            control = EDWIN
+                {
+                flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable |
+                        EEikEdwinNoAutoSelection | EEikEdwinJustAutoCurEnd;
+                default_case = EAknEditorTextCase;
+                allowed_case_modes = EAknEditorAllCaseModes;
+                numeric_keymap = EAknEditorAlphanumericNumberModeKeymap;
+                special_character_table=
+                                R_AVKON_SPECIAL_CHARACTER_TABLE_DIALOG;
+                avkon_flags = EAknEditorFlagDefault;
+                };
+            },
+        DLG_LINE
+            {
+            type = EEikCtEdwin;
+            prompt = qtn_postcard_postal_code_control;
+            id = EPostcardAddressZip;
+            itemflags = EEikDlgItemTakesEnterKey;
+            control = EDWIN
+                {
+                flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable |
+                        EEikEdwinNoAutoSelection | EEikEdwinJustAutoCurEnd;
+                default_case = EAknEditorNumericInputMode;
+                allowed_case_modes = EAknEditorAllCaseModes;
+                numeric_keymap = EAknEditorAlphanumericNumberModeKeymap;
+                special_character_table=
+                                R_AVKON_SPECIAL_CHARACTER_TABLE_DIALOG;
+                avkon_flags = EAknEditorFlagDefault;
+                };
+            },
+        DLG_LINE
+            {
+            type = EEikCtEdwin;
+            prompt = qtn_postcard_city_control;
+            id = EPostcardAddressCity;
+            itemflags = EEikDlgItemTakesEnterKey;
+            control = EDWIN
+                {
+                flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable |
+                        EEikEdwinNoAutoSelection | EEikEdwinJustAutoCurEnd;
+                default_case = EAknEditorTextCase;
+                allowed_case_modes = EAknEditorAllCaseModes;
+                numeric_keymap = EAknEditorAlphanumericNumberModeKeymap;
+                special_character_table=
+                                R_AVKON_SPECIAL_CHARACTER_TABLE_DIALOG;
+                avkon_flags = EAknEditorFlagDefault;
+                };
+            },
+        DLG_LINE
+            {
+            type = EEikCtEdwin;
+            prompt = qtn_postcard_state_control;
+            id = EPostcardAddressState;
+            itemflags = EEikDlgItemTakesEnterKey;
+            control = EDWIN
+                {
+                flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable |
+                        EEikEdwinNoAutoSelection | EEikEdwinJustAutoCurEnd;
+                default_case = EAknEditorTextCase;
+                allowed_case_modes = EAknEditorAllCaseModes;
+                numeric_keymap = EAknEditorAlphanumericNumberModeKeymap;
+                special_character_table=
+                                R_AVKON_SPECIAL_CHARACTER_TABLE_DIALOG;
+                avkon_flags = EAknEditorFlagDefault;
+                };
+            },
+        DLG_LINE
+            {
+            type = EEikCtEdwin;
+            prompt = qtn_postcard_country_control;
+            id = EPostcardAddressCountry;
+            itemflags = EEikDlgItemTakesEnterKey;
+            control = EDWIN
+                {
+                flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable |
+                        EEikEdwinNoAutoSelection | EEikEdwinJustAutoCurEnd;
+                default_case = EAknEditorTextCase;
+                allowed_case_modes = EAknEditorAllCaseModes;
+                numeric_keymap = EAknEditorAlphanumericNumberModeKeymap;
+                special_character_table=
+                                R_AVKON_SPECIAL_CHARACTER_TABLE_DIALOG;
+                avkon_flags = EAknEditorFlagDefault;
+                };
+            }
+       };
+    } 
+
+
+// ---------------------------------------------------------
+//    r_postcard_menubar - Main Menubar
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_postcard_main_menubar
+    {
+    titles =
+        {
+        MENU_TITLE  { menu_pane = r_postcard_main_options; } 
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_text_menubar - Main Menubar
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_postcard_text_menubar
+    {
+    titles =
+        {
+        MENU_TITLE  { menu_pane = r_postcard_text_options; } 
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_address_menubar - Main Menubar
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_postcard_address_menubar
+    {
+    titles =
+        {
+        MENU_TITLE  { menu_pane = r_postcard_address_options; } 
+        };
+    }
+
+// Index for wait note
+#define KWaitNoteIndex  10
+
+// ---------------------------------------------------------
+//    r_postcard_main_menu - Main Menubar items
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_postcard_main_options
+    {
+    items=
+        {
+        MENU_ITEM { command = EPostcardCmdSend;               txt = qtn_msg_om_send; } ,
+        MENU_ITEM { command = EPostcardCmdEditAddress;        txt = qtn_mms_poca_edit_address; } ,
+        MENU_ITEM { command = EPostcardCmdEditGreeting;       txt = qtn_mms_poca_add_greeting; } ,
+        MENU_ITEM { command = EPostcardCmdInsertSubmenu;      txt = qtn_mms_poca_om_insert_image;
+                                                                cascade = r_postcard_insert_submenu; } ,
+        MENU_ITEM { command = EPostcardCmdReplaceSubmenu;     txt = qtn_mms_poca_om_replace_image;
+                                                                cascade = r_postcard_replace_submenu; } ,
+        MENU_ITEM { command = EPostcardCmdInsertFromGallery;  txt = qtn_mms_poca_om_insert_image; },
+        MENU_ITEM { command = EPostcardCmdReplaceFromGallery; txt = qtn_mms_poca_om_replace_image; },
+        MENU_ITEM { command = EPostcardCmdForward;            txt = qtn_mms_om_forward; } ,
+        MENU_ITEM { command = EPostcardCmdDelete;             txt = qtn_msg_om_delete; } ,
+        MENU_ITEM { command = EPostcardCmdMessageInfo;        txt = qtn_msg_om_message_info; } ,
+        MENU_ITEM { command = EAknCmdHelp;                    txt = qtn_options_help; } ,
+        MENU_ITEM { command = EAknCmdExit;                    txt = qtn_options_exit; } 
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_text_options - Text Main Menubar items
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_postcard_text_options
+    {
+    items=
+        {
+        MENU_ITEM { command = EPostcardCmdSend;				txt = qtn_msg_om_send; } ,
+        MENU_ITEM { command = EPostcardCmdInsertSubmenu;	txt = qtn_mms_om_insert;
+                        cascade = r_postcard_text_insert_submenu; } ,
+        MENU_ITEM { command = EPostcardCmdForward;          txt = qtn_mms_om_forward; } ,
+        MENU_ITEM { command = EPostcardCmdMessageInfo;		txt = qtn_msg_om_message_info; } ,
+        MENU_ITEM { command = EPostcardCmdSubmenuZoomCommands;txt = qtn_options_text_size;
+                        cascade = r_postcard_zoom_submenu; },        
+        MENU_ITEM { command = EAknCmdHelp;					txt = qtn_options_help; } ,
+        MENU_ITEM { command = EAknCmdExit;					txt = qtn_options_exit; } 
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_address_options - Address Main Menubar items
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_postcard_address_options
+    {
+    items=
+        {
+        MENU_ITEM { command = EPostcardCmdSend;				txt = qtn_msg_om_send; } ,
+        MENU_ITEM { command = EPostcardCmdAddRecipient;		txt = qtn_msg_om_add_recipient; } ,
+        MENU_ITEM { command = EPostcardCmdReplaceRecipient;		txt = qtn_msg_om_replace_recipient; } ,
+        MENU_ITEM { command = EPostcardCmdForward;          txt = qtn_mms_om_forward; } ,
+        MENU_ITEM { command = EPostcardCmdMessageInfo;		txt = qtn_msg_om_message_info; } ,
+        MENU_ITEM { command = EPostcardCmdSubmenuZoomCommands;txt = qtn_options_text_size;
+                        cascade = r_postcard_zoom_submenu; },
+        MENU_ITEM { command = EAknCmdHelp;					txt = qtn_options_help; } ,
+        MENU_ITEM { command = EAknCmdExit;					txt = qtn_options_exit; } 
+        };
+    }
+
+//----------------------------------------------------
+//    r_postcard_zoom_submenu
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_postcard_zoom_submenu
+    {
+    items=
+        {
+        MENU_ITEM   { command = EMsgDispSizeAutomatic; 
+                    txt = qtn_options_auto;
+                    flags = EEikMenuItemRadioStart;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeLarge; 
+                    txt = qtn_options_large;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeNormal; 
+                    txt = qtn_options_normal;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeSmall;
+                    txt = qtn_options_small;
+                    flags = EEikMenuItemRadioEnd;
+                    }
+        }; 
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_insert_submenu - 
+//    Main menu's insert submenu items
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_postcard_insert_submenu
+    {
+    items=
+        {
+        MENU_ITEM { command = EPostcardCmdInsertFromGallery;		txt = qtn_mms_poca_sm_from_gallery; } ,
+        MENU_ITEM { command = EPostcardCmdInsertFromCamera;			txt = qtn_mms_poca_sm_open_camera; } 
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_replace_submenu -
+//    Main menu's replace submenu items
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_postcard_replace_submenu
+    {
+    items=
+        {
+        MENU_ITEM { command = EPostcardCmdReplaceFromGallery;        txt = qtn_mms_poca_sm_replace_from_gallery; } ,
+        MENU_ITEM { command = EPostcardCmdReplaceFromCamera;         txt = qtn_mms_poca_sm_replace_open_camera; } 
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_text_insert_options - Text Insert Submenu items
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_postcard_text_insert_submenu
+	{
+    items=
+        {
+        MENU_ITEM { command = EPostcardCmdInsertTemplate;       txt = qtn_mms_sm_insert_template_text; } ,
+        MENU_ITEM { command = EPostcardCmdInsertNote;           txt = qtn_mms_sm_insert_note; } 
+        };			
+	}
+
+// ---------------------------------------------------------
+//    r_postcard_context_menubar - Context sensitive Menubar
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_postcard_context_menubar
+    {
+    titles =
+        {
+        MENU_TITLE  { menu_pane = r_postcard_context_options; } 
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_context_options - Context Menubar items
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_postcard_context_options
+    {
+    items=
+        {
+        MENU_ITEM { command = EPostcardCmdInsertSubmenu;      txt = qtn_mms_poca_om_insert_image;
+                                                                cascade = r_postcard_insert_submenu; } ,
+        MENU_ITEM { command = EPostcardCmdReplaceSubmenu;     txt = qtn_mms_poca_om_replace_image;
+                                                                cascade = r_postcard_replace_submenu; } ,
+        MENU_ITEM { command = EPostcardCmdInsertFromGallery;  txt = qtn_mms_poca_om_insert_image; },
+        MENU_ITEM { command = EPostcardCmdReplaceFromGallery; txt = qtn_mms_poca_om_replace_image; }
+        };
+    }
+
+
+// ---------------------------------------------------------
+//    r_postcard_text_context_menubar - Context sensitive Menubar
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_postcard_text_context_menubar
+    {
+    titles =
+        {
+        MENU_TITLE  { menu_pane = r_postcard_text_context_options; } 
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_context_options - Context Menubar items
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_postcard_text_context_options
+    {
+    items=
+        {
+        MENU_ITEM { command = EPostcardCmdInsertSubmenu;	txt = qtn_mms_om_insert;
+						cascade = r_postcard_text_insert_submenu; } ,
+        MENU_ITEM { command = EPostcardCmdForward; txt = qtn_mms_om_forward; } ,
+        MENU_ITEM { command = EPostcardCmdMessageInfo;	txt = qtn_msg_om_message_info; } 
+        };
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_titlepane
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_titlepane
+    {
+	buf = qtn_title_mms_postcard;
+	}
+
+// ---------------------------------------------------------
+//      r_postcard_greeting_exceeded
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_greeting_exceeded
+    {
+    buf = qtn_mms_poca_greeting_too_long_one;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_greeting_exceeded_many
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_greeting_exceeded_many
+    {
+    buf = qtn_mms_poca_greeting_too_long_many;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_address_exceeded
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_address_exceeded
+    {
+    buf = qtn_mms_poca_address_too_long_one;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_address_exceeded_many
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_address_exceeded_many
+    {
+    buf = qtn_mms_poca_address_too_long_many;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_format_not_supported
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_format_not_supported
+    {
+    buf = qtn_mms_poca_info_unsupported;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_multiple_files
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_multiple_files
+    {
+    buf = qtn_mms_poca_info_many_files;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_multiple_recipients
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_multiple_recipients
+    {
+    buf = qtn_mms_poca_info_many_recip;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_cannot_send_protected
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_cannot_send_protected
+    {
+    buf = qtn_drm_send_forbid;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_remove_image
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_remove_image
+    {
+    buf = qtn_qry_mms_poca_rm_image;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_delete_message
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_delete_message
+    {
+    buf = qtn_mms_quest_delete_msg;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_send_insert_image
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_send_insert_image
+    {
+    buf = qtn_mms_poca_cannot_send_no_image;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_send_field_empty
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_send_field_empty
+    {
+    buf = qtn_mms_poca_cannot_send_no_address;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_recipient_prompt_text
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_recipient_prompt_text
+    {
+    buf = qtn_qry_mms_poca_send_to;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_sending_postcard
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_sending_postcard
+    {
+    buf = qtn_mms_wait_send_message;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_saved_outbox
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_saved_outbox
+    {
+    buf = qtn_wait_offline_outbox;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_character_counter
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_character_counter
+    {
+    buf = qtn_postcard_message_length;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_object_corrupted
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_object_corrupted
+    {
+    buf = qtn_mms_info_object_corrupted;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_query_delete_message
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_query_delete_message
+    {
+    buf = qtn_mms_quest_delete_message;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_query_closing_message
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_query_closing_message
+    {
+    buf = qtn_msg_qry_close_title;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_saving_to_drafts
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_saving_to_drafts
+    {
+    buf = qtn_msg_qry_save_to_drafts;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_delete_from_drafts
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_delete_from_drafts
+    {
+    buf = qtn_msg_qry_delete_msg;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_saving_new
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_saving_new
+    {
+    buf = qtn_wait_saving_message_new;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_saving
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_saving
+    {
+    buf = qtn_wait_saving_message;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_no_space_to_save
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_no_space_to_save
+    {
+    buf = qtn_mail_close_nosave;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_message_deleted
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_message_deleted
+    {
+    buf = qtn_sms_info_deleted;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_wait_opening
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_wait_opening
+    {
+    buf = qtn_gen_note_opening;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_wait_inserting
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_postcard_wait_inserting
+    {
+    buf = qtn_gen_note_inserting;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_close_query
+//      Close query dialog
+// ---------------------------------------------------------
+//
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_postcard_close_query
+    {
+    flags = EGeneralQueryFlags;
+    softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+    items =
+        {
+        AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+            {
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = AVKON_LIST_QUERY_LIST
+                    {
+                    array_id = r_postcard_close_query_array;
+                    };
+                heading = qtn_msg_qry_close_title;
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_close_query_array
+//      Close query dialog array
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_postcard_close_query_array
+    {
+    items=
+        {
+        LBUF { txt = qtn_msg_qry_save_to_drafts; },
+        LBUF { txt = qtn_msg_qry_delete_message; }
+        };
+    }
+
+// ---------------------------------------------------------
+//		r_postcard_wait_note
+//		Template for wait notes
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_postcard_wait_note
+{
+    flags   = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+    {
+        DLG_LINE
+        {
+            type    = EAknCtNote;
+            id      = KWaitNoteIndex;
+            control = AVKON_NOTE
+            {
+                layout         = EWaitLayout;
+                animation      = R_QGN_GRAF_WAIT_BAR_ANIM;
+            };
+        }
+    };
+}
+
+// ---------------------------------------------------------
+//    r_postcard_confirmation_query - dialog
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_postcard_confirmation_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                    layout = EConfirmationLayout;
+                    label = "";
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_confirmable_query - dialog
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_postcard_confirmable_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_OK_EMPTY__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                    layout = EConfirmationLayout;
+                    label = "";
+                    animation = R_QGN_NOTE_INFO_ANIM;
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_postcard_extra_charge_query - confirmation query
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_postcard_extra_charge_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationQueryLayout;
+                label = qtn_qry_mms_poca_extra_cost;
+                animation = R_QGN_NOTE_INFO_ANIM;
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_address_selection_xxx
+//      The strings for the address location selection dialog
+// ---------------------------------------------------------
+RESOURCE TBUF r_postcard_address_selection_none
+    {
+    buf = qtn_mms_postcard_fetch_address;
+    }
+    
+RESOURCE TBUF r_postcard_address_selection_home
+    {
+    buf = qtn_mms_postcard_fetch_address_home;
+    }
+
+RESOURCE TBUF r_postcard_address_selection_work
+    {
+    buf = qtn_mms_postcard_fetch_address_work;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_address_selection_title
+//      The string for title of address location selection dialog
+// ---------------------------------------------------------
+RESOURCE TBUF r_postcard_address_selection_title
+    {
+    buf = qtn_mms_postcard_fetch_address_title;
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_oma_smil
+//      The SMIL file included when the postcard is made by OMA standard
+// ---------------------------------------------------------
+RESOURCE TBUF r_postcard_oma_smil
+    {
+    buf = "<smil><head><layout><root-layout width=\"352\" height=\"416\"/><region id=\"Image\" width=\"320\" height=\"240\" top=\"20\" left=\"20\" fit=\"meet\"/></layout></head><body><par dur=\"5000ms\"><img region=\"Image\" src=\"%U\"/></par></body></smil>";
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_single_entry_fetch_interest
+//      Interest to AIW contact single entry fetch
+// ---------------------------------------------------------
+RESOURCE AIW_INTEREST r_postcard_single_entry_fetch_interest
+    {
+    items=
+        {
+        AIW_CRITERIA_ITEM 
+            { 
+            id = KAiwCmdSelect; // use KAiwCmdSelect also as id
+            serviceCmd   = KAiwCmdSelect;
+            contentType  = EGenericParamContactItemStr;
+            serviceClass = KAiwClassBase; 
+            // Default service provider Phonebook2
+            defaultProvider = 0x101F87BE; // KPbk2UIServicesUID
+            maxProviders = 1;
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//      r_postcard_process_not_successful
+// ---------------------------------------------------------
+RESOURCE TBUF r_postcard_process_not_successful
+    {
+    buf = qtn_mms_poca_image_size_exceeded;
+    }
+
+// End of File

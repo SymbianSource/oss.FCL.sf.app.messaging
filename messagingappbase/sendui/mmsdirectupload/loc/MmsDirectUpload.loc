@@ -1,0 +1,70 @@
+/*
+* Copyright (c) 2002-2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   This file contains the localised strings for MmsDirectUpload.
+*
+*/
+
+
+
+
+// LOCALISATION STRINGS
+
+// d:Confirmation query.
+// d:When sending more than one file.
+// d:OK / CANCEL
+// l:popup_note_window
+#define qtn_mms_qry_upload_messages "The selected content will be sent in %N messages."
+
+//d:Progress note.
+//d:While creating messages.
+//d:%0N is the number of messaqe being created.
+//d:%1N is the whole amount of messages to be created.
+//l:popup_note_wait_window
+//
+#define qtn_mms_prog_loading_image "Loading multimedia object %0N of %1N"
+
+// d:Confirmation query
+// d:After one image is compressed successfully.
+// d:OK / -
+// l:popup_note_window
+#define qtn_mms_successful_compression "Image included successfully. Image quality had to be reduced to decreased the size."
+
+// d:Confirmation query
+// d:After many images are compressed successfully.
+// d:OK / -
+// l:popup_note_window
+#define qtn_mms_successful_compression_many "Image quality of some objects had to be reduced to decreased the size."
+
+// d:Confirmation query
+// d:When creation of some messages fails.
+// d:OK / -
+// l:popup_note_window
+#define qtn_mms_upload_info_all_not_inserted "Message creation failed. Cannot send all selected objects."
+
+// d:Confirmation query
+// d:When creation of the message fails.
+// d:OK / -
+// l:popup_note_window
+#define qtn_mms_upload_info_cannot_send "Message creation failed. Sending not possible."
+
+// d:Confirmation query
+// d:When creation of all messages fails.
+// d:OK / -
+// l:popup_note_window
+// w:
+// r:3.0
+//
+#define qtn_mms_upload_info_cannot_send_any "Message creation failed. No objects can be sent."
+
+// End of File

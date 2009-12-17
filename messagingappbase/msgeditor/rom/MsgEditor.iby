@@ -1,0 +1,28 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  MsgEditor.iby*
+*/
+
+#ifndef __MSGEDITOR_IBY__
+#define __MSGEDITOR_IBY__
+
+file=ABI_DIR\BUILD_DIR\MsgEditorAppUi.dll       SHARED_LIB_DIR\MsgEditorAppUi.dll
+file=ABI_DIR\BUILD_DIR\MsgEditorModel.dll       SHARED_LIB_DIR\MsgEditorModel.dll
+file=ABI_DIR\BUILD_DIR\MsgEditorView.dll        SHARED_LIB_DIR\MsgEditorView.dll
+file=ABI_DIR\BUILD_DIR\MsgEditorMediaControl.dll    SHARED_LIB_DIR\MsgEditorMediaControl.dll
+
+SCALABLE_IMAGE(APP_BITMAP_DIR,APP_BITMAP_DIR,MsgEditor)
+
+data=DATAZ_\resource\apps\msgeditor_ah.mif resource\apps\msgeditor_ah.mif
+#endif // __MSGEDITOR_IBY__

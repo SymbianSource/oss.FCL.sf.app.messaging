@@ -1,0 +1,25 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  SmilUiResources.iby*
+*/
+
+#ifndef __SMILUIRES_IBY__
+#define __SMILUIRES_IBY__
+
+#ifdef __MMS
+// Localised resources
+data=DATAZ_\RESOURCE_FILES_DIR\SmilPlayer.rsc   						RESOURCE_FILES_DIR\SmilPlayer.rsc
+#endif //__MMS
+
+#endif   // __SMILUIRES_IBY__

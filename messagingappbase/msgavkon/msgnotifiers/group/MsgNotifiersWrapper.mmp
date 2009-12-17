@@ -1,0 +1,48 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Project specification file for the MsgNotifiers Ecom Plugin.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+TARGET          msgnotifierswrapper.dll
+TARGETTYPE      PLUGIN
+UID             0x10009D8D 0x1028289B
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_ECOM_PLUGIN
+VERSION 	10.0
+PAGED
+
+// ECom resource file
+START RESOURCE  1028289B.rss
+TARGET          msgnotifierswrapper.rsc 
+END	
+
+USERINCLUDE     ../inc
+
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+SYSTEMINCLUDE   /epoc32/include/ecom
+
+SOURCEPATH      ../src
+SOURCE          MsgNotifiersWrapper.cpp
+
+LIBRARY ecom.lib                            // Symbian E-Com Plugin definitions and types
+LIBRARY aknnotifierwrapper.lib              // Avkon's notifier wrapper
+LIBRARY euser.lib                           // Symbian OS framework library
+
+// End of File

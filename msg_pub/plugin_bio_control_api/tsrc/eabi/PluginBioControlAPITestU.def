@@ -1,0 +1,6 @@
+EXPORTS
+	_Z9LibEntryLR13CTestModuleIf @ 1 NONAME
+	_ZN15CMsgBioCtrlTest4NewLER22MMsgBioControlObserverP11CMsvSessionl11TMsgBioModePK5RFile @ 2 NONAME
+	_ZTI17CEdwinTestControl @ 3 NONAME ; #<TI>#
+	_ZTV17CEdwinTestControl @ 4 NONAME ; #<VT>#
+

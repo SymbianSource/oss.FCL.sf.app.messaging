@@ -1,0 +1,138 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Resource definitions for project BVA
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME    BVAA
+
+//  INCLUDES
+
+#include <eikon.rh>
+#include "eikon.rsg"
+#include <avkon.rsg>
+#include <avkon.loc>
+#include <avkon.rh>
+#include <AiwCommon.rh>
+#include <avkon.mbg>
+#include <appinfo.rh>
+#include <data_caging_paths_strings.hrh>
+
+//  RESOURCE DEFINITIONS 
+
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF { buf=""; }
+
+RESOURCE EIK_APP_INFO
+{
+    menubar = r_bva_menubar;
+    cba = r_bva_menu_cba;
+}
+
+RESOURCE LOCALISABLE_APP_INFO r_bva_localisable_app_info
+    {
+     short_caption = " ";
+     caption_and_icon = CAPTION_AND_ICON_INFO
+ 	{
+	caption = " ";
+ #ifdef __SCALABLE_ICONS
+ 	number_of_icons = 1;
+ 	icon_file = APP_BITMAP_DIR"\\bva_aif.mif";
+ #else
+ 	number_of_icons = 2;
+ 	icon_file = APP_BITMAP_DIR"\\bva_aif.mbm";
+ #endif //__SCALABLE_ICONS
+ 	};
+    }
+
+RESOURCE MENU_BAR r_bva_menubar
+    {
+    titles=
+        {
+        MENU_TITLE { menu_pane=r_bva_menu; txt="Dummy"; }
+        };
+    }
+
+RESOURCE MENU_PANE r_bva_menu
+    {
+    items=
+        {
+        MENU_ITEM 
+            {            
+            command = KAiwCmdSaveToCalendar;
+            txt = " "; // dynamically loaded!!
+            },
+        MENU_ITEM 
+            {            
+            command = EAknCmdHelp;
+            txt = qtn_options_help; 
+            },
+        MENU_ITEM { command=EAknCmdExit; txt = qtn_options_exit; }
+        };
+    }
+
+RESOURCE CBA r_bva_menu_cba
+    {
+    buttons =
+	    {
+        CBA_BUTTON {id=EAknSoftkeyOptions;  	 txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack;     	 txt = text_softkey_back;},
+        CBA_BUTTON {id=EAknSoftkeyContextOptions;txt = text_softkey_option ;}
+        };
+    }
+    
+RESOURCE MENU_BAR r_bva_context_menubar
+    {
+    titles=
+        {
+        MENU_TITLE { menu_pane=r_bva_context_menu; txt="Dummy"; }
+        };
+    }
+
+RESOURCE MENU_PANE r_bva_context_menu
+    {
+    items=
+        {
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_bva_aiw_calendar_interest
+//    AIW interest for calendar menu item(Save to calendar)
+//
+// ---------------------------------------------------------
+//
+RESOURCE AIW_INTEREST r_bva_aiw_calendar_interest
+    {
+    items=
+        {
+        AIW_CRITERIA_ITEM 
+            { 
+            id = KAiwCmdSaveToCalendar; 
+            serviceCmd = KAiwCmdSaveToCalendar;
+            contentType = "*" ;
+            serviceClass = KAiwClassMenu;
+            defaultProvider = 0x2002A506;
+            maxProviders = 1;
+            }
+        };
+    }
+// End of File

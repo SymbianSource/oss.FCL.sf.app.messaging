@@ -1,0 +1,11 @@
+EXPORTS
+	??1CMmsSettingsHandler@@UAE@XZ @ 1 NONAME ; CMmsSettingsHandler::~CMmsSettingsHandler(void)
+	?ApExistsL@CMmsSettingsHandler@@QAEHJ@Z @ 2 NONAME ; int CMmsSettingsHandler::ApExistsL(long)
+	?CheckSettingsL@CMmsSettingsHandler@@QAEHAAW4TMmsExitCode@CMmsSettingsDialog@@@Z @ 3  NONAME ; int CMmsSettingsHandler::CheckSettingsL(enum CMmsSettingsDialog::TMmsExitCode &)
+	?CompleteSettingsOperationL@CMmsSettingsHandler@@QAEPAVCMsvOperation@@AAVTRequestStatus@@ABW4TMmsExitCode@CMmsSettingsDialog@@@Z @ 4 NONAME ; class CMsvOperation * CMmsSettingsHandler::CompleteSettingsOperationL(class TRequestStatus &, enum CMmsSettingsDialog::TMmsExitCode const &)
+	?HandleFactorySettingsL@CMmsSettingsHandler@@QAEXAAVTDes8@@@Z @ 5 NONAME ; void CMmsSettingsHandler::HandleFactorySettingsL(class TDes8 &)
+	?LaunchSettingsDialogL@CMmsSettingsHandler@@QAEXAAW4TMmsExitCode@CMmsSettingsDialog@@@Z @ 6  NONAME ; void CMmsSettingsHandler::LaunchSettingsDialogL(enum CMmsSettingsDialog::TMmsExitCode &)
+	?NewL@CMmsSettingsHandler@@SAPAV1@AAVCMmsClientMtm@@@Z @ 7 NONAME ; class CMmsSettingsHandler * CMmsSettingsHandler::NewL(class CMmsClientMtm &)
+	?OpenServiceSettingsDialogL@CMmsSettingsHandler@@QAEPAVCMsvOperation@@AAVTRequestStatus@@@Z @ 8 NONAME ; class CMsvOperation * CMmsSettingsHandler::OpenServiceSettingsDialogL(class TRequestStatus &)
+	?SelectMmsAccessPointL@MmsApSelect@@SAHAAVCCommsDatabase@@KAAKH@Z @ 9 NONAME ; int MmsApSelect::SelectMmsAccessPointL(class CCommsDatabase &, unsigned long, unsigned long &, int)
+

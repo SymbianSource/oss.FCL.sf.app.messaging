@@ -1,0 +1,125 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*     This file contains defines for CMuiuSettingsArray.
+*
+*
+*/
+
+
+
+#ifndef __MUIUDYNSETTINGSARRAY_HRH__
+#define __MUIUDYNSETTINGSARRAY_HRH__
+
+// DATA TYPES
+enum TMuiuDynSettingsType
+    {
+    EMuiuDynSetUndefined = 0x00,
+    EMuiuDynSetMenuArray,
+    EMuiuDynSetItemMultiLine,
+    EMuiuDynSetRadioButtonArray,
+    EMuiuDynSetCheckBoxArray,
+    EMuiuDynSetItemEditText,
+    EMuiuDynSetItemEditValue,
+    EMuiuDynSetItemEditScValue,
+    EMuiuDynSetItemEditTime,
+    EMuiuDynSetItemCheckBox,
+    EMuiuDynSetItemRadioButton,
+    EMuiuDynSetItemLastUnusedItem
+    };
+
+// Do note that these flags are index number and not directly flags
+enum TMuiuItemFlags
+    {
+    // Indicates if the item is checked or not (Radiobutton/Checkbox)
+    EMuiuDynItemChecked = 32,
+    // Allows drawing the item but not editing
+    EMuiuDynItemReadOnly,
+    // Determines if item is drawn or not (for dynamic hiding)
+    EMuiuDynItemHidden,
+    // Determines if item is drawn or not (can be used with variation)
+    EMuiuDynItemPermanentlyHidden,
+    // Allows changing the state between two values without editor
+    EMuiuDynItemEnterPressed,
+    // Item is critical setting
+    EMuiuDynItemCompulsory,
+    // Setting has to be filled before exiting the settings
+    EMuiuDynItemMustFill,
+    // When set, the ok button is hidden from the page, when field is empty
+    EMuiuDynItemForceMustFill,
+    // Use text editor instead of number editor to edit value
+    EMuiuDynItemTextEditorToValue,
+    // Should number conversion be used with item
+    EMuiuDynItemLangSpecificNumConv,
+    // The text written in field should be masked with special character
+    EMuiuDynItemPassword,
+    // Determines, does the changing value automatically update the setting
+    EMuiuDynItemUpdateOnChange,
+    // Item status is approved, when the flag is set
+    EMuiuDynItemValidated,
+    // Flag to prevent selection of the text, when starting edit
+    EMuiuDynItemNoInitialSelection,
+    // Flag to move the cursor in the beginning of the line
+    EMuiuDynItemEditorCursorAtBeginning,
+    // Flag to inform that the page should be acquired from the client
+    EMuiuDynItemAcquireCustomPage,
+    // One time flag to indicate, if the view needs to be opened
+    EMuiuDynItemOneTimeForceViewOpen,
+    // Indicates the current initialization state of the item
+    EMuiuDynItemIsInitialized,
+    // Indicates that the typing language needs to be restricted to latin
+    EMuiuDynItemLatinOnly,
+    // Indicates that settings item can be locked
+    EMuiuDynItemLockableSetting
+    };
+
+// This should match with above enumeration
+#define KMuiuDynItemChecked                     0x00000001 // << 32
+#define KMuiuDynItemReadOnly                    0x00000002 // << 33
+#define KMuiuDynItemHidden                      0x00000004 // << 34
+#define KMuiuDynItemPermanentlyHidden           0x00000008 // << 35
+#define KMuiuDynItemEnterPressed                0x00000010 // << 36
+#define KMuiuDynItemCompulsory                  0x00000020 // << 37
+#define KMuiuDynItemMustFill                    0x00000040 // << 38
+#define KMuiuDynItemForceMustFill               0x00000080 // << 39
+#define KMuiuDynItemTextEditorToValue           0x00000100 // << 40
+#define KMuiuDynItemLangSpecificNumConv         0x00000200 // << 41
+#define KMuiuDynItemPassword                    0x00000400 // << 42
+#define KMuiuDynItemUpdateOnChange              0x00000800 // << 43
+#define KMuiuDynItemValidated                   0x00001000 // << 44
+#define KMuiuDynItemNoInitialSelection          0x00002000 // << 45
+#define KMuiuDynItemEditorCursorAtBeginning     0x00004000 // << 46
+#define KMuiuDynItemAcquireCustomPage           0x00008000 // << 47
+#define KMuiuDynItemOneTimeForceViewOpen        0x00010000 // << 48
+#define KMuiuDynItemIsInitialized               0x00020000 // << 49
+#define KMuiuDynItemLatinOnly                   0x00040000 // << 50
+#define KMuiuDynItemLockableSetting             0x00080000 // << 51
+
+#define KMuiuDynSettingsTextLengthDefault 20
+#define KMuiuDynMaxSettingsTextWidth 12
+#define KMuiuDynMaxSettingsLongTextLength 1600
+#define KMuiuDynMaxSettingsTextLength 100
+#define KMuiuDynMaxSettingsValueLength 3
+#define KMuiuDynMaxSettingsTimeLength 4
+#define KMuiuDynArrayGranularity 5
+#define KMuiuDynMaxPasswordLength 50
+
+
+// FUNCTION PROTOTYPES
+// FORWARD DECLARATIONS
+// CLASS DECLARATION
+
+#endif //__MUIUDYNSETTINGSARRAY_HRH__
+
+// End of file

@@ -1,0 +1,12 @@
+component	messaging_email_imap
+
+source	\sf\app\messaging\email\imap4mtm
+
+binary	\sf\app\messaging\email\imap4mtm\group	all
+exports	\sf\app\messaging\email\imap4mtm\group	
+
+notes_source	\component_defs\release.src
+
+
+ipr E 
+

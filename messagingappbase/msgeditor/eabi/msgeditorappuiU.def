@@ -1,0 +1,168 @@
+EXPORTS
+	_ZN14CMsgCheckNames15HandleMatchesLCEP17CPbkContactEnginei @ 1 NONAME ABSENT
+	_ZN14CMsgCheckNames19FindAndCheckByNameLEP17CPbkContactEngineRK7TDesC16i @ 2 NONAME ABSENT
+	_ZN14CMsgCheckNames4NewLEv @ 3 NONAME
+	_ZN14CMsgCheckNames5NewLCEv @ 4 NONAME
+	_ZN14CMsgCheckNamesD0Ev @ 5 NONAME
+	_ZN14CMsgCheckNamesD1Ev @ 6 NONAME
+	_ZN14CMsgCheckNamesD2Ev @ 7 NONAME
+	_ZN15CMsgEditorAppUi10ConstructLEv @ 8 NONAME
+	_ZN15CMsgEditorAppUi10LockEntryLEv @ 9 NONAME
+	_ZN15CMsgEditorAppUi11ReplyToAllLEli @ 10 NONAME
+	_ZN15CMsgEditorAppUi11SetEmphasisEP11CCoeControli @ 11 NONAME
+	_ZN15CMsgEditorAppUi11UnlockEntryEv @ 12 NONAME
+	_ZN15CMsgEditorAppUi12NextMessageLEi @ 13 NONAME
+	_ZN15CMsgEditorAppUi13PrepareToExitEv @ 14 NONAME
+	_ZN15CMsgEditorAppUi14DeleteAndExitLEv @ 15 NONAME
+	_ZN15CMsgEditorAppUi14EditorObserverEN18MMsgEditorObserver22TMsgEditorObserverFuncEPvS2_S2_ @ 16 NONAME
+	_ZN15CMsgEditorAppUi14HandleWsEventLERK8TWsEventP11CCoeControl @ 17 NONAME
+	_ZN15CMsgEditorAppUi15HandleKeyEventLERK9TKeyEvent10TEventCode @ 18 NONAME
+	_ZN15CMsgEditorAppUi15InsertTemplateLEi @ 19 NONAME
+	_ZN15CMsgEditorAppUi15ShowCloseQueryLEv @ 20 NONAME
+	_ZN15CMsgEditorAppUi15UpdateNaviPaneLEPK10CFbsBitmapS2_ @ 21 NONAME
+	_ZN15CMsgEditorAppUi17HandleEntryMovedLEll @ 22 NONAME
+	_ZN15CMsgEditorAppUi18CallToSenderQueryLERK7TDesC16S2_ @ 23 NONAME
+	_ZN15CMsgEditorAppUi18HandleEntryChangeLEv @ 24 NONAME
+	_ZN15CMsgEditorAppUi19ComparePhoneNumberLERK7TDesC16S2_i @ 25 NONAME ABSENT
+	_ZN15CMsgEditorAppUi19DeleteCurrentEntryLEv @ 26 NONAME
+	_ZN15CMsgEditorAppUi19HandleCloseSessionLEv @ 27 NONAME
+	_ZN15CMsgEditorAppUi19HandleEntryDeletedLEv @ 28 NONAME
+	_ZN15CMsgEditorAppUi19HandleGeneralErrorLEi @ 29 NONAME
+	_ZN15CMsgEditorAppUi19HandleMediaChangedLEv @ 30 NONAME
+	_ZN15CMsgEditorAppUi20CreateCustomControlLEi @ 31 NONAME
+	_ZN15CMsgEditorAppUi20HandleIteratorEventLEN24MMessageIteratorObserver21TMessageIteratorEventE @ 32 NONAME
+	_ZN15CMsgEditorAppUi21HandleMediaAvailableLEv @ 33 NONAME
+	_ZN15CMsgEditorAppUi21HandleMediaIncorrectLEv @ 34 NONAME
+	_ZN15CMsgEditorAppUi21HandleResourceChangeLEi @ 35 NONAME
+	_ZN15CMsgEditorAppUi21MessageIndexInFolderLERiS0_ @ 36 NONAME
+	_ZN15CMsgEditorAppUi23HandleMediaUnavailableLEv @ 37 NONAME
+	_ZN15CMsgEditorAppUi23HandleServerTerminatedLEv @ 38 NONAME
+	_ZN15CMsgEditorAppUi23IsNextMessageAvailableLEi @ 39 NONAME
+	_ZN15CMsgEditorAppUi25ProcessCommandParametersLE11TApaCommandR4TBufILi256EERK6TDesC8 @ 40 NONAME
+	_ZN15CMsgEditorAppUi26CreateSubjectPrefixStringLERK7TDesC16i @ 41 NONAME
+	_ZN15CMsgEditorAppUi26HandleMtmGroupDeinstalledLEv @ 42 NONAME
+	_ZN15CMsgEditorAppUi26HandleServerFailedToStartLEv @ 43 NONAME
+	_ZN15CMsgEditorAppUi28HandleCorruptedIndexRebuiltLEv @ 44 NONAME
+	_ZN15CMsgEditorAppUi31HandleCorruptedIndexRebuildingLEv @ 45 NONAME
+	_ZN15CMsgEditorAppUi4ExitEi @ 46 NONAME
+	_ZN15CMsgEditorAppUi6ReplyLEli @ 47 NONAME
+	_ZN15CMsgEditorAppUi8ForwardLEl @ 48 NONAME
+	_ZN15CMsgEditorAppUiC2Ev @ 49 NONAME
+	_ZN15CMsgEditorAppUiD0Ev @ 50 NONAME
+	_ZN15CMsgEditorAppUiD1Ev @ 51 NONAME
+	_ZN15CMsgEditorAppUiD2Ev @ 52 NONAME
+	_ZN16CMsgEditorBaseUiC2Ev @ 53 NONAME
+	_ZN16CMsgEditorBaseUiD0Ev @ 54 NONAME
+	_ZN16CMsgEditorBaseUiD1Ev @ 55 NONAME
+	_ZN16CMsgEditorBaseUiD2Ev @ 56 NONAME
+	_ZN21CMsgAttaListItemArray10ConstructLEv @ 57 NONAME
+	_ZN21CMsgAttaListItemArray4NewLER19CMsgAttachmentModelP9CArrayPtrI8CGulIconE @ 58 NONAME
+	_ZN21CMsgAttaListItemArrayC1ER19CMsgAttachmentModelP9CArrayPtrI8CGulIconE @ 59 NONAME
+	_ZN21CMsgAttaListItemArrayC2ER19CMsgAttachmentModelP9CArrayPtrI8CGulIconE @ 60 NONAME
+	_ZN21CMsgAttaListItemArrayD0Ev @ 61 NONAME
+	_ZN21CMsgAttaListItemArrayD1Ev @ 62 NONAME
+	_ZN21CMsgAttaListItemArrayD2Ev @ 63 NONAME
+	_ZN25CMsgViewAttachmentsDialog10ConstructLER9CMsvEntry @ 64 NONAME
+	_ZN25CMsgViewAttachmentsDialog10ConstructLEv @ 65 NONAME
+	_ZN25CMsgViewAttachmentsDialog10ItemAddedLEi @ 66 NONAME
+	_ZN25CMsgViewAttachmentsDialog10UpdateIconEi @ 67 NONAME
+	_ZN25CMsgViewAttachmentsDialog12ItemRemovedLEi @ 68 NONAME
+	_ZN25CMsgViewAttachmentsDialog13LoadFormDataLEv @ 69 NONAME
+	_ZN25CMsgViewAttachmentsDialog13OpenParamListEv @ 70 NONAME
+	_ZN25CMsgViewAttachmentsDialog14CleanupPointerEPv @ 71 NONAME
+	_ZN25CMsgViewAttachmentsDialog15ProcessCommandLEi @ 72 NONAME
+	_ZN25CMsgViewAttachmentsDialog16DynInitMenuPaneLEiP12CEikMenuPane @ 73 NONAME
+	_ZN25CMsgViewAttachmentsDialog16SetOpenParamListEP20CAiwGenericParamList @ 74 NONAME
+	_ZN25CMsgViewAttachmentsDialog17InsertAttachmentLERK4TBufILi256EEii @ 75 NONAME
+	_ZN25CMsgViewAttachmentsDialog17PreLayoutDynInitLEv @ 76 NONAME
+	_ZN25CMsgViewAttachmentsDialog17RemoveAttachmentLEi @ 77 NONAME
+	_ZN25CMsgViewAttachmentsDialog19HandleListBoxEventLEP11CEikListBoxN19MEikListBoxObserver13TListBoxEventE @ 78 NONAME
+	_ZN25CMsgViewAttachmentsDialog20CreateCustomControlLEi @ 79 NONAME
+	_ZN25CMsgViewAttachmentsDialog20CurrentListItemIndexEv @ 80 NONAME
+	_ZN25CMsgViewAttachmentsDialog20HandleResourceChangeEi @ 81 NONAME
+	_ZN25CMsgViewAttachmentsDialog9OkToExitLEi @ 82 NONAME
+	_ZN25CMsgViewAttachmentsDialogC1ER7TDesC16iR19CMsgAttachmentModel @ 83 NONAME
+	_ZN25CMsgViewAttachmentsDialogC2ER7TDesC16iR19CMsgAttachmentModel @ 84 NONAME
+	_ZN25CMsgViewAttachmentsDialogD0Ev @ 85 NONAME
+	_ZN25CMsgViewAttachmentsDialogD1Ev @ 86 NONAME
+	_ZN25CMsgViewAttachmentsDialogD2Ev @ 87 NONAME
+	_ZNK15CMsgEditorAppUi11IsLaunchedLEv @ 88 NONAME
+	_ZNK15CMsgEditorAppUi13IsLockedEntryEv @ 89 NONAME
+	_ZNK15CMsgEditorAppUi17MoveMessageEntryLEl @ 90 NONAME
+	_ZNK15CMsgEditorAppUi7MenuBarEv @ 91 NONAME
+	_ZNK21CMsgAttaListItemArray9MdcaCountEv @ 92 NONAME
+	_ZTI14CMsgCheckNames @ 93 NONAME ; #<TI>#
+	_ZTI15CMsgEditorAppUi @ 94 NONAME ; #<TI>#
+	_ZTI16CMsgEditorBaseUi @ 95 NONAME ; #<TI>#
+	_ZTI21CMsgAttaListItemArray @ 96 NONAME ; #<TI>#
+	_ZTI22CMsgAttachmentsListBox @ 97 NONAME ; #<TI>#
+	_ZTI24CMsgAttachmentItemDrawer @ 98 NONAME ; #<TI>#
+	_ZTI25CMsgSendKeyAcceptingQuery @ 99 NONAME ; #<TI>#
+	_ZTI25CMsgViewAttachmentsDialog @ 100 NONAME ; #<TI>#
+	_ZTV14CMsgCheckNames @ 101 NONAME ; #<VT>#
+	_ZTV15CMsgEditorAppUi @ 102 NONAME ; #<VT>#
+	_ZTV16CMsgEditorBaseUi @ 103 NONAME ; #<VT>#
+	_ZTV21CMsgAttaListItemArray @ 104 NONAME ; #<VT>#
+	_ZTV22CMsgAttachmentsListBox @ 105 NONAME ; #<VT>#
+	_ZTV24CMsgAttachmentItemDrawer @ 106 NONAME ; #<VT>#
+	_ZTV25CMsgSendKeyAcceptingQuery @ 107 NONAME ; #<VT>#
+	_ZTV25CMsgViewAttachmentsDialog @ 108 NONAME ; #<VT>#
+	_ZThn128_N15CMsgEditorAppUi14EditorObserverEN18MMsgEditorObserver22TMsgEditorObserverFuncEPvS2_S2_ @ 109 NONAME ; #<thunk>#
+	_ZThn128_N15CMsgEditorAppUi20CreateCustomControlLEi @ 110 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi17HandleEntryMovedLEll @ 111 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi18HandleEntryChangeLEv @ 112 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi19HandleCloseSessionLEv @ 113 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi19HandleEntryDeletedLEv @ 114 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi19HandleGeneralErrorLEi @ 115 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi19HandleMediaChangedLEv @ 116 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi21HandleMediaAvailableLEv @ 117 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi21HandleMediaIncorrectLEv @ 118 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi23HandleMediaUnavailableLEv @ 119 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi23HandleServerTerminatedLEv @ 120 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi26HandleMtmGroupDeinstalledLEv @ 121 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi26HandleServerFailedToStartLEv @ 122 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi28HandleCorruptedIndexRebuiltLEv @ 123 NONAME ; #<thunk>#
+	_ZThn132_N15CMsgEditorAppUi31HandleCorruptedIndexRebuildingLEv @ 124 NONAME ; #<thunk>#
+	_ZThn136_N15CMsgEditorAppUi20HandleIteratorEventLEN24MMessageIteratorObserver21TMessageIteratorEventE @ 125 NONAME ; #<thunk>#
+	_ZThn156_N25CMsgViewAttachmentsDialog15ProcessCommandLEi @ 126 NONAME ; #<thunk>#
+	_ZThn156_N25CMsgViewAttachmentsDialog16DynInitMenuPaneLEiP12CEikMenuPane @ 127 NONAME ; #<thunk>#
+	_ZThn176_N25CMsgViewAttachmentsDialog19HandleListBoxEventLEP11CEikListBoxN19MEikListBoxObserver13TListBoxEventE @ 128 NONAME ; #<thunk>#
+	_ZThn24_N15CMsgEditorAppUi11SetEmphasisEP11CCoeControli @ 129 NONAME ; #<thunk>#
+	_ZThn96_N25CMsgViewAttachmentsDialog20CreateCustomControlLEi @ 130 NONAME ; #<thunk>#
+	_ZN15CMsgEditorAppUi15InsertTextMemoLEi @ 131 NONAME
+	_ZN14CMsgCheckNames16FetchRecipientsLER13CArrayPtrFlatI17CMsgRecipientItemENS_21TMsgAddressSelectTypeE @ 132 NONAME
+	_ZN14CMsgCheckNames19FindAndCheckByNameLERK7TDesC16NS_21TMsgAddressSelectTypeER13CArrayPtrFlatI17CMsgRecipientItemEi @ 133 NONAME
+	_ZN25CMsgViewAttachmentsDialog25HandleControlStateChangeLEi @ 134 NONAME
+	_ZN15CMsgEditorAppUi22HandleLocalZoomChangeLE18TMsgCommonCommands @ 135 NONAME
+	_ZNK34TMsgEditorSettingCacheUpdatePlugin8GetValueEiRi @ 136 NONAME
+	_ZN14CMsgCheckNames16FetchRecipientsLER21CVPbkContactLinkArrayNS_21TMsgAddressSelectTypeE @ 137 NONAME
+	_ZN24CMsgEditorAppUiExtensionC1EP9CAknAppUi @ 138 NONAME
+	_ZN24CMsgEditorAppUiExtensionC2EP9CAknAppUi @ 139 NONAME
+	_ZN34TMsgEditorSettingCacheUpdatePluginC1EP9CAknAppUi @ 140 NONAME
+	_ZN34TMsgEditorSettingCacheUpdatePluginC2EP9CAknAppUi @ 141 NONAME
+	_ZN34TMsgEditorSettingCacheUpdatePluginD0Ev @ 142 NONAME
+	_ZN34TMsgEditorSettingCacheUpdatePluginD1Ev @ 143 NONAME
+	_ZN34TMsgEditorSettingCacheUpdatePluginD2Ev @ 144 NONAME
+	_ZN15CMsgEditorAppUi12CanFastOpenLERK16CMessageIterator @ 145 NONAME
+	_ZN15CMsgEditorAppUi19AknInputBlockCancelEv @ 146 NONAME
+	_ZThn140_N15CMsgEditorAppUi19AknInputBlockCancelEv @ 147 NONAME ; #<thunk>#
+	_ZN15CMsgEditorAppUi21CreateViewerNaviPaneLE5TTime21TMsgEditorMsgPriorityi @ 148 NONAME
+	_ZN15CMsgEditorAppUi29HandleNavigationControlEventLEN27MMsgNaviPaneControlObserver22TMsgNaviControlEventIdE @ 149 NONAME
+	_ZThn144_N15CMsgEditorAppUi29HandleNavigationControlEventLEN27MMsgNaviPaneControlObserver22TMsgNaviControlEventIdE @ 150 NONAME ; #<thunk>#
+	_ZN19CMsgNaviPaneControl17SetTimeIndicatorLE5TTimei @ 151 NONAME
+	_ZN19CMsgNaviPaneControl21SetPriorityIndicatorLE21TMsgEditorMsgPriority @ 152 NONAME
+	_ZN19CMsgNaviPaneControl23SetNavigationIndicatorLER11CMsvSessionRK9TMsvEntry @ 153 NONAME
+	_ZN19CMsgNaviPaneControl28SetNavigationControlObserverEP27MMsgNaviPaneControlObserver @ 154 NONAME
+	_ZN19CMsgNaviPaneControl4NewLEPK11CCoeControl @ 155 NONAME
+	_ZThn16_N14CMsgCheckNamesD0Ev @ 156 NONAME ; #<thunk>#
+	_ZThn16_N14CMsgCheckNamesD1Ev @ 157 NONAME ; #<thunk>#
+	_ZThn4_N21CMsgAttaListItemArrayD0Ev @ 158 NONAME ; #<thunk>#
+	_ZThn4_N21CMsgAttaListItemArrayD1Ev @ 159 NONAME ; #<thunk>#
+	_ZThn4_NK21CMsgAttaListItemArray9MdcaCountEv @ 160 NONAME ; #<thunk>#
+	_ZN15CMsgEditorAppUi17SetTitleIconSizeLEP10CFbsBitmap @ 161 NONAME
+	_ZN15CMsgEditorAppUi26HandleStatusPaneSizeChangeEv @ 162 NONAME
+	_ZThn88_N15CMsgEditorAppUi26HandleStatusPaneSizeChangeEv @ 163 NONAME ; #<thunk>#
+	_ZN25CMsgViewAttachmentsDialog19HandleServerAppExitEi @ 164 NONAME
+	_ZThn180_N25CMsgViewAttachmentsDialog19HandleServerAppExitEi @ 165 NONAME ; #<thunk>#
+	_ZN14CMsgCheckNames9GetAliasLERK7TDesC16R6TDes16i @ 166 NONAME
+

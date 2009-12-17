@@ -1,0 +1,84 @@
+/*
+* Copyright (c) 2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*     This is project specification file for the Email plain view plug-in.
+*     
+*
+*/
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+TARGET			MailPlainView.dll
+TARGETTYPE 		PLUGIN
+UID			0x10009D8D 0x101FD69F //KECOMUid2 0x10009D8D
+
+CAPABILITY		CAP_ECOM_PLUGIN
+VENDORID 		VID_DEFAULT
+
+SOURCEPATH		.
+SOURCE  ImplementationGroupProxy.cpp
+SOURCE  CMailMessagePlainView.cpp
+SOURCE  MsgMailViewerHtmlConv.cpp
+SOURCE  MailLoadStateMachine.cpp
+SOURCE  MailLoadStateHtml.cpp
+SOURCE  MailLoadStateInline.cpp
+SOURCE  MailLoadStateMessageAttachment.cpp
+SOURCE  CLoadAttachments.cpp
+
+
+SOURCEPATH  ../../UtilsSrc
+SOURCE  Maillog.cpp
+
+SOURCEPATH  .
+START RESOURCE 101F85C5.rss
+TARGET MailPlainView.rsc
+END
+
+APP_LAYER_SYSTEMINCLUDE
+
+// Notice that now there’re 2 different resource files with the same name, 
+// but in different directories (/resource/plugins and /resource).
+START RESOURCE MailPlainView.rss
+TARGET MailPlainView.rss       
+TARGETPATH      RESOURCE_FILES_DIR
+HEADER
+LANGUAGE_IDS
+END 
+
+USERINCLUDE		. ../../ViewerSrc
+USERINCLUDE	  ../../group
+USERINCLUDE	  ../../UtilsSrc
+SYSTEMINCLUDE	  ../../../../inc
+
+// Mail Utils
+LIBRARY msgmailutils.lib
+
+
+LIBRARY etext.lib
+LIBRARY euser.lib apparc.lib cone.lib eikcore.lib 
+LIBRARY eikcoctl.lib avkon.lib charconv.lib
+LIBRARY eikdlg.lib bafl.lib ecom.lib
+LIBRARY efsrv.lib apgrfx.lib apmime.lib 
+LIBRARY CommonEngine.lib
+
+// Messaging
+LIBRARY msgs.lib
+LIBRARY imcm.lib
+LIBRARY muiu.lib
+
+DEBUGLIBRARY flogger.lib
+
+
+// End of File

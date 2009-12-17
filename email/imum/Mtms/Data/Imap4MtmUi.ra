@@ -1,0 +1,150 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: Imap4MtmUi.ra
+*
+*/
+
+
+#include "Imap4MtmUi.hrh"
+
+RESOURCE RSS_SIGNATURE
+    { 
+    }
+
+
+RESOURCE TBUF r_inbox_name                  
+    { 
+    buf="Inbox"; 
+    // this is not localised because every Imap4 mail server must include 
+    // folder named 'Inbox' according Imap4 protocol
+    }
+
+//  Progress messages
+RESOURCE TBUF r_imap4_progress_inboxsync    
+    { 
+    buf=qtn_mce_wait_updating_inbox; 
+    }
+RESOURCE TBUF r_imap4_progress_fetching     
+    { 
+    buf=qtn_mce_progress_fetch; 
+    }
+
+RESOURCE TBUF r_imap4_progress_fetching_multi   
+    { 
+    buf=qtn_mce_progress_fetch_many; 
+    }
+
+RESOURCE TBUF r_imap4_progress_copying      
+    { 
+    buf=qtn_mce_wait_copy; 
+    }
+RESOURCE TBUF r_imap4_progress_copying_multi    
+    { 
+    buf=qtn_mce_wait_copy_many; 
+    }
+
+RESOURCE TBUF r_imap4_progress_deleting_many
+    { 
+    buf=qtn_mce_wait_delete_many; 
+    }
+
+RESOURCE TBUF r_imap4_progress_deleting     
+    { 
+    buf=qtn_mce_wait_delete; 
+    }
+
+RESOURCE TBUF r_imap4_getting_attachment        
+    { 
+    buf=qtn_mail_wait_fetch_atta; 
+    }
+
+RESOURCE TBUF r_imap4_progress_undeleting
+    { 
+    buf=qtn_mce_wait_undelete; 
+    }
+
+RESOURCE TBUF r_imap4_progress_undeleting_many
+    { 
+    buf=qtn_mce_wait_undeletes; 
+    }
+
+RESOURCE TBUF r_imap4_progress_deleting_locally_many
+    { 
+    buf=qtn_mce_wait_delete_many_msg; // this is also used in pop3 local delete 
+    }
+
+RESOURCE TBUF r_imap4_progress_deleting_locally
+    { 
+    buf=qtn_mce_wait_delete_msg; // this is also used in pop3 local delete 
+    }
+
+
+// --- summary text ---
+
+RESOURCE TBUF256 r_imap4_timeout_dialog_text        
+    { 
+    buf=qtn_mce_info_mailbox_closed; 
+    }
+
+RESOURCE TBUF256 r_mail_err_no_in_srvr        
+    { 
+    buf=qtn_mail_err_no_in_srvr; 
+    }
+
+
+//message info
+RESOURCE TBUF64 r_imap_message_info_mail_type   
+    { 
+    buf=qtn_mail_msginfo_mail; 
+    }
+
+RESOURCE DIALOG r_imum_delete_list_query
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    items=
+        {
+        DLG_LINE 
+            {
+            type = EAknCtListQueryControl;
+            id = EListQueryControl;
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = LISTBOX
+                    {
+                    flags = EAknListBoxMenuList;
+                    height = 3;
+                    width = 3;
+                    array_id = r_imum_delete_list_query_list_array;
+                    };
+                heading = qtn_mce_pop_up_delete;
+                };
+            }
+        };
+    }
+
+RESOURCE TBUF r_imum_delete_list_query_title_many_mails
+    { 
+    buf = qtn_mce_pop_up_delete_many; 
+    }
+
+RESOURCE ARRAY r_imum_delete_list_query_list_array
+    {
+    items = 
+        {
+        LBUF { txt = qtn_mce_pop_up_locally; },
+        LBUF { txt = qtn_mce_pop_up_server; }
+        };
+    }

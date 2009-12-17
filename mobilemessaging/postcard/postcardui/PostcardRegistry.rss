@@ -1,0 +1,93 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains Poca MTM info resource.
+*
+*/
+
+
+
+//  INCLUDES
+#include <mtmconfig.rh>
+#include <e32capability.h>
+
+//  CONSTANTS  
+// none
+
+//  MACROS  
+// none
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    
+//    MTM info resource for Poca
+//
+// ---------------------------------------------------------
+//
+
+RESOURCE MTM_INFO_FILE
+    {
+    mtm_type_uid = 0x10207245;
+    technology_type_uid = 0x100058E2;
+    components = 
+        {
+        MTM_COMPONENT_V2
+            {
+            human_readable_name = "Poca";
+            component_uid = KUidMtmServerComponentVal;
+            entry_point = 1;
+            version = VERSION_V2 {};
+            filename = "mmssrv.dll";
+            },
+        MTM_COMPONENT_V2
+            {
+            human_readable_name = "Poca";
+            component_uid = KUidMtmClientComponentVal;
+            entry_point = 1;
+            version = VERSION_V2 {};
+            filename = "mmscli.dll";
+            },
+        MTM_COMPONENT_V2
+            {
+            human_readable_name = "Poca";
+            component_uid = KUidMtmUiComponentVal;
+            entry_point = 1;
+            version = VERSION_V2 {};
+            filename = "postcardui.dll";
+            },
+        MTM_COMPONENT_V2
+            {
+            human_readable_name = "Poca";
+            component_uid = KUidMtmUiDataComponentVal;
+            entry_point = 2;
+            version = VERSION_V2 {};
+            filename = "postcardui.dll";
+            }
+        };
+    }
+
+RESOURCE MTM_CAPABILITIES
+    {
+    send_capability = 1;
+    body_capability = 0;
+    }
+
+RESOURCE MTM_SECURITY_CAPABILITY_SET
+    {
+    capabilities = { ECapabilityNetworkServices };
+    }
+
+// End of File

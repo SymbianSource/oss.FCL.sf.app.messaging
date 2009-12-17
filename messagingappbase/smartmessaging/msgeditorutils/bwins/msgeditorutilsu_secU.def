@@ -1,0 +1,78 @@
+EXPORTS
+	??0CMsgAsyncItemSaver@@QAE@XZ @ 1 NONAME ; CMsgAsyncItemSaver::CMsgAsyncItemSaver(void)
+	??0CMsgBioControl@@QAE@AAVMMsgBioControlObserver@@PAVCMsvSession@@JW4TMsgBioMode@@ABV?$TBuf@$0BAA@@@@Z @ 2 NONAME ABSENT ; CMsgBioControl::CMsgBioControl(class MMsgBioControlObserver &, class CMsvSession *, long, enum TMsgBioMode, class TBuf<256> const &)
+	??0CMsgBioControl@@QAE@AAVMMsgBioControlObserver@@PAVCMsvSession@@JW4TMsgBioMode@@ABV?$TBuf@$0BAA@@@ABVRFile@@@Z @ 3 NONAME ABSENT ; CMsgBioControl::CMsgBioControl(class MMsgBioControlObserver &, class CMsvSession *, long, enum TMsgBioMode, class TBuf<256> const &, class RFile const &)
+	??1CMsgAsyncItemSaver@@UAE@XZ @ 4 NONAME ; CMsgAsyncItemSaver::~CMsgAsyncItemSaver(void)
+	??1CMsgBioBodyControl@@UAE@XZ @ 5 NONAME ; CMsgBioBodyControl::~CMsgBioBodyControl(void)
+	??1CMsgBioControl@@UAE@XZ @ 6 NONAME ; CMsgBioControl::~CMsgBioControl(void)
+	??1CMsgBioControlFactory@@UAE@XZ @ 7 NONAME ; CMsgBioControlFactory::~CMsgBioControlFactory(void)
+	??1CMsgDetailWindow@@UAE@XZ @ 8 NONAME ; CMsgDetailWindow::~CMsgDetailWindow(void)
+	??1CMsgNameValue@@UAE@XZ @ 9 NONAME ; CMsgNameValue::~CMsgNameValue(void)
+	?AddMenuItemL@CMsgBioControl@@IAEXAAVCEikMenuPane@@HHH@Z @ 10 NONAME ; void CMsgBioControl::AddMenuItemL(class CEikMenuPane &, int, int, int)
+	?BioControl@CMsgBioBodyControl@@QAEAAVCMsgBioControl@@XZ @ 11 NONAME ; class CMsgBioControl & CMsgBioBodyControl::BioControl(void)
+	?CheckIP@MsgBioUtils@@SAHABVTDesC16@@@Z @ 12 NONAME ; int MsgBioUtils::CheckIP(class TDesC16 const &)
+	?CheckURL@MsgBioUtils@@SAHABVTDesC16@@@Z @ 13 NONAME ; int MsgBioUtils::CheckURL(class TDesC16 const &)
+	?ClipboardL@CMsgBioBodyControl@@UAEXW4TMsgClipboardFunc@@@Z @ 14 NONAME ; void CMsgBioBodyControl::ClipboardL(enum TMsgClipboardFunc)
+	?ConfirmationNoteL@MsgBioUtils@@SAXABVTDesC16@@@Z @ 15 NONAME ; void MsgBioUtils::ConfirmationNoteL(class TDesC16 const &)
+	?ConfirmationNoteL@MsgBioUtils@@SAXH@Z @ 16 NONAME ; void MsgBioUtils::ConfirmationNoteL(int)
+	?ConfirmationQueryL@CMsgBioControl@@SAHABVTDesC16@@@Z @ 17 NONAME ; int CMsgBioControl::ConfirmationQueryL(class TDesC16 const &)
+	?ConfirmationQueryL@CMsgBioControl@@SAHH@Z @ 18 NONAME ; int CMsgBioControl::ConfirmationQueryL(int)
+	?ConfirmationQueryOkCancelL@MsgBioUtils@@SAHABVTDesC16@@@Z @ 19 NONAME ; int MsgBioUtils::ConfirmationQueryOkCancelL(class TDesC16 const &)
+	?ConfirmationQueryOkCancelL@MsgBioUtils@@SAHH@Z @ 20 NONAME ; int MsgBioUtils::ConfirmationQueryOkCancelL(int)
+	?Continue@CMsgAsyncItemSaver@@QAEXXZ @ 21 NONAME ; void CMsgAsyncItemSaver::Continue(void)
+	?Control@CMsgDetailWindow@@QBEAAVCRichBio@@XZ @ 22 NONAME ; class CRichBio & CMsgDetailWindow::Control(void) const
+	?CreateControlL@CMsgBioControlFactory@@QAEPAVCMsgBioControl@@AAVMMsgBioControlObserver@@ABVTUid@@W4TMsgBioMode@@ABV?$TBuf@$0BAA@@@@Z @ 23 NONAME ABSENT ; class CMsgBioControl * CMsgBioControlFactory::CreateControlL(class MMsgBioControlObserver &, class TUid const &, enum TMsgBioMode, class TBuf<256> const &)
+	?CreateControlL@CMsgBioControlFactory@@QAEPAVCMsgBioControl@@AAVMMsgBioControlObserver@@ABVTUid@@W4TMsgBioMode@@ABVRFile@@@Z @ 24 NONAME ; class CMsgBioControl * CMsgBioControlFactory::CreateControlL(class MMsgBioControlObserver &, class TUid const &, enum TMsgBioMode, class RFile const &)
+	?CreateControlL@CMsgBioControlFactory@@QAEPAVCMsgBioControl@@AAVMMsgBioControlObserver@@ABVTUid@@W4TMsgBioMode@@JPAVCMsvSession@@@Z @ 25 NONAME ; class CMsgBioControl * CMsgBioControlFactory::CreateControlL(class MMsgBioControlObserver &, class TUid const &, enum TMsgBioMode, long, class CMsvSession *)
+	?CurrentLineRect@CMsgBioBodyControl@@UAE?AVTRect@@XZ @ 26 NONAME ; class TRect CMsgBioBodyControl::CurrentLineRect(void)
+	?EditL@CMsgBioBodyControl@@UAEXW4TMsgEditFunc@@@Z @ 27 NONAME ; void CMsgBioBodyControl::EditL(enum TMsgEditFunc)
+	?EditPermission@CMsgBioBodyControl@@UBEKXZ @ 28 NONAME ; unsigned long CMsgBioBodyControl::EditPermission(void) const
+	?ErrorNoteL@MsgBioUtils@@SAXABVTDesC16@@@Z @ 29 NONAME ; void MsgBioUtils::ErrorNoteL(class TDesC16 const &)
+	?ErrorNoteL@MsgBioUtils@@SAXH@Z @ 30 NONAME ; void MsgBioUtils::ErrorNoteL(int)
+	?FileHandle@CMsgBioControl@@IBEABVRFile@@XZ @ 31 NONAME ; class RFile const & CMsgBioControl::FileHandle(void) const
+	?FileName@CMsgBioControl@@IBEABV?$TBuf@$0BAA@@@XZ @ 32 NONAME ; class TBuf<256> const & CMsgBioControl::FileName(void) const
+	?GetBioControlHelpContext@CMsgBioControl@@QBEHAAVTCoeHelpContext@@@Z @ 33 NONAME ABSENT ; int CMsgBioControl::GetBioControlHelpContext(class TCoeHelpContext &) const 
+	?HandleBaseControlEventRequestL@CMsgBioBodyControl@@UAEHW4TMsgBioControlEventRequest@@H@Z @ 34 NONAME ; int CMsgBioBodyControl::HandleBaseControlEventRequestL(enum TMsgBioControlEventRequest, int)
+	?HandleBioCommandL@CMsgBioBodyControl@@QAEHH@Z @ 35 NONAME ; int CMsgBioBodyControl::HandleBioCommandL(int)
+	?HeaderTextL@CMsgBioBodyControl@@QBEPAVHBufC16@@XZ @ 36 NONAME ; class HBufC16 * CMsgBioBodyControl::HeaderTextL(void) const
+	?Hide@CMsgDetailWindow@@QAEXXZ @ 37 NONAME ; void CMsgDetailWindow::Hide(void)
+	?IncrementNameL@MsgBioUtils@@SAXAAVTDes16@@@Z @ 38 NONAME ABSENT ; void MsgBioUtils::IncrementNameL(class TDes16 &)
+	?InformationNoteL@MsgBioUtils@@SAXABVTDesC16@@@Z @ 39 NONAME ; void MsgBioUtils::InformationNoteL(class TDesC16 const &)
+	?InformationNoteL@MsgBioUtils@@SAXH@Z @ 40 NONAME ; void MsgBioUtils::InformationNoteL(int)
+	?IsCursorLocation@CMsgBioBodyControl@@UBEHW4TMsgCursorLocation@@@Z @ 41 NONAME ; int CMsgBioBodyControl::IsCursorLocation(enum TMsgCursorLocation) const
+	?IsCursorLocation@CMsgBioControl@@UBEHW4TMsgCursorLocation@@@Z @ 42 NONAME ; int CMsgBioControl::IsCursorLocation(enum TMsgCursorLocation) const
+	?IsEditor@CMsgBioControl@@IBEHXZ @ 43 NONAME ; int CMsgBioControl::IsEditor(void) const
+	?IsFileBased@CMsgBioControl@@IBEHXZ @ 44 NONAME ; int CMsgBioControl::IsFileBased(void) const
+	?IsFocusChangePossible@CMsgBioBodyControl@@UBEHW4TMsgFocusDirection@@@Z @ 45 NONAME ; int CMsgBioBodyControl::IsFocusChangePossible(enum TMsgFocusDirection) const
+	?LoadResourceL@CMsgBioControl@@IAEXABVTDesC16@@0@Z @ 46 NONAME ; void CMsgBioControl::LoadResourceL(class TDesC16 const &, class TDesC16 const &)
+	?LoadResourceL@CMsgBioControl@@IAEXABVTDesC16@@@Z @ 47 NONAME ; void CMsgBioControl::LoadResourceL(class TDesC16 const &)
+	?LoadStandardBioResourceL@CMsgBioControl@@IAEXXZ @ 48 NONAME ; void CMsgBioControl::LoadStandardBioResourceL(void)
+	?MsvSession@CMsgBioControl@@IBEAAVCMsvSession@@XZ @ 49 NONAME ; class CMsvSession & CMsgBioControl::MsvSession(void) const
+	?Name@CMsgNameValue@@QBEABVTDesC16@@XZ @ 50 NONAME ; class TDesC16 const & CMsgNameValue::Name(void) const
+	?NewL@CMsgBioBodyControl@@SAPAV1@AAVMMsgBioControlObserver@@ABVTUid@@JW4TMsgBioMode@@AAVCMsvSession@@@Z @ 51 NONAME ; class CMsgBioBodyControl * CMsgBioBodyControl::NewL(class MMsgBioControlObserver &, class TUid const &, long, enum TMsgBioMode, class CMsvSession &)
+	?NewL@CMsgBioControlFactory@@SAPAV1@XZ @ 52 NONAME ; class CMsgBioControlFactory * CMsgBioControlFactory::NewL(void)
+	?NewL@CMsgDetailWindow@@SAPAV1@XZ @ 53 NONAME ; class CMsgDetailWindow * CMsgDetailWindow::NewL(void)
+	?NewL@CMsgNameValue@@SAPAV1@ABVTDesC16@@0@Z @ 54 NONAME ; class CMsgNameValue * CMsgNameValue::NewL(class TDesC16 const &, class TDesC16 const &)
+	?NewL@CMsgNameValue@@SAPAV1@PAVHBufC16@@0@Z @ 55 NONAME ; class CMsgNameValue * CMsgNameValue::NewL(class HBufC16 *, class HBufC16 *)
+	?NewLC@CMsgNameValue@@SAPAV1@ABVTDesC16@@0@Z @ 56 NONAME ; class CMsgNameValue * CMsgNameValue::NewLC(class TDesC16 const &, class TDesC16 const &)
+	?NotifyEditorViewL@CMsgBioControl@@IAEHW4TMsgBioControlEventRequest@@H@Z @ 57 NONAME ; int CMsgBioControl::NotifyEditorViewL(enum TMsgBioControlEventRequest, int)
+	?OptionMenuPermissionsL@CMsgBioControl@@UBEKXZ @ 58 NONAME ; unsigned long CMsgBioControl::OptionMenuPermissionsL(void) const
+	?Pause@CMsgAsyncItemSaver@@QAEXH@Z @ 59 NONAME ; void CMsgAsyncItemSaver::Pause(int)
+	?SetAndGetSizeL@CMsgBioBodyControl@@UAEXAAVTSize@@@Z @ 60 NONAME ; void CMsgBioBodyControl::SetAndGetSizeL(class TSize &)
+	?SetControlL@CMsgDetailWindow@@QAEXPAVCRichBio@@@Z @ 61 NONAME ; void CMsgDetailWindow::SetControlL(class CRichBio *)
+	?SetExtension@CMsgBioControl@@IAEXPAVMMsgBioControlExtension@@@Z @ 62 NONAME ; void CMsgBioControl::SetExtension(class MMsgBioControlExtension *)
+	?SetMenuCommandSetL@CMsgBioBodyControl@@QAEXAAVCEikMenuPane@@@Z @ 63 NONAME ; void CMsgBioBodyControl::SetMenuCommandSetL(class CEikMenuPane &)
+	?Show@CMsgDetailWindow@@QAEXXZ @ 64 NONAME ; void CMsgDetailWindow::Show(void)
+	?StartOperation@CMsgAsyncItemSaver@@QAEXPAVMMsgAsyncItemSaver@@@Z @ 65 NONAME ; void CMsgAsyncItemSaver::StartOperation(class MMsgAsyncItemSaver *)
+	?TextQueryL@MsgBioUtils@@SAXHAAVTDes16@@@Z @ 66 NONAME ; void MsgBioUtils::TextQueryL(int, class TDes16 &)
+	?Value@CMsgNameValue@@QBEABVTDesC16@@XZ @ 67 NONAME ; class TDesC16 const & CMsgNameValue::Value(void) const
+	?VirtualHeight@CMsgBioBodyControl@@UAEHXZ @ 68 NONAME ; int CMsgBioBodyControl::VirtualHeight(void)
+	?VirtualHeight@CMsgBioControl@@UAEHXZ @ 69 NONAME ; int CMsgBioControl::VirtualHeight(void)
+	?VirtualVisibleTop@CMsgBioBodyControl@@UAEHXZ @ 70 NONAME ; int CMsgBioBodyControl::VirtualVisibleTop(void)
+	?VirtualVisibleTop@CMsgBioControl@@UAEHXZ @ 71 NONAME ; int CMsgBioControl::VirtualVisibleTop(void)
+	??0CMsgBioControl@@QAE@AAVMMsgBioControlObserver@@PAVCMsvSession@@JW4TMsgBioMode@@PBVRFile@@@Z @ 72 NONAME ; CMsgBioControl::CMsgBioControl(class MMsgBioControlObserver &, class CMsvSession *, long, enum TMsgBioMode, class RFile const *)
+	?IncrementNameL@MsgBioUtils@@SAXAAVTDes16@@H@Z @ 73 NONAME ; void MsgBioUtils::IncrementNameL(class TDes16 &, int)
+	?NotifyViewEvent@CMsgBioBodyControl@@UAEXW4TMsgViewEvent@@H@Z @ 74 NONAME ; void CMsgBioBodyControl::NotifyViewEvent(enum TMsgViewEvent, int)
+	?NotifyViewEvent@CMsgBioControl@@QAEXW4TMsgViewEvent@@H@Z @ 75 NONAME ; void CMsgBioControl::NotifyViewEvent(enum TMsgViewEvent, int)
+	?ScrollL@CMsgBioBodyControl@@UAEHHW4TMsgScrollDirection@@@Z @ 76 NONAME ; int CMsgBioBodyControl::ScrollL(int, enum TMsgScrollDirection)
+	?ScrollL@CMsgBioControl@@QAEHHW4TMsgScrollDirection@@@Z @ 77 NONAME ; int CMsgBioControl::ScrollL(int, enum TMsgScrollDirection)

@@ -1,0 +1,5 @@
+EXPORTS
+	?NewL@CUniDummyServerMtm@@SAPAV1@AAVCRegisteredMtmDll@@PAVCMsvServerEntry@@@Z @ 1 NONAME ; class CUniDummyServerMtm * CUniDummyServerMtm::NewL(class CRegisteredMtmDll &, class CMsvServerEntry *)
+	?NewL@CUniClientMtm@@SAPAV1@AAVCRegisteredMtmDll@@AAVCMsvSession@@@Z @ 2 NONAME ; class CUniClientMtm * CUniClientMtm::NewL(class CRegisteredMtmDll &, class CMsvSession &)
+	?NewUniMtmUiL@@YAPAVCBaseMtmUi@@AAVCBaseMtm@@AAVCRegisteredMtmDll@@@Z @ 3 NONAME ; class CBaseMtmUi * NewUniMtmUiL(class CBaseMtm &, class CRegisteredMtmDll &)
+	?NewUniMtmUiDataL@@YAPAVCBaseMtmUiData@@AAVCRegisteredMtmDll@@@Z @ 4 NONAME ; class CBaseMtmUiData * NewUniMtmUiDataL(class CRegisteredMtmDll &)

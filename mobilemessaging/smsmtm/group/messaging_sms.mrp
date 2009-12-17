@@ -1,0 +1,13 @@
+component	messaging_sms
+source	\sf\app\messaging\mobilemessaging\smsmtm
+
+binary	\sf\app\messaging\mobilemessaging\smsmtm\group	all
+exports	\sf\app\messaging\mobilemessaging\smsmtm\group	
+
+notes_source	\component_defs\release.src
+
+
+ipr E 
+ipr T \sf\app\messaging\mobilemessaging\smsmtm\clientmtm\test
+ipr T \sf\app\messaging\mobilemessaging\smsmtm\test
+

@@ -1,0 +1,31 @@
+component	messaging_email
+
+# everything except imapservermtm and imap
+
+source	\sf\app\messaging\email\pop3andsmtpmtm\autosend
+source	\sf\app\messaging\email\pop3andsmtpmtm\clientmtms
+source	\sf\app\messaging\email\pop3andsmtpmtm\group
+source	\sf\app\messaging\email\pop3andsmtpmtm\popservermtm
+source	\sf\app\messaging\email\pop3andsmtpmtm\servermtmutils
+source	\sf\app\messaging\email\pop3andsmtpmtm\smtpservermtm
+source	\sf\app\messaging\email\pop3andsmtpmtm\testsuites
+
+# Resource files from messaging top-level group directory
+
+source	\sf\app\messaging\email\pop3andsmtpmtm\group\emailerr.ra
+source	\sf\app\messaging\email\pop3andsmtpmtm\group\emailerr.rls
+
+binary	\sf\app\messaging\email\pop3andsmtpmtm\group	all
+exports	\sf\app\messaging\email\pop3andsmtpmtm\group	
+
+notes_source	\component_defs\release.src
+
+
+ipr E 
+ipr T \sf\app\messaging\email\pop3andsmtpmtm\clientmtms\test
+ipr T \sf\app\messaging\email\pop3andsmtpmtm\popservermtm\test
+ipr T \sf\app\messaging\email\pop3andsmtpmtm\servermtmutils\test
+ipr T \sf\app\messaging\email\pop3andsmtpmtm\smtpservermtm\test
+ipr T \sf\app\messaging\email\pop3andsmtpmtm\testsuites
+ipr T \sf\app\messaging\email\pop3andsmtpmtm\clientmtms\testsuites
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<api id="e66d76e3e1f5076c3df18269910f18ca" dataversion="2.0">
+  <name>Messaging Integration API</name>
+  <description>Interface to help 3rd parties to integrate to S60 messaging</description>
+  <type>c++</type>
+  <collection>messagingappbase</collection>
+  <libs>
+  </libs>
+  <release category="public" sinceversion="0"/>
+  <attributes>
+     <!-- This indicates wether the api provedes separate html documentation -->
+     <!-- or is the additional documentation generated from headers. -->
+     <!-- If you are unsuere then the value is "no" -->
+     <htmldocprovided>no</htmldocprovided>
+     <adaptation>no</adaptation>
+  </attributes>
+</api>

@@ -1,0 +1,617 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME    NOTU
+
+//  INCLUDES
+#include <eikon.rh>
+#include <avkon.rsg>
+#include <avkon.hrh>
+#include <avkon.rsg>
+#include <avkon.rh>
+#include <mtud.rh>
+#include <MtmExtendedCapabilities.hrh>
+#include <avkon.loc>
+#include <muiusettingsarray.rh>
+
+#include "NotUi.hrh"
+#include <mmsui.loc>
+
+//  CONSTANTS  
+
+//  MACROS  
+
+//  RESOURCE DEFINITIONS 
+
+    RESOURCE RSS_SIGNATURE { }
+
+    RESOURCE TBUF { buf="NotUi"; }
+
+    // Settings
+    RESOURCE TBUF r_mms_settings_none                 { buf = qtn_mce_settings_mms_none; }
+    RESOURCE TBUF r_mms_settings_compulsory           { buf = qtn_selec_setting_compulsory; }
+
+    // Message Info
+    // Multimedia notification/forward string type string
+    RESOURCE TBUF r_not_type_text         { buf = qtn_mms_msginfo_notif ; }
+    RESOURCE TBUF r_not_message_size_kb   { buf = qtn_size_kb; }
+
+   // MMS priority in Message Info
+    RESOURCE TBUF r_mms_message_priority_high    { buf = qtn_mms_message_priority_high; }
+    RESOURCE TBUF r_mms_message_priority_normal  { buf = qtn_mms_message_priority_normal; }
+    RESOURCE TBUF r_mms_message_priority_low     { buf = qtn_mms_message_priority_low; }
+
+
+    RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_notui_delete_from_query
+        {
+        flags = EGeneralQueryFlags;
+        softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+        items =
+            {
+            AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+                {
+                control = AVKON_LIST_QUERY_CONTROL
+                    {
+                    listtype = EAknCtSinglePopupMenuListBox;
+                    listbox = AVKON_LIST_QUERY_LIST
+                        {
+                        array_id = 0;
+                        };
+                    heading = qtn_mms_qry_title_del_from;
+                    };
+                }
+            };
+        }
+
+
+/////////////// STRINGS RELATED TO MMBOX START HERE /////////////////
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_dialog
+// ----------------------------------------------------------------------------
+
+RESOURCE DIALOG r_not_mmbox_dialog
+    {
+    flags = EAknDialogMarkableList;
+    buttons=R_AVKON_SOFTKEYS_OPTIONS_BACK__SELECT;
+    items=
+        {
+        DLG_LINE
+            {
+            type	= EAknCtDoubleGraphicListBox;
+            id		= EMsgControlIdMMBoxListBox;
+            itemflags = EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+            control	= LISTBOX 
+                {
+				flags = EAknListBoxMultiselectionList;
+                height = 8;
+                };
+            }
+        };
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_msk_button_mark
+// ----------------------------------------------------------------------------
+RESOURCE CBA_BUTTON r_not_mmbox_msk_button_mark
+    {
+    id = EAknSoftkeyMark;
+    txt = qtn_msk_mark;
+    }
+    
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_msk_button_unmark
+// ----------------------------------------------------------------------------
+RESOURCE CBA_BUTTON r_not_mmbox_msk_button_unmark
+    {
+    id = EAknSoftkeyUnmark;
+    txt = qtn_msk_unmark;
+    }
+    
+RESOURCE TBUF r_not_mmbox_msk_button_empty
+    {
+    buf = R_TEXT_SOFTKEY_EMPTY;
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_menubar
+// ----------------------------------------------------------------------------
+RESOURCE MENU_BAR r_not_mmbox_menubar
+    {
+    titles=
+        { 
+        MENU_TITLE 
+            { 
+            menu_pane=r_not_mmbox_menupane ; 
+            txt=""; 
+            } 
+        };
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_menupane
+// ----------------------------------------------------------------------------
+RESOURCE MENU_PANE r_not_mmbox_menupane
+    {
+    items=
+        {
+        MENU_ITEM
+            {   
+            command = EMMBoxOpen;
+            txt = qtn_mce_open;
+            },
+        MENU_ITEM
+            {   
+            command = EMMBoxRetrieveMenu;
+            txt = qtn_mms_om_retrieve_msg;
+			cascade = r_not_mmbox_submenu_retrieve;
+            },
+        MENU_ITEM
+            {   
+            command = EMMBoxDeleteMenu;
+            txt = qtn_mce_delete;
+			cascade = r_not_mmbox_submenu_delete;
+            },
+        MENU_ITEM
+            {   
+            command = EMMBoxUpdateList;
+            txt = qtn_mce_om_update_view;
+            },
+        MENU_ITEM
+            {   
+            command = EMMBoxViewStatus;
+            txt = qtn_mce_om_view_info;
+            },
+        MENU_ITEM
+            {
+            command = EMMBoxSortMessagesBy;
+            txt = qtn_mce_rm_sort_messages;
+			cascade = r_not_mmbox_submenu_sort;
+            },
+        MENU_ITEM
+            {
+            command = EAknCmdHelp;
+            txt = qtn_options_help;
+            },
+        MENU_ITEM 
+            { 
+            command = EAknCmdExit;
+            txt = qtn_options_exit;
+            }
+        };
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_submenu_retrieve
+// ----------------------------------------------------------------------------
+RESOURCE MENU_PANE r_not_mmbox_submenu_retrieve
+    {
+    items=
+        {
+        MENU_ITEM
+            {   
+            command = EMMBoxRetrieveSelected;
+            txt = qtn_mms_sm_selected_items;
+            },
+        MENU_ITEM
+            {   
+            command = EMMBoxRetrieveAll;
+            txt = qtn_mms_sm_all_items;
+            }
+		};
+	}
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_submenu_delete
+// ----------------------------------------------------------------------------
+RESOURCE MENU_PANE r_not_mmbox_submenu_delete
+    {
+    items=
+        {
+        MENU_ITEM
+            {   
+            command = EMMBoxDeleteSelected;
+            txt = qtn_mms_sm_selected_items;
+            },
+        MENU_ITEM
+            {   
+            command = EMMBoxDeleteAll;
+            txt = qtn_mms_sm_all_items;
+            }
+		};
+	}
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_submenu_sort
+// ----------------------------------------------------------------------------
+RESOURCE MENU_PANE r_not_mmbox_submenu_sort
+    {
+    items=
+        {
+        MENU_ITEM
+            {   
+            command = EMMBoxSortMessagesByDate;
+            txt = qtn_mce_rm_sort_date;
+            },
+        MENU_ITEM
+            {   
+            command = EMMBoxSortMessagesBySender;
+            txt = qtn_mce_rm_sort_sender;
+            },
+        MENU_ITEM
+            {   
+            command = EMMBoxSortMessagesBySubject;
+            txt = qtn_mce_rm_sort_subject;
+            }
+		};
+	}
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_title_text
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_title_text
+    { 
+    buf = qtn_mce_title_mms_notifs_view; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_timed_query
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_timed_query
+    { 
+    buf = qtn_mms_qry_time_update_list;
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_timeless_query
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_timeless_query
+    { 
+    buf = qtn_mms_qry_update_list;
+	}
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_navi_date
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_navi_date
+    { 
+    buf = qtn_navi_list_updated; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_navi_time
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_navi_time
+    { 
+    buf = qtn_navi_list_updated_today; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_info_time
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_info_time
+    { 
+    buf = qtn_notif_list_updated; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_empty_string
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_empty_string
+    { 
+    buf = qtn_mms_text_empty_list;
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_status_title
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_status_title
+    { 
+    buf = qtn_list_view_status_info_title; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_update_label
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_update_label
+    { 
+    buf = qtn_list_view_info_updated; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_storage_label
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_storage_label
+    { 
+    buf = qtn_list_view_info_percents_used; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_quota_label
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_quota_label
+    { 
+    buf = qtn_list_view_info_quota_used; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_storage_data
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_storage_data
+    { 
+    buf = qtn_list_view_data_percents_used; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_quota_data
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_quota_data
+    { 
+    buf = qtn_list_view_data_quota_used; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_wait_updating_notif
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_wait_updating_notif
+    { 
+    buf = qtn_mce_wait_updating_notif_list; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_query_80_used
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_query_80_used
+    { 
+    buf = qtn_list_view_qry_remove_msgs; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_info_no_msgs
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_info_no_msgs
+    { 
+    buf = qtn_mce_info_mmbox_empty; 
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_info_unable_update
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_info_unable_update
+    { 
+    buf = qtn_mce_info_failed_update_list;
+    }
+
+// ----------------------------------------------------------------------------
+//   
+//      deleting_wait_note
+//      The wait note deleting messages from the MMBox
+//
+// ----------------------------------------------------------------------------
+RESOURCE DIALOG deleting_wait_note
+    {
+    flags = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_CANCEL;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtNote;
+            id = 1;
+            control= AVKON_NOTE 
+                { 
+                layout = EWaitLayout;
+                singular_label = qtn_mms_wait_deleting_remote;
+                animation =R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }
+
+/////////////// STRINGS RELATED TO MMBOX END HERE /////////////////
+
+
+
+RESOURCE MTUD_FUNCTION_ARRAY r_not_mtm_function_array
+    {
+    functions =
+         {
+         MTUD_FUNCTION 
+             {
+             functiontext = qtn_mce_info;
+             command = KMtmUiFunctionMessageInfo;
+             flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+             },
+         MTUD_FUNCTION 
+             {
+             functiontext = qtn_mms_om_retrieve_msg;
+             command = KMtmUiFunctionFetchMMS;
+             flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+             },
+         MTUD_FUNCTION 
+             {
+             functiontext = qtn_mce_open_mms_notif_view;
+             command = KMtmUiFunctionMMBox;
+             flags = EMtudAsynchronous|EMtudCommandTransferReceive;
+             }
+         };
+     }
+
+// ---------------------------------------------------------
+//   
+//    r_notui_confirmation_query - dialog
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_notui_confirmation_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                    layout = EConfirmationLayout;
+                    label = "";
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//   
+//    r_notui_confirmable_query - dialog
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_notui_confirmable_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_OK_EMPTY__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                    layout = EConfirmationLayout;
+                    label = "";
+                };
+            }
+        };
+    }
+
+
+    RESOURCE TBUF r_notmtm_wait_deleting_remote      { buf = qtn_mms_wait_deleting_remote; }
+    RESOURCE TBUF r_notmtm_wait_deleting			 { buf = qtn_notif_wait_delete; }
+    RESOURCE TBUF r_notmtm_wait_deleting_many        { buf = qtn_notif_wait_delete_many; }
+
+    RESOURCE TBUF r_notmtm_quest_delete_message      { buf = qtn_query_common_conf_delete_me; }
+    RESOURCE TBUF r_notmtm_quest_delete_messages     { buf = qtn_query_common_conf_delete_ms; }
+    RESOURCE TBUF r_notmtm_inbox_status_retrieving   { buf = qtn_mms_notification_state_retrieving; }
+    RESOURCE TBUF r_notmtm_inbox_status_waiting      { buf = qtn_mms_notification_state_waiting; }
+    RESOURCE TBUF r_notmtm_inbox_status_failed       { buf = qtn_mms_notification_state_failed; }
+    RESOURCE TBUF r_notmtm_inbox_status_forwarding   { buf = qtn_mms_notification_state_forwarding; }
+    RESOURCE TBUF r_notmtm_inbox_status_forwarded    { buf = qtn_mms_notification_state_forwarded; }
+    RESOURCE TBUF r_notmtm_inbox_status_deleted		 { buf = qtn_mms_notification_state_deleted; }
+    RESOURCE TBUF r_notmtm_inbox_status_normal		 { buf = qtn_mms_notification_state_normal; }
+
+    RESOURCE TBUF r_notmtm_outbox_status_sending     { buf = qtn_mce_outbox_status_sending; }
+    RESOURCE TBUF r_notmtm_outbox_status_waiting     { buf = qtn_mce_outbox_status_waiting; }
+    RESOURCE TBUF r_notmtm_outbox_status_failed      { buf = qtn_mce_outbox_status_failed; }
+
+    RESOURCE TBUF r_notmtm_delete_query_remoteonly   { buf = qtn_mms_qry_del_only_remote; }
+    RESOURCE TBUF r_notmtm_delete_query_bothlocalandremote { buf = qtn_mms_qry_del_from_both; }
+    RESOURCE TBUF r_notmtm_delete_query_localonly   { buf = qtn_mms_qry_del_only_local; }
+
+    RESOURCE TBUF r_notmtm_offline_not_possible      { buf = qtn_offline_not_possible; }
+
+// ---------------------------------------------------------
+//   
+//      r_notui_wait_note
+//      Wait note for MMBoxDialog
+//
+// ---------------------------------------------------------
+//
+
+RESOURCE DIALOG r_notui_wait_note
+{
+    flags   = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+    {
+        DLG_LINE
+        {
+            type    = EAknCtNote;
+            id      = 2;
+            control = AVKON_NOTE
+            {
+                layout         = EWaitLayout;
+                animation      = R_QGN_GRAF_WAIT_BAR_ANIM;
+            };
+        }
+    };
+}
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_info_delete_failed
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_info_delete_failed
+    { 
+    buf = qtn_mms_info_remote_del_failed;
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_info_delete_failed_many
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_info_delete_failed_many
+    { 
+    buf = qtn_mms_info_remote_del_failed_many;
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_info_fetch_failed_one
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_info_fetch_failed_one
+    { 
+    buf = qtn_mms_cannot_retrieve_one;
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_info_fetch_failed_some
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_info_fetch_failed_some
+    { 
+    buf = qtn_mms_cannot_retrieve_some;
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_info_fetch_failed_any
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_info_fetch_failed_any
+    { 
+    buf = qtn_mms_cannot_retrieve_any;
+    }
+
+// ----------------------------------------------------------------------------
+//    r_not_mmbox_last_update_error
+// ----------------------------------------------------------------------------
+RESOURCE TBUF r_not_mmbox_last_update_error
+	{
+	buf = qtn_mms_qry_list_update_not_successful;
+	}
+
+//----------------------------------------------------
+//    r_not_mmbox_quest_message_expired
+//----------------------------------------------------
+RESOURCE TBUF r_not_mmbox_quest_msg_expired
+	{
+	buf = qtn_mms_quest_msg_expired; 
+	}
+
+
+// End of File

@@ -1,0 +1,59 @@
+/*
+* Copyright (c) 2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  NotViewer_reg.rss*
+*/
+
+
+
+#include <MuiuMsgEditorService.rh>
+#include <MuiuMsgEditorServiceConst.h>
+#include <appinfo.rh>
+#include <data_caging_paths_strings.hrh>
+#include <NotViewer.rsg>
+
+UID2 KUidAppRegistrationResourceFile
+UID3 0x101F86A0 // Define your application UID here
+
+RESOURCE APP_REGISTRATION_INFO
+    {
+    app_file = "notviewer";
+    localisable_resource_file = APP_RESOURCE_DIR"\\notviewer";
+    localisable_resource_id = R_NOTVIEWER_LOCALISABLE_APP_INFO;
+
+    hidden = KAppIsHidden;
+    embeddability = KAppEmbeddable;
+
+    service_list =
+    	{
+	    SERVICE_INFO { uid = KMuiuMsgEditorServiceUid; opaque_data = r_service_view; },
+	    SERVICE_INFO { uid = KMuiuMsgEditorServiceUid; opaque_data = r_service_edit; }
+	    };
+
+    }
+
+RESOURCE MSG_SERVICE_STRUCT r_service_view
+    {
+    mtm_id = 0x100059c8; // Notification MTM
+    type = KMsgServiceView;
+    }
+
+RESOURCE MSG_SERVICE_STRUCT r_service_edit
+    {
+    mtm_id = 0x100059c8;
+    type = KMsgServiceEdit;
+    }
+
+
+// End of File
+  

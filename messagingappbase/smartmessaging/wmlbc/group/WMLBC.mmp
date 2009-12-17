@@ -1,0 +1,98 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Project definition file for project WMLBC
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+#include <data_caging_paths.hrh>
+#include "../inc/WmlLogDef.h"
+
+TARGET          WMLBC.dll
+TARGETPATH      system/libs
+TARGETTYPE      dll
+UID     	0x10005F5F 0x101F4CDB
+VERSION 	10.0
+CAPABILITY CAP_GENERAL_DLL
+PAGED
+
+SOURCEPATH      ../src
+
+SOURCE			WmlBMSubItem30.cpp 
+SOURCE			WmlBMUtils30.cpp
+
+SOURCE			WmlPanics.cpp
+SOURCE          WmlBioControl.cpp
+SOURCE			WmlItemEngine.cpp 
+SOURCE			WmlSubItemBase.cpp 
+
+SOURCE          WmlFieldParser.cpp
+SOURCE			WmlState.cpp
+
+SOURCE			WmlLog.cpp
+
+
+
+START RESOURCE ../group/WMLBC.rss
+HEADER
+TARGETPATH RESOURCE_FILES_DIR
+LANGUAGE_IDS
+END
+
+#ifdef __SMARTMSG_SMS_BOOKMARK_RECEIVING
+START RESOURCE ../bif/WMLBif.rss
+TARGETPATH BIOFILE_DIR
+LANGUAGE_IDS
+END
+#else
+START RESOURCE ../bif/WMLBif_sms_no.rss
+TARGETPATH BIOFILE_DIR
+LANGUAGE_IDS
+END
+#endif
+
+
+
+USERINCLUDE     ../inc ../group
+
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+LIBRARY        MsgEditorUtils.lib
+LIBRARY        euser.lib
+LIBRARY        cone.lib
+
+// CKON libraries
+
+LIBRARY			eikcoctl.lib
+LIBRARY			biut.lib			//CParsedField
+LIBRARY			msgs.lib			//Messaging Centre interface
+LIBRARY			avkon.lib
+LIBRARY			estor.lib
+LIBRARY			favouritesengine.lib
+LIBRARY			commonengine.lib		// StringLoader
+LIBRARY			richBio.lib			// Richtext component
+LIBRARY			FeatMgr.lib
+LIBRARY			SysUtil.lib
+LIBRARY         ws32.lib
+
+#ifdef WMLBC_ENABLE_LOGGING
+#ifdef WMLBC_LOG_TO_FILE
+DEBUGLIBRARY	flogger.lib		// Only in debug builds
+#endif // WMLBC_LOG_TO_FILE
+#endif // WMLBC_ENABLE_LOGGING
+
+// End of file

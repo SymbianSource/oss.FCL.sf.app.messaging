@@ -1,0 +1,161 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME    MMSU
+
+//  INCLUDES
+#include <eikon.rh>
+#include <avkon.rsg>
+#include <avkon.hrh>
+#include <avkon.rsg>
+#include <avkon.rh>
+#include <mtud.rh>
+#include <MtmExtendedCapabilities.hrh>
+#include <avkon.loc>
+#include <muiusettingsarray.rh>
+#include <drmcommon.loc>
+#include <messaging.loc>
+
+#include <mmsui.loc>
+
+//  CONSTANTS  
+
+//  MACROS  
+
+//  RESOURCE DEFINITIONS 
+
+    RESOURCE RSS_SIGNATURE { }
+
+    RESOURCE TBUF { buf="MmsUi"; }
+
+    // Message Info
+    RESOURCE TBUF r_mms_type_text         { buf = qtn_mms_msginfo_mms ; } // Multimedia message type string
+    RESOURCE TBUF   r_mms_message_size_kb   { buf = qtn_size_kb; }
+    RESOURCE TBUF r_postcard_type_text         { buf = qtn_mms_poca_msginfo_type; } // Postcard message type string
+    RESOURCE TBUF r_audiomessage_type_text         { buf = qtn_msg_details_type_audio; } // Audio message type string
+    
+    // MMS priority in Message Info
+    RESOURCE TBUF r_mms_message_priority_low	 { buf = qtn_mms_message_priority_low; }
+    RESOURCE TBUF r_mms_message_priority_normal  { buf = qtn_mms_message_priority_normal; }
+    RESOURCE TBUF r_mms_message_priority_high    { buf = qtn_mms_message_priority_high; }
+
+    RESOURCE MTUD_FUNCTION_ARRAY r_mms_mtm_function_array
+    {
+    functions =
+         {
+    	 MTUD_FUNCTION
+    	     {
+             functiontext = qtn_msg_om_delivery_status;
+             command = KMtmUiFunctionDeliveryStatus;
+             flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+     	     },
+         MTUD_FUNCTION 
+             {
+             functiontext = qtn_mce_info;
+             command = KMtmUiFunctionMessageInfo;
+             flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+             },
+         MTUD_FUNCTION 
+             {
+             functiontext = qtn_mce_settings_mms;
+             command = KMtmUiMceSettings;
+             flags = EMtudCommandTransferSend;
+             }
+         };
+     }
+
+    RESOURCE TBUF r_mms_outbox_status_sending     { buf = qtn_mce_outbox_status_sending; }
+    RESOURCE TBUF r_mms_outbox_status_waiting     { buf = qtn_mce_outbox_status_waiting; }
+    RESOURCE TBUF r_mms_outbox_status_suspended   { buf = qtn_mce_outbox_status_suspended; }
+    RESOURCE TBUF r_mms_outbox_status_failed      { buf = qtn_mce_outbox_status_failed; }
+    RESOURCE TBUF r_mms_outbox_status_resend      { buf = qtn_mce_outbox_status_retry_at; }
+
+RESOURCE DIALOG r_mms_confirmation_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO__YES;  
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                layout = EConfirmationLayout;
+                label = "";
+                };
+            }
+        };
+    }
+
+RESOURCE TBUF r_mms_cannot_fw_drm       { buf = qtn_drm_forw_forbid; }
+RESOURCE TBUF r_mms_send_wo_rights      { buf = qtn_drm_send_wo_rights_sd; }
+RESOURCE TBUF r_mms_send_wo_rights_mix  { buf = qtn_drm_send_wo_rights_misc; }
+
+
+//-----------------------------------------------------
+//    Dialog to display Delivery Status data.
+//-----------------------------------------------------
+RESOURCE DIALOG r_properties_message_query
+{
+    flags = EGeneralQueryFlags | EEikDialogFlagNoBorder | EEikDialogFlagNoShadow;
+    buttons = R_AVKON_SOFTKEYS_OK_EMPTY__OK;
+    items=
+        {
+        DLG_LINE 
+            {
+            type = EAknCtPopupHeadingPane;
+            id = EAknMessageQueryHeaderId;
+            control = AVKON_HEADING
+                {
+                };
+            },
+        DLG_LINE
+            {
+            type = EAknCtMessageQuery;
+            id = EAknMessageQueryContentId;
+            control = AVKON_MESSAGE_QUERY
+                {
+                };
+            }
+    };
+}
+
+
+//-----------------------------------------------------
+//    Localised resource strings for Delivery Status dialog.
+//-----------------------------------------------------
+RESOURCE TBUF r_mms_delivery_status_failed  { buf = qtn_mms_qry_status_label_failed;}
+RESOURCE TBUF r_mms_delivery_status_pending { buf = qtn_mms_qry_status_label_pending;}
+RESOURCE TBUF r_mms_delivery_status_delivered { buf = qtn_mms_qry_status_label_delivered; }
+RESOURCE TBUF r_mms_delivery_status_read { buf = qtn_mms_qry_status_label_read; }
+RESOURCE TBUF r_mms_delivery_status_unavailable { buf = qtn_mms_qry_status_label_unavailable; }
+
+RESOURCE TBUF r_mms_delivery_status_failed_plural  { buf = qtn_mms_qry_status_label_failed_plural;}
+RESOURCE TBUF r_mms_delivery_status_pending_plural { buf = qtn_mms_qry_status_label_pending_plural;}
+RESOURCE TBUF r_mms_delivery_status_delivered_plural { buf = qtn_mms_qry_status_label_delivered_plural; }
+RESOURCE TBUF r_mms_delivery_status_read_plural { buf = qtn_mms_qry_status_label_read_plural; }
+RESOURCE TBUF r_mms_delivery_status_unavailable_plural { buf = qtn_mms_qry_status_label_unavailable_plural; }
+
+RESOURCE TBUF r_mms_delivery_status_header { buf = qtn_msg_qry_title_delivery_status;}
+
+// End of File

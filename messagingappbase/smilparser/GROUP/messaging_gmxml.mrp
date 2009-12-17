@@ -1,0 +1,14 @@
+component	messaging_gmxml
+source	\sf\app\messaging\messagingappbase\smilparser
+binary	\sf\app\messaging\messagingappbase\smilparser\GROUP	all
+exports	\sf\app\messaging\messagingappbase\smilparser\GROUP
+
+notes_source	\component_defs\release.src
+
+
+ipr E 
+ipr T \sf\app\messaging\messagingappbase\smilparser\SMILdtd\SMIL_Test_Files
+ipr T \sf\app\messaging\messagingappbase\smilparser\SMILdtd\tinc
+ipr T \sf\app\messaging\messagingappbase\smilparser\SMILdtd\tsrc
+
+

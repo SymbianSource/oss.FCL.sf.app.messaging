@@ -1,0 +1,78 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*   Makmake file
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+// Include common Mce UID definition file
+
+TARGET          mcelogeng.dll
+TARGETTYPE      dll
+/// CHANGE FOR MCE
+UID             0x10004845 0x1000596F
+/// CHANGE FOR MCE
+
+VENDORID		VID_DEFAULT
+CAPABILITY CAP_GENERAL_DLL
+VERSION 		10.0
+PAGED
+
+SOURCEPATH      ../logengsrc
+
+// Source files
+SOURCE MceLogEngine.cpp          // The main file
+SOURCE MceLogEngineReader.cpp
+SOURCE MceLogPbkMatcher.cpp
+SOURCE CPhoneNumberMatcher.cpp
+
+
+// Utility
+SOURCE DllMain.cpp
+
+// Resources
+START RESOURCE ../group/MceLogEng.rss
+HEADER
+TARGETPATH   APP_RESOURCE_DIR
+// Language
+LANGUAGE_IDS
+END
+
+
+// Userincludes
+USERINCLUDE     ../logengsrc ../logenginc ../group ../inc
+SYSTEMINCLUDE ../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+// Dependencies to other components
+
+// Dependencies to system components
+LIBRARY euser.lib 
+
+LIBRARY efsrv.lib
+LIBRARY logcli.lib 
+LIBRARY logwrap.lib 
+LIBRARY pbkeng.lib      
+LIBRARY commonengine.lib
+LIBRARY         msgcommonutils.lib      // CContactMatcher
+LIBRARY         centralrepository.lib
+LIBRARY         vpbkeng.lib
+
+
+// End of file

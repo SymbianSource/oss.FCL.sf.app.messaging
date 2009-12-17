@@ -1,0 +1,68 @@
+/*
+* Copyright (c) 2002-2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   This is project specification file for the DrmLinkSender.dll
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+TARGET          drmlinksender.dll
+TARGETTYPE      PLUGIN
+UID             0x10009D8D 0x10207387
+VENDORID        VID_DEFAULT
+VERSION 	10.0
+CAPABILITY      CAP_ECOM_PLUGIN
+PAGED
+
+SOURCEPATH      ../Src
+SOURCE          DrmLinkSender.cpp
+SOURCE          DrmLinkSenderGroupProxy.cpp
+
+SOURCEPATH      ../Group
+START RESOURCE	10207387.rss
+TARGET          drmlinksender.rsc
+END
+
+START RESOURCE  DrmLinkSenderUi.rss
+HEADER
+TARGETPATH		RESOURCE_FILES_DIR
+LANGUAGE_IDS
+END
+
+USERINCLUDE		../Inc ../Group ../../inc
+
+SYSTEMINCLUDE   /epoc32/include/ecom
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+SYSTEMINCLUDE   /epoc32/include/caf
+
+LIBRARY         euser.lib
+LIBRARY         efsrv.lib
+LIBRARY         commonengine.lib		// ResourceLoader
+LIBRARY         sendui.lib
+LIBRARY         msgs.lib
+LIBRARY         muiu_internal.lib
+LIBRARY         mtur.lib
+LIBRARY         etext.lib
+LIBRARY         senduidatautils.lib
+LIBRARY         estor.lib
+LIBRARY         eikcore.lib             // appuifactory
+LIBRARY         caf.lib
+LIBRARY         apmime.lib              // TDataType
+
+/* End of File */

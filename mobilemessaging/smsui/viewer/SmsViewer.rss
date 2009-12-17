@@ -1,0 +1,697 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME SMSV
+
+//  INCLUDES
+#include <eikon.rh>
+#include <eikon.rsg>
+#include <avkon.rsg>
+#include <avkon.hrh>
+#include <avkon.rh>
+#include <avkon.mbg>
+#include <muiu.mbg>
+#include <avkon.loc>
+#include <appinfo.rh>
+#include <messaging.loc>
+
+#include <MsgEditor.rh>
+
+#include "MsgSmsViewer.hrh"
+#include <smsviewer.loc>
+
+#include <bldvariant.hrh>
+#include <finditem.hrh>
+#include <data_caging_paths_strings.hrh>
+
+#include <AiwCommon.rh>
+#include <AiwGenericParam.hrh>
+
+#include <MsgEditor.hrh>   
+#include <muiu.mbg>           // title icon
+// RESOURCES
+
+RESOURCE RSS_SIGNATURE { }
+
+// Default name for file save?
+RESOURCE TBUF { buf = "SmsV"; }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    eik_app_info
+//    Application resource info
+//
+// ---------------------------------------------------------
+//
+RESOURCE EIK_APP_INFO
+    {
+    menubar     = r_smsv_optionsmenubar;
+    status_pane = r_smsviewer_status_pane;
+    cba         = R_SMSVIEWER_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS;
+    }
+
+// ---------------------------------------------------------
+//   
+//    r_smsviewer_app_info_extension
+//    Application resource info extension
+//
+// ---------------------------------------------------------
+//
+RESOURCE EIK_APP_INFO_EXT r_smsviewer_app_info_extension
+    {
+    popup_toolbar = r_smsviewer_app_toolbar;
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsviewer_status_pane
+// 		Status pane resource
+//
+// ---------------------------------------------------------
+//
+RESOURCE STATUS_PANE_APP_MODEL r_smsviewer_status_pane
+    {
+    layout = R_AVKON_STATUS_PANE_LAYOUT_USUAL;
+    panes=
+        {
+        SPANE_PANE
+            {
+            id = EEikStatusPaneUidTitle;
+            type = EAknCtTitlePane;
+            resource = r_smsviewer_app_name;
+            }
+        };        
+    }
+//----------------------------------------------------
+//   
+//    r_smsviewer_app_toolbar - CAknToolbar
+//    Application toolbar
+//
+//----------------------------------------------------
+//
+RESOURCE AVKON_TOOLBAR r_smsviewer_app_toolbar
+    {
+    flags = KAknToolbarFixed; 
+    items =
+        {
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = ESmsViewerToolbarReply;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_sms_tb_tooltip_reply;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_tb_msg_reply;
+                        bmpmask = EMbmMuiuQgn_indi_tb_msg_reply_mask;
+                        }  
+                    };            
+                };
+            },
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = ESmsViewerToolbarForward;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_sms_tb_tooltip_forward;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_tb_msg_forward;
+                        bmpmask = EMbmMuiuQgn_indi_tb_msg_forward_mask;
+
+                        }  
+                    };            
+                };
+            },
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = ESmsViewerToolbarDelete;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText; 
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_sms_tb_tooltip_delete;
+                        bmpfile = BITMAP_DIR"\\muiu.mif";
+                        bmpid = EMbmMuiuQgn_indi_mg_tb_delete;
+                        bmpmask = EMbmMuiuQgn_indi_mg_tb_delete;
+                        }  
+                    };            
+                };
+            }
+        };
+    }
+
+
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsviewer_app_name - titlepane
+//    Title pane for SMS Viewer
+//
+// ---------------------------------------------------------
+//
+RESOURCE TITLE_PANE r_smsviewer_app_name
+    {
+     txt = " "; // title is set when message type is known
+     //bmpfile = APP_BITMAP_DIR"\\muiu.mif";
+     //bmpid = EMbmMuiuQgn_prop_mce_sms_title;
+     //bmpmask = EMbmMuiuQgn_prop_mce_sms_title_mask;
+    }
+    
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    R_SMSVIEWER_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+//    SmsViewer softkeys 
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA R_SMSVIEWER_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=EAknSoftkeyContextOptions; txt = text_softkey_option; }
+        };
+    }
+        
+    
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    R_SMSVIEWER_CLASS0_SOFTKEYS_OPTIONS_EXIT__CONTEXTOPTIONS
+//    SmsViewer softkeys when Class0-message
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA R_SMSVIEWER_CLASS0_SOFTKEYS_OPTIONS_EXIT__CONTEXTOPTIONS
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyExit; txt = text_softkey_exit; },
+        CBA_BUTTON {id=EAknSoftkeyContextOptions; txt = text_softkey_option; }
+        };
+    }
+    
+    
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smse_optionsmenubar - menubar
+//    Options mainmenu titles
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_smsv_optionsmenubar
+    {
+    titles =
+        {
+        MENU_TITLE 
+            { 
+            menu_pane = r_smsv_optionsmenupane; 
+            }        
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smse_optionsmenupane - menupane
+//    Options mainmenu items
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_smsv_optionsmenupane
+    {
+    items =
+        {
+        MENU_ITEM 
+            { 
+            command = KAiwCmdSaveToCalendar;           
+            txt = " "; //dynamically loaded!!            
+            },                
+        MENU_ITEM 
+            { 
+            command = ESmsViewerReply; 
+            txt = qtn_sms_reply; 
+            cascade = r_smsv_reply_menu;
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerReplyNoSubMenu; 
+            txt = qtn_sms_reply; 
+            flags=EEikMenuItemDimmed;
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerForward;            
+            txt = qtn_sms_forward; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerCallBack;           
+            txt = qtn_sms_call_back; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerDelete;             
+            txt = qtn_msg_om_delete; 
+            },
+        MENU_ITEM 
+            { 
+            command = EFindItemMenuPlaceHolder;             
+            txt = ""; // constructed dynamically
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerMessInfo;           
+            txt = qtn_msg_om_message_info; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerMove;               
+            txt = qtn_sms_move_to_folder; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerCreateCC;           
+            txt = " "; // <- dynamically loaded!!
+            // Request AIW to place the menu into submenu
+            cascade = AIW_CASCADE_ID;
+            },
+        MENU_ITEM   { command = ESmsViewerSubmenuZoomCommands;  
+                        txt = qtn_options_text_size;
+                        cascade = r_smsviewer_zoom_submenu;
+                    },
+        MENU_ITEM 
+            { 
+            command = EAknCmdHelp;                  
+            txt = qtn_options_help; 
+            },
+        MENU_ITEM 
+            { 
+            command = EAknCmdExit;                  
+            txt = qtn_options_exit; 
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+//----------------------------------------------------
+//
+//    r_smsviewer_zoom_submenu
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_smsviewer_zoom_submenu
+    {
+    items=
+        {
+        
+        MENU_ITEM   { command = EMsgDispSizeAutomatic; 
+                    txt = qtn_options_auto;
+                    flags = EEikMenuItemRadioStart;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeLarge; 
+                    txt = qtn_options_large;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeNormal; 
+                    txt = qtn_options_normal;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeSmall;
+                    txt = qtn_options_small;
+                    flags = EEikMenuItemRadioEnd;
+                    }
+        }; 
+    }
+// ---------------------------------------------------------
+//   
+//    r_smsv_reply_menu
+//    Menu items in Reply submenu
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_smsv_reply_menu
+    {
+    items=
+        {
+        MENU_ITEM { command = ESmsViewerReplyViaMessage; txt=qtn_mms_sm_via_message; },
+        MENU_ITEM { command = ESmsViewerReplyNormal; txt=qtn_mms_sm_via_sms; },
+        MENU_ITEM { command = ESmsViewerReplyViaMms; txt=qtn_sms_reply_via_mms; },
+        MENU_ITEM { command = ESmsViewerReplyViaAudio; txt=qtn_msg_reply_via_audio_message; flags=EEikMenuItemDimmed; },
+        MENU_ITEM { command = ESmsViewerReplyViaEmail; txt=qtn_mms_sm_via_mail; flags=EEikMenuItemDimmed;}        
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_contextmenubar - menubar
+//    Contextmenu titles
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_smsv_contextmenubar
+    {
+    titles =
+        {
+        MENU_TITLE 
+            { 
+            menu_pane = r_smsv_contextmenupane; 
+            }        
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_contextmenupane - menupane
+//    Context menu items
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_smsv_contextmenupane
+    {
+    items =
+        {
+        MENU_ITEM 
+            { 
+            command = EFindItemContextMenuPlaceHolder;
+            txt=""; // constucted dynamically
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_from - msgeditoraddresscontrol
+//    A text inside 'from'-field
+//
+// ---------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_smsv_from   
+    {
+    prompt = qtn_msg_from;
+    id = EMsgComponentIdFrom;
+    distance = 0;
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_to - msgeditoraddresscontrol
+//    A text inside 'to'-field
+//
+// ---------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_smsv_to   
+    {
+    prompt = qtn_msg_to;
+    id = EMsgComponentIdTo;
+    distance = 0;
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_replypath - msgeditoraddresscontrol
+//    An indication of "replypath provided"
+//
+// ---------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_EXPANDABLE_CONTROL r_smsv_replypath
+    {
+    id = EMsgComponentIdCc;
+    fontid = 1;  // 1 = LatinPlain12
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_deletemsgconf_query - dialog
+//    Query when deleting a current message
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_deletemsgconf_query
+    {
+    flags=EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control= AVKON_CONFIRMATION_QUERY
+                { 
+                layout = EConfirmationLayout;
+                };
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_optionsmenubar_class0 - menubar
+//    Class 0 titles
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_smsv_optionsmenubar_class0
+    {
+    titles =
+        {
+        MENU_TITLE 
+            { 
+            menu_pane = r_smsv_optionsmenupane_class0; 
+            }        
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_optionsmenupane_class0 - menupane
+//    Class 0 titles
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_smsv_optionsmenupane_class0
+    {
+    items =
+        {
+        MENU_ITEM 
+            { 
+            command = ESmsViewerSave;               
+            txt = qtn_sms_save; 
+            },
+        MENU_ITEM 
+            { 
+            command = EFindItemMenuPlaceHolder;             
+            txt = ""; // constructed dynamically
+            }
+        };
+    }
+    
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_optionscontextmenubar_class0 - menubar
+//    Class 0 Context menutitles 
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_smsv_optionscontextmenubar_class0
+    {
+    titles =
+        {
+        MENU_TITLE 
+            { 
+            menu_pane = r_smsv_optionscontextmenupane_class0; 
+            }        
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_optionscontextmenupane_class0 - menupane
+//    Class 0 context menutitles
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_smsv_optionscontextmenupane_class0
+    {
+    items =
+        {
+        MENU_ITEM 
+            { 
+            command = EFindItemContextMenuPlaceHolder;             
+            txt = ""; // constructed dynamically
+            }
+        };
+    }
+    
+
+//  RESOURCE DEFINITIONS 
+//-----------------------------------------------------     
+//    R_SMS_VIEWER_SUBJECT
+//
+//    'Subject' field in sms viewer.
+//----------------------------------------------------- 
+
+RESOURCE MSG_EDITOR_EXPANDABLE_CONTROL r_sms_viewer_subject
+    {
+    prompt = qtn_msg_subject;  // Subject
+    id = EMsgComponentIdSubject;
+    distance = 0;
+    //maxchars = 998;
+    default_case = EAknEditorLowerCase;
+    //allowed_case_modes = EAknEditorAllCaseModes;
+    default_input_mode = EAknEditorNullInputMode;
+    //allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode;
+	//avkon_flags = EAknEditorFlagUseSCTNumericCharmap;
+    } 
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsviewer_localisable_app_info
+//    Application resource info
+//
+// ---------------------------------------------------------
+//
+RESOURCE LOCALISABLE_APP_INFO r_smsviewer_localisable_app_info
+    {
+    short_caption = qtn_apps_sms_grid;
+    caption_and_icon = 
+    CAPTION_AND_ICON_INFO
+        {
+        caption = qtn_title_sms;
+	#ifdef __SCALABLE_ICONS
+        number_of_icons = 1;
+        icon_file = APP_BITMAP_DIR"\\smsviewer_aif.mif";
+	#else
+        number_of_icons = 1;
+        icon_file = APP_BITMAP_DIR"\\smsviewer_aif.mbm";
+	#endif
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_aiw_contact_interest
+//    AIW interest for contact create/update
+//
+// ---------------------------------------------------------
+//
+RESOURCE AIW_INTEREST r_smsv_aiw_contact_interest
+    {
+    items=
+        {
+        AIW_CRITERIA_ITEM 
+            { 
+            id = ESmsViewerCreateCC;
+            serviceCmd = KAiwCmdAssign;
+            contentType = EGenericParamContactItemStr;
+            serviceClass = KAiwClassMenu;
+            // Default service provider Phonebook2
+            defaultProvider = 0x101F87BE; // KPbk2UIServicesUID
+            maxProviders    = 1;
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_aiw_calendar_interest
+//    AIW interest for add calender 
+//
+// ---------------------------------------------------------
+//
+RESOURCE AIW_INTEREST r_smsv_aiw_calendar_interest
+    {
+    items=
+        {
+        AIW_CRITERIA_ITEM 
+            { 
+            id = KAiwCmdSaveToCalendar;
+            serviceCmd = KAiwCmdSaveToCalendar;
+            contentType = "*";
+            serviceClass = KAiwClassMenu;
+            defaultProvider = 0x2002A506;
+            maxProviders = 1;
+            }
+        };
+    }
+
+//
+// Used texts. Notice that there is no TBUF-lengths, so usage of dynamic loading is strongly
+// recommended.
+//
+RESOURCE TBUF       r_qtn_mce_move_move_to              { buf = qtn_mce_move_move_to; }
+RESOURCE TBUF       r_qtn_query_common_conf_delete_me   { buf = qtn_query_common_conf_delete_me ;}
+RESOURCE TBUF       r_qtn_mce_conf_message_saved        { buf = qtn_mce_conf_message_saved ;}
+RESOURCE TBUF       r_qtn_sm_title_picture_message      { buf = qtn_sm_title_picture_message; }
+RESOURCE TBUF       r_qtn_sm_picture_name               { buf = qtn_sm_picture_name; }
+RESOURCE TBUF       r_qtn_title_sms                     { buf = qtn_title_sms; }
+RESOURCE TBUF       r_qtn_sms_heading_reply_path        { buf = qtn_sms_heading_reply_path; }
+RESOURCE TBUF       r_qtn_sms_replyformat               { buf = qtn_msg_mail_re; }
+
+#ifdef __PROTOCOL_CDMA
+#include "SmsViewerCDMA.rss"
+#endif
+
+// End of File

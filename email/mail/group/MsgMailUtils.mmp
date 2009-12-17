@@ -1,0 +1,88 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  This is project specification file for the MsgMailUtils.
+*
+*/
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+TARGET  MsgMailUtils.dll
+TARGETTYPE  dll
+UID  0x1000008d 0x101F4CF9
+
+VENDORID VID_DEFAULT
+CAPABILITY CAP_GENERAL_DLL
+    
+SOURCEPATH ../UtilsSrc
+
+SOURCE  MsgMailDocument.cpp
+SOURCE  MsgMailPreferences.cpp
+SOURCE  MsgMailAppUi.cpp
+SOURCE  Maillog.cpp
+SOURCE  MailUtils.cpp
+SOURCE  MsgMailDRMHandler.cpp
+SOURCE  CMailMessage.cpp
+SOURCE  CMailViewFactory.cpp
+SOURCE	CMailCRHandler.cpp
+SOURCE  mailmessageutils.cpp
+
+APP_LAYER_SYSTEMINCLUDE
+
+START RESOURCE ../group/MsgMailUtils.rss
+TARGETPATH RESOURCE_FILES_DIR
+HEADER
+LANGUAGE_IDS
+END //RESOURCE
+
+USERINCLUDE . ../inc ../UtilsSrc
+
+SYSTEMINCLUDE   ../../../inc\
+
+
+// Libraries
+LIBRARY aknicon.lib
+LIBRARY aknskins.lib
+LIBRARY aknlayout.lib
+LIBRARY AknLayout2Scalable.lib
+LIBRARY egul.lib
+
+LIBRARY euser.lib apparc.lib cone.lib eikcore.lib eikcoctl.lib
+LIBRARY avkon.lib bafl.lib efsrv.lib commonengine.lib 
+LIBRARY FeatMgr.lib		// Feature Manager
+LIBRARY ecom.lib etext.lib
+LIBRARY charconv.lib
+LIBRARY CommonUI.lib
+LIBRARY apgrfx.lib apmime.lib
+
+// Editor base
+LIBRARY msgeditorappui.lib msgeditorview.lib msgeditormodel.lib 
+
+// DRM Libraries
+LIBRARY DRMHelper.lib
+LIBRARY caf.lib
+
+// Messaging
+LIBRARY imcm.lib                // Client-side DLLs for mail MTMs
+LIBRARY msgs.lib                // Messaging Server interface
+LIBRARY muiu.lib
+LIBRARY muiu_internal.lib
+
+// Central Repository 
+LIBRARY	        centralrepository.lib
+LIBRARY         CenRepNotifHandler.lib
+
+DEBUGLIBRARY flogger.lib
+
+

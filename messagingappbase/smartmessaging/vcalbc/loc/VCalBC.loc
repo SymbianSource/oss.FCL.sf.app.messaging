@@ -1,0 +1,205 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is a localisation file for VCalBC
+*  -------------------------------------------------------------------
+*
+*/
+
+
+
+
+// LOCALISATION STRINGS
+
+
+//d:Command in options list.
+//d:Adds the calendar message data to Calendar application.
+//l:list_single_pane_t1_cp2
+//
+#define qtn_sm_add_calendar "Add to Calendar"
+
+//d:Title which tells what smart message type this is. (vCalendar type of message)
+//l:title_pane_t2/opt12
+//
+#define qtn_sm_title_invitation "Calendar entry"
+
+//d:Informs of success of 'Add to Calendar'
+//l:popup_note_window
+//
+#define qtn_sm_calendar_event_saved "Calendar\nevent\nsaved."
+
+//d:Label which tells what type of calendar item this is.
+//l:popup_query_data_window
+//
+#define qtn_sm_cal_typelabel "Type"
+
+//d:Value which tells that this is an anniversary type of calendar event.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_type_anniv "Anniversary"
+
+//d:Value which tells that this is a day note type of calendar event.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_type_daynote "Day note"
+
+//d:Value which tells that this is a meeting type of calendar event.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_type_meeting "Meeting"
+
+//d:Label for subject row.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_meeting_subject "Subject"
+
+//d:Starting date.
+//l:popup_query_data_window
+#define qtn_sm_cal_startdate "Start date"
+
+//d:Starting time.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_meeting_start_time "Start time"
+
+//d:Ending date.
+//l:popup_query_data_window
+#define qtn_sm_cal_enddate "End date"
+
+//d:Ending time.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_meeting_end_time "End time"
+
+//d:Alarm time.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_event_alarm_time "Alarm time"
+
+//d:Alarm date.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_event_alarm_date "Alarm date"
+
+//d:Alarm repeating info.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_meeting_repeat "Repeat"
+
+//d:Alarm repeating info.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_meeting_repeat_until "Repeat until"
+
+//d:Alarm repeating value.
+//l:popup_info_list_pane_t1
+#define qtn_sm_cal_meeting_rpt_daily "Every day"
+
+//d:Alarm repeating value.
+//l:popup_info_list_pane_t1
+#define qtn_sm_cal_meeting_rpt_weekly "Every week"
+
+//d:Alarm repeating value.
+//l:popup_info_list_pane_t1
+#define qtn_sm_cal_meeting_rpt_biweekly "Every two weeks"
+
+//d:Alarm repeating value.
+//l:popup_info_list_pane_t1
+#define qtn_sm_cal_meeting_rpt_monthly "Monthly"
+
+//d:Alarm repeating value.
+//l:popup_info_list_pane_t1
+#define qtn_sm_cal_meeting_rpt_yearly "Every year"
+
+//d:Repeating value.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_rpt_other "Other"
+
+//d:Confidentiality.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_synchronisation "Confidentiality"
+
+//d:Value for confidentiality field. Public.
+//l:popup_info_list_pane_t1
+#define qtn_sm_cal_sync_public "Public"
+
+//d:Value for confidentiality field. Private.
+//l:popup_info_list_pane_t1
+#define qtn_sm_cal_sync_private "Private"
+
+//d:Value for confidentiality field. No synchronisation.
+//l:popup_info_list_pane_t1
+#define qtn_sm_cal_sync_no_sync "No synchronisation"
+
+//d:'Occasion'/subject of Anniversary calendar event.
+//l:popup_query_data_window
+#define qtn_sm_cal_annivers_subject "Subject"
+
+//d:Date of Anniversary calendar event.
+//l:popup_query_data_window
+#define qtn_sm_cal_annivers_date "Start date"
+
+//d:Location of Meeting calendar event.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_location "Location:"
+
+//d:Subject of Day Note calendar event.
+//l:popup_query_data_window
+#define qtn_sm_cal_day_note_subject "Subject"
+
+//d:Rel 2.6. Label for description row.
+//l:popup_info_list_pane_t2/opt1
+#define qtn_sm_cal_meeting_description	"Description"
+
+//d:Label for subject row.
+//l:popup_query_data_window
+//r:Rel 3.0
+//
+#define qtn_sm_todo_subject "Subject:"
+
+//d:Label for due date row.
+//l:popup_query_data_window
+//r:Rel 3.0
+//
+#define qtn_sm_todo_due_date "Due date:"
+
+//d:Label for priority row.
+//l:popup_query_data_window
+//r:Rel 3.0
+//
+#define qtn_sm_todo_priority "Priority:"
+
+//d:Value for type
+//l:popup_query_data_window
+//r:Rel 3.0
+//
+#define qtn_sm_cal_type_todo "To-do note"
+
+//d:Value for high priority
+//l:popup_query_data_window
+//r:Rel 3.0
+//
+#define qtn_sm_todo_priority_high "High"
+
+//d:Value for normal priority
+//l:popup_query_data_window
+//r:Rel 3.0
+//
+#define qtn_sm_todo_priority_normal "Normal"
+
+//d:Value for low priority
+//l:popup_query_data_window
+//r:Rel 3.0
+//
+#define qtn_sm_todo_priority_low "Low"
+
+//*******************************************************
+// from other ui specs:
+
+//d:Name of the message [type].
+//l:title_pane_t2/opt12
+//
+#define qtn_mce_inbox_type_smart_vcal "Calendar"
+
+// End of File

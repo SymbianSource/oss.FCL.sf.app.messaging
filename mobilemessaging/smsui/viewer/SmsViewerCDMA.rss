@@ -1,0 +1,160 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for CDMA.
+*
+*/
+
+
+
+// This file is empty. It should be used in case CDMA-specific resources are 
+// required.
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smse_optionsmenubar - menubar
+//    Options mainmenu titles
+//
+// ---------------------------------------------------------
+//
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smse_optionsmenubar - menubar
+//    Options mainmenu titles
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_smsv_optionsmenubar_cdma
+    {
+    titles =
+        {
+        MENU_TITLE 
+            { 
+            menu_pane = r_smsv_optionsmenupane_cdma; 
+            }        
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smse_optionsmenupane - menupane
+//    Options mainmenu items
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_smsv_optionsmenupane_cdma
+    {
+    items =
+        {
+        MENU_ITEM 
+            { 
+            command = ESmsViewerReply; 
+            txt = qtn_sms_reply; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerForward;            
+            txt = qtn_sms_forward; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerCallBack;           
+            txt = qtn_sms_call_back; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerDelete;             
+            txt = qtn_msg_om_delete; 
+            },
+        MENU_ITEM 
+            { 
+            command = EFindItemMenuPlaceHolder;             
+            txt = ""; // constructed dynamically
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerMessInfo;           
+            txt = qtn_msg_om_message_info; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerMove;               
+            txt = qtn_sms_move_to_folder; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsViewerCreateCC;           
+            txt = " "; // <- dynamically loaded!!
+            // Request AIW to place the menu into submenu
+            cascade = AIW_CASCADE_ID;
+            }, 
+        MENU_ITEM 
+            { 
+            command = EAknCmdHelp;                  
+            txt = qtn_options_help; 
+            },
+        MENU_ITEM 
+            { 
+            command = EAknCmdExit;                  
+            txt = qtn_options_exit; 
+            }
+        };
+    }
+
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_contextmenubar - menubar
+//    Contextmenu titles
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_smsv_contextmenubar_cdma
+    {
+    titles =
+        {
+        MENU_TITLE 
+            { 
+            menu_pane = r_smsv_contextmenupane_cdma; 
+            }        
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_smsv_contextmenupane - menupane
+//    Context menu items
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_smsv_contextmenupane_cdma
+    {
+    items =
+        {
+        MENU_ITEM
+            {
+            command = EFindItemContextMenuPlaceHolder;
+            txt=""; // constucted dynamically
+            },
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 

@@ -1,0 +1,117 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is project specification file for the MsgEditorView.dll.
+*
+*/
+
+
+
+#include <bldvariant.hrh>
+#include <platform_paths.hrh>
+
+#include "../inc/MsgEditor.mph" // Common options for all components (logging etc.)
+
+TARGET          msgeditorview.dll
+TARGETTYPE      dll
+UID             0x1000008D 0x100058C0
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_GENERAL_DLL
+VERSION 	10.0
+PAGED
+
+SOURCEPATH      ../viewsrc
+
+SOURCE          MsgAddressControl.cpp
+SOURCE          MsgAddressControlEditor.cpp
+SOURCE          MsgAddressControlEditorField.cpp
+SOURCE          MsgBaseControl.cpp
+SOURCE          MsgBody.cpp
+SOURCE          MsgBodyControl.cpp
+SOURCE          MsgBodyControlEditor.cpp
+SOURCE          MsgCaptionedHighlight.cpp
+SOURCE          MsgControlArray.cpp
+SOURCE          MsgEditorView.cpp
+SOURCE          MsgEditorDll.cpp
+SOURCE          MsgExpandableControl.cpp
+SOURCE          MsgExpandableControlEditor.cpp
+SOURCE          MsgFormComponent.cpp
+SOURCE          MsgHeader.cpp
+SOURCE          MsgRecipientItem.cpp
+SOURCE          MsgEditorCustomDraw.cpp
+SOURCE          MsgEditorKeyCatcher.cpp
+SOURCE          MsgDummyHeaderCleaner.cpp
+SOURCE          MsgAttachmentControl.cpp
+SOURCE          MsgXhtmlBodyControl.cpp
+SOURCE	        MsgExpandableTextEditorControl.cpp
+
+USERINCLUDE     ../viewinc
+USERINCLUDE     ../inc
+USERINCLUDE     ../../../msg_plat/messaging_editor_api/inc
+USERINCLUDE     ../../../msg_pub/messaging_editor_constants_api/inc
+
+SYSTEMINCLUDE   ../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+
+LIBRARY         msgeditormodel.lib
+LIBRARY         euser.lib
+LIBRARY         ws32.lib
+LIBRARY         bafl.lib
+LIBRARY         form.lib
+LIBRARY         field.lib
+LIBRARY         etext.lib
+LIBRARY         efsrv.lib
+LIBRARY         estor.lib
+LIBRARY         cone.lib
+LIBRARY         eikcore.lib
+LIBRARY         eikcoctl.lib
+LIBRARY         eikctl.lib
+LIBRARY         egul.lib
+LIBRARY         avkon.lib
+LIBRARY         gdi.lib
+LIBRARY         featmgr.lib //feature manager, added because of numbergrouping flag
+LIBRARY         cdlengine.lib // Layout
+LIBRARY         aknskins.lib
+LIBRARY		    apparc.lib
+LIBRARY         aknlayout2scalable.lib
+LIBRARY         aknicon.lib
+LIBRARY         aknlayout2.lib
+LIBRARY         commonengine.lib
+LIBRARY         commonui.lib
+LIBRARY         fepbase.lib
+
+#ifdef RD_TACTILE_FEEDBACK
+LIBRARY         touchfeedback.lib // tactilefeedback
+#endif
+
+#ifdef RD_MSG_XHTML_SUPPORT 
+LIBRARY         xhtmlparser.lib
+#endif
+
+START WINS
+  BASEADDRESS   0x77600000
+END
+
+#if defined(ARMCC)
+deffile                 ../eabi/msgeditorview.def 
+
+#elif defined (WINS)
+deffile                 ../view/WINS.DEF
+
+#else
+deffile                 ../View/marm.def
+#endif
+
+/* End of File */

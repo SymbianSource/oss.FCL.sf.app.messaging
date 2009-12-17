@@ -1,0 +1,17 @@
+component	messaging_mmssettings
+
+source	\sf\app\messaging\mmsengine\mmssettings\bwins
+source	\sf\app\messaging\mmsengine\mmssettings\eabi
+source	\sf\app\messaging\mmsengine\mmssettings\group
+source	\sf\app\messaging\mmsengine\mmssettings\inc
+source	\sf\app\messaging\mmsengine\mmssettings\src
+source	\sf\app\messaging\mmsengine\mmssettings\test
+
+binary	\sf\app\messaging\mmsengine\mmssettings\group	all
+exports	\sf\app\messaging\mmsengine\mmssettings\group	
+notes_source	\component_defs\release.src
+
+
+ipr E 
+ipr T \sf\app\messaging\mmsengine\mmssettings\test
+

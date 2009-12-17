@@ -1,0 +1,131 @@
+EXPORTS
+	_ZN10CUniObject4NewLER3RFsR8CBaseMtmR13CUniDataUtilsP13CMsgMediaInfo @ 1 NONAME
+	_ZN10CUniObject4NewLER3RFsR8CBaseMtmR13CUniDataUtilsP13CMsgMediaInfoR21MMsvAttachmentManagerR14CMsvAttachment @ 2 NONAME
+	_ZN10CUniObject5NewLCER3RFsR8CBaseMtmR13CUniDataUtilsP13CMsgMediaInfo @ 3 NONAME
+	_ZN10CUniObject5NewLCER3RFsR8CBaseMtmR13CUniDataUtilsP13CMsgMediaInfoR21MMsvAttachmentManagerR14CMsvAttachment @ 4 NONAME
+	_ZN11CUniDrmInfo12RightsValidLEi @ 5 NONAME
+	_ZN11CUniDrmInfo12FreezeRightsEv @ 6 NONAME
+	_ZN11CUniDrmInfo13ConsumeRightsEv @ 7 NONAME
+	_ZN11CUniDrmInfo13ReleaseRightsEv @ 8 NONAME
+	_ZN11CUniDrmInfo14EvaluateRightsERi @ 9 NONAME
+	_ZN11CUniDrmInfo15HandleDrmErrorLEi @ 10 NONAME
+	_ZN11CUniDrmInfo19IsDrmWithOnePreviewEv @ 11 NONAME
+	_ZN11CUniDrmInfo4NewLER3RFsR8CBaseMtmRjR13CMsgMediaInfo @ 12 NONAME
+	_ZN11CUniDrmInfo5NewLCER3RFsR8CBaseMtmRjR13CMsgMediaInfo @ 13 NONAME
+	_ZN12CUniSmilList11RemoveSmilLER9CMsvStore @ 14 NONAME
+	_ZN12CUniSmilList18AddSmilAttachmentLER21MMsvAttachmentManagerj @ 15 NONAME
+	_ZN12CUniSmilList19GetSmilFileByIndexLEi @ 16 NONAME
+	_ZN12CUniSmilList21CreateSmilAttachmentLER23MUniSmilComposeObserverR9CMsvStoreP14CMDXMLDocument @ 17 NONAME
+	_ZN12CUniSmilList24GetSmilAttachmentByIndexEi @ 18 NONAME
+	_ZN12CUniSmilList4NewLER8CBaseMtm @ 19 NONAME
+	_ZN12UniSmilUtils10GetMetaTagEP10CMDXMLNodeR7TPtrC16S3_ @ 20 NONAME
+	_ZN12UniSmilUtils11GetRegionIdEP10CMDXMLNodeR7TPtrC16 @ 21 NONAME
+	_ZN12UniSmilUtils11IsMediaElemEP10CMDXMLNode @ 22 NONAME
+	_ZN12UniSmilUtils12GetSmilTypeLEP14CMDXMLDocument @ 23 NONAME
+	_ZN12UniSmilUtils12RemoveChildsEP10CMDXMLNode @ 24 NONAME
+	_ZN12UniSmilUtils13MediaElemTypeEP10CMDXMLNode @ 25 NONAME
+	_ZN12UniSmilUtils14IsTemplateSmilEP14CMDXMLDocument @ 26 NONAME
+	_ZN12UniSmilUtils16StringToIntValueERK7TDesC16i @ 27 NONAME
+	_ZN12UniSmilUtils5GetIdEP10CMDXMLNodeR7TPtrC16 @ 28 NONAME
+	_ZN12UniSmilUtils7GetSrcLEP10CMDXMLNode @ 29 NONAME
+	_ZN12UniSmilUtils8NextNodeEP10CMDXMLNode @ 30 NONAME
+	_ZN13CUniDataModel10ConstructLEv @ 31 NONAME
+	_ZN13CUniDataModel14AddAttachmentLER22MUniObjectSaveObserverP13CMsgMediaInfoN14CMsvAttachment18TMsvAttachmentTypeE @ 32 NONAME
+	_ZN13CUniDataModel18FinalizeMediaParseEv @ 33 NONAME
+	_ZN13CUniDataModel20AddStoredAttachmentLEjP13CMsgMediaInfo @ 34 NONAME
+	_ZN13CUniDataModel4NewLER3RFsR8CBaseMtm @ 35 NONAME
+	_ZN13CUniDataModel8RestoreLER21MUniDataModelObserverii @ 36 NONAME
+	_ZN13CUniDataModelD0Ev @ 37 NONAME
+	_ZN13CUniDataModelD1Ev @ 38 NONAME
+	_ZN13CUniDataModelD2Ev @ 39 NONAME
+	_ZN13CUniDataUtils18CharconvIdToMibIdLEj @ 40 NONAME
+	_ZN13CUniDataUtils18GetAttachmentFileLER8CBaseMtmj @ 41 NONAME
+	_ZN13CUniDataUtils18MibIdToCharconvIdLEj @ 42 NONAME
+	_ZN13CUniDataUtils26IndexPositionOfAttachmentLER21MMsvAttachmentManagerj @ 43 NONAME
+	_ZN13CUniDataUtils4NewLER3RFs @ 44 NONAME
+	_ZN13CUniDataUtils8UTF8SizeE7TPtrC16 @ 45 NONAME
+	_ZN13CUniDataUtils9FileSizeLERK4TBufILi256EE @ 46 NONAME
+	_ZN13CUniSmilModel10AddObjectLER22MUniObjectSaveObserveriP13CMsgMediaInfo @ 47 NONAME
+	_ZN13CUniSmilModel10MoveSlideLEii @ 48 NONAME
+	_ZN13CUniSmilModel10SetLayoutLE10TUniLayout @ 49 NONAME
+	_ZN13CUniSmilModel11RemoveSlideEi @ 50 NONAME
+	_ZN13CUniSmilModel11SortSlidesLEv @ 51 NONAME
+	_ZN13CUniSmilModel13ChangeLayoutLEP14CMDXMLDocument @ 52 NONAME
+	_ZN13CUniSmilModel13RemoveObjectLEiP10CUniObjecti @ 53 NONAME
+	_ZN13CUniSmilModel14AddTextObjectLEiP18CEikRichTextEditor @ 54 NONAME
+	_ZN13CUniSmilModel14CorrectTimingLEP14CMDXMLDocument @ 55 NONAME
+	_ZN13CUniSmilModel15SmilComposeSizeEii @ 56 NONAME
+	_ZN13CUniSmilModel15SmilComposeSizeEv @ 57 NONAME
+	_ZN13CUniSmilModel16AddStoredObjectLEijP13CMsgMediaInfo @ 58 NONAME
+	_ZN13CUniSmilModel17RemoveEmptySlidesEv @ 59 NONAME
+	_ZN13CUniSmilModel20RemoveObjectByIndexLEii @ 60 NONAME
+	_ZN13CUniSmilModel4NewLER3RFsR8CBaseMtmR13CUniDataUtilsR14CUniObjectList @ 61 NONAME
+	_ZN13CUniSmilModel5NewLCER3RFsR8CBaseMtmR13CUniDataUtilsR14CUniObjectList @ 62 NONAME
+	_ZN13CUniSmilModel6ParseLEP14CMDXMLDocument @ 63 NONAME
+	_ZN13CUniSmilModel8ComposeLEv @ 64 NONAME
+	_ZN13CUniSmilModel9AddSlideLEi @ 65 NONAME
+	_ZN14CUniObjectList10AddObjectLEP10CUniObject @ 66 NONAME
+	_ZN14CUniObjectList10GetByIndexEi @ 67 NONAME
+	_ZN14CUniObjectList10GetByNodeLEP10CMDXMLNode @ 68 NONAME
+	_ZN14CUniObjectList12GetMimeTypeLERK7TDesC16 @ 69 NONAME
+	_ZN14CUniObjectList13RemoveObjectLEP10CUniObjecti @ 70 NONAME
+	_ZN14CUniObjectList14GetFileHandleLERK7TDesC16R5RFile @ 71 NONAME
+	_ZN14CUniObjectList15SetListObserverEP22MUniObjectListObserver @ 72 NONAME
+	_ZN14CUniObjectList16GetCharacterSetLERK7TDesC16 @ 73 NONAME
+	_ZN14CUniObjectList17GetByAttachmentIdEj @ 74 NONAME
+	_ZN14CUniObjectList17RemoveAllObjectsLEv @ 75 NONAME
+	_ZN14CUniObjectList23GetObjectByUniqueHandleEi @ 76 NONAME
+	_ZN14CUniObjectList21SpaceNeededForSaveAllEv @ 77 NONAME
+	_ZN14CUniObjectList36EnsureAllObjectsHaveContentLocationLEv @ 78 NONAME
+	_ZN14CUniObjectList4NewLER8CBaseMtmR13CUniDataUtils @ 79 NONAME
+	_ZN14CUniObjectList7SaveAllER22MUniObjectSaveObserverN14CMsvAttachment18TMsvAttachmentTypeE @ 80 NONAME
+	_ZN14CUniObjectList9GetByUrlLERK7TDesC16 @ 81 NONAME
+	_ZN14CUniSmilParams4NewLERK3RFs @ 82 NONAME
+	_ZN14CUniSmilParams5NewLCERK3RFs @ 83 NONAME
+	_ZN14CUniTextObject15SynchronizeSizeEv @ 84 NONAME
+	_ZN14CUniTextObject4NewLER3RFsR8CBaseMtmR13CUniDataUtilsP12CMsgTextInfo @ 85 NONAME
+	_ZN14CUniTextObject4NewLER3RFsR8CBaseMtmR13CUniDataUtilsP12CMsgTextInfoR21MMsvAttachmentManagerR14CMsvAttachment @ 86 NONAME
+	_ZN14CUniTextObject4NewLER3RFsR8CBaseMtmR13CUniDataUtilsP18CEikRichTextEditor @ 87 NONAME
+	_ZN14CUniTextObject5NewLCER3RFsR8CBaseMtmR13CUniDataUtilsP12CMsgTextInfo @ 88 NONAME
+	_ZN14CUniTextObject5NewLCER3RFsR8CBaseMtmR13CUniDataUtilsP12CMsgTextInfoR21MMsvAttachmentManagerR14CMsvAttachment @ 89 NONAME
+	_ZN14CUniTextObject5NewLCER3RFsR8CBaseMtmR13CUniDataUtilsP18CEikRichTextEditor @ 90 NONAME
+	_ZNK10CUniObject8MimeTypeEv @ 91 NONAME
+	_ZNK10CUniObject9MediaTypeEv @ 92 NONAME
+	_ZNK13CUniSmilModel11ObjectCountEv @ 93 NONAME
+	_ZNK13CUniSmilModel16GetObjectByIndexEii @ 94 NONAME
+	_ZNK13CUniSmilModel16SlideObjectCountEi @ 95 NONAME
+	_ZNK13CUniSmilModel20IsSupportedMediaTypeE13TMsgMediaType @ 96 NONAME
+	_ZNK13CUniSmilModel7IsSlideEi @ 97 NONAME
+	_ZNK13CUniSmilModel9GetObjectEi10TUniRegion @ 98 NONAME
+	_ZNK14CUniObjectList14ObjectByteSizeEv @ 99 NONAME
+	_ZTI10CUniObject @ 100 NONAME ; #<TI>#
+	_ZTI11CUniDrmInfo @ 101 NONAME ; #<TI>#
+	_ZTI12CUniMimeInfo @ 102 NONAME ; #<TI>#
+	_ZTI12CUniSmilList @ 103 NONAME ; #<TI>#
+	_ZTI13CUniDataModel @ 104 NONAME ; #<TI>#
+	_ZTI13CUniDataUtils @ 105 NONAME ; #<TI>#
+	_ZTI13CUniSmilModel @ 106 NONAME ; #<TI>#
+	_ZTI13CUniSmilSlide @ 107 NONAME ; #<TI>#
+	_ZTI14CUniObjectList @ 108 NONAME ; #<TI>#
+	_ZTI14CUniSmilParams @ 109 NONAME ; #<TI>#
+	_ZTI14CUniTextObject @ 110 NONAME ; #<TI>#
+	_ZTV10CUniObject @ 111 NONAME ; #<VT>#
+	_ZTV11CUniDrmInfo @ 112 NONAME ; #<VT>#
+	_ZTV12CUniMimeInfo @ 113 NONAME ; #<VT>#
+	_ZTV12CUniSmilList @ 114 NONAME ; #<VT>#
+	_ZTV13CUniDataModel @ 115 NONAME ; #<VT>#
+	_ZTV13CUniDataUtils @ 116 NONAME ; #<VT>#
+	_ZTV13CUniSmilModel @ 117 NONAME ; #<VT>#
+	_ZTV13CUniSmilSlide @ 118 NONAME ; #<VT>#
+	_ZTV14CUniObjectList @ 119 NONAME ; #<VT>#
+	_ZTV14CUniSmilParams @ 120 NONAME ; #<VT>#
+	_ZTV14CUniTextObject @ 121 NONAME ; #<VT>#
+	_ZThn4_N14CUniObjectList12GetMimeTypeLERK7TDesC16 @ 122 NONAME ; #<thunk>#
+	_ZThn4_N14CUniObjectList14GetFileHandleLERK7TDesC16R5RFile @ 123 NONAME ; #<thunk>#
+	_ZThn4_N14CUniObjectList16GetCharacterSetLERK7TDesC16 @ 124 NONAME ; #<thunk>#
+	_ZN10CUniObject22SetDrmRightsWhenLoadedEi @ 125 NONAME
+	_ZN10CUniObject27ResolveDrmRightsWhenLoadedLEv @ 126 NONAME
+	_ZN10CUniObject12SetObserverLEP18MUniObjectObserver @ 127 NONAME
+	_ZN10CUniObject14RemoveObserverEP18MUniObjectObserver @ 128 NONAME
+	_ZN10CUniObject29SetDrmRightsWhenLoadedObjectsEi @ 129 NONAME
+

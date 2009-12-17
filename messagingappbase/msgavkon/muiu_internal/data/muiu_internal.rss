@@ -1,0 +1,208 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     Resource file for Messaging UI Utilities Dll MUIU_INTERNAL.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME MUIU
+
+//  INCLUDES
+#include <bldvariant.hrh>
+#include <eikon.rh>
+#include <avkon.rh>
+#include <AiwCommon.rh>
+#include <AiwGenericParam.hrh>
+#include <avkon.rsg>
+#include <avkon.loc>  //qtn_find_number_call_send_key; qtn_find_call_to_sender
+#include <muiu.loc>
+
+
+
+//----------------------------------------------------
+//
+//    RSS_SIGNATURE
+//
+//
+//----------------------------------------------------
+//
+RESOURCE RSS_SIGNATURE
+    { 
+    }
+
+
+//----------------------------------------------------
+//
+//    TBUF
+//
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF16 
+    { 
+    buf=""; 
+    }
+
+//Note: RSS_SIGNATURE and TBUF must be above includes below.
+//Otherwise can not open muiu resources
+#include "../settingsarray/data/MuiuSettings.ra"
+
+//  RESOURCE DEFINITIONS
+
+
+//----------------------------------------------------
+//
+//    r_muiu_callback_query
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_muiu_callback_query
+    {
+    flags   = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+    items =
+        {
+        DLG_LINE
+            {
+            type    = EAknCtQuery;
+            id      = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationLayout;
+                };
+            }
+        };
+     }
+
+
+// A text in query when asking from user if calling to sender of the message.
+RESOURCE TBUF r_qtn_muiu_quest_call              { buf = qtn_muiu_quest_call; }
+
+
+//----------------------------------------------------
+//
+//    r_call_to_sender_list_query
+//    When SMS viewer or MMS viewer is open it is possible to call
+//    back to sender or phone number which is currently highlighted
+//    in message. If user select Send-key then CAknListQueryDialog
+//    is opened with items "Back to sender" and currently highlighted
+//    phone number and with soft keys "Call" and "Cancel".
+//    r_call_to_sender_list_query resource is for
+//    this CAknListQueryDialog dialog.
+//     
+//----------------------------------------------------
+//
+RESOURCE AVKON_LIST_QUERY r_call_to_sender_list_query
+    {
+    flags = EGeneralQueryFlags;
+    softkeys = R_AVKON_SOFTKEYS_CALL_CANCEL__CALL;
+    items = 
+        {
+        AVKON_LIST_QUERY_DLG_LINE 
+            {
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = AVKON_LIST_QUERY_LIST
+                    {
+                    array_id = r_call_to_sender_array;
+                    };
+                heading = qtn_find_number_call_send_key;
+                };
+            }
+        };
+    }
+
+
+//----------------------------------------------------
+//
+//    r_call_to_sender_array
+//    Array for list query items.
+//    (Items are "Back to sender" and highlighted phone number)
+//
+//----------------------------------------------------
+//
+RESOURCE ARRAY r_call_to_sender_array
+    {
+    items=
+        {
+        LBUF { txt = qtn_find_call_to_sender; }
+        };
+    }
+
+
+// A text in query when asking from user if calling to sender of the message 
+// and there is no alias name in use.
+RESOURCE TBUF r_qtn_quest_call              { buf = qtn_quest_call; }
+
+
+//----------------------------------------------------
+//
+//    r_muiu_phonenumber_match_interest
+//    Interest for AIW for selecting one phone number from contact
+//
+//----------------------------------------------------
+//
+RESOURCE AIW_INTEREST r_muiu_phonenumber_match_interest
+    {
+    items=
+        {
+        AIW_CRITERIA_ITEM 
+            { 
+            id = KAiwCmdSelect;  // serviceCmd used here also as ID
+            serviceCmd   = KAiwCmdSelect;
+            contentType  = EGenericParamContactItemStr;
+            serviceClass = KAiwClassBase; 
+            maxProviders = 1;
+            }
+        };
+    }
+
+// -----------------------------------------------------------------------------
+//    r_muiu_matching_address_wait_note
+// Wait note shown when matching address to contacts
+// -----------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_muiu_matching_address_wait_note
+    {
+    flags = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_CANCEL;
+    items =
+        {
+        DLG_LINE
+            { 
+            type = EAknCtNote;
+            id = EGeneralNote;
+            control = AVKON_NOTE
+                {
+                layout = EWaitLayout;
+                singular_label = qtn_fdn_reading_memory;
+                animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }         
+// -----------------------------------------------------------------------------
+//    r_muiu_qtn_phob_note_no_number
+// Shown when no matches are found when searching phone numbers from phonebook.
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_muiu_qtn_phob_note_no_number { buf = qtn_phob_note_no_number; }
+
+
+
+// End of File

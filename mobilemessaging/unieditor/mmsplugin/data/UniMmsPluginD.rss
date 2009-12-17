@@ -1,0 +1,64 @@
+/*
+* Copyright (c) 2002-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME UNIM
+
+//  INCLUDES
+#include <eikon.rh>
+#include <avkon.rsg>
+#include <avkon.rh>
+
+#include <unieditor.loc>
+
+#include <data_caging_paths_strings.hrh>
+
+// RESOURCES
+
+RESOURCE RSS_SIGNATURE { }
+
+// Default name for file save?
+RESOURCE TBUF { buf = "UniMms"; }
+
+
+
+//  RESOURCE DEFINITIONS 
+
+RESOURCE DIALOG r_unieditor_query_ap_error
+        {
+        flags = EGeneralQueryFlags;
+        buttons = R_AVKON_SOFTKEYS_YES_NO;
+        items =
+            {
+            DLG_LINE
+                {
+                type    = EAknCtQuery;
+                id      = EGeneralQuery;
+                control = AVKON_CONFIRMATION_QUERY
+                    {
+                    layout  = EConfirmationQueryLayout;
+                    label   = qtn_mce_conf_no_ap;
+                    };
+                }
+            };
+        }
+
+ 
+// End of File

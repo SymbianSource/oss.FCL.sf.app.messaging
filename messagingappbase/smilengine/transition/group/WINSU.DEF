@@ -1,0 +1,21 @@
+EXPORTS
+	??0CSmilTransitionFactory@@QAE@PAVCFbsBitmap@@@Z @ 1 NONAME ; public: __thiscall CSmilTransitionFactory::CSmilTransitionFactory(class CFbsBitmap *)
+	??1CBarWipeTransitionFilter@@UAE@XZ @ 2 NONAME ; public: virtual __thiscall CBarWipeTransitionFilter::~CBarWipeTransitionFilter(void)
+	??1CClockWipeTransitionFilter@@UAE@XZ @ 3 NONAME ; public: virtual __thiscall CClockWipeTransitionFilter::~CClockWipeTransitionFilter(void)
+	??1CFadeTransitionFilter@@UAE@XZ @ 4 NONAME ; public: virtual __thiscall CFadeTransitionFilter::~CFadeTransitionFilter(void)
+	??1CIrisWipeTransitionFilter@@UAE@XZ @ 5 NONAME ; public: virtual __thiscall CIrisWipeTransitionFilter::~CIrisWipeTransitionFilter(void)
+	??1CMatrixWipeTransitionFilter@@UAE@XZ @ 6 NONAME ; public: virtual __thiscall CMatrixWipeTransitionFilter::~CMatrixWipeTransitionFilter(void)
+	??1CPushWipeTransitionFilter@@UAE@XZ @ 7 NONAME ; public: virtual __thiscall CPushWipeTransitionFilter::~CPushWipeTransitionFilter(void)
+	??1CSlideWipeTransitionFilter@@UAE@XZ @ 8 NONAME ; public: virtual __thiscall CSlideWipeTransitionFilter::~CSlideWipeTransitionFilter(void)
+	??1CSmilTransitionFactory@@UAE@XZ @ 9 NONAME ; public: virtual __thiscall CSmilTransitionFactory::~CSmilTransitionFactory(void)
+	?CreateFilterL@CSmilTransitionFactory@@UAEPAVCSmilTransitionFilter@@PAVCSmilTransition@@PAVMSmilMedia@@@Z @ 10 NONAME ; public: virtual class CSmilTransitionFilter * __thiscall CSmilTransitionFactory::CreateFilterL(class CSmilTransition *,class MSmilMedia *)
+	?IsSupportedSubtype@CSmilTransitionFactory@@UBEHABVTDesC16@@0@Z @ 11 NONAME ; public: virtual int __thiscall CSmilTransitionFactory::IsSupportedSubtype(class TDesC16 const &,class TDesC16 const &)const 
+	?IsSupportedType@CSmilTransitionFactory@@UBEHABVTDesC16@@@Z @ 12 NONAME ; public: virtual int __thiscall CSmilTransitionFactory::IsSupportedType(class TDesC16 const &)const 
+	?NewL@CBarWipeTransitionFilter@@SAPAV1@PAVCSmilTransition@@PAVCFbsBitmap@@PAVMSmilMedia@@@Z @ 13 NONAME ; public: static class CBarWipeTransitionFilter * __cdecl CBarWipeTransitionFilter::NewL(class CSmilTransition *,class CFbsBitmap *,class MSmilMedia *)
+	?NewL@CClockWipeTransitionFilter@@SAPAV1@PAVCSmilTransition@@PAVCFbsBitmap@@PAVMSmilMedia@@@Z @ 14 NONAME ; public: static class CClockWipeTransitionFilter * __cdecl CClockWipeTransitionFilter::NewL(class CSmilTransition *,class CFbsBitmap *,class MSmilMedia *)
+	?NewL@CFadeTransitionFilter@@SAPAV1@PAVCSmilTransition@@PAVCFbsBitmap@@PAVMSmilMedia@@@Z @ 15 NONAME ; public: static class CFadeTransitionFilter * __cdecl CFadeTransitionFilter::NewL(class CSmilTransition *,class CFbsBitmap *,class MSmilMedia *)
+	?NewL@CIrisWipeTransitionFilter@@SAPAV1@PAVCSmilTransition@@PAVCFbsBitmap@@PAVMSmilMedia@@@Z @ 16 NONAME ; public: static class CIrisWipeTransitionFilter * __cdecl CIrisWipeTransitionFilter::NewL(class CSmilTransition *,class CFbsBitmap *,class MSmilMedia *)
+	?NewL@CMatrixWipeTransitionFilter@@SAPAV1@PAVCSmilTransition@@PAVCFbsBitmap@@PAVMSmilMedia@@@Z @ 17 NONAME ; public: static class CMatrixWipeTransitionFilter * __cdecl CMatrixWipeTransitionFilter::NewL(class CSmilTransition *,class CFbsBitmap *,class MSmilMedia *)
+	?NewL@CPushWipeTransitionFilter@@SAPAV1@PAVCSmilTransition@@PAVCFbsBitmap@@PAVMSmilMedia@@@Z @ 18 NONAME ; public: static class CPushWipeTransitionFilter * __cdecl CPushWipeTransitionFilter::NewL(class CSmilTransition *,class CFbsBitmap *,class MSmilMedia *)
+	?NewL@CSlideWipeTransitionFilter@@SAPAV1@PAVCSmilTransition@@PAVCFbsBitmap@@PAVMSmilMedia@@@Z @ 19 NONAME ; public: static class CSlideWipeTransitionFilter * __cdecl CSlideWipeTransitionFilter::NewL(class CSmilTransition *,class CFbsBitmap *,class MSmilMedia *)
+
