@@ -27,7 +27,7 @@
 #include <mtud.rh>
 #include <mtud.hrh>
 
-#include <Imum.loc>	// Localisable text
+#include <imum.loc>	// Localisable text
 #include "../Inc/Imas.hrh"
 
 NAME IMUM

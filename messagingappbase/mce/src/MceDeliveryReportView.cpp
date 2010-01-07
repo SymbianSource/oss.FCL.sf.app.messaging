@@ -180,7 +180,10 @@ void CMceDeliveryReportView::DynInitMenuPaneL( TInt aResourceId, CEikMenuPane* a
             if(  ! MceAppUi()->LogEngine()->
                     IsNumberAvailable( iContainer->ListBox()->CurrentItemIndex() ) )
                 {
-                aMenuPane->DeleteMenuItem( EMceCmdCall );
+					if ( aMenuPane->MenuItemExists( EMceCmdCall, aPosition ) ) 
+					{
+						aMenuPane->DeleteMenuItem( EMceCmdCall );
+					}
                 }
 
             if ( iContainer->ListBox()->Model()->NumberOfItems() == 0 )

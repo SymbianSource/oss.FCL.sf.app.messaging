@@ -365,7 +365,10 @@ void CImumMboxManager::LoadAccountFillIapL(
     {
     IMUM_CONTEXT( CImumMboxManager::LoadAccountFillIapL, 0, KLogData );
     IMUM_IN();
-
+	
+	//check IAP number 
+    if ( aSettings.iIncomingIapPref->NumberOfIAPs() > 0 )
+    	{
     // Set internet access point (incoming IAP)
     TImIAPChoice incomingIapChoice =
         aSettings.iIncomingIapPref->IAPPreference( 0 );
@@ -375,7 +378,20 @@ void CImumMboxManager::LoadAccountFillIapL(
     TImIAPChoice outgoingIapChoice =
         aSettings.iOutgoingIapPref->IAPPreference( 0 );
     aSettings.iOutgoingIap = outgoingIapChoice.iIAP;
-
+    	}
+		
+	//check SNAP define	
+    else if( aSettings.iIncomingIapPref->SNAPDefined() )
+    	{
+    	aSettings.iIncomingIap = aSettings.iIncomingIapPref->SNAPPreference();
+    	aSettings.iOutgoingIap = aSettings.iOutgoingIapPref->SNAPPreference();
+    	}	
+    else 
+    	{
+    	aSettings.iIncomingIap = 0;
+    	aSettings.iOutgoingIap = 0;
+    	}
+    	
     IMUM_OUT();
     }
 

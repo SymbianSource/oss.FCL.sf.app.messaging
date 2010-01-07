@@ -101,7 +101,7 @@ void CMceDeliveryReportControlContainer::ConstructL( const TRect& aRect )
 
     iListBox = new( ELeave ) CAknDoubleGraphicStyleListBox;
     iListBox->SetContainerWindowL( *this );
-    iListBox->ConstructL( this, EAknListBoxSelectionList );
+    iListBox->ConstructL( this, EAknListBoxSelectionList|EAknListBoxItemSpecificMenuDisabled );
 
     CMceDeliveryReportAdapter* adapter = CMceDeliveryReportAdapter::NewL(
                     iMceDeliveryReportView->MceAppUi()->LogEngine(), iListBox );

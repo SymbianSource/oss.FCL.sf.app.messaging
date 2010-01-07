@@ -2452,11 +2452,7 @@ void CUniEditorAppUi::DynInitMenuPaneL( TInt aResourceId, CEikMenuPane* aMenuPan
             if ( IsHardcodedSms() )
                 { 
                 // Dim these items always in locked SMS mode
-                aMenuPane->SetItemDimmed( EUniCmdViewImage, ETrue );
-                aMenuPane->SetItemDimmed( EUniCmdPlayAudio, ETrue );
-                aMenuPane->SetItemDimmed( EUniCmdPlayVideo, ETrue );
-                aMenuPane->SetItemDimmed( EUniCmdPlayPres, ETrue );
-                aMenuPane->SetItemDimmed( EUniCmdPlaySvg, ETrue );
+
                 aMenuPane->SetItemDimmed( EUniCmdPlayPreview, ETrue );
                 aMenuPane->SetItemDimmed( EUniCmdSendMMS, ETrue );
                 aMenuPane->SetItemDimmed( EUniCmdInsertMedia, ETrue );
@@ -2522,11 +2518,7 @@ void CUniEditorAppUi::DynInitMenuPaneL( TInt aResourceId, CEikMenuPane* aMenuPan
                 if ( Document()->UniState() == EUniSms )
                     {
                     // It's currently a SMS message
-                    aMenuPane->SetItemDimmed( EUniCmdViewImage, ETrue );
-                    aMenuPane->SetItemDimmed( EUniCmdPlayAudio, ETrue );
-                    aMenuPane->SetItemDimmed( EUniCmdPlayVideo, ETrue );
-                    aMenuPane->SetItemDimmed( EUniCmdPlayPres, ETrue );
-                    aMenuPane->SetItemDimmed( EUniCmdPlaySvg, ETrue );
+
                     aMenuPane->SetItemDimmed( EUniCmdPlayPreview, ETrue );
                     aMenuPane->SetItemDimmed( EUniCmdSendMMS, ETrue );
                     aMenuPane->SetItemDimmed( EUniCmdPlaceTextFirst, ETrue );
@@ -2694,59 +2686,9 @@ void CUniEditorAppUi::DynInitMenuPaneL( TInt aResourceId, CEikMenuPane* aMenuPan
 void CUniEditorAppUi::DynInitFocusedMediaBasedOptionsL( CEikMenuPane* aMenuPane )
     {
     // Lets dim all the context sensitive options first
-    aMenuPane->SetItemDimmed( EUniCmdViewImage, ETrue );                    
-    aMenuPane->SetItemDimmed( EUniCmdPlayAudio, ETrue );                    
-    aMenuPane->SetItemDimmed( EUniCmdPlayVideo, ETrue );                    
-    aMenuPane->SetItemDimmed( EUniCmdPlayPres, ETrue );
+
     aMenuPane->SetItemDimmed( EUniCmdPlayPreview, ETrue );                    
     aMenuPane->SetItemDimmed( EUniCmdSendSMS, ETrue );
-    aMenuPane->SetItemDimmed( EUniCmdPlaySvg, ETrue );
-                                    
-    if ( iView && iView->FocusedControl() )
-        { 
-        // And then dim one of them if necessary
-        switch ( iView->FocusedControl()->ControlId() )
-            {
-            case EMsgComponentIdImage:
-                {
-                if ( Document()->DataModel()->SmilType() == E3GPPSmil )
-                    { 
-                    // Non-editable pres
-                    aMenuPane->SetItemDimmed( EUniCmdPlayPres, EFalse );                                    
-                    }
-                else if( Document()->DataModel()->SmilType() == ETemplateSmil )
-                    { 
-                    // Editable press
-                    aMenuPane->SetItemDimmed( EUniCmdPlayPres, EFalse );                                    
-                    }
-                else
-                    { 
-                    // Real image
-                    aMenuPane->SetItemDimmed( EUniCmdViewImage, EFalse );
-                    }
-                break;                            
-                }
-            case EMsgComponentIdAudio:
-                {
-                aMenuPane->SetItemDimmed( EUniCmdPlayAudio, EFalse );
-                break;                            
-                }
-            case EMsgComponentIdVideo:
-                {
-                aMenuPane->SetItemDimmed( EUniCmdPlayVideo, EFalse );
-                break; 
-                }
-            case EMsgComponentIdSvg:
-                {
-                aMenuPane->SetItemDimmed( EUniCmdPlaySvg, EFalse );
-                break;
-                }
-            default:
-                {
-                break; 
-                }
-            }
-        }
 
     if ( Document()->DataModel()->SmilType() != EMmsSmil ) 
         { 
@@ -4608,6 +4550,10 @@ void CUniEditorAppUi::DoUserInsertImageL( MsgAttachmentUtils::TMsgAttachmentFetc
                 fetchFile = ETrue;
                 }
             }
+         else if(Err == KLeaveExit)
+             {
+              User::Leave( Err );
+             }
          else
             {
             iEditorFlags &= ~EMsgEditInProgress;           
@@ -4672,6 +4618,10 @@ void CUniEditorAppUi::DoUserInsertVideoL( MsgAttachmentUtils::TMsgAttachmentFetc
                 fetchFile = ETrue;
                 }
             }
+        else if(Err == KLeaveExit)
+            {
+             User::Leave( Err );
+            }
         else
             {
             iEditorFlags &= ~EMsgEditInProgress;
@@ -4734,6 +4684,10 @@ void CUniEditorAppUi::DoUserInsertAudioL( MsgAttachmentUtils::TMsgAttachmentFetc
                 {
                 fetchFile = ETrue;
                 }
+            }
+        else if(Err == KLeaveExit)
+            {
+             User::Leave( Err );
             }
          else
             {
@@ -9357,7 +9311,7 @@ void CUniEditorAppUi::DeactivateInputBlocker()
 //
 void CUniEditorAppUi::UpdateToolbarL()
     {
-    if ( iFixedToolbar )
+    if ( iFixedToolbar && !iFixedToolbar->IsDimmed()  )
         {
         iFixedToolbar->SetItemDimmed( EUniCmdFixedToolbarSend, EFalse, EFalse );
         

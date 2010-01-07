@@ -21,14 +21,14 @@ NAME    MAVW // MAilVieWer, 4 letter ID
 
 //  INCLUDES
 #include <appinfo.rh>
-#include <DRMCommon.loc>
-#include <Messaging.loc>
+#include <drmcommon.loc>
+#include <messaging.loc>
 #include <data_caging_paths_strings.hrh>
 #include <eikon.rh>
 #include <eikon.hrh>
 #include "msgmailviewer.hrh"
-#include <MsgMailEditor.loc>
-#include <MsgMailViewer.loc>
+#include <msgmaileditor.loc>
+#include <msgmailviewer.loc>
 #include "eikon.rsg"
 #include <avkon.loc>
 #include <avkon.rsg>

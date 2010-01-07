@@ -1061,7 +1061,9 @@ void CMceMessageListView::DynInitMenuPaneL(
 								
 				iAiwServiceHandler->InitializeMenuPaneL( *aMenuPane, aResourceId, 
 				                                         EMceCmdFirstMessageReaderAiwCommand,
-				                                         inList );
+				                                         inList,
+				                                         EFalse,
+				                                         ETrue);
                 HandleContainerOptionsMenuL( aMenuPane );				                                         
                 }
             

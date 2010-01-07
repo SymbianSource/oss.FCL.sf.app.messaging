@@ -79,6 +79,7 @@ const TUint KSendUiFeatureMMS           = 0x4;
 const TUint KSendUiFeatureSelectableEmail	= 0x8;
 
 const TUint KSeconds = 1000000;
+const TUid KMailTechnologyTypeUid = { 0x10001671 };
 
 // ======== LOCAL FUNCTIONS ========
 
@@ -1304,7 +1305,10 @@ TMsvId CGenericMtmPlugin::GetAndValidateServiceL(
             CleanupStack::PushL( note );
             
             HBufC* text = NULL;
-            text = StringLoader::LoadLC( R_SENDUI_SETTINGS_NOT_OK, &iCoeEnv );
+            if( iSingleton.ClientMtmRegistryL().TechnologyTypeUid( aMtmUid ) == KMailTechnologyTypeUid )
+                text = StringLoader::LoadLC( R_SENDUI_SETTINGS_EMAIL_NOT_OK, &iCoeEnv );
+            else
+                text = StringLoader::LoadLC( R_SENDUI_SETTINGS_NOT_OK, &iCoeEnv );
             note->ShowNoteL( EAknGlobalErrorNote, *text );
             CleanupStack::PopAndDestroy( 2, note ); // note, stringLoader
             aContinue = EFalse;

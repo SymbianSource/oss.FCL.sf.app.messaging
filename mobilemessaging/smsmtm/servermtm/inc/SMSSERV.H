@@ -16,6 +16,7 @@
 #ifndef SMSSERV_H_
 #define SMSSERV_H_
 
+#include <etelmm.h>
 #include <smuthdr.h>
 #include <schedulebaseservermtm.h>
 #include <smutset.h>

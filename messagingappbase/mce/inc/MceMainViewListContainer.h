@@ -52,8 +52,6 @@ class  CMceMainViewListContainer :
         */
         static CMceMainViewListContainer* NewL(
             const TRect& aRect,
-            CMsvSessionPtr aSession,
-            CMceBitmapResolver& aBitmapResolver,
             TMsvId aFolderId,
             TMceListType aListType = EMceListTypeMainView );
 
@@ -61,6 +59,13 @@ class  CMceMainViewListContainer :
         * Destructor.
         */
         virtual ~CMceMainViewListContainer();
+		
+        /**
+         * Creates list items.
+         */
+        void CreateListItemsL(
+                CMsvSessionPtr aSession,
+                CMceBitmapResolver& aBitmapResolver );
 
         /**
         * From CoeControl
@@ -146,9 +151,7 @@ class  CMceMainViewListContainer :
         * Symbian OS constructor.
         */
         void ConstructL(
-            const TRect& aRect,
-            CMsvSessionPtr aSession,
-            CMceBitmapResolver& aBitmapResolver );
+                const TRect& aRect );
             
     private: // Data
         CAknDoubleLargeStyleListBox* iListBox;

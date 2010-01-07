@@ -38,6 +38,7 @@ NAME    AUDI   // 4 letter id resource file.
 #include <muiu.mbg> 
 #include <aknsconstants.hrh>
 #include <audiomessage.loc>
+#include <VoiceRecorder.loc>
 
 RESOURCE RSS_SIGNATURE { }
 RESOURCE TBUF { buf = ""; }
@@ -100,6 +101,8 @@ RESOURCE TITLE_PANE r_audiomessage_app_name
     
 // Title
 RESOURCE TBUF r_audiomessage_title { buf = qtn_title_audio_message; }
+RESOURCE TBUF r_vr_video_call_infonote_label { buf = qtn_vorec_info_video_call_ongoing; }
+RESOURCE TBUF r_vr_internet_call_infonote_label { buf = qtn_vorec_info_internet_call_ongoing; }
 
 // ======== main view ========
 

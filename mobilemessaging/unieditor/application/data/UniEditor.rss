@@ -707,16 +707,6 @@ RESOURCE MENU_PANE r_unieditor_main_menu
         ,
         MENU_ITEM   { command = EUniCmdSendMMS;         txt = qtn_msg_om_send_mms; }
         ,
-        MENU_ITEM   { command = EUniCmdViewImage;       txt = qtn_mms_om_view_image; }
-        ,
-        MENU_ITEM   { command = EUniCmdPlayAudio;       txt = qtn_mms_om_play_audio; }
-        ,
-        MENU_ITEM   { command = EUniCmdPlayVideo;       txt = qtn_mms_om_play_video; }
-        ,
-        MENU_ITEM   { command = EUniCmdPlayPres;        txt = qtn_mms_om_play_presentation; }
-        ,
-        MENU_ITEM   { command = EUniCmdPlaySvg;         txt = qtn_mms_om_play_presentation; }        
-        ,
         MENU_ITEM   { command = EUniCmdPlayPreview;     txt = qtn_drm_options_play_preview; }
         ,
         MENU_ITEM   { command = EUniCmdAddRecipient;    txt = qtn_msg_om_add_recipient; }

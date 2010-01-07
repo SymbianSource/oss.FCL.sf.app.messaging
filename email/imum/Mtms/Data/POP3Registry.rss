@@ -22,7 +22,7 @@
 #include <mtmconfig.rh>
 #include <e32capability.h>
 
-#include <Imum.loc>
+#include <imum.loc>
 
 //  CONSTANTS  
 //  MACROS  

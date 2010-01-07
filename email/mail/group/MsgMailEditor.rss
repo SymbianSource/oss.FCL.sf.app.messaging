@@ -27,19 +27,19 @@ NAME    CAME // From Mail Editor
 #include <data_caging_paths_strings.hrh>
 #include <AvkonIcons.hrh> // Avkon icon files
 #include "msgmaileditor.hrh"
-#include <MsgMailEditor.loc>
+#include <msgmaileditor.loc>
 #include <avkon.rsg>
 #include <avkon.rh>
 #include <avkon.mbg>
 #include <avkon.loc>
-#include <DRMCommon.loc>
-#include <Messaging.loc>
+#include <drmcommon.loc>
+#include <messaging.loc>
 #include <muiu.mbg>
 
 #include <MsgEditor.rh>
 #include <MsgEditorAppUi.hrh>
 #include <MsgEditor.hrh>
-#include <Messaging.loc>
+#include <messaging.loc>
 
 //  RESOURCE DEFINITIONS 
 

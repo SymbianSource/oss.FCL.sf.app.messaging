@@ -1174,34 +1174,7 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
                 aMenuPane->SetItemDimmed( EMmsViewerForward, ETrue );
                 }
                                 
-            if ( !  (    Document( )->SmilType( ) == EMmsSmil  
-                    &&   focusedControl == EMsgComponentIdImage
-                    &&   iImage 
-                    &&   MediaInitializedL( iImage ) ) )
-                {
-                aMenuPane->SetItemDimmed( EMmsViewerViewImage, ETrue );
-                }
-            if ( ! (    focusedControl == EMsgComponentIdAudio
-                    &&  iAudio
-                    &&  MediaInitializedL( iAudio ) ) )
-                {
-                aMenuPane->SetItemDimmed( EMmsViewerPlayAudio, ETrue );
-                }
-            if ( ! (    focusedControl == EMsgComponentIdVideo
-                    &&  iVideo
-                    &&  MediaInitializedL( iVideo ) ) )
-                {
-                aMenuPane->SetItemDimmed( EMmsViewerPlayVideo, ETrue );
-                }
-#ifdef RD_SVGT_IN_MESSAGING              
-            if ( !  ( Document( )->SmilType( ) == EMmsSmil  
-                    &&  focusedControl == EMsgComponentIdSvg
-                    &&  iSvgt
-                    &&  MediaInitializedL( iSvgt ) ) )
-                {
-                aMenuPane->SetItemDimmed( EMmsViewerPlaySvg, ETrue );
-                }                
-#endif                 
+   
             if ( ! (    Document( )->SmilType( ) == EMmsSmil 
                    &&   (  focusedControl == EMsgComponentIdBody 
                         || focusedControl == EMsgComponentIdImage 
@@ -1228,7 +1201,7 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
             if ( !Document( )->SmilList( )->Count( ) )
                 {
                 aMenuPane->SetItemDimmed( EMmsViewerShowMessage, ETrue );
-                aMenuPane->SetItemDimmed( EMmsViewerShowPresentation, ETrue );
+
                 }
             else 
                 {
@@ -1236,12 +1209,7 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
                     {
                     aMenuPane->SetItemDimmed( EMmsViewerShowMessage, ETrue );
                     }
-                if (    Document( )->SmilType( ) == EMmsSmil 
-                    ||  (   Document( )->SmilType( ) != EMmsSmil
-			            &&  focusedControl != EMsgComponentIdImage ) )
-                    {
-                    aMenuPane->SetItemDimmed( EMmsViewerShowPresentation, ETrue );
-    				}
+
 				}
 
             if ( !ShowReplyMenu( ) )

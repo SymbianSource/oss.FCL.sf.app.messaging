@@ -19,7 +19,7 @@
 
 
 // INCLUDES
-#include "Imum.loc"
+#include "imum.loc"
 
 // CONSTANTS
 #define ImasEdwinNumberMinValue     1

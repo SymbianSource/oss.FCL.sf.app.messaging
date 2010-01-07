@@ -26,7 +26,7 @@ NAME    CAMU // From Mail Utils
 #include <eikon.rh>
 #include <avkon.rh>
 #include <avkon.rsg>
-#include <MsgMailEditor.loc>
+#include <msgmaileditor.loc>
 
 
 //  RESOURCE DEFINITIONS 

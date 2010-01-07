@@ -25,11 +25,11 @@
 #include <e32math.h>
 #include <apparc.h>
 
-#include <cpushhandlerbase.h>
-#include <implementationproxy.h>
-#include <pluginkiller.h>
-#include <pushmessage.h>
-#include <pushlog.h>
+#include <push/cpushhandlerbase.h>
+#include <ecom/implementationproxy.h>
+#include <push/pluginkiller.h>
+#include <push/pushmessage.h>
+#include <push/pushlog.h>
 
 #include "mmsconst.h"
 #include "mmscmds.h"

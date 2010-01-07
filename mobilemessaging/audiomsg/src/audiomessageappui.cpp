@@ -4356,12 +4356,14 @@ TBool CAudioMessageAppUi::UnsupportedCallTypeOngoing(  )
 		case EPSCTsyCallTypeH324Multimedia:
 			{
 			unsupported = ETrue;
+			ShowUnsupportedCallTypeNoteL( R_VR_VIDEO_CALL_INFONOTE_LABEL );
 			break;			
 			}
 		// Voip call ongoing
 		case EPSCTsyCallTypeVoIP:
 			{
 			unsupported = ETrue;
+			ShowUnsupportedCallTypeNoteL( R_VR_INTERNET_CALL_INFONOTE_LABEL );
 			break;			
 			}			
 		}
@@ -4369,6 +4371,30 @@ TBool CAudioMessageAppUi::UnsupportedCallTypeOngoing(  )
 	return unsupported;
 	}
 	
+// ---------------------------------------------------------------------------
+// CAudioMessageAppUi::ShowUnsupportedCallTypeNoteL
+// 
+// ---------------------------------------------------------------------------
+//
+void CAudioMessageAppUi::ShowUnsupportedCallTypeNoteL( TInt aResourceId )
+    {
+    CAknInformationNote* infoNote;
+    HBufC* noteText;
+    
+    noteText = CEikonEnv::Static()->
+        AllocReadResourceLC( aResourceId );
+    
+    infoNote = new( ELeave ) CAknInformationNote( ETrue );
+    infoNote->ExecuteLD( *noteText );
+
+    CleanupStack::PopAndDestroy( noteText );
+    }
+
+// ---------------------------------------------------------------------------
+// CAudioMessageAppUi::CheckIncomingCall
+// 
+// ---------------------------------------------------------------------------
+//
 TBool CAudioMessageAppUi::CheckIncomingCall(  )
     {
 	TInt value( 0 );

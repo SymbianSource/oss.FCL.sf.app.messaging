@@ -2050,7 +2050,7 @@ void CMceOneRowMessageListContainer::UpdateEntryL( TMsvId aEntryId )
         iTreeListBox->SetTextL(
             treeItemId,
             bufferC3,
-            1,
+            3,
             EFalse );
         }
     else

@@ -28,9 +28,9 @@
 
 #include    <e32base.h>
 #include    <mentact.h>     // CMsgActive
-#include    <thttpevent.h>
-#include    <mhttptransactioncallback.h>
-#include    <mhttpdatasupplier.h>
+#include    <http/thttpevent.h>
+#include    <http/mhttptransactioncallback.h>
+#include    <http/mhttpdatasupplier.h>
 
 // CONSTANTS
 

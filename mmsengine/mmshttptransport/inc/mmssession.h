@@ -24,8 +24,8 @@
 //  INCLUDES
 #include <e32base.h>
 #include <http/rhttpsession.h>
-#include <mhttpsessioneventcallback.h>
-#include <rhttpheaders.h>
+#include <http/mhttpsessioneventcallback.h>
+#include <http/rhttpheaders.h>
 
 // CONSTANTS
 _LIT8( KProtocolHTTP, "HTTP/TCP" );

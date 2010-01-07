@@ -188,6 +188,11 @@ void CMceMainViewListView::ConstructL()
 
     BaseConstructL( R_MCE_MAIN_VIEW );
 //    CMceMainViewListView::ConstructL( EMceListTypeMainView );
+    iMsgListContainer = CMceMainViewListContainer::NewL(
+        ClientRect(),
+        KMsvRootIndexEntryIdValue,
+        EMceListTypeMainView );
+    iMsgListContainer->SetMopParent( this );
     }
 
 // ----------------------------------------------------
@@ -318,15 +323,9 @@ void CMceMainViewListView::DoActivateL(
 void CMceMainViewListView::CreateContainerAndActivateL()
     {
     MCELOGGER_ENTERFN("CreateContainerAndActivateL()");
-    if ( !iMsgListContainer )
+    if ( iMsgListContainer )
         {
-        iMsgListContainer = CMceMainViewListContainer::NewL(
-            ClientRect(),
-            iSession,
-            iBitmapResolver,
-            KMsvRootIndexEntryIdValue,
-            EMceListTypeMainView );
-        iMsgListContainer->SetMopParent( this );
+        iMsgListContainer->CreateListItemsL( iSession, iBitmapResolver );
         iMsgListContainer->ListItems()->SetListItemArrayObserver( this );
         ResetBitmapsL();
         iMsgListContainer->SetMskL();

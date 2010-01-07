@@ -17,8 +17,8 @@
 */
 
 #include <eikon.rh>
-#include <Messaging.loc>
-#include <AlwaysOnlineEmailPlugin.loc>
+#include <messaging.loc>
+#include <alwaysonlineemailplugin.loc>
 
 NAME AOEM
 RESOURCE RSS_SIGNATURE {}

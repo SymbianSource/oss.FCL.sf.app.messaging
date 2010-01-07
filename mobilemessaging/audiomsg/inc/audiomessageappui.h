@@ -746,7 +746,12 @@ class CAudioMessageAppUi :
         void UpdateIndicatorIcons( TMmsMessagePriority aPriority );
         
         TBool UnsupportedCallTypeOngoing( /*TBool aShowNote*/ );
-		
+        /**
+        * This method is called if video or VOIP call is ongoing and
+        * information note needs to be shown
+        * @param aResourceId
+        */
+        static void ShowUnsupportedCallTypeNoteL( TInt aResourceId );
 		TBool CheckIncomingCall(  );
 		
 		TBool DoEnterKeyL();

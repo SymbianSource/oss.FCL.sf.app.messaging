@@ -29,10 +29,10 @@
 #include <muiusettingsarray.hrh>
 #include "MuiuDynamicSettingsArray.hrh"
 #include "MuiuDynamicSettingsItemBase.rh"
-#include <Messaging.loc>
+#include <messaging.loc>
 #include <mce.loc>
 
-#include <Imum.loc>	// Localisable text
+#include <imum.loc>	// Localisable text
 
 
 #include "../Inc/IMASPageIds.hrh"

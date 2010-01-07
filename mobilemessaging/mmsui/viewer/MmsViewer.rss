@@ -384,13 +384,7 @@ RESOURCE MENU_PANE r_mmsviewer_optionsmenu
     {
     items =
         {
-        MENU_ITEM { command = EMmsViewerViewImage;          txt = qtn_mms_om_view_image; },
-        MENU_ITEM { command = EMmsViewerPlayAudio;          txt = qtn_mms_om_play_audio; },
-        MENU_ITEM { command = EMmsViewerPlayVideo;          txt = qtn_mms_om_play_video; },
-        MENU_ITEM { command = EMmsViewerShowPresentation;   txt = qtn_mms_om_show_presentation; },
-#ifdef RD_SVGT_IN_MESSAGING        
-        MENU_ITEM { command = EMmsViewerPlaySvg;   txt = qtn_mms_om_show_presentation; },
-#endif        
+
         MENU_ITEM { command = EMmsViewerReplyMenu;          txt = qtn_mms_om_reply; 
                     cascade = r_mmsviewer_reply_submenu; },
         MENU_ITEM { command = EMmsViewerUpload;             txt = qtn_options_send_via; },

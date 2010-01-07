@@ -123,7 +123,11 @@ void CMceMessageListContainer::ConstructL(
     SetRect( aRect );
 
     iListBox = new (ELeave) CMceMessageListBox( *this );
-    iListBox->ConstructL( this, EAknListBoxStylusMarkableList );
+    if(aFolderId == KMsvGlobalOutBoxIndexEntryIdValue) 
+        iListBox->ConstructL( this, EAknListBoxStylusMarkableList|EAknListBoxItemSpecificMenuDisabled );
+    else
+    	iListBox->ConstructL( this, EAknListBoxStylusMarkableList );
+		
     iListBox->ItemDrawer()->SetItemMarkReverse( ETrue );
     iListBox->EnableMSKObserver( EFalse );
 

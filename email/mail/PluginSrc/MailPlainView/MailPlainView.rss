@@ -21,7 +21,7 @@
 NAME    MPVW
 
 //  INCLUDES
-#include <MsgMailEditor.loc>
+#include <msgmaileditor.loc>
 #include <eikon.rh>
 
 RESOURCE RSS_SIGNATURE { }

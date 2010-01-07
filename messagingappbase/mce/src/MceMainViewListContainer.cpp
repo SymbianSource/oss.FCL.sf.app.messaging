@@ -41,6 +41,8 @@
 
 
 CMceMainViewListContainer::CMceMainViewListContainer()
+    : iListBox( NULL ),
+    iListItems( NULL )
     {
     }
 
@@ -52,8 +54,6 @@ CMceMainViewListContainer::~CMceMainViewListContainer()
 
 CMceMainViewListContainer* CMceMainViewListContainer::NewL(
     const TRect& aRect,
-    CMsvSessionPtr aSession,
-    CMceBitmapResolver& aBitmapResolver,
     //TODO:
     TMsvId /*aFolderId*/,
     //TODO
@@ -62,11 +62,27 @@ CMceMainViewListContainer* CMceMainViewListContainer::NewL(
     CMceMainViewListContainer* self = new (ELeave)
         CMceMainViewListContainer();
     CleanupStack::PushL(self);
-    self->ConstructL( aRect, aSession, aBitmapResolver );
+    self->ConstructL( aRect );
     CleanupStack::Pop(); // self
     return self;
     }
 
+// ----------------------------------------------------
+// CMceMainViewListContainer::CreateListItemsL
+// ----------------------------------------------------
+void CMceMainViewListContainer::CreateListItemsL(
+        CMsvSessionPtr aSession,
+        CMceBitmapResolver& aBitmapResolver )
+    {
+    if ( iListBox && !iListItems )
+        {
+        iListItems = CMceMainViewListItemArray::NewL(
+            aSession, KMsvRootIndexEntryId,
+            EMceListTypeMainView, aBitmapResolver );
+        iListBox->Model()->SetItemTextArray( iListItems );
+        iListBox->Model()->SetOwnershipType( ELbmDoesNotOwnItemArray );
+        }
+    }
 
 
 // ----------------------------------------------------
@@ -81,9 +97,7 @@ void CMceMainViewListContainer::GetHelpContext
     }
 
 void CMceMainViewListContainer::ConstructL(
-    const TRect& aRect,
-    CMsvSessionPtr aSession,
-    CMceBitmapResolver& aBitmapResolver )
+        const TRect& aRect )
     {
     CreateWindowL();
     SetRect( aRect );
@@ -91,12 +105,7 @@ void CMceMainViewListContainer::ConstructL(
     iListBox = new (ELeave) CAknDoubleLargeStyleListBox ;
 //    CEikTextListBox* listBox = new (ELeave) CAknSingleLargeStyleListBox;
     iListBox->ConstructL( this, EAknListBoxSelectionList );
-
-    iListItems = CMceMainViewListItemArray::NewL(
-        aSession, KMsvRootIndexEntryId, EMceListTypeMainView, aBitmapResolver );
-
-    iListBox->Model()->SetItemTextArray( iListItems );
-    iListBox->Model()->SetOwnershipType( ELbmDoesNotOwnItemArray );
+	
 
     //iSelectedEntries = new (ELeave) CMsvEntrySelection;
     }

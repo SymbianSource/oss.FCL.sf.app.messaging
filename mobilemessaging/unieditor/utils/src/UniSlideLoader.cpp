@@ -643,7 +643,12 @@ TBool CUniSlideLoader::LoadControlL( MMsgAsyncControl& aMediaControl, CUniObject
         {
         aObject->SetDrmRightsWhenLoaded( drmRightsValid );
         }
-    if ( aObject && drmRightsValid )
+    if ( ( aObject && drmRightsValid )  
+#ifdef RD_SVGT_IN_MESSAGING
+          || ( ( aObject &&  aObject->MediaType() == EMsgMediaSvg ) 
+                              &&  !drmRightsValid  )
+#endif 
+       )
         {
         RFile file = CUniDataUtils::GetAttachmentFileL( iDataModel.Mtm(), aObject->AttachmentId() );
         CleanupClosePushL( file );

@@ -28,7 +28,7 @@
 #include <aknlayoutscalable_avkon.cdl.h>
 #include <AknStatuspaneUtils.h>
 #include <mmf/common/mmcaf.h>
-#include <mmferrors.h>
+#include <mmf/common/mmferrors.h>
 #include <AudioPreference.h>
 
 #include <smilpresentation.h>
