@@ -2715,12 +2715,13 @@ TBool CAudioMessageAppUi::ShowWaitNoteL( TInt aResourceId )
     	}
     	
     iWaitDialog->SetCallback( this );	
-    iWaitDialog->SetTextL( *string );
-    iWaitResId = aResourceId;
+    // Coverty fix, Forward NULL , http://ousrv057/cov.cgi?cid=35709 
     if (string)
         {
+        iWaitDialog->SetTextL( *string );
         CleanupStack::PopAndDestroy( string );
         }
+    iWaitResId = aResourceId;
     iWaitDialog->PrepareLC( waitNoteResource );
 
     AMSLOGGER_WRITE( "CAudioMessageAppUi::ShowWaitNoteL <<" );

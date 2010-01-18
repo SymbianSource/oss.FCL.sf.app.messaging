@@ -1770,5 +1770,16 @@ RESOURCE TBUF r_unieditor_popup_sms_size_under_limit
      {
      buf = qtn_info_popup_sms_size_below_limit;
      }
-
+// ---------------------------------------------------------------------------
+//	r_unieditor_embedded_object_stylus_menu
+// ---------------------------------------------------------------------------
+//
+RESOURCE STYLUS_POPUP_MENU r_unieditor_embedded_object_stylus_menu
+    {
+    items =
+        {
+        STYLUS_POPUP_MENU_ITEM { txt = qtn_mms_om_remove; 
+                             command = EUniCmdRemove; }
+        };
+    }
 // End of File

@@ -41,6 +41,7 @@ class TMceListItem
         TMsvId                  iMsvId;
         TMcePrintableText       iPrintableText;
         TInt                    iIconIndex;
+        TMcePrintableText       iSecondaryText;
 #ifdef RD_MSG_NAVIPANE_IMPROVEMENT
         TInt                    iMessageCount;
 #endif // RD_MSG_NAVIPANE_IMPROVEMENT        
@@ -55,6 +56,7 @@ class TMceMainViewExtraItem
         TInt                    iApplicationUid;
         TMcePrintableText       iPrintableText;
         TMcePrintableText       iCommandText;
+        TMcePrintableText       iSecondaryText;
     };
     
 typedef CArrayFixFlat<TMceMainViewExtraItem> CMceMainViewExtraItemArray;

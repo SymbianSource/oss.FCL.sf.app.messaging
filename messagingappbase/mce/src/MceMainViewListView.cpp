@@ -30,7 +30,7 @@
 #include <eikmenub.h>
 #include <msvids.h>
 #include <featmgr.h>
-#include <SchemeHandler.h>
+#include <schemehandler.h>
 #include <ConeResLoader.h>
 #include <apgcli.h>
 #include <msvstd.hrh>
@@ -809,8 +809,11 @@ void CMceMainViewListView::HandleSessionEventL(
 		        iMsgListContainer->ListBox()->DrawDeferred();        
                 }
             }
-
-        CheckMainViewBitmapL( changedFolderId );
+		// Coverty fix, Forward NULL
+        if ( iMsgListContainer )
+           {
+           CheckMainViewBitmapL( changedFolderId );
+           }
         break;
         }
 

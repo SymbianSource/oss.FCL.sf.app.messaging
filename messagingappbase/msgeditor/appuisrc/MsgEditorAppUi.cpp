@@ -626,8 +626,6 @@ EXPORT_C void CMsgEditorAppUi::ReplyL(
     // to by-pass scanner warning about member variable being stored into
     // cleanup stack blocker is first stored into temporary variable. Storing
     // is allowed here as it is not owned.
-    CAknInputBlock* blocker = CAknInputBlock::NewCancelHandlerLC( this );
-    iInputBlocker = blocker;
 
     CMuiuOperationWait* wait =
         CMuiuOperationWait::NewLC( EActivePriorityWsEvents + 10 );
@@ -638,8 +636,7 @@ EXPORT_C void CMsgEditorAppUi::ReplyL(
 
     wait->Start();
     
-    CleanupStack::PopAndDestroy( 3, iInputBlocker );  // absorber, wait, oper
-    iInputBlocker = NULL;
+    CleanupStack::PopAndDestroy( 2 );  // absorber, wait, oper
     }
 
 // ---------------------------------------------------------

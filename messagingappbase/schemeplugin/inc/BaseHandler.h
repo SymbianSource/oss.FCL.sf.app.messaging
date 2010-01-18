@@ -23,7 +23,7 @@
 
 // INCLUDES
 
-#include <SchemeHandler.h>
+#include <schemehandler.h>
 #include <e32base.h>
 
 // FORWARD DECLARATION

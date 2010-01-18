@@ -242,8 +242,12 @@ EXPORT_C TBool CMsgCheckNames::FindAndCheckByNameL( const TDesC& aText,
         {
         PerformAdvancedMatchL( aText, fieldTypes );
         }
-    
-    TInt contactAmount = iFoundContacts->Count();
+     // Coverty fix, Forward NULL , http://ousrv057/cov.cgi?cid=35690 
+    TInt contactAmount;  
+    if(iFoundContacts)
+        {
+        contactAmount = iFoundContacts->Count();
+      	}
 
     // Offer the user a list of matching contacts
     if ( contactAmount > 1 )

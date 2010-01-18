@@ -18,7 +18,7 @@
 
 #include <appinfo.rh>
 #include <data_caging_paths_strings.hrh>
-#include <unieditor.rsg>
+#include <UniEditor.rsg>
 #include <MuiuMsgEditorService.rh>
 #include <MuiuMsgEditorServiceConst.h>
 

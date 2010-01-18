@@ -565,7 +565,9 @@ void CAudioMessageProgressDialog::UpdateProgressTextL( TInt aText,
 		case R_AUDIOMESSAGE_PROGRESS_PAUSED:
 		tempBuf = iTextPaused;
 		break;
+		// Coverty fix, Forward NULL; http://ousrv057/cov.cgi?cid=35851
 		default:
+		tempBuf = iTextPlaying;
 		break;		
 		}
 	

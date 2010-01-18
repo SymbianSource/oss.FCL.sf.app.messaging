@@ -179,7 +179,7 @@ void TSmilTimeList::Remove( CSmilInstanceTime* aRem, CSmilInstanceTime* aPrev )
 		{
 		iFirst = aRem->Next();
 		}
-	else
+	else if( aPrev )
 		{
 		aPrev->SetNext( aRem->Next() );
 		}

@@ -351,14 +351,16 @@ EXPORT_C void CMmsHeaders::StoreL(
         stream.AssignLC( aStore, KUidMmsApplicationInfoStream ); // pushes 'stream' to the stack
         length = ApplicId().Length();
         stream.WriteInt32L( length );
-        if ( length > 0 )
+        // Coverty fix, Forward NULL , http://ousrv057/cov.cgi?cid=35556
+        if ( length > 0 && iApplicationId )
             {
             stream << iApplicationId->Des();
             }
         
         length = ReplyApplicId().Length();
         stream.WriteInt32L( length );
-        if ( length > 0 )
+        // Coverty fix, Forward NULL , http://ousrv057/cov.cgi?cid=35559
+        if ( length > 0 && iReplyToApplicationId )
             {
             stream << iReplyToApplicationId->Des();
             }
@@ -387,14 +389,16 @@ EXPORT_C void CMmsHeaders::StoreL(
 
         length = RecommendedRetrievalModeText().Length();
         stream.WriteInt32L( length );
-        if ( length > 0 )
+        // Coverty fix, Forward NULL , http://ousrv057/cov.cgi?cid=35557
+        if ( length > 0 && iRecommendedRetrievalModeText )
             {
             stream << iRecommendedRetrievalModeText->Des();
             }
             
         length = ReplaceCancelId().Length();
         stream.WriteInt32L( length );
-        if ( length > 0 )
+        // Coverty fix, Forward NULL , http://ousrv057/cov.cgi?cid=35558
+        if ( length > 0 && iReplaceCancelId )
             {
             stream << iReplaceCancelId->Des();
             }

@@ -183,6 +183,7 @@
 #include "UniEditorLogging.h"
 
 #include <gsmuelem.h>     // Turkish SMS-PREQ2265 specific
+#include <aknstyluspopupmenu.h> //Added for displaying object specific stylus menus in editor
 // ========== LOCAL CONSTANTS AND MACROS ===================
 
 // SMS related
@@ -280,6 +281,7 @@ CUniEditorAppUi::CUniEditorAppUi() :
 //
 void CUniEditorAppUi::ConstructL()
     {
+    iFinalizeLaunchL = EFalse;
     // We don't have any app ui if launched from idle
     if ( iEikonEnv->EikAppUi() )
         {
@@ -444,6 +446,10 @@ void CUniEditorAppUi::ConstructL()
             iMsgLenToVKB = ETrue; 
         }
 #endif
+    	iLongTapDetector = CAknLongTapDetector::NewL( this );
+		iLongTapDetector->SetTimeDelayBeforeAnimation( KUniLongTapStartDelay );
+		iLongTapDetector->SetLongTapDelay( KUniLongTapTimeDelay );
+		iTapConsumed = EFalse;
     }
 
 
@@ -574,6 +580,15 @@ CUniEditorAppUi::~CUniEditorAppUi()
 
     delete iPopupSmsSizeAboveLimitBuffer;
     delete iPopupSmsSizeBelowLimitBuffer;
+	if(iLongTapDetector)
+	{
+    delete iLongTapDetector;
+	}
+	if(iEmbeddedObjectStylusPopup)
+	{
+    delete iEmbeddedObjectStylusPopup;
+	iEmbeddedObjectStylusPopup = NULL;
+	}
    
     }
 
@@ -651,6 +666,7 @@ void CUniEditorAppUi::LaunchViewL()
 //
 void CUniEditorAppUi::FinalizeLaunchL()
     {
+    iFinalizeLaunchL = ETrue;
     iSmilModel = &Document()->DataModel()->SmilModel();
     iHeader = iLaunchOperation->DetachHeader();
     iSlideLoader = iLaunchOperation->DetachSlideLoader();
@@ -694,10 +710,6 @@ void CUniEditorAppUi::FinalizeLaunchL()
     
     TMsgControlId focusedControlId = ResolveLaunchFocusedControlL();
             
-    iView->ExecuteL( ClientRect(), focusedControlId );
-  
-    delete iScreenClearer;
-    iScreenClearer = NULL;
     
     CEikStatusPane* statusPane = StatusPane();
     
@@ -765,6 +777,11 @@ void CUniEditorAppUi::FinalizeLaunchL()
     UpdateToolbarL();
     
     iEditorFlags |= ELaunchSuccessful;
+	
+    iView->ExecuteL( ClientRect(), focusedControlId );
+    delete iScreenClearer;
+    iScreenClearer = NULL;
+	
     }
     
 // ---------------------------------------------------------
@@ -1544,6 +1561,33 @@ void CUniEditorAppUi::DoHandleCommandL( TInt aCommand )
             DoUserRemoveMediaL( EMsgComponentIdSvg, EUniRegionImage );
             break;
             }
+        case EUniCmdRemove:
+            {
+            CMsgBaseControl* ctrl = iView->FocusedControl();  // ctrl can be NULL.
+			if(ctrl)
+			{
+            TMsgControlId controlId = TMsgControlId(ctrl->ControlId()); 
+			if(controlId == EMsgComponentIdAudio)
+			{
+                DoUserRemoveMediaL( controlId, EUniRegionAudio );
+			}
+            else if ( controlId == EMsgComponentIdImage ||
+			          controlId == EMsgComponentIdVideo ||
+                      controlId == EMsgComponentIdSvg )
+			{
+				if( (Document()->DataModel()->SmilType() == ETemplateSmil) || (Document()->DataModel()->SmilType() == E3GPPSmil))
+				   {
+				     // focus is on SMIL presentation icon
+				      RemoveTemplateL();
+				   }
+				else
+				    {
+                		DoUserRemoveMediaL( controlId, EUniRegionImage );
+				    }
+			}
+			} 
+            break;
+            }
         case EMsgDispSizeAutomatic:
         case EMsgDispSizeLarge:
         case EMsgDispSizeNormal:
@@ -1744,13 +1788,19 @@ void CUniEditorAppUi::DoEditorObserverL( TMsgEditorObserverFunc aFunc,
             {
             TPointerEvent* event = static_cast<TPointerEvent*>( aArg2 );
             CMsgBaseControl* control = static_cast<CMsgBaseControl*>( aArg1 );
-
+            if(iLongTapDetector)
+            {
+                iLongTapDetector->EnableLongTapAnimation(ETrue);
+                iLongTapDetector->PointerEventL( *event );
+            }
             if ( event->iType == TPointerEvent::EButton1Down )
                 {
-                iFocusedControl = control && control->IsFocused() ? control : NULL;
+                iFocusedControl = control;
+                iTapConsumed = EFalse;
                 }
-            else if ( event->iType == TPointerEvent::EButton1Up )
+            else if ( (!iTapConsumed) && (event->iType == TPointerEvent::EButton1Up) )
                 {
+                iTapConsumed = ETrue;
                 if ( control && 
                      iFocusedControl == control &&
                      ( control->ControlId() == EMsgComponentIdAudio ||
@@ -2070,9 +2120,13 @@ void CUniEditorAppUi::HandleServerAppExit( TInt /*aReason*/ )
                 {
                 CUniObject* object = iSmilModel->GetObject( Document()->CurrentSlide(), region );
                 
-                if ( object->DrmInfo() )
-                    {
-                    object->DrmInfo()->FreezeRights();
+                // Coverty fix, Null pointer return, http://ousrv057/cov.cgi?cid=37172
+                if ( object )
+                	{
+                    if ( object->DrmInfo() )
+                       {
+                       object->DrmInfo()->FreezeRights();
+                       }
                     }
                 
                 TRAP_IGNORE( iSlideLoader->UpdateControlIconL( 
@@ -4503,6 +4557,7 @@ void CUniEditorAppUi::SetTitleL()
     User::LeaveIfError( bitmapMask->Duplicate( image->Mask()->Handle() ) );
 
     iTitlePane->SetSmallPicture( bitmap, bitmapMask, ETrue );
+    if(!iFinalizeLaunchL)
     iTitlePane->DrawNow();
     
     CleanupStack::Pop( 2, bitmap );
@@ -5264,8 +5319,13 @@ TBool CUniEditorAppUi::ShowWaitNoteL( TInt aResourceId )
 
     iWaitDialog = new( ELeave ) CAknWaitDialog( reinterpret_cast<CEikDialog**>( &iWaitDialog ),
                                                 waitNoteDelayOff );
-    iWaitDialog->SetTextL( *string );
-    CleanupStack::PopAndDestroy( string ); 
+                                                
+    // Coverty Fix, Forward Null, http://ousrv057/cov.cgi?cid=35691                                            
+    if(string)
+    	{
+    	iWaitDialog->SetTextL( *string );
+    	CleanupStack::PopAndDestroy( string ); 
+    	}
     
     iWaitDialog->SetCallback( this );
     
@@ -5579,6 +5639,9 @@ void CUniEditorAppUi::ChangeOrderL( TUniLayout aLayout )
         }
         
     TInt index = EMsgAppendControl;
+    // Coverty fix: Forward NULL, http://ousrv057/cov.cgi?cid=35695
+    if(iView)
+    	{
     CMsgBaseControl* ctrl = iView->RemoveControlL( EMsgComponentIdBody ); // Does not leave
 
     if ( ctrl ) 
@@ -5612,6 +5675,7 @@ void CUniEditorAppUi::ChangeOrderL( TUniLayout aLayout )
             
         iView->AddControlL( ctrl, EMsgComponentIdBody, index, EMsgBody );
         }
+      }
     
     if ( !( iHeader->IsAddressControl( focusedId ) ||  
             focusedId == EMsgComponentIdSubject ||
@@ -8378,12 +8442,14 @@ void CUniEditorAppUi::PlayFocusedItemL()
             case EMsgComponentIdSvg:
                 {
                 CUniObject* obj = iSmilModel->GetObject( Document()->CurrentSlide(), region );
-                
-                if( obj->Corrupted() )
+                // Coverty fix, Null pointer return , http://ousrv057/cov.cgi?cid=37100
+                if(obj)
+                {
+                  if( obj->Corrupted() )
                     { // Object is corrupt -> just show note
                     ShowInformationNoteL( R_UNIEDITOR_CANNOT_OPEN_CORRUPT, EFalse );
                     }
-                else
+                  else
                     {
                     RFile file = CUniDataUtils::GetAttachmentFileL( Document()->DataModel()->Mtm(), obj->AttachmentId() );
                     CleanupClosePushL( file );
@@ -8413,6 +8479,7 @@ void CUniEditorAppUi::PlayFocusedItemL()
                          //  DeactivateInputBlocker();
                         }
                     }
+                  }
                 break;
                 }
             default:
@@ -9716,5 +9783,40 @@ void CUniEditorAppUi::ExitWithoutSave()
      TRAP_IGNORE(ShowConfirmableInfoL( R_UNIEDITOR_NOT_ENOUGH_MEMORY));     
      Exit( EAknSoftkeyClose );
     }
+// ---------------------------------------------------------
+// CUniEditorAppUi::HandleLongTapEventL
+//  Function for handling the long tap events
+// ---------------------------------------------------------
+//
+void CUniEditorAppUi::HandleLongTapEventL(const TPoint& aPenEventLocation, 
+										  const TPoint& aPenEventScreenLocation )
+    {
+    CMsgBaseControl* ctrl = iView->FocusedControl(); // ctrl can be NULL.
+    if ( ctrl && 
+         ( ctrl->ControlId() == EMsgComponentIdAudio ||
+                 ctrl->ControlId() == EMsgComponentIdImage ||
+                 ctrl->ControlId() == EMsgComponentIdVideo ||
+                 ctrl->ControlId() == EMsgComponentIdSvg ) )
+        {
+        TRect rect = ctrl->Rect();
+
+        if ((!iTapConsumed)&&rect.Contains(aPenEventLocation))
+            {
+            if (iEmbeddedObjectStylusPopup)
+                {
+                delete iEmbeddedObjectStylusPopup;
+                iEmbeddedObjectStylusPopup = NULL;
+                }
+            iEmbeddedObjectStylusPopup = CAknStylusPopUpMenu::NewL(this,aPenEventLocation);
+            TResourceReader reader;
+            iCoeEnv->CreateResourceReaderLC(reader,R_UNIEDITOR_EMBEDDED_OBJECT_STYLUS_MENU );
+            iEmbeddedObjectStylusPopup->ConstructFromResourceL(reader);
+            CleanupStack::PopAndDestroy();
+            iEmbeddedObjectStylusPopup->SetPosition(aPenEventLocation);
+            iEmbeddedObjectStylusPopup->ShowMenu();
+            iTapConsumed = ETrue;
+            }
+        }   
+    }  
 // End of file
 

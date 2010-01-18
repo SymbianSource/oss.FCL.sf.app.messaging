@@ -44,6 +44,7 @@
 
 #include <eikedwob.h>                   // for MEikEdwinObserver
 
+#include <aknlongtapdetector.h> // for long tap
 // Needed by inline functions
 #include "uniobjectlist.h"
 #include "unidatamodel.h"
@@ -91,6 +92,7 @@ class CUniEditorInsertOperation;
 class CUniEditorVCardOperation;
 class CUniEditorHeader;
 class CAknToolbarExtension;
+class CAknStylusPopUpMenu;
 
 // CLASS DECLARATION
 
@@ -110,7 +112,8 @@ class CUniEditorAppUi :
     public MEikEdwinObserver,
     public MProgressDialogCallback,
     public MPenUiActivationHandler,
-    public MCenRepNotifyHandlerCallback
+    public MCenRepNotifyHandlerCallback,
+    public MAknLongTapDetectorCallBack
     {
     public:  // Constructors and destructor
         
@@ -381,6 +384,13 @@ class CUniEditorAppUi :
         * 2nd phase constructor.
         */
         void ConstructL(); 
+    	// From MAknLongTapDetectorCallBack
+        /**
+         * @see MAknLongTapDetectorCallBack
+         */
+        void HandleLongTapEventL(
+            const TPoint& aPenEventLocation, 
+            const TPoint& aPenEventScreenLocation );
 
     private:
     
@@ -1351,6 +1361,17 @@ class CUniEditorAppUi :
         //Korean Req: 415-5434
         HBufC*                     iPopupSmsSizeAboveLimitBuffer;
         HBufC*                     iPopupSmsSizeBelowLimitBuffer;
+		TBool                      iFinalizeLaunchL;
+        // Own: For long tap detecting
+        CAknLongTapDetector* iLongTapDetector;
+
+        // For long tap handling
+        TBool iTapConsumed;     
+      /** 
+      * Contact image selection stylus popup menu 
+      * Own. 
+      */  
+    	CAknStylusPopUpMenu* iEmbeddedObjectStylusPopup;
     };
 
 #include "UniEditorAppUi.inl"

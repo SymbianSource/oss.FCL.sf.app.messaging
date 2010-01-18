@@ -71,6 +71,7 @@ const TInt KShowNoNotes = 0;
 const TInt KShowNotes = 1;
 
 const TInt KFrameExpansion = 10;
+const TInt KMaxVolumeLevel = 10;
 
 // MODULE DATA STRUCTURES
 
@@ -578,7 +579,8 @@ void CRingingToneBioControl::GetAndSetRingingToneVolumeL()
     {
     TInt ringingVol;
     TInt ringingType;
-
+    TInt aMaxVolume;
+	aMaxVolume = iAudioControl->MaxVolume();
 	CRepository* repository = CRepository::NewLC( KCRUidProfileEngine );
 
 	User::LeaveIfError( repository->Get( KProEngActiveRingingVolume, ringingVol ));
@@ -595,8 +597,9 @@ void CRingingToneBioControl::GetAndSetRingingToneVolumeL()
         }
     else
         {
+        TInt result( aMaxVolume * ringingVol / KMaxVolumeLevel ); 
         RDebug::Print(_L("Ringing volume : %d"), ringingVol);
-        iAudioControl->SetVolume(ringingVol);
+        iAudioControl->SetVolume(result);
         }
 #endif
     }

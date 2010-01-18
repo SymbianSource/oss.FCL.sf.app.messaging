@@ -47,6 +47,7 @@ NAME SMSV
 
 #include <MsgEditor.hrh>   
 #include <muiu.mbg>           // title icon
+#include <aknsconstants.hrh> 
 // RESOURCES
 
 RESOURCE RSS_SIGNATURE { }
@@ -109,6 +110,26 @@ RESOURCE STATUS_PANE_APP_MODEL r_smsviewer_status_pane
 //
 //----------------------------------------------------
 //
+// Needed by skinning. In toolbar resource definition skin support and bitmap methods are used, in case skin
+// does not support toolbar icons
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_smsviewer_reply_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgReply; 
+    } 
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_smsviewer_forward_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgForward; 
+    } 
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_smsviewer_delete_button_state_extension 
+    { 
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiMgTbDelete; 
+    } 
+    
 RESOURCE AVKON_TOOLBAR r_smsviewer_app_toolbar
     {
     flags = KAknToolbarFixed; 
@@ -129,6 +150,7 @@ RESOURCE AVKON_TOOLBAR r_smsviewer_app_toolbar
                         bmpfile = BITMAP_DIR"\\muiu.mif";
                         bmpid = EMbmMuiuQgn_indi_tb_msg_reply;
                         bmpmask = EMbmMuiuQgn_indi_tb_msg_reply_mask;
+                        extension = r_smsviewer_reply_button_state_extension; 
                         }  
                     };            
                 };
@@ -148,7 +170,7 @@ RESOURCE AVKON_TOOLBAR r_smsviewer_app_toolbar
                         bmpfile = BITMAP_DIR"\\muiu.mif";
                         bmpid = EMbmMuiuQgn_indi_tb_msg_forward;
                         bmpmask = EMbmMuiuQgn_indi_tb_msg_forward_mask;
-
+                        extension = r_smsviewer_forward_button_state_extension; 
                         }  
                     };            
                 };
@@ -168,6 +190,7 @@ RESOURCE AVKON_TOOLBAR r_smsviewer_app_toolbar
                         bmpfile = BITMAP_DIR"\\muiu.mif";
                         bmpid = EMbmMuiuQgn_indi_mg_tb_delete;
                         bmpmask = EMbmMuiuQgn_indi_mg_tb_delete;
+                        extension = r_smsviewer_delete_button_state_extension; 
                         }  
                     };            
                 };

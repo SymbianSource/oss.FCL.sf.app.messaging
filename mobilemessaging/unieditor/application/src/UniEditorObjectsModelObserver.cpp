@@ -105,8 +105,12 @@ void CUniEditorObjectsModelObserver::NotifyChangesL ( TMsgAttachmentCommand aCom
                     {
                     iAppUi.ReleaseImage( ETrue );
                     }
-                
-                editorDoc->DeleteAttachmentL( objInfo->SlideNumber(), obj, EFalse );
+                //Coverty fix -- Forward NULL, http://ousrv057/cov.cgi?cid=36246    
+                if(obj)
+                    {
+                    editorDoc->DeleteAttachmentL( objInfo->SlideNumber(), obj, EFalse );
+              		}
+              
                 
                 // Only call AppUI to remove object if it is located on the
                 // current slide.

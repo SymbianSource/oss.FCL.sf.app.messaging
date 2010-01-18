@@ -145,13 +145,14 @@ void CUniEditorInsertOperation::Insert( CMsgMediaInfo* aInfo,
     else
         {
         iAddAsAttachment = aAddAsAttachment;
-        }     
-    
-    if ( aInfo->MediaType() == EMsgMediaImage )
+        }   
+      
+    //Coverty fix : Forward Null http://ousrv057/cov.cgi?cid=35696
+    if ( aInfo && aInfo->MediaType() == EMsgMediaImage )
         {
         iOperationState = EUniInsertCheckMode;
         }
-    else if ( aInfo->MimeType() == KMsgMimeVideoMp4 )
+    else if ( aInfo && aInfo->MimeType() == KMsgMimeVideoMp4 )
         {
         iOperationState = EUniInsertConvertVideo;
         }

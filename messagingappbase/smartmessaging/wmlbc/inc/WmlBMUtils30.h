@@ -23,7 +23,7 @@
 #define WMLBMUTILS_H
 
 // INCLUDES
-#include <FavouritesDb.h>
+#include <favouritesdb.h>
 
 // DATA TYPES
 

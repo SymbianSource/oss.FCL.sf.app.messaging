@@ -25,7 +25,7 @@
 #include <mtmuidef.hrh>
 #endif // KMtmUiFunctionPrint
 
-#include <extendedmtmids.hrh> 
+#include <ExtendedMTMIDS.hrh> 
 
 // Capabilties
 #define KUidMsvMtmQueryMessageInfo                  0x10005996 // response true/false

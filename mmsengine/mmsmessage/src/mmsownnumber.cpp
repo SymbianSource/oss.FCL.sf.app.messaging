@@ -521,9 +521,13 @@ void CMmsOwnNumber::CheckDuplicatesL()
         {
         iMatch = EFalse;
         iState = EMmsOwnNumberSearching;
-        iOperation = iContactManager->RetrieveContactL(
+		// Coverty fix, Forward NULL
+        if(iResultArray)
+        	{
+        	iOperation = iContactManager->RetrieveContactL(
                 iResultArray->At( iContactToMatch ),
                 *this);
+            }
         iStatus = KRequestPending;
         SetActive();
         }

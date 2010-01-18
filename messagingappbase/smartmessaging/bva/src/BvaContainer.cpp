@@ -181,7 +181,7 @@ CCoeControl* CBvaContainer::ComponentControl(TInt aIndex) const
                 {
                 return iBioControl;
                 }
-            else
+            else if( iScrollBar )
                 {
                 return iScrollBar->ComponentControl( aIndex );
                 }

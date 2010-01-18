@@ -30,15 +30,15 @@ NAME    AUDI   // 4 letter id resource file.
 #include <avkon.mbg>
 #include <audiomessage.mbg>
 #include <avkon.loc>
-#include <DRMCommon.loc>
-#include <Messaging.loc>
+#include <drmcommon.loc>
+#include <messaging.loc>
 #include <appinfo.rh>
 #include <data_caging_paths_strings.hrh>
 #include "audiomessage.hrh"
 #include <muiu.mbg> 
 #include <aknsconstants.hrh>
 #include <audiomessage.loc>
-#include <VoiceRecorder.loc>
+#include <voicerecorder.loc>
 
 RESOURCE RSS_SIGNATURE { }
 RESOURCE TBUF { buf = ""; }

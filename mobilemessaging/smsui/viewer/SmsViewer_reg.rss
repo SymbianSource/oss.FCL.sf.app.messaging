@@ -17,7 +17,7 @@
 
 
 #include <appinfo.rh>
-#include <smsviewer.rsg>
+#include <SmsViewer.rsg>
 #include <MuiuMsgEditorService.rh>
 #include <MuiuMsgEditorServiceConst.h>
 #include <data_caging_paths_strings.hrh>

@@ -383,20 +383,23 @@ void CUniEditorSaveOperation::DoComposeSmilL()
     iEditStore = iDocument.Mtm().Entry().EditStoreL();
     if ( iComposeSmil )
         {
-        iDocument.DataModel()->SmilList().RemoveSmilL( *iEditStore );
-        if ( iSaveType == ESendingSave )
-            {
-            iDocument.DataModel()->SmilModel().RemoveEmptySlides();
-            }
+         if( !(iSaveType == ESendingSave && iDocument.UniState() == EUniSms) )
+             {
+	        iDocument.DataModel()->SmilList().RemoveSmilL( *iEditStore );
+	        if ( iSaveType == ESendingSave )
+	            {
+	            iDocument.DataModel()->SmilModel().RemoveEmptySlides();
+	            }
             
-        if ( iDocument.DataModel()->SmilModel().SlideCount() != 0 )
-            {
-            // Model is not empty -> Compose new SMIL
-            iDom = iDocument.DataModel()->SmilModel().ComposeL();
-            iDocument.DataModel()->SmilList().CreateSmilAttachmentL( *this, *iEditStore, iDom );
-            SetPending();
-            return;
-            }
+	        if ( iDocument.DataModel()->SmilModel().SlideCount() != 0 )
+	            {
+	            // Model is not empty -> Compose new SMIL
+	            iDom = iDocument.DataModel()->SmilModel().ComposeL();
+	            iDocument.DataModel()->SmilList().CreateSmilAttachmentL( *this, *iEditStore, iDom );
+	            SetPending();
+	            return;
+	            }
+             }
         }
         
     iOperationState = EUniEditorSaveFinalize;
@@ -657,11 +660,9 @@ HBufC* CUniEditorSaveOperation::CreateDescriptionL()
         
         TBuf<KUniMaxDescription> description;
         description.Zero();
-        length = subject.Length();
-        CMsgExpandableControl* header = static_cast<CMsgExpandableControl*>( iView.ControlById( EMsgComponentIdSubject ) );
-        
+        length = subject.Length();     
         // Saving as pure text from the editor which may contain emoticons.
-        HBufC *text = header->Editor().GetTextInHBufL();
+        HBufC *text = iHeader.SubjectControl()->Editor().GetTextInHBufL();
         CleanupStack::PushL( text );
         description.Copy( text->Ptr(), length );
         CleanupStack::PopAndDestroy( text );

@@ -27,7 +27,7 @@
 #include "WmlBioControl.pan"
 #include "WmlLog.h"
 
-#include <FavouritesItemList.h>
+#include <favouritesitemlist.h>
 #include <WMLBC.rsg>                    // resource identifiers
 #include <StringLoader.h>               // StringLoader
 #include <msgnamevalue.h>               // CMsgNameValue

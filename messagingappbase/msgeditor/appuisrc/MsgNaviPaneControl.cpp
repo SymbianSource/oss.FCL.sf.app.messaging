@@ -248,7 +248,8 @@ void CMsgNaviPaneControl::HandlePointerEventL( const TPointerEvent& aPointerEven
                 {
                 iPreviouslyFocusedControl = leftArrowIndicator;
                 }
-            else if ( iPreviouslyFocusedControl == leftArrowIndicator )
+            // Coverty fix , Forward NULL, http://ousrv057/cov.cgi?cid=35876
+            else if ( iObserver && iPreviouslyFocusedControl == leftArrowIndicator )
                 {
                 iObserver->HandleNavigationControlEventL( 
                             MMsgNaviPaneControlObserver::EMsgNaviLeftArrowPressed );
@@ -370,11 +371,20 @@ void CMsgNaviPaneControl::LayoutNavigationIndicators()
         {
         TAknLayoutRect leftArrowTouchRect;
         leftArrowTouchRect.LayoutRect( Rect(), AknLayoutScalable_Apps::aid_size_touch_mv_arrow_left(iVarientId) );
-        iLeftArrowTouchRect = leftArrowTouchRect.Rect();
     
         TAknLayoutRect rightArrowTouchRect;
         rightArrowTouchRect.LayoutRect( Rect(), AknLayoutScalable_Apps::aid_size_touch_mv_arrow_right(iVarientId) );
-        iRightArrowTouchRect = rightArrowTouchRect.Rect();
+        if ( AknLayoutUtils::LayoutMirrored() )
+        	{
+        		iLeftArrowTouchRect=rightArrowTouchRect.Rect();
+        		iRightArrowTouchRect= leftArrowTouchRect.Rect();
+        	}
+        else
+        	{
+        		iLeftArrowTouchRect=leftArrowTouchRect.Rect();
+        		iRightArrowTouchRect= rightArrowTouchRect.Rect();
+        	}
+ 
         }
     }
         

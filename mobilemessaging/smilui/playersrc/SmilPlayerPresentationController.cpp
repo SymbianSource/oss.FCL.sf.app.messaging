@@ -54,7 +54,7 @@
 #include <aknnavi.h>
 #include <aknnavide.h>
 
-#include <BrowserLauncher.h>
+#include <browserlauncher.h>
 
 #include <txtetext.h>           // for CPlainText
 #include "SmilTextRenderer.h"

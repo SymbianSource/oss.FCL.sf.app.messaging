@@ -208,6 +208,11 @@ void CMceIdleMtmLoader::LoadMtmL( TUid aMtmType )
         canSend.iUid = KUidMtmQueryCanCreateNewMsgValue;
         canSendResponse = uiData->QueryCapability( canSend, response );      
         }
+        
+    if(cMailVal && aMtmType == KSenduiMtmSmtpUid)
+       {
+       canSendResponse = KErrNotSupported;
+       }
 
     TBool foundPopup = EFalse;
     TBool foundSubmenu = EFalse;

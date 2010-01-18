@@ -1495,10 +1495,11 @@ void CNotMtmUi::CleanupWaitDialog( TAny* aAny )
     if ( dialog && *dialog )
         { 
         delete *dialog;
+        // Coverty fix, Forward NULL http://ousrv057/cov.cgi?cid=36247
+        *dialog = NULL;
+  		dialog = NULL;
         } 
-    *dialog = NULL;
-    dialog = NULL;
-    } 
+   	  }
 
 //--------------------------------
 // DecodeProgress

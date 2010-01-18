@@ -184,8 +184,9 @@ TBool CPostcardRecipientWrapper::AskLocationL(
         TInt popupOk = popupList->ExecuteLD();
         TInt itemIndex = listBox->CurrentItemIndex();
         CleanupStack::PopAndDestroy( listBox ); // listBox;
-
-        if ( popupOk )
+        	
+		// Coverty fix, Negative return; http://ousrv057/cov.cgi?cid=36961
+        if ( popupOk && itemIndex > 0)
 	        {
 	        location = foundLocations[ itemIndex ];
 	        }

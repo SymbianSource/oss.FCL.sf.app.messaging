@@ -39,6 +39,7 @@
 #include <uniobject.h>
 #include <unidrminfo.h>                 // CUniDrmInfo
 #include <AknNaviDecoratorObserver.h>
+#include <aknlongtapdetector.h> // for long tap
 
 #include "MmsViewer.hrh"                // enumerations
 #include "MmsViewerOperation.h"
@@ -88,6 +89,7 @@ class CPeriodic;
 class CAknVolumeControl;
 class CAknInputBlock;
 class CAknToolbar;
+class CAknStylusPopUpMenu;
 
 // CLASS DECLARATION
 
@@ -109,7 +111,8 @@ class CMmsViewerAppUi :
     public MAknToolbarObserver,             //toolbar
 #endif
     public MCoeControlObserver,              // of CAknVolumeControl
-    public MUniObjectObserver
+    public MUniObjectObserver,
+    public MAknLongTapDetectorCallBack
     {
     public:  // Constructors and destructor
         
@@ -567,6 +570,13 @@ class CMmsViewerAppUi :
         * This function handles the situation.
         */
         void HandleImageNoRightsInLaunch( );
+        // From MAknLongTapDetectorCallBack
+        /**
+         * @see MAknLongTapDetectorCallBack
+         */
+        void HandleLongTapEventL(
+            const TPoint& aPenEventLocation, 
+            const TPoint& aPenEventScreenLocation );
 
 
     private: // Functions from base classes
@@ -1116,6 +1126,16 @@ class CMmsViewerAppUi :
         TInt                        iMaxForwardSlideCount;
         CAknTitlePane*              iTitlePane; 
         CGulIcon*                   iAppIcon;
+        // Own: For long tap detecting
+        CAknLongTapDetector* iLongTapDetector;
+
+        // For long tap handling
+        TBool iTapConsumed;     
+      /** 
+      * Contact image selection stylus popup menu 
+      * Own. 
+      */  
+        CAknStylusPopUpMenu* iEmbeddedObjectStylusPopup;
     };
 
 #endif      //  MMSVIEWERAPPUI_H

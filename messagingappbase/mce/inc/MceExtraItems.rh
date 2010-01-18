@@ -37,6 +37,7 @@ STRUCT MCE_EXTRA_ITEM
     WORD    index = -1;
     WORD    icon_index = -1;
     LONG    app_icon_index = -1; // if set, used to find application icon needed if wanted to skin this
+    LTEXT   secondary_text = "";
     }
 
 // End of file

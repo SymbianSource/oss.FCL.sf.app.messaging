@@ -191,6 +191,7 @@ void CUniSmsPlugin::ConstructL()
         }
     
     FeatureManager::UnInitializeLib();
+    iStoreChanged = EFalse;
     
     UNILOGGER_LEAVEFN("CUniSmsPlugin::ConstructL");
     }
@@ -340,12 +341,15 @@ TMsvId CUniSmsPlugin::DoConvertFromL( TMsvId aId, TBool aIsForward )
         }
     
     SmsMtmL()->Body().Reset();
-    
     SmsMtmL()->SaveMessageL();
     TMsvEntry uniTEntry = iUniMtm.Entry().Entry();
+    CMsvStore* store = iUniMtm.Entry().EditStoreL();
+    CleanupStack::PushL( store );
    
-    iUniMtm.SaveMessageL();
+    iUniMtm.SaveMessageL(*store, uniTEntry);
     
+    store->CommitL();
+    CleanupStack::PopAndDestroy(store);  
     // Lets convert the bits to Uni mode
 	TUniMsvEntry::SetForwardedMessage( uniTEntry, aIsForward );
 	
@@ -356,6 +360,41 @@ TMsvId CUniSmsPlugin::DoConvertFromL( TMsvId aId, TBool aIsForward )
     return aId;
     }
 
+TInt32 CUniSmsPlugin::AttachmentsSizeL( CMsvStore& aStore )
+    {
+    TInt32 size = 0;
+
+    MMsvAttachmentManager& attachMan = aStore.AttachmentManagerL();
+    TInt numAttachments = attachMan.AttachmentCount();
+
+    for ( TInt i = 0; i < numAttachments; i++ )
+        {
+        CMsvAttachment* attachmentInfo = attachMan.GetAttachmentInfoL( i );
+        CleanupStack::PushL( attachmentInfo );
+        
+        CMsvMimeHeaders* mimeHeaders = CMsvMimeHeaders::NewL();
+        CleanupStack::PushL( mimeHeaders );
+        
+        mimeHeaders->RestoreL( *attachmentInfo );
+        
+        RFile attaFile = attachMan.GetAttachmentFileL( i );
+        CleanupClosePushL( attaFile );
+        TInt fileSize = 0;
+        
+        // If we cannot access the file, we are in trouble
+        User::LeaveIfError( attaFile.Size( fileSize ) ); 
+        
+        // This adds up mime header size + actual attachment binary data
+        size += mimeHeaders->Size() + fileSize;
+
+        CleanupStack::PopAndDestroy( &attaFile );
+        CleanupStack::PopAndDestroy( mimeHeaders );
+        CleanupStack::PopAndDestroy( attachmentInfo );
+        }
+
+    return size;
+    }
+	
 // -----------------------------------------------------------------------------
 // ConvertToL
 // -----------------------------------------------------------------------------
@@ -601,13 +640,17 @@ TMsvId CUniSmsPlugin::ConvertToL( TMsvId aId )
 	
     CleanupStack::PopAndDestroy( sendOptions ); 
 
-    SmsMtmL()->Entry().ChangeL( tEntry );
+    SmsMtmL()->SaveMessageL(*store, tEntry);
 
     store->CommitL();        
+    tEntry.iSize = store->SizeL();
+    if( AttachmentsSizeL( *store ) > 0 )
+        {
+        tEntry.SetAttachment( ETrue );
+        }
     CleanupStack::PopAndDestroy( store );
     
-    iUniMtm.SaveMessageL();
-    SmsMtmL()->SaveMessageL();
+    SmsMtmL()->Entry().ChangeL( tEntry );
     UNILOGGER_LEAVEFN("CUniSmsPlugin::ConvertToL");
     return aId;
     }
@@ -831,6 +874,7 @@ TMsvId CUniSmsPlugin::DoCreateReplyOrForwardL(
 // ----------------------------------------------------------------------------
 void CUniSmsPlugin::MoveMessagesToOutboxL()
     {
+    iStoreChanged = EFalse;
     if ( !iRecipients || !iRecipients->Count() )
         {
         User::Leave( KErrGeneral );
@@ -915,6 +959,7 @@ void CUniSmsPlugin::MoveMessagesToOutboxL()
                 SmsMtmL()->AddAddresseeL( 
 	            iEmailOverSmsC->Address( ) ,
 		        KNullDesC( ) );
+                iStoreChanged = ETrue;
                 }
             else
                 {                           
@@ -922,7 +967,10 @@ void CUniSmsPlugin::MoveMessagesToOutboxL()
                 }
 
             entry.ChangeL( msvEntry );
-            SmsMtmL()->SaveMessageL();
+            if( iStoreChanged )
+                {
+            	SmsMtmL()->SaveMessageL();
+                }
             // Move it
             copyId = MoveMessageEntryL( KMsvGlobalOutBoxIndexEntryId );
             cantExit = EFalse;
@@ -951,6 +999,7 @@ void CUniSmsPlugin::MoveMessagesToOutboxL()
                     msvEntry, *rcpt, SmsMtmL()->Body());
  
                 SmsMtmL()->RemoveAddressee( 0 );
+                iStoreChanged = ETrue;
                 }
             //If hundreds of recipient, make sure viewserver
             //timers are reseted
@@ -1380,6 +1429,7 @@ void CUniSmsPlugin::InsertSubjectL( CSmsHeader& aHeader, CRichText& aText  )
             aText.InsertL( 1, subject );
             aText.InsertL( writePosition-1, KUniSmsEndParenthesis );
             }
+        iStoreChanged = ETrue;
         }
     
     // Clears the CSmsHeaders EmailFields for non Email addresses
@@ -1387,6 +1437,7 @@ void CUniSmsPlugin::InsertSubjectL( CSmsHeader& aHeader, CRichText& aText  )
     CleanupStack::PushL( emailFields );
     aHeader.SetEmailFieldsL( *emailFields );
     CleanupStack::PopAndDestroy( emailFields );  
+        iStoreChanged = ETrue;
     }
            
 // ----------------------------------------------------------------------------

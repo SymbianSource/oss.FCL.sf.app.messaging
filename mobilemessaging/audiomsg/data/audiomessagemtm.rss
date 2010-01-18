@@ -28,7 +28,7 @@ NAME    AMSM
 #include <MtmExtendedCapabilities.hrh>
 #include <avkon.loc>
 #include <muiusettingsarray.rh>
-#include <Messaging.loc>
+#include <messaging.loc>
 #include <audiomessage.loc>
 
 

@@ -16,7 +16,7 @@
 
 
 
-#include "msgeditor.hrh"
+#include "MsgEditor.hrh"
 
 STRUCT MSG_EDITOR_EXPANDABLE_CONTROL
     {

@@ -40,6 +40,7 @@ NAME    MMSV // 4 letter ID
 #include <avkon.loc>
 #include <drmcommon.loc>
 #include <messaging.loc>
+#include <unieditor.loc>
 
 #include <appinfo.rh>
 #include <data_caging_paths_strings.hrh>
@@ -860,6 +861,16 @@ RESOURCE TBUF r_qtn_mms_obey_silent_mode { buf = qtn_mms_qry_play_audio; }
 //----------------------------------------------------
 //
 RESOURCE TBUF r_mmsviewer_cannot_play_videocall_ongoing  { buf = qtn_mms_info_video_call_ongoing_no_media ; }
-
-
+// ---------------------------------------------------------------------------
+//  r_mmsviewer_embedded_object_stylus_menu
+// ---------------------------------------------------------------------------
+//
+RESOURCE STYLUS_POPUP_MENU r_mmsviewer_embedded_object_stylus_menu
+    {
+    items =
+        {
+        STYLUS_POPUP_MENU_ITEM { txt = qtn_mms_om_save; 
+                             command = EMmsViewerSaveObject; }
+        };
+    }
 // End of File

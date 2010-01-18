@@ -21,7 +21,7 @@
 // INCLUDE FILES
 
 #include "WmlBMUtils30.h"
-#include <FavouritesItemList.h>         // CFavouritesItemList         
+#include <favouritesitemlist.h>         // CFavouritesItemList         
 
 // ================= MEMBER FUNCTIONS =======================
 

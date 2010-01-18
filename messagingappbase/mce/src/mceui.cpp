@@ -713,6 +713,17 @@ void CMceUi::HandleServerStartupL()
 
     iUiRegistry=CMtmUiDataRegistry::NewL(*iSession);
 
+   
+    iMceMainView->HandleMsgServerStartupL();
+    
+    CMceDeliveryReportView* view3 = CMceDeliveryReportView::NewL( *iSessionHolder );
+    CleanupStack::PushL( view3 );
+    AddViewL( view3 );      // transfer ownership to CAknAppUi
+    CleanupStack::Pop( view3 );
+
+    iMceDeliveryView = view3;
+
+     
     CMceMessageListView* mceListView = CMceMessageListView::NewL(
         iSession,
         KMsvLocalServiceIndexEntryId,
@@ -725,8 +736,8 @@ void CMceUi::HandleServerStartupL()
     iMceListView = mceListView;
 
 
-    // should be called after creation of iUiRegistry
-    iMceMainView->HandleMsgServerStartupL();
+
+
     
     iAudioMsgEnabled = FeatureManager::FeatureSupported( KFeatureIdAudioMessaging ); // CR : 401-1806
     iPostcardEnabled = FeatureManager::FeatureSupported( KFeatureIdMmsPostcard ) ; // CR : 401-1806
@@ -745,12 +756,7 @@ void CMceUi::HandleServerStartupL()
     iMceListView = mceListView;*/
     iMceListView->HandleMsgServerStartupL();
 
-    CMceDeliveryReportView* view3 = CMceDeliveryReportView::NewL( *iSessionHolder );
-    CleanupStack::PushL( view3 );
-    AddViewL( view3 );      // transfer ownership to CAknAppUi
-    CleanupStack::Pop( view3 );
 
-    iMceDeliveryView = view3;
 
     iMceMainView->ListContainer()->ListItems()->SetAlwaysOnline( iAlwaysOnline );
 
@@ -4100,6 +4106,7 @@ void CMceUi::AddMTMFunctionsL(CEikMenuPane& aMenuPane, TInt aMenuCommandId)
 
                 else if ( functionInfo.iFuncId == KMtmUiFunctionDeliveryStatus )
                     {
+                    data.iFlags |= EEikMenuItemSpecific;               
                     aMenuPane.AddMenuItemL( data, EMceCmdUndelete );
                     }
 

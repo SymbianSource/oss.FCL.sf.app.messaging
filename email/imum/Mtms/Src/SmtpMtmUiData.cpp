@@ -135,13 +135,10 @@ TInt CSmtpMtmUiData::QueryCapability(TUid aCapability, TInt& aResponse) const
         //
         // --- Support depends on variation ---
         case KUidMsvMtmQuerySupportEditor:
-            aResponse = iFFEmailVariation ? EFalse : ETrue;
-            // FALLTHROUGH
-        case KUidMtmQueryCanCreateNewMsgValue:
-            return iFFEmailVariation ? KErrNotSupported : KErrNone;
-    
-        //
+            aResponse = ETrue;
+            break;
         // --- Supported non-valued capabilities ---
+		case KUidMtmQueryCanCreateNewMsgValue:
         case KUidMtmQuerySupportAttachmentsValue:
         case KUidMtmQueryCanSendMsgValue:
         case KUidMsvMtmQueryMessageInfo:

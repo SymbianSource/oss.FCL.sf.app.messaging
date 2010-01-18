@@ -21,7 +21,7 @@
 #if !defined (__IMPICMDS_H__)
 #define __IMPICMDS_H__
 
-#include <mtmextendedcapabilities.hrh>
+#include <MtmExtendedCapabilities.hrh>
 
 /**
 *   TIMAP4Cmds:

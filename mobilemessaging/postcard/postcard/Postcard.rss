@@ -35,16 +35,16 @@ NAME    PCAP // 4 letter ID
 #include <appinfo.rh>
 #include <data_caging_paths_strings.hrh>
 //LOC Files
-#include <DRMCommon.loc>
-#include <Messaging.loc>
+#include <drmcommon.loc>
+#include <messaging.loc>
 #include <avkon.loc>
 
 #include <AiwCommon.rh>
 #include <AiwGenericParam.hrh>
 
 // Local ones
-#include <Postcard.loc>
-#include <Postcard_branded.loc>
+#include <postcard.loc>
+#include <postcard_branded.loc>
 #include "Postcard.hrh"
 
 //  RESOURCE DEFINITIONS 

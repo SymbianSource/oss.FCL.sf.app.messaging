@@ -44,7 +44,7 @@
 #include <ecom/ecom.h>
 #include <AknDef.h>
 #include <AiwServiceHandler.h>          // CAiwServiceHandler
-#include <smsviewer.rsg>
+#include <SmsViewer.rsg>
 #include <bva.rsg>
 #include <AiwCommon.hrh>
 #include <data_caging_path_literals.hrh>

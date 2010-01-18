@@ -481,12 +481,14 @@ RESOURCE MENU_PANE r_mce_folder_menu
         MENU_ITEM
             {
             command = EMceCmdMarkAsReadMsgs;
-            txt = qtn_mce_rm_mark_read_messages;            
+            txt = qtn_mce_rm_mark_read_messages;
+            flags = EEikMenuItemSpecific;
             },
         MENU_ITEM
             {
             command = EMceCmdMarkAsUnreadMsgs;
             txt = qtn_mce_rm_mark_unread_messages;
+            flags = EEikMenuItemSpecific;
             },
         MENU_ITEM
             {

@@ -32,8 +32,8 @@ NAME    POUB
 #include <avkon.loc>
 #include <muiusettingsarray.rh>
 
-#include <Messaging.loc>
-#include <Postcard_branded.loc>
+#include <messaging.loc>
+#include <postcard_branded.loc>
 
 //  CONSTANTS  
 

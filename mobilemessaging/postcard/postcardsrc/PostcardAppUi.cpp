@@ -1773,14 +1773,14 @@ void CPostcardAppUi::PostcardOperationEvent(
 // ---------------------------------------------------------
 void CPostcardAppUi::DoDelayedExit( TInt aDelayTime )
     {
-    if ( !iIdle )
+    // Coverty fix , Forward NULL http://ousrv057/cov.cgi?cid=36248    
+    if ( iIdle )
         {
-        
-        }
-    iIdle->Cancel();
-    iIdle->Start( aDelayTime,
+        iIdle->Cancel();
+   		iIdle->Start( aDelayTime,
                   aDelayTime, 
                   TCallBack( DelayedExit, this ));
+        }
     }
 
 // ---------------------------------------------------------

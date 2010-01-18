@@ -955,7 +955,11 @@ void CMsgSmsViewerAppUi::DynInitMenuPaneL(
             break;
         case R_FINDITEMMENU_MENU:
             {
-            iFindItemMenu->DisplayFindItemCascadeMenuL( *aMenuPane );
+            // Coverty fix , Forward NULL http://ousrv057/cov.cgi?cid=35945
+            if(iFindItemMenu)
+               {
+               iFindItemMenu->DisplayFindItemCascadeMenuL( *aMenuPane );
+         	   }
             }
             break;
         case R_SMSV_OPTIONSMENUPANE_CLASS0:
@@ -970,7 +974,8 @@ void CMsgSmsViewerAppUi::DynInitMenuPaneL(
                 {
                 aMenuPane->DeleteMenuItem( EFindItemMenuPlaceHolder );
                 }
-            else
+            // Coverty fix , Forward NULL http://ousrv057/cov.cgi?cid=35945
+            else if(iFindItemMenu)
 	            {              
 	            iFindItemMenu->AddItemFindMenuL( 
                 IsBodyFocused() ? iView->ItemFinder() : 0,

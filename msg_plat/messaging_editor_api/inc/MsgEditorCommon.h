@@ -30,6 +30,8 @@ _LIT( KMsgEditorMbm_AH, "\\resource\\apps\\msgeditor_ah.mbm" );
 
 const TText KArabicSemicolon = 0x061B;
 const TText KSemicolon = 0x003B;
+const TInt KUniLongTapStartDelay( 500000 ); // 0.5s
+const TInt KUniLongTapTimeDelay( 1500000 ); // 1.5s
 
 // ========== MACROS =======================================
 

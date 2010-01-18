@@ -191,6 +191,7 @@
 #include <MsgEditorSettingCacheUpdatePlugin.h>
 #include    <e32property.h>
 #include  <ctsydomainpskeys.h>
+#include <aknstyluspopupmenu.h>
 // CONSTANTS
 
 // following is minimum value for player
@@ -414,6 +415,10 @@ void CMmsViewerAppUi::ConstructL( )
 	    Document( )->PrepareToLaunchL( this );
 		}
     LOGTEXT2(_L16("CMmsViewerAppUi::ConstructL read. iSupportedFeatures 0x%x"), iSupportedFeatures );
+    iLongTapDetector = CAknLongTapDetector::NewL( this );
+    iLongTapDetector->SetTimeDelayBeforeAnimation( KUniLongTapStartDelay );
+    iLongTapDetector->SetLongTapDelay( KUniLongTapTimeDelay );
+    iTapConsumed = EFalse;
     }
 
 // ---------------------------------------------------------
@@ -464,6 +469,15 @@ CMmsViewerAppUi::~CMmsViewerAppUi( )
     delete iSendReadReportOperation;
     delete iIdle;
     delete iAppIcon;
+    if(iLongTapDetector)
+    {
+    delete iLongTapDetector;
+    }
+    if(iEmbeddedObjectStylusPopup)
+    {
+    delete iEmbeddedObjectStylusPopup;
+    iEmbeddedObjectStylusPopup = NULL;
+    }
 
     LOGTEXT(_L8("CMmsViewerAppUi::~CMmsViewerAppUi end") );
     }
@@ -2804,18 +2818,23 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                 {
                 TPointerEvent* pointerEvent = static_cast<TPointerEvent*>( aArg2 );
                 CMsgBaseControl* baseControl = static_cast<CMsgBaseControl*>( aArg1 );
-
+                if(iLongTapDetector)
+                {
+                    iLongTapDetector->EnableLongTapAnimation(ETrue);
+                    iLongTapDetector->PointerEventL( *pointerEvent );
+                }
                 if (    pointerEvent
                     &&  pointerEvent->iType == TPointerEvent::EButton1Down )
                     {
                     // We are looking for a valid tap (button down and up)
                     // on a focused object.
-                    iPointerTarget =
-                        baseControl && baseControl->IsFocused() ? baseControl : NULL;
+                    iPointerTarget = baseControl;
+                    iTapConsumed = EFalse;
                     }
-                else if (   pointerEvent
-                        &&  pointerEvent->iType == TPointerEvent::EButton1Up )
+                else if ( (!iTapConsumed) && (pointerEvent
+                        &&  pointerEvent->iType == TPointerEvent::EButton1Up) )
                     {
+                    iTapConsumed = ETrue;
                     if ( baseControl && iPointerTarget == baseControl )
                         {
                         switch( iMskId )
@@ -3426,30 +3445,34 @@ void CMmsViewerAppUi::MediaPlayL(CMsgMediaControl* aMedia)
                 __ASSERT_ALWAYS(    ObjectByMediaControl( *iAudio ) || ObjectByMediaControl( *iAudio )->MediaInfo( ), 
                                     Panic( EMmsViewerNullPointer ) );
                 CUniObject* obj = ObjectByMediaControl( *iAudio );
-                if (    iViewerFlags & EProhibitNonDrmMusic 
+                // Coverty fix, Null pointer return, http://ousrv057/cov.cgi?cid=37099
+                if (obj)
+                	{
+                    if (    iViewerFlags & EProhibitNonDrmMusic 
                     &&  !( obj->MediaInfo( )->Protection( ) &
                         ( EFileProtSuperDistributable | EFileProtForwardLocked ) ) )
-                    {
-                    // Prepare buffer for aMimeType
-                    HBufC* mimeBuffer = HBufC::NewLC( obj->MimeType().Length() + KMmsViewerSpace().Length() );
-                    TPtr mimeBufferPtr = mimeBuffer->Des();
-                    mimeBufferPtr.Copy( obj->MimeType() );
-
-                    // FindF() would find "audio/3gpp" in "audio/3gpp2" without
-                    // the added space.
-                    mimeBufferPtr.Append( KMmsViewerSpace );
-
-                    // If result is not KErrNotFound, this MIME-type is indeed on blocked list.
-                    if ( iProhibitMimeTypeBuffer->FindF( mimeBufferPtr ) >= 0 ) 
                         {
-                        ShowInformationNoteL( R_MMSVIEWER_PLAIN_MUSIC_PROHIBITED );
+                        // Prepare buffer for aMimeType
+                        HBufC* mimeBuffer = HBufC::NewLC( obj->MimeType().Length() + KMmsViewerSpace().Length() );
+                        TPtr mimeBufferPtr = mimeBuffer->Des();
+                        mimeBufferPtr.Copy( obj->MimeType() );
+
+                        // FindF() would find "audio/3gpp" in "audio/3gpp2" without
+                        // the added space.
+                        mimeBufferPtr.Append( KMmsViewerSpace );
+
+                        // If result is not KErrNotFound, this MIME-type is indeed on blocked list.
+                        if ( iProhibitMimeTypeBuffer->FindF( mimeBufferPtr ) >= 0 ) 
+                           {
+                           ShowInformationNoteL( R_MMSVIEWER_PLAIN_MUSIC_PROHIBITED );
+                           /* Allocated buffer must be destroyed and pop'd !!! */
+                           CleanupStack::PopAndDestroy( mimeBuffer );
+                            return;
+                           }
                          /* Allocated buffer must be destroyed and pop'd !!! */
                         CleanupStack::PopAndDestroy( mimeBuffer );
-                        return;
                         }
-                         /* Allocated buffer must be destroyed and pop'd !!! */
-                        CleanupStack::PopAndDestroy( mimeBuffer );
-                    }
+                     }
                 if (    IsSilenceL( ) 
                     &&  !ShowConfirmationQueryL( R_QTN_MMS_OBEY_SILENT_MODE ) )
                     {
@@ -5450,6 +5473,43 @@ void CMmsViewerAppUi::SetTitleIconL()
     CleanupStack::Pop( bitmapMask );
     CleanupStack::Pop( bitmap );
     }
-
+// ---------------------------------------------------------
+// CMmsViewerAppUi::HandleLongTapEventL
+//  Function for handling the long tap events
+// ---------------------------------------------------------
+//
+void CMmsViewerAppUi::HandleLongTapEventL(const TPoint& aPenEventLocation, 
+                                          const TPoint& aPenEventScreenLocation )
+    {
+    CMsgBaseControl* ctrl = iView->FocusedControl(); // ctrl can be NULL.
+    if ( ctrl && 
+         ( ctrl->ControlId() == EMsgComponentIdAudio ||
+                 ctrl->ControlId() == EMsgComponentIdImage ||
+                 ctrl->ControlId() == EMsgComponentIdVideo ||
+                 ctrl->ControlId() == EMsgComponentIdSvg )&&
+                 ((Document()->SmilType()!=ETemplateSmil)&&(Document()->SmilType()!=E3GPPSmil) )) 
+        {
+        TRect rect = ctrl->Rect();
+       
+        
+     
+        if ((!iTapConsumed)&&rect.Contains(aPenEventLocation))
+            {
+            if (iEmbeddedObjectStylusPopup)
+                {
+                delete iEmbeddedObjectStylusPopup;
+                iEmbeddedObjectStylusPopup = NULL;
+                }
+            iEmbeddedObjectStylusPopup = CAknStylusPopUpMenu::NewL(this,aPenEventLocation);
+            TResourceReader reader;
+            iCoeEnv->CreateResourceReaderLC(reader,R_MMSVIEWER_EMBEDDED_OBJECT_STYLUS_MENU );
+            iEmbeddedObjectStylusPopup->ConstructFromResourceL(reader);
+            CleanupStack::PopAndDestroy();
+            iEmbeddedObjectStylusPopup->SetPosition(aPenEventLocation);
+            iEmbeddedObjectStylusPopup->ShowMenu();
+            iTapConsumed = ETrue;
+            }
+        }   
+    }  
 //  End of File
 

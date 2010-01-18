@@ -366,7 +366,7 @@ void CMceMainViewListItemArray::AddExtraItemWithIconL(
     TUid aApplicationUid )
     {
     TMcePrintableText tempText = aNewItem.iPrintableText; // let's save string
-
+    TMcePrintableText secondarytxt = aNewItem.iSecondaryText;
     aNewItem.iExtraItem = ETrue;
     // make sure it will not be mixed with items in msgs
     TMceBitmapListItem bitmapItem;
@@ -403,6 +403,8 @@ void CMceMainViewListItemArray::AddExtraItemWithIconL(
     aNewItem.iPrintableText.AppendNum( index );
     aNewItem.iPrintableText.Append( KColumnListSeparator );
     aNewItem.iPrintableText.Append( tempText );
+    aNewItem.iPrintableText.Append( KColumnListSeparator );
+    aNewItem.iPrintableText.Append( secondarytxt );
 
     InsertL( aIndex, aNewItem );
     }
@@ -1086,7 +1088,18 @@ void CMceMainViewListItemArray::ReadExtraItemsResourceL()
                         TUid applicationUid;
                         applicationUid.iUid = reader.ReadUint32();
                         extraItem.iApplicationUid = applicationUid.iUid;
-
+                        // secondary text
+                        txt = reader.ReadHBufCL();   //secondary text                       
+                        if(txt)
+                            {
+                            extraItem.iSecondaryText.Copy( *txt );
+                            delete txt;
+                            txt = NULL;
+                            }   
+                        else
+                            {
+                            extraItem.iSecondaryText.Copy(KNullDesC());
+                            }
                         iExtraItemsArray->AppendL( extraItem );
                         extraItem.iCommandId++;
                         }
@@ -1130,6 +1143,7 @@ void CMceMainViewListItemArray::AddExtraItemCommandL( TInt aIndex )
         tempItem.iExtraItem = ETrue;
         tempItem.iMsvId = extraItem.iCommandId;
        	tempItem.iPrintableText.Copy( extraItem.iPrintableText );
+       	tempItem.iSecondaryText.Copy(extraItem.iSecondaryText);
        	TUid appUid;
        	appUid.iUid = extraItem.iApplicationUid;
        	AddExtraItemWithIconL( tempItem, Count(), extraItem.iIconIndex, appUid );

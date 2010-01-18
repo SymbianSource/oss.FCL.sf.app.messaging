@@ -227,7 +227,11 @@ class CUniSmsPlugin : public CUniEditorPlugin
         * Converts sms message to uni message format.
         */
 		TMsvId DoConvertFromL( TMsvId aId, TBool aIsForward );
-        
+
+        /**
+        * returns attachment size.
+        */
+		TInt32 AttachmentsSizeL( CMsvStore& aStore );        
 
     private:  // Data    
 
@@ -268,6 +272,8 @@ class CUniSmsPlugin : public CUniEditorPlugin
         TInt iCharSupportType;
         TSmsEncoding  iAlternativeEncodingType;
         TBool iNLTFeatureSupport;
+        
+        TBool iStoreChanged ;
     };
 
 inline void CUniSmsPlugin::SetUnicodeMode( TBool aUnicodeMode )

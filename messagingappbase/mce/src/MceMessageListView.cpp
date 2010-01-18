@@ -228,6 +228,15 @@ void CMceMessageListView::DoActivateL(
     // Reset the sort order
     iFolderItemArray->Reset();
        }
+	if ( iMsgListContainer &&
+	     iCurrentListType != GetFolderListBoxType())
+	    {
+	    ListboxTypeChangedL();
+	    }
+	else
+	    {
+	    CreateListboxL();        
+	    }	    
     if ( iMsgListContainer )
         {
         iMsgListContainer->SetSortTypeL( iSortOrder, iOrdering );
@@ -276,15 +285,6 @@ void CMceMessageListView::DoActivateL(
         iMceUi->SetDontExitOnNextOperationComplete();
         }
 
-    if ( iMsgListContainer &&
-        iCurrentListType != GetFolderListBoxType())
-        {
-        ListboxTypeChangedL();
-        }
-    else
-        {
-        CreateListboxL();        
-        }
     
     
     if ( iMsgListContainer && aPrevViewId == TDRVIEWID )

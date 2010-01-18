@@ -46,9 +46,9 @@
 #include <MVPbkContactFieldDateTimeData.h>
 #include <CVPbkFieldTypeSelector.h>
 #include <CVPbkContactStoreUri.h>
-#include <stringloader.h>           // StringLoader
-#include <AknNoteWrappers.h>
-#include <pbk2commonui.rsg>
+#include <StringLoader.h>           // StringLoader
+#include <aknnotewrappers.h>
+#include <Pbk2CommonUi.rsg>
 #include "VCardLog.h"
 #include <s32file.h> // for RFileReadStream
 #include <barsread.h> // for ResourceReader

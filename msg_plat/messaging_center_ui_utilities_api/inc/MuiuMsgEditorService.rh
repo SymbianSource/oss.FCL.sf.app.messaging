@@ -21,7 +21,7 @@
 // Set either KMsgServiceView or KMsgServiceEdit in type
 // (defined in MuiuMsgEditorServiceConst.h)
 
-#include <muiumsgeditorserviceconst.h>
+#include <MuiuMsgEditorServiceConst.h>
 
 STRUCT MSG_SERVICE_STRUCT
 	{
