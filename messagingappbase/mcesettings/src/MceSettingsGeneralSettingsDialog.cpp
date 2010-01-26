@@ -59,7 +59,10 @@
 
 #include <bldvariant.hrh>
 #include <data_caging_path_literals.hrh>
-
+#include <msvids.h>
+#include <mtudreg.h>
+#include <miutset.h>
+#include <SendUiConsts.h>
 // CONSTANTS
 
 #define KMceApplicationUidValue         0x100058C5
@@ -78,6 +81,8 @@ const TInt KMSKPosition = 3;
 const TInt KMceListTypeTwoRow       = 0;
 const TInt KMceListTypeOneRow       = 1;
 
+#define KUidMsgTypeCmailMtmVal               0x2001F406
+
 #ifdef _DEBUG
 _LIT( KPanicText, "MceSettings" );
 const TInt KCRepositorySettingFailure = 1;
@@ -95,6 +100,9 @@ enum TMceGeneralSettings
     EMceGeneralSettingsInboxListType,
     EMceGeneralSettingsMailListType
     };
+// These constants are added to handle 	"show e-mails in groups", when R_MCE_GENERAL_SETTINGS_ITEMS is used for MCESETTINGS.
+const TInt MceGeneralSettingsInboxListType = 2;
+const TInt MceGeneralSettingsMailListType = 3;
 #ifdef RD_MULTIPLE_DRIVE
 const TInt KSpaceDelimiter=' ';
 #endif //RD_MULTIPLE_DRIVE
@@ -131,11 +139,14 @@ CMceGeneralSettingsDialog::CMceGeneralSettingsDialog(
 #ifdef RD_MESSAGING_GENERAL_SETTINGS_RENOVATION
     CMceSettingsTitlePaneHandlerDialog(),
     iSession( aSession ), iObserver( aObserver ),
-    iResources( *CCoeEnv::Static() ), iAccountManager( aManager )
+    iResources( *CCoeEnv::Static() ), iAccountManager( aManager ),
 #else
     CMceSettingsTitlePaneHandlerDialog(),
-    iSession( aSession ), iObserver(aObserver ), iAccountManager( aManager )
+    iSession( aSession ), iObserver(aObserver ), iAccountManager( aManager ),
 #endif
+    iChangeDrive(EFalse),
+	iIsThirdPartyMail( EFalse )
+	
     {
     }
 
@@ -150,6 +161,7 @@ void CMceGeneralSettingsDialog::ConstructL( TInt aResource )
     iResources.OpenL( fileName );
 #endif
     CMceSettingsTitlePaneHandlerDialog::ConstructL( aResource );
+	iIsThirdPartyMail = IsThirdPartyMailBox();
     }
 
 // ----------------------------------------------------
@@ -192,13 +204,33 @@ TInt CMceGeneralSettingsDialog::OkToExitL( TInt aButtonId )
             setValue = ( *iMceSettingsArray )[EMceGeneralSettingsSentItemsCount].iCurrentNumber;
 #endif
 
-            ret = repository->Set( KMuiuInboxMessageListType,
-                ( *iMceSettingsArray )[EMceGeneralSettingsInboxListType].iCurrentNumber );
+            if ( iMemoryInUse )
+                {
+                ret = repository->Set( KMuiuInboxMessageListType,
+                  ( *iMceSettingsArray )[EMceGeneralSettingsInboxListType].iCurrentNumber );
+                }
+            else
+                {
+                ret = repository->Set( KMuiuInboxMessageListType,
+                  ( *iMceSettingsArray )[MceGeneralSettingsInboxListType].iCurrentNumber );
+                }
             __ASSERT_DEBUG( !ret, User::Panic(KPanicText,KCRepositorySettingFailure) );            
 
-            ret = repository->Set( KMuiuMailMessageListType,
-                ( *iMceSettingsArray )[EMceGeneralSettingsMailListType].iCurrentNumber );
-            __ASSERT_DEBUG( !ret, User::Panic(KPanicText,KCRepositorySettingFailure) );            
+            if ( iIsThirdPartyMail )
+                {
+                if ( iMemoryInUse )
+                    {
+                    ret = repository->Set( KMuiuMailMessageListType,
+                      ( *iMceSettingsArray )[EMceGeneralSettingsMailListType].iCurrentNumber );
+                    }
+                else
+                    {
+                    ret = repository->Set( KMuiuMailMessageListType,
+                      ( *iMceSettingsArray )[MceGeneralSettingsMailListType].iCurrentNumber );
+                    }
+                __ASSERT_DEBUG( !ret, User::Panic(KPanicText,KCRepositorySettingFailure) );
+                }
+            
             }
         CleanupStack::Pop( repository );
         delete repository;
@@ -369,16 +401,46 @@ void CMceGeneralSettingsDialog::PreLayoutDynInitL( )
             {
             i = KMceListTypeTwoRow;
             }
-        ( *iMceSettingsArray )[EMceGeneralSettingsInboxListType].iCurrentNumber =
-                i ? KMceListTypeOneRow : KMceListTypeTwoRow;
-
-        // Get one/two row list type selection
-        if ( repository->Get( KMuiuMailMessageListType, i ) != KErrNone )
+        if ( iMemoryInUse )
             {
-            i = KMceListTypeOneRow;
+            ( *iMceSettingsArray )[EMceGeneralSettingsInboxListType].iCurrentNumber =
+                   i ? KMceListTypeOneRow : KMceListTypeTwoRow;
             }
-        ( *iMceSettingsArray )[EMceGeneralSettingsMailListType].iCurrentNumber =
-                i ? KMceListTypeOneRow : KMceListTypeTwoRow;
+        else
+            {
+            ( *iMceSettingsArray )[MceGeneralSettingsInboxListType].iCurrentNumber =
+                   i ? KMceListTypeOneRow : KMceListTypeTwoRow;
+            }
+        
+        if ( iIsThirdPartyMail )
+            {
+             // Get one/two row list type selection
+             if ( repository->Get( KMuiuMailMessageListType, i ) != KErrNone )
+                 {
+                 i = KMceListTypeOneRow;
+                 }
+             if ( iMemoryInUse )
+                 {
+                 ( *iMceSettingsArray )[EMceGeneralSettingsMailListType].iCurrentNumber =
+                         i ? KMceListTypeOneRow : KMceListTypeTwoRow;
+                 }
+             else
+                 {
+                 ( *iMceSettingsArray )[MceGeneralSettingsMailListType].iCurrentNumber =
+                        i ? KMceListTypeOneRow : KMceListTypeTwoRow;
+                 }
+            }
+        else
+            {
+            if ( iMemoryInUse )
+                {
+                iMceSettingsArray->Delete(EMceGeneralSettingsMailListType);
+                }
+            else
+                {
+                iMceSettingsArray->Delete(MceGeneralSettingsMailListType);
+                }
+            }
         }
 
     if ( iMemoryInUse )
@@ -650,6 +712,11 @@ void CMceGeneralSettingsDialog::HandleMemoryInUseDialogL()
         // User does not want to close open messages
         return;
         }
+    
+    if(iChangeDrive)
+        {
+        return;
+        }
 
     RFs& fs=iEikonEnv->FsSession();
     
@@ -739,7 +806,7 @@ void CMceGeneralSettingsDialog::HandleMemoryInUseDialogL()
                 {
                 return;
                 }
-
+            CAknInputBlock* comAbs=CAknInputBlock::NewLC();  
             // change message store
             CMuiuOperationWait* waiter=CMuiuOperationWait::NewLC();
 
@@ -747,6 +814,7 @@ void CMceGeneralSettingsDialog::HandleMemoryInUseDialogL()
                     CMsvProgressReporterOperation::NewL( *iSession, waiter->iStatus );
             CleanupStack::PushL( reportOp );
 
+            reportOp->SetProgressVisibilityDelay(EFalse);
             HBufC* text = StringLoader::LoadLC( R_MCE_SETTINGS_SWITCHING_MESSAGE_STORE, 
                        iEikonEnv );  
             reportOp->SetTitleL( *text ); 
@@ -754,14 +822,15 @@ void CMceGeneralSettingsDialog::HandleMemoryInUseDialogL()
             reportOp->SetCanCancelL( EFalse);
 
             CleanupStack::PopAndDestroy( text );
-            
+            iChangeDrive = ETrue;
             CMsvOperation* changeOp=iSession->ChangeDriveL( selectedDrive, reportOp->RequestStatus() );
             reportOp->SetOperationL( changeOp );
 
             waiter->Start();
-    
+            iChangeDrive = EFalse;
             CleanupStack::PopAndDestroy( reportOp );
             CleanupStack::PopAndDestroy( waiter );
+            CleanupStack::PopAndDestroy( comAbs );
                   
             //memory has been changed
             UpdateMemorySelectionL();           
@@ -828,13 +897,14 @@ void CMceGeneralSettingsDialog::HandleMemoryInUseDialogL()
                     {
                     User::Leave( KErrDiskFull );
                     }
-
+                CAknInputBlock* comAbs=CAknInputBlock::NewLC(); 
                 CMuiuOperationWait* waiter=CMuiuOperationWait::NewLC(); 
 
                 CMsvProgressReporterOperation* reportOp =
                             CMsvProgressReporterOperation::NewL( *iSession, waiter->iStatus );
                 CleanupStack::PushL( reportOp );
 
+                reportOp->SetProgressVisibilityDelay(EFalse);
                 HBufC* text = StringLoader::LoadLC( R_MCE_SETTINGS_SWITCHING_MESSAGE_STORE, 
                                                                         iEikonEnv );  
                 reportOp->SetTitleL( *text ); 
@@ -842,15 +912,16 @@ void CMceGeneralSettingsDialog::HandleMemoryInUseDialogL()
                 reportOp->SetCanCancelL( EFalse);
 
                 CleanupStack::PopAndDestroy( text );
-            
+                iChangeDrive = ETrue;
                 CMsvOperation* changeOp=iSession->ChangeDriveL( selectedDrive, 
                                                                                                 reportOp->RequestStatus() );
                 reportOp->SetOperationL( changeOp );
 
                 waiter->Start();
-    
+                iChangeDrive = EFalse;
                 CleanupStack::PopAndDestroy( reportOp ); 
                 CleanupStack::PopAndDestroy( waiter );
+                CleanupStack::PopAndDestroy( comAbs );
                 UpdateMemorySelectionL();
                 }                
             }
@@ -1010,4 +1081,60 @@ HBufC* CMceGeneralSettingsDialog::MakeDriveNameStringLC( TInt aDriveNumber )
         }
     }
 #endif //RD_MULTIPLE_DRIVE
+
+// ---------------------------------------------------------
+// CMceGeneralSettingsDialog::IsThirdPartyMailBox()
+// 
+// ---------------------------------------------------------
+//
+TBool CMceGeneralSettingsDialog::IsThirdPartyMailBox()
+    {
+    CMsvEntry* entry = iSession->GetEntryL( KMsvRootIndexEntryId );
+    CleanupStack::PushL( entry );
+    TInt cnt = entry->Count();
+    TBool isThirdPartyMail = EFalse;
+    for ( TInt i=0; i < cnt ; i++)
+        {
+        if ( (*entry)[i].iType.iUid == KUidMsvServiceEntryValue &&
+             (*entry)[i].Id() != KMsvLocalServiceIndexEntryIdValue &&
+             ( !( (*entry)[i].iMtm.iUid == KUidMsgTypeCmailMtmVal ||
+                  (*entry)[i].iMtm == KSenduiMtmImap4Uid          || 
+                  (*entry)[i].iMtm == KSenduiMtmPop3Uid           ||
+                  (*entry)[i].iMtm == KSenduiMtmSmtpUid   ))   &&
+             IsEmailEntryL((*entry)[i]))
+           {
+           isThirdPartyMail = ETrue;
+           break;
+           }
+        }
+    CleanupStack::PopAndDestroy( entry );
+    return isThirdPartyMail;
+    }
+
+// ---------------------------------------------------------
+// CMceGeneralSettingsDialog::IsEmailEntryL
+// 
+// ---------------------------------------------------------
+//
+TBool CMceGeneralSettingsDialog::IsEmailEntryL(TMsvEntry tentry)
+    {
+    TBool IsEmail = EFalse;
+
+    CMtmUiDataRegistry* uiRegistry =
+                         CMtmUiDataRegistry::NewL( *iSession );
+    CleanupStack::PushL(uiRegistry);
+    if ( uiRegistry->IsPresent( tentry.iMtm ) &&
+         uiRegistry->IsPresent( KUidMsgTypePOP3 ) )
+         {
+          TUid mailMTMTechType =
+                  uiRegistry->TechnologyTypeUid( KUidMsgTypePOP3 );
+          if( uiRegistry->TechnologyTypeUid( tentry.iMtm ) == mailMTMTechType )
+                {
+                IsEmail = ETrue;
+                }
+         }
+    CleanupStack::PopAndDestroy( uiRegistry );
+        
+    return IsEmail;
+    }
 //  End of File

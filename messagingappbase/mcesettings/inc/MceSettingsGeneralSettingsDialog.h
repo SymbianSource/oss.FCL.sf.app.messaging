@@ -134,6 +134,17 @@ class CMceGeneralSettingsDialog :
 #else
         void ChangeMessageStoreL();
 #endif //RD_MULTIPLE_DRIVE
+        
+        /**
+        * Function to check if the entry is email entry or not
+        * returns ETrue if email
+        */
+        TBool IsEmailEntryL(TMsvEntry entry);
+        
+        /**
+         *  This will return true if there is any third party mailbox.
+         */
+        TBool IsThirdPartyMailBox();
 
     protected:  // Functions from base classes
 
@@ -182,12 +193,15 @@ class CMceGeneralSettingsDialog :
         TFileName               iTargetPath;
         TBool                   iMemoryInUse;
         TBool                   iNewMailIndicator;
+        //Variable added to know if drive is changed 
+        TBool                   iChangeDrive;
         friend class CMceMoveProgress;
 #ifdef RD_MESSAGING_GENERAL_SETTINGS_RENOVATION
         RConeResourceLoader     iResources;
 #endif // RD_MESSAGING_GENERAL_SETTINGS_RENOVATION
         MMceSettingsAccountManager* iAccountManager;
-        TInt                     iTransferError;
+        TInt                    iTransferError;
+		TBool                   iIsThirdPartyMail;
     };
 
 #endif      // MCESETTINGSGENERALSETTINGSDIALOG_H

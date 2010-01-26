@@ -405,7 +405,7 @@ RESOURCE AVKON_BUTTON_STATE_EXTENSION r_amsviewer_forward_button_state_extension
 RESOURCE AVKON_BUTTON_STATE_EXTENSION r_amsviewer_delete_button_state_extension 
     { 
     bmbSkinIdMajor= EAknsMajorGeneric; 
-    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgDelete; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiMgTbDelete; 
     } 
 
 RESOURCE AVKON_BUTTON_STATE_EXTENSION r_amsviewer_send_button_state_extension 
