@@ -121,7 +121,7 @@ RESOURCE AVKON_BUTTON_STATE_EXTENSION r_notviewer_add_recipient_button_state_ext
 RESOURCE AVKON_BUTTON_STATE_EXTENSION r_notviewer_delete_button_state_extension 
     { 
     bmbSkinIdMajor= EAknsMajorGeneric; 
-    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgDelete; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiMgTbDelete; 
     } 
     
 RESOURCE AVKON_TOOLBAR r_notviewer_app_toolbar

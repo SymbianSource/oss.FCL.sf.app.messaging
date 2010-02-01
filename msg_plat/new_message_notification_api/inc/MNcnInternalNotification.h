@@ -22,8 +22,8 @@
 #define __MNCNINTERNALNOTIFICATION_H__
 
 //  INCLUDES
-#include <mncnnotification.h>
-#include <ncnnotificationdefs.h>
+#include <MNcnNotification.h>
+#include <NcnNotificationDefs.h>
 
 // FORWARD DECLARATIONS
 
@@ -144,7 +144,7 @@ class MNcnInternalNotification: public MNcnNotification
         virtual void CancelMarkUnread( ) = 0;
     };
 
-#include <mncninternalnotification.inl>
+#include <MNcnInternalNotification.inl>
 
 #endif // __MNCNINTERNALNOTIFICATION_H__
 

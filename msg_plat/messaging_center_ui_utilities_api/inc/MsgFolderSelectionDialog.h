@@ -22,7 +22,7 @@
 #define MSGFOLDERSELECTIONDIALOG_H__
 
 //  INCLUDES
-#include <coneresloader.h>
+#include <ConeResLoader.h>
 
 
 // FORWARD DECLARATIONS

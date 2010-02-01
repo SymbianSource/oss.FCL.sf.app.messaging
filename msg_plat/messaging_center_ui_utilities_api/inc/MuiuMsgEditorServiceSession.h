@@ -23,7 +23,7 @@
 
 #include <f32file.h>
 #include <eikdoc.h>
-#include <aknserverapp.h>
+#include <AknServerApp.h>
 
 enum TMuiuMsgEditorServiceCmds
 	{

@@ -528,6 +528,10 @@ TBool CUniEditorHeader::CopyHeadersToMtmL(  TBool aDocumentHeaderModified,
             iMtm.SetSubjectL( description );
             modified = ETrue;
             }
+        else
+            {
+            iMtm.SetSubjectL( KNullDesC() );
+            }
         }
     // variation has changed On->Off and message opened from Drafts
     else if ( modified )

@@ -28,8 +28,8 @@
 #include <f32file.h>
 #include <apgcli.h>  // RApaLsSession
 
-#include <msgmedia.hrh>
-#include <msgmediainfo.h>
+#include <MsgMedia.hrh>
+#include <MsgMediaInfo.h>
 
 // CONSTANTS
 
@@ -218,6 +218,6 @@ NONSHARABLE_CLASS( CMsgMediaResolver ) : public CBase,
         CActiveSchedulerWait     iWait;
     };
 
-#include <msgmediaresolver.inl>
+#include <MsgMediaResolver.inl>
 
 #endif // __MSGMEDIARESOLVER_H

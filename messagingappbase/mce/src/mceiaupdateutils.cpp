@@ -24,7 +24,7 @@
 #include <featmgr.h>
 
 // user include files go here:
-
+#include "mceui.h"
 #include "mceiaupdateutils.h"
 #include "MceLogText.h"
 
@@ -34,9 +34,10 @@
 // C++ default constructor.
 // ---------------------------------------------------------------------------
 //
-CMceIAUpdateUtils::CMceIAUpdateUtils()
-: iUpdate( NULL ), iParameters( NULL )
+CMceIAUpdateUtils::CMceIAUpdateUtils(CMceUi& aMceUi)
+: iUpdate( NULL ), iParameters( NULL ),iMceUi( aMceUi ),CActive(EPriorityStandard)
     {
+    CActiveScheduler::Add(this);
     }
 
 
@@ -61,9 +62,9 @@ void CMceIAUpdateUtils::ConstructL()
 // Two-phased constructor.
 // ---------------------------------------------------------------------------
 //
-CMceIAUpdateUtils* CMceIAUpdateUtils::NewL()
+CMceIAUpdateUtils* CMceIAUpdateUtils::NewL(CMceUi& aMceUi)
     {
-    CMceIAUpdateUtils* self = new( ELeave ) CMceIAUpdateUtils;
+    CMceIAUpdateUtils* self = new( ELeave ) CMceIAUpdateUtils(aMceUi);
     CleanupStack::PushL( self );
     self->ConstructL();
     CleanupStack::Pop( self );
@@ -77,13 +78,14 @@ CMceIAUpdateUtils* CMceIAUpdateUtils::NewL()
 CMceIAUpdateUtils::~CMceIAUpdateUtils()
     {
     Delete();
+    Cancel();
     }
 
 // ---------------------------------------------------------------------------
 // Start IA update process.
 // ---------------------------------------------------------------------------
 //
-void CMceIAUpdateUtils::StartL( const TUid aAppUid )
+void CMceIAUpdateUtils::DoStartL( const TUid aAppUid )
     {
     if( iUpdate && iParameters )
         {
@@ -129,9 +131,16 @@ void CMceIAUpdateUtils::CheckUpdatesComplete( TInt aErrorCode,
         {
         if ( aAvailableUpdates > 0 )
             {
-            // There were some updates available.
-            MCELOGGER_WRITE("CheckUpdatesComplete --- updates available");
-            iUpdate->UpdateQuery();
+                if((iMceUi.IsForeground())&&(iMceUi.MceViewActive(EMceMainViewActive)))
+                    {
+                    // There were some updates available.
+                    MCELOGGER_WRITE("CheckUpdatesComplete --- updates available");
+                    iUpdate->UpdateQuery();
+                    }
+                else
+                    {
+                    MCELOGGER_WRITE("CheckUpdatesComplete --- But MessageView or Delivery Reports View is active");
+                    }
             }
         else
             {
@@ -189,6 +198,50 @@ void CMceIAUpdateUtils::UpdateQueryComplete( TInt aErrorCode, TBool aUpdateNow )
             MCELOGGER_WRITE("UpdateQueryComplete --- later");
             }
         }
+    }
+// -----------------------------------------------------------------------------
+// From class MIAUpdateObserver.
+// This callback function is called when an update query operation has completed.
+// -----------------------------------------------------------------------------
+//
+void CMceIAUpdateUtils::StartL(const TUid aAppUid)
+    {
+    if (IsActive())
+        {
+            return;
+         }
+    iAppUid = aAppUid;
+    CompleteSelf();
+    }
+// -----------------------------------------------------------------------------
+// 
+// For Setting the Active Object Active
+// -----------------------------------------------------------------------------
+//
+void CMceIAUpdateUtils::CompleteSelf()
+    {
+    iStatus = KRequestPending;
+    TRequestStatus* pStatus = &iStatus;
+    SetActive();
+    User::RequestComplete( pStatus, KErrNone );
+    }
+// -----------------------------------------------------------------------------
+// From class CActive.
+// For Starting the update in a seperate Thread
+// -----------------------------------------------------------------------------
+//
+void CMceIAUpdateUtils::RunL()
+    {
+    DoStartL( iAppUid );
+    }
+// -----------------------------------------------------------------------------
+// From class CActive.
+// Nothing to do here
+// -----------------------------------------------------------------------------
+//
+void CMceIAUpdateUtils::DoCancel()
+    {
+    
     }
 
 // EOF

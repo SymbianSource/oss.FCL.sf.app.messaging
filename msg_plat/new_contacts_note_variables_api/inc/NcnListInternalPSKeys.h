@@ -22,7 +22,7 @@
 #define NCNLISTINTERNALPSKEYS_H
 
 
-#include <ncnlistdomainpskeys.h>
+#include <NcnListDomainPSKeys.h>
 
 #endif      // NCNLISTINTERNALPSKEYS_H
 

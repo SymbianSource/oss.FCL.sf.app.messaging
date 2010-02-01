@@ -29,7 +29,7 @@
 #include <f32file.h>
 #include <apmstd.h>
 
-#include <msgmedia.hrh>
+#include <MsgMedia.hrh>
 
 // CONSTANTS
 
@@ -313,6 +313,6 @@ NONSHARABLE_CLASS( CMsgMediaInfo ) : public CActive
         TUid            iHandlerAppUid;
         };
 
-#include <msgmediainfo.inl>
+#include <MsgMediaInfo.inl>
 
 #endif // __MSGMEDIAINFO_H

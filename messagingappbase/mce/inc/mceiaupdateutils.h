@@ -24,6 +24,7 @@
 #include <iaupdateobserver.h>
 
 // forward declarations go here:
+class CMceUi;
 class CIAUpdate;
 class CIAUpdateParameters;
 
@@ -38,7 +39,7 @@ class CIAUpdateParameters;
  *  @endcode
  *
  */
-class CMceIAUpdateUtils : public CBase,
+class CMceIAUpdateUtils : public CActive,
 public MIAUpdateObserver
     {
 public:
@@ -47,7 +48,7 @@ public:
      * Two-phased constructor.
      * @param aAppUid Uid of the app for which update needs to be checked.
      */
-    static CMceIAUpdateUtils* NewL();
+    static CMceIAUpdateUtils* NewL(CMceUi& aMceUi);
 
 
     /**
@@ -55,18 +56,22 @@ public:
     */
     virtual ~CMceIAUpdateUtils();
 
-    /**
-     * Start IA update process.
-     * @param aAppUid Uid of the app for which update needs to be checked.
-     */
     void StartL( const TUid aAppUid );
+protected: 
+
+     /**
+     * From CActive
+     */
+     void RunL();
+     
+     void DoCancel();  
 
 private:
-
+	
     /**
      * C++ default constructor.
      */
-    CMceIAUpdateUtils();
+    CMceIAUpdateUtils(CMceUi& aMceUi);
 
     /**
      * By default Symbian 2nd phase constructor is private.
@@ -77,6 +82,17 @@ private:
      * Cleanup function.
      */
     void Delete();
+	
+	/**
+     * For Setting the active object active immediately.
+     */	
+	void CompleteSelf();
+	
+	/**
+     * Start IA update process.
+     * @param aAppUid Uid of the app for which update needs to be checked.
+     */
+    void DoStartL(TUid aAppUid);
 
 private: // From MIAUpdateObserver
 
@@ -136,6 +152,10 @@ private: // data
      * Own.
      */
     CIAUpdateParameters* iParameters;
+    
+    TUid 				 iAppUid;
+    
+    CMceUi&              iMceUi;
 
     };
 

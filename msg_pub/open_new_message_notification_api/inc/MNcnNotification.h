@@ -172,7 +172,7 @@ class MNcnNotification
         TUid iDtor_ID_Key;
     };
 
-#include <mncnnotification.inl>
+#include <MNcnNotification.inl>
 
 #endif // __MNCNNOTIFICATION_H__
 

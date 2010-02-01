@@ -21,7 +21,7 @@
 #ifndef MMSENGINEINTERNALCRKEYS_H
 #define MMSENGINEINTERNALCRKEYS_H
 
-#include <mmsenginedomaincrkeys.h>
+#include <MmsEngineDomainCRKeys.h>
 
 #endif      // MMSENGINEINTERNALCRKEYS_H
 

@@ -2050,7 +2050,7 @@ void CMceOneRowMessageListContainer::UpdateEntryL( TMsvId aEntryId )
         iTreeListBox->SetTextL(
             treeItemId,
             bufferC3,
-            3,
+            1,
             EFalse );
         }
     else
@@ -2136,7 +2136,7 @@ void CMceOneRowMessageListContainer::UpdateEntryL( TMsvId aEntryId )
                 }
             }
         }
-    iTreeListBox->EnableThirdColumn( treeItemId, bufferC3.Length(), EFalse );
+    iTreeListBox->EnableThirdColumn( treeItemId, !IsItemFolder( entry.Id() ), EFalse );
     iTreeListBox->SetEmphasis( treeItemId, entry.Unread(), EFalse );
     TAknTreeItemID parentId = iTreeListBox->Parent( treeItemId );
     if ( parentId > KAknTreeIIDRoot )

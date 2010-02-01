@@ -16,7 +16,7 @@
  */
 
 // INCLUDE FILES
-#include <ecom/ECom.h>
+#include <ecom/ecom.h>
 
 // ============================ MEMBER FUNCTIONS ===============================
 

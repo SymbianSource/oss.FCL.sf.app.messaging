@@ -44,6 +44,15 @@ RESOURCE MCE_EXTRA_ITEMS_ARRAY r_mce_extra_items
     {
     items = 
         {
+       MCE_EXTRA_ITEM
+            {
+            title = qtn_mce_conversations;
+            command = "537044288";
+            index = 8;
+            icon_index = EMbmMceextraiconsQgn_prop_im_ibox;      
+            app_icon_index = 537044288;
+            secondary_text = qtn_mce_own_cvs;
+            }          
        };
     }
     

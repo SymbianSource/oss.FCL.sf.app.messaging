@@ -25,7 +25,7 @@
 
 #include <e32std.h>
 
-#include <msgmediainfo.h>
+#include <MsgMediaInfo.h>
 
 // CONSTANTS
 
@@ -169,6 +169,6 @@ NONSHARABLE_CLASS( CMsgImageInfo ) : public CMsgMediaInfo
         TUint32 iFrameFlags;
     };
 
-#include <msgimageinfo.inl>
+#include <MsgImageInfo.inl>
 
 #endif // __MSGIMAGEINFO_H

@@ -27,7 +27,7 @@
 #include <e32std.h>
 #include <e32base.h> // CBase
 
-#include <msgmedia.hrh>
+#include <MsgMedia.hrh>
 
 // CONSTANTS
 
@@ -418,6 +418,6 @@ NONSHARABLE_CLASS( CMmsConformance ) : public CBase
         
     };
 
-#include <mmsconformance.inl>
+#include <MmsConformance.inl>
 
 #endif // __MMSCONFORMANCE_H

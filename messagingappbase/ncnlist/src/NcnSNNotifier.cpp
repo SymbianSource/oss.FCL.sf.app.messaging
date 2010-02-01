@@ -26,13 +26,18 @@
 #include    <avkon.rsg>
 #include    <Ncnlist.rsg>
 #include    <aknSDData.h>
+#include    <centralrepository.h>
 #include    "NcnModel.h"
 #include    "CVoiceMailManager.h"
+#include "messaginginternalcrkeys.h"
 
 // ================= DEFINITIONS ============================
 #define KSpeedDialViewId TVwsViewId( TUid::Uid( 0x1000590A ), TUid::Uid( 0x02 ) )
 #define KMceMailViewId TVwsViewId( TUid::Uid( 0x100058C5 ), TUid::Uid( 0x01 ) )
 #define KMceAudioMessageViewId TVwsViewId(TUid::Uid(0x100058C5),TUid::Uid(0x01) )
+// Conversational messaging UIDs.
+#define KConversationApplicationViewUid TVwsViewId(TUid::Uid(0x2002A540),TUid::Uid(0x01))
+const TInt KConversationListViewUid  = 0x01 ;
 
 // ================= LOCAL CONSTANTS ========================
 namespace
@@ -66,6 +71,11 @@ CNcnSNNotifier::~CNcnSNNotifier()
     // Delete notifier
     delete iNotifier;
     iNotifier = NULL;
+    if ( iMuiuSettings )
+       {
+       delete iMuiuSettings;
+       iMuiuSettings = NULL;
+       }
     }
 
 
@@ -95,6 +105,8 @@ void CNcnSNNotifier::ConstructL()
     {
     // Create notifier instance
     iNotifier = CAknSoftNotifier::NewL();
+    // Muiu settings repository
+    iMuiuSettings = CRepository::NewL(KCRUidMuiuSettings);
     }
 
 
@@ -323,6 +335,27 @@ CAknSoftNotificationParameters* CNcnSNNotifier::CreateNotificationParametersLC(
         // Notification for audio message
         case ECustomSoftNotification:
         	{
+       		TInt viewtype = 0; // Default is traditional Inbox
+		    if ( iMuiuSettings )
+		        {
+			    // Read the messaging settings
+		        iMuiuSettings->Get(KMuiuMceDefaultView,viewtype);
+		        } 	 
+        	 if ( viewtype == 1 ) // Launch conversations 
+    	        {        	        
+    	        ret = CAknSoftNotificationParameters::NewL(
+                        KNcnResourceFile,
+                        R_NCN_AUDIO_MESSAGE_NOTE,
+                        KNcnNotificationPriority,
+                        R_AVKON_SOFTKEYS_SHOW_EXIT,
+                        CAknNoteDialog::ENoTone,
+                        KConversationApplicationViewUid,
+                        TUid::Uid(KConversationListViewUid),   
+                        EAknSoftkeyShow,
+                        KNullDesC8() );    	        
+    	        }  
+        	 else
+        	    {
         	ret = CAknSoftNotificationParameters::NewL(
                 KNcnResourceFile,
                 R_NCN_AUDIO_MESSAGE_NOTE,
@@ -333,6 +366,7 @@ CAknSoftNotificationParameters* CNcnSNNotifier::CreateNotificationParametersLC(
                 KNcnAudioMessageUid,
                 EAknSoftkeyShow,
                 KNullDesC8() );
+        	    }        	
             ret->SetGroupedTexts( R_NCN_AUDIO_MESSAGE_GROUPED );
             break;
         	}

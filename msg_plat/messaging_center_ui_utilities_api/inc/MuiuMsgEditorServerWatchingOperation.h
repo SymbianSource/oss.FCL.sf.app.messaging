@@ -20,8 +20,8 @@
 
 
 #include <msvapi.h>        // CMsvOperation
-#include <aknserverapp.h>  // MAknServerAppExitObserver
-#include <muiumsgeditorlauncher.h>  // TEditorParameters 
+#include <AknServerApp.h>  // MAknServerAppExitObserver
+#include <MuiuMsgEditorLauncher.h>  // TEditorParameters 
 
 class CMuiuMsgEditorService;
 

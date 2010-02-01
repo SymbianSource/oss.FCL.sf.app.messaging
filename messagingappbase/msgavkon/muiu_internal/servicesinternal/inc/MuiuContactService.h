@@ -21,7 +21,7 @@
 #define MUIUCONTACTSERVICE_H
 
 #include <e32base.h> // CBase
-#include "MuiuMsvUiServiceUtilitiesInternal.h"
+#include "muiumsvuiserviceutilitiesinternal.h"
 
 class CMuiuContactAddressMatcher;
 class CMsgVoIPExtension;

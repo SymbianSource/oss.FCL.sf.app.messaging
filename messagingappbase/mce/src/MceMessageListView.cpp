@@ -1517,12 +1517,16 @@ void CMceMessageListView::FolderMenuL( CEikMenuPane* aMenuPane )
                 if ( tEntry.iMtm == KUidMsgMMSNotification ) 
                     {
                     mmsCount++;
-                    if ( uiData->OperationSupportedL( KMtmUiFunctionDeleteMessage, tEntry ) )
+                    //Coverty fix,NULL RETURN, http://ousrv057/cov.cgi?cid=101801 
+                    if ( uiData )
                         {
-                        //MMS notification delete this entry not supported
-                        mmsNotDeleteCount ++;
+                        if ( uiData->OperationSupportedL( KMtmUiFunctionDeleteMessage, tEntry ) )
+                            {
+                            //MMS notification delete this entry not supported
+                            mmsNotDeleteCount ++;
+                            }
                         }
-                    }
+                     }
                 }
             }
         if ( mmsCount == count )
@@ -1824,10 +1828,14 @@ void CMceMessageListView::FolderMenuOneItemL( CEikMenuPane* aMenuPane,
                 aMenuPane->SetItemDimmed( EMceCmdMove, ETrue );
                 //check also open               
                 CBaseMtmUiData* uiData = iMceUi->GetMtmUiDataL( KUidMsgMMSNotification );
-                aMenuPane->SetItemDimmed( EAknCmdOpen, 
-                    uiData->OperationSupportedL( KMtmUiFunctionOpenMessage, currentEntry ) );
-                aMenuPane->SetItemDimmed( EMceCmdDelete, 
-                    uiData->OperationSupportedL( KMtmUiFunctionDeleteMessage, currentEntry ) );               
+                // Coverty change, NULL Return, http://ousrv057/cov.cgi?cid=101800
+                if ( uiData )
+                    {
+                    aMenuPane->SetItemDimmed( EAknCmdOpen, 
+                     uiData->OperationSupportedL( KMtmUiFunctionOpenMessage, currentEntry ) );
+                    aMenuPane->SetItemDimmed( EMceCmdDelete, 
+                     uiData->OperationSupportedL( KMtmUiFunctionDeleteMessage, currentEntry ) );
+                    }                 
                 }
 
             aMenuPane->SetItemDimmed( EMceCmdOutboxSuspend, ETrue );
@@ -3075,7 +3083,11 @@ TBool CMceMessageListView::CheckMMSNotificationOpenL( ) const
                 ( currentEntry.iMtm == KUidMsgMMSNotification ) )
                 {
                 CBaseMtmUiData* uiData = iMceUi->GetMtmUiDataL( KUidMsgMMSNotification );
-                skip = uiData->OperationSupportedL( KMtmUiFunctionOpenMessage, currentEntry );
+                // Coverty change, NULL Return, http://ousrv057/cov.cgi?cid=101803
+                if ( uiData )
+                    {
+                	skip = uiData->OperationSupportedL( KMtmUiFunctionOpenMessage, currentEntry );
+                	}	
                 }
             }
         }    
@@ -3803,7 +3815,8 @@ void CMceMessageListView::SetMSKButtonL()
                     iSession->GetEntry( id, serviceId, currentEntry );
                            
                     CBaseMtmUiData* mtmUiData = iMceUi->GetMtmUiDataL( currentEntry.iMtm );
-                    if ( currentEntry.iMtm == KUidMsgMMSNotification &&
+                    // Coverty fix NULL Return, http://ousrv057/cov.cgi?cid=101802
+                    if ( currentEntry.iMtm == KUidMsgMMSNotification && mtmUiData &&
                         mtmUiData->OperationSupportedL(KMtmUiFunctionOpenMessage, currentEntry ) )
                         {
                         // when MMSNotification is in retrieving status, the hide open for MSK
@@ -3812,7 +3825,7 @@ void CMceMessageListView::SetMSKButtonL()
                     else 
                         {
                         resourceId = R_MCE_MSK_BUTTON_OPEN;
-                        }   
+                        } 
                     }
                 else
                     {
@@ -3879,7 +3892,8 @@ void CMceMessageListView::SetMSKButtonL()
                     iSession->GetEntry( id, serviceId, currentEntry );
                            
                     CBaseMtmUiData* mtmUiData = iMceUi->GetMtmUiDataL( currentEntry.iMtm );
-                    if ( currentEntry.iMtm == KUidMsgMMSNotification &&
+                    // Coverty fix, NULL Return, http://ousrv057/cov.cgi?cid=101802
+                    if ( currentEntry.iMtm == KUidMsgMMSNotification && mtmUiData &&
                         mtmUiData->OperationSupportedL(KMtmUiFunctionOpenMessage, currentEntry ) )
                         {
                         // when MMSNotification is in retrieving status, the hide open for MSK
@@ -3888,7 +3902,7 @@ void CMceMessageListView::SetMSKButtonL()
                     else 
                         {
                         resourceId = R_MCE_MSK_BUTTON_OPEN;
-                        }   
+                        } 
                     }
                 else
                     {

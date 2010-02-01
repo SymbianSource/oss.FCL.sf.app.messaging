@@ -26,7 +26,7 @@
 #include <e32std.h>
 #include <f32file.h>
 
-#include <msgmediainfo.h>
+#include <MsgMediaInfo.h>
 
 // CONSTANTS
 
@@ -128,6 +128,6 @@ NONSHARABLE_CLASS( CMsgTextInfo ) : public CMsgMediaInfo
 
     };
 
-#include <msgtextinfo.inl>
+#include <MsgTextInfo.inl>
 
 #endif // __MSGTEXTINFO_H

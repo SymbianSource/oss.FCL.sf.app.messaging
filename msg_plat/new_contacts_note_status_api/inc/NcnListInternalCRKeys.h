@@ -22,7 +22,7 @@
 #define NCNLISTINTERNALCRKEYS_H
 
 
-#include <ncnlistdomaincrkeys.h>
+#include <NcnListDomainCRKeys.h>
 
 #endif      // NCNLISTINTERNALCRKEYS_H
 

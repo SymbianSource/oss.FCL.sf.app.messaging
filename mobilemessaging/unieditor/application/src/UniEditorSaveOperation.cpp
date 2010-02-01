@@ -663,9 +663,12 @@ HBufC* CUniEditorSaveOperation::CreateDescriptionL()
         length = subject.Length();     
         // Saving as pure text from the editor which may contain emoticons.
         HBufC *text = iHeader.SubjectControl()->Editor().GetTextInHBufL();
+        if(text)
+            {
         CleanupStack::PushL( text );
         description.Copy( text->Ptr(), length );
         CleanupStack::PopAndDestroy( text );
+            
        
 
         while( length-- )
@@ -676,6 +679,11 @@ HBufC* CUniEditorSaveOperation::CreateDescriptionL()
             }
         description.Trim();
         return description.AllocL();
+        }
+        else
+         {
+            return KNullDesC().AllocL();
+            }
         }
         
     return NULL;

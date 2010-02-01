@@ -30,7 +30,7 @@
 #include <videoplayer.h>
 
 // Base Class
-#include <msgmediainfo.h>
+#include <MsgMediaInfo.h>
 
 // CONSTANTS
 
@@ -177,6 +177,6 @@ NONSHARABLE_CLASS( CMsgVideoInfo ) : public CMsgMediaInfo
 
     };
 
-#include <msgvideoinfo.inl>
+#include <MsgVideoInfo.inl>
 
 #endif // __MSGVIDEOINFO_H

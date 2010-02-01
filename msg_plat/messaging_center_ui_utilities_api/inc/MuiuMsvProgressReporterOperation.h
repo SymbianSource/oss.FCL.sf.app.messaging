@@ -24,7 +24,7 @@
 
 //  INCLUDES
 #include <msvapi.h>
-#include <msvprgreporter.h>
+#include <MsvPrgReporter.h>
 
 
 // FORWARD DECLARATIONS

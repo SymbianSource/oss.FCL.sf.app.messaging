@@ -30,7 +30,7 @@
 class CAknSoftNotifier;
 class CAknSoftNotificationParameters;
 class TVwsViewId;
-
+class CRepository;
 /**
 *  Notifies Avkon notifier about new items and idle state status.
 */
@@ -128,6 +128,7 @@ class CNcnSNNotifier : public CBase
         
         friend class CNcnlist_SNNotifier;
 
+        CRepository* iMuiuSettings;
     };
 
 #endif      // NCNSNNOTIFIER_H

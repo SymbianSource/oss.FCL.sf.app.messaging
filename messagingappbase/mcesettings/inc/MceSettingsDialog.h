@@ -25,7 +25,7 @@
 
 #include <ConeResLoader.h>
 #include <msvapi.h>
-#include "MceSettingsTitlePaneHandlerDialog.h"
+#include "mcesettingstitlepanehandlerdialog.h"
 #include <MsgArrays.h>
 
 

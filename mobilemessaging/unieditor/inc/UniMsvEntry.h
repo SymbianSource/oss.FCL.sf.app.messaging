@@ -24,7 +24,7 @@
 
 #include <msvstd.h>
 #include <mmsconst.h>
-#include <unieditorconsts.h>
+#include <UniEditorConsts.h>
 
 // CONSTANTS
 
@@ -112,7 +112,7 @@ class TUniMsvEntry
 
     };
 
-#include <unimsventry.inl>
+#include <UniMsvEntry.inl>
 
 #endif      // __UNIMSVENTRY_H
             

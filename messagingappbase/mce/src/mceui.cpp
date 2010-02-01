@@ -427,7 +427,7 @@ void CMceUi::ConstructL()
     iMailAccountItemArray = new(ELeave) CMceMailAccountItemArray(
         KMceArrayGranularity );
 
-    iMceIAUpdate = CMceIAUpdateUtils::NewL();
+    iMceIAUpdate = CMceIAUpdateUtils::NewL(*this);
 
     if ( iAlwaysOnline )
         {
@@ -4112,6 +4112,7 @@ void CMceUi::AddMTMFunctionsL(CEikMenuPane& aMenuPane, TInt aMenuCommandId)
 
                 else if ( functionInfo.iFuncId == KMtmUiFunctionFetchMMS ) //MMS notification
                     {
+                    data.iFlags |= EEikMenuItemSpecific; 
                     aMenuPane.AddMenuItemL( data, EAknCmdOpen );
                     }
 

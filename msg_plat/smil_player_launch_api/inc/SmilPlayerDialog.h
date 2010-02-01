@@ -21,9 +21,9 @@
 #define SMILPLAYERDIALOG_H
 
 // INCLUDES
-#include <akndialog.h>
+#include <AknDialog.h>
 #include <remconcoreapitargetobserver.h>
-#include <coneresloader.h>
+#include <ConeResLoader.h>
 
 // FORWARD DECLARATIONS
 class TCoeHelpContext;

@@ -21,7 +21,7 @@
 #define C_IMUMDASETTINGSDATA_H
 
 #include <msvstd.h>                     // TMsvId
-#include <imumdasettingskeys.h>         // Settings data keys
+#include <ImumDaSettingsKeys.h>         // Settings data keys
 
 class MImumDaSettingsDataCollection;
 

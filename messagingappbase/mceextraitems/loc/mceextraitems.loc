@@ -36,4 +36,13 @@
 //
 #define qtn_mce_shortcut3 "Shortcut 3"
 
+// d: Conversation application shortcut in the main view. Opens an conversation application 
+// l: list_double_large_graphic_pane_t1
+//
+#define qtn_mce_conversations "Conversations"
+// d: Displayed as the second line for conversations item in Mce main view
+// l: list_double_large_graphic_pane_t2
+
+
+#define qtn_mce_own_cvs "Own conversations"
 // End of File

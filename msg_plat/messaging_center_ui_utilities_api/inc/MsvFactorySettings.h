@@ -21,7 +21,7 @@
 #define MSVFACTORYSETTINGS_H__
 
 //  INCLUDES
-#include <mtmextendedcapabilities.hrh>
+#include <MtmExtendedCapabilities.hrh>
 
 // CLASS DECLARATION
 
