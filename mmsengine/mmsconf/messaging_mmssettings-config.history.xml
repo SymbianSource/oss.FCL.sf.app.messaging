@@ -3,6 +3,10 @@
   <purpose>
   </purpose>
 
+  <defect number="DEF143456" title="version attribute is incorrect in crml file" revision="03">
+    version attribute is changed to 1 from mmssettings_10202d4c.crml file
+  </defect>
+  
   <defect number="DEF139515" title="mmssettings-config does not conform to the standard sysdef model" revision="02">
     messaging_mmssettings-config is made a new component under mmsengine.
   </defect>

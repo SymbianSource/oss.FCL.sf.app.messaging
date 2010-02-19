@@ -29,6 +29,9 @@
 #include <akntextsettingpage.h>
 #include <muiu_internal.rsg>
 #include "MuiuSettingsArray.h"
+#include <e32property.h>
+#include <MessagingInternalPSkeys.h>
+#include <StringLoader.h>
 
 // CONSTANTS
 const TInt KMuiuSettingsArrayGranularity    = 4;
@@ -106,6 +109,10 @@ EXPORT_C void CMuiuSettingsArray::ConstructL( TInt aResourceId )
             item.iType = EMuiuSettingsUnknown;
             HBufC* txt = reader.ReadHBufCL();   // message text
             item.iLabelText.Copy( *txt );
+            TBool flag = EFalse;
+            //If string retrived from resource is "Message sent as" 
+            flag = IsMessageSentStringL( txt );
+
             delete txt;
             
             const TMuiuSettingsType type = ( TMuiuSettingsType ) reader.ReadInt16();
@@ -136,6 +143,7 @@ EXPORT_C void CMuiuSettingsArray::ConstructL( TInt aResourceId )
                     }
                 CleanupStack::PopAndDestroy(); //reader2
                 item.iMuiuSettingsItemArray = array;
+                if(!flag)
                 AppendL( item );
                 CleanupStack::Pop( array ); //array
                 }
@@ -435,4 +443,25 @@ EXPORT_C TPtrC CMuiuSettingsArray::MdcaPoint( TInt aIndex ) const
     return tempText;
     }
 
+// ---------------------------------------------------------
+// CMuiuSettingsArray::IsMessageSentStringL
+// ---------------------------------------------------------
+//
+TBool CMuiuSettingsArray::IsMessageSentStringL(HBufC* aString)
+    {
+    TInt flag = EFalse;
+    HBufC* string = StringLoader::LoadLC( R_MUIU__MCE_SETTINGS_SMS_CONVERSION);
+    if (aString->Compare(string->Des()) == 0)
+        {
+         TInt val = 0;
+         TInt ret = RProperty::Get( KPSUidMuiu, KMuiuRemoveMsgSentSettings, val );
+         if ( ret == KErrNone && val != 0 )
+             {
+             flag = ETrue;
+             RProperty::Set( KPSUidMuiu, KMuiuRemoveMsgSentSettings, 0) ;
+             }
+         }
+    CleanupStack::PopAndDestroy( string );
+    return flag;
+    }
 //  End of File

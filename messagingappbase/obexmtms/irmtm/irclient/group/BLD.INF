@@ -26,7 +26,7 @@ PRJ_EXPORTS
 // specify the source file followed by its destination here
 // copy will be used to copy the source file to its destination
 // If there's no destination then the source file will be copied
-// to the same name in \epoc32\include
+// to the same name in /epoc32/include
 
 ../include/IRCMTM.H SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(ircmtm.h)
 ../include/irHeader.h SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(irheader.h)

@@ -28,8 +28,8 @@ SOURCE requester.cpp
 SOURCE ProtocolWrapper.cpp
 SOURCE engine.cpp
 
-USERINCLUDE	 . ..\inc ..\..\inc 
-SYSTEMINCLUDE  \epoc32\include
+USERINCLUDE	 . ../inc ../../inc 
+SYSTEMINCLUDE  /epoc32/include
 LIBRARY		euser.lib 
 LIBRARY		esock.lib
 LIBRARY		bluetooth.lib

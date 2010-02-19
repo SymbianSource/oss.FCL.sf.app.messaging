@@ -21,7 +21,7 @@ UID    0x1000008c 0x1000484B
 CAPABILITY NetworkServices LocalServices ReadUserData ReadDeviceData WriteDeviceData NetworkControl ProtServ
 SOURCEPATH		../src
 SOURCE          T_SMTSSECURESOCKETS.cpp 
-USERINCLUDE   ..\..\inc
+USERINCLUDE   ../../inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/base/inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/email/inc

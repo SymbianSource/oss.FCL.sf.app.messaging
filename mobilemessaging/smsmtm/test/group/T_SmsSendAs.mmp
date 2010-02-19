@@ -19,9 +19,9 @@ target          t_smssendas.exe
 targettype      exe
 
 CAPABILITY All -TCB
-SOURCEPATH		..\src
+SOURCEPATH		../src
 source          t_smssendas.cpp
-userinclude     ..\inc
+userinclude     ../inc
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 library         euser.lib msgs.lib smcm.lib esock.lib
 library			smstestutils.lib msvtestutils.lib send.lib etext.lib gsmu.lib

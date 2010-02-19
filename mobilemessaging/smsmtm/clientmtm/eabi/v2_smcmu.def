@@ -289,4 +289,5 @@ EXPORTS
 	_ZN13TSmsUtilities16PopulateMsgEntryER9TMsvEntryRK11CSmsMessagelRK12CSmsSettings4TUid @ 288 NONAME
 	_ZN13CSmsClientMtm10Extension_EjRPvS0_ @ 289 NONAME
 	_ZN13CSmsClientMtm12SaveMessageLER9CMsvStoreR9TMsvEntry @ 290 NONAME
+	_ZN13CSmsClientMtm14CreateMessageLER9TMsvEntry @ 291 NONAME
 

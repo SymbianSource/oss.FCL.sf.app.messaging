@@ -20,10 +20,10 @@ PRJ_EXPORTS
 PRJ_MMPFILES
 
 PRJ_TESTEXPORTS
-//inc\btsdp.h
-//inc\btsdp.inl
+//inc/btsdp.h
+//inc/btsdp.inl
 
 PRJ_TESTMMPFILES
-agent\sdpagentstub.mmp
-//test\tsdpdb.mmp
-//test\tsdpag.mmp
+agent/sdpagentstub.mmp
+//test/tsdpdb.mmp
+//test/tsdpag.mmp

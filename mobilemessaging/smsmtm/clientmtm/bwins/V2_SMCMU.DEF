@@ -266,4 +266,5 @@ EXPORTS
 	?PopulateMsgEntry@TSmsUtilities@@SAXAAVTMsvEntry@@ABVCSmsMessage@@JABVCSmsSettings@@VTUid@@@Z @ 265 NONAME ; void TSmsUtilities::PopulateMsgEntry(class TMsvEntry &, class CSmsMessage const &, long, class CSmsSettings const &, class TUid)
 	?Extension_@CSmsClientMtm@@MAEHIAAPAXPAX@Z @ 266 NONAME ; int CSmsClientMtm::Extension_(unsigned int, void * &, void *)
 	?SaveMessageL@CSmsClientMtm@@QAEXAAVCMsvStore@@AAVTMsvEntry@@@Z @ 267 NONAME ; void CSmsClientMtm::SaveMessageL(class CMsvStore &, class TMsvEntry &)
+	?CreateMessageL@CSmsClientMtm@@QAEXAAVTMsvEntry@@@Z @ 268 NONAME ; void CSmsClientMtm::CreateMessageL(class TMsvEntry &)
 

@@ -72,9 +72,8 @@ enum TSmumMainSmsSettingsSettingLBIndex
     ESmumCharSupportInUseLBI,    //= 3
     ESmumDeliveryReportLBI,      //= 4
     ESmumValidityPeriodLBI,      //= 5
-    ESmumMessageConversionLBI,   //= 6
-    ESmumPreferredConnectionLBI, //= 7
-    ESmumReplyViaSameCentreLBI   //= 8
+    ESmumPreferredConnectionLBI, //= 6
+    ESmumReplyViaSameCentreLBI   //= 7
     };
 
 enum TSmumMainSmsSendingOptSettingLBIndex
@@ -83,8 +82,7 @@ enum TSmumMainSmsSendingOptSettingLBIndex
     ESmumSendOptCharSupportInUseLBI,    //= 1,
     ESmumSendOptDeliveryReportLBI,      //= 2,
     ESmumSendOptValidityPeriodLBI,      //= 3,
-    ESmumSendOptMessageConversionLBI,   //= 4,
-    ESmumSendOptReplyViaSameCentreLBI   //= 5
+    ESmumSendOptReplyViaSameCentreLBI   //= 4
     };
 
 

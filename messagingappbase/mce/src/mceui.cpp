@@ -470,7 +470,8 @@ void CMceUi::ConstructL()
         }
     iMsgDeletedStatus = EFalse;
     iServerStarted = EFalse ;
-		
+    iEmailNotifHandler = NULL;
+#ifndef __WINSCW__ 
     // Handling of NCN reset
     TRAPD( err, iEmailNotifHandler = CMceEmailNotifHandler::NewL() );
     MCELOGGER_WRITE_FORMAT("ConstructL iEmailNotifHandler err %d", err);
@@ -478,7 +479,7 @@ void CMceUi::ConstructL()
         {
         iEmailNotifHandler = NULL;
         }
-
+#endif
     ZoomLevelChangedL( ReadZoomLevelL() );
 
     iEmailApi = CreateEmailApiL( iSession );
@@ -4892,8 +4893,8 @@ void CMceUi::MarkAsReadL( TBool aRead )
     CMsvEntrySelection* sel = iMceListView->ListContainer()
         ->CurrentItemSelectionL();
     CleanupStack::PushL( sel );
-
-    if (  sel->Count() <= 0 )
+    TInt selCount = sel->Count();
+    if ( selCount <= 0 )
         {
         CleanupStack::PopAndDestroy( 2 ); // singleOpWatcher, sel
         return;
@@ -4922,6 +4923,10 @@ void CMceUi::MarkAsReadL( TBool aRead )
     type, *iSession, op->RequestStatus(), sel );
 
     op->SetOperationL( subOp ); // this takes ownership immediately, so no cleanupstack needed.
+    if ( selCount ==  1 )
+        {
+        op->MakeProgressVisibleL(EFalse);
+        }
     op->SetProgressDecoder( *subOp );
     CleanupStack::Pop( op );
 
@@ -5504,14 +5509,17 @@ void CMceUi::EventL( const CConnMonEventBase &aConnMonEvent )
             
             if ( iMceMainView->ListContainer() ) // Cannot set roaming if ListContainer is empty
                 {
-                // Set roaming status
-                iMceMainView->ListContainer()->ListItems()->SetRoaming(
-                    event->RegistrationStatus() == ENetworkRegistrationRoaming );
-                    
-                if ( MceViewActive( EMceMainViewActive ) )
+                CMceMainViewListItemArray* array = iMceMainView->ListContainer()->ListItems();
+                if ( array && (array->Count() > 0) ) // List item array should not be empty
                     {
-                    //update icon only if main view is open
-                    iMceMainView->ListContainer()->DrawDeferred();
+                    // Set roaming status
+                    array->SetRoaming( event->RegistrationStatus() == ENetworkRegistrationRoaming );
+                    
+                    if ( MceViewActive( EMceMainViewActive ) )
+                        {
+                        //update icon only if main view is open
+                        iMceMainView->ListContainer()->DrawDeferred();
+                        }
                     }
                 }
             }

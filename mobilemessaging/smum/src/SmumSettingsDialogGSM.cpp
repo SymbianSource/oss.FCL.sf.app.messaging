@@ -40,6 +40,7 @@
 #include <RCustomerServiceProfileCache.h>
 #include <centralrepository.h>          // CRepository
 #include <messaginginternalcrkeys.h>    // Keys
+#include <MessagingInternalPSKeys.h>
 
 // locals
 #include "smsui.pan"    				// for panics
@@ -113,6 +114,8 @@ CSmumMainSettingsDialogGSM::~CSmumMainSettingsDialogGSM()
         {
         iListBox->SetScrollBarFrame( NULL, CEikListBox::EOwnedExternally );
         }
+    // To remove sending options from Message Settings
+    RProperty::Delete( KPSUidMuiu, KMuiuRemoveMsgSentSettings ); 
     delete iPreviousTitleText;
     delete iSettingsArrayIndex;
     delete iCentralRapository;
@@ -159,6 +162,15 @@ void CSmumMainSettingsDialogGSM::ConstructL()
 		{
 		iUseSimSCsOnly = ETrue;
 		}
+	// Define the property to remove sending options from Message Settings
+    TInt r = RProperty::Define( KPSUidMuiu, KMuiuRemoveMsgSentSettings, RProperty::EInt );
+    if ( r != KErrAlreadyExists )
+       {
+        User::LeaveIfError( r );
+       }
+    // Initialise the value of key as 0
+    RProperty::Set( KPSUidMuiu, KMuiuRemoveMsgSentSettings, 0) ;
+	
     SMUMLOGGER_LEAVEFN(" CSmumMainSettingsDialogGSM::ConstructL");
     }
 
@@ -299,12 +311,17 @@ void CSmumMainSettingsDialogGSM::PreLayoutDynInitL()
     SMUMLOGGER_ENTERFN(" CSmumMainSettingsDialogGSM::PreLayoutDynInitL");
     // Creating correct listbox depending Settings vs Sending Options 
     iListBox = STATIC_CAST( CEikTextListBox*, Control( ESmsSettingsListBoxId ));
+    
+    // To remove sending options from Message Settings ,set the key value as 1
+    TInt err = RProperty::Set( KPSUidMuiu, KMuiuRemoveMsgSentSettings, 1 ) ;
+    User::LeaveIfError(err);
+    
     iSettingsArray = CSmumSettingsArray::NewL( iTypeOfSettings ? 
         R_SMS_SENDING_OPTIONS_ITEMS : R_SMS_MAIN_SETTINGS_ITEMS );
     
     // The count of setting items depends of setting type
     TInt numberOfSettingItems = iTypeOfSettings ? 
-        ESmumSendOptReplyViaSameCentreLBI + 1 : ESmumReplyViaSameCentreLBI + 1;
+        ESmumSendOptReplyViaSameCentreLBI : ESmumReplyViaSameCentreLBI ;
     iSettingsArrayIndex = new(ELeave) CArrayFixFlat<TInt>( numberOfSettingItems );
 	// Iterate through settings
 	for (TInt count = 0; count < numberOfSettingItems; count++)
@@ -575,40 +592,6 @@ void CSmumMainSettingsDialogGSM::OpeningDialogL()
             }
         }
     
-    // Message conversion
-    if ( iCSPFeatures & EProtocolIDSupport )
-        {
-        if ( !iSettingsArrayIndex->Find ( iTypeOfSettings ? 
-                ESmumSendOptMessageConversionLBI : ESmumMessageConversionLBI, key, index ) )
-            {
-            // Message Conversion
-            switch(iSettings.MessageConversion())
-                {
-                case ESmsConvPIDNone:
-                    choicelistIndex = ESmumConversionNone;
-                    break;
-                case ESmsConvFax:
-                    choicelistIndex = ESmumConversionFax;
-                    break;        
-                case ESmsConvPaging:
-                    choicelistIndex = ESmumConversionPaging;
-                    break;
-                case ESmsConvX400:
-                case ESmsConvErmes:
-                case ESmsConvSpeech:
-                default:
-        #if defined (_DEBUG)
-                Panic( ESmsetdlgUnknownConversion );
-        #else
-                // drop through in release version
-                choicelistIndex = ESmumConversionNone;
-        #endif
-                    break;            
-                }
-            SetItem( index, choicelistIndex);
-            }
-        }
-
     // Preferred Connection
     if ( !iTypeOfSettings )
         {
@@ -753,40 +736,7 @@ void CSmumMainSettingsDialogGSM::ClosingDialogL()
             iSettings.SetValidityPeriod( validityPeriod );
             }
         }
-
-    // Message Conversion
-    if ( iCSPFeatures & EProtocolIDSupport )
-        {
-        if ( !iSettingsArrayIndex->Find ( iTypeOfSettings ? 
-            ESmumSendOptMessageConversionLBI : ESmumMessageConversionLBI, key, index ) )
-            {
-            TInt choicelistIndex = KErrNotFound;
-            switch( Item( index ))
-                {
-                case ESmumConversionNone:
-                    choicelistIndex = ESmsConvPIDNone;
-                    break;
-                case ESmumConversionFax:
-                    choicelistIndex = ESmsConvFax;
-                    break;        
-                case ESmumConversionPaging:
-                    choicelistIndex = ESmsConvPaging;
-                    break;
-                default:
-        #if defined ( _DEBUG )
-                Panic( ESmsetdlgUnknownConversion );
-        #else
-                // drop through in release version
-                choicelistIndex = ESmsConvPIDNone;
-        #endif
-                    break;            
-                }
-            iSettings.SetMessageConversion(STATIC_CAST(
-                TSmsPIDConversion, 
-                choicelistIndex ));
-            }
-        }
-
+    
     // Preferred Connection
     if ( !iTypeOfSettings )
         {
@@ -1162,14 +1112,6 @@ void CSmumMainSettingsDialogGSM::DeleteVariatedSettings()
             "DeleteVariatedSettings - EReplyPathSupport")
         DeleteSettingItemFromArrays( iTypeOfSettings ? 
             ESmumSendOptReplyViaSameCentreLBI : ESmumReplyViaSameCentreLBI );
-        needToBeCompressed = ETrue;
-        }
-    if ( !( iCSPFeatures & EProtocolIDSupport ))
-        {
-        SMUMLOGGER_WRITE(
-            "DeleteVariatedSettings - EProtocolIDSupport")
-        DeleteSettingItemFromArrays( iTypeOfSettings ? 
-                ESmumSendOptMessageConversionLBI : ESmumMessageConversionLBI );
         needToBeCompressed = ETrue;
         }
     if ( !( iCSPFeatures & EValidityPeriodSupport ))
