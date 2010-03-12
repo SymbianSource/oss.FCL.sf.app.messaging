@@ -91,6 +91,7 @@ void CSmsMtmUiData::ConstructL()
     CBaseMtmUiData::ConstructL();
     //Initalize SMS Settings for the first time
     TInt timeStamp = 0;
+    TBool deleteMsgToUknowPort = EFalse;
     CSmsSettings* serviceSettings = CSmsSettings::NewL();
     CleanupStack::PushL( serviceSettings );
     CSmsAccount* smsAccount = CSmsAccount::NewLC();
@@ -105,6 +106,15 @@ void CSmsMtmUiData::ConstructL()
     SMUMLOGGER_WRITE_FORMAT("CSmsMtmUiData::ConstructL: cenRep timesatmp value:%d", timeStamp);
     smsAccount->LoadSettingsL( *serviceSettings );
     serviceSettings->SetUseServiceCenterTimeStampForDate(timeStamp);
+    
+    if ( cenRepSession->Get( KSmsSettingsDiscardUnknownPortMsgs, deleteMsgToUknowPort ) != KErrNone )
+        {
+        //In case of any error,set the default value to EFalse, so that default behaviour could be used
+        deleteMsgToUknowPort = EFalse;
+        SMUMLOGGER_WRITE("CSmsMtmUiData::ConstructL: cenRep get error");
+        }
+    SMUMLOGGER_WRITE_FORMAT("CSmsMtmUiData::ConstructL: cenRep deleteMsgToUknowPort value:%d", deleteMsgToUknowPort);
+    serviceSettings->SetDiscardUnknownPortMessage(deleteMsgToUknowPort);
 
     TRAPD( err, smsAccount->SaveSettingsL( *serviceSettings ) );
     if( err != KErrNone)

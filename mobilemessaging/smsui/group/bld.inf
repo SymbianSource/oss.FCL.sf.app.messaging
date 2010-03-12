@@ -40,14 +40,8 @@ PRJ_EXPORTS
 PRJ_EXTENSIONS
 
 START EXTENSION s60/mifconv
-OPTION TARGETFILE smsviewer_aif.mbm
-OPTION SOURCES -c8,8 qgn_menu_mce_lst.bmp
-OPTION SOURCES -c8,8 qgn_menu_mce_cxt.bmp
-END
-
-START EXTENSION s60/mifconv
 OPTION TARGETFILE smsviewer_aif.mif
-OPTION SOURCES -c8,8 qgn_menu_mce.svg
+OPTION SOURCES -c8,8 qgn_menu_mce_lst -c8,8 qgn_menu_mce_cxt -c8,8 qgn_menu_mce
 END
 
 PRJ_MMPFILES

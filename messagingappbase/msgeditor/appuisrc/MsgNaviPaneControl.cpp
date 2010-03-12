@@ -248,8 +248,7 @@ void CMsgNaviPaneControl::HandlePointerEventL( const TPointerEvent& aPointerEven
                 {
                 iPreviouslyFocusedControl = leftArrowIndicator;
                 }
-            // Coverty fix , Forward NULL, http://ousrv057/cov.cgi?cid=35876
-            else if ( iObserver && iPreviouslyFocusedControl == leftArrowIndicator )
+            else if ( iPreviouslyFocusedControl == leftArrowIndicator )
                 {
                 iObserver->HandleNavigationControlEventL( 
                             MMsgNaviPaneControlObserver::EMsgNaviLeftArrowPressed );

@@ -44,5 +44,5 @@
 // l: list_double_large_graphic_pane_t2
 
 
-#define qtn_mce_own_cvs "Own conversations"
+#define qtn_mce_own_cvs "My conversations"
 // End of File

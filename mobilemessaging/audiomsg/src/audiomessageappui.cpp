@@ -484,8 +484,7 @@ void CAudioMessageAppUi::LaunchViewL()
         *iView );
     iLaunchOperation->Launch();
  
-    ShowWaitNoteL( R_QTN_AUDIOMESSAGE_WAIT_OPENING_EDITOR );
-    AMSLOGGER_WRITE( "CAudioMessageAppUi::LaunchViewL <<" ); 
+   AMSLOGGER_WRITE( "CAudioMessageAppUi::LaunchViewL <<" ); 
     }
 
 
@@ -2116,7 +2115,7 @@ void CAudioMessageAppUi::InsertAudioL( TBool aNew )
         	CleanupStack::Pop( iAbsorber );
             }
             
-        if ( UnsupportedCallTypeOngoing() )
+        if ( UnsupportedCallTypeOngoingL() )
         	{
             delete iAbsorber;
             iAbsorber = NULL;
@@ -4315,7 +4314,7 @@ void CAudioMessageAppUi::DoHandleLocalZoomChangeL( TInt aCommand )
 // UnsupportedCallTypeOngoing
 // -----------------------------------------------------------------------------
 //
-TBool CAudioMessageAppUi::UnsupportedCallTypeOngoing(  )
+TBool CAudioMessageAppUi::UnsupportedCallTypeOngoingL(  )
 	{
 	TBool unsupported( EFalse );
 	TInt value( 0 );

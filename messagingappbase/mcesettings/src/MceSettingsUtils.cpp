@@ -51,6 +51,9 @@
 //
 TBool MceSettingsUtils::MemoryInUseOptionL( )
     {
+#ifdef RD_HIDE_MEMORY_IN_USE
+    return EFalse;
+#endif // RD_HIDE_MEMORY_IN_USE
     TBool memoryInUse = ETrue;
     if ( FeatureManager::FeatureSupported( KFeatureIdMmc ) )
         {        

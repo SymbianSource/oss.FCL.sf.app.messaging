@@ -1184,6 +1184,7 @@ TInt CMceMainViewListItemArray::FindVisibleCountL(TMsvId serviceId ) const
     TInt emailcount=0;
     TInt itemcount;
     CMsvEntry* entry = iSession->GetEntryL( serviceId );
+    CleanupStack::PushL( entry );
     itemcount=entry->Count();
       
     //Find email messages 
@@ -1244,7 +1245,7 @@ TInt CMceMainViewListItemArray::FindVisibleCountL(TMsvId serviceId ) const
         CleanupStack::PopAndDestroy( pop3selection );
         }
     CleanupStack::PopAndDestroy( smtpselection );
-
+    CleanupStack::PopAndDestroy( entry );
     return visiblecount; 
     }
 //  End of File

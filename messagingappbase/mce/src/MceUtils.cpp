@@ -157,6 +157,9 @@ void MceUtils::GetIrFilePathL( CMsvSession& aSession, TMsvId aEntryId, TFileName
 //
 TBool MceUtils::MemoryInUseOptionL( )
     {
+#ifdef RD_HIDE_MEMORY_IN_USE
+    return EFalse;
+#endif // RD_HIDE_MEMORY_IN_USE
     TBool memoryInUse = ETrue;
     if ( FeatureManager::FeatureSupported( KFeatureIdMmc ) )
         {        

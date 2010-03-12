@@ -57,6 +57,13 @@ class CMceMainViewListView :
     public MEikListBoxObserver,
     public MMsvSessionObserver
     {
+    public:
+        
+        enum TMceDefaultView
+            {
+            EMceInboxview = 0,                   
+            EMceConversationview
+            };
 
     public:  // Constructors and destructor
 
@@ -239,6 +246,22 @@ class CMceMainViewListView :
 		* Input parameter list for AIW plugin
 		*/
         CAiwGenericParamList* AiwSyncParamListLC(TInt aId, const TDesC& aText);
+
+        /**
+         * Show a confirmation note to the user after successful 
+         * setting of the default view
+         */
+        void ShowConfirmationNoteL( TInt aResourceID );
+       
+        /**
+         *  Set the default view settings    
+         */
+        TBool SetMceDefaultViewL(TBool aVal);
+
+        /**
+         *  Get the current default view settings    
+         */
+        TInt GetMceDefaultViewL();
 
     private:    // Data
         CMceMainViewListContainer*      iMsgListContainer;

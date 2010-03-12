@@ -24,8 +24,8 @@
 
 //  INCLUDES
 #include <coecntrl.h>
-
 // CLASS DECLARATION
+class CAknsBasicBackgroundControlContext;
 
 /**
 *  Displayed in mce launch before message server is ready.
@@ -62,6 +62,15 @@ class CMceMainViewEmptyListContainer : public CCoeControl
         virtual TKeyResponse OfferKeyEventL(
             const TKeyEvent& aKeyEvent,
             TEventCode aType );
+        
+        /**
+        * From CCoeControl
+        */
+        TTypeUid::Ptr MopSupplyObject(TTypeUid aId);
+        /**
+        * Called when the size has changed.
+        */        
+        void SizeChanged();
 
     private:
 
@@ -69,6 +78,11 @@ class CMceMainViewEmptyListContainer : public CCoeControl
         * By default Symbian OS constructor is private.
         */
         void ConstructL(const TRect& aRect);
+        
+        /**
+        * Own: Background Skin
+        */
+        CAknsBasicBackgroundControlContext* iBgContext;
 
     };
 

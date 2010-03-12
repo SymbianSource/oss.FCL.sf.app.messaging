@@ -931,8 +931,12 @@ CNcnMsvSessionObserver::TNcnInboxEntryType
 		{
 			entryToHandle.SetVisible( EFalse );
 			entryToHandle.SetInPreparation(ETrue);
-			TRAPD(err1,aEntryToHandlePtr->ChangeL( entryToHandle ));
-			NCN_RDEBUG_INT(_L("HandleNewChildrenL:CheckAndHandleSmsEntryL ChangeL Trap error1 Id is: %d "), err1 );
+#ifdef _DEBUG
+			TRAPD(TrapError,aEntryToHandlePtr->ChangeL( entryToHandle ));
+			NCN_RDEBUG_INT(_L("HandleNewChildrenL:CheckAndHandleSmsEntryL ChangeL Trap error1 Id is: %d "), TrapError );
+#else
+			TRAP_IGNORE(aEntryToHandlePtr->ChangeL( entryToHandle ));
+#endif			
 			iUpdateNotifier = EFalse;
 			NCN_RDEBUG(_L("CNcnMsvSessionObserver::CheckAndHandleSmsEntryL Discard message: Try deleting again "));
 			//Entry is not yet released.. try Remove Entry

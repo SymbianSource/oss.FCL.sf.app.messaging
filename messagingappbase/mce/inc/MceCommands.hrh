@@ -53,6 +53,11 @@ enum
     EMceCmdSettings,
     EMceCmdCall,
 
+    // Message viewing style commands
+    EMceDefaultView,
+    EMceDefaultConversationsView,
+    EMceDefaultInboxView,
+
     EMceCIdChoiceList,
     EMceIdDuplicateFolderNote,
     EMceCmdSettingsChoiceMenuOpen,

@@ -21,6 +21,9 @@
 #include <data_caging_paths.hrh>
 #include <platform_paths.hrh>
 
+MACRO             RD_HIDE_MEMORY_IN_USE
+#define           RD_HIDE_MEMORY_IN_USE
+
 // Include common Mce UID definition file
 
 TARGET          mcesettings.dll

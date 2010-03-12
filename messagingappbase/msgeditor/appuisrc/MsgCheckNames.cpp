@@ -243,7 +243,7 @@ EXPORT_C TBool CMsgCheckNames::FindAndCheckByNameL( const TDesC& aText,
         PerformAdvancedMatchL( aText, fieldTypes );
         }
      // Coverty fix, Forward NULL , http://ousrv057/cov.cgi?cid=35690 
-    TInt contactAmount;  
+    TInt contactAmount = 0;  
     if(iFoundContacts)
         {
         contactAmount = iFoundContacts->Count();

@@ -171,7 +171,7 @@ void CNcnNotifier::HandleNotificationChange(
 	TBool aTone,
 	TBool aNote )
     {
-    TBool displaySN;
+    TBool displaySN = EFalse;
     NCN_RDEBUG_INT( _L("CNcnNotifier::HandleNotificationChange() -  notifType: %d"), aNotificationType );
     
     

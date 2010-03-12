@@ -199,7 +199,6 @@ const TUint KSmsDownwardsArrowLeft = 0x21B2;
 const TInt  KSmsEdPDUInfoCalcReplaceCharacterCount = 2;
 const TUint KSmsEdUnicodeLFSupportedByBasicPhones = 0x000A;
 const TUint KSmsEnterCharacter = 0x2029;
-const TUint KSmsSpaceCharacter = 0x0020;
 // Unicode char codes for GSM 03.38 7 bit ext table characters 
 const TUint KUniEdEuroSymbol = 0x20ac;
 const TUint KUniEdLeftSquareBracket = 0x5b;
@@ -1297,7 +1296,15 @@ void CUniEditorAppUi::CalculateSMSMsgLen(TInt& charsLeft, TInt& msgsParts)
         
         if ( maxSmsCharacters <= 0 )
             {                    
-            maxSmsCharacters = maxSmsParts * lengthMany;
+             // maxSmsCharacters is set to minimum lengthOne.            
+             if( maxSmsParts > 1 )
+             	{
+                maxSmsCharacters = maxSmsParts * lengthMany;
+                }
+             else
+                {
+                maxSmsCharacters = lengthOne;
+                }
             }
             
         TInt thisPartChars = 0;
@@ -1809,6 +1816,7 @@ void CUniEditorAppUi::DoEditorObserverL( TMsgEditorObserverFunc aFunc,
                 }
             else if ( (!iTapConsumed) && (event->iType == TPointerEvent::EButton1Up) )
                 {
+                iLongTapDetector->CancelAnimationL();
                 iTapConsumed = ETrue;
                 if ( control && 
                      iFocusedControl == control &&
@@ -3978,19 +3986,7 @@ void CUniEditorAppUi::DoUserSendingOptionsL()
 void CUniEditorAppUi::DoUserInsertMediaL()
     {
     RArray<TInt> disabledItems;
-    CleanupClosePushL( disabledItems );
-    
-    TBool svgFetchDisabled( EFalse );   
-    if ( Document()->CreationMode() == EMmsCreationModeRestricted )
-        {
-        svgFetchDisabled = ETrue;
-        }
-    
-//    if ( svgFetchDisabled )
-//        {
-//        disabledItems.Append( EUniCmdInsertMediaSVG );
-//        }
-    
+    CleanupClosePushL( disabledItems );  
 
     if ( !( iSupportedFeatures & EUniFeatureCamcorder ) )
         {
@@ -9627,7 +9623,7 @@ void CUniEditorAppUi::DoEnableFixedToolbar()
 //
 void CUniEditorAppUi::DoUpdateFixedToolbar()
     {
-     UpdateToolbarL();    
+     TRAP_IGNORE(UpdateToolbarL());    
     }
 // ---------------------------------------------------------
 // CUniEditorAppUi::DoEnterKeyL

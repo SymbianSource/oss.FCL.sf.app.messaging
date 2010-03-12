@@ -191,7 +191,7 @@ void CGenericMtmPlugin::CreateAndSendMessageL(
         // TODO: Use original MTM for "InitializeSending" (does some
         //       SmartMessaging checks)?
         }
-    TMsvId service;
+    TMsvId service= KMsvUnkownServiceIndexEntryIdValue;
     TBool onlineSharing = EFalse;
     TBool doContinue = EFalse;
 

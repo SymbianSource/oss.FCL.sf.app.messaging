@@ -95,7 +95,9 @@ EXPORT_C TInt CMceSettingsMultipleServicesDialog::CreateAndExecuteL(
     CMceSettingsMultipleServicesDialog* mailDlg =new( ELeave ) CMceSettingsMultipleServicesDialog(aManager,  aMessageType, aSession );
     CleanupStack::PushL( mailDlg );
     FeatureManager::InitializeLibL();
-    if ( FeatureManager::FeatureSupported( KFeatureIdSelectableEmail ) )  
+    TBool temp = FeatureManager::FeatureSupported( KFeatureIdSelectableEmail );
+    FeatureManager::UnInitializeLib();
+    if ( temp )  
     {
       mailDlg->ConstructL(R_MCE_SETTINGS_MULTIPLE_SERVICES_DIALOG_MENUBAR_WITH_SELECTABLE_EMAIL );
   	  CleanupStack::Pop( mailDlg );
@@ -108,7 +110,6 @@ EXPORT_C TInt CMceSettingsMultipleServicesDialog::CreateAndExecuteL(
       return mailDlg->ExecuteLD( R_MCE_SETTINGS_MULTIPLE_SERVICES_DIALOG );
     
    }
-   FeatureManager::UnInitializeLib();
 #else
     User::Leave( KErrNotSupported );
     return KErrNotSupported;
@@ -1069,11 +1070,10 @@ void CMceSettingsMultipleServicesDialog::SetAccountInUseL()
         const MImumInHealthServices* healthApi =
         &iEmailApi->HealthServicesL();
 
-        TInt error;
         iMailboxArray.Reset();
         if ( iMessageType == KSenduiMtmSyncMLEmailUid )
             {
-            error = MceSettingsUtils::GetHealthyMailboxListL( *healthApi,
+            MceSettingsUtils::GetHealthyMailboxListL( *healthApi,
                                                               iMailboxArray,
                                                               EFalse,
                                                               EFalse,
@@ -1081,7 +1081,7 @@ void CMceSettingsMultipleServicesDialog::SetAccountInUseL()
             }
         else
             {
-            error = MceSettingsUtils::GetHealthyMailboxListL( *healthApi,
+            MceSettingsUtils::GetHealthyMailboxListL( *healthApi,
                                                               iMailboxArray,
                                                               ETrue,
                                                               ETrue,
@@ -1492,7 +1492,7 @@ void CMceSettingsMultipleServicesDialog::GetHelpContext
 	        TInt item = list->CurrentItemIndex();      	        		
 	        CMsvEntry* entry = NULL;
 
-	        TRAPD( error, entry = iSession->GetEntryL(
+	        TRAP_IGNORE( entry = iSession->GetEntryL(
 	                (*iAccountArray)[item-1].iUid.iUid )); 
 
 	        if ( entry )
@@ -1717,7 +1717,6 @@ CUidNameArray* CMceSettingsMultipleServicesDialog::MtmEmailAccountsL()
             ( iMtmPluginId == 0 || iMessageType == KSenduiMtmSyncMLEmailUid ) )
         {
         const TInt mailboxArrayCount = iMailboxArray.Count();
-        TBool foundServiceArray = EFalse;
         TMsvId msvId;
 
         for ( TInt cc = 0; cc < mailboxArrayCount; cc++)

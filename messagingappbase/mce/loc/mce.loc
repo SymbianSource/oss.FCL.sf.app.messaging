@@ -734,4 +734,38 @@
 #define qtn_mce_doc_temp_folder_1row  "Templates"
 
 
+//d: Command in options list in Conversation List view. 
+//d: to set the default view to be launched when a new message is arrived
+//l: list_single_pane_t1_cp2
+//r: 9.2
+#define qtn_cv_opt_def_view                             "Message Viewing Style"
+
+
+//d: Command in option menu  "Default View" submenu.
+//d: open the Conversations application from new message notifications.
+//l: list_single_popup_submenu_pane_t1/opt1 
+//r: 9.2
+#define qtn_cv_opt_sub_conv                             "Conversations"
+
+
+//d: Command in option menu  "Default View" submenu.
+//d: open the Inbox from new message notifications.
+//l: list_single_popup_submenu_pane_t1/opt1
+//r: 9.2
+#define qtn_cv_opt_sub_inbox                            "Inbox"
+
+
+//d: Information note.
+//d: Note shown when user sets Inbox as default view.
+//l: popup_note_window
+//r: 9.2
+#define qtn_cv_info_inbox_used                          "New message notification will open Inbox"
+
+
+//d: Information note.
+//d: Note shown when user sets Conversation as default view.
+//l: popup_note_window
+//r: 9.2
+#define qtn_cv_info_conv_used                           "New message notification will open Conversations"
+
 // End of File

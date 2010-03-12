@@ -161,7 +161,7 @@ void CMceGeneralSettingsDialog::ConstructL( TInt aResource )
     iResources.OpenL( fileName );
 #endif
     CMceSettingsTitlePaneHandlerDialog::ConstructL( aResource );
-	iIsThirdPartyMail = IsThirdPartyMailBox();
+	iIsThirdPartyMail = IsThirdPartyMailBoxL();
     }
 
 // ----------------------------------------------------
@@ -1087,7 +1087,7 @@ HBufC* CMceGeneralSettingsDialog::MakeDriveNameStringLC( TInt aDriveNumber )
 // 
 // ---------------------------------------------------------
 //
-TBool CMceGeneralSettingsDialog::IsThirdPartyMailBox()
+TBool CMceGeneralSettingsDialog::IsThirdPartyMailBoxL()
     {
     CMsvEntry* entry = iSession->GetEntryL( KMsvRootIndexEntryId );
     CleanupStack::PushL( entry );

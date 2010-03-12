@@ -806,7 +806,7 @@ TBool CSmsDetailsPluginOneShotOperation::ShowContactNameL(CVPbkContactLinkArray*
      *        abcdef xyz , abcdef xy
      *        abcdef xyz , abcde
      */
-    TInt i, minLength = 999, maxLength = 0, length = 0, maxLengthIndex = 0, stdLength = 14;
+    TInt i, minLength = 999, maxLength = 0, length = 0, maxLengthIndex = 0;
     TBool retVal = ETrue ;
     SMUMLOGGER_WRITE( "Contact Match statistics to follow..." );
     SMUMLOGGER_WRITE_FORMAT( "CSmsDetailsPluginOneShotOperation::MatchContactL Match count: %d", aLinkArray->Count() );
@@ -828,8 +828,6 @@ TBool CSmsDetailsPluginOneShotOperation::ShowContactNameL(CVPbkContactLinkArray*
         delete alias;
         alias = NULL;
         }
-    
-    SMUMLOGGER_WRITE_FORMAT( "Cotact Lengths: Std Length  : %d", stdLength);
     SMUMLOGGER_WRITE_FORMAT( "                MinLength   : %d", minLength);
     SMUMLOGGER_WRITE_FORMAT( "                MaxLength   : %d", maxLength); 
     SMUMLOGGER_WRITE_FORMAT( "                MaxLen index: %d", maxLengthIndex);

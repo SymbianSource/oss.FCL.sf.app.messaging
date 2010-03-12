@@ -111,9 +111,9 @@ CMceMainViewListView::CMceMainViewListView(
     iBitmapResolver( aBitmapResolver ),
     iSelectedIndex( KErrNotFound ),
     iTopItemIndex( 0 ),
-    iSelectionFolderId( KMsvNullIndexEntryId ),
-		iSelectableEmail(EFalse), 
+    iSelectionFolderId( KMsvNullIndexEntryId ), 
 		iEmailClientIntegration(EFalse),
+		iSelectableEmail(EFalse),
 		iEmailFramework(EFalse)
     {
     iSessionHolder.AddClient();
@@ -232,6 +232,8 @@ void CMceMainViewListView::DoActivateL(
             iEmptyListContainer = CMceMainViewEmptyListContainer::NewL( ClientRect() );
             AppUi()->AddToStackL(*this,iEmptyListContainer);
             MCELOGGER_WRITE_TIMESTAMP("Main view: Empty container activated at ");
+            CEikStatusPane* sp = StatusPane();
+            sp->DrawNow();
             }
         if ( aCustomMessageId.iUid == KMceShowMail )
             {
@@ -489,6 +491,19 @@ void CMceMainViewListView::HandleCommandL( TInt aCommand )
             break;
         case EAknCmdHideInBackground:
             break;
+        case EMceDefaultConversationsView:
+            if ( SetMceDefaultViewL(EMceConversationview) )
+                {
+                ShowConfirmationNoteL(R_DEFAULTVIEW_CONVERSATION_SELECTED);  
+                }
+             break;
+             
+        case EMceDefaultInboxView:     
+            if ( SetMceDefaultViewL(EMceInboxview) )
+                {
+                ShowConfirmationNoteL(R_DEFAULTVIEW_INBOX_SELECTED);
+                }
+             break;
         case EMceCmdSettings:
 		    {
 		    if (( iEmailClientIntegration )&&(!iEmailFramework))
@@ -778,7 +793,22 @@ void CMceMainViewListView::DynInitMenuPaneL(
     			}
     		}
     	}
-        
+    if ( aResourceId == R_MCE_DEFAULT_VIEW_SUBMENU )
+       {
+       TInt defaultview = KErrGeneral;
+       defaultview = GetMceDefaultViewL();
+       if(defaultview == EMceInboxview )
+           {
+           aMenuPane->SetItemButtonState( EMceDefaultInboxView,
+                    EEikMenuItemSymbolOn );
+           }
+       if(defaultview == EMceConversationview )
+           {
+           aMenuPane->SetItemButtonState( EMceDefaultConversationsView,
+                    EEikMenuItemSymbolOn );
+           }
+       }
+  
     iMceUi->DynInitMenuPaneL( aResourceId, aMenuPane );
     }
 
@@ -1104,4 +1134,62 @@ void CMceMainViewListView::HandleClientRectChange()
         }
     }
 
+// ---------------------------------------------------------
+// CConversationListView::ShowInformationNoteL
+// Shows a note to the user if the default view selection was successful
+// ---------------------------------------------------------
+//
+void CMceMainViewListView::ShowConfirmationNoteL(TInt aResourceID)
+    {
+    HBufC* prompt = NULL;           
+    prompt = StringLoader::LoadLC( aResourceID, iCoeEnv );             
+    CAknQueryDialog* dlg = CAknQueryDialog::NewL();
+    dlg->ExecuteLD( R_MCE_OK_EMPTY_CONFIRMATION, prompt->Des() );          
+    CleanupStack::PopAndDestroy( prompt );   
+    }
+
+// ---------------------------------------------------------
+// CMceMainViewListView::SetMceDefaultViewL
+// Sets the central repository for the default view activation when 
+// a new message arrives
+// ---------------------------------------------------------
+//
+TBool CMceMainViewListView::SetMceDefaultViewL(TBool aVal)
+    {
+    CRepository* repository = NULL;
+    TRAPD( ret, repository = CRepository::NewL(KCRUidMuiuSettings) );
+    if ( ret == KErrNone )
+       {
+       CleanupStack::PushL( repository );
+       repository->Set(KMuiuMceDefaultView,aVal);
+       CleanupStack::PopAndDestroy( repository );
+       return ETrue;
+       }
+    else
+        {
+        return EFalse;
+        }
+    }
+// ---------------------------------------------------------
+// CMceMainViewListView::GetMceDefaultViewL
+// Get the central repository value of the current default view 
+// ---------------------------------------------------------
+//
+TInt CMceMainViewListView::GetMceDefaultViewL()
+    {
+    CRepository* repository = NULL;
+    TInt keyvalue;
+    TRAPD( ret, repository = CRepository::NewL(KCRUidMuiuSettings) );
+    if ( ret == KErrNone )
+       {
+       CleanupStack::PushL( repository );
+       repository->Get(KMuiuMceDefaultView,keyvalue);
+       CleanupStack::PopAndDestroy( repository );
+       return keyvalue;
+       }
+    else
+       {
+       return KErrNotFound;
+       }
+    }
 //  End of File

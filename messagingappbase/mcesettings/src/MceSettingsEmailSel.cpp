@@ -652,8 +652,8 @@ void CMceSettingsEmailSel::AppendCmailBoxesL(CArrayFix<TInt64 >* atimeItems, CMs
 //
 void CMceSettingsEmailSel::AddOtherEmailBoxesL(CDesCArrayFlat& aListItems, CArrayFix<TUid>& aListItemUids , CMsvEntry* aEntry)
     {
-    CArrayFix<TInt64 >* timeItems;
-    CDesCArrayFlat* cmaillist;
+    CArrayFix<TInt64 >* timeItems = NULL;
+    CDesCArrayFlat* cmaillist = NULL;
     TTime timeNow;
     
     if(iEmailFramework)

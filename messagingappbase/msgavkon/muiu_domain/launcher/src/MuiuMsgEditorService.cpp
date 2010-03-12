@@ -33,7 +33,8 @@
 // CONSTANTS
 _LIT( KRomDriveLetter, "z:" );
 
-
+const TInt KSmsViewerLaunchDelay = 100000; // microseconds
+const TInt KMaxNumberOfTrials    = 25;
 // ---------------------------------------------------------
 // RMuiuMsgEditorService::OpenEntryL
 // ---------------------------------------------------------
@@ -104,8 +105,23 @@ void CMuiuMsgEditorService::ConstructL( const TEditorParameters aParams,
     {
     const TUid uid = DiscoverL( aParams );
     if( uid != KNullUid )
-        {
-        iService.ConnectChainedAppL( uid );
+        {  
+         // To get rid of KErrorInUse( when msgeditor is open and trying to view new message)
+         //  We try to launch it again after 100 miliseconds.
+        TInt err = KErrInUse;
+        for ( TInt count = 0; err == KErrInUse  &&  count < KMaxNumberOfTrials ; count++ )
+             {                      
+             TRAP( err, iService.ConnectChainedAppL( uid )); 
+             if ( err == KErrInUse )
+                 {    
+                  User::After( KSmsViewerLaunchDelay );
+                 }
+             else if( err != KErrNone )
+                 {
+                 User::Leave( err );
+                 }
+             }
+
         iMonitor = CApaServerAppExitMonitor::NewL( iService, 
                                                    *aObserver, 
                                                    CActive::EPriorityStandard );

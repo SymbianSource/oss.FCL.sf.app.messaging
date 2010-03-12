@@ -19,8 +19,10 @@
 
 
 // INCLUDE FILES
-#include    <eikenv.h>
+#include <eikenv.h>
 #include <aknenv.h>
+#include <AknsDrawUtils.h>
+#include <AknsBasicBackgroundControlContext.h>
 #include    "MceMainViewEmptyListContainer.h"
 
 
@@ -36,6 +38,8 @@ CMceMainViewEmptyListContainer::CMceMainViewEmptyListContainer()
 // Symbian OS default constructor can leave.
 void CMceMainViewEmptyListContainer::ConstructL( const TRect& aRect )
     {
+    iBgContext = CAknsBasicBackgroundControlContext::NewL(
+                KAknsIIDQsnBgAreaMainMessage, aRect, ETrue);
     CreateWindowL();
     SetRect( aRect );
     ActivateL();
@@ -56,6 +60,7 @@ CMceMainViewEmptyListContainer* CMceMainViewEmptyListContainer::NewL( const TRec
 // Destructor
 CMceMainViewEmptyListContainer::~CMceMainViewEmptyListContainer()
     {
+    delete iBgContext;
     }
 
 
@@ -68,7 +73,30 @@ TKeyResponse CMceMainViewEmptyListContainer::OfferKeyEventL(
     {
     return EKeyWasConsumed;
     }
-
+// ---------------------------------------------------------
+// CMceMainViewEmptyListContainer::MopSupplyObject
+// ---------------------------------------------------------
+//
+TTypeUid::Ptr CMceMainViewEmptyListContainer::MopSupplyObject(TTypeUid aId)
+    {
+    if (aId.iUid == MAknsControlContext::ETypeId)
+        {
+        return MAknsControlContext::SupplyMopObject( aId, iBgContext );
+        }
+    return CCoeControl::MopSupplyObject(aId);
+    }
+// ---------------------------------------------------------
+// CMceMainViewEmptyListContainer::SizeChanged
+// ---------------------------------------------------------
+//
+void CMceMainViewEmptyListContainer::SizeChanged()
+    {
+    if ( iBgContext )
+        {
+        iBgContext->SetRect( Rect() );
+        iBgContext->SetParentPos( PositionRelativeToScreen() );
+       }
+    }
 // ---------------------------------------------------------
 // CMceMainViewEmptyListContainer::Draw
 // ---------------------------------------------------------
@@ -76,10 +104,19 @@ TKeyResponse CMceMainViewEmptyListContainer::OfferKeyEventL(
 void CMceMainViewEmptyListContainer::Draw(const TRect& /*aRect*/ ) const
     {
     CWindowGc& gc = SystemGc();
-    gc.SetPenColor( AKN_LAF_COLOR ( 0 ) ); // background
-    gc.SetPenStyle( CGraphicsContext::ESolidPen );
-    gc.SetPenSize( TSize(0,0) ); // no border needed here
-    gc.DrawRect( Rect() );
+    TRect aRect = Rect();
+    MAknsSkinInstance* skin = AknsUtils::SkinInstance();
+    MAknsControlContext* cc = AknsDrawUtils::ControlContext( this );
+
+    if( !AknsDrawUtils::Background( skin, cc, this, gc, aRect ) )
+        {
+        // Same as CCoeControl draw for blank controls
+        CGraphicsContext& gcBlank = SystemGc();
+        gcBlank.SetPenStyle( CGraphicsContext::ENullPen );
+        gcBlank.SetBrushStyle( CGraphicsContext::ESolidBrush );
+        gcBlank.DrawRect( aRect );
+      }
+
     }
 
 //  End of File

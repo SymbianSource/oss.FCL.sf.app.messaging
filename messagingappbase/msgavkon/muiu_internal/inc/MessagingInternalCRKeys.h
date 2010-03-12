@@ -131,6 +131,7 @@ const TUint32 KSmumMultipleRecipient                = 0x00000016;
 const TUint32 KSmumRemoveReplyViaSameCentre			    = 0x00000017;
 const TUint32 KSmumPreviousSimSmscNumber            = 0x00000018;
 const TUint32 KSmumShowSMSCTimeStamp                = 0x00000019;
+const TUint32 KSmsSettingsDiscardUnknownPortMsgs    = 0x0000001A;
 
 //
 // Send UI Settings API

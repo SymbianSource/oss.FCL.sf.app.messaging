@@ -1384,7 +1384,6 @@ void CMceMessageListContainer::HandleMsvSessionEventL(
 	                    }
                     if(aEvent==MMsvSessionObserver::EMsvEntriesCreated)
                         {
-                               TInt selectedIndex =0;
                                iAnchorItemIndex=0;
                                iAnchorItemId = iListItems->ItemId( iAnchorItemIndex );
                         }

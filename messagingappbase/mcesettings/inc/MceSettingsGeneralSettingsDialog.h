@@ -144,7 +144,7 @@ class CMceGeneralSettingsDialog :
         /**
          *  This will return true if there is any third party mailbox.
          */
-        TBool IsThirdPartyMailBox();
+        TBool IsThirdPartyMailBoxL();
 
     protected:  // Functions from base classes
 

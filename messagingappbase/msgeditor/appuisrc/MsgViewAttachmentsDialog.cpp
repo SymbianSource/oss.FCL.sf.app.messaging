@@ -427,7 +427,7 @@ EXPORT_C void CMsgViewAttachmentsDialog::HandleResourceChange(TInt aType)
 EXPORT_C void CMsgViewAttachmentsDialog::HandleServerAppExit( TInt /*aReason*/)
     {
     // replace navi pane with empty one.
-    iNaviPane->PushDefaultL();
+    TRAP_IGNORE(iNaviPane->PushDefaultL());
     iBusy = EFalse;
     }
 

@@ -201,6 +201,7 @@ const TInt KVolumeControlMinValue = 0;      //from "AKNVOLUMECONTROL.CPP"
 const TInt KVolumeControlMaxValue = 10;     //from "AKNVOLUMECONTROL.CPP"
 const TInt KVolumeDefault = 8;
 const TInt KVolumeLevels = 10;
+const TInt KMmsSizeWaitDialogDisabled = 204800; 
 
 #ifndef RD_MSG_NAVIPANE_IMPROVEMENT
 const TUint KNaviGranularity = 2;
@@ -558,7 +559,12 @@ void CMmsViewerAppUi::DoLaunchViewL()
 
     iViewerState = EBusy;
     iOpeningState = EOpeningMessage;
-    LaunchWaitDialogL( 0 );
+    
+    // Disabling Wait Dialog for messages less than 200kB 
+    if ( iMtm->MessageSize() > KMmsSizeWaitDialogDisabled )
+        {
+        LaunchWaitDialogL( 0 );
+        }
 
     // iWaitDialog was deleted in case of error. Is this needed ?
     iLaunchOperation = new ( ELeave ) CMmsViewerLaunchOperation(
@@ -2826,17 +2832,12 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                     // on a focused object.
                     iPointerTarget = baseControl;
                     
-                    if(baseControl && (iMskId ==  R_MMSVIEWER_MSK_BUTTON_PLAY_PRESENTATION 
-                            || iMskId == R_MMSVIEWER_MSK_BUTTON_PLAY_AUDIO
-                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_OPEN_IMAGE
-                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_PLAY_VIDEO
-                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_STOP_AUDIO
-                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_STOP_VIDEO
-                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_OPEN_OBJECTS
-#ifdef RD_SVGT_IN_MESSAGING                     
-                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_PLAY_SVG)
-#endif   
-                    )
+                    if ( baseControl && 
+                             ( baseControl->ControlId() == EMsgComponentIdAudio ||
+                               baseControl->ControlId() == EMsgComponentIdImage ||
+                               baseControl->ControlId() == EMsgComponentIdVideo ||
+                               baseControl->ControlId() == EMsgComponentIdSvg )&&
+                                     ((Document()->SmilType()!=ETemplateSmil)&&(Document()->SmilType()!=E3GPPSmil) )) 
                         {
                         if(iLongTapDetector)
                             {
@@ -2849,6 +2850,7 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                 else if ( (!iTapConsumed) && (pointerEvent
                         &&  pointerEvent->iType == TPointerEvent::EButton1Up) )
                     {
+                    iLongTapDetector->CancelAnimationL();
                     iTapConsumed = ETrue;
                     if ( baseControl && iPointerTarget == baseControl )
                         {

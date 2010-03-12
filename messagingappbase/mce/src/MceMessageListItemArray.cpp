@@ -115,8 +115,8 @@ CMceMessageListItemArray::CMceMessageListItemArray(
     iListType( aListType ),
     iBitmapResolver( aBitmapResolver ),
     iEmailClientIntegration(EFalse),
-    iEmailFramework(EFalse),
-    iIntegratedEmailAppExcist(EFalse)
+    iIntegratedEmailAppExcist(EFalse),
+    iEmailFramework(EFalse)
     {
     iDescriptionLength = iBitmapResolver.DescriptionLength();
     }
@@ -238,7 +238,7 @@ TInt CMceMessageListItemArray::ItemIndex(TMsvId aItemId) const
     TInt count = iFolderEntry->Count();
     if ( (iEmailClientIntegration && iIntegratedEmailAppExcist) || iEmailFramework ) 
         {
-        TRAPD( err, count = CreateEntryIndexL() );
+        TRAP_IGNORE( count = CreateEntryIndexL() );
         }
     for( TInt loop = 0; loop < count && foundItem == KErrNotFound ; loop++)
         {
@@ -325,7 +325,7 @@ TInt CMceMessageListItemArray::MdcaCount() const
                 iFolderId == KMsvGlobalInBoxIndexEntryId || iFolderId == KMsvGlobalOutBoxIndexEntryId)
             {
 
-            TRAPD( err, retval = CreateEntryIndexL() );
+            TRAP_IGNORE( retval = CreateEntryIndexL() );
             }
         }   
     return ( retval );

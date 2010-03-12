@@ -869,9 +869,8 @@ void CMmsEncode::EncodeHeadersChunkedL()
 
     if( iTargetEncodingType != 0 )
         {
-        TRAPD( err, PreProcessAttachmentDataL() );
-
 #ifndef _NO_MMSS_LOGGING_
+        TRAPD( err, PreProcessAttachmentDataL() );
     /* if any error, korean specific encoding failed, But this should not stop from sending MMS using
      * existing default encoding. Hence just log the error and continue in any case
      */
@@ -879,6 +878,8 @@ void CMmsEncode::EncodeHeadersChunkedL()
             {
             TMmsLogger::Log( _L("CMmsEncode::EncodeHeadersChunkedL:: PreProcessAttachmentDataL error: %d"), err );
             }
+#else
+				TRAP_IGNORE( PreProcessAttachmentDataL() );            
 #endif /* _NO_MMSS_LOGGING_ */
         }
     
@@ -4726,12 +4727,9 @@ void CMmsEncode::PreProcessAttachmentDataL()
 
         if( retVal )
             {
-            TRAPD( 
-                    err,
-                    attachManagerSync.ModifyAttachmentInfoL(attachmentInfo);
-                    editStore->CommitL();
-                  );
 #ifndef _NO_MMSS_LOGGING_
+            TRAPD( err,attachManagerSync.ModifyAttachmentInfoL(attachmentInfo);
+                    editStore->CommitL(););
             if(err != KErrNone)
                 {
                 TMmsLogger::Log( _L("CMmsEncode::PreProcessAttachmentData:: store commit error: %d"), err );
@@ -4740,6 +4738,9 @@ void CMmsEncode::PreProcessAttachmentDataL()
                 {
                 TMmsLogger::Log( _L("CMmsEncode::PreProcessAttachmentData:: store commit success") );                
                 }
+#else
+				    TRAP_IGNORE( attachManagerSync.ModifyAttachmentInfoL(attachmentInfo);
+                    editStore->CommitL(););	                
 #endif /* _NO_MMSS_LOGGING_ */
             /*  attachmentInfo ownership is transfered to attachment manager
              *  Hence, JUST pop attachmentInfo, DO NOT Destroy.

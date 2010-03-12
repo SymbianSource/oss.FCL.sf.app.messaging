@@ -66,7 +66,7 @@ class CGulIcon;
 #include <sendui.h>
 #include <CMessageData.h>
 
-
+#include <layoutmetadata.cdl.h>//for layout id
 #include <aknappui.h>
 #include <StringLoader.h>   // stringloader
 #include <akntabgrp.h>
@@ -1255,6 +1255,16 @@ void CMceUi::HandleResourceChangeL( TInt aType )
         }
         
     CAknViewAppUi::HandleResourceChangeL( aType );
+	// this is fix for setting the correct status pane id, if AVKON changes the status pane ids then there will be a problem
+    TBool landscape( Layout_Meta_Data::IsLandscapeOrientation() );
+    if(!landscape)
+    {
+    CEikStatusPane* statusPane = StatusPane();
+    if(statusPane->CurrentLayoutResId()== R_AVKON_STATUS_PANE_LAYOUT_USUAL_FLAT)
+    {
+    statusPane->SwitchLayoutL( R_AVKON_STATUS_PANE_LAYOUT_USUAL_EXT );
+    }
+    }
     if( aType == KEikDynamicLayoutVariantSwitch )
         {
         if ( iLocalScreenClearer )
@@ -1642,7 +1652,7 @@ void CMceUi::SettingsDialogL()
                             entryUid = tentry.iMtm;     
                             }
 
-                        CBaseMtmUiData* mtmUiData;
+                        CBaseMtmUiData* mtmUiData = NULL;
 
                         TRAPD( returnVal, mtmUiData =
                                &( iMtmStore->MtmUiDataL( entryUid ) ) );
@@ -3659,7 +3669,7 @@ void CMceUi::RemoveTabsAndUpdateArray()
 // ----------------------------------------------------
 void CMceUi::CheckIAUpdate()
     {
-    iMceIAUpdate->StartL( TUid::Uid( KMceApplicationUidValue ) );
+    TRAP_IGNORE(iMceIAUpdate->StartL( TUid::Uid( KMceApplicationUidValue ) ));
     }
 
 // ----------------------------------------------------
@@ -6622,7 +6632,7 @@ void CMceUi::OpenMtmMailboxViewL( const TMsvEntry& aEntry )
     CleanupStack::PushL( singleOpWatcher );
 
     CMsvOperation* op = NULL;
-    TRAPD( error, ( op=mtmUi.OpenL(singleOpWatcher->iStatus ) ) );
+    TRAP_IGNORE(  op=mtmUi.OpenL(singleOpWatcher->iStatus )  );
     
     CleanupStack::PushL( op );
     iOperations.AppendL( singleOpWatcher );
@@ -6708,7 +6718,7 @@ TInt CMceUi::PopulateMMSTemplates()
 
     if ( error !=KErrNone )
         {
-        return;
+        return -1;
         }
     // Reset inactivity timer to keep viewServer from crashing  
     User::ResetInactivityTime();

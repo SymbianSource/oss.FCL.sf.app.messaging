@@ -2528,7 +2528,6 @@ void CMceOneRowMessageListContainer::HandleOperationCompletedL()
 
        if(iLastOperationType == EMessageListOperationConnect )
          {                  
-         TInt selectedIndex =1;
          iAnchorItemIndex=1;
          iAnchorItemId = iListItems->ItemId( iAnchorItemIndex );
          SetCurrentItemIdL( iAnchorItemId );

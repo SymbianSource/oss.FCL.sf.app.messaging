@@ -35,7 +35,7 @@
 // ---------------------------------------------------------------------------
 //
 CMceIAUpdateUtils::CMceIAUpdateUtils(CMceUi& aMceUi)
-: iUpdate( NULL ), iParameters( NULL ),iMceUi( aMceUi ),CActive(EPriorityStandard)
+: CActive(EPriorityStandard),iUpdate( NULL ), iParameters( NULL ),iMceUi( aMceUi )
     {
     CActiveScheduler::Add(this);
     }

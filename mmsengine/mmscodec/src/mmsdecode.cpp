@@ -4604,7 +4604,7 @@ void CMmsDecode::FinishL()
     if ( iSmilCount <= 1 && iAudioCount == 1 &&
        ( iAttaNumber == iSmilCount + iAudioCount ) )
         {
-         if(!CheckDRMContent())
+         if(!CheckDRMContentL())
              {
                 TBool audioSupported = EFalse;
                 TRAP_IGNORE(
@@ -4654,7 +4654,7 @@ void CMmsDecode::FinishL()
 // CMmsDecode::CheckDRMContent
 // ---------------------------------------------------------
 //
-TBool CMmsDecode::CheckDRMContent()
+TBool CMmsDecode::CheckDRMContentL()
     {
     CFileProtectionResolver* resolver = CFileProtectionResolver::NewLC( iFs);
 

@@ -2754,6 +2754,7 @@ void CMsgSmsViewerAppUi::QuicklaunchViewL()
     CPlainText* nullString = CPlainText::NewL();
     CleanupStack::PushL( nullString );
     delete iSmsHeader;
+    iSmsHeader = NULL;
     iSmsHeader = CSmsHeader::NewL( CSmsPDU::ESmsDeliver, *nullString );
     CMsvStore* store = doc->CurrentEntry().ReadStoreL();
     CleanupStack::PushL(store);

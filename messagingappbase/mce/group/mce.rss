@@ -41,7 +41,6 @@ NAME MCE
 
 #include <appinfo.rh>
 #include <messaging.loc>
-
 #include <AiwCommon.rh>
 
 #include <aknsconstants.hrh>
@@ -224,14 +223,18 @@ RESOURCE MENU_PANE r_mce_main_view_menu
             command = EMceCmdZoomMenu;
             txt = qtn_options_text_size;
             cascade = r_mce_local_zoom_value;
+            },            
+        MENU_ITEM   
+            { 
+            command = EMceDefaultView;    
+            txt = qtn_cv_opt_def_view; 
+            cascade = r_mce_default_view_submenu;  
             },
         MENU_ITEM
             {
             command = EMceCmdSettings;
             txt = qtn_mce_settings;
             },
-
-
         MENU_ITEM
             {
             command = EAknCmdHelp;
@@ -1152,5 +1155,63 @@ RESOURCE TBUF r_qtn_mce_markas_unread
     { 
     buf = qtn_mce_rm_mark_unread; 
     }
-    
+
+//----------------------------------------------------
+//    Ok/ Empty confirmation dialog
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_mce_ok_empty_confirmation
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_OK_EMPTY__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                layout = EConfirmationLayout;
+                label = "";
+                animation = R_QGN_NOTE_INFO_ANIM;
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//   
+//    R_MCE_DEFAULT_VIEW_SUBMENU 
+//    Cascading  menu items
+// ---------------------------------------------------------
+//
+
+RESOURCE MENU_PANE r_mce_default_view_submenu
+    {
+    items = 
+        {       
+        MENU_ITEM   
+            { 
+            command = EMceDefaultConversationsView;    
+            txt = qtn_cv_opt_sub_conv;  
+            flags = EEikMenuItemRadioStart; 
+            }
+        ,
+        MENU_ITEM   
+            { 
+            command = EMceDefaultInboxView;            
+            txt = qtn_cv_opt_sub_inbox;    
+            flags = EEikMenuItemRadioEnd; 
+            }       
+        };
+    }
+
+// ---------------------------------------------------------
+//   Mce Default view notifications
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_defaultview_inbox_selected            {  buf = qtn_cv_info_inbox_used;    }
+RESOURCE TBUF r_defaultview_conversation_selected     {  buf = qtn_cv_info_conv_used;    }
+   
 // End of File
