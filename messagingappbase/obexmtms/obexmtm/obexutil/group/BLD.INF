@@ -17,7 +17,7 @@ PRJ_EXPORTS
 // specify the source file followed by its destination here
 // copy will be used to copy the source file to its destination
 // If there's no destination then the source file will be copied
-// to the same name in \epoc32\include
+// to the same name in /epoc32/include
 
 ../include/obexHeader.h 	SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(obexheader.h)
 ../include/obexHeaderList.h 	SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(obexheaderlist.h)

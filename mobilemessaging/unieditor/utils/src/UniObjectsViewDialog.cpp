@@ -975,6 +975,7 @@ void CUniObjectsViewDialog::DynInitMenuPaneL( TInt aMenuId,
                                 0, 
                                 TSendingCapabilities::ESupportsAttachments )
                             );
+                        aMenuPane->SetItemSpecific( EMmsObjectsSendVia, ETrue );
                         }
                     }
                 else if ( iDialogType == EForward )

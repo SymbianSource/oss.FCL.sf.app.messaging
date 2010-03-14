@@ -2818,17 +2818,32 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                 {
                 TPointerEvent* pointerEvent = static_cast<TPointerEvent*>( aArg2 );
                 CMsgBaseControl* baseControl = static_cast<CMsgBaseControl*>( aArg1 );
-                if(iLongTapDetector)
-                {
-                    iLongTapDetector->EnableLongTapAnimation(ETrue);
-                    iLongTapDetector->PointerEventL( *pointerEvent );
-                }
+                
                 if (    pointerEvent
                     &&  pointerEvent->iType == TPointerEvent::EButton1Down )
                     {
                     // We are looking for a valid tap (button down and up)
                     // on a focused object.
                     iPointerTarget = baseControl;
+                    
+                    if(baseControl && (iMskId ==  R_MMSVIEWER_MSK_BUTTON_PLAY_PRESENTATION 
+                            || iMskId == R_MMSVIEWER_MSK_BUTTON_PLAY_AUDIO
+                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_OPEN_IMAGE
+                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_PLAY_VIDEO
+                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_STOP_AUDIO
+                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_STOP_VIDEO
+                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_OPEN_OBJECTS
+#ifdef RD_SVGT_IN_MESSAGING                     
+                            || iMskId ==R_MMSVIEWER_MSK_BUTTON_PLAY_SVG)
+#endif   
+                    )
+                        {
+                        if(iLongTapDetector)
+                            {
+                            iLongTapDetector->EnableLongTapAnimation(ETrue);
+                            iLongTapDetector->PointerEventL( *pointerEvent );
+                            }
+                        }
                     iTapConsumed = EFalse;
                     }
                 else if ( (!iTapConsumed) && (pointerEvent

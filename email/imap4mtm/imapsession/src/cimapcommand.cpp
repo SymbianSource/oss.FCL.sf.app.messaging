@@ -935,12 +935,11 @@ TPtrC8 CImapCommand::GetResponseTextCodeL()
 			
 		__LOG_FORMAT((iLogId, "CImapCommand::GetResponseTextCodeL() - Found %S", &response));
 		}
-	else
-		{
-		__LOG_TEXT(iLogId, "CImapCommand::GetResponseTextCodeL() - Not Found");
-		response.Set(KNullDesC8);
-		}
-	
+		
+		//Case where there is no [ ] for Server Response from servers like tuukka
+		//(ie) * OK PERMANENTFLAGS (\seen \answered \flagged \deleted \draft \priority)  
+		//we would be returning iUnparsedData, without editing the data
+
 	return response;	
 	}
 	

@@ -819,20 +819,13 @@ void CSmsClientMtm::LoadMessageL()
 	{
 	__ASSERT_DEBUG(iMsvEntry,Panic(ESmscEntryNotSet));
 
-	RestoreServiceAndSettingsL();
-
-	ResetHeader();
-	Body().Reset();
 	CMsvStore* msvstore=iMsvEntry->ReadStoreL();
 	CleanupStack::PushL(msvstore);
 	switch (iMsvEntry->Entry().iType.iUid)
 		{
 		case KUidMsvServiceEntryValue:
 			{
-			CSmsAccount* account = CSmsAccount::NewLC();
-			// just v2
-			account->LoadSettingsL(*iServiceSettings);
-			CleanupStack::PopAndDestroy(account);    
+			RestoreServiceAndSettingsL();
 			break;
 			}
 		case KUidMsvFolderEntryValue:
@@ -841,6 +834,9 @@ void CSmsClientMtm::LoadMessageL()
 			}
 		case KUidMsvMessageEntryValue:
 			{
+			ResetHeader();
+			Body().Reset();
+			
 			CSmsHeader* smsheader=CSmsHeader::NewL(CSmsPDU::ESmsSubmit,Body());
 			CleanupStack::PushL(smsheader);
 			smsheader->RestoreL(*msvstore);
@@ -1521,6 +1517,46 @@ EXPORT_C void CSmsClientMtm::CreateMessageL(TMsvId /*aServiceId*/)
  	// store entry in folder
  	iMsvEntry->CreateL(entry);
  	SwitchCurrentEntryL(entry.Id());
+ 	// End of fix
+
+	delete iSmsHeader;
+	iSmsHeader=NULL;
+	iSmsHeader=CSmsHeader::NewL(CSmsPDU::ESmsSubmit,Body());
+	iSmsHeader->SetSmsSettingsL(*iServiceSettings);
+
+	// service centre was not being set 
+	TInt defaultSC = iServiceSettings->DefaultServiceCenter();
+	if(defaultSC > -1)
+		{
+		if (iServiceSettings->ServiceCenterCount() > defaultSC )
+			{
+			iSmsHeader->SetServiceCenterAddressL( iServiceSettings->GetServiceCenter(defaultSC).Address() );	
+			}
+		}
+ 	}
+
+
+
+/** 
+Creates a new outgoing SMS message entry as a child of the current context.
+
+Used by CSendAs::CreateMessageL to create an outgoing SMS message.
+
+@param	
+The entry with the required fields set.
+
+*/
+EXPORT_C void CSmsClientMtm::CreateMessageL(TMsvEntry& aEntry)
+	{
+	RestoreServiceAndSettingsL();
+
+ 	aEntry.SetVisible(EFalse);
+ 	aEntry.SetInPreparation(ETrue);
+ 	aEntry.iDate.UniversalTime();
+ 	
+ 	// store entry in folder
+ 	iMsvEntry->CreateL(aEntry);
+ 	SwitchCurrentEntryL(aEntry.Id());
  	// End of fix
 
 	delete iSmsHeader;

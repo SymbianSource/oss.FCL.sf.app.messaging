@@ -21,13 +21,13 @@ PRJ_MMPFILES
 PRJ_TESTEXPORTS
 //this code builds against the binary interface of irobex
 //for it to build successfully,
-//the relative path to master\common\generic\infra-red\.... must be changed to match your
+//the relative path to master/common/generic/infra-red/.... must be changed to match your
 //respective perforce client spec. setting 
-..\..\..\..\..\..\..\..\..\master\common\generic\infra-red\irda\inc\ir_sock.h
-..\..\..\..\..\..\..\..\..\master\common\generic\infra-red\irda\inc\ir_sock.inl
-..\..\..\..\..\..\..\..\..\master\common\generic\infra-red\irda\inc\obex.h
-..\..\..\..\..\..\..\..\..\master\common\generic\infra-red\irda\inc\obex.inl
+../../../../../../../../../master/common/generic/infra-red/irda/inc/ir_sock.h
+../../../../../../../../../master/common/generic/infra-red/irda/inc/ir_sock.inl
+../../../../../../../../../master/common/generic/infra-red/irda/inc/obex.h
+../../../../../../../../../master/common/generic/infra-red/irda/inc/obex.inl
 
 PRJ_TESTMMPFILES
-..\group\irobexstub.mmp		// Bluetooth and IrDA OBEX, using OBEX STUB
+../group/irobexstub.mmp		// Bluetooth and IrDA OBEX, using OBEX STUB
 

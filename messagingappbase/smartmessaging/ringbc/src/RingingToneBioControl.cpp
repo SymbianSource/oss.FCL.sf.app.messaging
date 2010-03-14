@@ -228,7 +228,8 @@ void CRingingToneBioControl::SetMenuCommandSetL( CEikMenuPane& aMenuPane )
     // if playing, do not show context sensitive menu.
     if ( iPlayerState != EMsgAsyncControlStatePlaying )
         {
-        AddMenuItemL(aMenuPane, R_SM_PLAYBACK, ERingtPlayback, EFirstMenuItem);
+		//removing the playback option from options menu, single click will do the playing
+        //AddMenuItemL(aMenuPane, R_SM_PLAYBACK, ERingtPlayback, EFirstMenuItem);
         AddMenuItemL(aMenuPane,
         	R_SM_ADD_COMPOSER, ERingtAddComposer, ESecondMenuItem);
         }
@@ -1178,45 +1179,41 @@ void CRingingToneBioControl::MsgAsyncControlStateChanged( CMsgBaseControl& /*aCo
 #ifdef RD_SCALABLE_UI_V2    
 void CRingingToneBioControl::HandlePointerEventL( const TPointerEvent& aPointerEvent )
     {
+
+
     if ( AknLayoutUtils::PenEnabled() )
         {
         switch ( aPointerEvent.iType )
             {
             case TPointerEvent::EButton1Down:
             	{
-                TBool hitted = iAudioControl->HitRegionContains( 
-                	aPointerEvent.iPosition, *this );
-                if( hitted )
-                   	{
-                	if( !iAudioControl->IsFocused() )	
-                		{
-                		//stylus touch to audio control sets it focused
-                		iAudioControl->SetFocus( IsFocused() );
-                		}
-					else if ( iPlayerState != EMsgAsyncControlStatePlaying && iAudioControl->IsFocused() )
-						{
-						//playback is triggered when focused control is touched with stylus
-						PlaybackL();
-						}
-                	else if ( iPlayerState == EMsgAsyncControlStatePlaying && iAudioControl->IsFocused() )
-                		{
-                		//stylus hit to audio control when playback is in 
-                		//progress stops the playing 
-                		StopPlayback();
-                		}
-                    }
-				else if ( iAudioControl->IsFocused() )
-					{
-					//hitting anywhere else than the control removes the focus from it
-					iAudioControl->SetFocus( EFalse );                    
-					}
-                break;                    
+            	//nothing to do here
             	}
+            break;
+            case TPointerEvent::EButton1Up:
+                {
+				TBool hitted = iAudioControl->HitRegionContains( aPointerEvent.iPosition, *this );
+                if( hitted )
+                    {
+                        if ( iPlayerState != EMsgAsyncControlStatePlaying )
+                            {
+                            //playback is triggered when focused control is touched with stylus
+                            iAudioControl->SetFocus(EFalse);
+                            PlaybackL();
+                            }
+                        else if ( iPlayerState == EMsgAsyncControlStatePlaying )
+                            {
+                            //stylus hit to audio control when playback is in 
+                            //progress stops the playing 
+                            StopPlayback();
+                            }
+                    }
+            	}
+              break;
             default:
                 break;
             }
         }
-
     }
 #else   
 void CRingingToneBioControl::HandlePointerEventL( const TPointerEvent& /*aPointerEvent*/ )

@@ -77,7 +77,7 @@ public:
 	IMPORT_C CSmsSimParamOperation* ReadSimParamsL(TRequestStatus& aObserverRequestStatus);
 	IMPORT_C CSmsSimParamOperation* WriteSimParamsL(const CMobilePhoneSmspList& aList, TRequestStatus& aObserverRequestStatus);
 	IMPORT_C void SaveMessageL(CMsvStore& aEditStore, TMsvEntry& aEntry);
-	
+	IMPORT_C void CreateMessageL(TMsvEntry& aEntry);
 	/** 
 	Sets the character encoding value. The character encoding value options are 7-bit,
 	8-bit and 16-Bit Unicode. By default the character set encoding is 7 bit encoding.

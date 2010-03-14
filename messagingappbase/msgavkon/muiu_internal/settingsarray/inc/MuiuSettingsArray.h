@@ -119,6 +119,11 @@ class CMuiuSettingsArray :
         * Opens Sc number edit setting page
         */
         TBool HandleEditScNumberL( TInt aIndex );
+        
+        /*
+        * Check if the read string is "Message sent as" 
+        */
+        TBool IsMessageSentStringL( HBufC* aString );        
 
     protected:
        /*

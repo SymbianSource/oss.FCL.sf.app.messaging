@@ -18,9 +18,9 @@ TARGETTYPE    	exe
 
 CAPABILITY All -TCB
 UID				0x1000007A 0x10274054
-SOURCEPATH	..\src
+SOURCEPATH	../src
 SOURCE        	T_IMCM04.CPP
-USERINCLUDE   	..\..\inc ..\inc
+USERINCLUDE   	../../inc ../inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/base/inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/email/inc

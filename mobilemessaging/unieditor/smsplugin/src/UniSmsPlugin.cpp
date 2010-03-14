@@ -243,7 +243,18 @@ void CUniSmsPlugin::SaveHeadersL( CMsvStore& aStore )
         iSmsHeader->StoreL( aStore );
         }
     }
-
+// -----------------------------------------------------------------------------
+// ResetUniAddresselist
+// -----------------------------------------------------------------------------
+//
+void CUniSmsPlugin::ResetUniAddresselist()
+    {
+    const CMsvRecipientList& uniRecipients = iUniMtm.AddresseeList();       
+    while ( uniRecipients.Count() )
+        {
+        iUniMtm.RemoveAddressee( 0 );
+        }  
+    }
 // -----------------------------------------------------------------------------
 // ConvertFromL
 // -----------------------------------------------------------------------------
@@ -264,10 +275,11 @@ TMsvId CUniSmsPlugin::DoConvertFromL( TMsvId aId, TBool aIsForward )
     SmsMtmL()->SwitchCurrentEntryL( aId );
     SmsMtmL()->LoadMessageL();
     iUniMtm.SwitchCurrentEntryL( aId );
-    iUniMtm.LoadMessageL();
-
+    iUniMtm.LoadMessageL(); 
+    ResetUniAddresselist();
     TPtrC name;
-    TPtrC address;
+    TPtrC address;  
+
 
 	const CSmsEmailFields& emailFields = SmsMtmL( )->SmsHeader( ).EmailFields();
 
@@ -641,8 +653,7 @@ TMsvId CUniSmsPlugin::ConvertToL( TMsvId aId )
     CleanupStack::PopAndDestroy( sendOptions ); 
 
     SmsMtmL()->SaveMessageL(*store, tEntry);
-
-    store->CommitL();        
+    store->CommitL();           
     tEntry.iSize = store->SizeL();
     if( AttachmentsSizeL( *store ) > 0 )
         {

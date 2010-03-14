@@ -20,11 +20,11 @@ VENDORID 0x70000001
 
 CAPABILITY All -TCB
 
-SOURCEPATH  	..\src
+SOURCEPATH  	../src
 SOURCE		t_SmsSpecialIndicationsServer.cpp
 SOURCE		t_SmsSpecialIndicationsStep.cpp	
 
-USERINCLUDE   	..\inc
+USERINCLUDE   	../inc
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 LIBRARY     	euser.lib testexecuteutils.lib testexecutelogclient.lib

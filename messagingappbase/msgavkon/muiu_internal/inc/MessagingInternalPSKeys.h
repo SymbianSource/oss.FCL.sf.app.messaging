@@ -40,6 +40,10 @@ const TUint32 KMuiuKeyCurrentMsg = 0x00000002;
 const TUint32 KMceTemplatesDialog = 0x00000003;
 
 // The New PSK introduced from 5.0
+// Tells whether Msg Sent as settings to be removed from Text settings view
+const TUint32 KMuiuRemoveMsgSentSettings = 0x00000004;
+
+// The New PSK introduced from 5.0
 
 const TUid KPSUidMsgEditor	=	{0x101F87FF};
 

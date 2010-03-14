@@ -69,8 +69,8 @@ SOURCE		ctestimapservermtmchange.cpp			// ChangeL (This command has been recinde
 USERINCLUDE   ../inc ../../../../pop3andsmtpmtm/clientmtms/inc
 USERINCLUDE   ../../inc ../../../../pop3andsmtpmtm/servermtmutils/inc
 USERINCLUDE   ../../../imapsettings/inc
-//USERINCLUDE	  ..\..\..\imaptransporthandler\inc
-//USERINCLUDE	  ..\..\..\imaputils\inc
+//USERINCLUDE	  ../../../imaptransporthandler/inc
+//USERINCLUDE	  ../../../imaputils/inc
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 OS_LAYER_ESTLIB_SYSTEMINCLUDE  
 USERINCLUDE ../../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/inc

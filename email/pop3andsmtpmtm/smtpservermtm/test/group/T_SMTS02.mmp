@@ -20,7 +20,7 @@ TARGETTYPE      exe
 CAPABILITY NetworkServices LocalServices ReadUserData ReadDeviceData WriteDeviceData NetworkControl ProtServ
 SOURCEPATH		../src
 SOURCE          t_smts02.cpp 
-USERINCLUDE   ..\..\inc
+USERINCLUDE   ../../inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/base/inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/email/inc

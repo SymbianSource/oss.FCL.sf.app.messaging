@@ -30,6 +30,7 @@ NAME MUIU
 #include <avkon.rsg>
 #include <avkon.loc>  //qtn_find_number_call_send_key; qtn_find_call_to_sender
 #include <muiu.loc>
+#include <smum.loc>
 
 
 
@@ -203,6 +204,7 @@ RESOURCE DIALOG r_muiu_matching_address_wait_note
 //
 RESOURCE TBUF r_muiu_qtn_phob_note_no_number { buf = qtn_phob_note_no_number; }
 
+RESOURCE TBUF r_muiu__mce_settings_sms_conversion { buf = qtn_mce_settings_sms_conversion; }
 
 
 // End of File

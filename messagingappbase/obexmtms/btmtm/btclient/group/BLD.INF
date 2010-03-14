@@ -25,10 +25,10 @@ PRJ_EXPORTS
 // specify the source file followed by its destination here
 // copy will be used to copy the source file to its destination
 // If there's no destination then the source file will be copied
-// to the same name in \epoc32\include
+// to the same name in /epoc32/include
 
 ../Include/btcmtm.h SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(btcmtm.h)
-//..\include\btmsgtypeuid.h	<- exported by the generic mtm build process.
+//../include/btmsgtypeuid.h	<- exported by the generic mtm build process.
 ../Include/btHeader.h SYMBIAN_APP_LAYER_PLATFORM_EXPORT_PATH(btheader.h)
 #ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
 #ifdef SYMBIAN_OLD_EXPORT_LOCATION

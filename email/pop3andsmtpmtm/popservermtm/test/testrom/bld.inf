@@ -15,7 +15,7 @@
 
 PRJ_TESTEXPORTS
 
-t_pops_prepare_for_test.bat 	\epoc32\data\z\system\msgtest\urel\t_pops_prepare_for_test.bat
-t_pops_prepare_for_test.bat 	\epoc32\data\z\system\msgtest\udeb\t_pops_prepare_for_test.bat
-t_pops.iby 			\epoc32\rom\include\t_pops.iby 
+t_pops_prepare_for_test.bat 	/epoc32/data/z/system/msgtest/urel/t_pops_prepare_for_test.bat
+t_pops_prepare_for_test.bat 	/epoc32/data/z/system/msgtest/udeb/t_pops_prepare_for_test.bat
+t_pops.iby 			/epoc32/rom/include/t_pops.iby 
 
