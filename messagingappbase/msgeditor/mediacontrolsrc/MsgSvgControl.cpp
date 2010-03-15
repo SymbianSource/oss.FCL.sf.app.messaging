@@ -21,6 +21,7 @@
 // INCLUDE FILES
 #include "MsgSvgControl.h"
 
+#include <gdi.h>
 #include <AknDialog.h>
 #include <aknlayoutscalable_apps.cdl.h>
 
@@ -149,9 +150,13 @@ void CMsgSvgControl::DoLoadL()
     // Use svgt thumbnail creation directly 
     CFbsBitmap* thumbnailBitmap = new ( ELeave ) CFbsBitmap;
     CleanupStack::PushL( thumbnailBitmap );
+    TDisplayMode DisplayMode = iCoeEnv->ScreenDevice()->DisplayMode();
+    //if DisplayMode is EColor16MAP then change to EColor16MA  
+    //EColor16MAP is not supported by SVG Engine.
+    if ( DisplayMode == EColor16MAP )
+        DisplayMode = EColor16MA;
     
-    User::LeaveIfError( thumbnailBitmap->Create( thumbnailSize,
-                                                 iCoeEnv->ScreenDevice()->DisplayMode() ) );
+    User::LeaveIfError( thumbnailBitmap->Create( thumbnailSize, DisplayMode ) );
                                                   
     CFbsBitmap* thumbnailMask = new ( ELeave ) CFbsBitmap;
     CleanupStack::PushL( thumbnailMask );

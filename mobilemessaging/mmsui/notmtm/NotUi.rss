@@ -510,8 +510,6 @@ RESOURCE DIALOG r_notui_confirmable_query
     RESOURCE TBUF r_notmtm_wait_deleting			 { buf = qtn_notif_wait_delete; }
     RESOURCE TBUF r_notmtm_wait_deleting_many        { buf = qtn_notif_wait_delete_many; }
 
-    RESOURCE TBUF r_notmtm_quest_delete_message      { buf = qtn_query_common_conf_delete_me; }
-    RESOURCE TBUF r_notmtm_quest_delete_messages     { buf = qtn_query_common_conf_delete_ms; }
     RESOURCE TBUF r_notmtm_inbox_status_retrieving   { buf = qtn_mms_notification_state_retrieving; }
     RESOURCE TBUF r_notmtm_inbox_status_waiting      { buf = qtn_mms_notification_state_waiting; }
     RESOURCE TBUF r_notmtm_inbox_status_failed       { buf = qtn_mms_notification_state_failed; }

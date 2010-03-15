@@ -1195,17 +1195,6 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
                 }
                                 
    
-            if ( ! (    Document( )->SmilType( ) == EMmsSmil 
-                   &&   (  focusedControl == EMsgComponentIdBody 
-                        || focusedControl == EMsgComponentIdImage 
-                        || focusedControl == EMsgComponentIdAudio 
-#ifdef RD_SVGT_IN_MESSAGING              
-                        ||  focusedControl == EMsgComponentIdSvg
-#endif
-                        || focusedControl == EMsgComponentIdVideo ) ) )
-                {
-                aMenuPane->SetItemDimmed( EMmsViewerSaveObject, ETrue );
-                }
                 
             if (    ! ( iSupportedFeatures & EMmsFeatureUpload )
                 ||  !iUploadServices.Count( ) )
@@ -2824,6 +2813,7 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                 {
                 TPointerEvent* pointerEvent = static_cast<TPointerEvent*>( aArg2 );
                 CMsgBaseControl* baseControl = static_cast<CMsgBaseControl*>( aArg1 );
+                TWsEvent* wsEvent = static_cast<TWsEvent*>(aArg2);
                 
                 if (    pointerEvent
                     &&  pointerEvent->iType == TPointerEvent::EButton1Down )
@@ -2849,9 +2839,10 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                     }
                 else if ( (!iTapConsumed) && (pointerEvent
                         &&  pointerEvent->iType == TPointerEvent::EButton1Up) )
-                    {
-                    iLongTapDetector->CancelAnimationL();
+                    {   
+                    iLongTapDetector->MonitorWsMessage(*wsEvent);
                     iTapConsumed = ETrue;
+                    CMsgBaseControl* focusedControl = iView->FocusedControl();
                     if ( baseControl && iPointerTarget == baseControl )
                         {
                         switch( iMskId )
@@ -2870,20 +2861,23 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                             case R_MMSVIEWER_MSK_BUTTON_PLAY_SVG:
 #endif                
                                 {
-                                // Read current MSK resource to get a command id
-                                // to execute.
-                                TResourceReader reader;
-                                iEikonEnv->CreateResourceReaderLC(
-                                    reader, iMskId );
-                                reader.ReadInt8(); // version
-                                HandleCommandL( reader.ReadUint16() );
-                                CleanupStack::PopAndDestroy(); // resource buffer
+                                HandleSelectionKeyL();
                                 *static_cast<TBool*>( aArg3 ) = ETrue;  // handled
                                 }
                             default:
                                 ;
                             }
                         }
+                    else if ( focusedControl && iPointerTarget == focusedControl )
+                        {
+                            if ( iMskId == R_MMSVIEWER_MSK_BUTTON_PLAY_VIDEO ||
+                                 iMskId == R_MMSVIEWER_MSK_BUTTON_STOP_VIDEO )
+                                {
+                                HandleSelectionKeyL();
+                                *static_cast<TBool*>( aArg3 ) = ETrue;  // handled
+                                }
+                        }
+
                     iPointerTarget = NULL;
                     }
                 }
@@ -5527,6 +5521,21 @@ void CMmsViewerAppUi::HandleLongTapEventL(const TPoint& aPenEventLocation,
             iTapConsumed = ETrue;
             }
         }   
-    }  
+    } 
+// ---------------------------------------------------------
+// CMmsViewerAppUi::HandleSelectionKeyL
+//  Function for handling the selection key
+// ---------------------------------------------------------
+void CMmsViewerAppUi::HandleSelectionKeyL()
+    {
+    // Read current MSK resource to get a command id
+    // to execute.
+    TResourceReader reader;
+    iEikonEnv->CreateResourceReaderLC(
+        reader, iMskId );
+    reader.ReadInt8(); // version
+    HandleCommandL( reader.ReadUint16() );
+    CleanupStack::PopAndDestroy(); // resource buffer
+    }
 //  End of File
 

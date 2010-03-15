@@ -1795,7 +1795,7 @@ void CUniEditorAppUi::DoEditorObserverL( TMsgEditorObserverFunc aFunc,
             {
             TPointerEvent* event = static_cast<TPointerEvent*>( aArg2 );
             CMsgBaseControl* control = static_cast<CMsgBaseControl*>( aArg1 );
-            
+            TWsEvent* wsEvent = static_cast<TWsEvent*>(aArg2);
             if ( event->iType == TPointerEvent::EButton1Down )
                 {
                 iFocusedControl = control;
@@ -1816,7 +1816,7 @@ void CUniEditorAppUi::DoEditorObserverL( TMsgEditorObserverFunc aFunc,
                 }
             else if ( (!iTapConsumed) && (event->iType == TPointerEvent::EButton1Up) )
                 {
-                iLongTapDetector->CancelAnimationL();
+                iLongTapDetector->MonitorWsMessage(*wsEvent);
                 iTapConsumed = ETrue;
                 if ( control && 
                      iFocusedControl == control &&
@@ -7851,8 +7851,19 @@ void CUniEditorAppUi::CheckSmsSizeAndUnicodeL()
     	               	plugin->SetEncodingSettings(EFalse, doc->AlternativeEncodingType(), doc->CharSetSupport());
                     }                
                 //Call the plugin SMS adaptation API to get PDU Info
-                plugin->GetNumPDUsL( inputBuff, numOfRemainingChars, numOfPDUs, unicodeMode, alternativeEncodingType);
-                
+               TRAPD( err, plugin->GetNumPDUsL( inputBuff, numOfRemainingChars, numOfPDUs, unicodeMode, alternativeEncodingType) );
+               if ( err == KErrOverflow )
+                    {
+                            iSmsBodyLength = buffLength;
+                            delete iPrevBuffer;
+                            iPrevBuffer = editorTxt;
+                            return;                          
+                    }
+                else if ( err != KErrNone )
+                    {
+                	        User::Leave(err);
+                	}
+                	  				     
                 //save current buffer 
                 delete iPrevBuffer;
                 iPrevBuffer = editorTxt;

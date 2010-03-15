@@ -321,7 +321,7 @@ void CSmumMainSettingsDialogGSM::PreLayoutDynInitL()
     
     // The count of setting items depends of setting type
     TInt numberOfSettingItems = iTypeOfSettings ? 
-        ESmumSendOptReplyViaSameCentreLBI : ESmumReplyViaSameCentreLBI ;
+        ESmumSendOptReplyViaSameCentreLBI + 1: ESmumReplyViaSameCentreLBI + 1 ;
     iSettingsArrayIndex = new(ELeave) CArrayFixFlat<TInt>( numberOfSettingItems );
 	// Iterate through settings
 	for (TInt count = 0; count < numberOfSettingItems; count++)

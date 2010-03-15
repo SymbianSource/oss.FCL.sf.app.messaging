@@ -577,6 +577,11 @@ class CMmsViewerAppUi :
         void HandleLongTapEventL(
             const TPoint& aPenEventLocation, 
             const TPoint& aPenEventScreenLocation );
+        
+        /**
+         *  For Handling iMskId for an embedded object
+         */
+ 		void HandleSelectionKeyL( );
 
 
     private: // Functions from base classes

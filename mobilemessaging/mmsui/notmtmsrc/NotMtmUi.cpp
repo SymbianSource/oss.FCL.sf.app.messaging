@@ -1274,25 +1274,8 @@ CMsvOperation* CNotMtmUi::StartDeletingL(
             {
             deleteMode = EMmsDeleteNotificationOnly;
             }
-        CAknQueryDialog* dlg = CAknQueryDialog::NewL();
-        HBufC* prompt;
-        if( iFlags & EDeletingMany )
-            {
-            prompt = StringLoader::LoadLC( R_NOTMTM_QUEST_DELETE_MESSAGES, aSelection.Count(), iCoeEnv );
-            }
-        else
-            {
-            prompt = StringLoader::LoadLC( R_NOTMTM_QUEST_DELETE_MESSAGE, iCoeEnv );
-            }
-        // Lets prompt the question
-        TInt retVal = dlg->ExecuteLD( R_NOTUI_CONFIRMATION_QUERY, *prompt );
-        CleanupStack::PopAndDestroy( prompt );
-
-        if( !retVal )
-            { // Answered NO
-            return msvoperation; // Return NULL operation
-            }
         }
+        
     if( deleteMode == -1 )
         {   // For some reason deleteMode was not set
         return msvoperation; // Return NULL operation

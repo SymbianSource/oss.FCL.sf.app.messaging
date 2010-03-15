@@ -2954,24 +2954,6 @@ void CMceUi::HandleDeleteL()
         iMMSNotifications = NULL;
         }
 
-    if ( local && ( ( iEntry->Entry().Parent() == KMsvGlobalInBoxIndexEntryId ) ||
-        ( iEntry->Entry().Parent() == KMsvGlobalOutBoxIndexEntryId ) ) ) 
-        {
-        CheckMMSNotificationsL( selection );
-        if (  selection->Count() <= 0 )
-            {
-            // delete mms notifications, if any
-            if ( iMMSNotifications->Count() > 0 )
-                {
-                //delete MMS notifications
-                TBuf8<1> params;
-                HandleMMSNotificationsDeleteL( params );
-                }
-            CleanupStack::PopAndDestroy( selection );
-            return;
-            }
-        }
-
     if ( local )
         {
         CAknQueryDialog* confDialog = CAknQueryDialog::NewL();
@@ -3006,6 +2988,26 @@ void CMceUi::HandleDeleteL()
             return;
             }
         }
+    
+    if ( local && ( ( iEntry->Entry().Parent() == KMsvGlobalInBoxIndexEntryId ) ||
+        ( iEntry->Entry().Parent() == KMsvGlobalOutBoxIndexEntryId ) ) ) 
+        {
+        CheckMMSNotificationsL( selection );
+        if (  selection->Count() <= 0 )
+            {
+            // delete mms notifications, if any
+            if ( iMMSNotifications->Count() > 0 )
+                {
+                //delete MMS notifications
+                TBuf8<1> params;
+                HandleMMSNotificationsDeleteL( params );
+                }
+            CleanupStack::PopAndDestroy( selection );
+            return;
+            }
+        }
+
+   
     iEntry->SetEntryL( iEntry->Entry().Parent() );
 
     CBaseMtmUi* ui = NULL;

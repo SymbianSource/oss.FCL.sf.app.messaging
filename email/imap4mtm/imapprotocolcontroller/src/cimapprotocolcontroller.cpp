@@ -1416,8 +1416,6 @@ EXPORT_C void CImapProtocolController::DoRunL()
 		{
 	case EConnect:
 		{
-		TRAP_IGNORE(MarkOnOrOfflineL(ETrue));
-
 		// Collect the final connect progress information		
 		iImapSessionManager->Progress(iProgress.iGenericProgress);
 
@@ -1426,6 +1424,8 @@ EXPORT_C void CImapProtocolController::DoRunL()
 		TMsvEntry entry=iEntry.Entry();
 		entry.SetMtmData1(iImapSessionManager->LastSocketActivityTimeout());
 		User::LeaveIfError( iEntry.ChangeEntry( entry ) );
+
+		TRAP_IGNORE(MarkOnOrOfflineL(ETrue));
 				
 		// Create an IMAP IDLE controller
 		delete iImapIdleController;

@@ -1831,7 +1831,11 @@ void CUniSmsPlugin::GetNumPDUsL(
     iRichText->InsertL(0, aBuf);
     
     //call SMS stack API to get PDU info
-    smsMsg.GetEncodingInfoL( aNumOfPDUs, numOfUnconvChars, numOfDowngradedChars, aNumOfRemainingChars );
+    TRAPD( err, smsMsg.GetEncodingInfoL( aNumOfPDUs, numOfUnconvChars, numOfDowngradedChars, aNumOfRemainingChars ) );
+    if (err != KErrNone)
+        {
+            User::Leave(err);
+        }
     
 #ifdef USE_LOGGER
     UNILOGGER_WRITE(" ---Get Encoding Info details:--- ");

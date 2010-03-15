@@ -392,7 +392,6 @@ RESOURCE MENU_PANE r_mmsviewer_optionsmenu
         MENU_ITEM { command = EMmsViewerForward;            txt = qtn_mms_om_forward; },
         MENU_ITEM { command = EMmsViewerDelete;             txt = qtn_msg_om_delete; },
         MENU_ITEM { command = EFindItemMenuPlaceHolder;     txt = ""; },
-        MENU_ITEM { command = EMmsViewerSaveObject;         txt = qtn_mms_om_save_object; },
  
         MENU_ITEM { command = EMmsViewerShowMessage;        txt = qtn_mms_om_play_message; },
         MENU_ITEM { command = EMmsViewerObjects;            txt = qtn_mms_om_objects; },
