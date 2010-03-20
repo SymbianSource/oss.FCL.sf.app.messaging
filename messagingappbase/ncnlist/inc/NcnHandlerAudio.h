@@ -155,7 +155,7 @@ class CNcnHandlerAudio : public CBase,
 		 */
 		TBool IsBeepOnceSetL( const MProfile& aProfile ) const;	
 		 /* Plays Alert tone */
-		void CNcnHandlerAudio::StartPlayToneL();	
+		void StartPlayToneL();	
 		
     public:     // Data   
     protected:  // Data

@@ -494,7 +494,7 @@ class CMmsViewerAppUi :
         * This function returns EFalse, if media is DRM protected and
         * no rights exist.
         */         
-        TBool CMmsViewerAppUi::MediaCanPlay(const CMsgMediaControl* aMedia,
+        TBool MediaCanPlay(const CMsgMediaControl* aMedia,
                                             const CUniObject* aMmsObject ) const;
 
 

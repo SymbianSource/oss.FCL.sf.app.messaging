@@ -93,7 +93,7 @@ private:
     /**
     * Constructor
     */
-    CMceMoveProgress::CMceMoveProgress(
+    CMceMoveProgress(
     	CMsvSession*& aSession, MMsvSessionObserver& aObserver,
     	TInt& aSource, const TInt& aTarget, TBool aDeleteCopiedStore,
     	CMceGeneralSettingsDialog& aGeneralSettings, TBool aDeleteOnly);

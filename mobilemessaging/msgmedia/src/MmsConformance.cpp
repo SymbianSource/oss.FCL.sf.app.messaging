@@ -195,7 +195,7 @@ void CMmsConformance::ConstructL()
 EXPORT_C TBool CMmsConformance::IsConformantMime( const TPtrC8& aMimeType )
     {
     LocalFuncPtr funcPtr = ResolveFunction( aMimeType );
-    return ( funcPtr != ResolveNonconformantAttachment );
+    return ( funcPtr != &CMmsConformance::ResolveNonconformantAttachment );
     }
 
 // -----------------------------------------------------------------------------
@@ -285,55 +285,55 @@ LocalFuncPtr CMmsConformance::ResolveFunction( const TPtrC8& aMimeType )
     //Resolve conf. status according to recognized MIME type
     if ( aMimeType.CompareF( KMsgMimeTextPlain ) == 0 )
         {
-        funcPtr = CMmsConformance::ResolveTextPlain;
+        funcPtr = &CMmsConformance::ResolveTextPlain;
         }
     else if ( iMmsVersion > KMmsVersion12 &&
               aMimeType.CompareF( KMsgMimeTextXhtml ) == 0 )
         {
-        funcPtr = ResolveTextXhtml;
+        funcPtr = &CMmsConformance::ResolveTextXhtml;
         }
     else if ( aMimeType.CompareF( KMsgMimeAudioAmr ) == 0 )
         {
-        funcPtr = ResolveAudioAmr;
+        funcPtr = &CMmsConformance::ResolveAudioAmr;
         }
     else if ( aMimeType.CompareF( KMsgMimeAudioSpMidi ) == 0 )
         {
-        funcPtr = ResolveAudioSpMidi;
+        funcPtr = &CMmsConformance::ResolveAudioSpMidi;
         }
     else if ( aMimeType.CompareF( KMsgMimeImageJpeg ) == 0 )
         {
-        funcPtr = ResolveImageJpeg;
+        funcPtr = &CMmsConformance::ResolveImageJpeg;
         }
     else if ( aMimeType.CompareF( KMsgMimeImageGif ) == 0 )
         {
-        funcPtr = ResolveImageGif;
+        funcPtr = &CMmsConformance::ResolveImageGif;
         }
     else if ( aMimeType.CompareF( KMsgMimeImageWbmp ) == 0 )
         {
-        funcPtr = ResolveImageWbmp;
+        funcPtr = &CMmsConformance::ResolveImageWbmp;
         }
     else if ( aMimeType.CompareF( KMsgMimeImagePng ) == 0 )
         {
-        funcPtr = ResolveImagePng;
+        funcPtr = &CMmsConformance::ResolveImagePng;
         }
     else if (!( iResolverFlags & EMms3gpp2Mode ) &&
     		  ( aMimeType.CompareF( KMsgMimeVideo3gpp ) == 0  ) )
         {
-        funcPtr = ResolveVideo3gpp;
+        funcPtr = &CMmsConformance::ResolveVideo3gpp;
         }
     else if ( ( iResolverFlags & EMms3gpp2Mode ) &&
     		  ( aMimeType.CompareF( KMsgMimeVideo3gpp2 ) == 0  ) )
         {
-        funcPtr = ResolveVideo3gpp2;
+        funcPtr = &CMmsConformance::ResolveVideo3gpp2;
         }
     else if ( aMimeType.CompareF( KMsgMimeVCard ) == 0 ||
               aMimeType.CompareF( KMsgMimeVCal ) == 0 )
         {
-        funcPtr = ResolveAttachment;
+        funcPtr = &CMmsConformance::ResolveAttachment;
         }
     else
         {
-        funcPtr = ResolveNonconformantAttachment;
+        funcPtr = &CMmsConformance::ResolveNonconformantAttachment;
         }
    return funcPtr;
    }

@@ -596,7 +596,7 @@ class CImap4MtmUi : public CImumMtmBaseMtmUi
         /**
         * DoFilteredPopulateL
         */
-        CMsvOperation* CImap4MtmUi::DoFilteredPopulateL(
+        CMsvOperation* DoFilteredPopulateL(
             TRequestStatus& aStatus,
             const CMsvEntrySelection& aSelection,
             TInt aFunctionId,

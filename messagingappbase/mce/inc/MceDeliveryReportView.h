@@ -150,7 +150,7 @@ class   CMceDeliveryReportView :
          * C++ constructor
          *
          */
-        CMceDeliveryReportView::CMceDeliveryReportView( CMceSessionHolder& aSessionHolder );
+        CMceDeliveryReportView( CMceSessionHolder& aSessionHolder );
         /**
          * Constructor, second phase.
          */
