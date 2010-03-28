@@ -47,7 +47,7 @@ class TSmilTimeList
 		/**
         * Destructor.
         */
-		virtual TSmilTimeList::~TSmilTimeList();		
+		virtual ~TSmilTimeList();		
 
 		void SetObject(CSmilObject* aObject);
 
