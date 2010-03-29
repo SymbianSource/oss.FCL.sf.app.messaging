@@ -47,3 +47,4 @@ RESOURCE TBUF16 { buf=""; }
 #include "../Data/ImumFolderSubscription.ra"
 #include "../Data/ImumMailSettings.ra"
 #include "../Data/ImumMailWizard.ra"
+// End of File

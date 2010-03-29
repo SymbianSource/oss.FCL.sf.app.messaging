@@ -254,11 +254,16 @@ EXPORT_C void CRfc822Token::ParseNextLineL(const TDesC8& aSourceLine)
 			 // Folding headers, RFC 2822, section 2.2.3
 			{
 			// make sure we're not about to exceed the buffer
-			if((iOutputLine->Length() + iInputLine.Length()) > iOutputLine->Des().MaxLength())
-				iOutputLine = iOutputLine->ReAllocL(iOutputLine->Length() + iInputLine.Length());
+			//Restricting the field size of the header to 5000, to avoid -4 error
+			//and which at times ends up in DOS condition [denial of service- user wouldn't be able to download any further mails]. 
+			if (iOutputLine->Length()<5000)
+				{
+				if((iOutputLine->Length() + iInputLine.Length()) > iOutputLine->Des().MaxLength())
+					iOutputLine = iOutputLine->ReAllocL(iOutputLine->Length() + iInputLine.Length());
 
-			// now copy the remaining data into the buffer
-			iOutputLine->Des().Append(iInputLine);
+				// now copy the remaining data into the buffer
+				iOutputLine->Des().Append(iInputLine);
+			    }
 			}
 		}
 	else

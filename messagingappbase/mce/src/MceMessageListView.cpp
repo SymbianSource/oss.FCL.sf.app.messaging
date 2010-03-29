@@ -2539,7 +2539,26 @@ void CMceMessageListView::ChangeFolderAndRefreshListboxL( TMsvId aNewFolderId )
         == KErrNone )
         {
         iMsgListContainer->ClearSelection();
-        SetFolderL( aNewFolderId );
+        
+        if ((oldId == KMsvGlobalOutBoxIndexEntryId) || (aNewFolderId == KMsvGlobalOutBoxIndexEntryId))
+            {
+            iFolderId = aNewFolderId;    
+            iMsgListContainer->MakeVisible(EFalse);
+            AppUi()->RemoveFromStack(iMsgListContainer);
+            delete iMsgListContainer;
+            iMsgListContainer = NULL;
+            CreateListboxL();
+            iMsgListContainer->SetRect(ClientRect());
+            AppUi()->AddToStackL( *this,iMsgListContainer );
+            iMsgListContainer->ActivateL();
+            iMsgListContainer->MakeVisible(ETrue);
+            iMsgListContainer->SetFolderL( iFolderId );
+            }
+        else
+            {
+            SetFolderL( aNewFolderId );
+            }
+        
         TUid mtm = iMsgListContainer->FolderEntry().iMtm;
         if ( mtm == KSenduiMtmImap4Uid )
             {

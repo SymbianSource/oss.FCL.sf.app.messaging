@@ -231,7 +231,11 @@ class CUniSmsPlugin : public CUniEditorPlugin
         /**
         * returns attachment size.
         */
-		TInt32 AttachmentsSizeL( CMsvStore& aStore );        
+		TInt32 AttachmentsSizeL( CMsvStore& aStore );     
+        /**
+        * resets Unimtm addresslist.
+        */
+		void ResetUniAddresselist();
 
     private:  // Data    
 

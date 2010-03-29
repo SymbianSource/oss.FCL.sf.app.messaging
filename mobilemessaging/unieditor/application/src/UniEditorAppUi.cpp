@@ -1788,14 +1788,23 @@ void CUniEditorAppUi::DoEditorObserverL( TMsgEditorObserverFunc aFunc,
             {
             TPointerEvent* event = static_cast<TPointerEvent*>( aArg2 );
             CMsgBaseControl* control = static_cast<CMsgBaseControl*>( aArg1 );
-            if(iLongTapDetector)
-            {
-                iLongTapDetector->EnableLongTapAnimation(ETrue);
-                iLongTapDetector->PointerEventL( *event );
-            }
+            
             if ( event->iType == TPointerEvent::EButton1Down )
                 {
                 iFocusedControl = control;
+                if ( control && 
+                        ( control->ControlId() == EMsgComponentIdAudio ||
+                                control->ControlId() == EMsgComponentIdImage ||
+                                control->ControlId() == EMsgComponentIdVideo ||
+                                control->ControlId() == EMsgComponentIdAttachment ||
+                                control->ControlId() == EMsgComponentIdSvg ) )
+                    {
+                    if(iLongTapDetector)
+                        {
+                        iLongTapDetector->EnableLongTapAnimation(ETrue);
+                        iLongTapDetector->PointerEventL( *event );
+                        }
+                    }
                 iTapConsumed = EFalse;
                 }
             else if ( (!iTapConsumed) && (event->iType == TPointerEvent::EButton1Up) )

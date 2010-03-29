@@ -17,9 +17,9 @@ TARGET        T_IMSK01.exe
 TARGETTYPE    exe
 
 CAPABILITY All -TCB
-SOURCEPATH		..\src
+SOURCEPATH		../src
 SOURCE        t_imsk01.cpp
-USERINCLUDE   ..\inc
+USERINCLUDE   ../inc
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 LIBRARY       euser.lib efsrv.lib imut.lib EmailTestUtils.lib MsvTestUtils.lib imcm.lib
 VENDORID 0x70000001

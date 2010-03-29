@@ -34,26 +34,26 @@ VENDORID 0x70000001
 
 //this code builds against the binary interface of irobex
 //for it to build successfully,
-//the relative path to master\common\generic\infra-red\.... must be changed to match your
+//the relative path to master/common/generic/infra-red/.... must be changed to match your
 //respective perforce client spec. setting 
 
-DEFFILE		..\..\..\..\..\..\..\..\..\master\common\generic\infra-red\irda\bwins\irobex2.def
-//DEFFILE		..\..\..\..\..\..\..\infra-red\irda\bwins\irobex2.def
+DEFFILE		../../../../../../../../../master/common/generic/infra-red/irda/bwins/irobex2.def
+//DEFFILE		../../../../../../../infra-red/irda/bwins/irobex2.def
 
 #else
 
-DEFFILE		..\..\..\..\..\..\..\..\..\master\common\generic\infra-red\irda\bmarm\irobex2.def
+DEFFILE		../../../../../../../../../master/common/generic/infra-red/irda/bmarm/irobex2.def
 
 #endif
 
 // Source files modified by the stub
-SOURCEPATH	..\irobex
+SOURCEPATH	../irobex
 SOURCE		obex.cpp
 SOURCE		obex_client.cpp
 SOURCE		obex_server.cpp
 
 // Source files for exsiting irobex.dll
-SOURCEPATH	..\..\..\..\..\..\..\..\..\master\common\generic\infra-red\irda\irobex
+SOURCEPATH	../../../../../../../../../master/common/generic/infra-red/irda/irobex
 SOURCE		obexobjectexpandedbaseobject.cpp
 SOURCE		obexheader.cpp
 SOURCE		obexheaderset.cpp
@@ -71,18 +71,18 @@ SOURCE		rfcomm.cpp
 SOURCE		usbconn.cpp
 
 // Source files for the obex header utils class, used by the stub and t_obexmtm test harness
-SOURCEPATH	..\..\..\testutils\headerutils\src
+SOURCEPATH	../../../testutils/headerutils/src
 SOURCE		cobextestbaseheaderlist.cpp
 SOURCE		cobextestheaderlist.cpp
 
 
-USERINCLUDE		..\..\..\..\..\..\..\..\..\master\common\generic\infra-red\irda\irobex
-USERINCLUDE		..\..\..\..\..\..\..\..\..\master\common\generic\infra-red\irda\inc
-USERINCLUDE		..\..\..\inc
-USERINCLUDE		..\..\..\testutils\msgth\inc
-USERINCLUDE		..\..\..\testutils\headerutils\inc
+USERINCLUDE		../../../../../../../../../master/common/generic/infra-red/irda/irobex
+USERINCLUDE		../../../../../../../../../master/common/generic/infra-red/irda/inc
+USERINCLUDE		../../../inc
+USERINCLUDE		../../../testutils/msgth/inc
+USERINCLUDE		../../../testutils/headerutils/inc
 
-SYSTEMINCLUDE	\epoc32\include
+SYSTEMINCLUDE	/epoc32/include
 
 LIBRARY	euser.lib
 LIBRARY	efsrv.lib
