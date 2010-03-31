@@ -246,7 +246,7 @@ void CMsgSmsViewerAppUi::ConstructMembersL()
         EMbmMuiuQgn_prop_mce_sms_title_mask );
         
             
-	iScreenClearer = CAknLocalScreenClearer::NewLC( EFalse );
+	iScreenClearer = CAknLocalScreenClearer::NewLC( ETrue );
 	CleanupStack::Pop( iScreenClearer );    
     iTypeMsg = CSmsPDU::ESmsDeliver; //for successful launch save the PDU Type.
 

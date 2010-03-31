@@ -1053,13 +1053,14 @@ void CMceMainViewListItemArray::ReadExtraItemsResourceL()
     
     _LIT(KDirAndMceExtraItemsResFileName,"mceextraitems.rsc");
             TFileName fileName; 
+		    fileName.Insert( 0,KDC_APP_RESOURCE_DIR );
+		    fileName.Append( KDirAndMceExtraItemsResFileName );
             TFindFile finder( iCoeEnv->FsSession() );
             //Search Y->A then Z:
-            TInt err = finder.FindByDir( KDirAndMceExtraItemsResFileName, KDC_APP_RESOURCE_DIR );
+		    BaflUtils::NearestLanguageFile(iCoeEnv->FsSession(),fileName);
+		    TInt err = finder.FindByDir(fileName , KDC_APP_RESOURCE_DIR );
             if(err == KErrNone)
-                {
-                fileName = finder.File();
-                BaflUtils::NearestLanguageFile(iCoeEnv->FsSession(),fileName);
+		        {                            
                 RConeResourceLoader resources( *iCoeEnv );
 
                 TInt err = KErrNone;

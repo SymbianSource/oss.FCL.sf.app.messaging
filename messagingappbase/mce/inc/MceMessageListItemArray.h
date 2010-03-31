@@ -498,6 +498,14 @@ class CMceMessageListItemArray :
         //FS Email stuff
         TInt CreateEntryIndexL() const;
         TInt GetEntryIndex( TInt aIndex ) const;
+        
+        /**
+         * Check the MTM technology type for Mail Technology 
+         * @param aMtm: Mtm Uid
+         * @return : ETrue if Mtm Technology is Mail
+         *           otherwsie EFalse
+         */
+        TBool IsMailMtmTechnology(TUid aMtm ) const ;
     
     private:    // Data
         CMsvSessionPtr                  iSession;

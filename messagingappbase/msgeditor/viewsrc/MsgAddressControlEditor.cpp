@@ -224,9 +224,18 @@ void CMsgAddressControlEditor::DeleteEntryL( TInt aEntryNumber )
      if( numOfEntries > 0 && numOfEntries != aEntryNumber && !setcursorpos)
         {
          TInt  txtlen = TextLength();
-         TInt  curpos = CursorPos();                
-         entryStart = iRichText->CharPosOfParagraph( entryLength, aEntryNumber );
-         curpos+= --entryLength;
+         TInt  curpos = CursorPos();        
+         if ( aEntryNumber ) 
+             {
+             entryStart = iRichText->CharPosOfParagraph( entryLength, aEntryNumber - 1 );         
+             curpos = entryStart + --entryLength ;
+             }
+         else 
+             {
+             entryStart = iRichText->CharPosOfParagraph( entryLength, aEntryNumber );         
+             curpos+= --entryLength;
+             }
+         
          if ( TextView() )
             {
                 if(curpos < txtlen)

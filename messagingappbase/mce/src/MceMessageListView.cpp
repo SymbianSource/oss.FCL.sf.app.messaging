@@ -228,15 +228,7 @@ void CMceMessageListView::DoActivateL(
     // Reset the sort order
     iFolderItemArray->Reset();
        }
-	if ( iMsgListContainer &&
-	     iCurrentListType != GetFolderListBoxType())
-	    {
-	    ListboxTypeChangedL();
-	    }
-	else
-	    {
-	    CreateListboxL();        
-	    }	    
+	    
     if ( iMsgListContainer )
         {
         iMsgListContainer->SetSortTypeL( iSortOrder, iOrdering );
@@ -245,7 +237,6 @@ void CMceMessageListView::DoActivateL(
     TMsvId id = 0;
     TBool editorLaunched = EFalse;
     TBool launchingFromOutside = EFalse;  
-    TInt  msgMtmUid = 0;
     TMsvId service = KMsvLocalServiceIndexEntryId;
     TMsvEntry entry;
     
@@ -273,18 +264,19 @@ void CMceMessageListView::DoActivateL(
         	{
             // Set the folder based on the given ID
             iFolderId = aCustomMessageId.iUid;
-            // this is performance optimization, start to launch viewer before container creation
-            if ( !iMsgListContainer && entry.Id() == KMsvGlobalInBoxIndexEntryId )
-                {
-                if ( LaunchViewerWhenOneUnreadL( msgMtmUid ) > KErrNotFound )
-                    {
-                    editorLaunched = ETrue;
-                    }
-                }
+
         	}
         iMceUi->SetDontExitOnNextOperationComplete();
         }
-
+	if ( iMsgListContainer &&
+	     iCurrentListType != GetFolderListBoxType())
+	    {
+	    ListboxTypeChangedL();
+	    }
+	else
+	    {
+	    CreateListboxL();        
+	    }
     
     
     if ( iMsgListContainer && aPrevViewId == TDRVIEWID )
@@ -1222,7 +1214,7 @@ void CMceMessageListView::HandleOpenL()
             switch ( currentEntry.iType.iUid )
                 {
                 case KUidMsvMessageEntryValue:
-                    if ( currentEntry.Parent() != KMsvGlobalOutBoxIndexEntryId )
+                    if (( currentEntry.Parent() != KMsvGlobalOutBoxIndexEntryId) && (iFolderId != KMsvGlobalOutBoxIndexEntryId))
                         {
                         EditEntryL();
                         }

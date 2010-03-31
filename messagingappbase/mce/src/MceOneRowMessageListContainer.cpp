@@ -59,7 +59,7 @@
 #include <muiumsvuiserviceutilitiesinternal.h>
 
 #include <mce.rsg>
-
+#include <mtudreg.h> 
 // CONSTANTS
 
 const TInt KMceListContainerGranuality = 4;
@@ -79,7 +79,7 @@ const TInt KMSKLabel    = 20;
 
 //cmail update
 #define KUidMsgTypeCmailMtmVal               0x2001F406
-
+const TUid KMailTechnologyTypeUid = { 0x10001671 };
 // ================= MEMBER FUNCTIONS =======================
 
 // ----------------------------------------------------
@@ -106,6 +106,7 @@ CMceOneRowMessageListContainer::~CMceOneRowMessageListContainer()
     delete iBgContext;
     delete iSelectedEntries;
     delete iTreeListBox;
+    delete iUiRegistry;
     }
 
 
@@ -207,6 +208,7 @@ void CMceOneRowMessageListContainer::ConstructL(
     TLocale locale;
     iStartOfWeek = locale.StartOfWeek();
     iDialerEvent = EFalse ;
+    iUiRegistry = CMtmUiDataRegistry::NewL(*aSession); 
     }
 
 
@@ -570,7 +572,9 @@ void CMceOneRowMessageListContainer::AddEntryL( TInt aEntryIndex )
             EFalse );
 
         TBool attachmentIcon = EFalse; 
-        if ( entry.Attachment() && entry.iMtm != KSenduiMtmMmsUid )
+         
+        if ( entry.Attachment() && entry.iMtm != KSenduiMtmMmsUid 
+             && IsMailMtmTechnology(entry.iMtm ))
             {
             iTreeListBox->SetIcon(
                 itemId,
@@ -2075,7 +2079,9 @@ void CMceOneRowMessageListContainer::UpdateEntryL( TMsvId aEntryId )
             foundIcon,
             EFalse );
         TBool attachmentIcon = EFalse;
-        if ( entry.Attachment() && entry.iMtm != KSenduiMtmMmsUid )
+ 
+        if ( entry.Attachment() && entry.iMtm != KSenduiMtmMmsUid  
+             && IsMailMtmTechnology(entry.iMtm ))
             {
             iTreeListBox->SetIcon(
                 treeItemId,
@@ -2534,4 +2540,19 @@ void CMceOneRowMessageListContainer::HandleOperationCompletedL()
          }
     }
 
+// ----------------------------------------------------
+// CMceOneRowMessageListContainer::IsMailMtmTechnology
+// ----------------------------------------------------
+TBool CMceOneRowMessageListContainer::IsMailMtmTechnology( TUid aMtm )const
+    {
+    TBool isMailMtm = EFalse;
+    if ( aMtm.iUid != 0 && aMtm != KUidMsvLocalServiceMtm &&
+            iUiRegistry->IsPresent( aMtm) )
+        {
+        // get MTM technology type
+        TUid technologyType = iUiRegistry->TechnologyTypeUid( aMtm);
+        isMailMtm = ( KMailTechnologyTypeUid == technologyType );
+        }
+    return isMailMtm;
+    }
 //  End of File

@@ -2846,6 +2846,16 @@ void CUniEditorAppUi::DoUserSendL()
         }
     
     TUniState currentState = Document()->UniState();
+    if(currentState == EUniMms)
+        {
+        TInt PrevSlidecount = iSmilModel->SlideCount();
+        iSmilModel->RemoveEmptySlides();
+        if( PrevSlidecount != iSmilModel->SlideCount() )
+            {
+            Document()->SetBodyModified( ETrue );
+            CheckBodyForMessageTypeL();  
+            }
+        }
     
     TBool modified( EFalse );
     if ( !VerifyAddressesL( modified ) )
@@ -7455,6 +7465,11 @@ void CUniEditorAppUi::DoUserRemoveMediaL( TMsgControlId aMediaControlId,
         }
         
     CleanupStack::PopAndDestroy( queryText );
+    if(!ObjectsAvailable() && Document()->CurrentSlide())
+        {
+        DoRemoveSlideL();
+        Document()->SetBodyModified( ETrue ); 
+        }   
     CheckBodyForMessageTypeL();
     MsgLengthToNavipaneL();
     }
@@ -7477,8 +7492,12 @@ void CUniEditorAppUi::RemoveCurrentTextObjectL()
             Document()->SetBodyModified( ETrue );
             
             UpdateSmilTextAttaL();
-            }
-        
+            }        
+        if((Document()->UniState() == EUniMms) &&(!ObjectsAvailable() && Document()->CurrentSlide()))
+            {
+            DoRemoveSlideL();
+            Document()->SetBodyModified( ETrue ); 
+            }        
         CheckBodyForMessageTypeL();
         MsgLengthToNavipaneL();
         SetOrRemoveMaxSizeInEdwin();

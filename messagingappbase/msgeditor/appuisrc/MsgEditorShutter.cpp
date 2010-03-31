@@ -152,6 +152,16 @@ CMsgEditorShutter::~CMsgEditorShutter()
         openEditors--;    
         iOpenAppProperty.Set( openEditors );
         }
+    
+    TInt standAloneEditorCnt = 0; // since only one stand alone editor can be launched
+    iOpenAppStandAloneProperty.Get(KPSUidMsgEditor, KMuiuStandAloneOpenMsgEditors, standAloneEditorCnt);
+
+    if(standAloneEditorCnt > 0)
+        {
+        standAloneEditorCnt--;
+        iOpenAppStandAloneProperty.Set(KPSUidMsgEditor, KMuiuStandAloneOpenMsgEditors, standAloneEditorCnt);
+        }
+
     iOpenAppProperty.Close();
     iOpenAppStandAloneProperty.Close();
     }
@@ -185,9 +195,7 @@ void CMsgEditorShutter::RunL()
                  
     if((launchtype & EMsgLaunchEditorStandAlone ) && StandAloneEditorCnt > 1 )    
         {
-        StandAloneEditorCnt = 1;
-        err = iOpenAppStandAloneProperty.Set(KPSUidMsgEditor, KMuiuStandAloneOpenMsgEditors, StandAloneEditorCnt);
-         // Run appshutter
+        // Run appshutter
         CAknEnv::RunAppShutter();
         }
     else if ( openEditors  )

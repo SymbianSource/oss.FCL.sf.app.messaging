@@ -80,6 +80,7 @@ const TUint KSendUiFeatureSelectableEmail	= 0x8;
 
 const TUint KSeconds = 1000000;
 const TUid KMailTechnologyTypeUid = { 0x10001671 };
+const TUid KUidMsgTypeCmailMtmVal = { 0x2001f406 }; //CMail mtmuid
 
 // ======== LOCAL FUNCTIONS ========
 
@@ -324,7 +325,8 @@ void CGenericMtmPlugin::CreateAndSendMessageL(
 
         if ( success && ( aMtmUid == KSenduiMtmSmtpUid ||
              aMtmUid == KSenduiMtmMmsUid ||
-             aMtmUid == KSenduiMtmUniMessageUid ))
+             aMtmUid == KSenduiMtmUniMessageUid ||
+             aMtmUid == KUidMsgTypeCmailMtmVal ))
             {
             HBufC* subject = aMessageData->Subject().AllocLC();
             cleanupItems++;

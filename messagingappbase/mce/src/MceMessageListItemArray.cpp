@@ -99,6 +99,8 @@ enum
 //cmail update
 #define KUidMsgTypeFsMtmVal               0x2001F406
 
+const TUid KMailTechnologyTypeUid = { 0x10001671 };
+
 // ================= MEMBER FUNCTIONS =======================
 
 // C++ default constructor can NOT contain any code that
@@ -416,8 +418,9 @@ void CMceMessageListItemArray::AppendMessageString( TDes& aBuffer, const TMsvEnt
 
     aBuffer.Append( KColumnListSeparator );
 
-    if ( aEntry.iMtm != KSenduiMtmMmsUid &&
-         aEntry.Attachment() )
+         
+    if ( aEntry.Attachment()&& aEntry.iMtm != KSenduiMtmMmsUid 
+         && IsMailMtmTechnology(aEntry.iMtm))
         {
         aBuffer.AppendNum( (TInt) EMceBitmapIndexAttachment );
 	    aBuffer.Append( KColumnListSeparator );
@@ -1596,5 +1599,19 @@ TInt CMceMessageListItemArray::GetEntryIndex( TInt aIndex ) const
 
     return tmpindex;
     }
-
+// ----------------------------------------------------
+// CMceMessageListItemArray::IsMailMtmTechnology
+// ----------------------------------------------------
+TBool CMceMessageListItemArray::IsMailMtmTechnology(TUid aMtm )const
+    {
+    TBool isMailMtm = EFalse;
+    if ( aMtm.iUid != 0 && aMtm != KUidMsvLocalServiceMtm &&
+            iUiRegistry->IsPresent( aMtm) )
+        {
+        // get MTM technology type
+        TUid technologyType = iUiRegistry->TechnologyTypeUid( aMtm);
+        isMailMtm = ( KMailTechnologyTypeUid == technologyType );
+        }
+    return isMailMtm;
+    }
 //  End of File

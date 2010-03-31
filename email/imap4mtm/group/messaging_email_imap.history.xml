@@ -3,10 +3,18 @@
   <purpose>
     Message Type Module (MTM) plugin to Messaging Framework supporting send/receive/edit of IMAP4 email messages.
   </purpose>
-
-<defect number="DEF144494" title="when finish the mailbox configure, connet manually, after sync commpleted, Unable to perform operations pops up" revision="078">
-	MarkOnOrOfflineL() moved down.
-</defect>
+ 
+  <defect number="DEF144650" title="Gmail freezes when cancelling connection " revision="080">
+    added CMsgActive::DoCancel() in CImapUpsResponseWaiter::DoCancel() 
+  </defect>
+  
+  <defect number="DEF144494" title="when finish the mailbox configure, connet manually, after sync commpleted, Unable to perform operations pops up " revision="079">
+    Moved MarkOnOrOfflineL() API down
+  </defect>
+  
+  <defect number="PDEF143414" title="TRUE - IMAP4 not fully supporting standard email " revision="078">
+    Parsing the server response without [ ].
+  </defect>
 
  <defect number="DEF142209" title="[System Build] components go influenced by sytem marco in MSF00202 tb101sf" revision="077">
     Included missing header file.

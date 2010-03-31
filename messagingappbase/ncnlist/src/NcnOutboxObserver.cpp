@@ -33,7 +33,9 @@
 #include    "NcnModelBase.h"
 #include    "CNcnMsvSessionHandler.h"
 #include    "CNcnMobileSignalStrengthHandler.h"
+#include <MIUTSET.H>
 
+const TUid KUidMsgTypeCmailMtmVal = {0x2001F406};
 // ================= MEMBER FUNCTIONS =======================
 
 // ---------------------------------------------------------
@@ -117,6 +119,30 @@ void CNcnOutboxObserver::CheckOutboxAndNotifyL()
     // Check messagecount in outbox
     TInt msgCount = iOutboxFolder->Count();
     
+    CMsvEntrySelection *smtpselection = NULL ;
+    CMsvEntrySelection *pop3selection = NULL;
+    CMsvEntrySelection *imapselection = NULL ;
+    CMsvEntrySelection *cmailselection = NULL ;
+
+    smtpselection = iOutboxFolder ->ChildrenWithMtmL( KUidMsgTypeSMTP );
+    CleanupStack::PushL( smtpselection );
+    TInt smtpCount= smtpselection ->Count();
+    
+    pop3selection = iOutboxFolder ->ChildrenWithMtmL( KUidMsgTypePOP3 );
+    CleanupStack::PushL( pop3selection );    
+    TInt pop3Count= pop3selection ->Count();
+
+    imapselection = iOutboxFolder ->ChildrenWithMtmL( KUidMsgTypeIMAP4 );
+    CleanupStack::PushL( imapselection );
+    TInt imapCount= imapselection ->Count();
+    
+    cmailselection = iOutboxFolder ->ChildrenWithMtmL( KUidMsgTypeCmailMtmVal);
+    CleanupStack::PushL( cmailselection );
+    TInt cmailCount= cmailselection ->Count();
+    
+    CleanupStack::Pop( 4 );
+    // Check messagecount in outbox
+    msgCount  = msgCount - (smtpCount+pop3Count+ imapCount+cmailCount);
     // Set msg count to the CR key
     NCN_RDEBUG_INT( _L("CNcnOutboxObserver::CheckOutboxAndNotifyL SetCRInt(KNcnMessageCountInOutbox) %d" ), msgCount );
     User::LeaveIfError( iModel->SetCRInt( 

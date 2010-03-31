@@ -38,7 +38,7 @@ class CAknSingleColumnStyleTreeList;
 class CAknsBasicBackgroundControlContext;
 class CPtiEngine;
 class CAknTreeList;
-
+class CMtmUiDataRegistry;
 // CLASS DECLARATION
 
 
@@ -548,6 +548,14 @@ class  CMceOneRowMessageListContainer :
         */
         void HandleOperationCompletedL();
 
+        /**
+         * Check the MTM technology type for Mail Technology 
+         * @param aMtm: Mtm Uid
+         * @return : ETrue if Mtm Technology is Mail
+         *           otherwsie EFalse
+         */
+        TBool IsMailMtmTechnology( TUid aMtm )const;
+        
     private:
 
         CAknSingleColumnStyleTreeList*      iTreeListBox;
@@ -579,6 +587,7 @@ class  CMceOneRowMessageListContainer :
          * KFeatureIdFfEmailFramework is enabled
          */
         TBool                       iEmailFramework;
+        CMtmUiDataRegistry*             iUiRegistry;
     };
 
 #endif

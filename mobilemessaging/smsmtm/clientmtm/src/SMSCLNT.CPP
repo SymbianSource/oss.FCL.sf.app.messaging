@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -238,8 +238,18 @@ void CSmsClientMtm::ConstructL()
 			{
 			User::Leave(err);
 			}
-
-		iServiceId = 0;
+		TMsvEntry entry;
+		entry.iMtm = KUidMsgTypeSMS;
+	    entry.iType = KUidMsvServiceEntry;
+	    entry.SetReadOnly(EFalse);
+	    entry.SetVisible(EFalse);
+	    entry.iDate.UniversalTime();
+	    entry.iDetails.Set(_L("Default SMS Message"));
+    
+    	CMsvEntry* root = Session().GetEntryL(KMsvRootIndexEntryId);
+	    root->CreateL(entry);
+	   	iServiceId = entry.Id();
+	   	delete root;
 		}
 
 	//Initialise iRealAddressOpen and iRealAddressClose from the SMS resouce file
@@ -1539,7 +1549,6 @@ EXPORT_C void CSmsClientMtm::CreateMessageL(TMsvId /*aServiceId*/)
 
 /** 
 Creates a new outgoing SMS message entry as a child of the current context.
-
 Used by CSendAs::CreateMessageL to create an outgoing SMS message.
 
 @param	

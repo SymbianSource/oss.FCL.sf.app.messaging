@@ -38,7 +38,9 @@
 #include <NcnListInternalCRKeys.h>
 #include <muiumsvuiserviceutilitiesinternal.h> // Messaging utilites
 #include <messaginginternalcrkeys.h>
+#include <MIUTSET.H>
 
+const TUid KUidMsgTypeCmailMtmVal = {0x2001F406};
 
 // ================= LOCAL CONSTANTS =======================
 namespace
@@ -1045,42 +1047,45 @@ void CNcnNotifApiObserver::AddMailBoxL( const TMsvId& aMsvId,
 										const TUid& aMtmType, 
 										const TUid& aTechnologyType)
     {
-    TNcnMailBoxStatus mailbox( aMsvId );
+    if((aMtmType != KUidMsgTypeCmailMtmVal) &&  (aMtmType != KUidMsgTypeIMAP4) && (aMtmType != KUidMsgTypeSMTP) && (aMtmType != KUidMsgTypePOP3))
+        {
+	    TNcnMailBoxStatus mailbox( aMsvId );
     
-    // if mail box is not already in status array
-    if ( iMailBoxStatusArray.Find( mailbox, 
-            TNcnMailBoxStatus::Match ) == KErrNotFound )
-        {                        
-        // set mailbox fields        
-        mailbox.iMTMType = aMtmType;
-        mailbox.iMailBoxTechnologyType = aTechnologyType;      
+	    // if mail box is not already in status array
+	    if ( iMailBoxStatusArray.Find( mailbox, 
+	            TNcnMailBoxStatus::Match ) == KErrNotFound )
+	        {                        
+	        // set mailbox fields        
+	        mailbox.iMTMType = aMtmType;
+	        mailbox.iMailBoxTechnologyType = aTechnologyType;      
         
-        // set the mailboxes 'highest' values
-        FindHighest_MsvId_ImapId_LatestTime(mailbox.iMailBox,
-        									mailbox.iHighestEMailMsvId ,
-        									mailbox.iHighestIMAPId,
-        									mailbox.iLatestMessageArrival);
+	        // set the mailboxes 'highest' values
+	        FindHighest_MsvId_ImapId_LatestTime(mailbox.iMailBox,
+	        									mailbox.iHighestEMailMsvId ,
+	        									mailbox.iHighestIMAPId,
+	        									mailbox.iLatestMessageArrival);
 		
-		// set the rest of the values
-        mailbox.iUnreadCheckpointMsvId = mailbox.iHighestEMailMsvId;
-        mailbox.iPublishedCheckpointMsvId = mailbox.iHighestEMailMsvId;
-        mailbox.iPublishedCheckpointIMAPId = mailbox.iHighestIMAPId;
-        mailbox.iPublishedCheckpointTimeStamp = mailbox.iLatestMessageArrival;
-        mailbox.iPublishedNewEmailCount = 0;
-        mailbox.iShowIcon = ETrue;
-		//In case the mailbox is IMAP/POP/SyncMl update the notifcation
-		//parameters. 3rd party box's will give these in API
-	    if(	mailbox.iMTMType.iUid == KSenduiMtmImap4UidValue ||
-	    	mailbox.iMTMType.iUid == KSenduiMtmPop3UidValue	||  
-	    	mailbox.iMTMType.iUid == KSenduiMtmSyncMLEmailUidValue )
-			{
-			//This should work, but just in case it does not
-			//use default parameters
-			TRAP_IGNORE(UpdateS60MailBoxNotificationAttributesL(mailbox));
-			}
+			// set the rest of the values
+	        mailbox.iUnreadCheckpointMsvId = mailbox.iHighestEMailMsvId;
+	        mailbox.iPublishedCheckpointMsvId = mailbox.iHighestEMailMsvId;
+	        mailbox.iPublishedCheckpointIMAPId = mailbox.iHighestIMAPId;
+	        mailbox.iPublishedCheckpointTimeStamp = mailbox.iLatestMessageArrival;
+	        mailbox.iPublishedNewEmailCount = 0;
+	        mailbox.iShowIcon = ETrue;
+			//In case the mailbox is IMAP/POP/SyncMl update the notifcation
+			//parameters. 3rd party box's will give these in API
+		    if(	mailbox.iMTMType.iUid == KSenduiMtmImap4UidValue ||
+		    	mailbox.iMTMType.iUid == KSenduiMtmPop3UidValue	||  
+		    	mailbox.iMTMType.iUid == KSenduiMtmSyncMLEmailUidValue )
+				{
+				//This should work, but just in case it does not
+				//use default parameters
+				TRAP_IGNORE(UpdateS60MailBoxNotificationAttributesL(mailbox));
+				}
 		
-        // and finally append mailbox status
-        iMailBoxStatusArray.AppendL( mailbox );
+	        // and finally append mailbox status
+	        iMailBoxStatusArray.AppendL( mailbox );
+            }
         }
     }
 

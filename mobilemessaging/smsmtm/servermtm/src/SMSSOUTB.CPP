@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -23,6 +23,7 @@
 #include <logsmspdudata.h>
 #include <smsulog.h>
 #include <logwraplimits.h>
+#include <exterror.h>
 
 #include "SMSSendSession.h"
 #include "SMSSPAN.H"
@@ -210,7 +211,15 @@ void CSmsOutboxSend::DoRunL()		// required by PV declaration in CActive
 			{
 			if (iCurrentMessage)
 				{
-				ReScheduleFailedMessageL();
+				if( (iProgress.iError == KErrGsmSMSShortMessageTransferRejected) || (iProgress.iError == KErrGsmSMSInvalidMandatoryInformation) || (iProgress.iError == KErrGsmSMSUnidentifiedSubscriber) ||
+					(iProgress.iError == KErrGsmSMSUnknownSubscriber) || (iProgress.iError == KErrGsmSMSNetworkOutOfOrder) )
+				    {
+					DoComplete(iProgress.iError);
+				    }
+				else
+				    {
+					ReScheduleFailedMessageL();
+				    }	
 				}
 			else
 				{

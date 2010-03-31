@@ -276,7 +276,7 @@ AMSLOGGER_WRITE( "CAudioMessageAppUi::ConstructL" );
 
     iCoeEnv->RootWin().EnableFocusChangeEvents();   // ignore error
     
-    iScreenClearer = CAknLocalScreenClearer::NewLC( EFalse );
+    iScreenClearer = CAknLocalScreenClearer::NewLC( ETrue );
     CleanupStack::Pop( iScreenClearer );    
 AMSLOGGER_WRITE( "CAudioMessageAppUi::ConstructL ends" );    	
     }
