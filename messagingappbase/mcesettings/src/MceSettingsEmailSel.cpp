@@ -730,7 +730,8 @@ void CMceSettingsEmailSel::AddOtherEmailBoxesL(CDesCArrayFlat& aListItems, CArra
                       // services.                    
                       entryUid.iUid = tentry2.Id();    
                       //If cmail box add to the hash table and cmaillist
-                      if(tentry2.iMtm.iUid == KUidMsgTypeFsMtmVal )
+                      if(tentry2.iMtm.iUid == KUidMsgTypeFsMtmVal 
+                              && timeItems != NULL && cmaillist != NULL)
                           {
                           TTimeIntervalMicroSeconds difference = timeNow.MicroSecondsFrom( tentry2.iDate.Int64() );
                           TInt ret = iCmailBoxes->Insert(difference.Int64() , cc );
@@ -738,7 +739,7 @@ void CMceSettingsEmailSel::AddOtherEmailBoxesL(CDesCArrayFlat& aListItems, CArra
                           cmaillist->AppendL(tentry2.iDetails);
                           }
                       //Add Non Cmail
-                      else
+                      else if( tentry2.iMtm.iUid != KSenduiMtmImap4UidValue && tentry2.iMtm.iUid != KSenduiMtmSmtpUidValue && tentry2.iMtm.iUid != KSenduiMtmPop3UidValue)
                           {
                           aListItemUids.AppendL( entryUid );
                           aListItems.AppendL( tentry2.iDetails );

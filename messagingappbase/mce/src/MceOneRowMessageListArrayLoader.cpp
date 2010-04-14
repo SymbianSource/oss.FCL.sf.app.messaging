@@ -32,6 +32,7 @@
 #include <SenduiMtmUids.h>  // mtm uids
 #include <eikenv.h>
 #include <gulicon.h>
+#include <e32property.h>
 
 #include "MceOneRowMessageListArray.h"
 #include "MceLogText.h"
@@ -61,6 +62,7 @@
 #include "MceCommands.hrh"
 #include "MceOneRowMessageListArrayLoader.h"
 #include <smuthdr.h>
+#include <messaginginternalpskeys.h> 
 
 
 // CONSTANTS
@@ -176,6 +178,12 @@ void CMceOneRowListItemArrayLoader::ConstructL(
 //
 void CMceOneRowListItemArrayLoader::StartL()
     {
+    //Before Starting to prepare the list, set the value to zero.
+    TInt r = RProperty::Set( KPSUidMuiu, KMuiuOneRowListPopulated, EFalse );
+    if ( r != KErrNone )
+        {
+        User::LeaveIfError( r );
+        }
     Cancel();
     InitialiseSearch();
     delete iEntriesToBeAdded;
@@ -538,6 +546,15 @@ void CMceOneRowListItemArrayLoader::AppendMessagesL()
         default:
             CreateTimeBasedArrayL();
             break;
+        }
+    if(iEntriesToBeAdded->Count() == 0)
+        {
+	//all the entries are populated successfully
+        TInt r = RProperty::Set( KPSUidMuiu, KMuiuOneRowListPopulated, ETrue );
+        if ( r != KErrNone )
+            {
+            User::LeaveIfError( r );
+            }
         }
     }
 

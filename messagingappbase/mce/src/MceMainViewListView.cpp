@@ -51,7 +51,8 @@
 #include <MNcnInternalNotification.h>
 #include <NcnNotificationDefs.h>
 #include "MceListItem.h"
-
+#include "MceIds.hrh"
+#include "MceIds.h"
 #include <ImumInternalApi.h>
 #include <ImumInHealthServices.h>
 #include <muiumsvuiserviceutilitiesinternal.h>
@@ -331,8 +332,13 @@ void CMceMainViewListView::CreateContainerAndActivateL()
         iMsgListContainer->ListItems()->SetListItemArrayObserver( this );
         ResetBitmapsL();
         iMsgListContainer->SetMskL();
+        TInt defaultview = KMceConversationview;
+        defaultview =    GetMceDefaultViewL();
+        if(defaultview != KErrNotFound)
+            {
+            iMsgListContainer->ListItems()->SetDefaultViewSettings(defaultview);
+            }
         }
-
     if ( !iDrawListbox )
         {
         return;
@@ -492,14 +498,14 @@ void CMceMainViewListView::HandleCommandL( TInt aCommand )
         case EAknCmdHideInBackground:
             break;
         case EMceDefaultConversationsView:
-            if ( SetMceDefaultViewL(EMceConversationview) )
+            if ( SetMceDefaultViewL(KMceConversationview) )
                 {
                 ShowConfirmationNoteL(R_DEFAULTVIEW_CONVERSATION_SELECTED);  
                 }
              break;
              
         case EMceDefaultInboxView:     
-            if ( SetMceDefaultViewL(EMceInboxview) )
+            if ( SetMceDefaultViewL(KMceInboxView) )
                 {
                 ShowConfirmationNoteL(R_DEFAULTVIEW_INBOX_SELECTED);
                 }
@@ -797,12 +803,12 @@ void CMceMainViewListView::DynInitMenuPaneL(
        {
        TInt defaultview = KErrGeneral;
        defaultview = GetMceDefaultViewL();
-       if(defaultview == EMceInboxview )
+       if(defaultview == KMceInboxView )
            {
            aMenuPane->SetItemButtonState( EMceDefaultInboxView,
                     EEikMenuItemSymbolOn );
            }
-       if(defaultview == EMceConversationview )
+       else if(defaultview == KMceConversationview )
            {
            aMenuPane->SetItemButtonState( EMceDefaultConversationsView,
                     EEikMenuItemSymbolOn );
@@ -1163,6 +1169,11 @@ TBool CMceMainViewListView::SetMceDefaultViewL(TBool aVal)
        CleanupStack::PushL( repository );
        repository->Set(KMuiuMceDefaultView,aVal);
        CleanupStack::PopAndDestroy( repository );
+      if(iMsgListContainer)
+          {
+          iMsgListContainer->ListItems()->SetDefaultViewSettings(aVal);
+          iMsgListContainer->ListBox()->DrawDeferred();  
+          }
        return ETrue;
        }
     else

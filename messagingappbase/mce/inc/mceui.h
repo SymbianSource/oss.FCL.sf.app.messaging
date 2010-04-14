@@ -1149,6 +1149,12 @@ class CMceUi :
         RFs                             iFs;
         CBufFlat*                       iEncodeBuffer;
         CMmsClientMtm*                  iMmsMtm;
+        /**
+         * Iad Update Feature Flag.
+         * It will be ETrue, if feature is enabled,
+         * otherwise EFalse
+         */
+        TBool                           iIadUpdateVal;
     };
 
 #endif

@@ -36,7 +36,7 @@
 #include "MceListItem.h"
 #include "MceBitmapResolver.h"
 #include "MceIds.h"         //kmcedocumentsentryid
-
+#include <mceextraicons.mbg>
 // security data caging
 #include <data_caging_path_literals.hrh>
 #include <bldvariant.hrh>
@@ -151,7 +151,13 @@ void CMceBitmapResolver::ConstructL()
     CreateAndAppendIconL( KAknsIIDQgnIndiMcePriorityHigh, iFilenameAvkon, EMbmAvkonQgn_indi_mce_priority_high, &listItem );
     CreateAndAppendIconL( KAknsIIDQgnIndiMcePriorityLow, iFilenameAvkon, EMbmAvkonQgn_indi_mce_priority_low, &listItem );
     
+   _LIT( KMceExtraIconsDirAndFile,"MceExtraIcons.mbm" );
+    TParse cvfp;
+    cvfp.Set( KMceExtraIconsDirAndFile, &KDC_APP_BITMAP_DIR , NULL );
 
+    listItem.iExtraItem = ETrue;
+    CreateAndAppendIconL( KAknsIIDQgnPropImIbox,  cvfp.FullName(),  EMbmMceextraiconsQgn_prop_im_ibox , &listItem );
+    CreateAndAppendIconL( KAknsIIDQgnPropImIboxNew,  cvfp.FullName(), EMbmMceextraiconsQgn_prop_im_ibox_new , &listItem );
     // add one dummy item which will be replaced when querying message items icons
     CreateAndAppendIconL( KAknsIIDQgnPropMceUnknownRead, EMbmMuiuQgn_prop_mce_unknown_read );
     
@@ -829,6 +835,29 @@ void CMceBitmapResolver::ChangeBitmapInIconArrayL(  )
                 bitmapIndex = EMbmMuiuQgn_indi_connection_inactive_add;
                 id = KAknsIIDQgnIndiConnectionInactiveAdd;
                 colorSkinnedBitmap = ETrue;
+                break;
+            case EMceBitmapIndexConversation:
+                  {
+                  _LIT( KMceExtraIconsDirAndFile,"MceExtraIcons.mbm" );
+                  TParse cvfp;
+                  cvfp.Set(KMceExtraIconsDirAndFile, &KDC_APP_BITMAP_DIR, NULL );
+                  fileName.Set(cvfp.FullName());
+                  bitmapIndex = EMbmMceextraiconsQgn_prop_im_ibox;
+                  id = KAknsIIDQgnPropImIbox;      
+                  colorSkinnedBitmap = EFalse;
+                  }
+                  break;
+                  
+            case EMceBitmapIndexConversationNew:
+                 {
+                _LIT( KMceExtraIconsDirAndFile,"MceExtraIcons.mbm" );
+                  TParse cvfp;
+                  cvfp.Set(KMceExtraIconsDirAndFile, &KDC_APP_BITMAP_DIR, NULL );
+                  fileName.Set(cvfp.FullName());
+                  bitmapIndex = EMbmMceextraiconsQgn_prop_im_ibox_new;
+                  id = KAknsIIDQgnPropImIboxNew; 
+                  colorSkinnedBitmap = EFalse;
+                 }
                 break;
             case EMceBitmapIndexReplaceMtmIcon:
             default:

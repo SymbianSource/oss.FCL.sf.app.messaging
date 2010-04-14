@@ -286,8 +286,12 @@ CMceUi::~CMceUi()
     delete iEmailApi;
     delete iEmailNotifHandler;
     delete iCancelExitFlagOperation;
-    delete iMceIAUpdate;
-
+    
+    if(iMceIAUpdate)
+	    {
+	    delete iMceIAUpdate;
+	    }
+    
     if ( iIdArray )
         {
         delete iIdArray;
@@ -427,8 +431,13 @@ void CMceUi::ConstructL()
     iMailAccountItemArray = new(ELeave) CMceMailAccountItemArray(
         KMceArrayGranularity );
 
-    iMceIAUpdate = CMceIAUpdateUtils::NewL(*this);
-
+    iMceIAUpdate = NULL;
+    iIadUpdateVal  = EFalse;
+    if(FeatureManager::FeatureSupported( KFeatureIdIAUpdate ))
+        {
+        iIadUpdateVal = ETrue;
+        }
+        
     if ( iAlwaysOnline )
         {
         iConnectionMonitor.ConnectL();
@@ -2681,6 +2690,10 @@ void CMceUi::EditMTMEntryL( const TMsvEntry& aEntry /*, TBool aOpen*/)
         if ( tabsToCleanupStack )
             {
             CleanupStack::PopAndDestroy(); // TCleanupItem - will show tabs again
+            }
+        if ( iMceUiFlags.MceFlag( EMceUiFlagsTabsActive )  && (!tabsToCleanupStack) )
+            {
+            ShowTabsL( iMceListView->ListContainer()->CurrentFolderId() );
             }
         }
     else
@@ -5556,13 +5569,29 @@ void CMceUi::HandleGainingForeground() // CR : 401-1806
     TBool newAudioMsgVal = EFalse;
     newAudioMsgVal = FeatureManager::FeatureSupported( KFeatureIdAudioMessaging );
     newPostcardVal = FeatureManager::FeatureSupported( KFeatureIdMmsPostcard );
+    
     if ( newAudioMsgVal != iAudioMsgEnabled || newPostcardVal != iPostcardEnabled )
         {
         TRAP_IGNORE( HandleMTMChangeL() );
         }
-    if ( MceViewActive( EMceMainViewActive ) )
-        {
-        CheckIAUpdate();
+    
+    if ( MceViewActive( EMceMainViewActive ) && iIadUpdateVal)
+        {      
+        if(!iMceIAUpdate) // first time messaging view is activated
+            {
+            TRAP_IGNORE(iMceIAUpdate = CMceIAUpdateUtils::NewL(*this));     
+            if(iMceIAUpdate)
+                {
+                CheckIAUpdate();
+                }
+            }
+        else
+            {
+            if(iMceIAUpdate->IsUpdateRequired())
+                {
+                CheckIAUpdate();
+                }
+            }
         }
     }
 

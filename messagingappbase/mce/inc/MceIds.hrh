@@ -45,6 +45,8 @@
 
 // Special handling for Mail for exchange
 #define KMceMtmMailForExchangeValue      0x102826F8 
+#define KMceInboxView                   0x00
+#define KMceConversationview            0x01
 #endif
 
 // End of File

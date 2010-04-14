@@ -38,7 +38,7 @@
 #include <NcnListInternalCRKeys.h>
 #include <muiumsvuiserviceutilitiesinternal.h> // Messaging utilites
 #include <messaginginternalcrkeys.h>
-#include <MIUTSET.H>
+#include <miutset.h>
 
 const TUid KUidMsgTypeCmailMtmVal = {0x2001F406};
 

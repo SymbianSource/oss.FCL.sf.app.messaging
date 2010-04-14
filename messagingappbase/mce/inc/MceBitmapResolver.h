@@ -58,6 +58,8 @@ enum TMceBitmapArrayIndexes
     EMceBitmapIndexAlwaysRoaming,
     EMceBitmapIndexPriorityHigh,
     EMceBitmapIndexPriorityLow,
+    EMceBitmapIndexConversation,
+    EMceBitmapIndexConversationNew,
     EMceBitmapIndexReplaceMtmIcon // this MUST be last
     };
 

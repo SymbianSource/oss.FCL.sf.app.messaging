@@ -89,6 +89,7 @@ enum
 
 //cmail update
 #define KUidMsgTypeFsMtmVal               0x2001F406
+#define KConversationUidVal               0x2002A540  //Conversation Application UID
 
 //cmail update
 
@@ -176,6 +177,7 @@ void CMceMainViewListItemArray::ConstructL()
     
     // todo
     iListBoxText = HBufC::NewL( iDescriptionLength*3 ); 
+    iDefaultViewSettings  = KMceConversationview;
     }
 
 // Two-phased constructor.
@@ -431,6 +433,10 @@ TPtrC CMceMainViewListItemArray::MdcaPoint( TInt aIndex ) const
             tempText.Copy( item.iPrintableText );
             return tempText;
             }
+     else if(  item.iApplicationUid == KConversationUidVal )
+            {          
+            return CreateConversationsListItem( aIndex );
+            }
         else
             {
             return item.iPrintableText;
@@ -458,7 +464,15 @@ TPtrC CMceMainViewListItemArray::MakeStringForMainView( TInt aIndex ) const
         if ( item.iIconIndex <= KErrNone || item.iIconIndex >= iBitmapResolver.MtmIconIndex() )
             {
             TInt messageCount = 0;
-            CONST_CAST( TMceListItem*, &item)->iIconIndex = iBitmapResolver.BitmapIndex( entry, messageCount );
+            TMsvId id = entry.Id();
+            if(iDefaultViewSettings == KMceConversationview && id == KMsvGlobalInBoxIndexEntryId )
+                {
+                CONST_CAST( TMceListItem*, &item)->iIconIndex = EMceBitmapIndexInbox;
+                }
+            else
+                {
+                CONST_CAST( TMceListItem*, &item)->iIconIndex = iBitmapResolver.BitmapIndex( entry, messageCount );
+                }
             CONST_CAST( TMceListItem*, &item)->iMessageCount = messageCount;
             }
         tempText.AppendNum( item.iIconIndex );
@@ -1014,7 +1028,15 @@ TBool CMceMainViewListItemArray::MMceUtilsIdleClassStepL( )
             if ( iSession->GetEntry( item.iMsvId, serviceId, entry ) == KErrNone )
                 {
                 TInt messageCount = 0;
-                item.iIconIndex = iBitmapResolver.BitmapIndex( entry, messageCount );
+                TMsvId id = entry.Id();
+                if(iDefaultViewSettings == KMceConversationview && id == KMsvGlobalInBoxIndexEntryId )
+                    {
+                    item.iIconIndex = EMceBitmapIndexInbox;
+                    }
+                else
+                    {
+                    item.iIconIndex = iBitmapResolver.BitmapIndex( entry, messageCount );     
+                    }              
                 item.iMessageCount = messageCount;
 //                        item.iUnreadMessageCount = unreadMessageCount;
                 if ( iListItemArrayObserver )
@@ -1145,6 +1167,7 @@ void CMceMainViewListItemArray::AddExtraItemCommandL( TInt aIndex )
         tempItem.iMsvId = extraItem.iCommandId;
        	tempItem.iPrintableText.Copy( extraItem.iPrintableText );
        	tempItem.iSecondaryText.Copy(extraItem.iSecondaryText);
+       	tempItem.iApplicationUid = extraItem.iApplicationUid; 
        	TUid appUid;
        	appUid.iUid = extraItem.iApplicationUid;
        	AddExtraItemWithIconL( tempItem, Count(), extraItem.iIconIndex, appUid );
@@ -1248,5 +1271,42 @@ TInt CMceMainViewListItemArray::FindVisibleCountL(TMsvId serviceId ) const
     CleanupStack::PopAndDestroy( smtpselection );
     CleanupStack::PopAndDestroy( entry );
     return visiblecount; 
+    }
+// ----------------------------------------------------
+// CMceMainViewListItemArray::CreateConversationsListItem()
+// ----------------------------------------------------
+TPtrC CMceMainViewListItemArray::CreateConversationsListItem( TInt aIndex ) const
+    {
+    const TMceListItem& item = At( aIndex );
+    TPtr tempText = iListBoxText->Des();        
+    tempText.Zero();
+    TInt bitmapidx = EMceBitmapIndexConversation;
+    if(iDefaultViewSettings == KMceConversationview )
+       {
+       TInt msgCount = 0;
+       TInt unreadCount = 0;
+       iBitmapResolver.HasUnreadMessagesL(KMsvGlobalInBoxIndexEntryId,msgCount,unreadCount);
+       if( unreadCount > 0 ) 
+           {
+           bitmapidx =  EMceBitmapIndexConversationNew ;
+           }
+       }    
+   tempText.AppendNum(bitmapidx);
+   TPtrC Ptr(item.iPrintableText); 
+   TInt len = Ptr.Length();
+   TInt  pos = Ptr.Locate(KColumnListSeparator);
+   TPtrC Ptr1(Ptr.Mid(pos));
+   tempText.Append(Ptr1);                
+   return tempText;    
+   }
+
+// ----------------------------------------------------
+// CMceMainViewListItemArray::SetDefaultViewSettings()
+// ----------------------------------------------------
+void CMceMainViewListItemArray::SetDefaultViewSettings(TBool aVal)
+    {
+    iDefaultViewSettings = aVal;   
+    Reset();
+    TRAP_IGNORE(AddFoldersL());
     }
 //  End of File

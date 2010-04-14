@@ -57,6 +57,15 @@ public:
     virtual ~CMceIAUpdateUtils();
 
     void StartL( const TUid aAppUid );
+    
+    /**
+     * Is IAD Update requried to do now
+     * @return TBool
+     * ETrue, If the KMceIADUpdateCheckRetryInterval is over after the previous try
+     * EFalse, If the KMceIADUpdateCheckRetryInterval is not over after the previous retry 
+     */
+    TBool IsUpdateRequired();
+    
 protected: 
 
      /**
@@ -156,7 +165,11 @@ private: // data
     TUid 				 iAppUid;
     
     CMceUi&              iMceUi;
-
+	
+    /**
+	 * Previous IAD update check retry time
+	 */
+    TTime                iPrevIADUpdateCheckTry;
     };
 
 #endif // C_CMCEIAUPDATEUTILS_H

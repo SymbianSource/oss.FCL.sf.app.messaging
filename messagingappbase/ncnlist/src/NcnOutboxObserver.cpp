@@ -33,7 +33,7 @@
 #include    "NcnModelBase.h"
 #include    "CNcnMsvSessionHandler.h"
 #include    "CNcnMobileSignalStrengthHandler.h"
-#include <MIUTSET.H>
+#include <miutset.h>
 
 const TUid KUidMsgTypeCmailMtmVal = {0x2001F406};
 // ================= MEMBER FUNCTIONS =======================

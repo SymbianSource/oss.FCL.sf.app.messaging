@@ -6592,6 +6592,11 @@ void CUniEditorAppUi::DoLaunchCompleteL()
     else
         {
         FinalizeLaunchL();
+     // check is Unieditor is launched from conversation by Addachemnt option 
+        if( Document()->IsLaunchFromCvAttachment())
+            {
+            iFixedToolbar->ToolbarExtension()->SetShown(ETrue);
+            }
         }
     }
 

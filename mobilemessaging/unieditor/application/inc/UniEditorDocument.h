@@ -523,6 +523,11 @@ class CUniEditorDocument : public CMsgEditorDocument
          */
         inline TInt SmsSizeWarningBytes();
         
+        /* Set the Attachemnt flag ELaunchFromCvAttachment */
+        inline  void SetLaunchFromCvAttachment(TBool); 
+        
+         /* Verify is the  flag ELaunchFromCvAttachment is set */
+        inline TBool IsLaunchFromCvAttachment() ;
     private:
 
         /**
@@ -554,7 +559,8 @@ class CUniEditorDocument : public CMsgEditorDocument
             EUniDocumentRestrictedReplySms = 0x10,
             EUniDocumentRestrictedReplyMms = 0x20,
             EUniDocumentCSPBitsSupported = 0x40,
-            EUniDocumentUnicodeCharacterMode = 0x80
+            EUniDocumentUnicodeCharacterMode = 0x80,
+            ELaunchFromCvAttachment = 0x100
             };
         
         CEikonEnv*          iEnvironment;

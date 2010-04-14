@@ -43,6 +43,10 @@ const TUint32 KMceTemplatesDialog = 0x00000003;
 // Tells whether Msg Sent as settings to be removed from Text settings view
 const TUint32 KMuiuRemoveMsgSentSettings = 0x00000004;
 
+// The New PSK introduced from 9.2
+// Tells whether If one row list is populated or not, 1- list is populated, 0 - list population is in progress
+const TUint32 KMuiuOneRowListPopulated = 0x00000005;
+
 // The New PSK introduced from 5.0
 
 const TUid KPSUidMsgEditor	=	{0x101F87FF};

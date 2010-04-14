@@ -22,7 +22,7 @@
 
 class CRepository;
 
-#include "messaginginternalcrkeys.h"
+#include "MessagingInternalCRKeys.h"
 
 
 // Lock identifier for messaging settings access

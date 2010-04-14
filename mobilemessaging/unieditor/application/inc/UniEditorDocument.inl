@@ -422,4 +422,32 @@ inline TInt CUniEditorDocument::SmsSizeWarningBytes()
     return iSmsSizeWarningBytes;
     }
 
+// ---------------------------------------------------------
+// CUniEditorDocument:: SetLaunchFromCvAttachment
+// Set/Reset the  attachment Flag 
+//  ---------------------------------------------------------
+
+inline void  CUniEditorDocument::SetLaunchFromCvAttachment(TBool aVal)
+    {
+    if(aVal)
+        {
+        iFlags |=  ELaunchFromCvAttachment;
+        }
+    else
+        {
+        iFlags &= ~ELaunchFromCvAttachment;
+        }
+    }
+
+// ---------------------------------------------------------
+// CUniEditorDocument:: IsLaunchFromCvAttachment
+// Verify is attachment Flag set and reset it.
+//---------------------------------------------------------
+     
+ inline TBool CUniEditorDocument::IsLaunchFromCvAttachment()
+   {
+   TBool x =iFlags & ELaunchFromCvAttachment;
+   iFlags &= ~ELaunchFromCvAttachment;
+   return(x);
+   }
 // End of file

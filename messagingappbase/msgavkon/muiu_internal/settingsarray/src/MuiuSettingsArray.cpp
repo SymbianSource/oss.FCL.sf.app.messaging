@@ -30,7 +30,7 @@
 #include <muiu_internal.rsg>
 #include "MuiuSettingsArray.h"
 #include <e32property.h>
-#include <MessagingInternalPSkeys.h>
+#include <messaginginternalpskeys.h>
 #include <StringLoader.h>
 
 // CONSTANTS

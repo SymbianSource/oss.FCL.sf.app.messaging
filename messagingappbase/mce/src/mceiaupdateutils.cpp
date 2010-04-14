@@ -28,6 +28,12 @@
 #include "mceiaupdateutils.h"
 #include "MceLogText.h"
 
+// CONSTANT 
+
+// Defines the time span in hours for the next IAD update check event 
+// which will be trigered.
+const TInt KMceIADUpdateCheckRetryInterval = 24;
+
 // ======== MEMBER FUNCTIONS ========
 
 // ---------------------------------------------------------------------------
@@ -47,14 +53,10 @@ CMceIAUpdateUtils::CMceIAUpdateUtils(CMceUi& aMceUi)
 //
 void CMceIAUpdateUtils::ConstructL()
     {
-    if( FeatureManager::FeatureSupported( KFeatureIdIAUpdate ) )
-        {
-        iUpdate = CIAUpdate::NewL( *this );
-        if( iUpdate )
-            {
-            iParameters = CIAUpdateParameters::NewL();
-            }
-        }
+    iUpdate = NULL;
+    iParameters = NULL;
+    // set it to current time.
+    iPrevIADUpdateCheckTry.UniversalTime();
     }
 
 
@@ -87,6 +89,16 @@ CMceIAUpdateUtils::~CMceIAUpdateUtils()
 //
 void CMceIAUpdateUtils::DoStartL( const TUid aAppUid )
     {
+    if(!iUpdate)
+        {
+        iUpdate = CIAUpdate::NewL( *this );
+        }
+
+    if( !iParameters )
+        {
+        iParameters = CIAUpdateParameters::NewL();
+        }
+        
     if( iUpdate && iParameters )
         {
         iParameters->SetUid( aAppUid );
@@ -97,6 +109,10 @@ void CMceIAUpdateUtils::DoStartL( const TUid aAppUid )
         // Check the updates
         MCELOGGER_WRITE("StartL --- check updates");
         iUpdate->CheckUpdates( *iParameters );
+        }
+    else
+        {
+        Delete(); //Delete session with IAD server
         }
     }
 
@@ -127,6 +143,8 @@ void CMceIAUpdateUtils::Delete()
 void CMceIAUpdateUtils::CheckUpdatesComplete( TInt aErrorCode,
         TInt aAvailableUpdates )
     {
+    TBool bContinue = EFalse;
+    
     if ( aErrorCode == KErrNone )
         {
         if ( aAvailableUpdates > 0 )
@@ -136,6 +154,7 @@ void CMceIAUpdateUtils::CheckUpdatesComplete( TInt aErrorCode,
                     // There were some updates available.
                     MCELOGGER_WRITE("CheckUpdatesComplete --- updates available");
                     iUpdate->UpdateQuery();
+                    bContinue = ETrue;
                     }
                 else
                     {
@@ -148,6 +167,11 @@ void CMceIAUpdateUtils::CheckUpdatesComplete( TInt aErrorCode,
             MCELOGGER_WRITE("CheckUpdatesComplete --- no updates available");
             }
         }
+    if(!bContinue)
+        {
+        Delete(); //Delete session with IAD server
+        }
+     
     }
 
 // -----------------------------------------------------------------------------
@@ -184,6 +208,7 @@ void CMceIAUpdateUtils::UpdateComplete( TInt aErrorCode, CIAUpdateResult* aResul
 //
 void CMceIAUpdateUtils::UpdateQueryComplete( TInt aErrorCode, TBool aUpdateNow )
     {
+    TBool bContinue = EFalse;
     if ( aErrorCode == KErrNone )
         {
         if ( aUpdateNow )
@@ -191,12 +216,17 @@ void CMceIAUpdateUtils::UpdateQueryComplete( TInt aErrorCode, TBool aUpdateNow )
             // User choosed to update now, so let's launch the IAUpdate UI.
             MCELOGGER_WRITE("UpdateQueryComplete --- now");
             iUpdate->ShowUpdates( *iParameters );
+            bContinue = ETrue;
             }
         else
             {
             // The answer was 'Later'.
             MCELOGGER_WRITE("UpdateQueryComplete --- later");
             }
+        }
+    if(!bContinue)
+        {
+        Delete(); //Delete session with IAD server
         }
     }
 // -----------------------------------------------------------------------------
@@ -244,4 +274,42 @@ void CMceIAUpdateUtils::DoCancel()
     
     }
 
+// ---------------------------------------------------------------------------
+// Is IAD Update requried to do now
+// YES, If the KMceIADUpdateCheckRetryInterval is over after the previous try
+// NO, If the KMceIADUpdateCheckRetryInterval is not over after the previous retry 
+// ---------------------------------------------------------------------------
+//
+TBool CMceIAUpdateUtils::IsUpdateRequired()
+    {
+    TBool required = EFalse;
+    TTime currTime;
+    TTimeIntervalHours hourInterval;
+    TInt err = KErrNone;
+    
+    currTime.UniversalTime();
+    
+    err = currTime.HoursFrom(iPrevIADUpdateCheckTry,hourInterval);
+    
+    // KErrNone-> successful case, 
+    // reset the iPrevIADUpdateCheckTry to current time, 
+    // start IAD check update
+    
+    // KErrOverflow ->  if the calculated interval 
+    // is too large for a 32-bit integer
+    // reset the iPrevIADUpdateCheckTry to current time
+    // start IAD check update
+    
+    // in all other cases don't do any thing.
+    
+    if(((err == KErrNone)&& 
+        (hourInterval.Int() >= KMceIADUpdateCheckRetryInterval ))
+        ||(err == KErrOverflow))        
+        {
+        iPrevIADUpdateCheckTry.UniversalTime();
+        required = ETrue; 
+        }
+    
+    return required;
+    }
 // EOF

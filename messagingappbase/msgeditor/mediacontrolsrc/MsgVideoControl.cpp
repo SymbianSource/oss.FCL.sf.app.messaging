@@ -637,6 +637,8 @@ void CMsgVideoControl::SetVideoFrameSizeL()
         MSGMEDIACONTROLLOGGER_WRITEF( _L("MsgVideoControl:: SizeChanged(): cliRect (%d,%d),( %d,%d)"),  clipRect.iTl.iX, clipRect.iTl.iY, clipRect.iBr.iX, clipRect.iBr.iY);
 	    }
 	
+    iVideoAreaControl->SetRect( iVideoFrameArea );
+
 	// iVideoAreaControl is relative to screen coordinates.
     iVideoPlayer->SetDisplayWindowL(
         ControlEnv()->WsSession(),
@@ -644,7 +646,6 @@ void CMsgVideoControl::SetVideoFrameSizeL()
         *iVideoAreaControl->DrawableWindow(),
         rect,
         clipRect );
-    iVideoAreaControl->SetRect( iVideoFrameArea );
     
     MSGMEDIACONTROLLOGGER_LEAVEFN( "MsgVideoControl : DoSizeChangedL()" );
     }

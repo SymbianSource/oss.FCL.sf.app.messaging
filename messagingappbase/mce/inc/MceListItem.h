@@ -42,6 +42,7 @@ class TMceListItem
         TMcePrintableText       iPrintableText;
         TInt                    iIconIndex;
         TMcePrintableText       iSecondaryText;
+        TInt                    iApplicationUid;
 #ifdef RD_MSG_NAVIPANE_IMPROVEMENT
         TInt                    iMessageCount;
 #endif // RD_MSG_NAVIPANE_IMPROVEMENT        

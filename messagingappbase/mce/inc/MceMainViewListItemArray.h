@@ -269,6 +269,10 @@ public:
         
         TBool MMceUtilsIdleClassStepL();
         void SetListItemArrayObserver( MMceMainViewListItemArrayObserver* aObserver );
+         /* 
+         * Set the Default Message viewing style 
+         */
+        void SetDefaultViewSettings(TBool );
     
     private:
 
@@ -455,6 +459,11 @@ public:
     
         //Calculates the visible count excluding FS email stuff
         TInt FindVisibleCountL(TMsvId serviceId) const;
+         /**
+         * Creates Conversation string for main view listbox. 
+         * @param aIndex: index of the message to be drawn
+         */
+         TPtrC CreateConversationsListItem( TInt aIndex ) const;
     private:    // Data
         CMsvSessionPtr                  iSession;
         CMsvEntry*                      iFolderEntry;
@@ -489,6 +498,10 @@ public:
          * KFeatureIdFfEmailFramework is enabled
          */
         TBool                           iEmailFramework;        
+        /**
+         *  Holds the current default Messagign viewing style type 
+        */
+        TBool                            iDefaultViewSettings;
     };
 
 #endif      // MCEMAINVIEWLISTITEMARRAY_H

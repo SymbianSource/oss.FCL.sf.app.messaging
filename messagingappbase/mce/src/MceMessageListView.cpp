@@ -158,6 +158,7 @@ CMceMessageListView::~CMceMessageListView()
     delete iDateTimeNotifier;
 	delete iAiwServiceHandler;
 	RProperty::Delete( KPSUidMuiu, KMceTemplatesDialog ); 	
+	RProperty::Delete( KPSUidMuiu, KMuiuOneRowListPopulated );
     iSessionHolder.RemoveClient();
     }
 
@@ -187,7 +188,17 @@ void CMceMessageListView::ConstructL( )
         }        
     iListboxMailTypeObserver = CMceListboxTypeObserver::NewL( *this, KMuiuMailMessageListType );
     iListboxInboxTypeObserver = CMceListboxTypeObserver::NewL( *this, KMuiuInboxMessageListType );
-    
+    TInt r = RProperty::Define( KPSUidMuiu, KMuiuOneRowListPopulated, RProperty::EInt );
+    if ( r != KErrAlreadyExists || r != KErrNone)
+        {
+        User::LeaveIfError( r );
+        }
+	// Initialisation		
+     r = RProperty::Set( KPSUidMuiu, KMuiuOneRowListPopulated, EFalse );
+     if ( r != KErrNone )
+         {
+         User::LeaveIfError( r );
+         }          
     MCELOGGER_LEAVEFN("CMceMessageListView::ConstructL");   
     }
 
@@ -2283,6 +2294,16 @@ void CMceMessageListView::FolderMenuSyncMLFolderL( CEikMenuPane *aMenuPane )
 // ----------------------------------------------------
 void CMceMessageListView::EditMenuL( CEikMenuPane* aMenuPane ) const
     {
+    TInt listPopulated =1;
+    //Get the value, accordingly we can dim/undim mark all for one row list only
+    if(!iCurrentListType)
+        {
+        TInt r = RProperty::Get( KPSUidMuiu, KMuiuOneRowListPopulated, listPopulated );
+        if ( r != KErrNone )
+        	{
+            User::LeaveIfError( r );
+            }
+        }
     // This function is not called if empty folder because in that case
     // EditMenu is hidden
     aMenuPane->SetItemDimmed( EAknCmdMarkReadMsgs, ETrue );
@@ -2305,7 +2326,7 @@ void CMceMessageListView::EditMenuL( CEikMenuPane* aMenuPane ) const
             }
        }   
 
-    if ( ( count + SubfolderCount() ) == iMsgListContainer->Count() )
+    if ( ( count + SubfolderCount() ) == iMsgListContainer->Count() || !listPopulated)
        {
        //if all selected, disable markall
        aMenuPane->SetItemDimmed( EAknMarkAll, ETrue );

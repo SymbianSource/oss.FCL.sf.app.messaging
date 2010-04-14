@@ -59,12 +59,6 @@ class CMceMainViewListView :
     {
     public:
         
-        enum TMceDefaultView
-            {
-            EMceInboxview = 0,                   
-            EMceConversationview
-            };
-
     public:  // Constructors and destructor
 
         /**

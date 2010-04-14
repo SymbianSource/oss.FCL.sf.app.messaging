@@ -40,7 +40,7 @@
 #include <RCustomerServiceProfileCache.h>
 #include <centralrepository.h>          // CRepository
 #include <messaginginternalcrkeys.h>    // Keys
-#include <MessagingInternalPSKeys.h>
+#include <messaginginternalpskeys.h>
 
 // locals
 #include "smsui.pan"    				// for panics

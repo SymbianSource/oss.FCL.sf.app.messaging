@@ -56,7 +56,7 @@
 // CONSTANTS
 const TInt KUniCharAt = '@';
 const TInt  KUniMaxSubject  = 40;
-
+const TUint KZeroWidthNonJoiner = 0x200C;
 // MACROS
 
 // LOCAL CONSTANTS AND MACROS
@@ -115,6 +115,18 @@ void CUniEditorHeader::ConstructL()
     iAddDelayed = EUniFeatureTo;
     
     iDoc.DataModel()->AttachmentList().SetListObserver( this );
+    TPtrC cvsubject = iMtm.SubjectL();
+    TUint value = 0;  
+    if( cvsubject.Length() != 0 )
+       {         
+        TLex Cv( cvsubject);
+        Cv.Val( value );
+        if(value == KZeroWidthNonJoiner)
+            {
+            iDoc.SetLaunchFromCvAttachment(ETrue);
+            iMtm.SetSubjectL(KNullDesC());           
+            }
+       }
         
     const TPtrC subject = iMtm.SubjectL();
     

@@ -414,8 +414,8 @@ void CMceOneRowMessageListContainer::MceListItemArrayChangedL(
         {
         SetCurrentItemIdL( iSelectedItemWaitingIndex );
         }
-
-    iTreeListBox->Sort( iListItems, CAknTreeList::ESaveFocus, ETrue );
+    //progressive draw for every 200 entries.
+    iTreeListBox->DrawNow();
     }
 
 

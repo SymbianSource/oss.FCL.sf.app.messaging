@@ -370,12 +370,15 @@ void CUniTextObject::CreateFileName( TFileName& aFileName )
     {
     if ( iTextEditor && iTextEditor->Text()->DocumentLength() )
         {
-    	TPtrC ptr = iTextEditor->Text()->Read( 0, KMaxFilenameLenghtForAttachment );        
+    	HBufC *ptr = iTextEditor->GetTextInHBufL();
+        CleanupStack::PushL( ptr );
         MsgAttachmentUtils::GetFileNameFromBuffer( 
             aFileName, 
-            ptr, 
+            *ptr, 
             KMaxFilenameLenghtForAttachment, 
             &KExtTextPlain_16 );
+        CleanupStack::PopAndDestroy( ptr );
+        
         }
     if ( aFileName.Length() == 0 ||
         !iFs.IsValidName( aFileName ) )
