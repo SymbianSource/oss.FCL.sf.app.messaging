@@ -27,6 +27,8 @@ TARGETTYPE		dll
 CAPABILITY ReadDeviceData WriteDeviceData ProtServ NetworkControl NetworkServices LocalServices ReaduserData WriteUserData
 UID				0x1000008d 0x10009ED1 //KObexServerMtmV1DllUid 
 VENDORID 0x70000001
+VERSION 	10.0
+PAGED
 
 SOURCEPATH		../source
 SOURCE			obexServerMtm.cpp obexServerMtmDll.cpp 
@@ -35,7 +37,7 @@ source			obexSendOp_debug.cpp
 source			obexSendOp_normal.cpp
 
 USERINCLUDE		../include 
-APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+APP_LAYER_SYSTEMINCLUDE
 
 LIBRARY			euser.lib  msgs.lib
 LIBRARY			efsrv.lib

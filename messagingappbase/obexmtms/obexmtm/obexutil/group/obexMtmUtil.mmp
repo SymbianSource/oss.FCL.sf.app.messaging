@@ -20,11 +20,13 @@ targettype      dll
 CAPABILITY All -TCB
 UID             0x1000008d 0x10009ED2 //KObexMtmUtilsDllUid 
 VENDORID 0x70000001
+VERSION 	10.0
+PAGED
 
 SOURCEPATH	../source
 lang            01
 
-APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+APP_LAYER_SYSTEMINCLUDE
 userinclude	../include 
 
 source      obexHeader.cpp 

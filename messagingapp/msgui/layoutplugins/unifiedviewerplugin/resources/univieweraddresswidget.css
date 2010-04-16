@@ -1,0 +1,20 @@
+HbWidget
+{
+  margin-left: 0un;
+  margin-top: 0un;
+}
+
+UniViewerAddressWidget
+{
+  layout: layout-default;
+}
+
+UniViewerAddressWidget::addressField
+{
+  left:-var(hb-param-margin-gene-left);
+  top:-var(hb-param-margin-gene-top);
+  right:var(hb-param-margin-gene-right);
+  bottom:var(hb-param-margin-gene-bottom);
+  size-policy-vertical:fixed;
+}
+

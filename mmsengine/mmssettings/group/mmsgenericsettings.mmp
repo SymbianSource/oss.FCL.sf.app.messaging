@@ -24,6 +24,8 @@ CAPABILITY All -TCB
 TARGETPATH    	/system/libs
 TARGETTYPE 		dll
 
+VERSION 	10.0
+PAGED
 
 SOURCEPATH	../src
 SOURCE		cmmsaccounts.cpp cmmssettings.cpp

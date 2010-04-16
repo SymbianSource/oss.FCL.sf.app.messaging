@@ -1,8 +1,0 @@
-EXPORTS
-	?GetRenderers@CSmilPlayerMediaFactory@@QAEPAV?$CArrayPtrFlat@VCSmilMediaRendererBase@@@@XZ @ 1 NONAME ; class CArrayPtrFlat<class CSmilMediaRendererBase> * CSmilPlayerMediaFactory::GetRenderers(void)
-	?GetText@CSmilTextRenderer@@QAEPAVCPlainText@@XZ @ 2 NONAME ; class CPlainText * CSmilTextRenderer::GetText(void)
-	?NewL@CSmilPlayerMediaFactory@@SAPAV1@AAVCCoeEnv@@PAVCGraphicsContext@@PAVMMediaFactoryFileInfo@@@Z @ 3 NONAME ; class CSmilPlayerMediaFactory * CSmilPlayerMediaFactory::NewL(class CCoeEnv &, class CGraphicsContext *, class MMediaFactoryFileInfo *)
-	?ActivateRendererL@CSmilMediaRendererBase@@UAEXXZ @ 4 NONAME ; void CSmilMediaRendererBase::ActivateRendererL(void)
-	?ActivateRendererL@CSmilSVGRenderer@@UAEXXZ @ 5 NONAME ; void CSmilSVGRenderer::ActivateRendererL(void)
-	?MediaType@CSmilMediaRendererBase@@QBE?AW4TMsgMediaType@@XZ @ 6 NONAME ; enum TMsgMediaType CSmilMediaRendererBase::MediaType(void) const
-

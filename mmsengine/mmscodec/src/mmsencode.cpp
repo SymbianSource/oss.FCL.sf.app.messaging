@@ -853,7 +853,7 @@ void CMmsEncode::EncodeHeadersChunkedL()
     User::LeaveIfError( iEntryWrapper->SetCurrentEntry( iCurrentMessageId ) );
     
     /* Korean req: 415-5434
-     * Get the target encoding MIB enum from cenrep and encode MMS text objects using coresponding conversion plugins
+     * Get the target encoding MIB enum from cenrep and encode MMS text objects using corresponding conversion plugins
      */
     TInt temp;
     iTargetEncodingType = 0;
@@ -941,7 +941,7 @@ void CMmsEncode::EncodeHeadersChunkedL()
 #ifndef _NO_MMSS_LOGGING_
         TMmsLogger::Log( _L("CMmsEncode::EncodeHeadersChunkedL:: only one chunk") );
 #endif /* _NO_MMSS_LOGGING_ */        // The message is small enough to be sent as one chunk
-        for ( i = 0; ( i < iNumberOfAttachments ) && ( iError == KErrNone ); i++ )
+        for ( i = 0; ( i < iNumberOfAttachments ) && ( iError == KErrNone ); ++i )
             {
             iCurrentAttachment = i;
             // encode attachments, too, as we have decided that our message
@@ -963,7 +963,7 @@ void CMmsEncode::EncodeHeadersChunkedL()
         // chunked sending - but it should be possible to calculate data size
         iOverallDataSize = iPosition; // This is the amount taken by headers
         // The message is small enough to be sent as one chunk
-        for ( i = 0; ( i < iNumberOfAttachments ) && ( iError == KErrNone ); i++ )
+        for ( i = 0; ( i < iNumberOfAttachments ) && ( iError == KErrNone ); ++i )
             {
             iCurrentAttachment = i;
             // encode attachments, too, as we have decided that our message
@@ -1259,7 +1259,7 @@ HBufC8* CMmsEncode::CalculateAttachmentHeaderLengthL(
         }
         
     TInt8 i;
-    for ( i = 0; i < KNumberContentTypes && aContentType < 0; i++ )
+    for ( i = 0; i < KNumberContentTypes && aContentType < 0; ++i )
         {
         if ( aContentTypeString.CompareF(
             TPtrC8( KContentTypeTable[i] ) ) == 0 )
@@ -1294,7 +1294,7 @@ HBufC8* CMmsEncode::CalculateAttachmentHeaderLengthL(
         aHeaderLength += 1; // terminating zero
         }
 
-    // If we have paramters, we must calculate their length.
+    // If we have parameters, we must calculate their length.
     if ( iMimeHeaders->MimeCharset() != 0 )
         {
         // charset has well-known encoding
@@ -1382,7 +1382,7 @@ HBufC8* CMmsEncode::CalculateAttachmentHeaderLengthL(
         }
     if ( ( iMimeHeaders->ContentTypeParams().MdcaCount() % 2 ) == 1 )
         {
-        // Odd number. Obviously last paramter has no value.
+        // Odd number. Obviously last parameter has no value.
         // Add the "no value" token
         aHeaderLength++;
         }
@@ -1499,7 +1499,7 @@ HBufC8* CMmsEncode::CalculateAttachmentHeaderLengthL(
             // replace all illegal characters by underscore
             buf8 = HBufC8::NewL( nameLength );
             CleanupStack::PushL( buf8 );
-            for ( j = 0; j < nameLength; j++ )
+            for ( j = 0; j < nameLength; ++j )
                 {
                 oneCharacter.Copy( originalName.Mid( j, 1 ) );
                 if ( !IsStringSafe( oneCharacter ) )
@@ -1622,7 +1622,7 @@ HBufC8* CMmsEncode::CalculateAttachmentHeaderLengthL(
     // X-parameter[i] = parameter name
     // X-parameter[i+1] = parameter value
     
-    for ( i = 0; i < iMimeHeaders->XTypeParams().MdcaCount(); i++ )
+    for ( i = 0; i < iMimeHeaders->XTypeParams().MdcaCount(); ++i )
         {
         // If we have corrupted parameters (length of name is zero)
         // we skip the name/value pair.
@@ -1644,7 +1644,7 @@ HBufC8* CMmsEncode::CalculateAttachmentHeaderLengthL(
         }
     if ( ( iMimeHeaders->XTypeParams().MdcaCount() % 2 ) == 1 )
         {
-        // Odd number. Obviously last paramter has no value.
+        // Odd number. Obviously last parameter has no value.
         // Add the "no value" token
         aHeaderLength++;
         }
@@ -1738,7 +1738,7 @@ void CMmsEncode::EncodeAttachmentHeadersL(
     temp = KWspCharset | KMms0x80; // encode as short integer
     EncodeOptionalInteger( temp, iMimeHeaders->MimeCharset() );
 
-    // if we didn't find "Name" parameter among our paramters, we
+    // if we didn't find "Name" parameter among our parameters, we
     // put it first.
 
     // we need the name later anyway...
@@ -1753,7 +1753,7 @@ void CMmsEncode::EncodeAttachmentHeadersL(
     
     TInt i = 0;
     
-    for ( i = 0; i < iMimeHeaders->ContentTypeParams().MdcaCount(); i++ )
+    for ( i = 0; i < iMimeHeaders->ContentTypeParams().MdcaCount(); ++i )
         {
         // If we have corrupted parameters (length of name is zero)
         // we skip the name/value pair.
@@ -1796,7 +1796,7 @@ void CMmsEncode::EncodeAttachmentHeadersL(
         }
     if ( ( iMimeHeaders->ContentTypeParams().MdcaCount() % 2 ) == 1 )
         {
-        // Odd number. Obviously last paramter has no value.
+        // Odd number. Obviously last parameter has no value.
         // Add the "no value" token
         iEncodeBuffer->Write( iPosition, &KMmsNull, 1 );
         iPosition++;
@@ -1843,7 +1843,7 @@ void CMmsEncode::EncodeAttachmentHeadersL(
 #endif
 
         // x-type parameters
-    for ( i = 0; i < iMimeHeaders->XTypeParams().MdcaCount(); i++ )
+    for ( i = 0; i < iMimeHeaders->XTypeParams().MdcaCount(); ++i )
         {
         // If we have corrupted parameters (length of name is zero)
         // we skip the name/value pair.
@@ -1870,7 +1870,7 @@ void CMmsEncode::EncodeAttachmentHeadersL(
         }
     if ( ( iMimeHeaders->XTypeParams().MdcaCount() % 2 ) == 1 )
         {
-        // Odd number. Obviously last paramter has no value.
+        // Odd number. Obviously last parameter has no value.
         // Add the "no value" token
         iEncodeBuffer->Write( iPosition, &KMmsNull, 1 );
         iPosition++;
@@ -2312,7 +2312,7 @@ void CMmsEncode::EncodeRetrieveConfirmationL()
     TInt i;
     TUint oldPosition;
     TUint length;
-    for ( i = 0; i < iMmsHeaders->PreviouslySentList().Count(); i++ )
+    for ( i = 0; i < iMmsHeaders->PreviouslySentList().Count(); ++i )
         {
         oldPosition = iPosition;
         length = 0;
@@ -3201,7 +3201,7 @@ void CMmsEncode::EncodeMMBoxDescriptionL()
     TInt i;
     TUint oldPosition;
     TUint length;
-    for ( i = 0; i < iMmsHeaders->PreviouslySentList().Count(); i++ )
+    for ( i = 0; i < iMmsHeaders->PreviouslySentList().Count(); ++i )
         {
         oldPosition = iPosition;
         length = 0;
@@ -3315,7 +3315,7 @@ void CMmsEncode::EncodeTextStringL( const TDesC& aString )
         // No need to check if we need a quote - if we are safe, we have 
         // no characters >= 128.
 
-        for ( i = 0; i < aString.Length(); i++ )
+        for ( i = 0; i < aString.Length(); ++i )
             {
             character = TUint8( aString[i] & KMms0xFF );
             iEncodeBuffer->Write( iPosition, &character, 1 );
@@ -3411,7 +3411,7 @@ void CMmsEncode::EncodeLongInteger( const TInt64& aLongInteger )
     TInt i = 0;
     TInt64 reminder = 0;
 
-    for ( i = 7; i >= 0; i-- )
+    for ( i = 7; i >= 0; --i )
         {
         reminder = temp % 0x100;
         temp = temp / 0x100;
@@ -3484,7 +3484,7 @@ void CMmsEncode::EncodeInteger( TUint aInteger )
         }
 
     TUint i = 0;
-    for ( i = 0; i < length; i++ )
+    for ( i = 0; i < length; ++i )
         {
         array[i] = TInt8( ( temp >> ( KMms8 * ( KMms3 - i ) ) ) & KMms0xFF );
         }
@@ -3642,7 +3642,7 @@ void CMmsEncode::EncodeAddressL( const TPtrC& aAddress )
         TInt i = 0;
         TUint8 character = 0;
         realAddressPointer = realAddress->Des();
-        for ( i = 0; i < realAddress->Length(); i++ )
+        for ( i = 0; i < realAddress->Length(); ++i )
             {
             // The array index is safe because i is always < realAddress->Length().
             character = TUint8( realAddressPointer[i] & KMms0xFF );
@@ -3698,7 +3698,7 @@ void CMmsEncode::EncodeUintvar( TUint aInteger )
     TUint temp = aInteger;
     TInt i;
 
-    for ( i = 0; i < KMms5; i++ )            
+    for ( i = 0; i < KMms5; ++i )            
         {
         buffer[KMms4 - i] = TUint8( temp & KMms0x7F );
         temp >>= KMms7;
@@ -3713,7 +3713,7 @@ void CMmsEncode::EncodeUintvar( TUint aInteger )
     
     TInt j;
 
-    for ( j = i; j < KMms4; j++ )
+    for ( j = i; j < KMms4; ++j )
         {
         // buffer indexes are safe because the buffer has been defined long enough.
         buffer[j] |= KMms0x80; // set Continue bit, but never to last
@@ -3740,7 +3740,7 @@ TInt CMmsEncode::GetUintvarLength( TUint aInteger )
     TUint temp = aInteger;
     TInt i;
 
-    for (i = 0; i < KMms5; i++ )            
+    for (i = 0; i < KMms5; ++i )            
         {
         buffer[KMms4 - i] = TUint8( temp & KMms0x7F );
         temp >>= KMms7;
@@ -3789,7 +3789,7 @@ void CMmsEncode::EncodeRecipientL( const CDesCArray& aRecipientList,
             break;
         }
 
-    for ( i = 0; i < size; i++ )
+    for ( i = 0; i < size; ++i )
         {
         // check for fakes
         if ( aRecipientList[i].Length() > 0 )
@@ -3994,7 +3994,7 @@ TBool CMmsEncode::IsStringSafe( const TDesC& aString )
     TInt i;
     TBool safe = ETrue;
 
-    for ( i = 0; i < aString.Length() && safe; i++ )
+    for ( i = 0; i < aString.Length() && safe; ++i )
         {
         if ( aString[i] < KMmsLowestAscii || aString[i] >= KMmsHighestAscii )
             {
@@ -4024,7 +4024,7 @@ TBool CMmsEncode::IsStringSafe( const TDesC8& aString, TInt& aNumNonSafe  )
     aNumNonSafe = 0;
     TBool safe = ETrue;
 
-    for ( i = 0; i < aString.Length()/* && safe*/; i++ )
+    for ( i = 0; i < aString.Length()/* && safe*/; ++i )
         {
         if ( aString[i] < KMmsLowestAscii || aString[i] >= KMmsHighestAscii )
             {
@@ -4152,7 +4152,7 @@ void CMmsEncode::EncodeMultipartRelatedHeaderL( const TMsvAttachmentId aRootId )
     TInt8 rootContentType = -1;
 
     TInt8 i = 0;
-    for ( i = 0; i < KNumberContentTypes && rootContentType < 0; i++ )
+    for ( i = 0; i < KNumberContentTypes && rootContentType < 0; ++i )
         {
         if ( contentTypeString.CompareF( TPtrC8( KContentTypeTable[i] ) ) == 0 )
             {
@@ -4320,7 +4320,7 @@ void CMmsEncode::EncodeKeywordArrayL()
 
     // caller must check that iMmsHeaders->ReadOnlyMMBoxMessageHeaders() is not NULL
     CMmsMMBoxMessageHeaders& temp = iMmsHeaders->MMBoxMessageHeadersL();
-    for ( i = 0; i < temp.KeywordArray().Count(); i++ )
+    for ( i = 0; i < temp.KeywordArray().Count(); ++i )
         {
         length = temp.KeywordArray()[i]->Keyword().Length();
         if ( length > 0 )
@@ -4375,7 +4375,7 @@ void CMmsEncode::EncodeAttributes( RArray<TUint>& aAttributeArray )
     {
     TInt i;
 
-    for ( i = 0; i < aAttributeArray.Count(); i++ )
+    for ( i = 0; i < aAttributeArray.Count(); ++i )
         {
         EncodeMandatoryByte( KMmsAssignedAttributes, aAttributeArray[i] );
         }
@@ -4389,7 +4389,7 @@ void CMmsEncode::EncodeMMBoxStates( RArray<TInt>& aStateArray )
     {
     TInt i;
 
-    for ( i = 0; i < aStateArray.Count(); i++ )
+    for ( i = 0; i < aStateArray.Count(); ++i )
         {
         EncodeMandatoryByte( KMmsAssignedMMState, aStateArray[i] );
         }
@@ -4741,7 +4741,7 @@ void CMmsEncode::PreProcessAttachmentDataL()
                 TMmsLogger::Log( _L("CMmsEncode::PreProcessAttachmentData:: store commit success") );                
                 }
 #endif /* _NO_MMSS_LOGGING_ */
-            /*  attachmentInfo ownership is transfered to attachment manager
+            /*  attachmentInfo ownership is transferred to attachment manager
              *  Hence, JUST pop attachmentInfo, DO NOT Destroy.
              */
             CleanupStack::Pop( attachmentInfo );
@@ -4848,7 +4848,7 @@ TBool CMmsEncode::CheckAndUpdateAttachmentL( CMsvAttachment& aAttachmentInfo,
 // ---------------------------------------------------------
 // CMmsEncode::ProcessAndConvertAttachmentDataL
 // converts of attachment data from source to target encoding type.
-// |src charset buffer| --->coverted to ---> |unicode buffer| ---> converted to ---> |target charset|
+// |src charset buffer| --->converted to ---> |unicode buffer| ---> converted to ---> |target charset|
 // Returns false if data is already int target format, or plugins are missing, or file operation issues.
 // ---------------------------------------------------------
 TBool CMmsEncode::ProcessAndConvertAttachmentDataL( TUint aSrcCharSetMIBEnum,

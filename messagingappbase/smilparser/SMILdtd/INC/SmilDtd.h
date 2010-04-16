@@ -24,9 +24,8 @@
 
 #include <e32def.h>
 #include <gmxmldocument.h>
-#ifndef SYMBIAN_ENABLE_SPLIT_HEADERS 
 #include "smildtdenum.h"
-#endif
+
 /**
 MXMLDtd is a mixin class. If User wants  to  derive from MXMLDtd class ,
 then  one  should not derive from any other class at the same time. 

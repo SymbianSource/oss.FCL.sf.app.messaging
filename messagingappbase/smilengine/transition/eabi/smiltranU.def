@@ -1,6 +1,0 @@
-EXPORTS
-	_ZN22CSmilTransitionFactoryC1EP10CFbsBitmap @ 1 NONAME
-	_ZN22CSmilTransitionFactoryC2EP10CFbsBitmap @ 2 NONAME
-	_ZTI22CSmilTransitionFactory @ 3 NONAME ; #<TI>#
-	_ZTV22CSmilTransitionFactory @ 4 NONAME ; #<VT>#
-

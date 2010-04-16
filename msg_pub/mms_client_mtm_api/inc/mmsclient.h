@@ -173,7 +173,7 @@ class CMmsClientMtm :public CBaseMtm
         * // Load the new message
         * iMmsClient->SwitchCurrentEntryL( progress );
         *
-        * // load the default values that were already intialized
+        * // load the default values that were already initialized
         * // when the message was created 
         * iMmsClient->LoadMessageL();
         * 
@@ -992,7 +992,7 @@ class CMmsClientMtm :public CBaseMtm
         *     given as UTC time. If aSending time is zero or in the past, the 
         *     message is scheduled to be sent as soon as possible.
         * @return Pointer to an operation active object. 
-        *     The operation will complete when the sending has been successfully 
+        *     The operation will complete when the sending has been successfuly 
         *     scheduled. The actual sending will happen in the background. 
         *     If scheduling the send fails, the status of CMsvOperation will 
         *     contain the relevant error code. The operation object must not 
@@ -1049,7 +1049,7 @@ class CMmsClientMtm :public CBaseMtm
         * - ETrue: User initiated fetch, use override.
         * - EFalse: Event triggered fetch, fetch only if settings allow.
         * @return Pointer to an operation active object. 
-        *     The operation will complete when the retrieving has been successfully 
+        *     The operation will complete when the retrieving has been successfuly 
         *     scheduled. The actual retrieving will happen in the background. 
         *     If scheduling the fetch fails, the status of CMsvOperation will 
         *     contain the relevant error code. The operation object must not 
@@ -1628,7 +1628,7 @@ class CMmsClientMtm :public CBaseMtm
         */
         void CancelAttachmentOperation();
 
-        // End of attachment funtions to support SendAs
+        // End of attachment functions to support SendAs
 
         /**
         * From CBaseMtm: Create an empty entry as the child of the current context.

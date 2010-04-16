@@ -1,0 +1,13 @@
+<animations>
+<icon name="frame_anim_looping" playmode="loop">
+<frame duration="100">:/qtg_anim_longtap_1.svg</frame>
+<frame duration="100">:/qtg_anim_longtap_2.svg</frame>
+<frame duration="100">:/qtg_anim_longtap_3.svg</frame>
+<frame duration="100">:/qtg_anim_longtap_4.svg</frame>
+<frame duration="100">:/qtg_anim_longtap_5.svg</frame>
+<frame duration="100">:/qtg_anim_longtap_6.svg</frame>
+<frame duration="100">:/qtg_anim_longtap_7.svg</frame>
+<frame duration="100">:/qtg_anim_longtap_8.svg</frame>
+<frame duration="100">:/qtg_anim_longtap_9.svg</frame>
+</icon>
+</animations>

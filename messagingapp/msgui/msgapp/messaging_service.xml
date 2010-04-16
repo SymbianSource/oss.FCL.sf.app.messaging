@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>  
+<service>
+  <name>com.nokia.services.hbserviceprovider</name>
+  <filepath>No path</filepath>
+  <description>Conversation View</description>
+  <interface>
+     <name>imessage.send</name>
+     <version>1.0</version>
+     <description>Send interface</description>
+     <customproperty key="txt_aiw_action_text">Attach to new message</customproperty>
+   </interface>
+   <interface>
+  <name>conversationview</name>
+     <version>1.0</version>
+     <description>ConversationView</description>
+  </interface> 
+</service>

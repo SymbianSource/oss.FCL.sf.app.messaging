@@ -1,0 +1,6 @@
+<RCC>
+  <qresource>
+		<file alias="msglistviewitemwidget.css">resources/msglistviewitemwidget.css</file>
+		<file alias="msglistviewitemwidget.widgetml">resources/msglistviewitemwidget.widgetml</file>
+  </qresource>
+</RCC>

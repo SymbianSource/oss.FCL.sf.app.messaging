@@ -27,12 +27,14 @@ TARGETTYPE		dll
 CAPABILITY All -TCB
 UID				0x1000008d 0x10009ED0 //KObexClientMtmV1DllUid
 VENDORID 0x70000001
+VERSION 	10.0
+PAGED
 
 SOURCEPATH		../source
 SOURCE			obexClientMtm.cpp obexClientMtmMain.cpp
 
 USERINCLUDE		../include 
-APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+APP_LAYER_SYSTEMINCLUDE
 
 LIBRARY			euser.lib bafl.lib msgs.lib
 LIBRARY			efsrv.lib

@@ -1,0 +1,20 @@
+EXPORTS
+	_ZN15MsgSettingsView11qt_metacallEN11QMetaObject4CallEiPPv @ 1 NONAME
+	_ZN15MsgSettingsView11qt_metacastEPKc @ 2 NONAME
+	_ZN15MsgSettingsView13closeSettingsEv @ 3 NONAME
+	_ZN15MsgSettingsView16staticMetaObjectE @ 4 NONAME DATA 16
+	_ZN15MsgSettingsView18connectCloseActionEv @ 5 NONAME
+	_ZN15MsgSettingsView19getStaticMetaObjectEv @ 6 NONAME
+	_ZN15MsgSettingsViewC1EP13QGraphicsItem @ 7 NONAME
+	_ZN15MsgSettingsViewC2EP13QGraphicsItem @ 8 NONAME
+	_ZN15MsgSettingsViewD0Ev @ 9 NONAME
+	_ZN15MsgSettingsViewD1Ev @ 10 NONAME
+	_ZN15MsgSettingsViewD2Ev @ 11 NONAME
+	_ZNK15MsgSettingsView10metaObjectEv @ 12 NONAME
+	_ZTI15MsgSettingsView @ 13 NONAME
+	_ZTV15MsgSettingsView @ 14 NONAME
+	_ZThn16_N15MsgSettingsViewD0Ev @ 15 NONAME
+	_ZThn16_N15MsgSettingsViewD1Ev @ 16 NONAME
+	_ZThn8_N15MsgSettingsViewD0Ev @ 17 NONAME
+	_ZThn8_N15MsgSettingsViewD1Ev @ 18 NONAME
+

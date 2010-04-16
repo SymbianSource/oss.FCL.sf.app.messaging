@@ -20,16 +20,13 @@
 
 
 // INCLUDE FILES
-#ifdef SYMBIAN_ENABLE_SPLIT_HEADERS
-#include <logwraplimits.h>
-#endif
 #include    <badesca.h>
 #include    <msvids.h>
 #include    <logcli.h>
 #include    <logview.h>
 // common component
 #include    <sysutil.h>
-#include    <LogsApiConsts.h>
+#include    "LogsApiConsts.h"
 
 // MMS specific
 #include    "mmsconst.h"
@@ -616,23 +613,23 @@ void CMmsLog::UpdateEntryL()
     // This will mark the entry as "sent" or "delivered" or "failed"
     // or something similar...
     TBool doNotUpdate = EFalse;
-    if ( iLogUpdatedEvent->Status().CompareF( KLogsMsgReadText ) == 0 )
-        {
-        // If the status is already "read" we don't change it
-        // This is a case where a delivery report arrives after a read report.
-        // Highly unlikely, but possible
-        doNotUpdate = ETrue;
-#ifndef _NO_MMSS_LOGGING_
-        TMmsLogger::Log( _L("Status already updated to read - do not update again"));
-#endif
-        }
-    else
-        {
-        iLogUpdatedEvent->SetStatus( iLogEvent->Status() );
-        // Clear the event read flag in case the user has cleared the log view
-        // We want this to become visible again.
-        iLogUpdatedEvent->ClearFlags( KLogEventRead );
-        }
+     if ( iLogUpdatedEvent->Status().CompareF( KLogsMsgReadText ) == 0 )
+         {
+         // If the status is already "read" we don't change it
+         // This is a case where a delivery report arrives after a read report.
+         // Highly unlikely, but possible
+         doNotUpdate = ETrue;
+ #ifndef _NO_MMSS_LOGGING_
+         TMmsLogger::Log( _L("Status already updated to read - do not update again"));
+ #endif
+         }
+     else
+         {
+         iLogUpdatedEvent->SetStatus( iLogEvent->Status() );
+         // Clear the event read flag in case the user has cleared the log view
+         // We want this to become visible again.
+         iLogUpdatedEvent->ClearFlags( KLogEventRead );
+         }
     // if we have a message id, store it
     if ( ( iLogUpdatedEvent->Data().Length() <= 0 ) &&
         ( iLogEvent->Data().Length() > 0 ) )

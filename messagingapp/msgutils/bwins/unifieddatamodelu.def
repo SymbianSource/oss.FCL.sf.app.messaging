@@ -1,0 +1,23 @@
+EXPORTS
+	?setPath@MsgObjectsInfo@@QAEXABVQString@@@Z @ 1 NONAME ; void MsgObjectsInfo::setPath(class QString const &)
+	?serialize@MsgObjectsInfo@@QBEXAAVQDataStream@@@Z @ 2 NONAME ; void MsgObjectsInfo::serialize(class QDataStream &) const
+	?slideContent@UnifiedDataModel@@QAE?AV?$QList@PAVMsgObjectsInfo@@@@H@Z @ 3 NONAME ; class QList<class MsgObjectsInfo *> UnifiedDataModel::slideContent(int)
+	?slideCount@UnifiedDataModel@@QAEHXZ @ 4 NONAME ; int UnifiedDataModel::slideCount(void)
+	?objectsList@UnifiedDataModel@@QAE?AV?$QList@PAVMsgObjectsInfo@@@@XZ @ 5 NONAME ; class QList<class MsgObjectsInfo *> UnifiedDataModel::objectsList(void)
+	?setSize@MsgObjectsInfo@@QAEXH@Z @ 6 NONAME ; void MsgObjectsInfo::setSize(int)
+	??0MsgObjectsInfo@@QAE@ABVQString@@H0@Z @ 7 NONAME ; MsgObjectsInfo::MsgObjectsInfo(class QString const &, int, class QString const &)
+	?setMimeType@MsgObjectsInfo@@QAEXABVQString@@@Z @ 8 NONAME ; void MsgObjectsInfo::setMimeType(class QString const &)
+	?deserialize@MsgObjectsInfo@@QAEXAAVQDataStream@@@Z @ 9 NONAME ; void MsgObjectsInfo::deserialize(class QDataStream &)
+	?updateContents@UnifiedDataModel@@QAEXXZ @ 10 NONAME ; void UnifiedDataModel::updateContents(void)
+	?NewL@CConformanceChecker@@SAPAV1@XZ @ 11 NONAME ; class CConformanceChecker * CConformanceChecker::NewL(void)
+	?hasAttachments@UnifiedDataModel@@QAE_NXZ @ 12 NONAME ; bool UnifiedDataModel::hasAttachments(void)
+	??1UnifiedDataModel@@QAE@XZ @ 13 NONAME ; UnifiedDataModel::~UnifiedDataModel(void)
+	?mimetype@MsgObjectsInfo@@QAEABVQString@@XZ @ 14 NONAME ; class QString const & MsgObjectsInfo::mimetype(void)
+	?path@MsgObjectsInfo@@QAEABVQString@@XZ @ 15 NONAME ; class QString const & MsgObjectsInfo::path(void)
+	??0UnifiedDataModel@@QAE@AAVCBaseMtm@@@Z @ 16 NONAME ; UnifiedDataModel::UnifiedDataModel(class CBaseMtm &)
+	?attachmentsList@UnifiedDataModel@@QAE?AV?$QList@PAVMsgObjectsInfo@@@@XZ @ 17 NONAME ; class QList<class MsgObjectsInfo *> UnifiedDataModel::attachmentsList(void)
+	?objectCount@UnifiedDataModel@@QAEHXZ @ 18 NONAME ; int UnifiedDataModel::objectCount(void)
+	?attachmentCount@UnifiedDataModel@@QAEHXZ @ 19 NONAME ; int UnifiedDataModel::attachmentCount(void)
+	?size@MsgObjectsInfo@@QAEHXZ @ 20 NONAME ; int MsgObjectsInfo::size(void)
+	??1MsgObjectsInfo@@QAE@XZ @ 21 NONAME ; MsgObjectsInfo::~MsgObjectsInfo(void)
+

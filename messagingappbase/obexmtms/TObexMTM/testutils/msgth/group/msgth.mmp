@@ -19,9 +19,9 @@ TARGETTYPE      dll
 CAPABILITY All -TCB
 UID             0x1000008d 0x1000cafe
 VENDORID 0x70000001
-SOURCEPATH      ..\src
+SOURCEPATH      ../src
 SOURCE          harness.cpp commands.cpp parsers.cpp testframeparse.cpp testframeutils.cpp
-USERINCLUDE     ..\inc
+USERINCLUDE     ../inc
 USERINCLUDE		../../../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/base/inc
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 OS_LAYER_ESTLIB_SYSTEMINCLUDE  

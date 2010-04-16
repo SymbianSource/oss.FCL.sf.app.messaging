@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
+<svg baseProfile="tiny" height="75px" version="1.1" viewBox="-1.5 -1.6 75 75" width="75px" x="0px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" y="0px">
+<linearGradient gradientUnits="userSpaceOnUse" id="SVGID_1_" x1="0" x2="19.814" y1="23.1826" y2="23.1826">
+<stop offset="0" style="stop-color:#3B87C0"/>
+<stop offset="1" style="stop-color:#0069B2"/>
+</linearGradient>
+<path d="M13.8,35.3c0.2-5.6,2.4-10.7,6-14.5L10,11.1C4,17.4,0.2,25.9,0,35.3H13.8z" fill="url(#SVGID_1_)"/>
+<linearGradient gradientUnits="userSpaceOnUse" id="SVGID_2_" x1="11.0552" x2="35.3105" y1="9.9063" y2="9.9063">
+<stop offset="0" style="stop-color:#3B87C0"/>
+<stop offset="1" style="stop-color:#0069B2"/>
+</linearGradient>
+<path d="M20.8,19.8c3.8-3.6,8.9-5.8,14.5-6V0c-9.4,0.2-17.9,4-24.3,10L20.8,19.8z" fill="url(#SVGID_2_)"/>
+<path d="M36.7,0v13.8c5.6,0.2,10.7,2.4,14.5,6L61,10C54.7,4,46.1,0.2,36.7,0z" fill="#5AB85B"/>
+<linearGradient gradientUnits="userSpaceOnUse" id="SVGID_3_" x1="0" x2="19.814" y1="48.8647" y2="48.8647">
+<stop offset="0" style="stop-color:#3B87C0"/>
+<stop offset="1" style="stop-color:#0069B2"/>
+</linearGradient>
+<path d="M19.8,51.2c-3.6-3.8-5.8-8.9-6-14.5H0C0.2,46.1,4,54.7,10,61L19.8,51.2z" fill="url(#SVGID_3_)"/>
+<path d="M52.2,20.8c3.6,3.8,5.8,8.9,6,14.5H72c-0.2-9.4-4-17.9-10-24.3L52.2,20.8z" fill="#5AB85B"/>
+<linearGradient gradientUnits="userSpaceOnUse" id="SVGID_4_" x1="11.0552" x2="35.3105" y1="62.1421" y2="62.1421">
+<stop offset="0" style="stop-color:#3B87C0"/>
+<stop offset="1" style="stop-color:#0069B2"/>
+</linearGradient>
+<path d="M35.3,58.2c-5.6-0.2-10.7-2.4-14.5-6L11.1,62c6.3,6.1,14.8,9.9,24.3,10V58.2z" fill="url(#SVGID_4_)"/>
+<path d="M51.2,52.2c-3.8,3.6-8.9,5.8-14.5,6V72c9.4-0.2,17.9-4,24.3-10L51.2,52.2z" fill="#424242"/>
+<linearGradient gradientTransform="matrix(1 0 0 1 -1269.75 -3487.3887)" gradientUnits="userSpaceOnUse" id="SVGID_5_" x1="1306.4873" x2="1311.042" y1="3494.2671" y2="3494.2671">
+<stop offset="0" style="stop-color:#3B87C0"/>
+<stop offset="1" style="stop-color:#0069B2"/>
+</linearGradient>
+<polygon fill="url(#SVGID_5_)" points="41.3,6.9 36.7,13.8 36.7,0 41.3,6.9 "/>
+<path d="M58.3,36.7L58.3,36.7c-0.2,5.6-2.5,10.7-6.1,14.5L62,61c6.1-6.3,9.9-14.8,10-24.3H58.3z" fill="#424242"/>
+</svg>

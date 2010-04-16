@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
+<svg baseProfile="tiny" height="98" viewBox="0 0 98 98" width="98" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g>
+<linearGradient gradientUnits="userSpaceOnUse" id="SVGID_1_" x1="48.9995" x2="48.9995" y1="23.8706" y2="73.753">
+<stop offset="0" style="stop-color:#FEEFA7"/>
+<stop offset="0.5091" style="stop-color:#FFC501"/>
+<stop offset="1" style="stop-color:#F6A800"/>
+</linearGradient>
+<polygon fill="url(#SVGID_1_)" points="84,74.5 14,74.5 14,23.5 49.579,24.5 84,23.5 "/>
+<linearGradient gradientUnits="userSpaceOnUse" id="SVGID_2_" x1="48.9995" x2="48.9995" y1="23.627" y2="74.8003">
+<stop offset="0" style="stop-color:#F7AC00"/>
+<stop offset="0.3394" style="stop-color:#FFF8DB"/>
+<stop offset="1" style="stop-color:#FFE066"/>
+</linearGradient>
+<path d="M83.23,24.275v49.449H14.77V24.275H83.23 M84,23.5l-35.249,0.42L14,23.5v51h70V23.5L84,23.5z" fill="url(#SVGID_2_)"/>
+<polygon fill="#FBAB13" fill-opacity="0.3" points="14,73.637 84,73.637 84,72.645 48.999,41.91 14,72.645 " stroke-opacity="0.3"/>
+<polygon fill="#F18800" fill-opacity="0.3" points="14,74.5 84,74.5 84,73.504 48.999,42.773 14,73.504 " stroke-opacity="0.3"/>
+<linearGradient gradientTransform="matrix(-1 0 0 -1 -1118.3896 -657.6523)" gradientUnits="userSpaceOnUse" id="SVGID_3_" x1="-1167.3896" x2="-1167.3896" y1="-701.0981" y2="-731.9614">
+<stop offset="0" style="stop-color:#F98A00"/>
+<stop offset="0.7273" style="stop-color:#FCBC3C"/>
+<stop offset="1" style="stop-color:#FFE36A"/>
+</linearGradient>
+<polygon fill="url(#SVGID_3_)" points="84,74.475 48.999,43.611 14,74.475 "/>
+<linearGradient gradientUnits="userSpaceOnUse" id="SVGID_4_" x1="48.9995" x2="48.9995" y1="43.374" y2="75.3424">
+<stop offset="0" style="stop-color:#FFF1B5"/>
+<stop offset="1" style="stop-color:#FFE066"/>
+</linearGradient>
+<polygon fill="url(#SVGID_4_)" points="84,74.475 48.999,43.611 14,74.475 48.999,44.705 "/>
+<polygon fill="#F18800" fill-opacity="0.3" points="49.07,24.5 14,23.5 48.999,59.771 84,23.5 " stroke-opacity="0.3"/>
+<polygon fill="#C26D00" fill-opacity="0.4" points="49.007,24.5 14,23.5 48.999,57.863 84,23.5 " stroke-opacity="0.4"/>
+<polygon fill="#AB6100" fill-opacity="0.4" points="48.879,24.371 14,23.5 48.999,56.252 84,23.5 " stroke-opacity="0.4"/>
+<linearGradient gradientUnits="userSpaceOnUse" id="SVGID_5_" x1="49.0005" x2="49.0005" y1="52.7031" y2="21.5113">
+<stop offset="0" style="stop-color:#FFDA33"/>
+<stop offset="0.25" style="stop-color:#FFE692"/>
+<stop offset="1" style="stop-color:#FFFBF8"/>
+</linearGradient>
+<polygon fill="url(#SVGID_5_)" points="14,23.5 48.999,54.363 84,23.5 "/>
+<rect fill="none" height="98" width="98"/>
+</g>
+</svg>

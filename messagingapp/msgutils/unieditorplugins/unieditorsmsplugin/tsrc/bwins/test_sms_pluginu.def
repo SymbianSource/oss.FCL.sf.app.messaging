@@ -1,0 +1,21 @@
+EXPORTS
+	qt_plugin_instance @ 1 NONAME
+	qt_plugin_query_verification_data @ 2 NONAME
+	?initTestCase@TestSmsPlugin@@AAEXXZ @ 3 NONAME ; void TestSmsPlugin::initTestCase(void)
+	?qt_metacast@TestSmsPlugin@@UAEPAXPBD@Z @ 4 NONAME ; void * TestSmsPlugin::qt_metacast(char const *)
+	?cleanupTestCase@TestSmsPlugin@@AAEXXZ @ 5 NONAME ; void TestSmsPlugin::cleanupTestCase(void)
+	?qt_metacall@TestSmsPlugin@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 6 NONAME ; int TestSmsPlugin::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?trUtf8@TestSmsPlugin@@SA?AVQString@@PBD0H@Z @ 7 NONAME ; class QString TestSmsPlugin::trUtf8(char const *, char const *, int)
+	?trUtf8@TestSmsPlugin@@SA?AVQString@@PBD0@Z @ 8 NONAME ; class QString TestSmsPlugin::trUtf8(char const *, char const *)
+	?validateMsg@TestSmsPlugin@@AAEXABVConvergedMessage@@ABVQString@@@Z @ 9 NONAME ; void TestSmsPlugin::validateMsg(class ConvergedMessage const &, class QString const &)
+	?staticMetaObject@TestSmsPlugin@@2UQMetaObject@@B @ 10 NONAME ; struct QMetaObject const TestSmsPlugin::staticMetaObject
+	?testReceived@TestSmsPlugin@@AAEXH@Z @ 11 NONAME ; void TestSmsPlugin::testReceived(int)
+	?createAndSend@TestSmsPlugin@@AAEXH@Z @ 12 NONAME ; void TestSmsPlugin::createAndSend(int)
+	?init@TestSmsPlugin@@AAEXXZ @ 13 NONAME ; void TestSmsPlugin::init(void)
+	?tr@TestSmsPlugin@@SA?AVQString@@PBD0H@Z @ 14 NONAME ; class QString TestSmsPlugin::tr(char const *, char const *, int)
+	?testSendReceiveSMS@TestSmsPlugin@@AAEXXZ @ 15 NONAME ; void TestSmsPlugin::testSendReceiveSMS(void)
+	?tr@TestSmsPlugin@@SA?AVQString@@PBD0@Z @ 16 NONAME ; class QString TestSmsPlugin::tr(char const *, char const *)
+	?metaObject@TestSmsPlugin@@UBEPBUQMetaObject@@XZ @ 17 NONAME ; struct QMetaObject const * TestSmsPlugin::metaObject(void) const
+	?getStaticMetaObject@TestSmsPlugin@@SAABUQMetaObject@@XZ @ 18 NONAME ; struct QMetaObject const & TestSmsPlugin::getStaticMetaObject(void)
+	?cleanup@TestSmsPlugin@@AAEXXZ @ 19 NONAME ; void TestSmsPlugin::cleanup(void)
+

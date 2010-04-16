@@ -21,8 +21,7 @@ CAPABILITY All -TCB
 SOURCEPATH		../src
 USERINCLUDE		../inc 
 SOURCE        T_MmsSettings.cpp
-APP_LAYER_SYSTEMINCLUDE_SYMBIAN
-USERINCLUDE		../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/base/inc
+SYSTEMINCLUDE /epoc32/include
 LIBRARY       euser.lib efsrv.lib
 LIBRARY       msvtestutils.lib
 LIBRARY		mmsgenericsettings.lib 

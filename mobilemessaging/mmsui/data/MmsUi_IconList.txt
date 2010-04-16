@@ -1,6 +1,0 @@
--c8,8 qgn_graf_mms_play
--c8,8 qgn_indi_mce_priority_low
--c8,8 qgn_indi_mce_priority_high
--c8,8 qgn_prop_mce_mms_title
--c8,8 qgn_indi_tb_retrieve_mms
-	

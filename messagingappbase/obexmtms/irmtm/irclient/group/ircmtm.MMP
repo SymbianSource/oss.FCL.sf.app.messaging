@@ -31,13 +31,15 @@ CAPABILITY All -TCB
 TARGETPATH      /system/libs
 UID		0x10003C5F 0x100053A1 // 0x10003C5F = KUidMtmClientComponent
 VENDORID 0x70000001
+VERSION 	10.0
+PAGED
 
 SOURCEPATH	../source
 SOURCE			Ircmtm.cpp IRCMAIN.CPP irHeader.cpp
 SOURCE		CIRCancelObserver.cpp
 
 USERINCLUDE		../include ../../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/inc
-APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+APP_LAYER_SYSTEMINCLUDE
 
 LIBRARY			euser.lib msgs.lib  // imcm.lib etext.lib  
 LIBRARY         irda.lib//-- Obex object send

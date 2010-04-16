@@ -1,0 +1,56 @@
+EXPORTS
+	?CloneL@CCsClientConversation@@QBEPAV1@XZ @ 1 NONAME ; class CCsClientConversation * CCsClientConversation::CloneL(void) const
+	?NewL@CCsDebug@@SAPAV1@XZ @ 2 NONAME ; class CCsDebug * CCsDebug::NewL(void)
+	??1CCsConversationEntry@@UAE@XZ @ 3 NONAME ; CCsConversationEntry::~CCsConversationEntry(void)
+	?Mark@CCsDebug@@QAAXV?$TRefByValue@$$CBVTDesC16@@@@ZZ @ 4 NONAME ; void CCsDebug::Mark(class TRefByValue<class TDesC16 const >, ...)
+	?SetConversationEntryL@CCsClientConversation@@QAEXPBVCCsConversationEntry@@@Z @ 5 NONAME ; void CCsClientConversation::SetConversationEntryL(class CCsConversationEntry const *)
+	?Description@CCsConversationEntry@@QBEPAVHBufC16@@XZ @ 6 NONAME ; class HBufC16 * CCsConversationEntry::Description(void) const
+	?SetUnreadMessageCount@CCsClientConversation@@QAEXG@Z @ 7 NONAME ; void CCsClientConversation::SetUnreadMessageCount(unsigned short)
+	?ChangeAttributes@CCsConversationEntry@@QAEXGG@Z @ 8 NONAME ; void CCsConversationEntry::ChangeAttributes(unsigned short, unsigned short)
+	?NewL@CCsClientConversation@@SAPAV1@XZ @ 9 NONAME ; class CCsClientConversation * CCsClientConversation::NewL(void)
+	?Compare@CCsConversationEntry@@SAHABV1@0@Z @ 10 NONAME ; int CCsConversationEntry::Compare(class CCsConversationEntry const &, class CCsConversationEntry const &)
+	?GetType@CCsConversationEntry@@QBEEXZ @ 11 NONAME ; unsigned char CCsConversationEntry::GetType(void) const
+	?GetConversationEntryId@CCsClientConversation@@QBEHXZ @ 12 NONAME ; int CCsClientConversation::GetConversationEntryId(void) const
+	?EntryId@CCsConversationEntry@@QBEHXZ @ 13 NONAME ; int CCsConversationEntry::EntryId(void) const
+	?CompareByConversationEntryId@CCsClientConversation@@SAHABV1@0@Z @ 14 NONAME ; int CCsClientConversation::CompareByConversationEntryId(class CCsClientConversation const &, class CCsClientConversation const &)
+	?InternalizeL@CCsConversationEntry@@UAEXAAVRReadStream@@@Z @ 15 NONAME ; void CCsConversationEntry::InternalizeL(class RReadStream &)
+	?__LatencyMarkEnd@CCsDebugWrapper@@SAXV?$TRefByValue@$$CBVTDesC16@@@@@Z @ 16 NONAME ; void CCsDebugWrapper::__LatencyMarkEnd(class TRefByValue<class TDesC16 const >)
+	?SetSendState@CCsConversationEntry@@QAEXABE@Z @ 17 NONAME ; void CCsConversationEntry::SetSendState(unsigned char const &)
+	?SetConversationEntryId@CCsClientConversation@@QAEXH@Z @ 18 NONAME ; void CCsClientConversation::SetConversationEntryId(int)
+	?IsEmpty@CCsDebugArr@@QAEHXZ @ 19 NONAME ; int CCsDebugArr::IsEmpty(void)
+	?GetContactId@CCsClientConversation@@QBEJXZ @ 20 NONAME ; long CCsClientConversation::GetContactId(void) const
+	?SetNickNameL@CCsClientConversation@@QAEXPBVHBufC16@@@Z @ 21 NONAME ; void CCsClientConversation::SetNickNameL(class HBufC16 const *)
+	?Contact@CCsConversationEntry@@QBEPAVHBufC16@@XZ @ 22 NONAME ; class HBufC16 * CCsConversationEntry::Contact(void) const
+	?GetConversationEntry@CCsClientConversation@@QBEPAVCCsConversationEntry@@XZ @ 23 NONAME ; class CCsConversationEntry * CCsClientConversation::GetConversationEntry(void) const
+	?__LatencyMarkStartL@CCsDebugWrapper@@SAXV?$TRefByValue@$$CBVTDesC16@@@@@Z @ 24 NONAME ; void CCsDebugWrapper::__LatencyMarkStartL(class TRefByValue<class TDesC16 const >)
+	?CompareById@CCsConversationEntry@@SAHABV1@0@Z @ 25 NONAME ; int CCsConversationEntry::CompareById(class CCsConversationEntry const &, class CCsConversationEntry const &)
+	?GetNickName@CCsClientConversation@@QBEPAVHBufC16@@XZ @ 26 NONAME ; class HBufC16 * CCsClientConversation::GetNickName(void) const
+	?GetSendState@CCsConversationEntry@@QBEEXZ @ 27 NONAME ; unsigned char CCsConversationEntry::GetSendState(void) const
+	?SetType@CCsConversationEntry@@QAEXABE@Z @ 28 NONAME ; void CCsConversationEntry::SetType(unsigned char const &)
+	?Push@CCsDebugArr@@QAEXAAVCCsDebug@@@Z @ 29 NONAME ; void CCsDebugArr::Push(class CCsDebug &)
+	??1CCsClientConversation@@UAE@XZ @ 30 NONAME ; CCsClientConversation::~CCsClientConversation(void)
+	?CompareByUnreadAttrib@CCsConversationEntry@@SAHABV1@0@Z @ 31 NONAME ; int CCsConversationEntry::CompareByUnreadAttrib(class CCsConversationEntry const &, class CCsConversationEntry const &)
+	?SetTimeStampL@CCsConversationEntry@@QAEX_J@Z @ 32 NONAME ; void CCsConversationEntry::SetTimeStampL(long long)
+	?SetLastNameL@CCsClientConversation@@QAEXPBVHBufC16@@@Z @ 33 NONAME ; void CCsClientConversation::SetLastNameL(class HBufC16 const *)
+	?SetFirstNameL@CCsClientConversation@@QAEXPBVHBufC16@@@Z @ 34 NONAME ; void CCsClientConversation::SetFirstNameL(class HBufC16 const *)
+	?Pop@CCsDebugArr@@QAEPAVCCsDebug@@XZ @ 35 NONAME ; class CCsDebug * CCsDebugArr::Pop(void)
+	?SetContactL@CCsConversationEntry@@QAEXABVTDesC16@@@Z @ 36 NONAME ; void CCsConversationEntry::SetContactL(class TDesC16 const &)
+	?SetConversationDir@CCsConversationEntry@@QAEXE@Z @ 37 NONAME ; void CCsConversationEntry::SetConversationDir(unsigned char)
+	?SetEntryId@CCsConversationEntry@@QAEXH@Z @ 38 NONAME ; void CCsConversationEntry::SetEntryId(int)
+	?SetDescriptionL@CCsConversationEntry@@QAEXABVTDesC16@@@Z @ 39 NONAME ; void CCsConversationEntry::SetDescriptionL(class TDesC16 const &)
+	?InternalizeL@CCsClientConversation@@UAEXAAVRReadStream@@@Z @ 40 NONAME ; void CCsClientConversation::InternalizeL(class RReadStream &)
+	?SetContactId@CCsClientConversation@@QAEXJ@Z @ 41 NONAME ; void CCsClientConversation::SetContactId(long)
+	?ConversationDir@CCsConversationEntry@@QBEEXZ @ 42 NONAME ; unsigned char CCsConversationEntry::ConversationDir(void) const
+	?GetLastName@CCsClientConversation@@QBEPAVHBufC16@@XZ @ 43 NONAME ; class HBufC16 * CCsClientConversation::GetLastName(void) const
+	?ExternalizeL@CCsConversationEntry@@UBEXAAVRWriteStream@@@Z @ 44 NONAME ; void CCsConversationEntry::ExternalizeL(class RWriteStream &) const
+	?GetUnreadMessageCount@CCsClientConversation@@QBEGXZ @ 45 NONAME ; unsigned short CCsClientConversation::GetUnreadMessageCount(void) const
+	?IsAttributeSet@CCsConversationEntry@@QBEHG@Z @ 46 NONAME ; int CCsConversationEntry::IsAttributeSet(unsigned short) const
+	?NewL@CCsConversationEntry@@SAPAV1@XZ @ 47 NONAME ; class CCsConversationEntry * CCsConversationEntry::NewL(void)
+	?TimeStamp@CCsConversationEntry@@QBE_JXZ @ 48 NONAME ; long long CCsConversationEntry::TimeStamp(void) const
+	?CloneL@CCsConversationEntry@@QBEPAV1@XZ @ 49 NONAME ; class CCsConversationEntry * CCsConversationEntry::CloneL(void) const
+	?NewL@CCsDebugArr@@SAPAV1@XZ @ 50 NONAME ; class CCsDebugArr * CCsDebugArr::NewL(void)
+	?CompareByTimeStamp@CCsClientConversation@@SAHABV1@0@Z @ 51 NONAME ; int CCsClientConversation::CompareByTimeStamp(class CCsClientConversation const &, class CCsClientConversation const &)
+	?UnMark@CCsDebug@@QAAXV?$TRefByValue@$$CBVTDesC16@@@@ZZ @ 52 NONAME ; void CCsDebug::UnMark(class TRefByValue<class TDesC16 const >, ...)
+	?ExternalizeL@CCsClientConversation@@UBEXAAVRWriteStream@@@Z @ 53 NONAME ; void CCsClientConversation::ExternalizeL(class RWriteStream &) const
+	?GetFirstName@CCsClientConversation@@QBEPAVHBufC16@@XZ @ 54 NONAME ; class HBufC16 * CCsClientConversation::GetFirstName(void) const
+

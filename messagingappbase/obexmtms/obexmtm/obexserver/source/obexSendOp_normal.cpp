@@ -43,7 +43,7 @@
 // should really be called obex.dll now that it supports more than IR)
 const TInt KErrIrObexClientFirstPutFailed = -5510;
 
-// Obex Send Operation specific Konstants 
+// Obex Send Operation specific constants 
 _LIT8(KObexClientLocalWho,"Epoc device");
 
 //
@@ -181,7 +181,7 @@ void CObexServerSendOperation::RealRunL()
 		// Attempt an OBEX connect. 
 		// If Connect is not successful (see TObexMtmProgress::EConnectAttemptComplete
 		// below) then we will return to this state and try to connect again, this will
-		// continue until we succesfully connect or iConnectTimeout expires.
+		// continue until we successfully connect or iConnectTimeout expires.
 		iSendState=TObexMtmProgress::EConnectAttemptComplete;
 		iStatus=KRequestPending;
 		SetActive();

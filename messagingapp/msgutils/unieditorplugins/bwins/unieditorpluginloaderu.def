@@ -1,0 +1,7 @@
+EXPORTS
+	?loadPlugins@UniEditorPluginLoader@@QAEXXZ @ 1 NONAME ; void UniEditorPluginLoader::loadPlugins(void)
+	??1UniEditorPluginLoader@@UAE@XZ @ 2 NONAME ; UniEditorPluginLoader::~UniEditorPluginLoader(void)
+	??0UniEditorPluginLoader@@QAE@PAVQObject@@@Z @ 3 NONAME ; UniEditorPluginLoader::UniEditorPluginLoader(class QObject *)
+	?getUniEditorPlugin@UniEditorPluginLoader@@QAEPAVUniEditorPluginInterface@@W4MessageType@ConvergedMessage@@@Z @ 4 NONAME ; class UniEditorPluginInterface * UniEditorPluginLoader::getUniEditorPlugin(enum ConvergedMessage::MessageType)
+	??_EUniEditorPluginLoader@@UAE@I@Z @ 5 NONAME ; UniEditorPluginLoader::~UniEditorPluginLoader(unsigned int)
+

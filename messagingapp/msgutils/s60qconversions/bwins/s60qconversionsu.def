@@ -1,0 +1,6 @@
+EXPORTS
+	?qStringToS60Desc8@S60QConversions@@SAPAVHBufC8@@ABVQString@@@Z @ 1 NONAME ; class HBufC8 * S60QConversions::qStringToS60Desc8(class QString const &)
+	?qStringToS60Desc@S60QConversions@@SAPAVHBufC16@@ABVQString@@@Z @ 2 NONAME ; class HBufC16 * S60QConversions::qStringToS60Desc(class QString const &)
+	?s60Desc8ToQString@S60QConversions@@SA?AVQString@@ABVTDesC8@@@Z @ 3 NONAME ; class QString S60QConversions::s60Desc8ToQString(class TDesC8 const &)
+	?s60DescToQString@S60QConversions@@SA?AVQString@@ABVTDesC16@@@Z @ 4 NONAME ; class QString S60QConversions::s60DescToQString(class TDesC16 const &)
+

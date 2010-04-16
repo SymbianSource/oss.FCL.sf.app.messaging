@@ -1,2 +1,0 @@
--c8,8 qgn_menu_mce_lst
--c8,8 qgn_menu_mce_cxt

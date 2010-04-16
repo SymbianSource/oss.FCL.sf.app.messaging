@@ -1,0 +1,22 @@
+EXPORTS
+	?saveContentToDrafts@MsgConversationBaseView@@QAE_NXZ @ 1 NONAME ; bool MsgConversationBaseView::saveContentToDrafts(void)
+	?qt_metacast@MsgConversationBaseView@@UAEPAXPBD@Z @ 2 NONAME ; void * MsgConversationBaseView::qt_metacast(char const *)
+	?metaObject@MsgConversationBaseView@@UBEPBUQMetaObject@@XZ @ 3 NONAME ; struct QMetaObject const * MsgConversationBaseView::metaObject(void) const
+	?closeConversationView@MsgConversationBaseView@@QAEXXZ @ 4 NONAME ; void MsgConversationBaseView::closeConversationView(void)
+	?trUtf8@MsgConversationBaseView@@SA?AVQString@@PBD0H@Z @ 5 NONAME ; class QString MsgConversationBaseView::trUtf8(char const *, char const *, int)
+	?tr@MsgConversationBaseView@@SA?AVQString@@PBD0H@Z @ 6 NONAME ; class QString MsgConversationBaseView::tr(char const *, char const *, int)
+	??0MsgConversationBaseView@@QAE@PAVQGraphicsItem@@@Z @ 7 NONAME ; MsgConversationBaseView::MsgConversationBaseView(class QGraphicsItem *)
+	?trUtf8@MsgConversationBaseView@@SA?AVQString@@PBD0@Z @ 8 NONAME ; class QString MsgConversationBaseView::trUtf8(char const *, char const *)
+	?openConversation@MsgConversationBaseView@@QAEX_J@Z @ 9 NONAME ; void MsgConversationBaseView::openConversation(long long)
+	?openContactDetails@MsgConversationBaseView@@AAEXXZ @ 10 NONAME ; void MsgConversationBaseView::openContactDetails(void)
+	?conversationViewClosed@MsgConversationBaseView@@IAEXXZ @ 11 NONAME ; void MsgConversationBaseView::conversationViewClosed(void)
+	?staticMetaObject@MsgConversationBaseView@@2UQMetaObject@@B @ 12 NONAME ; struct QMetaObject const MsgConversationBaseView::staticMetaObject
+	?initView@MsgConversationBaseView@@AAEXXZ @ 13 NONAME ; void MsgConversationBaseView::initView(void)
+	?markMessagesAsRead@MsgConversationBaseView@@QAEXXZ @ 14 NONAME ; void MsgConversationBaseView::markMessagesAsRead(void)
+	?tr@MsgConversationBaseView@@SA?AVQString@@PBD0@Z @ 15 NONAME ; class QString MsgConversationBaseView::tr(char const *, char const *)
+	?getStaticMetaObject@MsgConversationBaseView@@SAABUQMetaObject@@XZ @ 16 NONAME ; struct QMetaObject const & MsgConversationBaseView::getStaticMetaObject(void)
+	?qt_metacall@MsgConversationBaseView@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 17 NONAME ; int MsgConversationBaseView::qt_metacall(enum QMetaObject::Call, int, void * *)
+	??1MsgConversationBaseView@@UAE@XZ @ 18 NONAME ; MsgConversationBaseView::~MsgConversationBaseView(void)
+	??_EMsgConversationBaseView@@UAE@I@Z @ 19 NONAME ; MsgConversationBaseView::~MsgConversationBaseView(unsigned int)
+	?clearContent@MsgConversationBaseView@@QAEXXZ @ 20 NONAME ; void MsgConversationBaseView::clearContent(void)
+

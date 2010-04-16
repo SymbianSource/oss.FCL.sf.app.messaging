@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/" >
+        <file alias="sms.svg" >resources/sms.svg</file>
+        <file alias="mms.svg" >resources/mms.svg</file>  
+        <file alias="ringingtone.svg" >resources/ringingtone.svg</file> 
+    </qresource>
+</RCC>

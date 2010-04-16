@@ -1,3 +1,0 @@
-EXPORTS
-	?CreateRecognizer@@YAPAVCApaDataRecognizerType@@XZ @ 1 NONAME ; class CApaDataRecognizerType * __cdecl CreateRecognizer(void)
-

@@ -360,7 +360,7 @@ void CMmsNotificationClientMtm::MarkFreeNotificationsReservedL(
     CMsvEntry* clientEntry = Session().GetEntryL( aNotifications.At( 0 ));
     CleanupStack::PushL( clientEntry );
 
-    for ( TInt i = aNotifications.Count() - 1 ; i >= 0 ; i-- ) 
+    for ( TInt i = aNotifications.Count() - 1 ; i >= 0 ; --i ) 
         {
         TBool drop = EFalse;
         TBool alreadyMarked = EFalse;
@@ -541,7 +541,7 @@ void CMmsNotificationClientMtm::FindDuplicateNotificationL( TMsvId aParent,
     CMmsHeaders* mmsHeaders = CMmsHeaders::NewL( iMmsSettings->MmsVersion() );
     CleanupStack::PushL( mmsHeaders );
      
-    for ( TInt i = count; i > 0 && ( aDuplicate == KMsvNullIndexEntryId ); i-- )
+    for ( TInt i = count; i > 0 && ( aDuplicate == KMsvNullIndexEntryId ); --i )
         {
         cEntry->SetEntryL( selection->At( i - 1 ) );
                    
@@ -668,7 +668,7 @@ CMsvOperation* CMmsNotificationClientMtm::FetchAllL( TRequestStatus& aCompletion
     // Loop through the notifications and reserve them for the operation
     TInt retval = KErrNone;
     TInt count = notifications->Count();
-    for ( TInt i = count; i > 0; i-- ) 
+    for ( TInt i = count; i > 0; --i ) 
         {
         retval = ReserveNotificationOperationL( notifications->At( i - 1 ), KMmsOperationFetch );
         if( retval != KErrNone )
@@ -771,7 +771,7 @@ CMsvOperation* CMmsNotificationClientMtm::DeleteNotificationL(
     CMsvEntry* cEntry = NULL;
     cEntry = Session().GetEntryL( aSelection.At( 0 ) );
     CleanupStack::PushL( cEntry ); // ***
-    for ( TInt i = 0; i < aSelection.Count(); i++ ) 
+    for ( TInt i = 0; i < aSelection.Count(); ++i ) 
         {
         cEntry->SetEntryL( aSelection.At( i ) );
         TMsvEntry tEntry = cEntry->Entry();
@@ -885,7 +885,7 @@ void CMmsNotificationClientMtm::DeleteForwardEntryL( const CMsvEntrySelection& a
     // Loop through the selection of forward entries
     //
     TInt count = aSelection.Count();
-    for( TInt index = 0; index < count; index++ )
+    for( TInt index = 0; index < count; ++index )
         {
         iMsvEntry->SetEntryL( aSelection.At( index ) );
         TMsvEntry tEntry = iMsvEntry->Entry();

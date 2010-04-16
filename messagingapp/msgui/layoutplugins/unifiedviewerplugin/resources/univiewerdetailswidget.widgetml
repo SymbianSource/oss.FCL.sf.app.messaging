@@ -1,0 +1,16 @@
+
+<hbwidget version="0.1">
+  <layout name="layout-default" type="mesh">
+     <meshitem src="timeLabel" srcEdge="LEFT" dst="" dstEdge="LEFT" />
+     <meshitem src="timeLabel" srcEdge="TOP" dst="subjectLabel" dstEdge="BOTTOM" />
+     <meshitem src="timeLabel" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
+     <meshitem src="timeLabel" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
+
+     <meshitem src="subjectLabel" srcEdge="LEFT" dst="" dstEdge="LEFT" />
+     <meshitem src="subjectLabel" srcEdge="TOP" dst="" dstEdge="TOP" />
+     <meshitem src="subjectLabel" srcEdge="RIGHT" dst="priorityIcon" dstEdge="LEFT" />
+
+     <meshitem src="priorityIcon" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
+     <meshitem src="priorityIcon" srcEdge="CENTERV" dst="subjectLabel" dstEdge="CENTERV" />
+  </layout>
+</hbwidget>

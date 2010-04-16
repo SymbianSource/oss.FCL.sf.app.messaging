@@ -1,7 +1,0 @@
-EXPORTS
-	_ZN17CSmilPlayerDialog9ExecuteLDEv @ 1 NONAME
-	_ZTI17CSmilPlayerDialog @ 2 NONAME ; #<TI>#
-	_ZTV17CSmilPlayerDialog @ 3 NONAME ; #<VT>#
-	_ZN17CSmilPlayerDialog4NewLEP14CMDXMLDocumentP21MMediaFactoryFileInfoRK7TDesC16ii @ 4 NONAME
-	_ZN17CSmilPlayerDialog4NewLER5RFileP21MMediaFactoryFileInfoRK7TDesC16ii @ 5 NONAME
-

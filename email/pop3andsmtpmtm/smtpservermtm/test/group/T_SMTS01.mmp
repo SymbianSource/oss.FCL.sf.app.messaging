@@ -21,7 +21,7 @@ CAPABILITY NetworkServices LocalServices ReadUserData ReadDeviceData WriteDevice
 SOURCEPATH		../src
 SOURCE          t_smts01.cpp 
 
-USERINCLUDE   ..\..\inc
+USERINCLUDE   ../../inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/base/inc
 USERINCLUDE		../../../../../../../mw/messagingmw/messagingfw/msgtest/testutils/email/inc

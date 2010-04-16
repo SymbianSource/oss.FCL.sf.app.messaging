@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1999-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,6 +19,7 @@
 #include "SMSSPAN.H"
 #include "SMSSOUTB.H"
 
+#include <c32comm.h>
 #include <msventry.h>
 #include <smss.rsg>
 #include <smscmds.h>

@@ -1,0 +1,21 @@
+MsgEditorWidget
+{
+  layout:layout-msg-editor;
+}
+
+MsgEditorWidget::msgEditor
+{
+  left:-var(hb-param-margin-gene-middle-horizontal);
+  right:var(hb-param-margin-gene-middle-horizontal);
+  bottom:var(hb-param-margin-gene-middle-vertical);
+  min-height:7.46un;
+}
+
+MsgEditorWidget::sendButton
+{
+  top:0.0un;
+  right:var(hb-param-margin-gene-middle-horizontal);
+  size-policy:fixed fixed;
+  pref-height:7.46un;
+  pref-width:9.34un;
+}

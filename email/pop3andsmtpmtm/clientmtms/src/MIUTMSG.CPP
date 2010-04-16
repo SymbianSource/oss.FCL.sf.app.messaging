@@ -6925,6 +6925,11 @@ TBool CImHtmlConverter::StoreHTMLEntryTextAL(TRequestStatus& aStatus)
 			attachment->SetSize(iSize);
 		file.Close();
 		TFileName filename = HtmlFilename(iMsvEntry, GetDefaultAttachmentName());
+		if(filename.Length() == 0)
+		    {
+		    User::Leave(KErrArgument);
+		    }
+
 		attachment->SetAttachmentNameL(filename);
 		CleanupStack::Pop(attachment); // ownership passed to attachment manager 
 		
@@ -6939,6 +6944,11 @@ CMsvOperation*CImHtmlConverter::ChangeHTMLTextInEnrtyL(TRequestStatus& aStatus)
 	TMsvEmailEntry emailEntry = iMsvEntry.Entry();
 	
 	TFileName filename = HtmlFilename(iMsvEntry, GetDefaultAttachmentName());
+	if(filename.Length() == 0)
+		{
+		User::Leave(KErrArgument);
+		}
+
 	emailEntry.iDetails.Set(filename);
 	emailEntry.iSize = iSize;	
 	return iMsvEntry.ChangeL(emailEntry, aStatus);	
@@ -6946,8 +6956,9 @@ CMsvOperation*CImHtmlConverter::ChangeHTMLTextInEnrtyL(TRequestStatus& aStatus)
 
 TFileName CImHtmlConverter::HtmlFilename(CMsvEntry& aEntry, TPtrC aFileName)
 	{
-	TFileName path;
 	TFileName name;
+	name.Zero();
+
 	TMsvEntry entry = aEntry.Entry();	
 // this is not used at all , need to get rid of this 
 	if (entry.iDetails.Length())

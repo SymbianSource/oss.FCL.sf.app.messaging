@@ -32,12 +32,14 @@ TARGETPATH	/system/libs
 UID		0x10003C5F 0x10009ED3	// 0x10003C5F = KUidMtmClientComponent
 VENDORID 0x70000001
 								// 0x10009ED3 = KBtClientMtmV1DllUid
+VERSION 	10.0
+PAGED
 
 SOURCEPATH	../source
 SOURCE		btcmtm.cpp btcmain.cpp btHeader.cpp
 
 USERINCLUDE	../Include ../../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/inc
-APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+APP_LAYER_SYSTEMINCLUDE
 
 LIBRARY		euser.lib msgs.lib
 LIBRARY		obexclientmtm.lib

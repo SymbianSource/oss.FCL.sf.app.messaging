@@ -23,12 +23,10 @@
 #define MMSLOG_H
 
 //  INCLUDES
-#ifdef SYMBIAN_ENABLE_SPLIT_HEADERS
-#include <logwraplimits.h>
-#endif
 #include <msvstd.h>
 #include <mentact.h>
-
+#include <logwraplimits.h>
+#include <logengdurations.h>
 // MACROS
 
 // DATA TYPES

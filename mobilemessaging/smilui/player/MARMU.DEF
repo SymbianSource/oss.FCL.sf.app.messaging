@@ -1,4 +1,0 @@
-EXPORTS
-	ExecuteLD__17CSmilPlayerDialog @ 1 NONAME R3UNUSED ; CSmilPlayerDialog::ExecuteLD(void)
-	"_._17CSmilPlayerDialog" @ 2 NONAME R3UNUSED ; CSmilPlayerDialog::~CSmilPlayerDialog(void)
-

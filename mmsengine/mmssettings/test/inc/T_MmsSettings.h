@@ -17,7 +17,7 @@
 #define __T_MMSSETTINGS_H__
 
 #include <e32base.h>
-#include "msvtestutilsbase.h"
+#include <msvtestutilsbase.h>
 #include <mtclreg.h>
 #include <msvids.h>
 #include <msvuids.h>

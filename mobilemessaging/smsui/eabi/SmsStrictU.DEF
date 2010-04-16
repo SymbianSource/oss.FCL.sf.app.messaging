@@ -1,9 +1,0 @@
-EXPORTS
-	_Z24ImplementationGroupProxyRi @ 1 NONAME
-	_ZN24CSmsstrictImplementation16ConvertToUnicodeEN25CCnvCharacterSetConverter11TEndiannessER6TDes16RK6TDesC8RiS7_S7_ @ 2 NONAME
-	_ZN24CSmsstrictImplementation18ConvertFromUnicodeEN25CCnvCharacterSetConverter11TEndiannessERK6TDesC8R5TDes8RK7TDesC16RNS0_24TArrayOfAscendingIndicesE @ 3 NONAME
-	_ZN24CSmsstrictImplementation21IsInThisCharacterSetLERiS0_RK6TDesC8 @ 4 NONAME
-	_ZN24CSmsstrictImplementation44ReplacementForUnconvertibleUnicodeCharactersEv @ 5 NONAME
-	_ZTI24CSmsstrictImplementation @ 6 NONAME ; #<TI>#
-	_ZTV24CSmsstrictImplementation @ 7 NONAME ; #<VT>#
-

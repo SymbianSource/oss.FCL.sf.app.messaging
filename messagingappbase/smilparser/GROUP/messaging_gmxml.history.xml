@@ -4,16 +4,6 @@
     SMIL parsing implemented via generic XML Parser / Composer with a "mini-DOM" API able to perform syntax checking against simple DTDs. Replaces SMIL Translater implementation of 7.0s.
   </purpose>
 
-  <deliverystep number="1842" name="CR1934: Messaging: Moving XML Parser" osproject="SymTB9.2" revision="012">
-  <cr number="1934" title="Restructuring of the MCL">Adding SMIL parser into webservices-xml package.</cr> 
-  <milestone project="GT0539" number="3.4" /> 
-  </deliverystep>
-  
-   
-  <defect number="DEF142365" title="GCC-E: Simple syntax error" revision="011">
-      syntax error in function declaration
-    </defect>
-
   <defect number="DEF138034" title="GMXML parser could cause stray event panics" revision="010">
       stray scanner defect.
     </defect>
@@ -24,7 +14,7 @@
    </preq>
     <milestone project="GT0465" number="3.5"/>
   </deliverystep>
-  
+
   <defect number="DEF128078" title="@prototype tags in messaging" revision="008">
       Added IM tag message server.
     </defect>

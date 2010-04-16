@@ -138,4 +138,5 @@ void CImapUpsResponseWaiter::DoCancel()
 	{
 	iUpsSubsession.CancelPrompt();
 	iImapProtocolController.CancelAndCleanup();
+	CMsgActive::DoCancel();
 	}

@@ -354,7 +354,7 @@ class CMmsCodecClient : public CActive
          * Release the current data part being held at the data supplier.
          * This call indicates to the supplier that the part
          * is no longer needed, and another one can be provided.
-         * When this funtion is called, the next data part will be encoded
+         * When this function is called, the next data part will be encoded
          * into the buffer. When this function returns, a new data part
          * can be fetched with GetNextDataPart.
          * This function must always be called after the data obtained by

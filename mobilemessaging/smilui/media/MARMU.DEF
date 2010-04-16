@@ -1,5 +1,0 @@
-EXPORTS
-	GetRenderers__C23CSmilPlayerMediaFactory @ 1 NONAME R3UNUSED ; CSmilPlayerMediaFactory::GetRenderers(void) const
-	__23CSmilPlayerMediaFactoryR7CCoeEnvR16CGraphicsContextP21MMediaFactoryFileInfo @ 2 NONAME ; CSmilPlayerMediaFactory::CSmilPlayerMediaFactory(CCoeEnv &, CGraphicsContext &, MMediaFactoryFileInfo *)
-	GetText__17CSmilTextRenderer @ 3 NONAME R3UNUSED ; CSmilTextRenderer::GetText(void)
-

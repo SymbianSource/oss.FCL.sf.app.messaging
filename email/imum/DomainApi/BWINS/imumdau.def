@@ -1,4 +1,0 @@
-EXPORTS
-	?CreateDomainApiL@@YAPAVCImumDomainApi@@PAVCMsvSession@@@Z @ 1 NONAME ; class CImumDomainApi * CreateDomainApiL(class CMsvSession *)
-	?CreateDomainApiLC@@YAPAVCImumDomainApi@@PAVCMsvSession@@@Z @ 2 NONAME ; class CImumDomainApi * CreateDomainApiLC(class CMsvSession *)
-

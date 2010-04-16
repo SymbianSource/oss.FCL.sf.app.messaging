@@ -1,0 +1,29 @@
+HbWidget {
+    margin-left: 0un;
+    margin-top: 0un;
+}
+
+MsgUnifiedEditorSubject {
+    layout:layout-default;
+}
+
+MsgUnifiedEditorSubject::subjectLabel {
+    left: -var(hb-param-margin-gene-left);
+    size-policy-vertical: fixed;
+    size-policy-horizontal: fixed;
+    fixed-width: 9.5un;
+    fixed-height: 7.46un;
+    text-align: center;
+}
+
+MsgUnifiedEditorSubject::priorityIcon {
+    fixed-height: var(hb-param-graphic-size-secondary);
+    fixed-width: var(hb-param-graphic-size-secondary);
+    right: var(hb-param-margin-gene-right);
+    left: -0.5un;
+}
+
+MsgUnifiedEditorSubject::subjectEdit {
+    min-height:7.46un;
+}
+

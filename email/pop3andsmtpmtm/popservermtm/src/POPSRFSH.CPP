@@ -1536,10 +1536,6 @@ TBool CImPop3RefreshOperation::CanDeleteEntry(const TMsvEmailEntry& aEntry) cons
 	// Don't delete email if body exists or if it is an email that is being opened immediately after
 	// the inbox refreshing (See defect PEN-5ESAWM)
 	{
-	if (aEntry.BodyTextComplete())
-		{
-		return EFalse;
-		}
 	// iMessagesToKeep may be Null
 	if (iMessagesToKeep && iMessagesToKeep->Find(aEntry.Id()) != KErrNotFound)
 		{

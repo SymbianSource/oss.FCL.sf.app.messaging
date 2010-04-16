@@ -1,5 +1,0 @@
-EXPORTS
-	?ExecuteLD@CSmilPlayerDialog@@QAEHXZ @ 1 NONAME ; int CSmilPlayerDialog::ExecuteLD(void)
-	?NewL@CSmilPlayerDialog@@SAPAV1@AAVRFile@@PAVMMediaFactoryFileInfo@@ABVTDesC16@@HH@Z @ 2 NONAME ; class CSmilPlayerDialog * CSmilPlayerDialog::NewL(class RFile &, class MMediaFactoryFileInfo *, class TDesC16 const &, int, int)
-	?NewL@CSmilPlayerDialog@@SAPAV1@PAVCMDXMLDocument@@PAVMMediaFactoryFileInfo@@ABVTDesC16@@HH@Z @ 3 NONAME ; class CSmilPlayerDialog * CSmilPlayerDialog::NewL(class CMDXMLDocument *, class MMediaFactoryFileInfo *, class TDesC16 const &, int, int)
-

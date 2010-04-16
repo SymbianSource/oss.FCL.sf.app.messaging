@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/" >
+       <file alias="qtg_small_priority_low.svg">resources/qtg_small_priority_low.svg</file>
+       <file alias="qtg_small_priority_high.svg">resources/qtg_small_priority_high.svg</file>
+       <file alias="qtg_mono_contacts.svg">resources/qtg_mono_contacts.svg</file>
+       <file alias="qtg_mono_attach.svg">resources/qtg_mono_attach.svg</file>
+       <file alias="qtg_mono_send.svg">resources/qtg_mono_send.svg</file>
+       <file alias="qtg_mono_audio.svg">resources/qgn_indi_mce_tb_audio.svg</file>
+       <file alias="qtg_small_attachment.svg">resources/qtg_small_attachment.svg</file>
+       <file alias="animation.axml">resources/animation.axml</file>
+       <file alias="qtg_anim_longtap_1.svg">resources/qtg_anim_longtap_1.svg</file>
+       <file alias="qtg_anim_longtap_2.svg">resources/qtg_anim_longtap_2.svg</file>
+       <file alias="qtg_anim_longtap_3.svg">resources/qtg_anim_longtap_3.svg</file>
+       <file alias="qtg_anim_longtap_4.svg">resources/qtg_anim_longtap_4.svg</file>
+       <file alias="qtg_anim_longtap_5.svg">resources/qtg_anim_longtap_5.svg</file>
+       <file alias="qtg_anim_longtap_6.svg">resources/qtg_anim_longtap_6.svg</file>
+       <file alias="qtg_anim_longtap_7.svg">resources/qtg_anim_longtap_7.svg</file>
+       <file alias="qtg_anim_longtap_8.svg">resources/qtg_anim_longtap_8.svg</file>
+       <file alias="qtg_anim_longtap_9.svg">resources/qtg_anim_longtap_9.svg</file>       
+    </qresource>
+</RCC>

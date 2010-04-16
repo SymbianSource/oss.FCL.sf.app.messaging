@@ -1,0 +1,58 @@
+HbWidget
+{
+  margin-left:0un;
+  margin-top:0un;
+}
+
+UniViewerBodyWidget:portrait
+{
+  layout: layout-portrait;
+}
+
+UniViewerBodyWidget:landscape[hasText="true"]
+{
+  layout: layout-landscape;
+}
+
+UniViewerBodyWidget:landscape[hasText="false"]
+{
+  layout: layout-landscape-no-text;
+}
+
+UniViewerBodyWidget::pixmap:portrait
+{
+  top:-var(hb-param-margin-gene-middle-vertical);
+  size-policy-vertical:fixed;
+  size-policy-horizontal:fixed;
+}
+
+UniViewerBodyWidget::pixmap:landscape
+{
+  top:-var(hb-param-margin-gene-middle-vertical);
+  left:-var(hb-param-margin-gene-left);
+  size-policy-horizontal:fixed;
+  size-policy-vertical:fixed;
+}
+
+UniViewerBodyWidget::audioItem
+{
+  left:-var(hb-param-margin-gene-left);
+  top:-var(hb-param-margin-gene-middle-vertical);
+  right:var(hb-param-margin-gene-right);
+  size-policy-vertical:fixed;
+}
+
+UniViewerBodyWidget::textItem
+{
+  left:-var(hb-param-margin-gene-left);
+  top:-var(hb-param-margin-gene-middle-vertical);
+  right:var(hb-param-margin-gene-right);
+  text-height:var(hb-param-text-height-secondary);
+  text-line-count-min:1;
+  text-line-count-max:100;
+  text-align: left top;
+  font-variant:primary;
+  size-policy-vertical:minimum-expanding;
+  pref-height:-1;
+}
+

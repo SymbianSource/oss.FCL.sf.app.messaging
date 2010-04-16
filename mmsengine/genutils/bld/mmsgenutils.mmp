@@ -50,8 +50,8 @@ LIBRARY         estor.lib
 LIBRARY         charconv.lib
 LIBRARY         centralrepository.lib
 LIBRARY         msgcommonutils.lib
-LIBRARY         vpbkeng.lib
-LIBRARY         pbk2presentation.lib
+//LIBRARY         vpbkeng.lib
+//LIBRARY         Pbk2Presentation.lib
 DEBUGLIBRARY    flogger.lib
 
 #if defined(ARMCC)

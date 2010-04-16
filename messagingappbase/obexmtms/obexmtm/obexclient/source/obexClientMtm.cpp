@@ -38,8 +38,6 @@
 #include "obexClientMtmPanic.h"
 
 
-const TInt KMaxObexPasswordLength = 30;
-
 //
 //  CObexClientMtm
 //

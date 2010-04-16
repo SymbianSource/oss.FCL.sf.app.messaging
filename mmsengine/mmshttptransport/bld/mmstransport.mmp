@@ -56,8 +56,6 @@ USERINCLUDE     ../../inc
 
 SYSTEMINCLUDE   ../../../inc
 APP_LAYER_SYSTEMINCLUDE
-SYSTEMINCLUDE   /epoc32/include/http
-SYSTEMINCLUDE   /epoc32/include/ecom
 
 LIBRARY         euser.lib
 LIBRARY         msgs.lib
@@ -65,7 +63,7 @@ LIBRARY         esock.lib
 // Http libraries
 LIBRARY         http.lib
 LIBRARY         inetprotutil.lib
-LIBRARY         bafl.lib
+LIBRARY         BAFL.lib
 LIBRARY         ecom.lib
 LIBRARY         featmgr.lib
 

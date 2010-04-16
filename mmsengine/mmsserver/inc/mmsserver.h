@@ -437,7 +437,7 @@ class CMmsServerMtm : public CScheduleBaseServerMtm
         * @param aParent folder where the notifications are stored
         * @param aNotification MMS headers for the new notification for
         *     identity check.
-        * @return ETrue if the notification is a duplicate and shoud be discarded
+        * @return ETrue if the notification is a duplicate and should be discarded
         *     EFalse if a duplicate has not been found
         */
         TBool PruneDuplicateNotificationsL( TMsvId aParent, CMmsHeaders& aNotification );

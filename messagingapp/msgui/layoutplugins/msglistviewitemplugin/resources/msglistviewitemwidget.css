@@ -1,0 +1,207 @@
+MsgListViewItemWidget:portrait {
+	layout: layout-portrait;
+}
+
+MsgListViewItemWidget:landscape {
+	layout: layout-landscape;
+}
+
+MsgListViewItemWidget::newMsgIndicator:portrait {
+	left:-var(hb-param-margin-view-left);
+	size-policy-horizontal: fixed;
+	size-policy-vertical: fixed;
+	pref-width: 1.25un; 
+	pref-height: 15.1un;
+	aspect-ratio: ignore;
+}
+
+MsgListViewItemWidget[unReadMsg="true"]::addressLabel:portrait {
+  top:-var(hb-param-margin-gene-top);
+  left:-var(hb-param-margin-gene-middle-horizontal);
+  right:var(hb-param-margin-gene-middle-horizontal);
+  bottom:var(hb-param-margin-gene-middle-vertical);
+	text-align: left;
+	font-variant: primary;
+	text-height:var(hb-param-text-height-primary);
+	text-line-count-min:1;
+	text-line-count-max:1;
+}
+
+MsgListViewItemWidget[unReadMsg="false"]::addressLabel:portrait {
+  top:-var(hb-param-margin-gene-top);
+  left:-var(hb-param-margin-gene-middle-horizontal);
+  right:var(hb-param-margin-gene-middle-horizontal);
+  bottom:var(hb-param-margin-gene-middle-vertical);
+	text-align: left;
+	font-variant: secondary;
+	text-height:var(hb-param-text-height-primary);
+	text-line-count-min:1;
+	text-line-count-max:1;
+	color: gray;  
+}
+
+MsgListViewItemWidget[unReadMsg="true"]::previewLabel:portrait {
+	left:-var(hb-param-margin-gene-middle-horizontal);
+	bottom:-var(hb-param-margin-gene-bottom);
+	right:var(hb-param-margin-gene-middle-horizontal);
+	text-align: left top;
+	font-variant: primary;	
+	text-height: var(hb-param-text-height-secondary);
+	text-line-count-min:2;
+	text-line-count-max:2;
+}
+
+MsgListViewItemWidget[unReadMsg="false"]::previewLabel:portrait {
+	left:-var(hb-param-margin-gene-middle-horizontal);
+	bottom:-var(hb-param-margin-gene-bottom);
+	right:var(hb-param-margin-gene-middle-horizontal);
+	text-align: left top;
+	font-variant: secondary;	
+	text-height: var(hb-param-text-height-secondary);
+	text-line-count-min:2;
+	text-line-count-max:2;
+	color: gray;
+}
+
+MsgListViewItemWidget::unreadCount:portrait {
+	right:var(hb-param-margin-gene-middle-horizontal);
+	size-policy-horizontal: fixed;
+	pref-width:6un;
+	text-align: left;
+	font-variant: primary;	
+	text-height: var(hb-param-text-height-primary);
+	text-line-count-min:1;
+	text-line-count-max:1;
+}
+
+MsgListViewItemWidget[unReadMsg="true"]::timeLabel:portrait {
+	right:var(hb-param-margin-gene-right);
+	bottom:var(hb-param-margin-gene-bottom);
+	size-policy-horizontal: fixed;
+	pref-width:12un;
+	text-align: right;
+	font-variant: primary;	
+	text-height: var(hb-param-text-height-tiny);
+	text-line-count-min:1;
+	text-line-count-max:1;
+}
+
+MsgListViewItemWidget[unReadMsg="false"]::timeLabel:portrait {
+	right:var(hb-param-margin-gene-right);
+	bottom:var(hb-param-margin-gene-bottom);
+	size-policy-horizontal: fixed;
+	pref-width:12un;
+	text-align: right;
+	font-variant: secondary;	
+	text-height: var(hb-param-text-height-tiny);
+	text-line-count-min:1;
+	text-line-count-max:1;
+	color: gray;
+}
+
+MsgListViewItemWidget::presenceIndicator:portrait {
+	right: var(hb-param-margin-gene-right);
+	size-policy-horizontal: fixed;
+	size-policy-vertical: fixed;
+	pref-width: var(hb-param-graphic-size-secondary);
+  pref-height: var(hb-param-graphic-size-secondary);
+	aspect-ratio: ignore;
+}
+
+/*Landscape mode*/
+MsgListViewItemWidget::newMsgIndicator:landscape {
+  left:-var(hb-param-margin-view-left);
+	size-policy-horizontal: fixed;
+	size-policy-vertical: ignore;
+	pref-width: 1.25un; 
+	pref-height: -1;
+	aspect-ratio: ignore;
+}
+
+MsgListViewItemWidget[unReadMsg="true"]::addressLabel:landscape {
+  top:-var(hb-param-margin-gene-top);
+  left:-var(hb-param-margin-gene-left);
+  right:var(hb-param-margin-gene-middle-horizontal);
+  bottom:var(hb-param-margin-gene-bottom);
+	text-align: left;
+	font-variant: primary;
+	text-height:var(hb-param-text-height-primary);
+	text-line-count-min:1;
+	text-line-count-max:1;
+}
+
+MsgListViewItemWidget[unReadMsg="false"]::addressLabel:landscape {
+  top:-var(hb-param-margin-gene-top);
+  left:-var(hb-param-margin-gene-left);
+  right:var(hb-param-margin-gene-middle-horizontal);
+  bottom:var(hb-param-margin-gene-bottom);
+	text-align: left;
+	font-variant: secondary;
+	text-height:var(hb-param-text-height-primary);
+	text-line-count-min:1;
+	text-line-count-max:1;
+	color:gray;
+}
+
+MsgListViewItemWidget[unReadMsg="true"]::previewLabel:landscape {
+	right:var(hb-param-margin-gene-middle-horizontal);
+	text-align: left;
+	font-variant: primary;	
+	text-height: var(hb-param-text-height-secondary);
+	text-line-count-min:1;
+	text-line-count-max:1;
+}
+
+MsgListViewItemWidget[unReadMsg="false"]::previewLabel:landscape {
+	right:var(hb-param-margin-gene-middle-horizontal);
+	text-align: left;
+	font-variant: secondary;	
+	text-height: var(hb-param-text-height-secondary);
+	text-line-count-min:1;
+	text-line-count-max:1;
+	color:gray;
+}
+
+MsgListViewItemWidget::unreadCount:landscape {
+	right:var(hb-param-margin-gene-middle-horizontal);
+	size-policy-horizontal: fixed;
+	pref-width:6un;
+	text-align: left;
+	font-variant: primary;	
+	text-height: var(hb-param-text-height-primary);
+	text-line-count-min:1;
+	text-line-count-max:1;
+}
+
+MsgListViewItemWidget::presenceIndicator:landscape {
+	right: var(hb-param-margin-gene-middle-horizontal);
+	size-policy-horizontal: fixed;
+	size-policy-vertical: fixed;
+	pref-width: var(hb-param-graphic-size-secondary);
+  pref-height: var(hb-param-graphic-size-secondary);
+	aspect-ratio: ignore;
+}
+
+MsgListViewItemWidget[unReadMsg="true"]::timeLabel:landscape {
+	right:var(hb-param-margin-gene-right);
+	size-policy-horizontal: fixed;
+	pref-width:12un;
+	text-align: right;
+	font-variant: primary;	
+	text-height: var(hb-param-text-height-tiny);
+	text-line-count-min:1;
+	text-line-count-max:1;
+}
+
+MsgListViewItemWidget[unReadMsg="false"]::timeLabel:landscape {
+	right:var(hb-param-margin-gene-right);
+	size-policy-horizontal: fixed;
+	pref-width:12un;
+	text-align: right;
+	font-variant: secondary;	
+	text-height: var(hb-param-text-height-tiny);
+	text-line-count-min:1;
+	text-line-count-max:1;
+	color:gray;	
+}
+

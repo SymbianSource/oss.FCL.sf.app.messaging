@@ -688,7 +688,7 @@ void CImapFolder::CheckMessagesInRangeL(TInt aSyncThreshold)
 	// * If the remote message is no longer there:
 	//		(1) Then the local message is orphaned (always).
 	// * If the remote message is still there and it is not one of the N most recent:
-	//		(2) If the local message has body parts do nothing.
+	//		(2) If the local message has body parts do nothing. - This Check has been removed as per new CMail UI.
 	//		(3) If the local message does not have body parts, then it is orphaned
 	//		    unless is is a message we have selected for download.
 	// * If the remote message is still there and it is one of the N most recent:
@@ -734,16 +734,12 @@ void CImapFolder::CheckMessagesInRangeL(TInt aSyncThreshold)
 					SetEntryL((*iFolderIndex)[localloop].iMsvId);
 					TMsvEmailEntry message(iServerEntry.Entry());
 					// Does message have any downloaded parts?
-					if(!message.Complete() && 
-						!message.BodyTextComplete())
-						{
-						// The local message does not have any body parts and
-						// is not selected for download, so it is orphaned.
-						// See case (3) above.
-						__LOG_FORMAT((iSavedSession->LogId(), "ImapFolder: Local message (%d) is only header and not selected for download, deleting", (*iFolderIndex)[localloop].iMsvId));
-						removeThis = ETrue;
-						iOrphanedMessages++;
-						}
+					// The local message does not have any body parts and
+					// is not selected for download, so it is orphaned.
+					// See case (3) above.
+					__LOG_FORMAT((iSavedSession->LogId(), "ImapFolder: Local message (%d) is only header and not selected for download, deleting", (*iFolderIndex)[localloop].iMsvId));
+					removeThis = ETrue;
+					iOrphanedMessages++;
 					}
 				break;
 				}

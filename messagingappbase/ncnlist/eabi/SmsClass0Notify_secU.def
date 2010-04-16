@@ -1,8 +1,0 @@
-EXPORTS
-	_Z24ImplementationGroupProxyRi @ 1 NONAME
-	_Z13NotifierArrayv @ 2 NONAME
-	_ZTI22CClass0NotifierSubject @ 3 NONAME ; #<TI>#
-	_ZTI27CAknClass0SmsViewerLauncher @ 4 NONAME ; #<TI>#
-	_ZTV22CClass0NotifierSubject @ 5 NONAME ; #<VT>#
-	_ZTV27CAknClass0SmsViewerLauncher @ 6 NONAME ; #<VT>#
-

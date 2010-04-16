@@ -1,0 +1,70 @@
+EXPORTS
+	??0ConvergedMessageId@@QAE@H@Z @ 1 NONAME ; ConvergedMessageId::ConvergedMessageId(int)
+	?toAddressList@ConvergedMessage@@QBE?BV?$QList@PAVConvergedMessageAddress@@@@XZ @ 2 NONAME ; class QList<class ConvergedMessageAddress *> const ConvergedMessage::toAddressList(void) const
+	?serialize@ConvergedMessageAttachment@@QBEXAAVQDataStream@@@Z @ 3 NONAME ; void ConvergedMessageAttachment::serialize(class QDataStream &) const
+	?fromAddress@ConvergedMessage@@QBEPAVConvergedMessageAddress@@XZ @ 4 NONAME ; class ConvergedMessageAddress * ConvergedMessage::fromAddress(void) const
+	?setProperty@ConvergedMessage@@QAEXW4MessageProperty@1@@Z @ 5 NONAME ; void ConvergedMessage::setProperty(enum ConvergedMessage::MessageProperty)
+	?sendingState@ConvergedMessage@@QBE?AW4SendingState@1@XZ @ 6 NONAME ; enum ConvergedMessage::SendingState ConvergedMessage::sendingState(void) const
+	?properties@ConvergedMessage@@QBEGXZ @ 7 NONAME ; unsigned short ConvergedMessage::properties(void) const
+	?address@ConvergedMessageAddress@@QBEABVQString@@XZ @ 8 NONAME ; class QString const & ConvergedMessageAddress::address(void) const
+	??4ConvergedMessageId@@QAEAAV0@ABV0@@Z @ 9 NONAME ; class ConvergedMessageId & ConvergedMessageId::operator=(class ConvergedMessageId const &)
+	?location@ConvergedMessage@@QBE?AW4MessageLocation@1@XZ @ 10 NONAME ; enum ConvergedMessage::MessageLocation ConvergedMessage::location(void) const
+	?setTimeStamp@ConvergedMessage@@QAEX_J@Z @ 11 NONAME ; void ConvergedMessage::setTimeStamp(long long)
+	?setAttachmentType@ConvergedMessageAttachment@@QAEXH@Z @ 12 NONAME ; void ConvergedMessageAttachment::setAttachmentType(int)
+	?setSubject@ConvergedMessage@@QAEXABVQString@@@Z @ 13 NONAME ; void ConvergedMessage::setSubject(class QString const &)
+	?timeStamp@ConvergedMessage@@QBE_JXZ @ 14 NONAME ; long long ConvergedMessage::timeStamp(void) const
+	?bodyText@ConvergedMessage@@QBEABVQString@@XZ @ 15 NONAME ; class QString const & ConvergedMessage::bodyText(void) const
+	??0ConvergedMessageAttachment@@QAE@ABVQString@@H@Z @ 16 NONAME ; ConvergedMessageAttachment::ConvergedMessageAttachment(class QString const &, int)
+	?setAddress@ConvergedMessageAddress@@QAEXABVQString@@@Z @ 17 NONAME ; void ConvergedMessageAddress::setAddress(class QString const &)
+	?addCcRecipient@ConvergedMessage@@QAEXAAVConvergedMessageAddress@@@Z @ 18 NONAME ; void ConvergedMessage::addCcRecipient(class ConvergedMessageAddress &)
+	??0ConvergedMessage@@QAE@ABV0@@Z @ 19 NONAME ; ConvergedMessage::ConvergedMessage(class ConvergedMessage const &)
+	?setPriority@ConvergedMessage@@QAEXW4Priority@1@@Z @ 20 NONAME ; void ConvergedMessage::setPriority(enum ConvergedMessage::Priority)
+	?setBodyText@ConvergedMessage@@QAEXABVQString@@@Z @ 21 NONAME ; void ConvergedMessage::setBodyText(class QString const &)
+	?setDirection@ConvergedMessage@@QAEXW4Direction@1@@Z @ 22 NONAME ; void ConvergedMessage::setDirection(enum ConvergedMessage::Direction)
+	?addBccRecipients@ConvergedMessage@@QAEXAAV?$QList@PAVConvergedMessageAddress@@@@@Z @ 23 NONAME ; void ConvergedMessage::addBccRecipients(class QList<class ConvergedMessageAddress *> &)
+	?attachmentType@ConvergedMessageAttachment@@QBEHXZ @ 24 NONAME ; int ConvergedMessageAttachment::attachmentType(void) const
+	?addToRecipients@ConvergedMessage@@QAEXAAV?$QList@PAVConvergedMessageAddress@@@@@Z @ 25 NONAME ; void ConvergedMessage::addToRecipients(class QList<class ConvergedMessageAddress *> &)
+	?serialize@ConvergedMessageAddress@@QBEXAAVQDataStream@@@Z @ 26 NONAME ; void ConvergedMessageAddress::serialize(class QDataStream &) const
+	??0ConvergedMessageAddress@@QAE@ABVQString@@0@Z @ 27 NONAME ; ConvergedMessageAddress::ConvergedMessageAddress(class QString const &, class QString const &)
+	??_EConvergedMessageAddress@@QAE@I@Z @ 28 NONAME ABSENT ; ConvergedMessageAddress::~ConvergedMessageAddress(unsigned int)
+	??_EConvergedMessageAttachment@@QAE@I@Z @ 29 NONAME ABSENT ; ConvergedMessageAttachment::~ConvergedMessageAttachment(unsigned int)
+	?addFromRecipient@ConvergedMessage@@QAEXAAVConvergedMessageAddress@@@Z @ 30 NONAME ; void ConvergedMessage::addFromRecipient(class ConvergedMessageAddress &)
+	?addBccRecipient@ConvergedMessage@@QAEXAAVConvergedMessageAddress@@@Z @ 31 NONAME ; void ConvergedMessage::addBccRecipient(class ConvergedMessageAddress &)
+	?direction@ConvergedMessage@@QBE?AW4Direction@1@XZ @ 32 NONAME ; enum ConvergedMessage::Direction ConvergedMessage::direction(void) const
+	?setMessageId@ConvergedMessage@@QAEXAAVConvergedMessageId@@@Z @ 33 NONAME ; void ConvergedMessage::setMessageId(class ConvergedMessageId &)
+	?isUnread@ConvergedMessage@@QBE_NXZ @ 34 NONAME ; bool ConvergedMessage::isUnread(void) const
+	?setAlias@ConvergedMessageAddress@@QAEXABVQString@@@Z @ 35 NONAME ; void ConvergedMessageAddress::setAlias(class QString const &)
+	?setLocation@ConvergedMessage@@QAEXW4MessageLocation@1@@Z @ 36 NONAME ; void ConvergedMessage::setLocation(enum ConvergedMessage::MessageLocation)
+	?addAttachments@ConvergedMessage@@QAEXAAV?$QList@PAVConvergedMessageAttachment@@@@@Z @ 37 NONAME ; void ConvergedMessage::addAttachments(class QList<class ConvergedMessageAttachment *> &)
+	?bccAddressList@ConvergedMessage@@QBE?BV?$QList@PAVConvergedMessageAddress@@@@XZ @ 38 NONAME ; class QList<class ConvergedMessageAddress *> const ConvergedMessage::bccAddressList(void) const
+	?attachments@ConvergedMessage@@QBE?AV?$QList@PAVConvergedMessageAttachment@@@@XZ @ 39 NONAME ; class QList<class ConvergedMessageAttachment *> ConvergedMessage::attachments(void) const
+	?priority@ConvergedMessage@@QBE?AW4Priority@1@XZ @ 40 NONAME ; enum ConvergedMessage::Priority ConvergedMessage::priority(void) const
+	?getId@ConvergedMessageId@@QBEHXZ @ 41 NONAME ; int ConvergedMessageId::getId(void) const
+	?deserialize@ConvergedMessageAddress@@QAEXAAVQDataStream@@@Z @ 42 NONAME ; void ConvergedMessageAddress::deserialize(class QDataStream &)
+	?hasAttachment@ConvergedMessage@@QBE_NXZ @ 43 NONAME ; bool ConvergedMessage::hasAttachment(void) const
+	?setId@ConvergedMessageId@@QAEXH@Z @ 44 NONAME ; void ConvergedMessageId::setId(int)
+	?setMessageType@ConvergedMessage@@QAEXW4MessageType@1@@Z @ 45 NONAME ; void ConvergedMessage::setMessageType(enum ConvergedMessage::MessageType)
+	?id@ConvergedMessage@@QBEPAVConvergedMessageId@@XZ @ 46 NONAME ; class ConvergedMessageId * ConvergedMessage::id(void) const
+	??0ConvergedMessage@@QAE@ABVConvergedMessageId@@@Z @ 47 NONAME ; ConvergedMessage::ConvergedMessage(class ConvergedMessageId const &)
+	??0ConvergedMessage@@QAE@W4MessageType@0@@Z @ 48 NONAME ; ConvergedMessage::ConvergedMessage(enum ConvergedMessage::MessageType)
+	?addToRecipient@ConvergedMessage@@QAEXAAVConvergedMessageAddress@@@Z @ 49 NONAME ; void ConvergedMessage::addToRecipient(class ConvergedMessageAddress &)
+	?subject@ConvergedMessage@@QBEABVQString@@XZ @ 50 NONAME ; class QString const & ConvergedMessage::subject(void) const
+	?alias@ConvergedMessageAddress@@QBEABVQString@@XZ @ 51 NONAME ; class QString const & ConvergedMessageAddress::alias(void) const
+	?ccAddressList@ConvergedMessage@@QBE?BV?$QList@PAVConvergedMessageAddress@@@@XZ @ 52 NONAME ; class QList<class ConvergedMessageAddress *> const ConvergedMessage::ccAddressList(void) const
+	??1ConvergedMessageAddress@@QAE@XZ @ 53 NONAME ; ConvergedMessageAddress::~ConvergedMessageAddress(void)
+	?messageType@ConvergedMessage@@QBE?AW4MessageType@1@XZ @ 54 NONAME ; enum ConvergedMessage::MessageType ConvergedMessage::messageType(void) const
+	?deserialize@ConvergedMessageAttachment@@QAEXAAVQDataStream@@@Z @ 55 NONAME ; void ConvergedMessageAttachment::deserialize(class QDataStream &)
+	??1ConvergedMessageAttachment@@QAE@XZ @ 56 NONAME ; ConvergedMessageAttachment::~ConvergedMessageAttachment(void)
+	?serialize@ConvergedMessage@@QBEXAAVQDataStream@@@Z @ 57 NONAME ; void ConvergedMessage::serialize(class QDataStream &) const
+	??0ConvergedMessageId@@QAE@ABV0@@Z @ 58 NONAME ; ConvergedMessageId::ConvergedMessageId(class ConvergedMessageId const &)
+	?serialize@ConvergedMessageId@@QBEXAAVQDataStream@@@Z @ 59 NONAME ; void ConvergedMessageId::serialize(class QDataStream &) const
+	?setSendingState@ConvergedMessage@@QAEXW4SendingState@1@@Z @ 60 NONAME ; void ConvergedMessage::setSendingState(enum ConvergedMessage::SendingState)
+	??8ConvergedMessageAttachment@@QBE_NABV0@@Z @ 61 NONAME ; bool ConvergedMessageAttachment::operator==(class ConvergedMessageAttachment const &) const
+	??8ConvergedMessageId@@QBE_NABV0@@Z @ 62 NONAME ; bool ConvergedMessageId::operator==(class ConvergedMessageId const &) const
+	?deserialize@ConvergedMessageId@@QAEXAAVQDataStream@@@Z @ 63 NONAME ; void ConvergedMessageId::deserialize(class QDataStream &)
+	?filePath@ConvergedMessageAttachment@@QBEABVQString@@XZ @ 64 NONAME ; class QString const & ConvergedMessageAttachment::filePath(void) const
+	??1ConvergedMessage@@QAE@XZ @ 65 NONAME ; ConvergedMessage::~ConvergedMessage(void)
+	?addCcRecipients@ConvergedMessage@@QAEXAAV?$QList@PAVConvergedMessageAddress@@@@@Z @ 66 NONAME ; void ConvergedMessage::addCcRecipients(class QList<class ConvergedMessageAddress *> &)
+	?deserialize@ConvergedMessage@@QAEXAAVQDataStream@@@Z @ 67 NONAME ; void ConvergedMessage::deserialize(class QDataStream &)
+	?setFilePath@ConvergedMessageAttachment@@QAEXABVQString@@@Z @ 68 NONAME ; void ConvergedMessageAttachment::setFilePath(class QString const &)
+

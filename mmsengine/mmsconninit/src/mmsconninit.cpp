@@ -142,7 +142,7 @@ EXPORT_C void CMmsConnectionInitiator::ConnectL(
         }
  
     // Let's not start the AO if we do not find IAP
-    for( iIndex = 0; iIndex < iArray->Count(); iIndex++ )
+    for( iIndex = 0; iIndex < iArray->Count(); ++iIndex )
         {
         TUint32 ap; // IAP to be resolved
         // index is safe
@@ -438,7 +438,7 @@ TBool CMmsConnectionInitiator::CheckNetworkL()
 // -----------------------------------------------------------------------------
 // CMmsConnectionInitiator::CheckWapStartPageL
 // 
-// Private fuction used only by GetParametersL. Made just for splitting too big
+// Private function used only by GetParametersL. Made just for splitting too big
 // GetParameters function. 
 // Adds http scheme in the beginning of wap start page if it is missing. It does
 // not add it into comms database. 
@@ -484,7 +484,7 @@ void CMmsConnectionInitiator::CheckWapStartPageL(HBufC*& aUri)
 
 // -----------------------------------------------------------------------------
 // CMmsConnectionInitiator::FindIapL
-// WAP Acces Point is given as in-parameter and IAP is 
+// WAP access Point is given as in-parameter and IAP is 
 // retruned as out-parameter
 // Return value is EFalse if something goes wrong
 // Leavings are trapped in case of error in reading CommsDb
@@ -824,7 +824,7 @@ void CMmsConnectionInitiator::RunL()
             TMmsConnInitLogger::Log( _L("- Timer completed - retry %d"), iRetryCount );
 #endif
             }
-        for( iIndex = iIndex; iIndex < iArray->Count(); iIndex++ )
+        for( iIndex = iIndex; iIndex < iArray->Count(); ++iIndex )
             {
             // index is safe
             if( ( FindIapL( iArray->At( iIndex ), ap ) ) )

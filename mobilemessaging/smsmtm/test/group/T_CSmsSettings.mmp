@@ -17,10 +17,10 @@ TARGET                  T_CSmsSettings.exe
 TARGETTYPE              exe
 
 CAPABILITY All -TCB
-USERINCLUDE				..\inc
-SOURCEPATH              ..\src
+USERINCLUDE				../inc
+SOURCEPATH              ../src
 SOURCE                  T_CSmsSettings.cpp 
-SOURCEPATH              ..\..\clientmtm\src
+SOURCEPATH              ../../clientmtm/src
 SOURCE                  SmutSet.cpp
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 LIBRARY                 euser.lib efsrv.lib conarc.lib estor.lib commdb.lib msgs.lib
