@@ -128,4 +128,6 @@ EXPORTS
 	_ZN10CUniObject12SetObserverLEP18MUniObjectObserver @ 127 NONAME
 	_ZN10CUniObject14RemoveObserverEP18MUniObjectObserver @ 128 NONAME
 	_ZN10CUniObject29SetDrmRightsWhenLoadedObjectsEi @ 129 NONAME
+	_ZNK10CUniObject7IsValidEv @ 130 NONAME
+	_ZNK14CUniObjectList11IsListValidEv @ 131 NONAME
 

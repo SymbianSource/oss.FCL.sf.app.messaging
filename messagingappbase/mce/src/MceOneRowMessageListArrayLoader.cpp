@@ -80,6 +80,7 @@ _LIT( KSortSubjectSkipString, "*:*" );
 const TChar KWhiteSpaceCharacter(' ');
 const TInt KSortSubjectStringLength = 100;
 const TInt KMceLoopCounter  = 200;
+const TInt KFirstTimeMceLoopCounter  = 20;
 //cmail update
 #define KUidMsgTypeCmailMtmVal               0x2001F406
 
@@ -569,7 +570,12 @@ void CMceOneRowListItemArrayLoader::CreateTimeBasedArrayL()
 
     TInt entryCount = 0; // divides list building into smaller pieces
     TBool itemAdded = EFalse;
-
+    TInt loopCounter = KMceLoopCounter;
+	if (iCounter == 0)
+        {
+        //For the first time, when the list is about to get populated.
+        loopCounter = KFirstTimeMceLoopCounter;
+        }	
     // Loop until all entries and subtitles has been added to iHCListItemArray
     while ( iEntriesToBeAdded->Count() )
         { 
@@ -668,7 +674,7 @@ void CMceOneRowListItemArrayLoader::CreateTimeBasedArrayL()
                 // This breaks building the array after every KMceLoopCounter entries. 
                 // Necessary for not slowing down execution when there are many messages 
                 // as this is a part of an active scheduler callback.
-                if ( entryCount >= KMceLoopCounter )
+                if ( entryCount >= loopCounter)
                     {
                     iCounter++;
                     break;
@@ -681,6 +687,7 @@ void CMceOneRowListItemArrayLoader::CreateTimeBasedArrayL()
             }
         iCounter++;
         }
+	loopCounter = KMceLoopCounter;
     iStep = 1;
 
     // Update Tree list

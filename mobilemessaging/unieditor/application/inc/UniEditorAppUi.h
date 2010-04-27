@@ -1249,6 +1249,16 @@ class CUniEditorAppUi :
          *     Notification from central repository
          */
        	void HandleNotifyInt( TUint32 aId, TInt aNewValue );
+       	
+       	/**
+       	 * Is Inserted objects path are valid.
+       	 * All the media objects are availble in their respective paths. 
+       	 *
+       	 * @return ETrue, if all the media objects are available
+       	 * otherwise EFalse.
+       	 */
+       	TBool IsObjectsPathValidL() const;
+       	        
     private:     // Enumerations
 
     enum TUniEditorFlags

@@ -2968,19 +2968,31 @@ void CUniEditorAppUi::DoUserSendL()
         resourceId = R_QTN_WAIT_MSG_SAVED_OUTBOX;
         }
 
-    iSendOperation = CUniEditorSendOperation::NewL( *this,
-                                                    *Document(),
-                                                    *iHeader,
-                                                    *plugin,
-                                                    *iView,
-                                                    FsSession() );
-    ActivateInputBlockerL( iSendOperation );
-    
-    ShowWaitNoteL( resourceId ); 
+    if (IsObjectsPathValidL())
+        {
+    	iSendOperation = CUniEditorSendOperation::NewL( *this,
+                                                    	*Document(),
+                                                    	*iHeader,
+                                                    	*plugin,
+                                                    	*iView,
+                                                    	FsSession() );
+        ActivateInputBlockerL(iSendOperation);
 
-    iEditorFlags |= EEditorClosing;
+        ShowWaitNoteL(resourceId);
 
-    iSendOperation->Send();
+        iEditorFlags |= EEditorClosing;
+
+        iSendOperation->Send();
+        }
+    else
+        {
+        if (ShowConfirmationQueryL(R_UNIEDITOR_QUEST_CLOSE_OOD))
+            {
+            // Exit without saving.
+            Exit(EAknSoftkeyClose);
+            }
+        //else nothing.
+        }
     }
 
 
@@ -3017,7 +3029,7 @@ void CUniEditorAppUi::DoMsgSaveExitL()
         }
     else if ( ( Document()->Modified() || 
                 Document()->PrevSaveType() < EClosingSave ) && 
-              CanSaveMessageL() )
+              CanSaveMessageL())
         {
         // Needs saving
         if ( IsForeground() )
@@ -3060,14 +3072,24 @@ void CUniEditorAppUi::ExitAndSaveL()
         {
         iEditorFlags |= ERunAppShutterAtExit;
         }
-        
-    if ( iEditorFlags & ELaunchSuccessful &&  
-         Document()->MediaAvailable() )
+    if (IsObjectsPathValidL())
         {
-        DoMsgSaveExitL();
+        if (iEditorFlags & ELaunchSuccessful && Document()->MediaAvailable())
+            {
+            DoMsgSaveExitL();
+            }
+
+        Exit();
         }
-        
-    Exit(); 
+    else
+        {
+        if (ShowConfirmationQueryL(R_UNIEDITOR_QUEST_CLOSE_OOD))
+            {
+            // Exit without saving.
+            Exit(EAknSoftkeyClose);
+            }
+        }
+    
     }
 
 // ---------------------------------------------------------
@@ -3102,7 +3124,7 @@ void CUniEditorAppUi::DoBackSaveL()
             // Message has data
             if ( Document()->Modified() || Document()->PrevSaveType() < EClosingSave )
                 {
-                if ( CanSaveMessageL() )
+                if ( CanSaveMessageL() && IsObjectsPathValidL())                    
                     {
                     TInt resId = Document()->Saved() ? R_QTN_UNI_WAIT_SAVING_MESSAGE : 
                                                        R_QTN_UNI_WAIT_SAVING_MESSAGE_NEW;
@@ -9857,6 +9879,28 @@ void CUniEditorAppUi::HandleLongTapEventL(const TPoint& aPenEventLocation,
             iTapConsumed = ETrue;
             }
         }   
-    }  
+    }
+
+// ---------------------------------------------------------
+// CUniEditorAppUi::IsObjectPathValidL
+// Checks whether all inserted object's path are valid
+// message.
+// ---------------------------------------------------------
+//
+TBool CUniEditorAppUi::IsObjectsPathValidL() const
+    {
+    TBool bCanSave = ETrue;  
+    if ( Document()->DataModel()->SmilType() == EMmsSmil )
+        {
+        bCanSave = Document()->DataModel()->ObjectList().IsListValid();
+        
+        if(bCanSave)
+            {
+            bCanSave = Document()->DataModel()->AttachmentList().IsListValid();
+            }
+        }      
+    return bCanSave;
+    }
+
 // End of file
 

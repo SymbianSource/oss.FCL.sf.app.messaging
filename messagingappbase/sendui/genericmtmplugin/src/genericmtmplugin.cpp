@@ -210,6 +210,9 @@ void CGenericMtmPlugin::CreateAndSendMessageL(
     		!onlineSharing )
     		{
     		// cancel pressed on "selecta email account" query
+    	    // OR SMTP UID is provided,  
+    	    // but no cmail mailbox is not configured, shonw note to user to
+    	    // configured mailbox and return from here.
     		return;
     		}
     	}
@@ -1262,9 +1265,19 @@ TMsvId CGenericMtmPlugin::GetAndValidateServiceL(
 				}
 			
 			if( service == KMsvUnknownServiceIndexEntryId )
-				{
-				service = EmailDefaultServiceL();		        
-				}
+			    {
+			    //donot launch wizard
+			    // show info note to user to configured
+			    //mailbox from mail app.
+			    CAknGlobalNote* note = CAknGlobalNote::NewL();
+			    CleanupStack::PushL( note );
+			    HBufC* text = NULL;
+			    text = StringLoader::LoadLC( R_SENDUI_SETTINGS_EMAIL_NOT_OK, &iCoeEnv );
+			    note->ShowNoteL( EAknGlobalErrorNote, *text );
+			    CleanupStack::PopAndDestroy( 2, note ); // note, stringLoader
+			    aContinue = EFalse;
+			    return KMsvUnknownServiceIndexEntryId;
+			    }
             }
         else
             {

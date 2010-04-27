@@ -106,6 +106,9 @@ void CMceSettingsEmailSel::ConstructL()
     {
       iEmailFramework = ETrue;
     } 
+    iCmaillistItems = NULL;
+    iCmailBoxes = NULL;
+    iCmaillistItemUids = NULL;
     }
     
 // ---------------------------------------------------------
@@ -128,12 +131,30 @@ CMceSettingsEmailSel::~CMceSettingsEmailSel()
     if( iMtmStore )
     	{
     	delete iMtmStore;
+    	iMtmStore = NULL;
     	}     
     if( iMsvSessionPtr )
     	{
     	delete iMsvSessionPtr;
+    	iMsvSessionPtr = NULL;
     	}  	  
     UnLoadResource();    	 	
+    if(iCmaillistItemUids)
+        {
+        delete iCmaillistItemUids;
+        iCmaillistItemUids  = NULL;
+        }
+    if(iCmailBoxes)
+        {
+        iCmailBoxes->Close();
+        delete iCmailBoxes;
+        iCmailBoxes  = NULL;
+        }
+    if(iCmaillistItems)
+        {
+        delete iCmaillistItems;
+        iCmaillistItems = NULL;
+        }
     }    
 
 // ---------------------------------------------------------
@@ -364,10 +385,16 @@ TBool CMceSettingsEmailSel::ShowCmailSelectDlgL(TMsvId& aSelectedService,
             aMtmType = entry.iMtm;
             }
         }
-    delete iCmaillistItemUids;
-    iCmaillistItemUids  = NULL;
-    delete iCmaillistItems;
-    iCmaillistItems = NULL;;
+    if(iCmaillistItemUids)
+        {
+    	delete iCmaillistItemUids;
+        iCmaillistItemUids  = NULL;
+        }
+    if(iCmaillistItems)
+        {
+   		delete iCmaillistItems;
+        iCmaillistItems = NULL;
+        }
     CleanupStack::PopAndDestroy( aListItemUids );
     CleanupStack::PopAndDestroy( aListItems );
     if(cancel)
@@ -621,12 +648,23 @@ void CMceSettingsEmailSel::AppendCmailBoxesL(CArrayFix<TInt64 >* atimeItems, CMs
     atimeItems->Sort(key);
     TUid cmailEntryUid;
     
+    if(iCmaillistItems)
+        {
+        delete iCmaillistItems;
+        iCmaillistItems = NULL;
+        }   
     //Array to get the list of Cmail Boxes
     iCmaillistItems = new (ELeave) CDesCArrayFlat(
                                 KArrayGranularity );
     
-    iCmaillistItemUids = new ( ELeave ) CArrayFixFlat<TUid>( KArrayGranularity );
-    
+    if(iCmaillistItemUids)
+        {
+        delete iCmaillistItemUids;
+        iCmaillistItemUids = NULL;
+        }
+    iCmaillistItemUids = new ( ELeave ) 
+            CArrayFixFlat<TUid>( KArrayGranularity );
+   
     // Go one by one in Hash table
     if(atimeItems->Count() > 0)
         {    
@@ -659,6 +697,12 @@ void CMceSettingsEmailSel::AddOtherEmailBoxesL(CDesCArrayFlat& aListItems, CArra
     if(iEmailFramework)
         {
         //Added for Cmail Details
+        if(iCmailBoxes)
+           {
+           iCmailBoxes->Close();
+           delete iCmailBoxes;
+           iCmailBoxes  = NULL;
+           }
         iCmailBoxes =
               new( ELeave )RHashMap< TInt64, TInt >
                       (&TPtrC8Hash , &TInt64Ident);    
@@ -754,8 +798,12 @@ void CMceSettingsEmailSel::AddOtherEmailBoxesL(CDesCArrayFlat& aListItems, CArra
           AppendCmailBoxesL(timeItems, aEntry);
           CleanupStack::PopAndDestroy( cmaillist );
           CleanupStack::PopAndDestroy( timeItems );
-          delete iCmailBoxes;
-          iCmailBoxes = NULL;
+          if(iCmailBoxes)
+              {
+              iCmailBoxes->Close();
+              delete iCmailBoxes;
+              iCmailBoxes = NULL;
+              }
           }
       }
 

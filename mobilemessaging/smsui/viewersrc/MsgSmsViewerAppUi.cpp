@@ -1986,11 +1986,7 @@ void CMsgSmsViewerAppUi::CheckDiskAndReplyForwardL( TBool aForward )
         User::Leave( KErrDiskFull );
         }
 
-    //to reduce flickering during closing
-	if (!(iEditorBaseFeatures & EStayInViewerAfterReply ))
-        {
-        iView->MakeVisible( EFalse );
-        }
+
         
     TRAPD(err, DoReplyFwdL( aForward ));
     if(!(err == KErrNone) )

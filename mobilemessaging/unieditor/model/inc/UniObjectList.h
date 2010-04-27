@@ -263,6 +263,15 @@ class CUniObjectList : public CBase,
         * @return   Number of objects
         */
         inline TInt Count() const;
+        
+        /**
+         * Is object list valid.
+         * All the media objects are availble in their respective paths. 
+         *
+         * @return ETrue, if all the media objects are available
+         * otherwise EFalse.
+         */
+        IMPORT_C TBool IsListValid() const;
 
     public:
     

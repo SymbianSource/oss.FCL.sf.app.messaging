@@ -524,4 +524,26 @@ void CUniObjectList::ObjectSaveReady( TInt aError )
         }
     }
 
+// ---------------------------------------------------------
+// CUniObjectList::IsListValid
+//
+// IsListValid
+// ---------------------------------------------------------
+//
+EXPORT_C TBool CUniObjectList::IsListValid() const
+    {
+    TBool bFlag = ETrue;
+    
+    if(iObjectArray)
+        {
+        TInt count = iObjectArray->Count() ;
+    
+        for(TInt i =0; (i < count) && bFlag ; i++)
+            {
+            bFlag = iObjectArray->At( i )->IsValid();
+            }
+        }
+    return bFlag;
+    }
+
 // EOF

@@ -482,6 +482,14 @@ class CUniObject : public CActive,
         *           
         */
         IMPORT_C void RemoveObserver(   MUniObjectObserver*     aObserver );
+        
+        /**
+         * Is object path is valid
+         *
+         * @return ETrue, if media object is available in their respective path 
+         * otherwise EFalse
+         */
+        IMPORT_C TBool IsValid() const;
 
     protected: 
 

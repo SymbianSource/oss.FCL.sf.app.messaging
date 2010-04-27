@@ -3563,10 +3563,6 @@ void CAudioMessageAppUi::DoForwardL()
         iToolbar->SetToolbarVisibility( EFalse, EFalse );     
         }
     
-    if (!(iEditorBaseFeatures & EStayInViewerAfterReply ))
-        {
-        iView->MakeVisible( EFalse );
-        }
     
     ForwardL( KNewMessageFolder );
     if (!(iEditorBaseFeatures & EStayInViewerAfterReply))

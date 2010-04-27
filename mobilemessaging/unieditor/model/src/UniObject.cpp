@@ -596,8 +596,8 @@ void CUniObject::ConstructFromAttachmentL(
         SetAttachment( isAttachment );
         }
 
-    CMsvAttachment::TMsvAttachmentType type = aAttachment.Type();
-    if ( type == CMsvAttachment::EMsvLinkedFile )
+    iSaveType = aAttachment.Type();
+    if ( iSaveType == CMsvAttachment::EMsvLinkedFile )
         {
         iFileHandle = aManager.GetAttachmentFileL( iAttachmentId  );
         }
@@ -761,5 +761,32 @@ EXPORT_C void CUniObject::RemoveObserver( MUniObjectObserver* aObserver )
             }
         }
     }
-       
+
+// ---------------------------------------------------------
+// CUniObject::IsValid
+//
+// ---------------------------------------------------------
+//
+EXPORT_C TBool CUniObject::IsValid() const
+    {
+    TBool bFlag = ETrue;
+    if ( iSaveType == CMsvAttachment::EMsvLinkedFile )
+        {
+        TParsePtrC fileParse( iMediaInfo->FullFilePath() );
+        
+        RFile file;     
+        TInt err = file.Open( iFs, fileParse.FullName(), EFileShareAny );
+      
+        if(err == KErrNotReady)
+            {
+            bFlag = EFalse;
+            }
+        if(err == KErrNone)
+            {
+            file.Close();
+            }
+        }
+    return bFlag;
+    }
+
 // EOF

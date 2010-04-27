@@ -276,10 +276,12 @@ TBool CMmsIndirectUpload::ValidateAttachmentsL( CArrayPtrFlat<CSendUiAttachment>
 void CMmsIndirectUpload::PopulateServicesListL(
     RPointerArray<CSendingServiceInfo>& aList )
     {
+    CleanupClosePushL( aList );
     for ( TInt cc = 0; cc < iServiceArray.Count(); cc++ )
         {
         User::LeaveIfError( aList.Append( iServiceArray[cc] ) );         
         }
+    CleanupStack::Pop( &aList );
     }
 
 // -----------------------------------------------------------------------------

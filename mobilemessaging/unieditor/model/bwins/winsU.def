@@ -101,4 +101,6 @@ EXPORTS
 	?RemoveObserver@CUniObject@@QAEXPAVMUniObjectObserver@@@Z @ 100 NONAME ; void CUniObject::RemoveObserver(class MUniObjectObserver *)
 	?SetObserverL@CUniObject@@QAEXPAVMUniObjectObserver@@@Z @ 101 NONAME ; void CUniObject::SetObserverL(class MUniObjectObserver *)
 	?SetDrmRightsWhenLoadedObjects@CUniObject@@QAEXH@Z @ 102 NONAME ; void CUniObject::SetDrmRightsWhenLoadedObjects(int)
+	?IsListValid@CUniObjectList@@QBEHXZ @ 103 NONAME ; int CUniObjectList::IsListValid(void) const
+	?IsValid@CUniObject@@QBEHXZ @ 104 NONAME ; int CUniObject::IsValid(void) const
 

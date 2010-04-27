@@ -140,7 +140,7 @@ void CNcnOutboxObserver::CheckOutboxAndNotifyL()
     CleanupStack::PushL( cmailselection );
     TInt cmailCount= cmailselection ->Count();
     
-    CleanupStack::Pop( 4 );
+    CleanupStack::PopAndDestroy( 4 );
     // Check messagecount in outbox
     msgCount  = msgCount - (smtpCount+pop3Count+ imapCount+cmailCount);
     // Set msg count to the CR key
