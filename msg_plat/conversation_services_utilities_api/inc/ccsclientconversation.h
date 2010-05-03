@@ -76,56 +76,22 @@ public:
             TCsConversationEntryID aEnryId);
 
     /**
-     * GetFirstName
-     * Provides the Conversation first name of this object
+     * GetDisplayName
+     * Provides the Conversation display name of this object
      *
-     * @return Instance of Conversation first name of this object
+     * @return Instance of Conversation display name of this object
      */
-    IMPORT_C HBufC* GetFirstName() const;
+    IMPORT_C HBufC* GetDisplayName() const;
 
     /**
-     * SetFirstNameL
-     * Sets the Conversation first name of this object
+     * SetDisplayNameL
+     * Sets the Conversation display name of this object
      *  
-     * @param aFirstName Instance of Conversation first name
+     * @param aDisplayName Instance of Conversation display name
      */
-    IMPORT_C void SetFirstNameL(
-            const HBufC* aFirstName);
+    IMPORT_C void SetDisplayNameL(
+            const HBufC* aDisplayName);
 
-    /**
-     * GetLastName
-     * Provides the Conversation last name of this object
-     *
-     * @return Instance of Conversation last name of this object
-     */
-    IMPORT_C HBufC* GetLastName() const;
-
-    /**
-     * SetLastNameL
-     * Sets the Conversation last name of this object
-     *  
-     * @param aLastName Instance of Conversation last name
-     */
-    IMPORT_C void SetLastNameL(
-            const HBufC* aLastName);
-
-    /**
-     * GetNickName
-     * Provides the Conversation nick name of this object
-     *
-     * @return Instance of Conversation nick name of this object
-     */
-    IMPORT_C HBufC* GetNickName() const;
-    
-    /**
-     * SetNickNameL
-     * Sets the Conversation nick name of this object
-     *  
-     * @param aNickName Instance of Conversation nick name
-     */
-    IMPORT_C void SetNickNameL(
-            const HBufC* aNickName);
-    
     /**
      * GetContactId
      * Provides the Contact Id for the conversation
@@ -277,22 +243,10 @@ private:    // data members
     TCsConversationEntryID iConversationEntryID;
 
     /**
-     * iFirstName
-     * First name of conversation
+     * iDisplayName
+     * Display name of conversation
      */
-    HBufC*  iFirstName;
-
-    /**
-     * iLastName
-     * Last name of conversation
-     */
-    HBufC*  iLastName;
-    
-    /**
-     * iNickName
-     * Last name of conversation
-     */
-    HBufC*  iNickName;
+    HBufC*  iDisplayName;
 
     /**
      * iContactId

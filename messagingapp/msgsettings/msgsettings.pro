@@ -19,6 +19,5 @@ TEMPLATE = subdirs
 
 SYMBIAN_PLATFORMS = WINSCW ARMV5
 
-SUBDIRS += msgsettingsmw/msgsettingsmw.pro
 SUBDIRS += settingsview/settingsview.pro
 SUBDIRS += msginit/msginit.pro

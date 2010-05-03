@@ -104,6 +104,12 @@ CMsgMediaResolver::CMsgMediaResolver() :
 //
 CMsgMediaResolver::~CMsgMediaResolver()
     {
+    if ( iWait.IsStarted() )
+        {
+        // Stop active wait.
+        iWait.AsyncStop();
+        }
+    
     iFs.Close();
     iApaLsSession.Close();
     iMimeGroupArray.ResetAndDestroy();
@@ -262,13 +268,13 @@ EXPORT_C CMsgMediaInfo* CMsgMediaResolver::CreateMediaInfoL( RFile& aFile, TData
 EXPORT_C void CMsgMediaResolver::ParseInfoDetailsL( CMsgMediaInfo* aInfo, RFile& aFile )
     {
     aInfo->ParseInfoDetailsL( aFile, *iDRMHelper, *this );
-    /* if ( iWait.IsStarted() )
+     if ( iWait.IsStarted() )
         {
         // Stop active wait.
         iWait.AsyncStop();
         }
     // Start active wait
-    iWait.Start();*/
+    iWait.Start();
     }
 
 // -----------------------------------------------------------------------------
@@ -338,11 +344,11 @@ CMsgMediaInfo* CMsgMediaResolver::DoCreateMediaInfoL( RFile& aFile,
 //
 void CMsgMediaResolver::MediaInfoParsed()
     {
-    /*if ( iWait.IsStarted() )
+    if ( iWait.IsStarted() )
         {
         // Stop active wait.
         iWait.AsyncStop();
-        }*/
+        }
     }
 
 //  End of File  

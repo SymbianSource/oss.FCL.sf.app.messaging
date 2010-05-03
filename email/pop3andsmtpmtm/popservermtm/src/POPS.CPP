@@ -208,7 +208,17 @@ void CImPop3Session::DoCancel()
 		iSocket->Disconnect();
 		iSocketConnected=EFalse;
 		}
-	iSocket->Cancel();	// clear a pending socket call
+	
+	if(iState == EPopCapabilities || iState == EWaitingForReply)
+	    {
+	    if(iPopCapabilities)
+	        {
+	        iPopCapabilities->Cancel();
+	        }
+	    }
+	
+	iSocket->Cancel();  // clear a pending socket call
+
 	CMsgActive::DoCancel();
 	}
 

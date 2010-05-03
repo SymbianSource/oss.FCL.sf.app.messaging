@@ -26,5 +26,5 @@ ipr E
 ipr T \sf\app\messaging\messagingappbase\smilparser\SMILdtd\SMIL_Test_Files
 ipr T \sf\app\messaging\messagingappbase\smilparser\SMILdtd\tinc
 ipr T \sf\app\messaging\messagingappbase\smilparser\SMILdtd\tsrc
-ipr T \sf\app\messaging\messagingappbase\smilparser\XMLParser\test
+
 

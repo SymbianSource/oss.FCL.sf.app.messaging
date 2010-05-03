@@ -21,7 +21,7 @@
 #define UNIVIEWERTEXTITEM_H
 
 #include <HbTextEdit>
-
+#include <xqappmgr.h>
 
 //forward declarations
 class QRegExp;
@@ -105,6 +105,20 @@ private slots:
     void saveToContacts();
     void copyToClipboard();
     
+    /**
+     * Slot for handling valid returns from the framework.
+     * 
+     * @param result const QVariant&
+     */
+    void handleOk(const QVariant& result);
+    
+    /**
+     * Slot for handling errors. Error ids are provided as 
+     * 32-bit integers.
+     * @param errorCode qint32
+     */
+    void handleError(int errorCode, const QString& errorMessage);
+
     //called after service request is completed.
     void onServiceRequestCompleted();
     
@@ -128,6 +142,8 @@ private:
 
     //Current cursor position.
     int mCursorPos;
+
+    XQApplicationManager mAppManager;
 };
 
 #endif // UNIVIEWERTEXTITEM_H

@@ -17,16 +17,19 @@
 
 // INCLUDES
 #include "debugtraces.h"
-#include <HbTextItem>
-#include <HbLineEdit>
 #include <HbIconItem>
 
 // USER INCLUDES
 #include "msgunieditorsubject.h"
 #include "UniEditorGenUtils.h"
+#include "msgunifiededitorlineedit.h"
 
 // Localized Constants
 #define LOC_SUBJECT hbTrId("txt_messaging_formlabel_subject")
+
+//priority icon
+const QString HIGH_PRIORITY("qtg_small_priority_high");
+const QString LOW_PRIORITY("qtg_small_priority_low");
 
 //---------------------------------------------------------------
 // MsgUnifiedEditorSubject::MsgUnifiedEditorSubject
@@ -36,6 +39,7 @@ MsgUnifiedEditorSubject::MsgUnifiedEditorSubject( const QString& pluginPath, QGr
 HbWidget(parent),
 mPluginPath(pluginPath),
 mPriorityIcon(NULL),
+mPriority(ConvergedMessage::Normal),
 mGenUtils(0)
 {
 #ifdef _DEBUG_TRACES_
@@ -44,18 +48,16 @@ mGenUtils(0)
 
         setPluginBaseId(style()->registerPlugin(mPluginPath));
 
-        mSubjectLabel = new HbTextItem(LOC_SUBJECT,this);
-        HbStyle::setItemName(mSubjectLabel,"subjectLabel");
-
-        mSubjectEdit = new HbLineEdit(this);
+        mSubjectEdit = new MsgUnifiedEditorLineEdit(LOC_SUBJECT,this);
+        mSubjectEdit->setDefaultBehaviour(true);        
         HbStyle::setItemName(mSubjectEdit,"subjectEdit");
         mSubjectEdit->setMinRows(1);
         mSubjectEdit->setMaxRows(10);
         
         mGenUtils = new UniEditorGenUtils();
         
-        connect(mSubjectEdit, SIGNAL(textChanged(const QString&)),
-                this, SLOT(onTextChanged(const QString&)));
+        connect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
+                this, SLOT(onContentsAdded(const QString&)));
 }
 
 //---------------------------------------------------------------
@@ -82,47 +84,32 @@ void MsgUnifiedEditorSubject::setPriority(ConvergedMessage::Priority priority)
         delete mPriorityIcon;
         mPriorityIcon = NULL;
     }
-    else
-    {// Transition from normal
-        if(mPriority == ConvergedMessage::Normal)
-        {// to normal
-            return;
-        }
-        else
-        {// to high/low
-            emit mmContentAdded(true);
-        }
-    }
 
     switch(priority)
     {
         case ConvergedMessage::High :
         {
-        mPriorityIcon = new HbIconItem(":/qtg_small_priority_high.svg", this);
+        mPriorityIcon = new HbIconItem(HIGH_PRIORITY, this);
         HbStyle::setItemName(mPriorityIcon,"priorityIcon");
         }
         break;
         case ConvergedMessage::Low :
         {
-        mPriorityIcon = new HbIconItem(":/qtg_small_priority_low.svg", this);
+        mPriorityIcon = new HbIconItem(LOW_PRIORITY, this);
         HbStyle::setItemName(mPriorityIcon,"priorityIcon");
-        }
-        break;
-        case ConvergedMessage::Normal :
-        {
-            emit mmContentAdded(false);
         }
         break;
         default:
         break;
     }
 
+    emit contentChanged();
     this->repolish();
 }
 
 QString MsgUnifiedEditorSubject::text()
 {
-    return mSubjectEdit->text();
+    return mSubjectEdit->content();
 }
 
 ConvergedMessage::Priority MsgUnifiedEditorSubject::priority()
@@ -130,33 +117,33 @@ ConvergedMessage::Priority MsgUnifiedEditorSubject::priority()
 	return mPriority;
 }
 
-void MsgUnifiedEditorSubject::onTextChanged(const QString& text)
+void MsgUnifiedEditorSubject::onContentsAdded(const QString& text)
 {
     if(!text.isEmpty())
     {
-        disconnect(mSubjectEdit, SIGNAL(textChanged(const QString&)),
-                this, SLOT(onTextChanged(const QString&)));
+        disconnect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
+                this, SLOT(onContentsAdded(const QString&)));
         if(!subjectOkInSms())
         {
-            emit mmContentAdded(true);
+            emit contentChanged();
         }
-        connect(mSubjectEdit, SIGNAL(textChanged(const QString&)),
-                this, SLOT(onTextRemoved(const QString&)));
+        connect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
+                this, SLOT(onContentsRemoved(const QString&)));
     }
 }
 
-void MsgUnifiedEditorSubject::onTextRemoved(const QString& text)
+void MsgUnifiedEditorSubject::onContentsRemoved(const QString& text)
 {
     if(text.isEmpty())
     {
-        disconnect(mSubjectEdit, SIGNAL(textChanged(const QString&)),
-            this, SLOT(onTextRemoved(const QString&)));
+        disconnect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
+            this, SLOT(onContentsRemoved(const QString&)));
         if(!subjectOkInSms())
         {
-            emit mmContentAdded(false);
+            emit contentChanged();
         }
-        connect(mSubjectEdit, SIGNAL(textChanged(const QString&)),
-                this, SLOT(onTextChanged(const QString&)));
+        connect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
+                this, SLOT(onContentsAdded(const QString&)));
     }
 }
 
@@ -170,7 +157,7 @@ bool MsgUnifiedEditorSubject::subjectOkInSms()
 
 int MsgUnifiedEditorSubject::subjectSize()
 {
-    return mGenUtils->UTF8Size(mSubjectEdit->text());
+    return mGenUtils->UTF8Size(mSubjectEdit->content());
 }
 
 void MsgUnifiedEditorSubject::setText(const QString& text)

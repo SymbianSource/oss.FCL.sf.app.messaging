@@ -21,10 +21,9 @@
 
 #include "convergedmessage.h"
 
-class HbTextItem;
-class HbLineEdit;
 class HbIconItem;
 class UniEditorGenUtils;
+class MsgUnifiedEditorLineEdit;
 
 class MsgUnifiedEditorSubject : public HbWidget
     {
@@ -71,26 +70,21 @@ public:
 
 signals:
     /**
-     * Emitted when MMS content is added or removed
+     * Emitted when subject/priority content is added or removed
      */
-    void mmContentAdded(bool isAdded);
-    
-    /**
-     * Emitted when subject size changes
-     */
-    void sizeChanged(int aSize);
+    void contentChanged();
     
 private slots:
     /**
-     * called when textChanged signal is emitted by the line edit
+     * called when contentsChanged signal is emitted by the line edit
      */
-    void onTextChanged(const QString&);
+    void onContentsAdded(const QString&);
     
     /**
-     * Called when textChanged signal is emitted by the line edit
+     * Called when contentsChanged signal is emitted by the line edit
      * Checks for empty text content 
      */
-    void onTextRemoved(const QString& text);
+    void onContentsRemoved(const QString& text);
     
 private:
     /**
@@ -107,14 +101,9 @@ private:
     QString mPluginPath;
     
     /**
-     * label to show sub: string.
-     */
-    HbTextItem *mSubjectLabel;
-    
-    /**
      * line edit to input subject.
      */
-    HbLineEdit* mSubjectEdit;
+    MsgUnifiedEditorLineEdit* mSubjectEdit;
     
     /**
      * icon item to display priority.

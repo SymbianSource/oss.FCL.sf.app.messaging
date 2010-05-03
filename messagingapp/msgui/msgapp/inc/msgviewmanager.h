@@ -33,57 +33,68 @@ class MsgSettingsView;
 class HbAction;
 
 class MsgViewManager: public QObject
-    {
-    Q_OBJECT   
-   
+{
+Q_OBJECT
+
 public:
     /**
      * constructor
      */
     MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QObject* parent = 0);
-    
+
     /**
      * Destructor.
      */
     ~MsgViewManager();
-    
+
     /**
      * call back function will be called from MsgServiceInterface.
      */
     void send(const qint32 contactId, const QString phoneNumber, const QString displayName);
-    
+
     /**
      * call back function called from MsgServiceInterface to set service request flag.
      */
     void setServiceRequest(bool request);
-    
+
     /**
      * call back function called MsgServiceInterface.
      */
     void open(qint64 conversationId);
-    
+
     /**
      * call back function called MsgServiceInterface.
      */
     void send(QVariant data);
-    
+
     /**
      * depricated api. will be removed in future.
      */
     void openEditor(QString number, QString name);
-    
+
+    /**
+     * call back function will be called from MsgServiceInterface.
+     */
+    void send(const QString phoneNumber, const QString alias, const QString bodyText);
+
+    /**
+     * Opens the viewer to view the message.
+     * @param msgId message id of the message.
+     */
+    void view(int msgId);
+
 private:
     /**
      * swiches back to last view after service request is complete.
      */
     void switchToLastSavedView();
-    
+
     /**
      * find conversation id corresponding to given phone no.
      * @param phoneNum
      */
     qint64 findConversationId(const QString phoneNum);
-    
+
     /**
      * helper method to complete back action.
      */
@@ -124,23 +135,41 @@ private:
      */
     void handleDefault(const QVariantList& data);
 
+    /**
+     * handle sms and mms messge
+     * @param msgId message id
+     */
+    void handleSmsMmsMsg(int msgId);
+
+    /**
+     * handle ringtone message
+     * @param msgId message id
+     */
+    void handleRingtoneMsg(int msgId);
+
+    /**
+     * handle provisioning message
+     * @param msgId message id
+     */
+    void handleProvisoningMsg(int msgId);
+
 private slots:
     /**
      * this slot is called on mainwindows back action.
      */
     void onBackAction();
-    
+
     /**
      * This slot is called when switchView signal is emitted from a view.
      */
     void switchView(const QVariantList& data);
-    
+
 private:
     /**
      * main window reference not owned.
      */
     HbMainWindow* mMainWindow;
-    
+
     /**
      * different views.
      */
@@ -157,6 +186,7 @@ private:
     int mViewAtServiceRequest;
     bool mServiceRequest;
     qint64 mConversationId;
-    };
+    bool mViewServiceRequest;
+};
 
 #endif /* MSGVIEWMANAGER_H_ */

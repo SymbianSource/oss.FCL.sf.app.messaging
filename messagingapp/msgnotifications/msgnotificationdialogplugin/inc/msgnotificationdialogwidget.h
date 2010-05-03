@@ -20,11 +20,36 @@
 
 #include <QObject>
 #include <QVariantMap>
-
-
+#include <QRunnable>
 #include <hbdevicedialoginterface.h>
 #include <hbdevicedialog.h>
 #include <hbnotificationdialog.h>
+
+
+/**
+ * Class for sending service request
+ */
+class ServiceRequestSenderTask : public QRunnable
+{
+public:
+    /**
+     * Constructor
+     */
+    ServiceRequestSenderTask(qint64 conversationId);
+    
+    /**
+     * Destructor
+     */
+    ~ServiceRequestSenderTask();
+     
+    /**
+     * create and send service request
+     */
+     void run();
+
+private: 
+     qint64 mConvId;
+};
 
 /**
  * Message notification widget class. 

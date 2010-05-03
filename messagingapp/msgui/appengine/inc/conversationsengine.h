@@ -103,6 +103,11 @@ public:
     void deleteMessages(QList<int>& msgIdList);
 
     /**
+     * Delete all draft messages.
+     */
+    void deleteAllDraftMessages();
+
+    /**
      * Marks all the unread conversations to read
      * @param conversationId, conversationId
      * @return returns true if call is successful
@@ -117,14 +122,12 @@ public:
     bool markMessagesRead(QList<int>& msgIdList);
     
     /**
-     * Get Contact details firstname/lastname.
+     * Get Contact details name.
      * @param conversationId, conversationId
-     * @param firstName, First Name
-     * @param lastName, Last Name
+     * @param displayName, Name
      */  
     void getContactDetails(qint64 conversationId,
-        QString& firstName,
-        QString& lastName,
+        QString& displayName,
         QString& address);
 
     /**
@@ -165,7 +168,40 @@ public:
      *  Starts fetching remaing conversations
      */
     void fetchMoreConversations();
-    
+
+    /**
+     *  Resend a failed message
+	 *@param  messageId qint32 the Id of the message to be sent
+	 *@return bool true if succeeded
+     */
+    bool resendMessage(qint32 messageId);
+
+    /**
+     * Download a specified message
+     * @param messageId qint32 the Id of the message 
+     * @return KErrNone if Download request is successful, 
+     *         KErrNotFound if settings are not available,
+     *         KErrGeneral for other cases
+     */
+    int downloadMessage(qint32 messageId);  
+
+    /**
+     * Query if the download operation be performed for
+     * a message notification entry
+     * @param aId, message notification id
+     * @return true if download operation is possible
+     */
+    bool downloadOperationSupported(qint32 messageId);
+	
+    /**
+     * Mark message as read and get the message type
+     * @param messageId  message Id 
+     * @param msgType message type is written to this.
+     * @param msgType message sub type is written to this.
+     */
+    void markAsReadAndGetType( qint32 messageId,
+                               int& msgType,
+                               int& msgSubType);
 private:
 
     /**

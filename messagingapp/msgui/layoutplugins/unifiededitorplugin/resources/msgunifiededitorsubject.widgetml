@@ -1,11 +1,8 @@
 <hbwidget version="0.1">
   <layout name="layout-default" type="mesh">
-     
-     <meshitem src="subjectLabel" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-     <meshitem src="subjectLabel" srcEdge="TOP" dst="" dstEdge="TOP" />
 
      <meshitem src="subjectEdit" srcEdge="TOP" dst="" dstEdge="TOP" />
-     <meshitem src="subjectEdit" srcEdge="LEFT" dst="subjectLabel" dstEdge="RIGHT" />
+     <meshitem src="subjectEdit" srcEdge="LEFT" dst="" dstEdge="LEFT" />
      <meshitem src="subjectEdit" srcEdge="RIGHT" dst="priorityIcon" dstEdge="LEFT" />
      <meshitem src="" srcEdge="BOTTOM" dst="subjectEdit" dstEdge="BOTTOM" />
      

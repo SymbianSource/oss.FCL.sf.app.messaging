@@ -19,10 +19,11 @@
 #define UNI_DATA_MODEL_LOADER_H
 
 #include <QMap>
+#include "convergedmessage.h"
 
 //Forward declarations
 class UniDataModelPluginInterface;
-
+class QPluginLoader;
 
 
 #ifdef BUILD_DLL_DATA_MODEL
@@ -38,7 +39,7 @@ class UniDataModelPluginInterface;
 /**
  * Loads all the data model plugins.
  */
-class UNI_DATA_MODEL_LOADER_EXPORT UniDataModelLoader
+class UNI_DATA_MODEL_LOADER_EXPORT UniDataModelLoader 
 {
 public:
     /**
@@ -55,19 +56,13 @@ public:
      * Gets the  data model intended plugin.
      * @param messageType
      */
-    UniDataModelPluginInterface* getDataModelPlugin(const QString& messageType);
-
-    /**
-     * Loads plugins
-     */
-    void loadPlugins();
+    UniDataModelPluginInterface* getDataModelPlugin(ConvergedMessage::MessageType messageType);
 
 private:
     /**
-     * This shall store all the message types
-     * mapped to plugin instance
+     * Keep a list of all the pluginloaders used
      */
-    QMap<QString, UniDataModelPluginInterface*> mDataModelPluginMap;
+    QList<QPluginLoader* > mPluginLoaderList;
 };
 
 #endif //UNI_DATA_MODEL_LOADER_H

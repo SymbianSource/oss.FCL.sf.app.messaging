@@ -20,3 +20,5 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 SUBDIRS += msgnotificationdialogplugin/msgnotificationdialogplugin.pro
 SUBDIRS += msgindicatorplugin/msgindicatorplugin.pro
 SUBDIRS += msgnotifier/msgnotifier.pro
+SUBDIRS += msgerrornotifier/msgerrornotifier.pro
+

@@ -29,7 +29,10 @@
 #include <HbStyleLoader>
 #include <HbGroupBox>
 #include <HbFrameBackground>
+#include <HbMessageBox>
+#include <HbMainWindow>
 
+#include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
 #include <QGraphicsLinearLayout>
 
@@ -46,23 +49,36 @@ const QString NEW_MESSAGE_ICON("qtg_mono_create_message");
 const QString SORT_ICON("qtg_mono_sort");
 
 // LOCALIZATION CONSTANTS
-#define LOC_COMMON_OPEN hbTrId("txt_common_menu_open")
-#define LOC_COMMON_DELETE hbTrId("txt_common_menu_delete")
-#define VIEW_HEADING "Drafts"
-#define MENU_DELETE_ALL "Delete all drafts"
-#define TB_VIEW_EXTN "View"
-#define TB_NEW_MESSAGE "New message"
-#define TB_EXTN_DRAFTS "Drafts"
-#define TB_EXTN_CONVERSATIONS "Conversations"
+
+// Long Tap
+#define LOC_COMMON_OPEN           hbTrId("txt_common_menu_open")
+#define LOC_COMMON_DELETE         hbTrId("txt_common_menu_delete")
+
+// View heading
+#define LOC_DLV_HEADING           hbTrId("txt_messaging_title_drafts")
+
+// Menu items
+#define LOC_MENU_DELETE_ALL       hbTrId("txt_messaging_opt_delete_all")
+
+// Toolbar & toolbar exension
+#define LOC_TB_EXTN_DRAFTS        hbTrId("txt_messaging_button_drafts")
+#define LOC_TB_EXTN_CONVERSATIONS hbTrId("txt_messaging_button_conversations")
+
+// Confirmation note
+#define LOC_DELETE_MESSAGE        hbTrId("txt_messaging_dialog_delete_message")
+#define LOC_DELETE_ALL_DRAFTS     hbTrId("txt_messaging_dialog_delate_all_drafts")
+#define LOC_BUTTON_DELETE         hbTrId("txt_common_button_delete")
+#define LOC_BUTTON_CANCEL         hbTrId("txt_common_button_cancel")
 
 //---------------------------------------------------------------
 // DraftsListView::DraftsListView
 // @see header
 //---------------------------------------------------------------
 DraftsListView::DraftsListView(QGraphicsItem *parent) :
-    MsgBaseView(parent), mListView(0), mViewExtnList(0)
+    MsgBaseView(parent), mListView(0), mViewExtnList(0), mToolBar(0)
 {
-    createView();
+    // Delayed loading.
+    connect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(doDelayedLoading()));
 }
 
 //---------------------------------------------------------------
@@ -74,22 +90,18 @@ DraftsListView::~DraftsListView()
 }
 
 //---------------------------------------------------------------
-// DraftsListView::createView
-// @see header
-//---------------------------------------------------------------
-void DraftsListView::createView()
-{
-    setupToolbar();
-    setupMenu();
-    setupListView();
-}
-
-//---------------------------------------------------------------
 // DraftsListView::setupMenu
 // @see header
 //---------------------------------------------------------------
 void DraftsListView::setupMenu()
 {
+    QAbstractItemModel *model = mListView->model();
+
+    // Menu items are added/removed based on the item count.
+    connect(mListView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this,
+        SLOT(handleModelChanged()), Qt::UniqueConnection);
+    connect(mListView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this,
+        SLOT(handleModelChanged()), Qt::UniqueConnection);
 }
 
 //---------------------------------------------------------------
@@ -98,33 +110,32 @@ void DraftsListView::setupMenu()
 //---------------------------------------------------------------
 void DraftsListView::setupToolbar()
 {
-    HbToolBar *toolBar = this->toolBar();
-    toolBar->setOrientation(Qt::Horizontal);
+    if (!mToolBar) {
+        mToolBar = this->toolBar();
+        mToolBar->setOrientation(Qt::Horizontal);
 
-    // Create & setup ToolBar Extension
-    HbToolBarExtension *viewExtn = new HbToolBarExtension();
-    HbAction *viewAction = toolBar->addExtension(viewExtn);
-    viewAction->setText(TB_VIEW_EXTN);
-    viewAction->setIcon(HbIcon(SORT_ICON));
+        // Create & setup ToolBar Extension
+        HbToolBarExtension *viewExtn = new HbToolBarExtension();
+        HbAction *viewAction = mToolBar->addExtension(viewExtn);
+        viewAction->setIcon(HbIcon(SORT_ICON));
 
-    mViewExtnList = new HbListWidget();
-    mViewExtnList->addItem(TB_EXTN_DRAFTS);
-    mViewExtnList->addItem(TB_EXTN_CONVERSATIONS);
+        mViewExtnList = new HbListWidget();
+        mViewExtnList->addItem(LOC_TB_EXTN_DRAFTS);
+        mViewExtnList->addItem(LOC_TB_EXTN_CONVERSATIONS);
 
-    HbListViewItem *prototype = mViewExtnList->listItemPrototype();
-    HbFrameBackground frame(POPUP_LIST_FRAME, HbFrameDrawer::NinePieces);
-    prototype->setDefaultFrame(frame);
+        HbListViewItem *prototype = mViewExtnList->listItemPrototype();
+        HbFrameBackground frame(POPUP_LIST_FRAME, HbFrameDrawer::NinePieces);
+        prototype->setDefaultFrame(frame);
 
-    connect(mViewExtnList, SIGNAL(activated(HbListWidgetItem*)), this,
-        SLOT(handleViewExtnActivated(HbListWidgetItem*)));
-    connect(mViewExtnList, SIGNAL(activated(HbListWidgetItem*)), viewExtn, SLOT(close()));
+        connect(mViewExtnList, SIGNAL(activated(HbListWidgetItem*)), this,
+            SLOT(handleViewExtnActivated(HbListWidgetItem*)));
+        connect(mViewExtnList, SIGNAL(released(HbListWidgetItem*)), viewExtn, SLOT(close()));
 
-    viewExtn->setContentWidget(mViewExtnList);
+        viewExtn->setContentWidget(mViewExtnList);
 
-    // Create & setup 2nd ToolBar button.
-    HbAction* newMessageAction = new HbAction(HbIcon(NEW_MESSAGE_ICON), TB_NEW_MESSAGE, this);
-    connect(newMessageAction, SIGNAL(triggered()), this, SLOT(createNewMessage()));
-    toolBar->addAction(newMessageAction);
+        // Create & setup 2nd ToolBar button.
+        mToolBar->addAction(HbIcon(NEW_MESSAGE_ICON), "", this, SLOT(createNewMessage()));
+    }
 }
 
 //---------------------------------------------------------------
@@ -133,52 +144,68 @@ void DraftsListView::setupToolbar()
 //---------------------------------------------------------------
 void DraftsListView::setupListView()
 {
-    // Create parent layout.
-    QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(0);
+    if (!mListView) {
+        // Create parent layout.
+        QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+        mainLayout->setContentsMargins(0, 0, 0, 0);
+        mainLayout->setSpacing(0);
 
-    // Create view heading.
-    HbGroupBox *viewHeading = new HbGroupBox();
-    viewHeading->setTitleText(VIEW_HEADING);
+        // Create view heading.
+        HbGroupBox *viewHeading = new HbGroupBox();
+        viewHeading->setHeading(LOC_DLV_HEADING);
 
-    // Create List View.
-    mListView = new HbListView(this);
-    mListView->setScrollingStyle(HbScrollArea::PanOrFlick);
-    mListView->setItemRecycling(true);
-    mListView->setUniformItemSizes(true);
-    mListView->setClampingStyle(HbScrollArea::BounceBackClamping);
+        // Create List View.
+        mListView = new HbListView(this);
 
-    // Register the custorm css path.
-    HbStyleLoader::registerFilePath(":/hblistviewitem.css");
-    //    mListView->setLayoutName("custom");
+        mListView->setScrollingStyle(HbScrollArea::PanOrFlick);
+        mListView->setItemRecycling(true);
+        mListView->setUniformItemSizes(true);
+        mListView->setClampingStyle(HbScrollArea::BounceBackClamping);
 
-    // Set list item properties.
-    HbListViewItem *prototype = mListView->listItemPrototype();
-    prototype->setGraphicsSize(HbListViewItem::SmallIcon);
-    prototype->setStretchingStyle(HbListViewItem::StretchLandscape);
-    prototype->setSecondaryTextRowCount(1, 1);
-    HbFrameBackground frame(LIST_ITEM_FRAME, HbFrameDrawer::NinePieces);
-    prototype->setDefaultFrame(frame);
+        // Register the custorm css path.
+        HbStyleLoader::registerFilePath(":/xml/hblistviewitem.css");
+        //    mListView->setLayoutName("custom");
 
-    // Create and set model
-    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
-    proxyModel->setDynamicSortFilter(true);
-    proxyModel->setSourceModel(ConversationsEngine::instance()->getDraftsModel());
-    proxyModel->setSortRole(TimeStamp);
-    proxyModel->sort(0, Qt::DescendingOrder);
-    mListView->setModel(proxyModel);
+        // Set list item properties.
+        HbListViewItem *prototype = mListView->listItemPrototype();
+        prototype->setGraphicsSize(HbListViewItem::SmallIcon);
+        prototype->setStretchingStyle(HbListViewItem::StretchLandscape);
+        prototype->setSecondaryTextRowCount(1, 1);
+        HbFrameBackground frame(LIST_ITEM_FRAME, HbFrameDrawer::NinePieces);
+        prototype->setDefaultFrame(frame);
 
-    // Short & Long Taps
-    connect(mListView, SIGNAL(activated(QModelIndex)), this, SLOT(openDraftMessage(QModelIndex)));
-    connect(mListView, SIGNAL(longPressed(HbAbstractViewItem*,QPointF)), this,
-        SLOT(handleLongPressed(HbAbstractViewItem*,QPointF)));
+        // Create and set model
+        QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
+        proxyModel->setDynamicSortFilter(true);
+        proxyModel->setSourceModel(ConversationsEngine::instance()->getDraftsModel());
+        proxyModel->setSortRole(TimeStamp);
+        proxyModel->sort(0, Qt::DescendingOrder);
+        mListView->setModel(proxyModel);
 
-    // Add all widgets to main layout.
-    mainLayout->addItem(viewHeading);
-    mainLayout->addItem(mListView);
+        // Short & Long Taps
+        connect(mListView, SIGNAL(activated(QModelIndex)), this,
+            SLOT(openDraftMessage(QModelIndex)));
+        connect(mListView, SIGNAL(longPressed(HbAbstractViewItem*,QPointF)), this,
+            SLOT(handleLongPressed(HbAbstractViewItem*,QPointF)));
 
-    this->setLayout(mainLayout);
+        // Add all widgets to main layout.
+        mainLayout->addItem(viewHeading);
+        mainLayout->addItem(mListView);
+
+        this->setLayout(mainLayout);
+    }
+}
+
+//------------------------------------------------------------------------------
+// DraftsListView::doDelayedLoading
+// @see header
+//------------------------------------------------------------------------------
+void DraftsListView::doDelayedLoading()
+{
+    setupToolbar();
+    setupListView();
+    setupMenu();
+    disconnect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(doDelayedLoading()));
 }
 
 //------------------------------------------------------------------------------
@@ -196,10 +223,35 @@ void DraftsListView::openDraftMessage()
 //------------------------------------------------------------------------------
 void DraftsListView::deleteDraftMessage()
 {
-    int msgId = mListView->currentIndex().data(ConvergedMsgId).toInt();
-    QList<int> msgIdList;
-    msgIdList.append(msgId);
-    ConversationsEngine::instance()->deleteMessages(msgIdList);
+    QModelIndex index = mListView->currentIndex();
+
+    if (!index.isValid()) {
+        return;
+    }
+
+    bool result = HbMessageBox::question(LOC_DELETE_MESSAGE, LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
+
+    if (result) {
+        int msgId = index.data(ConvergedMsgId).toInt();
+        QList<int> msgIdList;
+        msgIdList.append(msgId);
+        ConversationsEngine::instance()->deleteMessages(msgIdList);
+    }
+
+}
+
+//------------------------------------------------------------------------------
+// DraftsListView::deleteAllDraftMessage
+// @see header
+//------------------------------------------------------------------------------
+void DraftsListView::deleteAllDraftMessage()
+{
+    bool result = HbMessageBox::question(LOC_DELETE_ALL_DRAFTS, LOC_BUTTON_DELETE,
+        LOC_BUTTON_CANCEL);
+
+    if (result) {
+        ConversationsEngine::instance()->deleteAllDraftMessages();
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -280,6 +332,24 @@ void DraftsListView::handleViewExtnActivated(HbListWidgetItem *item)
         param << MsgBaseView::DLV; // source view
 
         emit switchView(param);
+    }
+}
+
+//------------------------------------------------------------------------------
+// DraftsListView::handleModelChanged
+// @see header
+//------------------------------------------------------------------------------
+void DraftsListView::handleModelChanged()
+{
+    // If there are no items in list view, delete the menu item.
+    HbMenu *mainMenu = this->menu();
+    if (!mListView->model()->rowCount()) {
+        mainMenu->clearActions();
+    }
+    else {
+        if (this->menu()->isEmpty()) {
+            mainMenu->addAction(LOC_MENU_DELETE_ALL, this, SLOT(deleteAllDraftMessage()));
+        }
     }
 }
 

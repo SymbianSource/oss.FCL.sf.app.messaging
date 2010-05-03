@@ -38,17 +38,16 @@ class UniDataModelPluginInterface;
  *
  */
 
-class ConversationsModel : public QStandardItemModel
+class ConversationsModel: public QStandardItemModel
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
 
     /**
      * Constructor
      */
-    explicit ConversationsModel(ConversationMsgStoreHandler* msgStoreHandler,
-            QObject* parent = 0);
+    explicit ConversationsModel(ConversationMsgStoreHandler* msgStoreHandler, QObject* parent = 0);
 
     /**
      * Destructor
@@ -69,8 +68,7 @@ public:
      * @param entry, CCsConversationEntry
      * @param dynamicUpdate , true if it is a dynamic update event
      */
-    void addRow(const CCsConversationEntry& entry,
-        bool dynamicUpdate=false);
+    void addRow(const CCsConversationEntry& entry, bool dynamicUpdate = false);
 
     /**
      * Delete a row from conversations model.
@@ -78,16 +76,45 @@ public:
      */
     void deleteRow(int msgId);
 
-
 private:
 
     /**
-     * Populate an item in model from CovergedMessage.
+     * Populate an item in model from CCsConversationEntry.
      * @param item, QStandardItem
      * @param entry, CCsConversationEntry
      */
-    void populateItem(QStandardItem& item,
-            const CCsConversationEntry& entry);
+    void populateItem(QStandardItem& item, const CCsConversationEntry& entry);
+
+    /**
+     * Populate MMS related data into item.
+     * @param item, QStandardItem
+     * @param entry, CCsConversationEntry
+     */
+    void handleMMS(QStandardItem& item, const CCsConversationEntry& entry);
+    
+    /**
+     * Populate MMS Notification related data into item.
+     * @param item, QStandardItem
+     * @param entry, CCsConversationEntry
+     */
+    void handleMMSNotification(QStandardItem& item, 
+        const CCsConversationEntry& entry);
+
+    /**
+     * Populate BT message related data into item.
+     * @param item, QStandardItem
+     * @param entry, CCsConversationEntry
+     */
+    void handleBlueToothMessages(QStandardItem& item, 
+        const CCsConversationEntry& entry);
+
+    /**
+     * Populate Bio message related data into item.
+     * @param item, QStandardItem
+     * @param entry, CCsConversationEntry
+     */
+    void handleBioMessages(QStandardItem& item, 
+        const CCsConversationEntry& entry);
 
 private:
 
@@ -97,17 +124,23 @@ private:
      */
     ConversationMsgStoreHandler* mMsgStoreHandler;
 
-  /**
+    /**
      * UniDataModelLoader object
      * Own
      */
     UniDataModelLoader* iDataModelPluginLoader;
 
-  /**
+    /**
      * Mms Data model plugin interface
      * Not Own
      */
-  UniDataModelPluginInterface* iMmsDataPlugin;
+    UniDataModelPluginInterface* iMmsDataPlugin;
+
+    /**
+     * BioMsg Data model plugin interface
+     * Not Own
+     */
+    UniDataModelPluginInterface* iBioMsgPlugin;
 };
 
 #endif // CONVERSATIONS_MODEL_H

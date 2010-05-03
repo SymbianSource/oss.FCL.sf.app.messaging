@@ -18,12 +18,12 @@
 #ifndef UNIFIED_EDITOR_ATTACHMENT_H
 #define UNIFIED_EDITOR_ATTACHMENT_H
 
-#include <hbwidget.h>
+#include <HbWidget>
 #include <QList>
 
 class HbTextItem;
 class HbIconItem;
-class HbPushButton;
+class HbGestureSceneFilter;
 
 class MsgUnifiedEditorAttachment : public HbWidget
     {
@@ -67,6 +67,23 @@ public:
      * @return true/false
      */
     bool isMultimediaContent();
+    
+    HbFeedback::InstantEffect overrideFeedback(Hb::InstantInteraction interaction) const;
+
+protected:
+    /**
+     * reimplemented from base class.
+     */
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    
+    
+private:
+    /**
+     * Helper method to initialize gesture.
+     */
+    void initGesture();
+
 
 signals:
     /**
@@ -137,9 +154,14 @@ private:
     HbTextItem* mAttachmentDetails;
 
     /**
-	 * layout item for background
-	 */
-    HbPushButton *mFrameItem;
+	 * gesture filter for long press.
+	 */    
+    HbGestureSceneFilter* mGestureFilter;
+	
+	/**
+     * Max limit on sms size. Store at class level for optimization
+     */
+    int mMaxSmsSize;
 
     };
 

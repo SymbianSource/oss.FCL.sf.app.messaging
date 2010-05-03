@@ -824,7 +824,7 @@ void CMmsConnectionInitiator::RunL()
             TMmsConnInitLogger::Log( _L("- Timer completed - retry %d"), iRetryCount );
 #endif
             }
-        for( iIndex = iIndex; iIndex < iArray->Count(); ++iIndex )
+        for( ; iIndex < iArray->Count(); ++iIndex )
             {
             // index is safe
             if( ( FindIapL( iArray->At( iIndex ), ap ) ) )

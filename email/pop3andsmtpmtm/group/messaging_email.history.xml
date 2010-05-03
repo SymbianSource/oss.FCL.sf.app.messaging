@@ -7,6 +7,9 @@
     Modified IMAP/POP server MTM API to delete the old messages for new CMail  UI. 
   </defect>
  
+  <defect number="PDEF145102" title="Mail connection is disconnected with mVPN in MCL follow up" revision="157">
+   Handling cancel in   CAPA command 
+  </defect>
   <defect number="PDEF137958" title="Denial of Service vulnerability in mail retrieval" revision="156">
    Restricting the field size of the header to 5000, to avoid DOS condition.
   </defect>

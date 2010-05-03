@@ -26,7 +26,7 @@
 #include "msgattachmentcontainer.h"
 #include "unieditorgenutils.h"
 #include "msgmonitor.h"
-#include "mmsinsertcheckoperation.h"
+#include "mmsconformancecheck.h"
 
 // Constants
 
@@ -42,7 +42,7 @@ mIsMMContent(false)
     mLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     mLayout->setContentsMargins(0,0,0,0);
     mLayout->setSpacing(0);
-    mMmsInsertCheckOp = new MmsInsertCheckOperation;
+    mMmsConformanceCheck = new MmsConformanceCheck;
 }
 
 //---------------------------------------------------------------
@@ -51,18 +51,19 @@ mIsMMContent(false)
 //---------------------------------------------------------------
 MsgAttachmentContainer::~MsgAttachmentContainer()
 {
-    delete mMmsInsertCheckOp;
+    delete mMmsConformanceCheck;
 }
 
 //---------------------------------------------------------------
 // MsgAttachmentContainer::addAttachment
 // @see header file
 //---------------------------------------------------------------
-void MsgAttachmentContainer::addAttachment(const QString& filepath)
+MsgAttachmentContainer::AddAttachmentStatus 
+    MsgAttachmentContainer::addAttachment(const QString& filepath)
 {
     //check for insert conformance
-    if(EInsertSuccess != mMmsInsertCheckOp->checkModeForInsert(filepath))
-        return;
+    if(EInsertSuccess != mMmsConformanceCheck->checkModeForInsert(filepath))
+        return EAddNotSupported;
 
     int msgSize = messageSize();
     QFileInfo fileinfo(filepath);
@@ -76,21 +77,21 @@ void MsgAttachmentContainer::addAttachment(const QString& filepath)
                 ((mAttachmentList.count() == 1) && !mIsMMContent) )
         {
             mIsMMContent = true;
-            emit mmContentAdded(true);
         }
         mAttachmentList << att;
-        int index = mLayout->count() - 1;
+        int index = mLayout->count();
         mLayout->insertItem(index,att);
         connect(att, SIGNAL(deleteMe(MsgUnifiedEditorAttachment*)),
             this, SLOT(deleteAttachment(MsgUnifiedEditorAttachment*)));
 
-        // emit to signal that container size changed
-        emit sizeChanged(containerSize());
+        // emit to signal that container content & size changed
+        emit contentChanged();
     }
-    else if(mAttachmentList.count() == 0)
+    else
     {
-        emit emptyAttachmentContainer();
+        return EAddSizeExceed;
     }
+    return EAddSuccess;
 }
 
 //---------------------------------------------------------------
@@ -108,12 +109,10 @@ void MsgAttachmentContainer::deleteAttachment(MsgUnifiedEditorAttachment* attach
         ((mAttachmentList.count() == 0) && mIsMMContent) )
     {
         mIsMMContent = false;
-        emit mmContentAdded(false);
     }
 
-    // emit to indicate change in container size
-    emit sizeChanged(containerSize());
-
+    // emit to indicate change in container content & size
+    emit contentChanged();
     if(mAttachmentList.count() == 0)
     {
         emit emptyAttachmentContainer();
@@ -161,6 +160,15 @@ int MsgAttachmentContainer::containerSize()
 int MsgAttachmentContainer::messageSize()
 {
     return containerSize() + MsgMonitor::bodySize() + MsgMonitor::subjectSize();
+}
+
+//---------------------------------------------------------------
+// MsgAttachmentContainer::hasMMContent
+// @see header file
+//---------------------------------------------------------------
+bool MsgAttachmentContainer::hasMMContent()
+{
+    return mIsMMContent;
 }
 
 //EOF

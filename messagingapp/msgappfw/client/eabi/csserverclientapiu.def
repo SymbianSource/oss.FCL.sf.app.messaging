@@ -15,18 +15,19 @@ EXPORTS
 	_ZN17CCSRequestHandler25RemoveCachingStatusEventLEP24MCsCachingStatusObserver @ 14 NONAME
 	_ZN17CCSRequestHandler26GetConversationUnreadListLEP13RPointerArrayI21CCsClientConversationE @ 15 NONAME
 	_ZN17CCSRequestHandler26RequestCachingStatusEventLEP24MCsCachingStatusObserver @ 16 NONAME
-	_ZN17CCSRequestHandler29GetConversationIdFromAddressLER7TDesC16 @ 17 NONAME
-	_ZN17CCSRequestHandler30RemoveConversationChangeEventLEP29MCsConversationChangeObserverP21CCsClientConversation @ 18 NONAME
-	_ZN17CCSRequestHandler31RequestConversationChangeEventLEP29MCsConversationChangeObserverP21CCsClientConversation @ 19 NONAME
-	_ZN17CCSRequestHandler34RemoveConversationListChangeEventLEP33MCsConversationListChangeObserver @ 20 NONAME
-	_ZN17CCSRequestHandler35RequestConversationListChangeEventLEP33MCsConversationListChangeObserver @ 21 NONAME
-	_ZN17CCSRequestHandler4NewLEv @ 22 NONAME
-	_ZN17CCSRequestHandler5NewLCEv @ 23 NONAME
-	_ZNK17CCSRequestHandler7VersionEv @ 24 NONAME
-	_ZTI17CCSRequestHandler @ 25 NONAME
-	_ZTI22CCsNotificationHandler @ 26 NONAME
-	_ZTI29CCsConversationChangeObserver @ 27 NONAME
-	_ZTV17CCSRequestHandler @ 28 NONAME
-	_ZTV22CCsNotificationHandler @ 29 NONAME
-	_ZTV29CCsConversationChangeObserver @ 30 NONAME
+	_ZN17CCSRequestHandler29GetConversationFromMessageIdLEi @ 17 NONAME
+	_ZN17CCSRequestHandler29GetConversationIdFromAddressLER7TDesC16 @ 18 NONAME
+	_ZN17CCSRequestHandler30RemoveConversationChangeEventLEP29MCsConversationChangeObserverP21CCsClientConversation @ 19 NONAME
+	_ZN17CCSRequestHandler31RequestConversationChangeEventLEP29MCsConversationChangeObserverP21CCsClientConversation @ 20 NONAME
+	_ZN17CCSRequestHandler34RemoveConversationListChangeEventLEP33MCsConversationListChangeObserver @ 21 NONAME
+	_ZN17CCSRequestHandler35RequestConversationListChangeEventLEP33MCsConversationListChangeObserver @ 22 NONAME
+	_ZN17CCSRequestHandler4NewLEv @ 23 NONAME
+	_ZN17CCSRequestHandler5NewLCEv @ 24 NONAME
+	_ZNK17CCSRequestHandler7VersionEv @ 25 NONAME
+	_ZTI17CCSRequestHandler @ 26 NONAME
+	_ZTI22CCsNotificationHandler @ 27 NONAME
+	_ZTI29CCsConversationChangeObserver @ 28 NONAME
+	_ZTV17CCSRequestHandler @ 29 NONAME
+	_ZTV22CCsNotificationHandler @ 30 NONAME
+	_ZTV29CCsConversationChangeObserver @ 31 NONAME
 

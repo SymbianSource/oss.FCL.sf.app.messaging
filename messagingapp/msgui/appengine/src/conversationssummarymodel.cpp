@@ -20,9 +20,13 @@
 #include "conversationsengineutility.h"
 #include "s60qconversions.h"
 #include "convergedmessage.h"
+#include "unidatamodelloader.h"
+#include "unidatamodelplugininterface.h"
 
 #include <ccsclientconversation.h>
 #include <ccsconversationentry.h>
+#include <QFile>
+#include <QFileInfo>
 
 //---------------------------------------------------------------
 // ConversationsSummaryModel::ConversationsSummaryModel
@@ -80,9 +84,13 @@ QVariant ConversationsSummaryModel::data(const QModelIndex & index ,
         }
         case TimeStamp:
         {
-            value = item->data(TimeStamp);   
+            value = item->data(TimeStamp);
             break;
-            
+        }
+        case SendingState:
+        {
+            value = item->data(SendingState);
+            break;
         }
         case MessageProperty:
         {
@@ -91,12 +99,16 @@ QVariant ConversationsSummaryModel::data(const QModelIndex & index ,
         }
         case MessageType:
         {
-            value = item->data(MessageType);                    
+            value = item->data(MessageType);
+            break;
+        }
+        case MessageSubType:
+        {
+            value = item->data(MessageSubType);
             break;
         }
         case Subject:
         {
-            
             value = item->data(Subject);
             break;
         }
@@ -110,24 +122,19 @@ QVariant ConversationsSummaryModel::data(const QModelIndex & index ,
             value = item->data(ConversationAddress);
             break;
         }
-        case FirstName:
+        case DisplayName:
         {
-            value = item->data(FirstName);
-            break;
-        }
-        case LastName:
-        {
-            value = item->data(LastName);
-            break;
-        }
-        case NickName:
-        {
-            value = item->data(NickName);
+            value = item->data(DisplayName);
             break;
         }
         case Avatar:
         {
             value = item->data(Avatar);
+            break;
+        }
+        case Direction:
+        {
+            value = item->data(Direction);
             break;
         }
         default:
@@ -197,24 +204,48 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
         const CCsClientConversation& conversation)
     {
     //get entry
-    CCsConversationEntry* conEntry = conversation.GetConversationEntry();   
+    CCsConversationEntry* conEntry = conversation.GetConversationEntry(); 
+    //error scenario
+    if(conEntry == NULL)
+        return;
     
-    // id 
-    item.setData(conversation.GetConversationEntryId(), ConversationId);
-
     // message details
-    item.setData(conEntry->EntryId(), ConvergedMsgId);
-    item.setData(ConversationsEngineUtility::messageType(conEntry->GetType()), MessageType);
-    
-    // description
-    HBufC* body = conEntry->Description();
-    if( body && body->Length())
-        {     
-        QString bodytext(S60QConversions::s60DescToQString(*body));
-        item.setData(bodytext, BodyText); 
-        item.setData(bodytext, Subject );
-        }
+    // conversation-id 
+    item.setData(conversation.GetConversationEntryId(), ConversationId);
+    // message-id
+    item.setData(conEntry->EntryId(), ConvergedMsgId);	
+    // send status
+    item.setData(conEntry->GetSendState(),SendingState);
+    // direction
+    item.setData(conEntry->ConversationDir(), Direction);
+    //msg-type
+    int msgType = ConversationsEngineUtility::messageType(conEntry->GetType());
+    item.setData(msgType, MessageType);
+    //message sub-type   
+    item.setData(ConversationsEngineUtility::messageSubType(conEntry->GetType()), MessageSubType);
 
+    //handle BT messages, needs to be revisited again, once vcal/vcard over BT issue is fixed
+    if(ConvergedMessage::BT == msgType)
+    {
+        handleBlueToothMessages(item, *conEntry);
+    }
+    else if(msgType == ConvergedMessage::BioMsg)
+    {
+        handleBioMessages(item, *conEntry);
+    }
+    else
+    {       
+        // description
+        HBufC* body = conEntry->Description();
+        if( body && body->Length())
+        {     
+            QString bodytext(S60QConversions::s60DescToQString(*body));
+            item.setData(bodytext, BodyText); 
+            item.setData(bodytext, Subject );
+        }
+    }
+
+    
     // time stamp
     TTime unixEpoch(KUnixEpoch);
     TTimeIntervalSeconds seconds;
@@ -226,27 +257,15 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
     item.setData(conversation.GetUnreadMessageCount(), UnreadCount);
 
     // contact details
-    HBufC* firstname = conversation.GetFirstName(); 
+    HBufC* disName = conversation.GetDisplayName(); 
     QString displayName("");
-    //first name
-    if(firstname && firstname->Length())
+    //display name
+    if(disName && disName->Length())
         {
-    displayName = S60QConversions::s60DescToQString(*firstname);
-    item.setData(displayName,FirstName); 
+        displayName = S60QConversions::s60DescToQString(*disName);
+        item.setData(displayName,DisplayName); 
         }
-    //last name
-    HBufC* lastname = conversation.GetLastName();
-    if( lastname &&  lastname->Length())
-        {          
-    item.setData(S60QConversions::s60DescToQString(*lastname),LastName);
-        }
-    //nick name
-    HBufC* nickname = conversation.GetNickName();
-    if (nickname && nickname->Length())
-    {
-        item.setData(S60QConversions::s60DescToQString(*nickname), NickName);
-    }
-
+    
     // contact number
     HBufC* contactno = conEntry->Contact();
     QString contactNumber("");
@@ -264,4 +283,86 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
     item.setData(conEntry->IsAttributeSet(ECsAttributeUnread),UnReadStatus);      
     }
 
+
+//---------------------------------------------------------------
+// ConversationsModel::handleBlueToothMessages
+// @see header
+//---------------------------------------------------------------
+void ConversationsSummaryModel::handleBlueToothMessages(QStandardItem& item,
+    const CCsConversationEntry& entry)
+{
+    //TODO, needs to be revisited again, once BT team provides the solution for
+    //BT received as Biomsg issue.
+    QString description = S60QConversions::s60DescToQString(*(entry.Description()));
+
+    if (description.contains(".vcf") || description.contains(".ics")) // "vCard"
+    {
+        //message sub-type
+        item.setData(ConvergedMessage::VCard, MessageSubType);
+
+        //parse vcf file to get the details
+        QString displayName = ConversationsEngineUtility::getVcardDisplayName(description);
+        item.setData(displayName, BodyText);
+    }
+    else 
+    {
+        if (description.contains(".vcs")) // "vCalendar"
+        {
+            //message sub-type
+            item.setData(ConvergedMessage::VCal, MessageSubType);
+        }
+        else
+        {
+            //message sub-type
+            item.setData(ConvergedMessage::None, MessageSubType);
+        }
+        //for BT messages we show filenames for all other (except vcard) messages
+        //get filename and set as body
+        QFileInfo fileinfo(description);
+        QString filename = fileinfo.fileName();
+        item.setData(filename, BodyText);
+    }
+}
+
+//---------------------------------------------------------------
+// ConversationsSummaryModel::handleBioMessages
+// @see header
+//---------------------------------------------------------------
+void ConversationsSummaryModel::handleBioMessages(QStandardItem& item, const CCsConversationEntry& entry)
+{
+    UniDataModelLoader* pluginLoader = new UniDataModelLoader;
+    UniDataModelPluginInterface* bioMsgPlugin = pluginLoader->getDataModelPlugin(ConvergedMessage::BioMsg);
+    bioMsgPlugin->setMessageId(entry.EntryId());
+    
+    int msgSubType = ConversationsEngineUtility::messageSubType(entry.GetType());
+    if (ConvergedMessage::VCard == msgSubType) {
+        if (bioMsgPlugin->attachmentCount() > 0) {
+            UniMessageInfoList attList = bioMsgPlugin->attachmentList();
+            QString attachmentPath = attList[0]->path();
+
+            //get display-name and set as bodytext
+            QString displayName = ConversationsEngineUtility::getVcardDisplayName(attachmentPath);
+            item.setData(displayName, BodyText);
+
+            // clear attachement list : its allocated at data model
+            while (!attList.isEmpty()) {
+                delete attList.takeFirst();
+            }
+        }
+    }
+    else if (ConvergedMessage::VCal == msgSubType) {
+        //not supported
+    }
+    else {
+        // description
+        HBufC* description = entry.Description();
+        QString subject("");
+        if (description && description->Length()) {
+            subject = (S60QConversions::s60DescToQString(*description));
+            item.setData(subject, BodyText);
+        }
+    }
+    
+    delete pluginLoader;
+}
 // EOF

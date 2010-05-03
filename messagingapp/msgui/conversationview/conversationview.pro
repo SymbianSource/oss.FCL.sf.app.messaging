@@ -26,6 +26,7 @@ INCLUDEPATH += .
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../msguiutils/inc
 INCLUDEPATH += ../../msgutils/s60qconversions/inc
+INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../appengine/inc
 INCLUDEPATH += ../../smartmessaging/ringbc/inc
 
@@ -90,4 +91,11 @@ LIBS += -lappengine \
     -lxqserviceutil \
     -lmsguiutils \
     -lunidatamodelloader \
-    -lringbc
+    -lringbc \
+    -lQtContacts \
+    -lcentralrepository \
+    -lunieditorpluginloader \
+    -lgsmu \
+    -lsmcm \
+    -leditorgenutils
+

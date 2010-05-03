@@ -41,8 +41,7 @@ CCsClientConversation::CCsClientConversation()
 void CCsClientConversation::ConstructL()
     {
     iConversationEntryID = 0;
-    iFirstName = NULL;
-    iLastName = NULL;
+    iDisplayName = NULL;
     iContactId = KErrNotFound;
     iConversationEntry = NULL;
     iUnreadMessagesCount = 0;
@@ -67,21 +66,10 @@ EXPORT_C CCsClientConversation* CCsClientConversation::NewL()
 // ----------------------------------------------------------------------------
 EXPORT_C CCsClientConversation::~CCsClientConversation()
     {
-    if (iNickName)
+    if (iDisplayName)
         {
-        delete iNickName;
-        iNickName = NULL;
-        }
-    
-    if (iLastName)
-        {
-        delete iLastName;
-        iLastName = NULL;
-        }
-    if (iFirstName)
-        {
-        delete iFirstName;
-        iFirstName = NULL;
+        delete iDisplayName;
+        iDisplayName = NULL;
         }
     if (iConversationEntry)
         {
@@ -111,68 +99,25 @@ CCsClientConversation::SetConversationEntryId(TCsConversationEntryID aEnryId)
     }
 
 // ----------------------------------------------------------------------------
-// CCsClientConversation::GetFirstName
-// this shall return the conversation first name of the object
+// CCsClientConversation::GetDisplayName
+// this shall return the conversation name of the object
 // ----------------------------------------------------------------------------
-EXPORT_C HBufC* CCsClientConversation::GetFirstName() const
+EXPORT_C HBufC* CCsClientConversation::GetDisplayName() const
     {
-    return iFirstName;
+    return iDisplayName;
     }
 
 // ----------------------------------------------------------------------------
-// CCsClientConversation::SetFirstNameL
-// this function shall set conversation first name in the object
+// CCsClientConversation::SetDisplayNameL
+// this function shall set conversation name in the object
 // ----------------------------------------------------------------------------
 EXPORT_C void
-CCsClientConversation::SetFirstNameL(const HBufC* aFirstName)
+CCsClientConversation::SetDisplayNameL(
+                           const HBufC* aDisplayName)
     {
-    if (aFirstName)
+    if (aDisplayName)
         {
-        iFirstName = aFirstName->AllocL();
-        }
-    }
-
-// ----------------------------------------------------------------------------
-// CCsClientConversation::GetLastName
-// this shall return the conversation Last name of the object
-// ----------------------------------------------------------------------------
-EXPORT_C HBufC* CCsClientConversation::GetLastName() const
-    {
-    return iLastName;
-    }
-
-// ----------------------------------------------------------------------------
-// CCsClientConversation::SetLastNameL
-// this function shall set conversation Last name in the object
-// ----------------------------------------------------------------------------
-EXPORT_C void
-CCsClientConversation::SetLastNameL(const HBufC* aLastName)
-    {
-    if (aLastName)
-        {
-        iLastName = aLastName->AllocL();
-        }
-    }
-
-// ----------------------------------------------------------------------------
-// CCsClientConversation::GetNickName
-// this shall return the conversation nick name of the object
-// ----------------------------------------------------------------------------
-EXPORT_C HBufC* CCsClientConversation::GetNickName() const
-    {
-    return iNickName;
-    }
-
-// ----------------------------------------------------------------------------
-// CCsClientConversation::SetNickNameL
-// this function shall set conversation nick name in the object
-// ----------------------------------------------------------------------------
-EXPORT_C void
-CCsClientConversation::SetNickNameL(const HBufC* aNickName)
-    {
-    if (aNickName)
-        {
-        iNickName = aNickName->AllocL();
+        iDisplayName = aDisplayName->AllocL();
         }
     }
 
@@ -232,8 +177,7 @@ EXPORT_C CCsClientConversation* CCsClientConversation::CloneL() const
     CleanupStack::PushL(cloneObject);
 
     cloneObject->SetConversationEntryId(iConversationEntryID);
-    cloneObject->SetFirstNameL(iFirstName);
-    cloneObject->SetLastNameL(iLastName);
+    cloneObject->SetDisplayNameL(iDisplayName);
     cloneObject->SetContactId(iContactId);
     cloneObject->SetConversationEntryL(iConversationEntry);
     cloneObject->SetUnreadMessageCount(iUnreadMessagesCount);
@@ -253,33 +197,11 @@ EXPORT_C  void CCsClientConversation::ExternalizeL(RWriteStream& aStream) const
     aStream.WriteInt32L(iConversationEntryID);
     aStream.WriteUint16L(iUnreadMessagesCount);
 
-    if (iFirstName)
+    if (iDisplayName)
         {
         // now write the display name
-        aStream.WriteInt8L(iFirstName->Length());
-        aStream << *iFirstName;
-        }
-    else
-        {
-        aStream.WriteInt8L(0);
-        }
-    
-    if (iLastName)
-        {
-        // now write the display name
-        aStream.WriteInt8L(iLastName->Length());
-        aStream << *iLastName;
-        }
-    else
-        {
-        aStream.WriteInt8L(0);
-        }
-    
-    if (iNickName)
-        {
-        // now write the display name
-        aStream.WriteInt8L(iNickName->Length());
-        aStream << *iNickName;
+        aStream.WriteInt8L(iDisplayName->Length());
+        aStream << *iDisplayName;
         }
     else
         {
@@ -308,25 +230,12 @@ EXPORT_C  void CCsClientConversation::InternalizeL(
     iConversationEntryID = aStream.ReadInt32L();
     iUnreadMessagesCount = aStream.ReadUint16L();
     // read first name
-    TInt lenFirstname = aStream.ReadInt8L();
-    if (lenFirstname > 0)
+    TInt lenName = aStream.ReadInt8L();
+    if (lenName > 0)
         {
-        iFirstName = HBufC::NewL(aStream, lenFirstname);
+        iDisplayName = HBufC::NewL(aStream, lenName);
         }
-    // read last name
-    TInt lenLastname = aStream.ReadInt8L();
-    if (lenLastname > 0)
-        {
-        iLastName = HBufC::NewL(aStream, lenLastname);
-        }
-    
-    //read nick name
-    TInt lenNickname = aStream.ReadInt8L();
-    if (lenNickname > 0)
-        {
-        iNickName = HBufC::NewL(aStream, lenNickname);
-        }
-    
+        
     // read contact link
     iContactId = aStream.ReadInt32L();    
         

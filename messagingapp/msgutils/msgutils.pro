@@ -23,6 +23,4 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 SUBDIRS += s60qconversions/s60qconversions.pro
 SUBDIRS += convergedmessageutils/convergedmessageutils.pro
 SUBDIRS += unieditorutils/unieditorutils.pro
-SUBDIRS += unidatamodel/unidatamodel.pro
-SUBDIRS += unidatamodelloader/unidatamodelloader.pro
-SUBDIRS += unieditorplugins/unieditorplugins.pro
+SUBDIRS += unidatautils/unidatautils.pro

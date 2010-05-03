@@ -31,14 +31,12 @@ TARGETTYPE		dll
 CAPABILITY ReadDeviceData WriteDeviceData ProtServ NetworkControl NetworkServices LocalServices ReaduserData WriteUserData
 UID		0x10003C5E 0x100053A0 // 0x10003C5E = KUidMtmServerComponent
 VENDORID 0x70000001
-VERSION 	10.0
-PAGED
 
 SOURCEPATH	../source
 SOURCE			Irs.cpp IRSDLL.CPP  sendopn.cpp
 
 USERINCLUDE		../include  ../../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/inc
-APP_LAYER_SYSTEMINCLUDE
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 SOURCEPATH	.
 

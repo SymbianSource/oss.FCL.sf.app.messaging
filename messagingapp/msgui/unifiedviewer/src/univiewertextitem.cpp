@@ -30,7 +30,7 @@
 #include <cntservicescontact.h>
 #include <qtcontacts.h>
 #include <XQServiceRequest.h>
-
+#include <xqaiwrequest.h>
 
 QTM_USE_NAMESPACE
 
@@ -39,7 +39,7 @@ QTM_USE_NAMESPACE
 //regexp
 const QString NUMBER_PATTERN("(\\(|\\+|\\d)((?:\\d{2,})((?:[\\s-/.\\)\\()])*(?:(\\d+|\\))))*)|((\\*#)(?:\\d+(\\*|#)(?:\\d+#)?))");
 
-const QString EMAIL_PATTERN("[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
+const QString EMAIL_PATTERN("[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?");
 
 const QString URL_PATTERN("(((ht|f|rt)(tp|sp)(s?)\\:\\/\\/)|(www|wap)(?:\\.))(([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*)(\\.)([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*))+");
 
@@ -314,8 +314,8 @@ void UniViewerTextItem::call()
         connect(serviceRequest, SIGNAL(requestError(int)),
                 this, SLOT(onServiceRequestCompleted()));
         
-       *serviceRequest << phoneNumber;
-       serviceRequest->send();
+        *serviceRequest << phoneNumber;
+        serviceRequest->send();
     }
 }
 
@@ -337,11 +337,41 @@ void UniViewerTextItem::createEmail()
 {
     HbAction* action = qobject_cast<HbAction*>(sender());
 
-    if(action)
+    if ( action )
     {
         QString emailId = action->data().toString();
         emailId.remove(EMAIL_RULE);
-        //invoke email editor service & pass emailId.
+
+        // Launch email editor
+        QString serviceName("com.nokia.services.commonemail");
+        QString interfaceName("imessage.send");
+        QString operation("send(QVariant)");
+        XQAiwRequest* request = mAppManager.create(serviceName, interfaceName, 
+			operation, true); 
+        if ( request == NULL )
+            {
+            return;       
+            }
+    
+        // Fill args
+        QStringList recipients;
+        recipients.append(emailId);
+    
+        QMap<QString,QVariant> map;
+        map.insert(QString("to"),recipients);
+    
+        QList<QVariant> args;
+        args.append(map);
+        
+        // Result handlers
+        connect (request, SIGNAL(requestOk(const QVariant&)), 
+         this, SLOT(handleOk(const QVariant&)));
+        connect (request, SIGNAL(requestError(const QVariant&)), 
+             this, SLOT(handleError(const QVariant&)));
+        
+        request->setArguments(args);
+        request->send();
+        delete request;       
     }
 }
 
@@ -433,18 +463,24 @@ void UniViewerTextItem::openContactInfo()
         }
         
         //service stuff.
-        QString serviceName("com.nokia.services.phonebookservices.Fetch");
+        QString serviceName("com.nokia.services.phonebookservices");
      
-        XQServiceRequest* serviceRequest = new XQServiceRequest(serviceName,operation,false);
+        XQAiwRequest* request;
+        request = mAppManager.create(serviceName, "Fetch", operation, true); // embedded
+        if ( request == NULL )
+            {
+            return;       
+            }
+
+        // Result handlers
+        connect (request, SIGNAL(requestOk(const QVariant&)), 
+			this, SLOT(handleOk(const QVariant&)));
+        connect (request, SIGNAL(requestError(const QVariant&)), 
+			this, SLOT(handleError(const QVariant&)));
         
-        connect(serviceRequest, SIGNAL(requestCompleted(QVariant)),
-                this, SLOT(onServiceRequestCompleted()));
-        
-        connect(serviceRequest, SIGNAL(requestError(int)),
-                this, SLOT(onServiceRequestCompleted()));
-        
-        serviceRequest->setArguments(args);
-        serviceRequest->send();
+        request->setArguments(args);
+        request->send();
+        delete request;
     }
 }
 
@@ -479,11 +515,15 @@ int UniViewerTextItem::resolveContactId(const QString& value,
     phoneFilter.setValue(value);
     phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
 
-    QList<QContactLocalId> matchingContacts = phonebookManager.contacts(phoneFilter);
+    QList<QContactSortOrder> sortOrder;
+    QList<QContact> matchingContacts = phonebookManager.contacts(
+            phoneFilter,
+            sortOrder,
+            QStringList());
 
     if ( matchingContacts.count() > 0 ) 
         {       
-        contactId = matchingContacts.at(0);   
+        contactId = matchingContacts.at(0).localId();;   
         }
     
     return contactId;
@@ -528,3 +568,22 @@ void UniViewerTextItem::highlightText(bool highlight)
         }
     }
 }
+
+//---------------------------------------------------------------
+// UniViewerTextItem::handleOk
+//
+//---------------------------------------------------------------
+void UniViewerTextItem::handleOk(const QVariant& result)
+    {
+    Q_UNUSED(result)
+    }
+
+//---------------------------------------------------------------
+// UniViewerTextItem::handleError
+// 
+//---------------------------------------------------------------
+void UniViewerTextItem::handleError(int errorCode, const QString& errorMessage)
+    {
+    Q_UNUSED(errorMessage)
+    Q_UNUSED(errorCode)
+    }

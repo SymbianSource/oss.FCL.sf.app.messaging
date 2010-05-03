@@ -193,8 +193,7 @@ private:
      * @param aLastName contact last name
      */
     void AddNewConversationL(CCsConversationEntry* aConversationEntry,
-                             TInt32 aContactId, const HBufC* aFirstName,
-                             const HBufC* aLastName, const HBufC* aNickName);
+                             TInt32 aContactId, const HBufC* aDisplayName);
 
     /**
      * GetPendingEventCount

@@ -26,21 +26,25 @@
 #include "convergedmessage.h"
 #include "debugtraces.h"
 
+// LOCALIZATION
+#define LOC_MESSAGE_RESEND hbTrId("txt_common_menu_resend_message")
+
 // LOCAL CONSTANTS
 const QString DATE_TIME_FORMAT("dd/MM/yy hh:mm ap"); //Date format.
+const QString TIME_FORMAT("hh:mm ap");
 
-const QString MSG_HIGH_PRIORITY_ICON("qtg_small_priority_high.svg");
-const QString MSG_LOW_PRIORITY_ICON("qtg_small_priority_low.svg");
+const QString MSG_HIGH_PRIORITY_ICON("qtg_small_priority_high");
+const QString MSG_LOW_PRIORITY_ICON("qtg_small_priority_low");
 
 //---------------------------------------------------------------
 // UniViewerDetailsWidget::UniViewerDetailsWidget
 // @see header file
 //---------------------------------------------------------------
 UniViewerDetailsWidget::UniViewerDetailsWidget(QGraphicsItem *parent) :
-    HbWidget(parent), mSubjectLabel(NULL),
-    mPriorityIcon(NULL)
+    HbWidget(parent), mSubjectLabel(0), mPriorityIcon(0)
 {
-    // This is the only permanent item & will not be removed
+    // Permanent items & will not be removed
+
     mTime = new HbTextItem(this);
     HbStyle::setItemName(mTime, "timeLabel");
 }
@@ -73,9 +77,15 @@ void UniViewerDetailsWidget::setSubject(const QString &subject)
 //UniViewerDetailsWidget :: setTimeStamp
 // @see header file
 //---------------------------------------------------------------
-void UniViewerDetailsWidget::setTimeStamp(const QDateTime &aTimeStamp)
+void UniViewerDetailsWidget::setTimeStamp(const QDateTime &aTimeStamp, const int &aSendingState)
 {
-    mTime->setText(aTimeStamp.toString(DATE_TIME_FORMAT));
+
+    if (aSendingState == ConvergedMessage::Resend) {
+        mTime->setText(LOC_MESSAGE_RESEND + aTimeStamp.toString(TIME_FORMAT));
+    }
+    else {
+        mTime->setText(aTimeStamp.toString(DATE_TIME_FORMAT));        
+    }
 }
 
 //---------------------------------------------------------------

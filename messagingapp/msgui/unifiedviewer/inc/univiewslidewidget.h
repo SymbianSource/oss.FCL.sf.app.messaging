@@ -22,13 +22,9 @@
 #include <qobject.h>
 
 class QGraphicsLinearLayout;
-class UniViewerDetailsWidget;
 class UniViewerBodyWidget;
 class UniViewerFeeder;
-class ConvergedMessage;
-class HbGroupBox;
-class UniViewerAddressContainer;
-class UniViewerAttachmentContainer;
+class UniViewerHeaderContainer;
 
 /**
  * This widget is place holder for message headers and body
@@ -69,7 +65,6 @@ public slots:
 
     /**
      * Populates the content on the widget
-     * @param messageDetails message details
      */
     void populateContent();
 
@@ -80,10 +75,11 @@ public slots:
     void populateFirstSlide();
 
 signals:
-        /**
-         * this signal is emitted when sendMessage is emitted. from UniViewerTextItem.
-         */
-        void sendMessage(const QString& phoneNumber);
+
+    /**
+     * this signal is emitted when sendMessage is emitted. from UniViewerTextItem.
+     */
+    void sendMessage(const QString& phoneNumber);
 
 private:
 
@@ -106,12 +102,6 @@ private:
     QGraphicsLinearLayout* mMainLayout;
 
     /**
-     * UniViewerDetailsWidget object
-     * Owned
-     */
-    UniViewerDetailsWidget *mViewerDetails;
-
-    /**
      * UniViewerFeeder object
      * Owned
      */
@@ -119,27 +109,15 @@ private:
 
     /**
      * UniViewerBodyWidget object
-     * owned.
+     * Owned
      */
     UniViewerBodyWidget* mBody;
 
     /**
-     * HbGroupBox object
-     * owned.
+     * UniViewerHeaderContainer object
+     * Owned
      */
-    HbGroupBox *mHeaderGroupBox;
-
-    /**
-     * UniViewerAddressContainer object
-     * owned.
-     */
-    UniViewerAddressContainer *mAddressContainer;
-
-    /**
-     * UniViewerAttachmentContainer object
-     * owned.
-     */
-    UniViewerAttachmentContainer *mAttachmentContainer;
+    UniViewerHeaderContainer* mHeaderContainer;
 
 };
 

@@ -76,7 +76,7 @@ QVariant DraftsModel::data(const QModelIndex & index, int role) const
             dateString = dateTime.toString(DATE_FORMAT);
         }
         //display name
-        QString contactName = item->data(NickName).toString();
+        QString contactName = item->data(DisplayName).toString();
         if (contactName.isEmpty()) {
             contactName = tr("(no recipient)");
         }
@@ -131,9 +131,9 @@ QVariant DraftsModel::data(const QModelIndex & index, int role) const
         value = item->data(Subject);
         break;
     }
-    case NickName:
+    case DisplayName:
     {
-        value = item->data(NickName);
+        value = item->data(DisplayName);
         break;
     }
     case MessageProperty:
@@ -235,7 +235,7 @@ void DraftsModel::populateItem(QStandardItem& item, const TMsvEntry& entry)
 
     // contact details
     QString contact(S60QConversions::s60DescToQString(entry.iDetails));
-    item.setData(contact, NickName);
+    item.setData(contact, DisplayName);
     
     // Attachments
     if (entry.Attachment()) {

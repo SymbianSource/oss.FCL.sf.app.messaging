@@ -24,113 +24,125 @@
 #include "debugtraces.h"
 #include "s60qconversions.h"
 
+#define LOC_RECEIVED_FILES hbTrId("Received Files")
+
 // ----------------------------------------------------------------------------
 // MsgIndicatorPrivate::MsgIndicatorPrivate
 // @see MsgIndicatorPrivate.h
 // ----------------------------------------------------------------------------
-MsgIndicatorPrivate::MsgIndicatorPrivate(MsgIndicator* inidcator):
-	q_ptr(inidcator),mCvServer(NULL)
-    {
+MsgIndicatorPrivate::MsgIndicatorPrivate(MsgIndicator* inidcator) :
+    q_ptr(inidcator), mCvServer(NULL)
+{
     TRAP_IGNORE(initL());
-    }
+}
 
 // ----------------------------------------------------------------------------
 // MsgIndicatorPrivate::~MsgIndicatorPrivate
 // @see MsgIndicatorPrivate.h
 // ----------------------------------------------------------------------------
 MsgIndicatorPrivate::~MsgIndicatorPrivate()
-    {
-    if(mCvServer)
-        {
+{
+    if (mCvServer) {
         delete mCvServer;
         mCvServer = NULL;
-        }
     }
+}
 
 // ----------------------------------------------------------------------------
 // MsgIndicatorPrivate::initL()
 // @see MsgIndicatorPrivate.h
 // ----------------------------------------------------------------------------
 void MsgIndicatorPrivate::initL()
-    {
+{
     mCvServer = CCSRequestHandler::NewL();
-    }
+}
 
 // ----------------------------------------------------------------------------
 // MsgIndicatorPrivate::getIndicatorInfo
 // @see MsgIndicatorPrivate.h
 // ----------------------------------------------------------------------------
-void MsgIndicatorPrivate::getIndicatorInfo(IndicatorData& indicatorData)
-    {
+void MsgIndicatorPrivate::getIndicatorInfo(MsgInfo& indicatorData)
+{
     TRAP_IGNORE(getIndicatorInfoL(indicatorData));
-    }
-    
+}
+
 // ----------------------------------------------------------------------------
 // MsgIndicatorPrivate::getIndicatorInfoL
 // @see MsgIndicatorPrivate.h
 // ----------------------------------------------------------------------------
-void MsgIndicatorPrivate::getIndicatorInfoL(IndicatorData& indicatorData)
-    { 
-    RPointerArray<CCsClientConversation> *clientConversationList = 
-                                    new RPointerArray<CCsClientConversation> ();
-    CleanupStack::PushL(clientConversationList);   
+void MsgIndicatorPrivate::getIndicatorInfoL(MsgInfo& indicatorData)
+{
+    RPointerArray<CCsClientConversation> *clientConversationList = new RPointerArray<
+        CCsClientConversation> ();
+    CleanupStack::PushL(clientConversationList);
     mCvServer->GetConversationUnreadListL(clientConversationList);
     CleanupStack::Pop();
-    
+
+    QStringList nameList;    
     int count = clientConversationList->Count();
-    int msgCount = 0;
-    if(count== 1)
-        {    
-        indicatorData.mFromSingle = true;
+    
+    indicatorData.mMsgCount = 0;
+    
+    for (int loop = 0; loop < count; ++loop) {
         
         CCsClientConversation* conversation =
-        static_cast<CCsClientConversation*> ((*clientConversationList)[0]);
+            static_cast<CCsClientConversation*> ((*clientConversationList)[loop]);
         
         CCsConversationEntry* convEntry = conversation->GetConversationEntry();
+
+        indicatorData.mMsgCount += conversation->GetUnreadMessageCount();
+        indicatorData.mConversationId = static_cast<int>(conversation->GetConversationEntryId());
         
-        indicatorData.mUnreadMsgCount = conversation->GetUnreadMessageCount();
-        indicatorData.mConversationId = conversation->GetConversationEntryId();
-        
-        HBufC* firstName =conversation->GetFirstName();
-        HBufC* lastName = conversation->GetLastName();    
-        HBufC* number =  convEntry->Contact();
-        HBufC* decription = convEntry->Description();
-        
-        if(firstName)
-            {
-            indicatorData.mFirstName = S60QConversions::s60DescToQString(*firstName);
-            }
-        if(lastName)
-            {
-            indicatorData.mLastName = S60QConversions::s60DescToQString(*lastName);
-            }
-        if(number)
-            {
-            indicatorData.mContactNum  =  S60QConversions::s60DescToQString(*number);
-            }
-        if(decription)
-            {
-            indicatorData.mDescription  = S60QConversions::s60DescToQString(*decription);
-            }
-        
+        HBufC* description = convEntry->Description();
+        if (description && (count == 1)) {
+            // Only take the description from convEntry when there is one entry.
+            // description will contain the name list when there are more entries.
+            QString descText;
+            descText = S60QConversions::s60DescToQString(*description);
+            descText.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
+            descText.replace('\r', QChar::LineSeparator);
+            indicatorData.mDescription = descText;
         }
-    else
-        {
-        indicatorData.mFromSingle = false;
-        for (int loop = 0; loop < count; ++loop)
-            {
-            CCsClientConversation* conversation =
-            static_cast<CCsClientConversation*> ((*clientConversationList)[loop]);
-            msgCount += conversation->GetUnreadMessageCount();
-            }
-        indicatorData.mUnreadMsgCount = msgCount;
+
+        if((indicatorData.mMessageType = static_cast<int>(convEntry->GetType()))==ECsBlueTooth){
+            // if we have bluetooth messages, nameList should contain the LOC_RECEVED_FILES
+            // string. DisplayName/number are not needed.
+            nameList.append(LOC_RECEIVED_FILES);
+            indicatorData.mMessageType = ECsBlueTooth ;
+            continue;
         }
+        else { // non-bluetooth
+            HBufC* displayName = conversation->GetDisplayName();
+            HBufC* number = convEntry->Contact();
+
+            if (displayName) {
+                nameList.append(S60QConversions::s60DescToQString(*displayName));
+            }
+            else if (number) {
+                nameList.append(S60QConversions::s60DescToQString(*number));
+            }
+        }
+    }
+
+    nameList.removeDuplicates();
+    nameList.sort();
     
-    // Clean & destroy clientConversationList
-       clientConversationList->ResetAndDestroy();
-       delete clientConversationList;
+    if (nameList.count() > 1) {
+        // more than 1 sender. Concatenate the names in the description 
+        
+        indicatorData.mFromSingle = false;
+        indicatorData.mDescription = nameList.join(QString(", "));
+        indicatorData.mMessageType = ECsSMS;
+    }
+    else{
+        // only 1 sender.
+        // displayname will have the name of the sender.
+        // description will contain latest message if more than 1 message
+        indicatorData.mFromSingle = true;    
+        indicatorData.mDisplayName.append(nameList.at(0));
     }
     
-
-
+    clientConversationList->ResetAndDestroy();
+    delete clientConversationList;
+}
 

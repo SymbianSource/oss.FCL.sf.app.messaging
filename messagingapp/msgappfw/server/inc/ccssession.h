@@ -345,6 +345,15 @@ private:
      * @param aMessage RMessage instance
      */
     void GetConversationIdfromAddressL(const RMessage2& aMessage);
+	
+	/**
+     * GetConversationFromMessageIdL
+     * Get the conversation from message-id
+     * 
+     * @param aMessage RMessage instance
+     */
+    void GetConversationFromMessageIdL(const RMessage2& aMessage);
+    
     /**
      * MarkConversationReadL
      * Service method to mark a conversation as read.

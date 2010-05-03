@@ -35,6 +35,7 @@
 #include "ccsconversationchangeobserver.h"
 
 const TInt  KSmallIpcBuffer = 256; //256 bytes
+const TInt KBigIpcBuffer = 2048; // 2K
 
 // ========================= MEMBER FUNCTIONS ==================================
 
@@ -294,6 +295,10 @@ void CCSRequestHandler::HandleGetConversationListOverflow()
     {
     PRINT ( _L("Enter CCSRequestHandler::HandleGetConversationListOverflow") );
 
+	if ( !iListResultsBuffer )
+        {
+		return;
+		}
     TInt error = KErrNone;
 
     // New buffer size is now stored in results buffer
@@ -314,11 +319,8 @@ void CCSRequestHandler::HandleGetConversationListOverflow()
     stream.Close();
 
     // Delete and recreate the results buffer
-    if ( iListResultsBuffer )
-        {
-        delete iListResultsBuffer;
-        iListResultsBuffer = NULL;
-        }
+    delete iListResultsBuffer;
+    iListResultsBuffer = NULL;
 
     // Buffer created for the new size
     TRAP(error, 
@@ -343,6 +345,10 @@ void CCSRequestHandler::HandleGetConversationOverflow()
     {
     PRINT ( _L("Enter CCSRequestHandler::HandleGetConversationOverflow") );
 
+	   if ( !iConvResultsBuffer )
+        {
+				return;
+				}
     TInt error = KErrNone;
 
     // New buffer size is now stored in results buffer
@@ -364,11 +370,8 @@ void CCSRequestHandler::HandleGetConversationOverflow()
     stream.Close();
 
     // Delete and recreate the results buffer
-    if ( iConvResultsBuffer )
-        {
-        delete iConvResultsBuffer;
-        iConvResultsBuffer = NULL;
-        }
+    delete iConvResultsBuffer;
+    iConvResultsBuffer = NULL;
 
     // Buffer created for the new size
     TRAP(error, 
@@ -1193,6 +1196,40 @@ EXPORT_C TInt CCSRequestHandler::GetConversationIdFromAddressL(TDesC& aContactAd
     
     return conversationId;
     }
+	
+// -----------------------------------------------------------------------------
+// CCSRequestHandler::GetConversationFromMessageIdL()
+// -----------------------------------------------------------------------------
+EXPORT_C CCsClientConversation* CCSRequestHandler::GetConversationFromMessageIdL(TInt aMessageId)        
+{    
+    // Create a buffer to store the results.
+    if(iResultsBuffer)
+    {
+        delete iResultsBuffer;
+        iResultsBuffer = NULL;
+    }
+    iResultsBuffer = HBufC8::NewL(KBigIpcBuffer);
+
+    // Send the request
+    iSession.GetConversationFromMessageIdL(aMessageId, iResultsBuffer->Des());
+
+    // Parse the results
+    RDesReadStream resultStream(iResultsBuffer->Des());
+    resultStream.PushL();
+    CCsClientConversation* clientConversation = CCsClientConversation::NewL();
+    CleanupStack::PushL(clientConversation);
+    clientConversation->InternalizeL(resultStream);
+    CleanupStack::Pop(clientConversation);
+    
+    // Cleanup
+    delete iResultsBuffer;
+    iResultsBuffer = NULL;
+    resultStream.Pop();
+    resultStream.Close();
+
+    return clientConversation;
+}
+
 // -----------------------------------------------------------------------------
 // CCSRequestHandler::GetMessagingHistoryL()
 // -----------------------------------------------------------------------------
@@ -1210,8 +1247,7 @@ EXPORT_C void CCSRequestHandler::GetMessagingHistoryL(TInt aContactId)
     GetConversationsL(clientConversation);
     
     //delete 
-    if ( clientConversation )
-        delete clientConversation;
+    delete clientConversation;
     if( entry )
         delete entry;  
         

@@ -29,10 +29,10 @@
  * Message indicator plugin class. 
  * Main class of message indicator plugin. 
  */
-class MsgIndicatorPlugin : public QObject, public HbIndicatorPluginInterface
+class MsgIndicatorPlugin: public QObject, public HbIndicatorPluginInterface
 {
-    Q_OBJECT
-    Q_INTERFACES(HbIndicatorPluginInterface)
+Q_OBJECT
+Q_INTERFACES(HbIndicatorPluginInterface)
 
 public:
     /**
@@ -59,12 +59,19 @@ public:
      * @see HbIndicatorPluginInterface
      */
     HbIndicatorInterface* createIndicator(const QString &indicatorType);
-    
+
     /**
      * @see HbIndicatorPluginInterface
      */
     int error() const;
-    
+
+    /**
+     * Returns the indices of plugin types.
+     * @param indicatorType QString the type of indicator
+     * @return int the indicator type as an index.
+     */
+    int typeIndex(const QString &indicatorType) const;
+
 private:
     Q_DISABLE_COPY(MsgIndicatorPlugin)
     
@@ -81,4 +88,3 @@ private:
 };
 
 #endif // MSGINDICATORPLUGIN_H
-

@@ -34,6 +34,7 @@
 ConvergedMessageImpl::ConvergedMessageImpl(
         ConvergedMessage::MessageType messageType) :
     mSubject(QString()), mBodyText(QString()), mTimeStamp(0), mProperty(0x0),
+        mMessageSubType(ConvergedMessage::None),
             mPriority(ConvergedMessage::Normal), mLocation(
                     ConvergedMessage::Delete), mDirection(
                     ConvergedMessage::Incoming), mSendingState(
@@ -50,8 +51,9 @@ ConvergedMessageImpl::ConvergedMessageImpl(
 //----------------------------------------------------------------
 ConvergedMessageImpl::ConvergedMessageImpl(const ConvergedMessageId &id) :
     mSubject(QString()), mBodyText(QString()), mTimeStamp(0), mProperty(0x0),
-            mMessageType(ConvergedMessage::None), mPriority(
-                    ConvergedMessage::Normal), mLocation(
+            mMessageType(ConvergedMessage::None), 
+            mMessageSubType(ConvergedMessage::None),
+            mPriority(ConvergedMessage::Normal), mLocation(
                     ConvergedMessage::Delete), mDirection(
                     ConvergedMessage::Incoming), mSendingState(
                     ConvergedMessage::Unknown)
@@ -114,6 +116,7 @@ ConvergedMessageImpl::ConvergedMessageImpl(const ConvergedMessage& msg)
     mTimeStamp = msg.timeStamp();
     mProperty = msg.properties();
     mMessageType = msg.messageType();
+    mMessageSubType = msg.messageSubType();
     mPriority = msg.priority();
     mLocation = msg.location();
     mDirection = msg.direction();
@@ -187,7 +190,24 @@ ConvergedMessage::MessageType ConvergedMessageImpl::messageType() const
 void ConvergedMessageImpl::setMessageType(ConvergedMessage::MessageType type)
     {
     mMessageType = type;
+    }
 
+//----------------------------------------------------------------
+// ConvergedMessageImpl::messageType
+// @see header
+//----------------------------------------------------------------
+ConvergedMessage::MessageSubType ConvergedMessageImpl::messageSubType() const
+    {
+    return ConvergedMessage::MessageSubType(mMessageSubType);
+    }
+
+//----------------------------------------------------------------
+// ConvergedMessageImpl::setMessageSubType
+// @see header
+//----------------------------------------------------------------
+void ConvergedMessageImpl::setMessageSubType(ConvergedMessage::MessageSubType type)
+    {
+    mMessageSubType = type;
     }
 
 //----------------------------------------------------------------
@@ -535,6 +555,7 @@ void ConvergedMessageImpl::serialize(QDataStream &stream) const
     stream << timeStamp;
     stream << mProperty;
     stream << mMessageType;
+    stream << mMessageSubType;
     stream << mPriority;
     stream << mLocation;
     stream << mDirection;
@@ -607,6 +628,7 @@ void ConvergedMessageImpl::deserialize(QDataStream &stream)
     //others
     stream >> mProperty;
     stream >> mMessageType;
+    stream >> mMessageSubType;
     stream >> mPriority;
     stream >> mLocation;
     stream >> mDirection;

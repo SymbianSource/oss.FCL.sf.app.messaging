@@ -15,15 +15,40 @@
 *
 */
 
+#include <textresolver.h> // from CommonEngine
+#include <mtclreg.h>
+#include <mmsnotificationclient.h>
+#include <mmssettings.h>
+#include <xqconversions.h> // from xqutils
+#include <mmsconst.h>
+#include <QDateTime>
+
 #include "conversationmsgstorehandler.h"
 #include "draftsmodel.h"
+#include "MuiuOperationWait.h"
+#include "MsgBioUids.h"
+#include "UniEditorGenUtils.h"
+
 // SYSTEM INCLUDES
 #include <StringLoader.h>
 #include <ccsdefs.h> 
-#include <mmsconst.h>
+#include <msvids.h>
+#include <mmserrors.h>
+#include <msvuids.h>
+#include <smut.h>
 #include <SendUiConsts.h>
+#include <featmgr.h>
+#include <gsmerror.h> 
 
 // CONSTANTS
+const TUid KSmsMtmUid ={KSenduiMtmSmsUidValue};
+const TUid KMmsMtmUid ={KSenduiMtmMmsUidValue};
+_LIT(KUnixEpoch, "19700000:000000.000000");
+#define BYTES_TO_KBYTES_FACTOR 1024
+
+// TODO: read global setting of formats on the phone
+const QString DATE_FORMAT("dd/MM");
+const QString TIME_FORMAT("hh:mm");
 
 // ================= MEMBER FUNCTIONS =======================
 
@@ -32,7 +57,8 @@
 // ---------------------------------------------------------
 //
 ConversationMsgStoreHandler::ConversationMsgStoreHandler():
-    iMsvSession(NULL),iDraftEntry(NULL),iDraftMessages(NULL),mDraftsModel(NULL)
+    iMsvSession(NULL),iDraftEntry(NULL),iDraftMessages(NULL),mDraftsModel(NULL),
+    iMtmReg(NULL),iMmsClient(NULL),iNotificationClient(NULL)
     {
     TRAP_IGNORE(InitL());
     }
@@ -49,17 +75,32 @@ ConversationMsgStoreHandler::~ConversationMsgStoreHandler()
         iDraftEntry = NULL;
         }
 
-    if( iMsvSession )
-        {
-        delete iMsvSession;
-        iMsvSession = NULL;
-        }
-
     if ( iDraftMessages )
         {
         iDraftMessages->Reset();
         delete iDraftMessages;
         iDraftMessages = NULL;
+    }
+
+    if (iMmsClient)
+    {
+        delete iMmsClient;
+        iMmsClient = NULL;
+    }
+    if (iNotificationClient)
+    {
+        delete iNotificationClient;
+        iNotificationClient = NULL;
+    }
+    if (iMtmReg)
+    {
+        delete iMtmReg;
+        iMtmReg = NULL;
+    }
+    if (iMsvSession)
+    {
+        delete iMsvSession;
+        iMsvSession = NULL;
         }
     }
 
@@ -69,7 +110,33 @@ ConversationMsgStoreHandler::~ConversationMsgStoreHandler()
 //
 void ConversationMsgStoreHandler::InitL( )
     {
-    iMsvSession = CMsvSession::OpenSyncL(*this);
+    TInt err = KErrNone;
+    TRAP(err,iMsvSession = CMsvSession::OpenSyncL(*this));
+    if(err != KErrNone)
+        {
+        iMsvSession = NULL;
+        return;
+        }
+    
+    TRAP(err,iMtmReg = CClientMtmRegistry::NewL(*iMsvSession));
+    if(err != KErrNone)
+        {
+        iMtmReg = NULL;
+        return;
+        }
+	
+	 // Get if offline is supported
+    FeatureManager::InitializeLibL();
+    if (FeatureManager::FeatureSupported(KFeatureIdOfflineMode))
+    {
+        iOfflineSupported = ETrue;
+    }
+    else
+    {
+        iOfflineSupported = EFalse;
+    }
+    FeatureManager::UnInitializeLib();
+		
     }
 
 // ---------------------------------------------------------
@@ -172,6 +239,17 @@ MmsNotificationStatus( TInt aMsvId )
     
     TCsMmsNotificationMsgState status = EMsgStatusNull;
 
+    TTime currentTime;
+    currentTime.HomeTime( );
+    TTime expiryTime = iNotificationClient->ExpiryDate( );
+    TLocale locale;
+    expiryTime += locale.UniversalTimeOffset();
+    if (locale.QueryHomeHasDaylightSavingOn())          
+    {
+        TTimeIntervalHours daylightSaving(1);          
+        expiryTime += daylightSaving;
+    }
+
     // operationMask includes operation type. It is not bitmap but ordinal number. 
     // It does not include operation status and result
     TInt operationMask = (entry.iMtmData2 & KMmsOperationIdentifier) ;
@@ -215,6 +293,10 @@ MmsNotificationStatus( TInt aMsvId )
             { 
             // It's been deleted succesfully
             status = EMsgStatusDeleted;
+            }
+        else if( currentTime > expiryTime )
+            {
+            status = EMsgStatusExpired;
             }
         else 
             {   // Normal waiting state
@@ -284,6 +366,30 @@ void ConversationMsgStoreHandler::DeleteMessages(RArray<TInt>& aIdArray)
 }
 
 // ---------------------------------------------------------
+// ConversationMsgStoreHandler::DeleteAllDraftMessages
+// ---------------------------------------------------------
+//
+void ConversationMsgStoreHandler::DeleteAllDraftMessagesL()
+{
+    // Cancel the processing of draft messages.
+    iIdle->Cancel();
+
+    CMsvEntry *draftsEntry = iMsvSession->GetEntryL(KMsvDraftEntryIdValue);
+    CleanupStack::PushL(draftsEntry);
+    CMsvEntrySelection *draftsSelection = draftsEntry->ChildrenL();
+    CleanupStack::PushL(draftsSelection);
+    if ( draftsSelection->Count() > 0 )
+        {
+        CMuiuOperationWait* wait = CMuiuOperationWait::NewLC();
+        CMsvOperation *operation = draftsEntry->DeleteL(*draftsSelection, wait->iStatus);
+        wait->Start();
+        CleanupStack::PopAndDestroy(wait);
+        delete operation;
+        }
+    CleanupStack::PopAndDestroy(2, draftsEntry);
+}
+
+// ---------------------------------------------------------
 // ConversationMsgStoreHandler::DeleteMessagesL
 // ---------------------------------------------------------
 //
@@ -330,7 +436,7 @@ TInt ConversationMsgStoreHandler::ProcessDraftMessagesL()
             {
             iDraftEntry = iMsvSession->GetEntryL(KMsvDraftEntryIdValue);
            
-            iDraftMessages = iDraftEntry->ChildrenL();    
+            iDraftMessages = iDraftEntry->ChildrenL();
             iDraftMessageCount = iDraftEntry->Count();
 
             if ( iDraftMessageCount ) 
@@ -412,5 +518,473 @@ TBool ConversationMsgStoreHandler::IsMtmSupported(long uid)
         return ETrue;
         }	
     return EFalse;
+    }
+	
+//-----------------------------------------------------------------------------
+// ConversationMsgStoreHandler::ResendMessage(TMsvId aId)
+// 
+// -----------------------------------------------------------------------------
+//	
+	
+bool ConversationMsgStoreHandler::ResendMessageL(TMsvId aId)
+{
+    bool retval = true;
+	TMsvId serviceId;
+	TMsvEntry msgEntry;
+	  
+	if(iMsvSession == NULL)
+	    {
+        return false;
+   		}
+  TInt err = iMsvSession->GetEntry(aId, serviceId, msgEntry);
+    
+  if (KErrNone == err)
+  {
+       TUid mtmUid = msgEntry.iMtm;
+
+       CMsvEntry* entry = iMsvSession->GetEntryL(KMsvGlobalOutBoxIndexEntryId);
+       CleanupStack::PushL(entry);
+
+       CMuiuOperationWait* wait = CMuiuOperationWait::NewLC();
+
+       if (mtmUid == KSmsMtmUid)
+       {
+           UniEditorGenUtils* genUtils = new UniEditorGenUtils();
+           CleanupStack::PushL(genUtils);
+
+           // if phone is in offline mode set sending state to suspended
+           // so that mtm does not try to send it.
+           if (iOfflineSupported && genUtils->IsPhoneOfflineL())
+           {
+               msgEntry.SetSendingState(KMsvSendStateSuspended);
+               msgEntry.iError = KErrGsmOfflineOpNotAllowed;
+           }
+           else
+           {
+               msgEntry.SetSendingState(KMsvSendStateWaiting);
+           }
+           CleanupStack::PopAndDestroy(genUtils);
+
+           // Update message entry with sending state.
+           entry->SetEntryL(msgEntry.Id());
+           entry->ChangeL(msgEntry);
+
+           TMsvId firstId;
+           TSmsUtilities::ServiceIdL(*iMsvSession, firstId);
+
+           entry->SetEntryL(KMsvGlobalOutBoxIndexEntryId);
+           //send the message
+           entry->CopyL(aId, firstId, wait->iStatus);
+           wait->Start();
+       }
+       else if (mtmUid == KMmsMtmUid)
+       {
+           //send the message
+           entry->CopyL(aId, msgEntry.iServiceId, wait->iStatus);
+           wait->Start();
+       }
+       CleanupStack::PopAndDestroy(2, entry);
+   }
+   else
+   {
+       User::LeaveIfError(err);
+   }
+   return retval;
+}
+
+//-----------------------------------------------------------------------------
+// ConversationMsgStoreHandler::DownloadOperationSupported
+// -----------------------------------------------------------------------------
+bool ConversationMsgStoreHandler::DownloadOperationSupported(
+        const TMsvId& aId)
+{
+    TMsvId serviceId;
+    TMsvEntry msgEntry;
+    TInt err = iMsvSession->GetEntry(aId,serviceId,msgEntry);
+    
+    TCsMmsNotificationMsgState msgstatus = 
+            MmsNotificationStatus( aId );
+
+    if ( msgEntry.iType == KUidMsvMessageEntry  )
+        {
+
+        if( msgEntry.iMtmData2 & KMmsNewOperationForbidden ) // New Forbidden
+            {
+            return false;
+            }
+        // If notification is succesfully routed to app 
+        // aContext.iMtmData2 & KMmsMessageRoutedToApplication is ETrue and
+        // if notification is NOT succesfully routed to app 
+        // aContext.iError is KMmsErrorUnregisteredApplication.
+        if(    ( msgEntry.iError == KMmsErrorUnregisteredApplication ) // To unregistered application
+            || ( msgEntry.iMtmData2 & KMmsMessageRoutedToApplication ) )
+            {
+            return false;
+            }
+
+        if( msgstatus == EMsgStatusDeleted )
+            { // Msg already been deleted from server
+            return false;
+            }
+
+        if( msgstatus == EMsgStatusReadyForFetching 
+            || msgstatus == EMsgStatusFailed )
+            {   // Fetch is supported if the msg is waiting or something has been failed
+            return true;
+            }
+
+        if (    msgstatus == EMsgStatusForwarded 
+            &&  msgEntry.iMtmData2 & KMmsStoredInMMBox )
+            { // Fetch is supported if it's forwarded and multiple forward is supported
+            return true;
+            }
+        
+        if( msgstatus == EMsgStatusExpired )
+            {
+            return false;
+            }
+        }
+    return false;
+}
+
+//---------------------------------------------------------------
+// ConversationMsgStoreHandler::setNotificationMessageId
+// @see header
+//---------------------------------------------------------------
+void ConversationMsgStoreHandler::setNotificationMessageId(int messageId)
+{
+    // get MMS Notification client mtm & set the content to current entry
+    if(iNotificationClient)
+    {
+        delete iNotificationClient;
+        iNotificationClient = NULL;
+    }
+    CClientMtmRegistry* mtmRegistry = 
+            CClientMtmRegistry::NewL( *iMsvSession );
+    iNotificationClient = static_cast<CMmsNotificationClientMtm*>( 
+                    mtmRegistry->NewMtmL( KUidMsgMMSNotification ));
+    iNotificationClient->SwitchCurrentEntryL(messageId);
+    iNotificationClient->LoadMessageL();
+}
+
+//---------------------------------------------------------------
+// ConversationMsgStoreHandler::NotificationMsgSize
+// @see header
+//---------------------------------------------------------------
+QString ConversationMsgStoreHandler::NotificationMsgSize()
+{
+    // Size of message.
+    TInt size = iNotificationClient->MessageTransferSize( );
+    
+    // read max receive size limit from settings
+    CMmsSettings* settings = CMmsSettings::NewL();
+    CleanupStack::PushL( settings );
+    iNotificationClient->RestoreSettingsL();
+    settings->CopyL( iNotificationClient->MmsSettings() );
+    TInt maxSize = static_cast<TInt>(settings->MaximumReceiveSize() );
+    CleanupStack::PopAndDestroy( settings );
+
+    // apply max size limit rule
+    if( maxSize > 0 )
+    {
+        if( size > maxSize )
+        {
+            size = maxSize;
+        }
+    }
+
+    // Finally make the UI string
+    int fileSize = size / BYTES_TO_KBYTES_FACTOR;
+    if ( size % BYTES_TO_KBYTES_FACTOR )
+    {
+        fileSize++;
+    }
+    // TODO: use localized string constants here
+    QString sizeString = QString("%1").arg(fileSize);
+    sizeString.append(" Kb");
+    return sizeString;
+}
+
+//---------------------------------------------------------------
+// ConversationMsgStoreHandler::NotificationClass
+// @see header
+//---------------------------------------------------------------
+QString ConversationMsgStoreHandler::NotificationClass()
+{
+    //TODO: use localized string
+    QString notificationClass;
+    TInt msgClass = iNotificationClient->MessageClass( );
+    switch( msgClass )
+    {
+        case EMmsClassPersonal:
+        {
+            notificationClass = "Personal";
+            break;
+        }
+        case EMmsClassAdvertisement:
+        {
+            notificationClass = "Advertisement";
+            break;
+        }
+        case EMmsClassInformational:
+        {
+            notificationClass = "Informative";
+            break;
+        }
+        default:
+        {   // In case no class is returned (0), don't add the field
+            break;
+        }
+    }
+    return notificationClass;
+}
+
+//---------------------------------------------------------------
+// ConversationMsgStoreHandler::NotificationStatus
+// @see header
+//---------------------------------------------------------------
+void ConversationMsgStoreHandler::NotificationStatus(
+        int& status,
+        QString& statusStr)
+{
+    // TODO : use standard strings provided by Arul
+    // fetch mms notification status from store handler
+    // and map as per our UI requirements
+    TMsvEntry entry = iNotificationClient->Entry().Entry();
+    status = MmsNotificationStatus(entry.Id());
+    switch(status)
+    {
+        case ConvergedMessage::NotifFailed:
+        {
+            statusStr = "Message retrieval failed !";
+            break;
+        }
+        case ConvergedMessage::NotifExpired:
+        {
+            statusStr = "Message Expired !";
+            break;
+        }
+        case ConvergedMessage::NotifReadyForFetching:
+        {
+            statusStr = "Multimedia Message waiting...";
+            break;
+        }
+        case ConvergedMessage::NotifWaiting:
+        case ConvergedMessage::NotifRetrieving:
+        {
+            statusStr = "Retrieving message...";
+            break;
+        }
+        default:
+        {
+            // not handled, do nothing
+            break;
+        }
+    }
+}
+
+//---------------------------------------------------------------
+// ConversationMsgStoreHandler::NotificationExpiryDate
+// @see header
+//---------------------------------------------------------------
+void ConversationMsgStoreHandler::NotificationExpiryDate(
+        TTime& expiryTime,
+        QString& expiryTimeStr)
+{
+    // get expiry time from entry
+    expiryTime = iNotificationClient->ExpiryDate( );
+    TLocale locale;
+    expiryTime += locale.UniversalTimeOffset();
+    if (locale.QueryHomeHasDaylightSavingOn())          
+    {
+        TTimeIntervalHours daylightSaving(1);          
+        expiryTime += daylightSaving;
+    }
+    
+    // create formatted string for the expiry time
+    TTime unixEpoch(KUnixEpoch);
+    TTimeIntervalSeconds seconds;
+    expiryTime.SecondsFrom(unixEpoch, seconds);
+    QDateTime dateTime;
+    dateTime.setTime_t(seconds.Int());
+    if (dateTime.date() == QDateTime::currentDateTime().date()) {
+        expiryTimeStr = dateTime.toString(TIME_FORMAT);
+    }
+    else {
+        expiryTimeStr = dateTime.toString(DATE_FORMAT);
+    }
+}
+
+//-----------------------------------------------------------------------------
+// ConversationMsgStoreHandler::DownloadMessageL
+// 
+// -----------------------------------------------------------------------------
+//  
+    
+TInt ConversationMsgStoreHandler::DownloadMessageL(TMsvId aId)
+{
+    TMsvId serviceId;
+    TMsvEntry msgEntry;
+
+    TInt err = iMsvSession->GetEntry(aId,serviceId,msgEntry);
+
+    if(err!= KErrNone || msgEntry.iMtm!= KUidMsgMMSNotification)
+    {
+        return KErrGeneral;
+    }
+
+    /*if(!iNotificationClient)
+    {
+        iNotificationClient = static_cast<CMmsNotificationClientMtm*> 
+        (iMtmReg->NewMtmL(KUidMsgMMSNotification));
+    }
+    iNotificationClient->SwitchCurrentEntryL(aId);    */ 
+    
+    // set context to current entry
+    setNotificationMessageId(aId);
+
+    TTime currentTime;
+    currentTime.HomeTime( );
+    TTime expiryTime = iNotificationClient->ExpiryDate( );
+    TLocale locale;
+    expiryTime += locale.UniversalTimeOffset();
+    if (locale.QueryHomeHasDaylightSavingOn())          
+    {
+        TTimeIntervalHours daylightSaving(1);          
+        expiryTime += daylightSaving;
+    }
+
+    if( currentTime > expiryTime )
+    {   // Message is expired
+        return KErrGeneral;
+    }
+
+    //Check if the mms client mtm object is already created or not
+    if( iMmsClient )
+    {
+        // If mms client mtm object is already created restore the settings
+        iMmsClient->RestoreSettingsL();
+    }
+    else
+    {
+        iMmsClient = static_cast<CMmsClientMtm*> (iMtmReg->NewMtmL(KMmsMtmUid));
+    }        
+
+    //TODO chk if only AP check is sufficient
+    TMsvId service = iMmsClient->DefaultServiceL();
+    TBool valid( iMmsClient->ValidateService( service ) == KErrNone );
+    if(!valid)
+    {
+        return KErrNotFound;
+    }
+
+    CMuiuOperationWait* wait =CMuiuOperationWait::NewLC();;
+
+    CMsvEntrySelection* sel = new ( ELeave ) CMsvEntrySelection;
+    CleanupStack::PushL( sel );
+    sel->AppendL( aId );    
+
+    CMsvOperation* op = 
+            iNotificationClient->FetchMessagesL( *sel, wait->iStatus );
+
+    if( !op )
+    {  
+        CleanupStack::PopAndDestroy( sel ); // selection
+        CleanupStack::PopAndDestroy( wait ); // wait
+        return KErrGeneral; 
+    }
+
+    CleanupStack::PushL( op );
+    wait->Start();
+    // Lets ignore the return value of wait
+
+    CleanupStack::PopAndDestroy( op ); // op 
+    CleanupStack::PopAndDestroy( sel ); // selection
+    CleanupStack::PopAndDestroy( wait ); // wait
+
+    return KErrNone;
+}
+
+//----------------------------------------------------------------------------
+// ConversationMsgStoreHandler::markAsReadAndGetType
+// @see header
+//----------------------------------------------------------------------------
+void ConversationMsgStoreHandler::markAsReadAndGetType(int msgId,
+                                                      int& msgType,
+                                                      int& msgSubType)
+    {
+    msgType = ConvergedMessage::None;
+    msgSubType = ConvergedMessage::None;
+    
+    CMsvEntry* cEntry = NULL;
+    TRAPD(err, cEntry = iMsvSession->GetEntryL(msgId));
+    if ( err == KErrNone)
+        {
+        TMsvEntry entry = cEntry->Entry();
+        if ( entry.Unread() ) 
+            {
+            // Mark the entry as read
+            entry.SetUnread( EFalse );
+            cEntry->ChangeL( entry );
+            }
+        // extract message type
+        extractMsgType(entry,msgType,msgSubType);
+        }
+    
+    delete cEntry;
+    }
+
+//----------------------------------------------------------------------------
+// ConversationMsgStoreHandler::extractMsgType
+// @see header
+//----------------------------------------------------------------------------
+void ConversationMsgStoreHandler::extractMsgType(const TMsvEntry& entry,
+                                    int& msgType,
+                                    int& msgSubType)
+    {
+    msgType = ConvergedMessage::None;
+    msgSubType = ConvergedMessage::None;
+
+    switch(entry.iMtm.iUid)   
+        {
+        case KSenduiMtmSmsUidValue:            
+            msgType = ConvergedMessage::Sms;
+            break;
+        case KSenduiMtmBtUidValue:
+            msgType = ConvergedMessage::BT;
+            break;
+        case KSenduiMtmMmsUidValue:        
+            msgType = ConvergedMessage::Mms;
+            break;
+        case KSenduiMMSNotificationUidValue:            
+            msgType = ConvergedMessage::MmsNotification;
+            break;
+        case KSenduiMtmBioUidValue:
+            { 
+            msgType = ConvergedMessage::BioMsg; 
+
+            // based on the biotype uid set message type
+            if(entry.iBioType == KMsgBioUidRingingTone.iUid)
+                {
+                msgSubType = ConvergedMessage::RingingTone;
+                }
+            else if(entry.iBioType == KMsgBioProvisioningMessage.iUid)
+                {
+                msgSubType = ConvergedMessage::Provisioning;
+                }     
+            else if (entry.iBioType == KMsgBioUidVCard.iUid)
+                {
+                msgSubType = ConvergedMessage::VCard;
+                }
+            else if (entry.iBioType == KMsgBioUidVCalendar.iUid)
+                {
+                msgSubType = ConvergedMessage::VCal;
+                }        
+            }
+            break;
+        default:
+            msgType = ConvergedMessage::None;       
+            break;
+        }
     }
 // End of file

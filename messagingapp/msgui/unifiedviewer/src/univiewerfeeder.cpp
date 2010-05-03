@@ -216,4 +216,9 @@ QString UniViewerFeeder::subject()
     return d_ptr->subject();
 }
 
+int UniViewerFeeder::sendingState()
+{
+    
+    return d_ptr->sendingState();    
+}
 // EOF

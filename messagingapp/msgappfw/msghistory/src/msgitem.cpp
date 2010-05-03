@@ -99,17 +99,17 @@ MsgItem::MsgState MsgItem::state() const
 // MsgItem::isAttributeSet
 //@ see header
 // ---------------------------------------------------------------------------
-MsgItem::MsgAttribute MsgItem::isAttributeSet
+bool MsgItem::isAttributeSet
 (MsgItem::MsgAttribute attribute) const
     {
-    return (MsgItem::MsgAttribute)(mAttributes & attribute );
+    return (mAttributes & attribute );
     }
 
 // ---------------------------------------------------------------------------
 // MsgItem::setId
 //@ see header
 // ---------------------------------------------------------------------------
-void MsgItem::setId(const int id)
+void MsgItem::setId(int id)
     {
     mId = id;
     }

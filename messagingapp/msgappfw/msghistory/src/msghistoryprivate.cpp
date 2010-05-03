@@ -106,10 +106,8 @@ TBool MsgHistoryPrivate::Subscribe( const TInt aContactId )
     clientConversation->SetConversationEntryL(entry);
 
     handler->RequestConversationChangeEventL(this, clientConversation);
-    if ( clientConversation )
-        delete clientConversation;
-    if( entry )
-        delete entry;        
+    delete clientConversation;
+    delete entry;        
     if ( err == KErrNone )
         return ETrue;
 
@@ -132,10 +130,9 @@ TBool MsgHistoryPrivate::UnSubscribe( const TInt aContactId )
     clientConversation->SetConversationEntryL(entry);
 
     handler->RemoveConversationChangeEventL(this, clientConversation);
-    if ( clientConversation )
-        delete clientConversation;
-    if( entry )
-        delete entry;
+    delete clientConversation;
+		
+	delete entry;
     if ( err == KErrNone )
         return ETrue;
 

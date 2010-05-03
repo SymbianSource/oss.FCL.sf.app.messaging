@@ -351,21 +351,21 @@ EXPORT_C void CMmsHeaders::StoreL(
         stream.AssignLC( aStore, KUidMmsApplicationInfoStream ); // pushes 'stream' to the stack
         length = ApplicId().Length();
         stream.WriteInt32L( length );
-        if ( length > 0 )
+        if ( length > 0 && iApplicationId )
             {
             stream << iApplicationId->Des();
             }
         
         length = ReplyApplicId().Length();
         stream.WriteInt32L( length );
-        if ( length > 0 )
+        if ( length > 0 && iReplyToApplicationId )
             {
             stream << iReplyToApplicationId->Des();
             }
         
         length = AuxApplicInfo().Length();
         stream.WriteInt32L( length );
-        if ( length > 0 )
+        if ( length > 0 && iApplicationInfo )
             {
             stream << iApplicationInfo->Des();
             }
@@ -387,14 +387,14 @@ EXPORT_C void CMmsHeaders::StoreL(
 
         length = RecommendedRetrievalModeText().Length();
         stream.WriteInt32L( length );
-        if ( length > 0 )
+        if ( length > 0 && iRecommendedRetrievalModeText )
             {
             stream << iRecommendedRetrievalModeText->Des();
             }
             
         length = ReplaceCancelId().Length();
         stream.WriteInt32L( length );
-        if ( length > 0 )
+        if ( length > 0 && iReplaceCancelId )
             {
             stream << iReplaceCancelId->Des();
             }

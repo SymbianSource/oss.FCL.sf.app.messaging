@@ -51,7 +51,7 @@ class MsgBaseView : public HbView
     /**
      * enum definition for differentiating switchview to unieditor command further
      */
-    enum UniEditorFields
+    enum UniEditorOperation
         {
         ADD_PHOTO = 0x01,
         ADD_AUDIO = 0x02,
@@ -59,7 +59,8 @@ class MsgBaseView : public HbView
         ADD_VCARD = 0x08,
         ADD_OTHERS = 0x10,
         ADD_RECIPIENTS = 0x20,
-        ADD_SUBJECT = 0x40
+        ADD_SUBJECT = 0x40,
+        FORWARD_MSG = 0x80
         };
     
     signals:

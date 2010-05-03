@@ -3,10 +3,13 @@
         <file alias="univieweraddresswidget.css">resources/layouts/univieweraddresswidget.css</file>
         <file alias="univieweraddresswidget.widgetml">resources/layouts/univieweraddresswidget.widgetml</file>
         <file alias="univiewerbodywidget.css">resources/layouts/univiewerbodywidget.css</file>
+        <file alias="univiewerbodywidget_color.css">resources/layouts/univiewerbodywidget_color.css</file>
         <file alias="univiewerbodywidget.widgetml">resources/layouts/univiewerbodywidget.widgetml</file>
         <file alias="univiewerdetailswidget.css">resources/layouts/univiewerdetailswidget.css</file>
+        <file alias="univiewerdetailswidget_color.css">resources/layouts/univiewerdetailswidget_color.css</file>
         <file alias="univiewerdetailswidget.widgetml">resources/layouts/univiewerdetailswidget.widgetml</file>
         <file alias="univiewermediawidget.css">resources/layouts/univiewermediawidget.css</file>
+        <file alias="univiewermediawidget_color.css">resources/layouts/univiewermediawidget_color.css</file>
         <file alias="univiewermediawidget.widgetml">resources/layouts/univiewermediawidget.widgetml</file>
     </qresource>
 </RCC>

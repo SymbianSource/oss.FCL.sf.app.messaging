@@ -71,13 +71,13 @@ public:
 public: // From CActive
     void RunL();
     void DoCancel();
-
+		
 private:    
     CCsConversationDeleteHandler();
     void ConstructL(CCsConversationCache* aCache,
             MCsConversationDeleteObserver* aObserver);
     void IssueRequest();
-    void DeleteOneMessageL();
+    void DeleteOneMessage();
     
 private:
     /**

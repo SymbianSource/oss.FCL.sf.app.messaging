@@ -23,8 +23,8 @@ CAPABILITY All -TCB
 SOURCEPATH	../tsrc
 SOURCE         	smiltranslatortest.cpp 
 
-USERINCLUDE	    ../tinc ../inc ../../XMLDOM/INC
-SYSTEMINCLUDE   /epoc32/include
+USERINCLUDE	    ../tinc ../inc 
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 LIBRARY		efsrv.lib
 LIBRARY		euser.lib
 LIBRARY		bafl.lib

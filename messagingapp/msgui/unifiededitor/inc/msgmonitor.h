@@ -19,7 +19,16 @@
 #define MSG_MONITOR_H
 
 #include <QObject>
+#include "convergedmessage.h"
+class MsgUnifiedEditorView;
+class HbWidget;
+class UniEditorGenUtils;
 
+/**
+ * Helper class to monitor message's contruction in unified editor.
+ * This class is for only reading editor's content to run its logic.
+ * This class is NOT a place for content editing inside editor.
+ */
 class MsgMonitor : public QObject
     {
     Q_OBJECT
@@ -36,46 +45,94 @@ public:
     ~MsgMonitor();
 
     /**
-     * setter method to initialize content
+     * Set to skip showing note for first time
+     * @param skip true/false
      */
-    void init();
+    inline void setSkipNote(bool skip = true);
+    
+    /**
+     * Seeker method to access current message type
+     */
+    static inline ConvergedMessage::MessageType messageType();
 
     /**
      * seeker function to get current msg size in bytes
      */
-    static int messageSize();
+    static inline int messageSize();
 
     /**
      * seeker function to get current msg's body size 
      * in bytes
      */
-    static int bodySize();
+    static inline int bodySize();
 
     /**
      * seeker function to get current msg's attachment
      * container size in bytes
      */
-    static int containerSize();
+    static inline int containerSize();
 
     /**
      * seeker function to get current msg's subject
      * size in bytes
      */
-    static int subjectSize();
+    static inline int subjectSize();
 
     /**
      * seeker function to get max possible mms size
      * in bytes
      */
-    static int maxMmsSize();
+    static inline int maxMmsSize();
+    
+    /**
+     * seeker funtion to get max recipient count for sms
+     */
+    static inline int maxSmsRecipients();
+
+    /**
+     * seeker funtion to get max recipient count for mms
+     */
+    static inline int maxMmsRecipients();
 
 public slots:
     /**
-     * handle size change signal emitted by msg components
+     * slot to find any msg type change during editor operations
      */
-    void onSizeChanged(int aSize);
+    void checkMsgTypeChange();
+
+private:
+    /**
+     * setter method to initialize content
+     */
+    void init();
+
+    /**
+     * handle size change of editor components
+     */
+    void updateSizeInfo(HbWidget* aWidget);
+    
+    /**
+     * show type change discreet note
+     */
+    void showPopup(const QString& text);
+    
+    /**
+     * accessor for view
+     */
+    MsgUnifiedEditorView* view();
         
 private:
+    /**
+     * Flag to skip showing the type change popup.
+     * Note need to be skipped when an mms is opened from draft.
+     */
+    bool mSkipNote;
+
+    /**
+     * Type of msg under composition in the editor 
+     */
+    static ConvergedMessage::MessageType mMessageType;
+    
     /**
      * msg body size in bytes
      */
@@ -95,6 +152,24 @@ private:
      * max mms size in bytes
      */
     static int mMaxMmsSize;
+    
+    /**
+     * max recipient count in an sms
+     */
+    static int mMaxSmsRecipients;
+
+    /**
+     * max recipient count in an sms
+     */
+    static int mMaxMmsRecipients;
+
+    /**
+     * UniEditorGenUtils object
+     * Owned
+     */
+    UniEditorGenUtils* mUniEditorGenUtils;
     };
+
+#include "msgmonitor.inl"
 
 #endif //MSG_MONITOR_H

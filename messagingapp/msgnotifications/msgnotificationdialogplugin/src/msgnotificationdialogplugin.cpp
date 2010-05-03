@@ -26,7 +26,7 @@
 static const struct {
     const char *mTypeString;
 } dialogInfos[] = {
-    {"com.nokia.messaging.newmsgnotificationdialog/1.0"}
+    {"com.nokia.messaging.newmsgnotificationdialog"}
 };
 
 // Constants

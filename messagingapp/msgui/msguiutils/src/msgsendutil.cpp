@@ -24,7 +24,6 @@
 #include "UniEditorGenUtils.h"
 
 
-#define MSG_SETTINGS_PLUGIN "resource\\qt\\plugins\\controlpanel\\msgsettingsplugin.qtplugin"
 //---------------------------------------------------------------
 // MsgSendUtil::MsgSendUtil
 // Constructor
@@ -34,8 +33,6 @@ MsgSendUtil::MsgSendUtil(QObject* parentObject) :
     {
     // Load Plugins for send
     mPluginLoader = new UniEditorPluginLoader(this);
-    mPluginLoader->loadPlugins();
-
     mUniEditorGenUtils = new UniEditorGenUtils();
     }
 

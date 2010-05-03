@@ -20,21 +20,24 @@
 
 #include <hbwidget.h>
 
+#include "unidatamodelplugininterface.h"
+
 class UniViewerTextItem;
 class HbIconItem;
+class HbTextItem;
 class HbPushButton;
 class HbGestureSceneFilter;
-
-#include "unidatamodelplugininterface.h"
+class QSignalMapper;
 
 /**
  * This widget displays the body of the viewer
  */
-class UniViewerBodyWidget : public HbWidget
+class UniViewerBodyWidget: public HbWidget
 {
 Q_OBJECT
 
-    Q_PROPERTY(bool hasText READ hasText WRITE setHasText)
+Q_PROPERTY(bool hasText READ hasText WRITE setHasText)
+Q_PROPERTY(bool hasPixmap READ hasPixmap WRITE setHasPixmap)
 
 public:
 
@@ -70,9 +73,15 @@ public slots:
 
     /**
      * Called to insert text content in viewer.
-     * @param
+     * @param text Body text to be set.
      */
     void setTextContent(QString text);
+
+    /**
+     * Sets the slide counter.
+     * @param slideCounter Slide counter string to be set.
+     */
+    void setSlideCounter(QString &slideCounter);
 
     /**
      * Specify if this slide has text
@@ -85,6 +94,18 @@ public slots:
      * @return bool
      */
     bool hasText();
+
+    /**
+     * Specify if this slide has pixmap
+     * @param bool
+     */
+    void setHasPixmap(bool text = true);
+
+    /**
+     * Returns true if body has pixmap
+     * @return bool
+     */
+    bool hasPixmap();
 
     /**
      * Sets the side content
@@ -120,15 +141,30 @@ private slots:
     void openMedia();
 
     /**
+     * Open a specified media file
+     */
+    void openMedia(const QString& fileName);
+
+    /**
      * called from the media object's item specific menu
      */
     void viewDetails();
-    
+
+    /**
+     * Service launch complete.
+     */
+    void handleOk(const QVariant& result);
+
+    /**
+     * Service launch errors.
+     */
+    void handleError(int errorCode, const QString& errorMessage);
+
 signals:
-        /**
-         * this signal is emitted when sendMessage is emitted from UniViewerTextItem.
-         */
-        void sendMessage(const QString& phoneNumber);
+    /**
+     * this signal is emitted when sendMessage is emitted from UniViewerTextItem.
+     */
+    void sendMessage(const QString& phoneNumber);
 
 private:
     /**
@@ -138,12 +174,23 @@ private:
     bool mHasText;
 
     /**
-     * editor to in put text.
+     * Info if slide has pixmap.
+     * true if slide has pixmap else false.
+     */
+    bool mHasPixmap;
+
+    /**
+     * Editor to in put text.
      */
     UniViewerTextItem* mTextItem;
 
     /**
-     * icon item to preview images.
+     * Slide counter.
+     */
+    HbTextItem *mSlideCounter;
+
+    /**
+     * Icon item to preview images.
      */
     HbIconItem* mIconItem;
 
@@ -157,6 +204,10 @@ private:
      */
     HbGestureSceneFilter* gestureFilter;
 
+    /**
+     * File mapper for opening media
+     */
+    QSignalMapper* mSignalMapper;
 };
 
 #endif //UNIVIEWER_BODY_WIDGET_H

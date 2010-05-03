@@ -13,48 +13,13 @@
 #
 # Description:
 #
-#
 
-TEMPLATE = lib
-TARGET = unieditorutils
-DEPENDPATH += . inc src
+TEMPLATE = subdirs
 
-INCLUDEPATH += .
-INCLUDEPATH += ../../../inc
-INCLUDEPATH += ../s60qconversions/inc
-INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+CONFIG += ordered
 
-DEFINES += BUILD_MUIU_UITLS_DLL
-#QMAKE_CXXFLAGS.ARMCC -= --no_hide_all
-
-# UID3
-TARGET.UID3 = 0x2001FE70
-
-# Capability
-TARGET.CAPABILITY = CAP_GENERAL_DLL
-
-TARGET.EPOCALLOWDLLDATA = 1
-
-# Platforms
 SYMBIAN_PLATFORMS = WINSCW ARMV5
 
-# Build.inf rules
-BLD_INF_RULES.prj_exports += \
-     "$${LITERAL_HASH}include <platform_paths.hrh>" \
-     "rom/unieditorutils.iby  CORE_APP_LAYER_IBY_EXPORT_PATH(unieditorutils.iby)"
-
-# Input
-HEADERS += inc/MuiuOperationWait.h \
-    inc/UniEditorGenUtils.h
-    
-SOURCES += src/MuiuOperationWait.cpp \
-    src/UniEditorGenUtils.cpp
-
-LIBS += -leuser \
-    -lCentralRepository \
-    -lconvergedmessageutils \
-    -lsssettings \
-    -ls60qconversions \
-    -lMsgMedia \
-    -lapmime
-
+SUBDIRS += editorgenutils/editorgenutils.pro
+SUBDIRS += unieditorplugins/unieditorplugins.pro
+SUBDIRS += unieditorpluginloader/unieditorpluginloader.pro

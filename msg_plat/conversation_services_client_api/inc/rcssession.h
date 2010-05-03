@@ -242,6 +242,13 @@ public:
             TPtr8 aResultsBuffer);
     
     /**
+     * GetConversation
+     * @param aMessageId message Id.
+     * @return aResultsBuffer Pointer to the results buffer.
+     */
+    void GetConversationFromMessageIdL(TInt aMessageId, TPtr8 aResultsBuffer);
+    
+    /**
      * MarkConversationReadL.
      * This function sends the request to conversation server
      * to mark a conversation as read.

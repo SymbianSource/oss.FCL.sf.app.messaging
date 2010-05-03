@@ -21,13 +21,20 @@
 #include "msgunieditorattachment.h"
 
 class QGraphicsLinearLayout;
-class MmsInsertCheckOperation;
+class MmsConformanceCheck;
 
 class MsgAttachmentContainer : public HbWidget
     {
     Q_OBJECT
 
 public:
+    /**
+     * Add Attachment success/failure states
+     */
+    enum AddAttachmentStatus
+    {
+        EAddSuccess = 0, EAddNotSupported, EAddSizeExceed
+    };
 
     /**
      * Constructor
@@ -42,8 +49,10 @@ public:
     /**
      * add attachment to the container
 	 * @param filepath of the attachment
+	 * @return add operation status
      */
-    void addAttachment(const QString& filepath);
+    MsgAttachmentContainer::AddAttachmentStatus addAttachment(
+            const QString& filepath);
 
     /**
      * count of attachments in the container
@@ -56,12 +65,25 @@ public:
      * @return attachments list
      */
     MsgUnifiedEditorAttachmentList attachmentList();
+    
+    /**
+     * Check if the container hold multimedia content
+     * @return true, if multimedia content is present
+     *         false, otherwise.
+     */
+    bool hasMMContent();
+    
+    /**
+     * Size of the attachment container
+     * @return size
+     */
+    int containerSize();
 
 signals:
     /**
-     * emit when container holds MM content
+     * emit when container content changes
      */
-    void mmContentAdded(bool isAdded);
+    void contentChanged();
 
     /**
      * emit to indicate view that container is now empty
@@ -69,11 +91,6 @@ signals:
      */
     void emptyAttachmentContainer();
     
-    /**
-     * Emitted when msg's attachment container size changes
-     */
-    void sizeChanged(int aSize);
-
 private slots:
     /**
      * delete attachment from the container
@@ -81,12 +98,6 @@ private slots:
     void deleteAttachment(MsgUnifiedEditorAttachment* attachment);
     
 private:
-    /**
-     * Size of the attachment container
-     * @return size
-     */
-    int containerSize();
-
     /**
      * size of the msg
      */
@@ -104,9 +115,9 @@ private:
     QGraphicsLinearLayout* mLayout;
     
     /**
-     * MMs insert check utility class
+     * MMS conformance check utility class
      */
-    MmsInsertCheckOperation* mMmsInsertCheckOp;
+    MmsConformanceCheck* mMmsConformanceCheck;
 
     /**
      * attachment list

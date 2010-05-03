@@ -682,23 +682,21 @@ Copies the MMS settings stored in the specified object into this object.
 The MMS Settings to be copied.
 */
 EXPORT_C void CMmsSettings::CopyL(const CMmsSettings& aMmsSettings)
-{
-    iMmsSettingsFlags = aMmsSettings.iMmsSettingsFlags;
-    iApplicationId = aMmsSettings.iApplicationId;
-
-    delete iAddress;
-    iAddress = NULL;
-
-    iAddress = aMmsSettings.Address().AllocL();
-
-    iCreationMode = aMmsSettings.iCreationMode;
-
-    TInt count = aMmsSettings.ProxyCount();
-    iProxy.Reset();
-    for (TInt loop = 0; loop < count; ++loop)
-    {
-        iProxy.Append(aMmsSettings.GetProxy(loop));
-    }
+	{
+	iMmsSettingsFlags		= aMmsSettings.iMmsSettingsFlags;
+	iApplicationId 			= aMmsSettings.iApplicationId;
+	
+	delete iAddress;
+	iAddress	=	aMmsSettings.Address().AllocL();
+	
+	iCreationMode 			= aMmsSettings.iCreationMode;
+	
+	TInt count = aMmsSettings.ProxyCount();
+	iProxy.Reset();
+	for(TInt loop=0; loop < count; ++loop)
+		{
+		iProxy.Append(aMmsSettings.GetProxy(loop));
+		}
 
 	count = aMmsSettings.NapIdCount();
 	iNapId.Reset();

@@ -64,7 +64,6 @@
   <layout name="layout-mms-image-landscape" type="mesh">
 
     <meshitem src="preview" srcEdge="TOP" dst="" dstEdge="TOP" />
-    <meshitem src="preview" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
     <meshitem src="preview" srcEdge="LEFT" dst="" dstEdge="LEFT" />
 
     <meshitem src="subject" srcEdge="TOP" dst="" dstEdge="TOP" />
@@ -84,6 +83,7 @@
 
     <meshitem src="timeStamp" srcEdge="LEFT" dst="preview" dstEdge="RIGHT" />
     <meshitem src="timeStamp" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
+    <meshitem src="timeStamp" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM"/>
 
     <meshitem src="newItemIcon" srcEdge="LEFT" dst="" dstEdge="LEFT"/>
     <meshitem src="newItemIcon" srcEdge="TOP" dst="" dstEdge="TOP"/>

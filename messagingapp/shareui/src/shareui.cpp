@@ -32,10 +32,7 @@ ShareUi::ShareUi() : d_ptr(NULL)
 
 /**
  * Destructor.
- * 
- * 
  */
-
 ShareUi::~ShareUi()
     {
     // free allocated memory

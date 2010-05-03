@@ -27,7 +27,6 @@ class HbTextItem;
 class HbPushButton;
 class HbLineEdit;
 class MsgUnifiedEditorLineEdit;
-class MsgUiUtilsManager;
 
 class MsgUnifiedEditorAddress : public HbWidget
     {
@@ -62,6 +61,11 @@ public:
      * setter method to set address
      */
     void setAddresses(ConvergedMessageAddressList addrlist);
+    
+    /**
+     * Get amount of digits to be used in contact matching
+     */
+    static int contactMatchDigits();
         
 signals:
     /**
@@ -70,27 +74,36 @@ signals:
     void sendMessage();
 
     /**
-     * Emitted when MMS content is added or removed
+     * Emitted when content is added or removed
      */
-    void mmContentAdded(bool isAdded);
+    void contentChanged();
 
 private slots:
    
     /**
      * called after selection from pbk.
      */
-    void contactsFetched(const QVariant& contacts);
-
+    void fetchContacts();
     /**
-     * Called when textChanged signal is emitted by the line edit
+     * Slot for handling valid returns from the phonebook contacts fetched.
      */
-    void onTextChanged(const QString&);
+    void handleOk(const QVariant& result);
+    
+    /**
+     * Slot for handling errors. Error ids are provided as 
+     */
+    void handleError(int errorCode, const QString& errorMessage);
 
     /**
-     * Called when textChanged signal is emitted by the line edit
+     * Called when contentsChanged signal is emitted by the line edit
+     */
+    void onContentsAdded(const QString&);
+
+    /**
+     * Called when contentsChanged signal is emitted by the line edit
      * Checks for empty text content
      */
-    void onTextRemoved(const QString& text);
+    void onContentsRemoved(const QString& text);
 
 private:
     /**
@@ -128,12 +141,7 @@ private:
      * address map.
      */
     QMap<QString, QString> mAddressMap;
-
-    /**
-     * MsgUiUtils Manager for phonebook operations
-     * Not Owned
-     */
-    MsgUiUtilsManager *mUtilsManager;
+   
     };
 
 #endif //UNIFIED_EDITOR_ADDRESS_H

@@ -1,23 +1,10 @@
 <RCC>
-    <qresource prefix="/">
-        <file alias="msglistviewitem.css">resources/msglistviewitem.css</file>
-        <file alias="msglistviewitem.widgetml">resources/msglistviewitem.widgetml</file>
-        <file alias="slide_in_from_screen_bottom.fxml">resources/slide_in_from_screen_bottom.fxml</file>
-        <file alias="qtg_large_message.svg">resources/qtg_large_message.svg</file>
-        <file alias="hblistviewitem.css">resources/hblistviewitem.css</file>
-    </qresource>
-    <qresource prefix="/newitem">
-        <file alias="qtg_fr_list_new_item_t.svg">resources/newitem_frames/qtg_fr_list_new_item_t.svg</file>
-        <file alias="qtg_fr_list_new_item_c.svg">resources/newitem_frames/qtg_fr_list_new_item_c.svg</file>
-        <file alias="qtg_fr_list_new_item_b.svg">resources/newitem_frames/qtg_fr_list_new_item_b.svg</file>
-    </qresource>
-    <qresource prefix="/icons">
-        <file alias="qtg_mono_chat_buddies.png">resources/icons/qtg_mono_chat_buddies.png</file>
-        <file alias="qtg_mono_create_message.png">resources/icons/qtg_mono_create_message.png</file>
-        <file alias="qtg_mono_search.png">resources/icons/qtg_mono_search.png</file>
-        <file alias="qtg_mono_sort.png">resources/icons/qtg_mono_sort.png</file>
+    <qresource prefix="/xml">
+        <file alias="hblistviewitem.css">resources/xml/hblistviewitem.css</file>
+        <file alias="msglistviewitem.css">resources/xml/msglistviewitem.css</file>
+        <file alias="msglistviewitem.widgetml">resources/xml/msglistviewitem.widgetml</file>
     </qresource>
     <qresource prefix="/translations">
-        <file alias="messaging_en_GB">resources/messaging_en_GB</file>
+        <file alias="messaging_en_GB">resources/translations/messaging_en_GB</file>
     </qresource>
 </RCC>

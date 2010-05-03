@@ -25,10 +25,11 @@
 
 // USER INCLUDES
 #include "unitexteditor.h"
-#include "debugtraces.h"
 
 // LOCAL CONSTANTS
 const QString ADDRESS_SEPARATOR("; ");
+const QString ADDRESS_OPEN(" (");
+const QString ADDRESS_CLOSE(")");
 
 //----------------------------------------------------------------------------
 // UniViewerAddressWidget::UniViewerAddressWidget
@@ -43,6 +44,8 @@ UniViewerAddressWidget::UniViewerAddressWidget(QGraphicsItem *parent) :
     connect(mAddress, SIGNAL(aboutToShowContextMenu(HbMenu *,QPointF)), this,
         SLOT(handleAboutToShowContextMenu(HbMenu *,QPointF)));
 
+    // TODO: Wrapping fix breaking normal scenarios.
+    // this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 }
 
 //----------------------------------------------------------------------------
@@ -78,9 +81,9 @@ void UniViewerAddressWidget::populate(const QString &label,
         QString alias1 = QString();
         if (UniViewerFeederPrivate::GetNameFromContacts(address, alias1) > 1)
         {
-            address1.append(" (");
+            address1.append(ADDRESS_OPEN);
             address1.append(address);
-            address1.append(")");
+            address1.append(ADDRESS_CLOSE);
         }
     }
     else
@@ -126,9 +129,9 @@ void UniViewerAddressWidget::populate(const QString &label,
             if (UniViewerFeederPrivate::GetNameFromContacts(addressList[i]->address(),
                                                             alias) > 1)
             {
-                address.append(" (");
+                address.append(ADDRESS_OPEN);
                 address.append(addressList[i]->address());
-                address.append(")");
+                address.append(ADDRESS_CLOSE);
             }
         }
         else

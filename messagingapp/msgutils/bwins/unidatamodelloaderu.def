@@ -1,6 +1,0 @@
-EXPORTS
-	??1UniDataModelLoader@@QAE@XZ @ 1 NONAME ; UniDataModelLoader::~UniDataModelLoader(void)
-	?getDataModelPlugin@UniDataModelLoader@@QAEPAVUniDataModelPluginInterface@@ABVQString@@@Z @ 2 NONAME ; class UniDataModelPluginInterface * UniDataModelLoader::getDataModelPlugin(class QString const &)
-	?loadPlugins@UniDataModelLoader@@QAEXXZ @ 3 NONAME ; void UniDataModelLoader::loadPlugins(void)
-	??0UniDataModelLoader@@QAE@XZ @ 4 NONAME ; UniDataModelLoader::UniDataModelLoader(void)
-

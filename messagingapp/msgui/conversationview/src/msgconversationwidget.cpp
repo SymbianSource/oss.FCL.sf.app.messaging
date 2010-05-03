@@ -24,37 +24,30 @@
 #include <QPixmap>
 #include <QImageReader>
 #include <QDir>
+#include <HbEffect>
 #include "debugtraces.h"
 
 #include "convergedmessage.h"
 
-#define DEBUG_PAINT 0
-
 const int MAX_SIZE(200);
 
 // Icons
-const QString MSG_FORWARD_ICON(":/icons/qtg_mono_forward.svg");
-
-const QString MSG_HIGH_PRIORITY_ICON(":/icons/qtg_small_priority_high.svg");
-const QString MSG_LOW_PRIORITY_ICON(":/icons/qtg_small_priority_low.svg");
-
-const QString MSG_ATTACH_ICON(":/icons/qtg_small_attachment.svg");
-
-const QString MSG_AUDIO_ICON(":/icons/qtg_large_music_player.png");
-const QString MSG_VIDEO_ICON(":/icons/video_icon.png");
-const QString MSG_AUDIO_PLAY_ICON(":/icons/qtg_large_music_player.png");
+const QString MSG_HIGH_PRIORITY_ICON("qtg_small_priority_high");
+const QString MSG_LOW_PRIORITY_ICON("qtg_small_priority_low");
+const QString MSG_ATTACH_ICON("qtg_small_attachment");
+const QString MSG_AUDIO_ICON("qtg_large_music_player");
+const QString MSG_VIDEO_ICON("qtg_large_video_player");
+const QString MSG_AUDIO_PLAY_ICON("qtg_large_music_player");
 
 
 // Frames
-const QString IN_CHAT_FRAME(":/bubble/qtg_fr_convlist_received_normal");
-const QString IN_CHAT_FRAME_PRESSED(":/bubble/qtg_fr_convlist_received_pressed");
-const QString OUT_CHAT_FRAME(":/bubble/qtg_fr_convlist_sent_normal");
-const QString OUT_CHAT_FRAME_PRESSED(":/bubble/qtg_fr_convlist_sent_pressed");
-const QString IN_CHAT_FRAME_UNREAD(":/bubble/qtg_fr_convlist_received_highlight");
-const QString NEW_ITEM_FRAME(":/new_item/qtg_fr_list_new_item");
-const QString SENDING_CHAT_FRAME(":/bubble/qtg_fr_convlist_sent_highlight");
-
-#define PLUGINPATH "conversationviewplugin.dll"
+const QString CV_RECEIVED_NORMAL_FR("qtg_fr_convlist_received_normal");
+const QString CV_RECEIVED_PRESSED_FR("qtg_fr_convlist_received_pressed");
+const QString CV_RECEIVED_HIGHLIGHT_FR("qtg_fr_convlist_received_highlight");
+const QString CV_SENT_NORMAL_FR("qtg_fr_convlist_sent_normal");
+const QString CV_SENT_PRESSED_FR("qtg_fr_convlist_sent_pressed");
+const QString CV_SENT_HIGHLIGHT_FR("qtg_fr_convlist_sent_highlight");
+const QString NEW_ITEM_FRAME("qtg_fr_list_new_item");
 
 //---------------------------------------------------------------
 // MsgConversationWidget::MsgConversationWidget
@@ -70,8 +63,10 @@ MsgConversationWidget::MsgConversationWidget(QGraphicsItem *parent) :
         mIncoming(false),
         mUnread(false),
         mIsMMS(false),
+        mIsMMSNotification(false),
         mPriority(0),
         mSendingState(0),
+        mNotificationState(0),
         mNewFrameItem(NULL),
         mBubbleFrameItem(NULL),
         mSubjectTextItem(NULL),
@@ -109,6 +104,7 @@ void MsgConversationWidget::init()
     mBubbleFrameItem = new HbFrameItem(this);
     // ZValue is set to make the bubble to be rendered in behind text items.
     mBubbleFrameItem->setZValue(-1.0);
+    mBubbleFrameItem->frameDrawer().setFrameType(HbFrameDrawer::NinePieces);
     HbStyle::setItemName(mBubbleFrameItem, "bubble");
 
     mBodyTextItem = new HbTextItem(this);
@@ -289,7 +285,7 @@ bool MsgConversationWidget::hasAudio()
 // MsgConversationWidget::displayAudioIcon
 // @see header file
 //---------------------------------------------------------------
-void MsgConversationWidget::displayAudioIcon()
+void MsgConversationWidget::displayAudioIcon(const QString &iconPath)
 {
     if (hasAudio())
     {
@@ -300,7 +296,7 @@ void MsgConversationWidget::displayAudioIcon()
                 mPlayIconItem = new HbIconItem(this);
                 HbStyle::setItemName(mPlayIconItem, "playIcon");
             }
-            mPlayIconItem->setIconName(MSG_AUDIO_PLAY_ICON);
+            mPlayIconItem->setIconName(iconPath.isEmpty() ? MSG_AUDIO_PLAY_ICON : iconPath);
         }
         else
         {
@@ -309,7 +305,7 @@ void MsgConversationWidget::displayAudioIcon()
                 mAudioIconItem = new HbIconItem(this);
                 HbStyle::setItemName(mAudioIconItem, "audioIcon");
             }
-            mAudioIconItem->setIconName(MSG_AUDIO_ICON);
+            mAudioIconItem->setIconName(iconPath.isEmpty() ? MSG_AUDIO_PLAY_ICON : iconPath);
         }
     }
 }
@@ -415,6 +411,24 @@ bool MsgConversationWidget::isMMS()
 }
 
 //---------------------------------------------------------------
+// MsgConversationWidget::setMMSNotification
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::setMMSNotification(bool isMMSNotification)
+{
+    mIsMMSNotification = isMMSNotification;
+}
+
+//---------------------------------------------------------------
+// MsgConversationWidget::isMMS
+// @see header file
+//---------------------------------------------------------------
+bool MsgConversationWidget::isMMSNotification()
+{
+    return mIsMMSNotification;
+}
+
+//---------------------------------------------------------------
 // MsgConversationWidget::setSendingState
 // @see header file
 //---------------------------------------------------------------
@@ -462,6 +476,52 @@ int MsgConversationWidget::sendingState()
 }
 
 //---------------------------------------------------------------
+// MsgConversationWidget::setNotificationState
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::setNotificationState(int state)
+{
+    switch (state)
+    {
+        case ConvergedMessage::NotifFailed:
+        {
+            mNotificationState = NotifFailed;
+            break;
+        }
+        case ConvergedMessage::NotifReadyForFetching:
+        {
+            mNotificationState = NotifReadyForFetching;
+            break;
+        }
+        case ConvergedMessage::NotifRetrieving:
+        case ConvergedMessage::NotifWaiting:
+        {
+            mNotificationState = NotifRetrieving;
+            break;
+        }
+        case ConvergedMessage::NotifExpired:
+        {
+            mNotificationState = NotifExpired;
+            break;
+        }
+        default:
+        {
+            mNotificationState = NotifUnknown;
+            break;
+        }
+    }
+}
+
+//---------------------------------------------------------------
+// MsgConversationWidget::notificationState
+// @see header file
+//---------------------------------------------------------------
+int MsgConversationWidget::notificationState()
+{
+    return mNotificationState;
+}
+
+//---------------------------------------------------------------
 // MsgConversationWidget::setTimeStamp
 // @see header file
 //---------------------------------------------------------------
@@ -493,23 +553,60 @@ void MsgConversationWidget::drawNewItemFrame()
 //---------------------------------------------------------------
 void MsgConversationWidget::drawBubbleFrame()
 {
-    mBubbleFrameItem->frameDrawer().setFrameType(HbFrameDrawer::NinePieces);
-    mBubbleFrameItem->frameDrawer().setFillWholeRect(true);
-
     if(isIncoming())
     {
-        mBubbleFrameItem->frameDrawer().setFrameGraphicsName(IN_CHAT_FRAME);
-    }
-    else
-    {
-        if(mSendingState == Sending || mSendingState == Pending || mSendingState == Unknown)
+        if (mIsMMSNotification && (mNotificationState == NotifUnknown
+                || mNotificationState == NotifRetrieving ))
         {
-            mBubbleFrameItem->frameDrawer().setFrameGraphicsName(SENDING_CHAT_FRAME);
+            mBubbleFrameItem->frameDrawer().setFrameGraphicsName(
+                CV_RECEIVED_HIGHLIGHT_FR);
+            //Inactive state bubble  
         }
         else
         {
-            mBubbleFrameItem->frameDrawer().setFrameGraphicsName(OUT_CHAT_FRAME);
+            mBubbleFrameItem->frameDrawer().setFrameGraphicsName(CV_RECEIVED_NORMAL_FR);
         }
+    }
+    else
+    {
+        if(mSendingState == Sending || mSendingState == Pending || 
+           mSendingState == Unknown || mSendingState == Failed)
+        {
+            mBubbleFrameItem->frameDrawer().setFrameGraphicsName(CV_SENT_HIGHLIGHT_FR);
+        }
+        else
+        {
+            mBubbleFrameItem->frameDrawer().setFrameGraphicsName(CV_SENT_NORMAL_FR);
+        }
+    }
+}
+
+//---------------------------------------------------------------
+// MsgConversationWidget::drawPressedBubbleFrame
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::drawPressedBubbleFrame()
+{
+    if(isIncoming())
+    {
+        mBubbleFrameItem->frameDrawer().setFrameGraphicsName(CV_RECEIVED_PRESSED_FR);
+    }
+    else
+    {
+        mBubbleFrameItem->frameDrawer().setFrameGraphicsName(CV_SENT_PRESSED_FR);
+    }
+}
+
+//---------------------------------------------------------------
+// MsgConversationWidget::pressStateChanged
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::pressStateChanged(bool pressed, bool animate)
+{
+    Q_UNUSED(animate)
+
+    if (mBubbleFrameItem) {
+        (pressed) ? drawPressedBubbleFrame() : drawBubbleFrame();
     }
 }
 

@@ -11,35 +11,57 @@
 *
 * Contributors:
 *
-* Description:  Offers message creation and sending services.
- *
+* Description:  Offers file share services.
+*
 */
 
+#ifndef __SHARE_UI_PRIVATE_H__
+#define __SHARE_UI_PRIVATE_H__
 
-
-#ifndef SHAREUIPRIVATE_H_
-#define SHAREUIPRIVATE_H_
-
-#include <qobject.h>
-#include <qfile.h>
-#include <qstandarditemmodel.h>
+#include <QObject>
+#include <QMap>
+#include <QAction>
 #include <QModelIndex>
-#include <QStringList>
-
-#include <hbaction.h>
-#include <hbmenu.h>
-#include <hbdialog.h>
-#include <hblabel.h>
-#include <hblistview.h>
-#include <hblistviewitem.h>
-
-#include <xqaiwrequest.h>
+#include <QStandardItemModel>
+#include <HbListViewItem>
 #include <xqappmgr.h>
-#include <xqaiwinterfacedescriptor.h>
 
+// FORWARD DECLARATIONS
+class XQAiwRequest;
+class XQAiwInterfaceDescriptor;
+class HbAction;
+class HbDialog;
+class HbListView;
+class HbListViewItem;
+class HbTextItem;
+class HbIconItem;
 
 #define SERVICE_INTERFACE "imessage.send"
 #define SHARE_OP "send(QVariant)"
+
+/**
+ * Data roles for list
+ */
+enum ShareItemDataRole {
+    ProviderNameRole = 10000,
+    ProviderIconRole = 10001
+};
+
+/**
+ * Share List item prototype
+ */
+class ShareListItem : public HbListViewItem
+    {
+    Q_OBJECT
+    
+public:
+    ShareListItem(QGraphicsItem* parent=0);
+    HbAbstractViewItem* createItem();
+    void updateChildItems();
+private:
+    HbIconItem* mProviderIcon;
+    HbTextItem *mProviderName;
+    };
 
 /**
  * Private implementaion of shareui.
@@ -62,26 +84,24 @@ public:
     virtual ~ShareUiPrivate();
     
     /**
-     * method for passing file list to the sending services
+     * Initiate share for the specified files.
      * @param fileList list of paths to files.eg: c:\images\sunset.jpg
-     * @param embedded true if sendui dialog is embedded in the launched application
+     * @param embedded true if service launched is embedded in the 
+     * launched application.
      * 
-     * @return bool true if dialog initialization successfull otherwise false
+     * @return bool true if dialog initialization successfull. Otherwise false.
      */
     bool init(QStringList& fileList, bool embedded);
-    
-
     
 public slots:
 
     /**
-     * Handles setting th orguments for triggered service
+     * Handles setting the arguments for triggered service.
      */
     void onTriggered(void); 
     
     /**
      * Slot for handling valid returns from the framework.
-     * 
      * @param result const QVariant&
      */
     void handleOk(const QVariant& result);
@@ -106,58 +126,74 @@ private slots:
     void itemActivated(QModelIndex index);
     
 private:
-
     /**
-     * fetchServiceDescriptors
-     * 
-     * Fetches the service descriptors using the Application Manager api. 
-     * 
-     * @return error boolean true if successfully fetched.
-     */
-    bool fetchServiceDescriptors(QList<XQAiwInterfaceDescriptor>& descriptorList);
-    
-    /**
-     * fetchServiceAction fetches the action associated with a specified interface descriptor.
-     * This is used after the fetchServiceDescriptors is called, and 
-     * 
-     * @param serviceDescriptor ServiceDescriptor fetched using fetchServiceDescriptors
-     * @return error boolean true if successfully fetched.
+     * Fetch the action associated with a specified interface descriptor.
+     * @param interfaceDescriptor Descriptor got from application manager.
+     * @return The action.
      */
     HbAction* fetchServiceAction(XQAiwInterfaceDescriptor interfaceDescriptor);    
     
     /**
-      * Creates the view for the sendui dialog.
-      *  
-      * @return bool true if initialization was successful, false otherwise.
-      */
-    void initializeUi(void);
+     * Creates the view for the share ui dialog.
+     */
+    void initializeUi();
     
     /**
-     * Update the SendUi Dialog (and associated list items) once the required
+     * Update the shareui dialog (and associated list items) once the required
      * information has been fetched.
-     * 
-     * @params action HbAction* The action that must be associated with the entry at that point in the list.
+     * @param action HbAction* The action associated with list entry.
+     * @param iconName The icon to be displayed 
      */
-    bool updateShareUiDialogList(HbAction* action);
+    void updateShareUiDialogList(HbAction* action, QString iconName);
     
     /**
-     * Enable the UI and show it on the screen.
-     */
-    void enableUi(void);
-    
-    /**
-     * Convert a qaction to hbaction.
-     * 
+     * Convert a QAction to HbAction.
      * @param action QAction*
      * @return HbAction* 
      */
     HbAction* convertAction(QAction *action);
+
+#ifdef __SHAREUI_MIME_HANDLING__  
+    /**
+     * Checks if the specified content type is allowed as per the 
+     * specified MIME pattern strings.
+     * @param mimeType List of file MIME types
+     * @param mimePattern List of file MIME patterns
+     * @return true if the content is allowed.
+     */
+    bool isContentAllowed ( QStringList mimeType, QString mimePattern );
+    
+    /** Checks if the specified content type is blocked as per the 
+     * specified MIME pattern strings.
+     * @param mimeType List of file MIME types
+     * @param mimePattern List of file MIME patterns
+     * @return true if the content is blocked.
+     */
+    bool isContentBlocked ( QStringList mimeType, QString mimePattern );
+    
+    /**
+     * Get file attributes
+     * @param fileList List of files.
+     * @param mimeTypeList (out) List of MIME types corresponding to the files.
+     * @param forwardStatusList (out) List of forward status corresponding to the files.
+     */
+    void getFileAttributes ( QStringList& fileList, QStringList& mimeTypeList,
+            QStringList& forwardStatusList );
+#endif
+    
+    /**
+     * Show notes
+     */
+    void showNote(QString text);
+    
+    /**
+     * Reset internal data structures
+     */
+    void reset();
     
 private:
     /**
-     * 
      * List of files to be sent.
-     * 
      */
     QList<QVariant> mFileList;
     
@@ -165,40 +201,36 @@ private:
      * Service List
      */
     QList<XQAiwRequest*> mAiwRequestList;
+    
     /**
      * ShareUi dialog
      */
     HbDialog* mSharePopup;
     
     /**
-     * 
      * item model for content list view.
-     */
-    
+     */    
     QStandardItemModel* mContentItemModel;
+    
     /**
      * content view
-     */
-    
+     */    
     HbListView* mContentListView;
     
     /**
      * mapping qmodelindex to the action
-     * 
-     */
-    
+     */    
     QMap<QModelIndex, HbAction*> mIndexActionMap;
     
     /**
-     * Application Manager
+     * Application Manager.
      */
     XQApplicationManager mAppManager;
     
     /**
      * Whether to launch the sending application as embedded or not.
      */
-    bool mIsEmbedded;
-    
+    bool mIsEmbedded;  
     };
 
-#endif /* SENDUIDIALOG_P_H_ */
+#endif /* __SHARE_UI_PRIVATE_H__ */

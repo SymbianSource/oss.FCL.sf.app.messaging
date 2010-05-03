@@ -23,10 +23,11 @@ DEPENDPATH += . \
     src
 
 INCLUDEPATH += ../../../inc
-INCLUDEPATH += ../../msgutils/unieditorutils/inc
+INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
+INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-INCLUDEPATH += /ext/mw/qthighway/inc
 
+CONFIG += hb
 
 TARGET.UID3 = 0x2001FE69
 
@@ -44,23 +45,24 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
 
 # Input
 HEADERS += msgsendutil.h \
-           msgimagefetcherutil.h \
-           msgaudiofetcherutil.h \
-           msgcontactsutil.h \
-           msguiutilsmanager.h \
-           matchphnumberutil.h
+           mmsconformancecheck.h \
+           msgmediautil.h
            
 SOURCES += msgsendutil.cpp \
-           msgimagefetcherutil.cpp \
-           msgaudiofetcherutil.cpp \
-           msgcontactsutil.cpp \
-           msguiutilsmanager.cpp \
-           matchphnumberutil.cpp
+           mmsconformancecheck.cpp \
+           msgmediautil.cpp
     
 # Libs
 LIBS += -lxqservice \
-    -lQtContacts \
     -lunieditorpluginloader \
-    -lunieditorutils \
+    -leditorgenutils \
     -lconvergedmessageutils \
-    -lcentralrepository
+    -lcentralrepository \
+    -ls60qconversions \
+    -lDRMHelper \
+    -lmsgmedia \
+    -lapmime \
+    -lunidatamodelloader \
+    -lxqutils
+
+

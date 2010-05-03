@@ -8,9 +8,9 @@ DEFINES += SETTINGSVIEW_DLL
 
 DEPENDPATH += .
 INCLUDEPATH += .
-INCLUDEPATH += ../msgsettingsmw/inc
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../../msgui/inc
+INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 CONFIG += hb
@@ -19,27 +19,25 @@ CONFIG += hb
 SYMBIAN_PLATFORMS = WINSCW \
                     ARMV5
     
-LIBS += -lmsgsettingsmw
-
 # Input
-SOURCES += 	src/msgadvancedsettingsform.cpp \
-					 	src/msgadvancedsettingsview.cpp \
-						src/msgsettingsdataformcustomitem.cpp \
-						src/msgsettingsform.cpp \
-						src/msgsettingsviewmanager.cpp \
-						src/msgsettingsview.cpp \
-						src/msgsmscentersettingsform.cpp \
-						src/msgsmscenterview.cpp
+SOURCES +=  src/msgsettingengine.cpp \
+            src/smssettingsprivate.cpp \
+            src/mmssettingsprivate.cpp \
+            src/msgsettingsdataformcustomitem.cpp \
+            src/msgsettingsform.cpp \
+	    src/msgsettingsview.cpp \
+	    src/msgsmscentersettingsform.cpp \
+	    src/msgsmscenterview.cpp
 			
-HEADERS += 	inc/msgadvancedsettingsform.h \
-					  inc/msgadvancedsettingsview.h\
-					  inc/msgsettingsdataformcustomitem.h\
-					  inc/msgsettingsform.h \
-					  inc/msgsettingsviewmanager.h \
-					  inc/msgsettingsview.h \
-						inc/msgsmscentersettingsform.h \
-						inc/msgsmscenterview.h \
-						../../msgui/inc/msgbaseview.h
+HEADERS +=  inc/msgsettingengine.h \
+            inc/smssettingsprivate.h \
+            inc/mmssettingprivate.h \
+            inc/msgsettingsdataformcustomitem.h\
+            inc/msgsettingsform.h \
+	    inc/msgsettingsview.h \
+	    inc/msgsmscentersettingsform.h \
+	    inc/msgsmscenterview.h \
+	    ../../msgui/inc/msgbaseview.h
 		   
 symbian: { 
     TARGET.EPOCALLOWDLLDATA = 1
@@ -52,3 +50,11 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
     "stub_sis/settingsview_stub.sis   /epoc32/data/z/system/install/settingsview_stub.sis"
      
 TARGET.CAPABILITY = All -TCB
+
+LIBS += -lSmcm \
+    -lmsgs \	
+    -ls60qconversions \
+    -lcommdb \
+    -lmmsserversettings \
+    -lmmsgenericsettings
+    

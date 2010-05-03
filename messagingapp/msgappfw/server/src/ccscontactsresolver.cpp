@@ -16,16 +16,12 @@
  */
 
 // SYSTEM INCLUDES
-//#include <QtContacts> 
 #include "qtcontacts.h" 
 #include "qcontactdetailfilter.h"
-#include "qcontactdetail.h"
-
 #include <QList>
+
 // USER INCLUDES
 #include "ccscontactsresolver.h"
-#include "qcontactnickname.h"
-#include "qcontactorganization.h"
 // ======================== Member Functions ====================
 
 // ----------------------------------------------------------------------------
@@ -55,31 +51,26 @@ bool CCsContactsResolver::resolveContact(
         CCsContactDetail &contactDetail)
     {
     QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    phoneFilter.setDetailDefinitionName(
+            QContactPhoneNumber::DefinitionName, 
+            QContactPhoneNumber::FieldNumber);
+    
     phoneFilter.setValue(address);
     phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
 
-    QList<QContactLocalId> matchingContacts = mPhonebookManager->contacts(phoneFilter);
+    QList<QContactSortOrder> sortOrder;
+    QList<QContact> matchingContacts = mPhonebookManager->contacts(
+                                                phoneFilter,
+                                                sortOrder,
+                                                QStringList());
 
-    if ( matchingContacts.count() > 0 ) {		
-    // Fill the contact details
-    contactDetail.contactId = matchingContacts.at(0);
-    QContact match = mPhonebookManager->contact(matchingContacts.at(0));
-
-    QContactName nameDetails = match.detail(QContactName::DefinitionName);
-
-    QContactName name = match.detail(QContactName::DefinitionName);
-    contactDetail.firstName = name.first();
-    contactDetail.lastName = name.last();
-    
-    contactDetail.nickName = match.detail<QContactNickname>().nickname();
-    
-    //campany name QContactOrganization
-    contactDetail.companyName = match.detail<QContactOrganization>().name();
-    
-    return true;
-
-    }		
+    if ( matchingContacts.count() > 0 ) {	        
+        QContact match = matchingContacts.at(0);
+        // Fill the contact details        
+        contactDetail.contactId = match.localId();
+        contactDetail.displayName = match.displayLabel();   
+        return true;
+    }
     return false;
     }
 
@@ -94,10 +85,9 @@ void CCsContactsResolver::resolveContactId(
     // Fetch back the persisted contact
     QContact contact = mPhonebookManager->contact(contactId);
     contactDetail.contactId = contact.localId(); 
-    QContactName name = contact.detail(QContactName::DefinitionName);
-    contactDetail.firstName = name.first();
-    contactDetail.lastName = name.last();
     
+    contactDetail.displayName = contact.displayLabel();
+        
     QList<QContactPhoneNumber> numbers = contact.details<QContactPhoneNumber>();
     int numberCount = numbers.count();
 
@@ -105,13 +95,7 @@ void CCsContactsResolver::resolveContactId(
         {
         QString phoneNumber= numbers.at(a).number();
         contactDetail.addressList.append(phoneNumber);
-        }
-    
-    QContactNickname nickName = contact.detail(QContactName::DefinitionName);
-    contactDetail.nickName = nickName.nickname();
-    
-    //company name QContactOrganization
-    contactDetail.companyName = contact.detail<QContactOrganization>().name();
+        }    
     }
 
 // EOF

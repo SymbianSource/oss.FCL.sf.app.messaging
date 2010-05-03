@@ -225,8 +225,13 @@ void CCsSession::DoServiceL(const RMessage2& aMessage)
             break;
             
         case EGetConversationIdFromAddress:
-            PRINT ( _L("Received function EGetConversationId") )
+            PRINT ( _L("Received function EGetConversationIdFromAddress") )
             GetConversationIdfromAddressL(aMessage);
+            break;
+			
+		case EGetConversationFromMessageId:
+            PRINT ( _L("Received function EGetConversationFromMessageId") )
+            GetConversationFromMessageIdL(aMessage);
             break;
 
         case EUserMarkReadConversation:
@@ -1405,6 +1410,62 @@ void CCsSession::GetConversationIdL(const RMessage2& aMessage)
     aMessage.Complete(EGetConversationIdComplete);
     delete des;
 }
+
+// ----------------------------------------------------------------------------
+// GetConversationFromMessageIdL
+// ----------------------------------------------------------------------------
+void CCsSession::GetConversationFromMessageIdL(const RMessage2& aMessage)
+    {
+    // create a new buffer for writing into stream
+    CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
+    CleanupStack::PushL(buf);
+
+    RBufWriteStream writeStream(*buf);
+    writeStream.PushL();
+
+    // Get the message id
+    TInt messageId = aMessage.Int0();
+    CCsConversationCache* cache = iServer->ConversationCacheInterface();
+    CCsClientConversation* conversation = cache->GetConversationFromMessageIdL(messageId);
+    
+    // if no conversation exists for given message-id, 
+    // create a dummy conversation and complete response
+    if(conversation == NULL)
+    {
+        //create dummy conversation
+        conversation = CCsClientConversation::NewL();
+        CleanupStack::PushL(conversation);
+        conversation->SetConversationEntryId(-1);
+        CCsConversationEntry* entry = CCsConversationEntry::NewL();
+		CleanupStack::PushL(entry);
+        entry->SetEntryId(-1);
+        conversation->SetConversationEntryL(entry); // clone
+		CleanupStack::PopAndDestroy(entry);
+    }
+    else
+    {
+        CleanupStack::PushL(conversation);
+    }
+
+    // Externalize 
+    conversation->ExternalizeL(writeStream);
+    
+    // Results are already packed in the stream
+    writeStream.CommitL();
+    
+    // Create a heap descriptor from the buffer
+    HBufC8* des = HBufC8::NewLC(buf->Size());
+    CleanupStack::Pop(des);
+    TPtr8 ptr(des->Des());
+    buf->Read(0, ptr, buf->Size());
+    
+    CleanupStack::PopAndDestroy(3, buf); // conversation, writestream, buf
+    
+    aMessage.Write(1, *des);
+    aMessage.Complete(EGetConversationFromMessageIdComplete);
+    delete des;
+    }
+
 // ----------------------------------------------------------------------------
 // CCsSession::GetConversationIdfromAddressL
 // ----------------------------------------------------------------------------

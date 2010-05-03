@@ -247,7 +247,7 @@ void CCsConversationCacheHelper::HandleProcessConversationL()
 void CCsConversationCacheHelper::HandleSpecialConversationL()
 {
     CCsConversationEntry* conEntry =
-            iConversationEvent->ClientConversation()->GetConversationEntry();
+        iConversationEvent->ClientConversation()->GetConversationEntry();
 
     if (ECsBlueTooth == conEntry->GetType())
     {
@@ -290,8 +290,7 @@ void CCsConversationCacheHelper::HandleConversationInCacheL()
 TUint8 CCsConversationCacheHelper::NeedsSpecialProcessing(
                                                           CCsConversationEntry* aConversationEntry)
 {
-    if (aConversationEntry->Contact() == NULL
-            && aConversationEntry->IsAttributeSet(ECsAttributeDraft))
+    if (ECsBlueTooth == aConversationEntry->GetType())
     {
         return 1;
     }
@@ -343,33 +342,17 @@ void CCsConversationCacheHelper::ResolveContact(
             if (cIndex == KErrNotFound)
             {
                 // Add as new conversation
-                HBufC* firstName = NULL;
-                if(!contactDetail.firstName.isEmpty())
+                HBufC* displayName = NULL;
+                if(!contactDetail.displayName.isEmpty())
                 {
-                    firstName=S60QConversions::qStringToS60Desc(contactDetail.firstName);
+                    displayName=S60QConversions::qStringToS60Desc(contactDetail.displayName);
                 }
-                HBufC* lastName=NULL;
-                if(!contactDetail.lastName.isEmpty())
-                {
-                    lastName=S60QConversions::qStringToS60Desc(contactDetail.lastName);
-                }
-                
-                HBufC* nickName=NULL;
-                if(!contactDetail.nickName.isEmpty())
-                {
-                    nickName=S60QConversions::qStringToS60Desc(contactDetail.nickName);
-                }
-                
                 TRAPD(error, AddNewConversationL( aConverastionEvent->
                                 ClientConversation()->GetConversationEntry(),
                                 contactId,
-                                firstName,
-                                lastName,
-                                nickName));
+                                displayName));
 
-                if (firstName) delete firstName;
-                if (lastName) delete lastName;
-                if (nickName) delete nickName;
+                if (displayName) delete displayName;                
 
                 if (error != KErrNone)
                 {
@@ -380,8 +363,9 @@ void CCsConversationCacheHelper::ResolveContact(
             {
                 // this is when two contacts are having same contact Id,
                 // in that case it should add into an existing conversation
-                TRAPD(error, AddConversationEntryL( aConverastionEvent->
-                                ClientConversation()->GetConversationEntry(), cIndex));
+                TRAPD(error, AddConversationEntryL( 
+                        aConverastionEvent->ClientConversation(
+                                )->GetConversationEntry(), cIndex));
                 if (error != KErrNone)
                 {
                     // handle error
@@ -412,8 +396,16 @@ void CCsConversationCacheHelper::AddConversationEntryL(
 
     CCsConversation* conversation = (*conversationList)[aConversationIndex];
 
-    CCsConversationEntry* prevLatestEntry =
-            conversation->GetLatestEntryL()->CloneL();
+    CCsConversationEntry* prevLatestEntry = conversation->GetLatestEntryL();
+
+    if (prevLatestEntry)
+    {
+        prevLatestEntry = prevLatestEntry->CloneL();
+    }
+    else
+    {
+        prevLatestEntry = aConEntry->CloneL();
+    }
 
     CleanupStack::PushL(prevLatestEntry);
 
@@ -567,9 +559,7 @@ void CCsConversationCacheHelper::DeleteConversationEntryL(
 void CCsConversationCacheHelper::AddNewConversationL(
                                                      CCsConversationEntry* aConversationEntry,
                                                      TInt32 aContactId,
-                                                     const HBufC* aFirstName,
-                                                     const HBufC* aLastName,
-                                                     const HBufC* aNickName)
+                                                     const HBufC* aDisplayName)
 {
     CCsConversation* conversation = CCsConversation::NewL();
     CleanupStack::PushL(conversation);
@@ -583,9 +573,7 @@ void CCsConversationCacheHelper::AddNewConversationL(
 
     // fill firstname and lastname and contact Id
     conversation->AddContactDetailsL(aContactId,
-                                     *aFirstName,
-                                     *aLastName,
-                                     *aNickName);
+                                     *aDisplayName);
 
     // fill the phone number
     if (aConversationEntry->Contact())

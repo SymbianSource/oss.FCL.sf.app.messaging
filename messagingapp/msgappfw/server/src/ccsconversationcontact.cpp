@@ -42,9 +42,7 @@ CCsConversationContact::CCsConversationContact()
 void
 CCsConversationContact::ConstructL()
     {
-    iFirstName = NULL;
-    iLastName = NULL;
-    iNickName = NULL;
+    iDisplayName = NULL;
     iContactId = KErrNotFound;
     iPhoneNumberList = new (ELeave) RPointerArray<HBufC> ();
     }
@@ -69,22 +67,10 @@ CCsConversationContact::NewL()
 // ----------------------------------------------------------------------------
 CCsConversationContact::~CCsConversationContact()
     {
-    if(iFirstName)
+    if(iDisplayName)
         {
-        delete iFirstName;
-        iFirstName = NULL;
-        }
-
-    if(iLastName)
-        {
-        delete iLastName;
-        iLastName = NULL;
-        }
-    
-    if(iNickName)
-        {
-        delete iNickName;
-        iNickName = NULL;
+        delete iDisplayName;
+        iDisplayName = NULL;
         }
 
     if (iPhoneNumberList)
@@ -97,46 +83,26 @@ CCsConversationContact::~CCsConversationContact()
     }
 
 // ----------------------------------------------------------------------------
-// CCsConversationContact::GetFirstName
-// get the first name of the conversation
+// CCsConversationContact::GetDisplayName
+// get the display name of the conversation
 // ----------------------------------------------------------------------------
 HBufC*
-CCsConversationContact::GetFirstName() const
+CCsConversationContact::GetDisplayName() const
     {
-    return iFirstName;
+    return iDisplayName;
     }
 
 // ----------------------------------------------------------------------------
-// CCsConversationContact::GetLastName
-// get the last name of the conversation
-// ----------------------------------------------------------------------------
-HBufC*
-CCsConversationContact::GetLastName() const
-    {
-    return iLastName;
-    }
-
-// ----------------------------------------------------------------------------
-// CCsConversationContact::GetNickName
-// get the nick name of the conversation
-// ----------------------------------------------------------------------------
-HBufC*
-CCsConversationContact::GetNickName() const
-    {
-    return iNickName;
-    }
-
-// ----------------------------------------------------------------------------
-// CCsConversationContact::SetFirstNameL
-// Sets the first name of the conversation
+// CCsConversationContact::SetDisplayNameL
+// Sets the display name of the conversation
 // ----------------------------------------------------------------------------
 void
-CCsConversationContact::SetFirstNameL(
-        const TDesC& aFirstName)
+CCsConversationContact::SetDisplayNameL(
+        const TDesC& aDisplayName)
     {
-    if( &aFirstName )
+    if( &aDisplayName )
         {
-        TRAPD(error, iFirstName = aFirstName.AllocL());
+        TRAPD(error, iDisplayName = aDisplayName.AllocL());
         if(error != KErrNone)
             {
             // handle error
@@ -147,47 +113,6 @@ CCsConversationContact::SetFirstNameL(
         }
     }
 
-// ----------------------------------------------------------------------------
-// CCsConversationContact::SetLastNameL
-// Sets the first name of the conversation
-// ----------------------------------------------------------------------------
-void
-CCsConversationContact::SetLastNameL(
-        const TDesC& aLastName)
-    {
-    if( &aLastName )
-        {
-        TRAPD(error, iLastName = aLastName.AllocL());
-        if(error != KErrNone)
-            {
-            // handle error
-            // call panic
-            PRINT1 ( _L("CCsConversationContact::SetLastNameL - Error:%d"),
-                    error );
-            }
-        }
-    }
-
-// ----------------------------------------------------------------------------
-// CCsConversationContact::SetNickNameL
-// Sets the first name of the conversation
-// ----------------------------------------------------------------------------
-void
-CCsConversationContact::SetNickNameL(
-        const TDesC& aNickName)
-    {
-    if( &aNickName )
-        {
-        TRAPD(error, iNickName = aNickName.AllocL());
-        if(error != KErrNone)
-            {
-            // handle error
-            // call panic
-            PRINT1 ( _L("CCsConversationContact::SetNickNameL - Error:%d"),
-                    error );
-            }
-        }
-    }
 // ----------------------------------------------------------------------------
 // CCsConversationContact::GetContactId
 // get the phonebook Contact Id link for the conversation

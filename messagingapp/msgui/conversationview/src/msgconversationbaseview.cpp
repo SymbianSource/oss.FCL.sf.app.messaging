@@ -16,22 +16,31 @@
  */
 
 #include "msgconversationbaseview.h"
-#include "msguiutilsmanager.h"
 
 // SYSTEM INCLUDES
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QSqlError>
-#include <QtDebug>
 #include <QGraphicsLinearLayout>
+#include <HbMainWindow>
+#include <HbNotificationDialog>
+
+#include <xqaiwrequest.h>
+#include <xqappmgr.h>
+
+#include <cntservicescontact.h>
+#include <qtcontactsglobal.h>
+#include <qtcontacts.h>
+#include <ccsdefs.h>
 
 // USER INCLUDES
 #include "msgconversationview.h"
-//#include "convergedmessage.h"
 #include "conversationsengine.h"
 #include "msgviewdefines.h"
 #include "conversationsenginedefines.h"
 #include "msgcontactcardwidget.h"
+
+QTM_USE_NAMESPACE
+
+// LOCALIZATION
+#define LOC_SAVED_TO_DRAFTS    hbTrId("txt_messaging_dpopinfo_saved_to_drafts")
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::MsgConversationBaseView
@@ -41,7 +50,8 @@ MsgConversationBaseView::MsgConversationBaseView(QGraphicsItem* parent) :
 MsgBaseView(parent),
 mConversationView(NULL),
 mConversationId(-1)
-{   
+{ 
+    connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));   
     initView();
 }
 
@@ -59,9 +69,14 @@ MsgConversationBaseView::~MsgConversationBaseView()
 //---------------------------------------------------------------
 void MsgConversationBaseView::openConversation(qint64 convId)
 {
-    ConversationsEngine::instance()->getConversations(convId);    
+    ConversationsEngine::instance()->getConversations(convId);
     mConversationId = convId;
-    mConversationView->refreshView();
+    connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
+    
+    if(mConversationView)
+        {
+        mConversationView->refreshView();
+        }
 }
 
 //---------------------------------------------------------------
@@ -70,26 +85,27 @@ void MsgConversationBaseView::openConversation(qint64 convId)
 //---------------------------------------------------------------
 void MsgConversationBaseView::initView()
     {
+    
     // Create header widget
-    MsgContactCardWidget *contactCardWidget = new MsgContactCardWidget();
+    mContactCard = new MsgContactCardWidget(this);
 
-    connect(contactCardWidget, SIGNAL(clicked()), this, SLOT(openContactDetails()));
+    mMainLayout = new QGraphicsLinearLayout(Qt::Vertical);
 
-    QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
-
-    mainLayout->setContentsMargins(CONTENT_MARGIN, CONTENT_MARGIN,
+    qreal spacing = HbDeviceProfile::profile(this).unitValue();
+    mMainLayout->setSpacing(spacing);
+    mMainLayout->setContentsMargins(CONTENT_MARGIN, CONTENT_MARGIN,
                                    CONTENT_MARGIN, CONTENT_MARGIN);
 
-    mainLayout->setSpacing(CONTENT_SPACING);
-
-    mainLayout->addItem(contactCardWidget);
+    mMainLayout->addItem(mContactCard);
 
     /**
      * Create conversation view and connect to proper signals.
      * NOTE: contactCardWidget is NOT parent of MsgConversationView.
      * Just passing reference to MsgConversationView.
      */
-    mConversationView = new MsgConversationView(contactCardWidget);
+    mConversationView = new MsgConversationView(mContactCard);
+
+    mConversationView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     connect(mConversationView, SIGNAL(closeConversationView()),
             this, SLOT(closeConversationView()));
@@ -99,12 +115,14 @@ void MsgConversationBaseView::initView()
 
     connect(mConversationView, SIGNAL(switchView(const QVariantList&)),
             this, SIGNAL(switchView(const QVariantList&)));
+    
+    connect(mConversationView,SIGNAL(hideChrome(bool)),this,SLOT(hideChrome(bool)));
 
     this->setMenu(mConversationView->menu());
 
-    mainLayout->addItem(mConversationView);
+    mMainLayout->addItem(mConversationView);
 
-    this->setLayout(mainLayout);
+    this->setLayout(mMainLayout);
 
 }
 
@@ -133,27 +151,19 @@ void MsgConversationBaseView::markMessagesAsRead()
 // MsgConversationBaseView::saveContentToDrafts
 // saves the editors content to drafts
 //---------------------------------------------------------------
-bool MsgConversationBaseView::saveContentToDrafts()
+void MsgConversationBaseView::saveContentToDrafts()
     {
     bool result = false;
     if( mConversationId >= 0)
         {
         result = mConversationView->saveContentToDrafts();
         }
-    return result;
+    
+    if(result)
+        {
+        HbNotificationDialog::launchDialog(LOC_SAVED_TO_DRAFTS);
+        }
     }
-
-//---------------------------------------------------------------
-// MsgConversationBaseView::openContactDetails
-// close conversation view
-//---------------------------------------------------------------
-void MsgConversationBaseView::openContactDetails()
-{
-    MsgUiUtilsManager uiUtilsManager(this);
-    QModelIndex aIndex = ConversationsEngine::instance()->getConversationsModel()->index(0, 0);
-    qint32 contactId = aIndex.data(ContactId).toLongLong();
-    uiUtilsManager.openContactDetails(contactId);
-}
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::clearContent
@@ -164,4 +174,64 @@ void MsgConversationBaseView::clearContent()
     ConversationsEngine::instance()->clearConversations();
     mConversationView->clearEditors();
 }
+
+//---------------------------------------------------------------
+// MsgConversationBaseView::handleOk
+//
+//---------------------------------------------------------------
+void MsgConversationBaseView::handleOk(const QVariant& result)
+    {
+    Q_UNUSED(result)
+    }
+
+//---------------------------------------------------------------
+// MsgConversationBaseView::handleError
+//
+//---------------------------------------------------------------
+void MsgConversationBaseView::handleError(int errorCode, const QString& errorMessage)
+    {
+    Q_UNUSED(errorMessage)
+    Q_UNUSED(errorCode)
+    }
+
+//---------------------------------------------------------------
+// MsgConversationBaseView::doDelayedConstruction
+//
+//---------------------------------------------------------------	
+void MsgConversationBaseView::doDelayedConstruction()
+{
+    disconnect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
+    ConversationsEngine::instance()->fetchMoreConversations();
+}
+
+//---------------------------------------------------------------
+// MsgConversationBaseView::hideChrome
+//
+//---------------------------------------------------------------
+void MsgConversationBaseView::hideChrome(bool hide)
+    {
+    if(hide)
+        {        
+        this->hideItems(Hb::StatusBarItem | Hb::TitleBarItem);
+        this->setContentFullScreen(true);
+        
+        if(this->mainWindow()->orientation() == Qt::Horizontal)
+            {
+            mMainLayout->removeItem(mContactCard);
+            mContactCard->hide();
+            }
+        }
+    else
+        {
+        this->showItems(Hb::StatusBarItem | Hb::TitleBarItem);
+        this->setContentFullScreen(false);
+        
+        if(!mContactCard->isVisible())
+            {
+            mMainLayout->insertItem(0,mContactCard);
+            mContactCard->show();
+            }
+        }
+    }
+
 // EOF

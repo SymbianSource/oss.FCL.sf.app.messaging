@@ -20,7 +20,9 @@ DEPENDPATH += . inc
 DEPENDPATH += . src
 
 INCLUDEPATH += ../../../inc
+INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../../msgutils/s60qconversions/inc
+INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_DLL
@@ -73,7 +75,16 @@ LIBS += -lcsserverclientapi \
         -lsmildtd \
         -lxmldom \
         -lxmlparser \
-        -lunidatamodelloader 
+        -lunidatamodelloader \
+	-leditorgenutils \
+	-lsmcm \
+	-lQtVersit \
+        -lQtContacts \
+        -lxqutils \
+        -lmmscli \
+        -lcommonengine \
+        -lmmsserversettings \
+	-lFeatMgr
 
 
 

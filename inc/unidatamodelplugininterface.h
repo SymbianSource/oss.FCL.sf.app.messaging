@@ -232,60 +232,10 @@ public:
     virtual QDateTime timeStamp()=0;
 
     /**
-     * Adds object into smil model
-     * @param slide number
-     * @param UniMessageInfo obj
-     */
-    virtual void addObject( int aslideNum,UniMessageInfo* aInfo )=0;
-
-    /**
-     * Adds text object into smil model
-     * @param slide number
-     * @param text
-     */    
-    virtual void addTextObject(int aSlideNum,QString aText )=0;
-
-    /**
-     * Adds slide into smil model
-     * @param slide number
-     */    
-    virtual void addSlide( int aSlideNum )=0;
-
-    /**
-     * Compose Smil
-     * @param Edit store
-     */    
-    virtual void composeSmil(CMsvStore& aEditStore)=0;
-
-    /**
-     * Save Objects inside smil model 
-     */        
-    virtual void saveObjects()=0;
-
-    /**
-     *  Get the smil attachment index
-     *  @return TMsvAttachmentId
-     */        
-    virtual TMsvAttachmentId getSmilAttachmentByIndex()=0;
-    
-    /**
      *  Restores the model for editing purpose
      *  @param CBaseMtm
      */        
     virtual void restore(CBaseMtm& mtm)=0;
-
-    /**
-     * Add attachment 
-     * @param UniMessageInfo
-     */
-    virtual void addAttachment( UniMessageInfo* aInfo )=0;
-    
-    /**
-     * Remove slide from smil model 
-     * @param slide number
-     */
-    virtual void removeSlide(int aSlideNumber)=0;
-
 	
 		/**
      * Subject associated with the message

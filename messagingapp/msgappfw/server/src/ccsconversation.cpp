@@ -118,19 +118,14 @@ CCsConversation::SetConversationId(
     }
 
 // ----------------------------------------------------------------------------
-// Get the Conversation Entry First name from Coversation Detail class
+// Get the Conversation Entry Display name from Coversation Detail class
 // ----------------------------------------------------------------------------
 HBufC*
-CCsConversation::GetFirstName()const
+CCsConversation::GetDisplayName()const
     {
-    HBufC* fn = iContact->GetFirstName();
+    HBufC* fn = iContact->GetDisplayName();
     if ( fn && fn->Length() > 0 )
        return fn;
-
-    // If last name is present don't promote phone number as first name
-    HBufC* ln = iContact->GetLastName();
-    if ( ln && ln->Length() > 0 )
-       return NULL;
 
 	RPointerArray<TDesC> pnoList;
 	iContact->GetPhoneNumberList(pnoList);
@@ -140,24 +135,6 @@ CCsConversation::GetFirstName()const
 		}
 
     return NULL;
-    }
-
-// ----------------------------------------------------------------------------
-// Get the Conversation Entry Last name from Coversation Detail class
-// ----------------------------------------------------------------------------
-HBufC*
-CCsConversation::GetLastName() const
-    {    
-    return iContact->GetLastName();
-    }
-
-// ----------------------------------------------------------------------------
-// Get the Conversation Entry Nick name from Coversation Detail class
-// ----------------------------------------------------------------------------
-HBufC*
-CCsConversation::GetNickName() const
-    {    
-    return iContact->GetNickName();
     }
 
 // ----------------------------------------------------------------------------
@@ -276,14 +253,10 @@ CCsConversation::AddEntryL(
 void
 CCsConversation::AddContactDetailsL(
         TInt32  aContactId,
-        const TDesC& aFirstName,
-		const TDesC& aLastName,
-		const TDesC& aNickName)
+        const TDesC& aDisplayName)
     {
-    iContact->SetFirstNameL(aFirstName);
-    iContact->SetLastNameL(aLastName);
-    iContact->SetContactId (aContactId);
-    iContact->SetNickNameL(aNickName);
+    iContact->SetDisplayNameL(aDisplayName);
+    iContact->SetContactId (aContactId);    
     }
 
 // ----------------------------------------------------------------------------

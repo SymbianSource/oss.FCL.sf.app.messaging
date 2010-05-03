@@ -22,9 +22,6 @@
 // backup registration for cen rep
 data=DATAZ_\private\100058DB\backup_registration.xml private\100058DB\backup_registration.xml
 
-//TODO: Exporting mms & not rsc files 
-data=DATAZ_\resource\messaging\mtm\mms.rsc    resource\messaging\mtm\mms.rsc
-data=DATAZ_\resource\messaging\mtm\not.rsc    resource\messaging\mtm\not.rsc
 
 // Message connection initiator needed by MMS Engine
 file=ABI_DIR\BUILD_DIR\mmsconninit.dll           SHARED_LIB_DIR\mmsconninit.dll

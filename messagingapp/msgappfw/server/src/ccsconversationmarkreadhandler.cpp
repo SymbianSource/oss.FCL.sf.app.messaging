@@ -114,7 +114,8 @@ void CCsConversationMarkReadHandler::MarkReadOneMessageL()
         TRAPD(err, cEntry = iSession->GetEntryL(id));
         if ( err == KErrNotFound )
            return;
-        
+        CleanupStack::PushL(cEntry);
+        	
         TMsvEntry entry = cEntry->Entry();
         if ( entry.Unread() ) 
            {
@@ -125,7 +126,7 @@ void CCsConversationMarkReadHandler::MarkReadOneMessageL()
             }
            cEntry->ChangeL( entry );
            }
-        delete cEntry;
+        CleanupStack::PopAndDestroy(cEntry);
         }
     }
 
@@ -176,8 +177,21 @@ void CCsConversationMarkReadHandler::RunL()
             // Notify observers
             iObserver->MarkReadComplete(this);
             break;
-        }
     }
+}
+
+TInt CCsConversationMarkReadHandler::RunError(TInt aError)
+{
+  iMarkReadCount = 0;
+  iConversationEntryList->ResetAndDestroy();
+  iConversationEntryList->Close();
+  delete iConversationEntryList;
+  iConversationEntryList = NULL;  
+            
+  // Notify observer
+  iObserver->MarkReadComplete(this);
+  return KErrNone;
+}
 
 // ----------------------------------------------------------------------------
 // DoCancel

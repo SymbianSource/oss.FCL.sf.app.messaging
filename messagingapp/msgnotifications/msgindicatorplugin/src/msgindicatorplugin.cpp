@@ -18,6 +18,8 @@
 #include "msgindicatorplugin.h"
 
 #include "msgindicator.h"
+#include "msginfodefs.h"
+
 #include <QtPlugin>
 #include <QVariant>
 
@@ -27,9 +29,13 @@ Q_EXPORT_PLUGIN(MsgIndicatorPlugin)
 // MsgIndicatorPlugin::MsgIndicatorPlugin
 // @see msgindicatorplugin.h
 // ----------------------------------------------------------------------------
-MsgIndicatorPlugin::MsgIndicatorPlugin() : mError(0)
+MsgIndicatorPlugin::MsgIndicatorPlugin() :
+    mError(0)
 {
-   
+    mIndicatorTypes.append(QString("com.nokia.messaging.newindicatorplugin"));
+    mIndicatorTypes.append(QString("com.nokia.messaging.failedindicatorplugin"));
+    mIndicatorTypes.append(QString("com.nokia.messaging.pendingindicatorplugin"));
+
 }
 
 // ----------------------------------------------------------------------------
@@ -47,9 +53,7 @@ MsgIndicatorPlugin::~MsgIndicatorPlugin()
 // ----------------------------------------------------------------------------
 QStringList MsgIndicatorPlugin::indicatorTypes() const
 {
-  QStringList types; 
-  types << "com.nokia.messaging.indicatorplugin/1.0";
-  return types;
+    return mIndicatorTypes;
 }
 
 // ----------------------------------------------------------------------------
@@ -72,10 +76,13 @@ bool MsgIndicatorPlugin::accessAllowed(const QString &indicatorType,
 // MsgIndicatorPlugin::createIndicator
 // @see msgindicatorplugin.h
 // ----------------------------------------------------------------------------
-HbIndicatorInterface* MsgIndicatorPlugin::createIndicator(
-        const QString &indicatorType)
+HbIndicatorInterface* MsgIndicatorPlugin::createIndicator(const QString &indicatorType)
 {
-    HbIndicatorInterface *indicator = new MsgIndicator(indicatorType);
+    HbIndicatorInterface *indicator = NULL;
+    int index(typeIndex(indicatorType));
+    if (index >= 0) {
+        indicator = new MsgIndicator(indicatorType);
+    }
 
     return indicator;
 }
@@ -89,6 +96,16 @@ int MsgIndicatorPlugin::error() const
     return mError;
 }
 
-
-
-
+// ----------------------------------------------------------------------------
+// MsgIndicatorPlugin::typeIndex
+// @see msgindicatorplugin.h
+// ----------------------------------------------------------------------------
+int MsgIndicatorPlugin::typeIndex(const QString &indicatorType) const
+{
+    for (int i = 0; i < mIndicatorTypes.count(); ++i) {
+        if (mIndicatorTypes.at(i) == indicatorType) {
+            return i;
+        }
+    }
+    return -1;
+}

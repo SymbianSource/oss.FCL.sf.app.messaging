@@ -187,6 +187,13 @@ public:
      * @return The conversation id
      */
     TInt GetConversationIdFromAddressL(TDesC& aContactAddress);
+    
+    /**
+     * Get conversation from message-id
+     * @param aMessageId Message id
+     * @return CCsClientConversation The conversation 
+     */
+    CCsClientConversation* GetConversationFromMessageIdL(TInt aMessageId);
 
 private:
 

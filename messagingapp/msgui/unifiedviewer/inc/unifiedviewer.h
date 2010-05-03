@@ -75,6 +75,13 @@ private:
      */
     void createToolBar();
 
+    /**
+     * Validates if message can be forwarded
+     * @return true if message can be forwarded
+     *         false if message cant be forwarded
+     */
+    bool validateMsgForForward();
+
 public slots:
 
     /**

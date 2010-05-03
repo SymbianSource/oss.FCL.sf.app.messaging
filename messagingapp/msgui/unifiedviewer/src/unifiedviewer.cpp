@@ -24,6 +24,8 @@
 #include <hbmessagebox.h>
 #include <hbnotificationdialog.h>
 #include <HbStyleLoader>
+#include <centralrepository.h>       
+#include <MmsEngineDomainCRKeys.h>
 
 // USER INCLUDES
 #include "uniscrollarea.h"
@@ -36,18 +38,20 @@
 #include "conversationsengine.h"
 #include "debugtraces.h"
 #include "nativemessageconsts.h"
+#include "mmsconformancecheck.h"
+#include "UniEditorGenUtils.h" // This is needed for KDefaultMaxSize
 
 // LOCAL CONSTANTS
-const QString REPLY_ICON("qtg_mono_reply.svg");
-const QString REPLY_ALL_ICON("qtg_mono_reply_all.svg");
-const QString FORWARD_ICON("qtg_mono_forward.svg");
-const QString DELETE_ICON("qtg_mono_delete.svg");
+const QString REPLY_ICON("qtg_mono_reply");
+const QString REPLY_ALL_ICON("qtg_mono_reply_all");
+const QString FORWARD_ICON("qtg_mono_forward");
+const QString SEND_ICON("qtg_mono_send");
+const QString DELETE_ICON("qtg_mono_delete");
 
 //LOCALIZED CONSTANTS
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
 #define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
 #define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
-#define LOC_DELETE_POPINFO hbTrId("txt_messaging_dpopinfo_message_deleted")
 
 //----------------------------------------------------------------------------
 // UnifiedViewer::UnifiedViewer
@@ -87,8 +91,6 @@ UnifiedViewer::UnifiedViewer(const qint32 messageId, QGraphicsItem *parent) :
 
     setLayout(mMainLayout);
 
-    createToolBar();
-
     QDEBUG_WRITE("UnifiedViewer contruction End");
 }
 
@@ -99,7 +101,6 @@ UnifiedViewer::UnifiedViewer(const qint32 messageId, QGraphicsItem *parent) :
 UnifiedViewer::~UnifiedViewer()
 {
     HbStyleLoader::unregisterFilePath(":/layouts");
-
 }
 
 //----------------------------------------------------------------------------
@@ -108,23 +109,27 @@ UnifiedViewer::~UnifiedViewer()
 //----------------------------------------------------------------------------
 void UnifiedViewer::createToolBar()
 {
-    HbToolBar *toolBar = this->toolBar();
-    toolBar->setOrientation(Qt::Horizontal);
+    HbToolBar* toolbar = this->toolBar();
+    toolbar->setOrientation(Qt::Horizontal);
 
-    HbAction* replyAction = new HbAction(HbIcon(REPLY_ICON), "", this);
-    toolBar->addAction(replyAction);
+    int sendingState = mViewFeeder->sendingState();
 
-    HbAction* replyAllAction = new HbAction(HbIcon(REPLY_ALL_ICON), "", this);
-    toolBar->addAction(replyAllAction);
+    if (mViewFeeder->sendingState() == ConvergedMessage::Failed)
+    {
+        toolbar->addAction(HbIcon(SEND_ICON), "");
+    }
+    else
+    {
+        toolbar->addAction(HbIcon(REPLY_ICON), "");
+        toolbar->addAction(HbIcon(REPLY_ALL_ICON), "");
+    }
 
-    HbAction* forwardAction = new HbAction(HbIcon(FORWARD_ICON), "", this);
-    toolBar->addAction(forwardAction);
+    if (validateMsgForForward())
+    {
+        toolbar->addAction(HbIcon(FORWARD_ICON), "", this, SLOT(handleFwdAction()));
+    }
 
-    HbAction* deleteAction = new HbAction(HbIcon(DELETE_ICON), "", this);
-    toolBar->addAction(deleteAction);
-
-    connect(deleteAction, SIGNAL(triggered()),
-    this, SLOT(handleDeleteAction()));
+    toolbar->addAction(HbIcon(DELETE_ICON), "", this, SLOT(handleDeleteAction()));
 }
 
 //---------------------------------------------------------------
@@ -175,6 +180,9 @@ void UnifiedViewer::populateContent(const qint32 messageId, bool update, int msg
 
     mContentsWidget->populateContent();
 
+    //Creation of toolbar now depends on content
+    createToolBar();
+    
     QDEBUG_WRITE("UnifiedViewer populateContent END");
 }
 
@@ -184,6 +192,31 @@ void UnifiedViewer::populateContent(const qint32 messageId, bool update, int msg
 //---------------------------------------------------------------
 void UnifiedViewer::handleFwdAction()
 {
+    ConvergedMessage message;
+    ConvergedMessageId id(mMessageId);
+    message.setMessageId(id);
+    if(mViewFeeder->msgType() == KSenduiMtmMmsUidValue)
+    {
+        message.setMessageType(ConvergedMessage::Mms);
+    }
+    else
+    {
+        message.setMessageType(ConvergedMessage::Sms);    
+    }
+
+    QByteArray dataArray;
+    QDataStream messageStream
+    (&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+    message.serialize(messageStream);
+
+    QVariantList params;
+    params << MsgBaseView::UNIEDITOR; // target view
+    params << MsgBaseView::UNIVIEWER; // source view
+
+    params << dataArray;
+    params << MsgBaseView::FORWARD_MSG;
+        
+    emit switchView(params);
 }
 
 //---------------------------------------------------------------
@@ -211,7 +244,6 @@ void UnifiedViewer::handleDeleteAction()
         msgIdList << mMessageId;
 
         ConversationsEngine::instance()->deleteMessages(msgIdList);
-        HbNotificationDialog::launchDialog(LOC_DELETE_POPINFO);
 
         QVariantList param;
         if (mMsgCount > 1)
@@ -258,4 +290,26 @@ void UnifiedViewer::sendMessage(const QString& phoneNumber)
 
     emit switchView(params);
     }
+
+//---------------------------------------------------------------
+// UnifiedViewer::validateMsgForForward
+// @see header file
+//---------------------------------------------------------------
+bool UnifiedViewer::validateMsgForForward()
+{
+    if (mViewFeeder->msgType() == KSenduiMtmMmsUidValue)
+    {
+        bool retValue = false;
+
+        //Validate if the mms msg can be forwarded or not
+        MmsConformanceCheck* mmsConformanceCheck = new MmsConformanceCheck;        
+        retValue = mmsConformanceCheck->validateMsgForForward(mMessageId);
+
+        delete mmsConformanceCheck;        
+        return retValue;
+    }
+
+    return true;
+}
+
 // EOF

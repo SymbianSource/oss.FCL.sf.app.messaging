@@ -3,7 +3,7 @@ MsgConversationViewItem[isIncoming="true"]
     layout:layout-incoming;
     pref-height:-1;
     pref-width:-1;
-
+    size-policy-vertical:minimum-expanding;
 }
 
 MsgConversationViewItem[isIncoming="false"]
@@ -11,15 +11,24 @@ MsgConversationViewItem[isIncoming="false"]
     layout:layout-outgoing;
     pref-height:-1;
     pref-width:-1;
-
+    size-policy-vertical:minimum-expanding;
 }
 
 MsgConversationViewItem[isIncoming="true"]::msgconvwidget
 {
   left:-var(hb-param-margin-gene-left);
   top:0.0un;
-  right:6.75un;
+  right:var(hb-param-margin-gene-middle-horizontal);
   bottom:0.0un;
+}
+
+MsgConversationViewItem[isIncoming="true"]::msgStateIcon
+{
+  right:var(hb-param-margin-gene-right);
+  size-policy:fixed fixed;
+  aspect-ratio:ignore;
+  pref-height:var(hb-param-graphic-size-primary-small);
+  pref-width:var(hb-param-graphic-size-primary-small);
 }
 
 MsgConversationViewItem[isIncoming="false"]::msgconvwidget

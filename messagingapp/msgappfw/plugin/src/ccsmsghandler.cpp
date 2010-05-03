@@ -32,8 +32,13 @@
 #include <e32const.h>
 #include <SendUiConsts.h>
 #include <pushentry.h> // For services messages
+#include <e32cmn.h>
 
-// NOTE:- DRAFTS AND OUTBOX ENTRIES ARE NOT HANDLED IN THE PLUGIN
+
+//CONSTANTS
+const TInt KMessageArrayGranularity = 50;
+
+// NOTE:- DRAFT ENTRIES ARE NOT HANDLED IN THE PLUGIN
 
 // ============================== MEMBER FUNCTIONS ============================
 // ----------------------------------------------------------------------------
@@ -114,6 +119,14 @@ CCsMsgHandler::~CCsMsgHandler()
         delete iMessages;
         iMessages = NULL;
         }
+    
+    if(iMessageArray)
+    {
+        iMessageArray->Reset();
+        iMessageArray->Close();
+        delete iMessageArray;
+        iMessageArray = NULL;
+    }
 
     PRINT ( _L("End CCsMsgHandler::~CCsMsgHandler") );
     }
@@ -144,6 +157,8 @@ void CCsMsgHandler::ConstructL(MCsMsgObserver *aMsgObserver)
             NewMtmL( KSenduiMtmMmsUid ) );
 
     iState = EReadInbox;
+
+    iMessageArray = new (ELeave)RArray <TMsvId>(KMessageArrayGranularity);
 
     iMessageCount = 0;
 
@@ -554,25 +569,31 @@ void CCsMsgHandler::ExtractAddressesL(
         ProcessEntryL(aEvent, KNullDesC, description, aEntry);       
         }
 
-    if ( tmpBuffer )
-        {
-        delete tmpBuffer;
-        }
+    delete tmpBuffer;
 
     PRINT ( _L("Exit CCsMsgHandler::ExtractAddressesL") );
     }
 
+// -----------------------------------------------------------------------------
+// CCsMsgHandler::CompareOrder()
+// Method for determining the sorting behaviour of RArray of TMsvId's  
+// -----------------------------------------------------------------------------
+//
+static TInt CompareOrder(const TMsvId& aFirst, const TMsvId& aSecond)
+    {
+    return aSecond - aFirst;
+    }
 // -----------------------------------------------------------------------------
 // CCsMsgHandler::UploadMsgL()
 // State machine to upload all messages 
 // -----------------------------------------------------------------------------
 //
 TInt CCsMsgHandler::UploadMsgL() 
-    {
+{
     switch ( iState ) 
-        {
+    {
         case EReadInbox:
-            {
+        {
             iRootEntry = iSession->GetEntryL(KMsvGlobalInBoxIndexEntryId);
 
             // Set sort order
@@ -580,42 +601,24 @@ TInt CCsMsgHandler::UploadMsgL()
             order.SetSorting(EMsvSortById);
             iRootEntry->SetSortTypeL(order);
 
-            iMessages = iRootEntry->ChildrenL();	
+            iMessages = iRootEntry->ChildrenL();
             iMessageCount = iRootEntry->Count();
-
-            if ( iMessageCount ) 
-                iState = EProcessInbox;
-            else
-                {
-                iState = EReadSent;
-                CleanupL();
-                }
-
-            return 1;
-            }
-
-        case EProcessInbox:
+            if(iMessageCount)
             {
-            iMessageCount = iMessageCount - 1;
-            TMsvEntry entry = iRootEntry->ChildDataL(iMessages->At(iMessageCount));
-            if(IsMtmSupported(entry.iMtm.iUid))
+                for(int i = 0; i < iMessageCount; i ++)
                 {
-                ProcessResultsL(entry);  
+                    iMessageArray->Append(iMessages->At(i));
                 }
+            }
 
-            if ( iMessageCount ) 
-                iState = EProcessInbox;
-            else 
-                {
-                iState = EReadSent;
-                CleanupL();
-                }
+            iState = EReadSent;
+            CleanupL();              
 
             return 1;
-            }
+        }
 
         case EReadSent:
-            {
+        {
             iRootEntry = iSession->GetEntryL(KMsvSentEntryId);
 
             // Set sort order
@@ -625,88 +628,75 @@ TInt CCsMsgHandler::UploadMsgL()
 
             iMessages = iRootEntry->ChildrenL();    
             iMessageCount = iRootEntry->Count();
-
-            if ( iMessageCount ) 
-                iState = EProcessSent;
-            else
+            if(iMessageCount)
+            {
+                for(int i = 0; i < iMessageCount; i++ )
                 {
-                iState = EReadOutbox;
-                CleanupL();
+                    iMessageArray->Append(iMessages->At(i));
                 }
+            }
+
+            iState = EReadOutbox;
+            CleanupL();
 
             return 1;
-            }
+        }
 
-        case EProcessSent:
-            {
-            iMessageCount = iMessageCount - 1;
-            TMsvEntry entry = iRootEntry->ChildDataL(iMessages->At(iMessageCount));
-            if(IsMtmSupported(entry.iMtm.iUid))
-                {
-                ProcessResultsL(entry);  
-                }
-
-            if ( iMessageCount ) 
-                iState = EProcessSent;
-            else 
-                {
-                iState = EReadOutbox;
-                CleanupL();
-                }
-
-            return 1;        
-            }
-            
         case EReadOutbox:
-            {
+        {
             iRootEntry = iSession->GetEntryL(KMsvGlobalOutBoxIndexEntryId);
-            
+
             // Set sort order
             TMsvSelectionOrdering order;
             order.SetSorting(EMsvSortById);
             iRootEntry->SetSortTypeL(order);
-            
-            iMessages = iRootEntry->ChildrenL();    
-            iMessageCount = iRootEntry->Count();
-            
-            if ( iMessageCount ) 
-                iState = EProcessOutbox;
-            else
-                {
-                iState = EComplete;
-                iMsgObserver->HandleCachingCompleted();
-                CleanupL();
-                return 0; // DONE
-                }
-            
-            return 1;
-            }
-            
-        case EProcessOutbox:
-            {
-            iMessageCount = iMessageCount - 1;
-            TMsvEntry entry = iRootEntry->ChildDataL(iMessages->At(iMessageCount));
-            if(IsMtmSupported(entry.iMtm.iUid))
-                {
-                ProcessResultsL(entry);  
-                }
-            
-            if ( iMessageCount ) 
-                iState = EProcessOutbox;
-            else 
-                {
-                iState = EComplete;
-                iMsgObserver->HandleCachingCompleted();
-                CleanupL();
-                return 0; // DONE
-                }
-            
-            return 1;        
-            }
-        }
 
-    return 0;
+            iMessages = iRootEntry->ChildrenL();  
+            iMessageCount = iRootEntry->Count();
+
+            if(iMessageCount)
+            {
+                for(int i = 0; i < iMessageCount; i ++)
+                {
+                    iMessageArray->Append(iMessages->At(i));
+                }
+                iMessageCount=0;
+            }
+            iState = ESortEntries;
+            CleanupL();
+
+            return 1;
+        }
+        case ESortEntries:
+        {
+             //Sort the elements in the array by descending order of TMsvId's
+            TLinearOrder<TMsvId> order(CompareOrder);
+            iMessageArray->Sort(order);
+            iState = EProcessEntries;
+            return 1;
+        }
+        
+        case EProcessEntries:
+        { 
+            //Process one entry at a time in sequence
+            //Process the first element in the array on each call, till the end
+            if(iMessageArray->Count())
+            {
+                ProcessResultsL(iSession->GetEntryL(iMessageArray->operator[](0))->Entry());
+                iMessageArray->Remove(0);
+            }
+            else
+            {
+                iMsgObserver->HandleCachingCompleted();
+                return 0; //DONE 
+            }
+
+            iState = EProcessEntries;
+            return 1; 
+        }
     }
+    return 0;    
+}
 
 // -----------------------------------------------------------------------------
 // CCsMsgHandler::UploadMsg()
@@ -792,6 +782,10 @@ TCsType CCsMsgHandler::ExtractCsType( const TMsvEntry& aEntry)
         {
         case KSenduiMtmSmsUidValue:            
             type = ECsSMS;
+            if (aEntry.iBioType == KMsgBioUidVCard.iUid)
+                {
+                type = ECsBioMsg_VCard;
+                }
             break;
         case KSenduiMtmBtUidValue:
             type = ECsBlueTooth;

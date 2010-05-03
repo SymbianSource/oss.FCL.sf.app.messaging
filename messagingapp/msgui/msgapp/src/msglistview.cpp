@@ -19,34 +19,33 @@
 
 // SYSTEM INCLUDES
 #include <hbmenu.h>
-#include <hbinstance.h>
-#include <hbapplication.h>
 #include <hbaction.h>
 #include <hbtoolbar.h>
 #include <hbtoolbarextension.h>
 #include <hblistview.h>
 #include <hblistwidget.h>
 #include <hblistwidgetitem.h>
-#include <hbnotificationdialog.h>
 #include <hbgroupbox.h>
 #include <hbmessagebox.h>
 #include <hbframebackground.h>
-#include <QProcess>
 #include <QSortFilterProxyModel>
 #include <QGraphicsLinearLayout>
-//cp settings launcher.
-#include <cppluginlauncher.h>
 #include <hblistviewitem.h>
 #include <HbStyleLoader>
-#include <hbeffect.h>
+#include <HbMainWindow>
+#include <xqaiwrequest.h>
+#include <xqappmgr.h>
+#include <qtcontacts.h>
 
 // USER INCLUDES
 #include "msgconversationviewinterface.h"
 #include "debugtraces.h"
 #include "conversationsengine.h"
 #include "conversationsenginedefines.h"
-
+#include "convergedmessage.h"
 #include "msglistviewitem.h"
+
+QTM_USE_NAMESPACE
 
 //Icons
 const QString POPUP_LIST_FRAME("qtg_fr_popup_list_normal");
@@ -54,15 +53,20 @@ const QString NEW_MESSAGE_ICON("qtg_mono_create_message");
 const QString SORT_ICON("qtg_mono_sort");
 
 //Localized constants
-#define LOC_MENU_DELETE_CONVERSATION hbTrId("txt_messaging_menu_delete_conversation")
-#define LOC_DIALOG_DELETE_CONVERSATION hbTrId("txt_messaging_dialog_delete_conversation")
-#define LOC_POPINFO_CONVERSATION_DELETED hbTrId("txt_messaging_dpopinfo_conversation_deleted")
 
-#define LOC_COMMON_OPEN hbTrId("txt_common_menu_open")
+#define LOC_DIALOG_DELETE_CONVERSATION hbTrId("txt_messaging_dialog_delete_conversation")
+
+//itemspecific menu
+#define LOC_OPEN hbTrId("txt_common_menu_open")
+#define LOC_SAVETO_CONTACTS hbTrId("txt_messaging_menu_save_to_contacts")
+#define LOC_DELETE_CONVERSATION hbTrId("txt_messaging_menu_delete_conversation")
+#define LOC_OPEN_CONTACT_INFO hbTrId("txt_messaging_menu_open_contact_info")
+
 #define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
 #define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
 
-#define LOC_SETTINGS hbTrId("txt_messaging_opt_settings")
+//main menu
+#define LOC_SETTINGS    hbTrId("txt_messaging_opt_settings")
 
 #define LOC_TB_VIEW_EXTN hbTrId("txt_messaging_button_view")
 #define LOC_TB_NEW_MESSAGE hbTrId("txt_messaging_button_new_message")
@@ -71,7 +75,6 @@ const QString SORT_ICON("qtg_mono_sort");
 
 #define LOC_VIEW_HEADING hbTrId("txt_messaging_title_conversations")
 
-//const int MSGSETTINGSPLUGIN_UID = 0x2001FE74;
 //---------------------------------------------------------------
 // MsgListView::MsgListView
 // @see header
@@ -79,8 +82,7 @@ const QString SORT_ICON("qtg_mono_sort");
 MsgListView::MsgListView(QGraphicsItem *parent) :
     MsgBaseView(parent)
 {
-    // Create the MsgListView.
-    createView();
+    connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
 }
 
 //---------------------------------------------------------------
@@ -89,7 +91,7 @@ MsgListView::MsgListView(QGraphicsItem *parent) :
 //---------------------------------------------------------------
 MsgListView::~MsgListView()
 {
-    mMsgList->setModel(NULL);
+    
 }
 
 //---------------------------------------------------------------
@@ -106,28 +108,30 @@ void MsgListView::longPressed(HbAbstractViewItem* viewItem, const QPointF& point
         // Create new menu
         HbMenu *contextMenu = new HbMenu();
 
-        // Add the menu items
-        HbAction *contextItem1 = contextMenu->addAction(LOC_COMMON_OPEN);
-        connect(contextItem1, SIGNAL(triggered()), this, SLOT(
-            openConversation()));
-
-        //This Item specific option is not mentioned in the UI spec
-        HbAction *contextItem2 = contextMenu->addAction(tr("Show contact info"));
-        connect(contextItem2, SIGNAL(triggered()), this, SLOT(showContact()));
-
-        qint64 conversationId = mMsgList->currentIndex().data(ConversationId).toLongLong();
-
-        bool isNotSent = false; //TODO implement new api 
-        //MessageModel::instance()->isMessageSendingOrScheduled(conversationId);
-        // Display Delete option only if conversation does not contain 
-        // any message which is yet to be sent
-        if (isNotSent == false) {
-            HbAction *contextItem3 = contextMenu->addAction(LOC_MENU_DELETE_CONVERSATION);
-            connect(contextItem3, SIGNAL(triggered()), this, SLOT(deleteItem()));
-        }
+        //open menu option
+        contextMenu->addAction(LOC_OPEN,this,SLOT(openConversation()));
+        
+        //save to contacts for unresolved.
+        int msgType = viewItem->modelIndex().data(MessageType).toInt();
+        if(msgType == ConvergedMessage::Sms || 
+           msgType == ConvergedMessage::Mms || 
+           msgType == ConvergedMessage::BioMsg)
+            {
+            qint64 contactId = mMsgList->currentIndex().data(ContactId).toLongLong();
+            if(contactId < 0)
+                {
+                contextMenu->addAction(LOC_SAVETO_CONTACTS,this,SLOT(saveToContacts()));
+                }
+            else
+                {
+                contextMenu->addAction(LOC_OPEN_CONTACT_INFO,this,SLOT(contactInfo()));
+                }
+            }
+        
+        //delete conversation
+        contextMenu->addAction(LOC_DELETE_CONVERSATION,this,SLOT(deleteItem()));
 
         contextMenu->exec(point);
-
         // Cleanup
         delete contextMenu;
     }
@@ -155,36 +159,6 @@ void MsgListView::openConversation(const QModelIndex& index)
 }
 
 //---------------------------------------------------------------
-// MsgListView::sortBySubject
-// @see header
-//---------------------------------------------------------------
-void MsgListView::sortBySubject()
-{
-    //	mProxyModel->setSortRole(LatestMsg);
-    //	mProxyModel->sort(0, Qt::AscendingOrder);
-}
-
-//---------------------------------------------------------------
-// MsgListView::sortByDate
-// @see header
-//---------------------------------------------------------------
-void MsgListView::sortByDate()
-{
-    //	mProxyModel->setSortRole(LatestMsgTimeStamp);
-    //	mProxyModel->sort(0, Qt::DescendingOrder);
-}
-
-//---------------------------------------------------------------
-// MsgListView::sortBySender
-// @see header
-//---------------------------------------------------------------
-void MsgListView::sortBySender()
-{
-    //	mProxyModel->setSortRole(ContactName);
-    //	mProxyModel->sort(0, Qt::AscendingOrder);
-}
-
-//---------------------------------------------------------------
 // MsgListView::sendNewMessage
 // @see header
 //---------------------------------------------------------------
@@ -195,32 +169,6 @@ void MsgListView::sendNewMessage()
     param << MsgBaseView::CLV; // source view
 
     emit switchView(param);
-}
-
-//---------------------------------------------------------------
-// MsgListView::closeActiveClats
-// @see header
-//---------------------------------------------------------------
-void MsgListView::closeActiveChats()
-{
-    // Implementation for closing all active chats
-}
-
-//---------------------------------------------------------------
-// MsgListView::deleteAll
-// @see header
-//---------------------------------------------------------------
-void MsgListView::deleteAll()
-{
-}
-
-//---------------------------------------------------------------
-// MsgListView::viewImMessagesSeperately
-// @see header
-//---------------------------------------------------------------
-void MsgListView::viewImMessagesSeparately()
-{
-    //Lists all the Im messages separately
 }
 
 //---------------------------------------------------------------
@@ -265,29 +213,19 @@ void MsgListView::deleteItem()
 #endif
 
     QModelIndex index = mMsgList->currentIndex();
-    qint64 conversationId = 0;
-    conversationId = index.data(ConversationId).toLongLong();
+    qint64 conversationId = index.data(ConversationId).toLongLong();
 
+    //confirmation dialog.
     bool result = HbMessageBox::question(LOC_DIALOG_DELETE_CONVERSATION,
-        LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
-    if (result) {
+                                         LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
+    if (result) 
+        {
         ConversationsEngine::instance()->deleteConversations(conversationId);
-        HbNotificationDialog::launchDialog(LOC_POPINFO_CONVERSATION_DELETED);
-    }
+        }
+    
 #ifdef _DEBUG_TRACES_	
     qDebug() << " Leaving MsgConversationView::deleteItem";
 #endif
-}
-
-//---------------------------------------------------------------
-// MsgListView::createView
-// @see header
-//---------------------------------------------------------------
-void MsgListView::createView()
-{
-    setupMenu();
-    setupToolBar();
-    setupListView();
 }
 
 //---------------------------------------------------------------
@@ -303,44 +241,42 @@ void MsgListView::setupListView()
 
     // Create view heading.
     HbGroupBox *viewHeading = new HbGroupBox();
-    viewHeading->setTitleText(LOC_VIEW_HEADING);
+    viewHeading->setHeading(LOC_VIEW_HEADING);
 
     // Register the custorm css path.
-    HbStyleLoader::registerFilePath(":/msglistviewitem.css");
-    HbStyleLoader::registerFilePath(":/msglistviewitem.widgetml");
+    HbStyleLoader::registerFilePath(":/xml/msglistviewitem.css");
+    HbStyleLoader::registerFilePath(":/xml/msglistviewitem.widgetml");
 
     mMsgList = new HbListView(this);
-
-    HbEffect::add(QString("ListView"), QString(":/slide_in_from_screen_bottom.fxml"), QString(
-        "show"));
+    mMsgList->setScrollingStyle(HbScrollArea::PanOrFlick);
+    mMsgList->setClampingStyle(HbScrollArea::BounceBackClamping);
 
     mMsgList->setLayoutName("custom");
-    mMsgList->setItemRecycling(false);
-    mMsgList->setUniformItemSizes(true);
-   
-    mMsgList->setScrollingStyle(HbScrollArea::PanOrFlick);
+    mMsgList->setItemRecycling(true);
+    mMsgList->setUniformItemSizes(true);   
+
     MsgListViewItem *prototype = new MsgListViewItem(this);
     mMsgList->setItemPrototype(prototype);
 
     // Set proxy model
-    mProxyModel = new QSortFilterProxyModel(this);
-    mProxyModel->setDynamicSortFilter(true);
-    mProxyModel->setSourceModel(ConversationsEngine::instance()->getConversationsSummaryModel());
-    mProxyModel->setSortRole(TimeStamp);
-    mProxyModel->sort(0, Qt::DescendingOrder);
+    QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel(this);
+    proxyModel->setDynamicSortFilter(true);
+    proxyModel->setSourceModel(ConversationsEngine::instance()->getConversationsSummaryModel());
+    proxyModel->setSortRole(TimeStamp);
+    proxyModel->sort(0, Qt::DescendingOrder);
 
-    mMsgList->setModel(mProxyModel);
+    mMsgList->setModel(proxyModel);
 
-    connect(ConversationsEngine::instance(), SIGNAL(conversationListModelPopulated()), this,
-        SLOT(populateListView()));
+    connect(ConversationsEngine::instance(), SIGNAL(conversationListModelPopulated()),
+            this, SLOT(populateListView()));
 
     // Single tap list item
-    connect(mMsgList, SIGNAL(activated(const QModelIndex&)), this,
-        SLOT(openConversation(const QModelIndex&)));
+    connect(mMsgList, SIGNAL(activated(const QModelIndex&)),
+            this, SLOT(openConversation(const QModelIndex&)));
 
     // Long tap list item
-    connect(mMsgList, SIGNAL(longPressed(HbAbstractViewItem*, const QPointF&)), this,
-        SLOT(longPressed(HbAbstractViewItem*, const QPointF&)));
+    connect(mMsgList, SIGNAL(longPressed(HbAbstractViewItem*, const QPointF&)),
+            this, SLOT(longPressed(HbAbstractViewItem*, const QPointF&)));
 
     // Add all widgets to main layout.
     mainLayout->addItem(viewHeading);
@@ -356,17 +292,8 @@ void MsgListView::setupListView()
 void MsgListView::setupMenu()
 {
     // Main menu
-    // Get the menu pointer for the view
-
     HbMenu* mainMenu = this->menu();
-
-    // Delete (This option is not mentioned in the UI spec 1.04)
-    HbAction* deleteItem = mainMenu->addAction(tr("Delete"));
-    connect(deleteItem, SIGNAL(triggered()), this, SLOT(deleteAll()));
-
-    // Settings
-    HbAction* settings = mainMenu->addAction(LOC_SETTINGS);
-    connect(settings, SIGNAL(triggered()), this, SLOT(settings()));
+    mainMenu->addAction(LOC_SETTINGS,this,SLOT(settings()));
 }
 
 //---------------------------------------------------------------
@@ -382,7 +309,6 @@ void MsgListView::setupToolBar()
     // Create & setup ToolBar Extension
     HbToolBarExtension *viewExtn = new HbToolBarExtension();
     HbAction *viewAction = toolBar->addExtension(viewExtn);
-    viewAction->setText(LOC_TB_VIEW_EXTN);
     viewAction->setIcon(HbIcon(SORT_ICON));
 
     mViewExtnList = new HbListWidget();
@@ -393,34 +319,14 @@ void MsgListView::setupToolBar()
     HbFrameBackground frame(POPUP_LIST_FRAME, HbFrameDrawer::NinePieces);
     prototype->setDefaultFrame(frame);
 
-    connect(mViewExtnList, SIGNAL(activated(HbListWidgetItem*)), this,
-        SLOT(handleViewExtnActivated(HbListWidgetItem*)));
-    connect(mViewExtnList, SIGNAL(activated(HbListWidgetItem*)), viewExtn, SLOT(close()));
+    connect(mViewExtnList, SIGNAL(activated(HbListWidgetItem*)),
+            this,SLOT(handleViewExtnActivated(HbListWidgetItem*)));
+    connect(mViewExtnList, SIGNAL(released(HbListWidgetItem*)), viewExtn, SLOT(close()));
 
     viewExtn->setContentWidget(mViewExtnList);
-
+    
     // Create & setup 2nd ToolBar button.
-    HbAction* newMessageAction = new HbAction(HbIcon(NEW_MESSAGE_ICON), LOC_TB_NEW_MESSAGE, this);
-    connect(newMessageAction, SIGNAL(triggered()), this, SLOT(sendNewMessage()));
-    toolBar->addAction(newMessageAction);
-}
-
-//---------------------------------------------------------------
-// MsgListView::activateView
-// @see header
-//---------------------------------------------------------------
-void MsgListView::activateView()
-{
-    HbEffect::start(mMsgList, QString("ListView"), QString("show"), this, NULL);
-}
-
-//---------------------------------------------------------------
-// MsgListView::populateListView
-// @see header
-//---------------------------------------------------------------
-void MsgListView::populateListView()
-{
-
+    toolBar->addAction(HbIcon(NEW_MESSAGE_ICON),"",this,SLOT(sendNewMessage()));
 }
 
 //---------------------------------------------------------------
@@ -438,5 +344,83 @@ void MsgListView::handleViewExtnActivated(HbListWidgetItem *item)
         emit switchView(param);
     }
 }
+
+//---------------------------------------------------------------
+// MsgListView::doDelayedConstruction
+// @see header
+//---------------------------------------------------------------
+void MsgListView::doDelayedConstruction()
+    {
+    setupToolBar();    
+    setupListView();
+    setupMenu();
+    
+    disconnect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
+    }
+
+//---------------------------------------------------------------
+// MsgListView::saveToContacts
+// @see header
+//---------------------------------------------------------------
+void MsgListView::saveToContacts()
+    {
+    //save to contacts with phone number field prefilled.
+    QList<QVariant> args;  
+
+    QString data = mMsgList->currentIndex().data(DisplayName).toString();
+
+    QString type = QContactPhoneNumber::DefinitionName;
+
+    args << type;
+    args << data;
+
+    //service stuff.
+    QString serviceName("com.nokia.services.phonebookservices");
+    QString operation("editCreateNew(QString,QString)");
+
+    XQAiwRequest* request;
+    XQApplicationManager appManager;
+    request = appManager.create(serviceName, "Fetch", operation, true); // embedded
+    if ( request == NULL )
+        {
+        return;       
+        }
+
+    request->setArguments(args);
+    request->send();
+    
+    delete request;
+    }
+
+//---------------------------------------------------------------
+// MsgListView::contactInfo
+// @see header
+//---------------------------------------------------------------
+void MsgListView::contactInfo()
+    {
+    //open contact info.
+    QList<QVariant> args;  
+
+    int contactId = mMsgList->currentIndex().data(ContactId).toInt();
+
+    args << contactId;
+
+    //service stuff.
+    QString serviceName("com.nokia.services.phonebookservices");
+    QString operation("open(int)");
+
+    XQAiwRequest* request;
+    XQApplicationManager appManager;
+    request = appManager.create(serviceName, "Fetch", operation, true); // embedded
+    if ( request == NULL )
+        {
+        return;       
+        }
+
+    request->setArguments(args);
+    request->send();
+    
+    delete request;
+    }
 
 //EOF

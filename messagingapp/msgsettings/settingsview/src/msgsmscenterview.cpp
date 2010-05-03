@@ -14,27 +14,51 @@
  * Description:This class is for sms message center view 
  *
  */
+#include <hbaction.h>
 
 #include "msgsmscenterview.h"
 #include "msgsmscentersettingsform.h"
-
-#include <cpbasesettingview.h>
 #include "debugtraces.h"
 
 MsgSMSCenterView::MsgSMSCenterView(int view, QGraphicsItem *parent) :
-MsgBaseView(parent)
+    MsgBaseView(parent)
 {
     mSMSCenterSettingsForm = new MsgSMSCenterSettingsForm(view);
 
     setWidget(mSMSCenterSettingsForm);
+
+    HbAction* backAction = new HbAction(Hb::BackAction, this);
+    setNavigationAction(backAction);
+
+    connect(mSMSCenterSettingsForm,
+            SIGNAL(deleteMessageCentreAndClose()),
+            this,
+            SLOT(onCloseMessageCenterView()));
+    
+    connect(backAction, SIGNAL(triggered()), this, SLOT(onBackAction()));
 }
 
 MsgSMSCenterView::~MsgSMSCenterView()
 {
+    setParent(NULL);
 }
 
-void MsgSMSCenterView::commitChanges()
+void MsgSMSCenterView::onBackAction()
 {
-	QDEBUG_WRITE("MsgSMSCenterView::commitChanges");
+    QDEBUG_WRITE("MsgSMSCenterView::onBackAction");
+
+    //commit the change
     mSMSCenterSettingsForm->commitChanges();
+    setNavigationAction(NULL);
+    emit smsCenterEditViewClosed();
 }
+
+void MsgSMSCenterView::onCloseMessageCenterView()
+{
+    QDEBUG_WRITE("MsgSMSCenterView::onCloseMessageCenterView");
+
+    setNavigationAction(NULL);
+    emit smsCenterEditViewClosed();
+}
+
+//eof

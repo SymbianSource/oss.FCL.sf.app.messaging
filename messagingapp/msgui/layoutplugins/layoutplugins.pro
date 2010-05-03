@@ -19,6 +19,5 @@ TEMPLATE = subdirs
 
 SYMBIAN_PLATFORMS = WINSCW ARMV5
 
-SUBDIRS += msglistviewitemplugin/msglistviewitemplugin.pro
 SUBDIRS += conversationviewplugin/conversationviewplugin.pro
 SUBDIRS += unifiededitorplugin/unifiededitorplugin.pro

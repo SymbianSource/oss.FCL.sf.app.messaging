@@ -139,15 +139,15 @@ public: // member functions
     
     /*
      * isAttributeSet
-     * @return MsgAttribute
+     * @return true, if set
      */
-    MsgAttribute isAttributeSet(MsgAttribute attribute) const;
+    bool isAttributeSet(MsgAttribute attribute) const;
     
     /*
      * setId
      * @param id, message id
      */
-    void setId(const int id);
+    void setId(int id);
     
     /*
      * setPhoneNumber

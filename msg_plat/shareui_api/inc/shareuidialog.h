@@ -11,8 +11,8 @@
 *
 * Contributors:
 *
-* Description: 
-*
+* Description:  Offers message creation and sending services.
+ *
 */
 
 #include <shareui.h>

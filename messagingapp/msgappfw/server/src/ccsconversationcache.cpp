@@ -424,9 +424,7 @@ CCsClientConversation* CCsConversationCache::CreateClientConvLC(
     CCsClientConversation* clientConversation = CCsClientConversation::NewL();
     CleanupStack::PushL(clientConversation);
 
-    clientConversation->SetFirstNameL(aConversation->GetFirstName());
-    clientConversation->SetLastNameL(aConversation->GetLastName());
-    clientConversation->SetNickNameL(aConversation->GetNickName());
+    clientConversation->SetDisplayNameL(aConversation->GetDisplayName());
     clientConversation->SetConversationEntryId(aConversation->GetConversationId());
     clientConversation->SetConversationEntryL(aConversationEntry);
     clientConversation->SetContactId(aConversation->GetContactId());
@@ -640,4 +638,35 @@ TInt CCsConversationCache::GetConversationIdFromAddressL(TDesC& aContactAddress)
     }
     return -1;
     }
+
+// ----------------------------------------------------------------------------
+// CCsConversationCache::GetConversationFromMessageIdL
+// ---------------------------------------------------------------------------
+CCsClientConversation* CCsConversationCache::GetConversationFromMessageIdL(TInt aMessageId)
+{
+    TInt conversationCount = iConversationList->Count();
+
+    for ( TInt loop = 0; loop < conversationCount; loop++ )
+    {
+        CCsConversation* conversation =
+            static_cast<CCsConversation*>((*iConversationList)[loop]);
+
+        // Get the conversation entries
+        RPointerArray<CCsConversationEntry> entryList;
+        conversation->GetEntryListL(&entryList);
+
+        for ( TInt loop1 = 0; loop1 < entryList.Count(); loop1++ )
+        {
+            TInt messageId = entryList[loop1]->EntryId();
+            if ( messageId == aMessageId )
+            {
+                CCsClientConversation *clientConv = CreateClientConvLC(conversation, entryList[loop1]);
+                CleanupStack::Pop();
+                return clientConv;
+            }
+        }
+    }
+    return NULL;
+}
+
 //end of file

@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QString>
 #include <QQueue>
+#include "msginfodefs.h"
 
 // CLASS DECLARATION
 class MsgNotifierPrivate;
@@ -34,50 +35,51 @@ class MsgSimNumDetector;
  * private class to qt - class.
  */
 class NotificationData
-    {
+{
 public:
     /**
      * constrcutor
      */
-    NotificationData():
-    mConversationId(-1),mMsgType(-1)
-        {};
+    NotificationData() :
+        mConversationId(-1), mMsgType(-1)
+    {
+    }
+    
     /**
      * Conversation id
      */
     int mConversationId;
-    
+
     /**
      * Message type
      */
     int mMsgType;
-    
+
     /**
      * Description
      */
     QString mDescription;
     
     /**
-     * First name
+     * Display name
      */
-    QString mFirstName;
-    
-    /**
-     * Last name
-     */
-    QString mLastName;
+    QString mDisplayName;
     
     /**
      * Contact Number
      */
     QString mContactNum;
  
+    /**
+     * MsvEntry Id
+     */
+   int msvEntryId;
     };
 
 
-class MsgNotifier : public QObject
-    {
-    Q_OBJECT
+class MsgNotifier: public QObject
+{
+Q_OBJECT
 
 public:
     /**
@@ -98,23 +100,39 @@ public:
      */
     void displayNewMessageNotification(NotificationData& data);
 
-
     /**
-     * updateIndications
+     * updateUnreadIndications
      * Activate/Deactivate message indications based on unread message count.
      * if unreadCount is zero then deactivate else activate.
      * @param unreadCount unread count.
      */
-    void updateIndications(int unreadCount);
+    void updateUnreadIndications(int unreadCount);
 
+    /**
+     * updateOutboxIndications
+     * Activate/Deactivate message indications based on outbox 
+     * message count.
+     * @param indicatorData The indicator data for displaying the indication.
+     */
+    void updateOutboxIndications(MsgInfo& indicatorData);
+
+private:
+    
+    /**
+     * Get display-name of a contact from VCard.
+     * @param filePath, VCard file-path
+     * @return display-name
+     */
+    QString getVcardDisplayName(const QString& filePath);
+    
 private:
 
     /**
      * Object of private implementation.
      * Owned.
      */
-    MsgNotifierPrivate* d_ptr;  
-    
+    MsgNotifierPrivate* d_ptr;
+
     /**
      * Sim settings handler
      */
@@ -122,5 +140,4 @@ private:
 };
 
 #endif // MSGNOTIFIER_H
-
 //EOF

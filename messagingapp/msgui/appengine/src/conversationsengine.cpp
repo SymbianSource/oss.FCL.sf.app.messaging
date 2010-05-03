@@ -154,6 +154,16 @@ void ConversationsEngine::deleteMessages(QList<int>& msgIdList)
 }
 
 //---------------------------------------------------------------
+// ConversationsEngine::deleteAllDraftMessages
+// @see header
+//---------------------------------------------------------------
+void ConversationsEngine::deleteAllDraftMessages()
+{
+    int error;
+    TRAP(error, d_ptr->deleteAllDraftMessagesL());
+}
+
+//---------------------------------------------------------------
 // ConversationsEngine::markConversationRead
 // @see header
 //---------------------------------------------------------------
@@ -188,8 +198,7 @@ bool ConversationsEngine::markMessagesRead(QList<int>& msgIdList)
 // @see header
 //---------------------------------------------------------------
 void ConversationsEngine::getContactDetails(qint64 conversationId,
-    QString& firstName,
-    QString& lastName,
+    QString& displayName,
     QString& address)
 {
     QModelIndexList indexList = mConversationsSummaryModel->match(
@@ -201,8 +210,7 @@ void ConversationsEngine::getContactDetails(qint64 conversationId,
 
     if(indexList.count() > 0)
     {
-        firstName = indexList[0].data(FirstName).toString();
-        lastName = indexList[0].data(LastName).toString();
+        displayName = indexList[0].data(DisplayName).toString();
         address = indexList[0].data(ConversationAddress).toString();
     }         
 }
@@ -283,6 +291,51 @@ void ConversationsEngine::fetchMoreConversations()
 {
     d_ptr->fetchMoreConversations();
 }
+
+//---------------------------------------------------------------
+// ConversationsEngine::resendMessage()
+// @see header
+//---------------------------------------------------------------
+
+bool ConversationsEngine::resendMessage(qint32 messageId)
+{
+    return d_ptr->resendMessage(messageId);
+}
+
+//---------------------------------------------------------------
+// ConversationsEngine::downloadMessage()
+// @see header
+//---------------------------------------------------------------
+
+int ConversationsEngine::downloadMessage(qint32 messageId)
+{
+    return d_ptr->downloadMessage(messageId);
+}
+
+//---------------------------------------------------------------
+// ConversationsEngine::downloadOperationSupported()
+// @see header
+//---------------------------------------------------------------
+bool ConversationsEngine::downloadOperationSupported(qint32 messageId)
+{
+    return d_ptr->downloadOperationSupported(messageId);
+}
+
+//---------------------------------------------------------------
+// ConversationsEngine::markAsReadAndGetType()
+// @see header
+//---------------------------------------------------------------
+
+void ConversationsEngine::markAsReadAndGetType(qint32 messageId,
+                                               int& msgType,
+                                               int& msgSubType)
+{
+mConversationMsgStoreHandler->markAsReadAndGetType(messageId,
+                                                    msgType,
+                                                    msgSubType);
+}
+
+
 
 //EOF
 

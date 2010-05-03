@@ -26,7 +26,7 @@ class HbIconItem;
 /*
  *This widget displays subject,timestamp & priority info
  */
-class UniViewerDetailsWidget : public HbWidget
+class UniViewerDetailsWidget: public HbWidget
 {
 Q_OBJECT
 
@@ -52,7 +52,7 @@ public:
      * Sets the time stamp inside widget
      * @param aTimeStamp
      */
-    void setTimeStamp(const QDateTime &aTimeStamp);
+    void setTimeStamp(const QDateTime &aTimeStamp, const int &aSendingState);
 
     /**
      * Sets the priority inside widget
@@ -67,13 +67,13 @@ public:
 
 private:
 
-    /*
+    /**
      * HbTextItem object
      * Owned
      */
     HbTextItem *mSubjectLabel;
 
-    /*
+    /**
      * HbIconItem object
      * Owned
      */

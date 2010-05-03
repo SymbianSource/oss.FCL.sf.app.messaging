@@ -19,9 +19,7 @@
 
 // Keys for the parameters passed to Notification framework
 
-const QString KFirstNameKey = "firstName";
-const QString KLastNameKey = "lastName";
-const QString KNickNameKey = "nickName";
+const QString KDisplayNameKey = "displayName";
 const QString KConversationIdKey = "conversationId";
 const QString KMessageTypeKey = "messageType";
 const QString KMessageBodyKey = "messageBody";

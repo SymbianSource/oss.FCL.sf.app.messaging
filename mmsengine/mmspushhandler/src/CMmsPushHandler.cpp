@@ -172,14 +172,16 @@ void CMmsPushHandler::HandleMessageL( CPushMessage* aPushMsg )
     // If memory runs out, tough luck..
     //
     TPtrC8 messageBodyPtr;
-    iPushMsg->GetMessageBody( messageBodyPtr );
-    iBody = messageBodyPtr.Alloc();
-    if ( !iBody )
+    if ( iPushMsg->GetMessageBody( messageBodyPtr ) )
         {
-        LOGTEXT( _L("HandleMessageL(): Out of memory when allocating body buffer") );
-        // Commit suicide - the caller expects it even if we leave
-        iPluginKiller->KillPushPlugin();
-        User::Leave( KErrNoMemory );
+        iBody = messageBodyPtr.Alloc();
+        if ( !iBody )
+            {
+        	LOGTEXT( _L("HandleMessageL(): Out of memory when allocating body buffer") );
+        	// Commit suicide - the caller expects it even if we leave
+        	iPluginKiller->KillPushPlugin();
+        	User::Leave( KErrNoMemory );
+            }
         }
     
     //

@@ -18,8 +18,8 @@
 #ifndef __GMXML_IBY__
 #define __GMXML_IBY__
 
+#include <legacyminidomparser.iby>
 file=ABI_DIR\BUILD_DIR\SMILDTD.dll	System\libs\SMILDTD.dll
-file=ABI_DIR\BUILD_DIR\XMLDOM.dll	System\libs\XMLDOM.dll
-file=ABI_DIR\BUILD_DIR\xmlparser.dll	System\libs\xmlparser.dll
+
 
 #endif

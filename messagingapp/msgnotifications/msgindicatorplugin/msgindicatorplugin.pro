@@ -20,6 +20,7 @@ CONFIG += plugin
 CONFIG += hb
 
 INCLUDEPATH += .
+INCLUDEPATH += ../inc
 DEPENDPATH += .
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += ../../../inc
@@ -28,7 +29,7 @@ INCLUDEPATH += ../../msgutils/s60qconversions/inc
 
 HEADERS += inc/msgindicatorplugin.h \
 		   inc/msgindicator.h \
-		   inc/msgindicator_p.h
+		   inc/msgindicator_p.h 
 		   
 SOURCES += src/msgindicatorplugin.cpp \
 		   src/msgindicator.cpp \

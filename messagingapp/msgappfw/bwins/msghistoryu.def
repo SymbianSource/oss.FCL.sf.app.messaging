@@ -7,11 +7,11 @@ EXPORTS
 	?trUtf8@MsgHistory@@SA?AVQString@@PBD0H@Z @ 6 NONAME ; class QString MsgHistory::trUtf8(char const *, char const *, int)
 	?setId@MsgItem@@QAEXH@Z @ 7 NONAME ; void MsgItem::setId(int)
 	?setDirection@MsgItem@@QAEXW4MsgDirection@1@@Z @ 8 NONAME ; void MsgItem::setDirection(enum MsgItem::MsgDirection)
-	?isAttributeSet@MsgItem@@QBE?AW4MsgAttribute@1@W421@@Z @ 9 NONAME ; enum MsgItem::MsgAttribute MsgItem::isAttributeSet(enum MsgItem::MsgAttribute) const
-	?subscribe@MsgHistory@@QAE_NH@Z @ 10 NONAME ; bool MsgHistory::subscribe(int)
-	?messagesReady@MsgHistory@@IAEXAAV?$QList@VMsgItem@@@@@Z @ 11 NONAME ; void MsgHistory::messagesReady(class QList<class MsgItem> &)
-	?trUtf8@MsgHistory@@SA?AVQString@@PBD0@Z @ 12 NONAME ; class QString MsgHistory::trUtf8(char const *, char const *)
-	?messageChanged@MsgHistory@@IAEXAAVMsgItem@@@Z @ 13 NONAME ; void MsgHistory::messageChanged(class MsgItem &)
+	?subscribe@MsgHistory@@QAE_NH@Z @ 9 NONAME ; bool MsgHistory::subscribe(int)
+	?messagesReady@MsgHistory@@IAEXAAV?$QList@VMsgItem@@@@@Z @ 10 NONAME ; void MsgHistory::messagesReady(class QList<class MsgItem> &)
+	?trUtf8@MsgHistory@@SA?AVQString@@PBD0@Z @ 11 NONAME ; class QString MsgHistory::trUtf8(char const *, char const *)
+	?messageChanged@MsgHistory@@IAEXAAVMsgItem@@@Z @ 12 NONAME ; void MsgHistory::messageChanged(class MsgItem &)
+	?isAttributeSet@MsgItem@@QBE_NW4MsgAttribute@1@@Z @ 13 NONAME ; bool MsgItem::isAttributeSet(enum MsgItem::MsgAttribute) const
 	?markRead@MsgHistory@@QAE_NH@Z @ 14 NONAME ; bool MsgHistory::markRead(int)
 	??1MsgItem@@UAE@XZ @ 15 NONAME ; MsgItem::~MsgItem(void)
 	?getMessages@MsgHistory@@QAE_NH@Z @ 16 NONAME ; bool MsgHistory::getMessages(int)

@@ -20,31 +20,64 @@
 
 #include <hbdataform.h>
 #include "msgsettingengine.h"
-#include "msgsettingsviewmanager.h"
+
+class HbDataFormModelItem;
+class HbDataFormModel;
+class QStandardItemModel;
+class QStandardItemModel;
 
 class MsgSettingsForm : public HbDataForm
 {
 Q_OBJECT
 public:
-    explicit MsgSettingsForm(
-                             MsgSettingsViewManager* settingsViewManager,
-                             QGraphicsItem *parent = 0);
+    explicit MsgSettingsForm(QGraphicsItem *parent = 0);
     ~MsgSettingsForm();
+    void refreshViewForm();
+    void expandSMSSettings();
     
+signals:
+    void newSMSCCenterClicked(int);
+        
 private:
-    void initSettingModel();    
-
+    void initSettingModel();
+    void addMMSGroupItem(HbDataFormModelItem* parent);
+    void addSmsMCGroupItem(HbDataFormModelItem* parent);
+    void updateSmsMCGroupItem(HbDataFormModelItem* parent);
+    
 private slots:
-    void onPressedAdvanced();
-    void onPressedDelReports();
+    void onPressedServiceMessages();
+    void onPressedCustomButton();
     void changeCharEncoding(int index);
+    void changeAccessPoint(int index);
+    void onSMSCurrentIndexChanged(int index);
+    void changeMMSRetrievalMode(int index);
+    void allowAnonymousMMS();
+    void allowMMSAdverts();
 
 private:
+    
+    HbDataFormModel *settingsModel;
+    
+    /**
+     * SmsGroup model item
+     */
+    HbDataFormModelItem* mSmsMCGroup;
+
+    /**
+     * SMS Center gropu list
+     */
+    QStringList mSmsMCSettingsGroup;
+
+    /**
+     * The list of smsc centers.
+     */
+    QStringList mSmsServiceList;
 
     //msg engine reference
     MsgSettingEngine* mSettingEngine;
     
-    //Settings View Manager
-    MsgSettingsViewManager* mSettingsViewManager;
+    QStandardItemModel* mSmsServiceCenterModel;
+    HbDataFormModelItem *smsMessageCenter;
+
 };
 #endif // MSG_SETTINGSFORM_H

@@ -33,15 +33,13 @@ TARGETPATH	/system/libs
 UID		0x10003C5E 0x10009ED4	// 0x10003C5E = KUidMtmServerComponent
 VENDORID 0x70000001
 								// 0x10009ED4 = KBtServerMtmV1DllUid 
-VERSION 	10.0
-PAGED
 
 SOURCEPATH	../source
 SOURCE		btsmtm.cpp btsmtmdll.cpp  btsendop.cpp  
 
 USERINCLUDE	../include ../../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/inc
 USERINCLUDE ../../btclient/Include
-APP_LAYER_SYSTEMINCLUDE
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 SOURCEPATH	.
 START RESOURCE	btmtm.rss

@@ -125,8 +125,7 @@ EXPORT_C void CMsgMediaInfo::ParseInfoDetails( RFile& aFile, CDRMHelper& aDRMHel
     iDRMHelper = &aDRMHelper;
     iFile.Duplicate( aFile );
     // Actual parsing is done in RunL (of each media info class).
-    //CompleteSelf( KErrNone );
-    RunL();
+    CompleteSelf( KErrNone );
     }
 
 // -----------------------------------------------------------------------------

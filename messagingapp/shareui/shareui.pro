@@ -11,23 +11,22 @@
 #
 # Contributors:
 #
-# Description: 
+# Description: Project file for file share services.
 #
 
 TEMPLATE = lib
 TARGET = shareui
 DEFINES += BUILD_SHAREUI_DLL
+#DEFINES += __SHAREUI_MIME_HANDLING__
 
 DEPENDPATH += inc src
 INCLUDEPATH += inc
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
-
-    
+   
 QT += core
 CONFIG += hb
-
 
 TARGET.EPOCALLOWDLLDATA = 1
 TARGET.CAPABILITY = CAP_GENERAL_DLL

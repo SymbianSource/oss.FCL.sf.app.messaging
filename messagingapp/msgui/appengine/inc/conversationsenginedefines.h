@@ -25,11 +25,10 @@ enum ConversationsEngineRoles
     ConvergedMsgId,
     ConversationAddress,
     ContactId,
-    FirstName,
-    LastName,
-    NickName,
+    DisplayName,
     Avatar,
     MessageType,
+    MessageSubType,
     MessagePriority,
     MessageProperty,
     Direction,
@@ -42,7 +41,8 @@ enum ConversationsEngineRoles
     UnreadCount,
     MessageLocation,
     MessageStore,
-    ConversationAlias
+    ConversationAlias,
+    NotificationStatus
 };
 
 #endif /* CONVERSATIONS_ENGINE_DEFINES_H */

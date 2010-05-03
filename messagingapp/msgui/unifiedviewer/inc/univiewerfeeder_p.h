@@ -30,8 +30,6 @@
 class QDateTime;
 class UniViewerFeeder;
 class CMsvSession;
-class UnifiedDataModel;
-class CClientMtmRegistry;
 class UniDataModelPluginInterface;
 class UniDataModelLoader;
 
@@ -179,6 +177,11 @@ public:
     QString subject();
     
     /**
+     * Returns the sending state of the message.
+     */
+    int sendingState();
+    
+    /**
      * Gets the name(alias) for a address from the Contact database
      * @int returns number of phone addresses for the specified address.
      */
@@ -226,12 +229,12 @@ private:
     /**
      * interface to fetch data
      */
-    UniDataModelPluginInterface* pluginInterface;
+    UniDataModelPluginInterface* mPluginInterface;
 
     /**
      * plugin loader
      */
-    UniDataModelLoader* pluginLoader;
+    UniDataModelLoader* mPluginLoader;
     /**
      * To address list
      * owned.

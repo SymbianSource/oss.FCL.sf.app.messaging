@@ -28,18 +28,6 @@ VENDORID        VID_DEFAULT
 VERSION 	10.0
 PAGED
 
-START RESOURCE  NotRegistry.rss
-TARGET          not.rsc
-TARGETPATH      MTM_INFO_FILE_DIR
-LANGUAGE_IDS
-END
-
-START RESOURCE  MmsRegistry.rss
-TARGET          mms.rsc
-TARGETPATH      MTM_INFO_FILE_DIR
-LANGUAGE_IDS
-END
-
 SOURCEPATH      ../src
 
 SOURCE          mmsaccount.cpp mmssettings.cpp mmsschedulesettingsutils.cpp mmsmessagestoreutils.cpp mmsregisteredapplications.cpp

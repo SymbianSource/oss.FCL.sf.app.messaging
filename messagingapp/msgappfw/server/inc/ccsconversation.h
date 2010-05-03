@@ -68,28 +68,12 @@ public:
     void SetConversationId(TCsConversationEntryID aCsConversationEntryID);
 
     /**
-     * GetFirstName
-     * Returns the first name of the Conversation
+     * GetDisplayName
+     * Returns the display name of the Conversation
      * 
      * @return First name of conversation
      */
-    HBufC* GetFirstName() const;
-
-    /**
-     * GetLastName
-     * Returns the last name of this Conversation
-     * 
-     * @return last name of conversation
-     */
-    HBufC* GetLastName() const;
-
-    /**
-     * GetNickName
-     * Returns the nick name of this Conversation
-     * 
-     * @return nick name of conversation
-     */
-    HBufC* GetNickName() const;
+    HBufC* GetDisplayName() const;
 
     /**
      * GetContactId
@@ -98,6 +82,7 @@ public:
      * 
      * @return - integer type contact Id
      */
+    
     TInt32 GetContactId() const;
 
     /**
@@ -152,8 +137,9 @@ public:
      * @param aFirstName first name
      * @param aLastName last name
      */
-    void AddContactDetailsL(TInt32 aContactId, const TDesC& aFirstName,
-                            const TDesC& aLastName, const TDesC& aNickName);
+    void AddContactDetailsL(
+            TInt32 aContactId, 
+            const TDesC& aDisplayName);
 
     /**
      * AddContactDetailsL

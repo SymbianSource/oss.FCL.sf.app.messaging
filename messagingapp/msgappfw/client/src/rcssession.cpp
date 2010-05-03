@@ -125,10 +125,7 @@ TVersion RCsSession::Version() const
 void RCsSession::ShutdownServerL()
 {
     TIpcArgs args;
-    TRequestStatus status;
-    SendReceive(EShutdown, args, status);
-    User::WaitForRequest(status);
-
+    User::LeaveIfError (SendReceive(EShutdown, args));
     PRINT ( _L("RCsSession::ShutdownServerL - ServerShutDown") );
 }
 
@@ -164,14 +161,8 @@ void RCsSession::GetConversationUnreadListL(TPtr8 aOverflow, TPtr8 aResultsBuffe
   PRINT( _L("Enter RCsSession::GetConversationEntryListL") );
 
   TIpcArgs args(&aOverflow, &aResultsBuffer);
-
-  TRequestStatus status;
-
   // Initiate the request
-  SendReceive(EGetConversationUnreadList, args, status);
-
-  User::WaitForRequest(status);
-
+  User::LeaveIfError (SendReceive(EGetConversationUnreadList, args));
   PRINT( _L("End RCsSession::GetConversationEntryListL") );
   }
 
@@ -225,13 +216,8 @@ void RCsSession::SendNewBufferGetConversationL(TPtr8 aResultsBuffer,
 void RCsSession::GetCachingStatusL(TPtr8 aResultsBuffer)
 {
     TIpcArgs args(TIpcArgs::ENothing, &aResultsBuffer);
-
-    TRequestStatus status;
-
     // Initiate the request
-    SendReceive(EGetCachingStatus, args, status);
-
-    User::WaitForRequest(status);
+    User::LeaveIfError (SendReceive(EGetCachingStatus, args));
 }
 
 // ----------------------------------------------------------------------------
@@ -242,13 +228,8 @@ void RCsSession::GetCachingStatusL(TPtr8 aResultsBuffer)
 void RCsSession::GetTotalUnreadCountL(TPtr8 aResultsBuffer)
     {
     TIpcArgs args(TIpcArgs::ENothing, &aResultsBuffer);
-
-    TRequestStatus status;
-
     // Initiate the request
-    SendReceive(EGetTotalUnreadCount, args, status);
-
-    User::WaitForRequest(status);
+    User::LeaveIfError (SendReceive(EGetTotalUnreadCount, args));
     }
 
 // ----------------------------------------------------------------------------
@@ -260,12 +241,10 @@ void RCsSession::SetConversationListChangeObserverL()
 {
     TIpcArgs args(TIpcArgs::ENothing, TIpcArgs::ENothing);
 
-    TRequestStatus status;
-
     // Initiate the request
-    SendReceive(ESetConversationListChangeObserver, args, status);
+    User::LeaveIfError ( SendReceive(ESetConversationListChangeObserver, args));
 
-    User::WaitForRequest(status);
+  
 }
 
 // ----------------------------------------------------------------------------
@@ -276,13 +255,8 @@ void RCsSession::SetConversationListChangeObserverL()
 void RCsSession::ResetConversationListChangeObserverL()
 {
     TIpcArgs args(TIpcArgs::ENothing, TIpcArgs::ENothing);
-
-    TRequestStatus status;
-
     // Initiate the request
-    SendReceive(EResetConversationListChangeObserver, args, status);
-
-    User::WaitForRequest(status);
+    User::LeaveIfError ( SendReceive(EResetConversationListChangeObserver, args));
 }
 
 // ----------------------------------------------------------------------------
@@ -295,13 +269,8 @@ void RCsSession::SetConversationChangeObserverL(
                                                 const TDes8& aClientConversation)
 {
     TIpcArgs args(&aClientConversation);
-
-    TRequestStatus status;
-
     // Initiate the request
-    SendReceive(ESetConversationChangeObserver, args, status);
-
-    User::WaitForRequest(status);
+    User::LeaveIfError (SendReceive(ESetConversationChangeObserver, args));
 }
 
 // ----------------------------------------------------------------------------
@@ -314,13 +283,8 @@ void RCsSession::ResetConversationChangeObserverL(
                                                   const TDes8& aClientConversation)
 {
     TIpcArgs args(&aClientConversation);
-
-    TRequestStatus status;
-
     // Initiate the request
-    SendReceive(EResetConversationChangeObserver, args, status);
-
-    User::WaitForRequest(status);
+    User::LeaveIfError (SendReceive(EResetConversationChangeObserver, args));
 }
 
 // ----------------------------------------------------------------------------
@@ -332,12 +296,8 @@ void RCsSession::SetCachingStatusObserverL()
 {
     TIpcArgs args(TIpcArgs::ENothing, TIpcArgs::ENothing);
 
-    TRequestStatus status;
-
     // Initiate the request
-    SendReceive(ESetCachingStatusObserver, args, status);
-
-    User::WaitForRequest(status);
+    User::LeaveIfError (SendReceive(ESetCachingStatusObserver, args));
 }
 
 // ----------------------------------------------------------------------------
@@ -349,12 +309,8 @@ void RCsSession::ResetCachingStatusObserverL()
 {
     TIpcArgs args(TIpcArgs::ENothing, TIpcArgs::ENothing);
 
-    TRequestStatus status;
-
     // Initiate the request
-    SendReceive(EResetCachingStatusObserver, args, status);
-
-    User::WaitForRequest(status);
+    User::LeaveIfError (SendReceive(EResetCachingStatusObserver, args));
 }
 
 // ----------------------------------------------------------------------------
@@ -387,12 +343,8 @@ void RCsSession::RemoveChangeEventL()
 {
     TIpcArgs args(TIpcArgs::ENothing, TIpcArgs::ENothing);
 
-    TRequestStatus status;
-
     // Initiate the request
-    SendReceive(ERemoveChangeEvent, args, status);
-
-    User::WaitForRequest(status);
+    User::LeaveIfError ( SendReceive(ERemoveChangeEvent, args));
 }
 
 // ----------------------------------------------------------------------------
@@ -420,16 +372,11 @@ void RCsSession::GetConversationIdL(TInt aContactId, TPtr8 aResultsBuffer)
     {
     PRINT( _L("Enter RCsSession::GetConversationIdL") );
 
-    TRequestStatus status;
+
     TIpcArgs args(aContactId, &aResultsBuffer);
 
     // Initiate the request
-    SendReceive(EGetConversationId,
-            args,
-            status );
-
-    User::WaitForRequest(status);
-
+    User::LeaveIfError (SendReceive(EGetConversationId, args) );
     PRINT( _L("End RCsSession::GetConversationIdL") );
     }
 
@@ -440,18 +387,29 @@ void RCsSession::GetConversationIdFromAddressL(TDesC& aContactAddress, TPtr8 aRe
     {
     PRINT( _L("Enter RCsSession::GetConversationIdFromAddressL") );
 
-    TRequestStatus status;
     TIpcArgs args(&aContactAddress, &aResultsBuffer);
 
     // Initiate the request
-    SendReceive(EGetConversationIdFromAddress,
-            args,
-            status );
-
-    User::WaitForRequest(status);
+    User::LeaveIfError (SendReceive(EGetConversationIdFromAddress,
+            args ));
 
     PRINT( _L("End RCsSession::GetConversationIdFromAddressL") );
     }
+	
+// ----------------------------------------------------------------------------
+// RCsSession::GetConversationFromMessageIdL
+// ----------------------------------------------------------------------------
+void RCsSession::GetConversationFromMessageIdL(TInt aMessageId, TPtr8 aResultsBuffer)
+    {
+    PRINT( _L("Enter RCsSession::GetConversationFromMessageIdL") );
+    
+    TIpcArgs args(aMessageId, &aResultsBuffer);
+
+    // Initiate the request
+    User::LeaveIfError (SendReceive(EGetConversationFromMessageId, args ) );
+    PRINT( _L("End RCsSession::GetConversationFromMessageIdL") );
+    }
+	
 // ----------------------------------------------------------------------------
 // RCsSession::MarkConversationReadL
 // ----------------------------------------------------------------------------

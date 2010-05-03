@@ -42,8 +42,10 @@ Q_OBJECT
     Q_PROPERTY(bool isPlayable READ isPlayable WRITE setPlayable)
     Q_PROPERTY(bool isIncoming READ isIncoming WRITE setIncoming)
     Q_PROPERTY(bool isMMS READ isMMS WRITE setMMS)
+    Q_PROPERTY(bool isMMSNotification READ isMMSNotification WRITE setMMSNotification)
     Q_PROPERTY(bool isUnread READ isUnread WRITE setUnread)
     Q_PROPERTY(int sendingState READ sendingState WRITE setSendingState)
+    Q_PROPERTY(int notificationState READ notificationState WRITE setNotificationState)
 
     Q_ENUMS(MessageState)
 
@@ -135,7 +137,7 @@ public:
     /**
      * Displays audio icon if audio media is present.
      */
-    void displayAudioIcon();
+    void displayAudioIcon(const QString &iconPath = QString());
 
     /**
      * Specify if this widget's message has video
@@ -198,6 +200,18 @@ public:
     bool isMMS();
 
     /**
+     * Set to know if this widget if of type MMS Notification
+     * @return bool
+     */
+    void setMMSNotification(bool isMMSNotification = true);
+
+    /**
+     * Get to find if this widget is of type MMS Notification
+     * @return bool
+     */
+    bool isMMSNotification();
+    
+    /**
      * Set the sending state.
      * Maps ConvergedMessage::SendingState to MessageState.
      * @see ConvergedMessage::SendingState
@@ -211,6 +225,19 @@ public:
     int sendingState();
 
     /**
+     * Set the notification state.
+     * Maps ConvergedMessage::NotificationState to MessageState.
+     * @see ConvergedMessage::NotificationState
+     */
+    void setNotificationState(int state);
+
+    /**
+     * Returns the notification state.
+     * @return Returns one of the states from enum NotificationState.
+     */
+    int notificationState();
+    
+    /**
      * Sets the Timestamp.
      * @param timeStamp Timestamp to be set.
      */
@@ -222,9 +249,20 @@ public:
     void drawNewItemFrame();
 
     /**
-     * Draws the bubble frame.
+     * Draws the normal/highlighted state bubble frame.
      */
     void drawBubbleFrame();
+
+    /**
+     * Draws the pressed state bubble frame.
+     */
+    void drawPressedBubbleFrame();
+
+    /**
+     * Function to receive item pressed events.
+     * @see MsgConversationViewItem::pressStateChanged
+     */
+    void pressStateChanged(bool pressed, bool animate);
 
 private:
 
@@ -247,6 +285,22 @@ public:
         Pending = 0x03,
         Failed = 0x04
     };
+    
+    /**
+     * Enum defining MMS Notification's Msg State
+     * These are added here so that notification state 
+     * can be used inside css in future
+     * @attention This enum can have values from 0 to 255 only
+     * Add any new states only at the bottom of this enum
+     */
+    enum NotificationState
+        {
+        NotifUnknown = 0x00,
+        NotifReadyForFetching = 0x01,
+        NotifRetrieving = 0x02,
+        NotifExpired = 0x03,
+        NotifFailed = 0x04, 
+        };
 
 private:
 
@@ -298,6 +352,11 @@ private:
     bool mIsMMS;
 
     /**
+     * Holds info if this widget is MMS Notification
+     */
+    bool mIsMMSNotification;
+    
+    /**
      * Info about message priority.
      * @attention Stores high/low/normal priority.
      * @see ConvergedMessage::Priority
@@ -309,6 +368,11 @@ private:
      */
     int mSendingState;
 
+    /**
+     * Holds Notification state information.
+     */
+    int mNotificationState;
+    
     /**
      * Graphics Item to hold new message icon.
      * Owned

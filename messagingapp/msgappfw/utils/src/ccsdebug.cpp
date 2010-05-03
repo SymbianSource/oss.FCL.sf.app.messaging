@@ -81,7 +81,7 @@ EXPORT_C void CCsDebugWrapper::__LatencyMarkEnd(TRefByValue<const TDesC> str)
 		delete dbg;			  	
     }
     
-    if ( dbgArr->IsEmpty() )
+    if ( !dbgArr && dbgArr->IsEmpty() )
     {
         delete dbgArr;
         Dll::SetTls( NULL );

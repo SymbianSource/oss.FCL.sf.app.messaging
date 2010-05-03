@@ -25,6 +25,7 @@
 
 // FORWARD DECLARATIONS
 class CCsClientConversation;
+class CCsConversationEntry;
 
 /**
  * This class implements the model of the model/view framework.
@@ -85,6 +86,21 @@ private:
      */    
     void populateItem(QStandardItem& item,
             const CCsClientConversation& conversation);   
+    
+    /**
+     * Populate BT message related data into item.
+     * @param item, QStandardItem
+     * @param entry, CCsConversationEntry
+     */
+    void handleBlueToothMessages(QStandardItem& item, const CCsConversationEntry& entry);
+    
+    /**
+     * Populate Bio message related data into item.
+     * @param item, QStandardItem
+     * @param entry, CCsConversationEntry
+     */
+    void handleBioMessages(QStandardItem& item, const CCsConversationEntry& entry);
+
          
 };
 

@@ -15,11 +15,11 @@ UniViewerDetailsWidget::timeLabel
   top:-var(hb-param-margin-gene-top);
   right:0.5un;
   bottom:var(hb-param-margin-gene-middle-vertical);
+  font-variant:secondary;
   text-height:var(hb-param-text-height-secondary);
   text-line-count-min:1;
   text-line-count-max:1;
   text-align: left;
-  font-variant: primary;
  }
 
 UniViewerDetailsWidget::subjectLabel
@@ -27,11 +27,11 @@ UniViewerDetailsWidget::subjectLabel
   left:-var(hb-param-margin-gene-left);
   right:var(hb-param-margin-gene-right);
   bottom:var(hb-param-margin-gene-bottom);
+  font-variant:primary;
   text-height:var(hb-param-text-height-primary);
   text-line-count-min:1;
   text-line-count-max:10;
-  text-align: left;
-  font-variant: primary;
+  text-align:left;
 }
 
 UniViewerDetailsWidget::priorityIcon

@@ -32,7 +32,6 @@ MsgContactCardWidget::addressText
   center-vertical:0un;
   text-height:var(hb-param-text-height-primary);
   font-variant:primary;
-  text-height:var(hb-param-text-height-primary);
   text-line-count-min:1;
   text-line-count-max:1;
 }

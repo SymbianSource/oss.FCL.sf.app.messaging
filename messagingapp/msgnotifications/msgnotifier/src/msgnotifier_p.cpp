@@ -21,14 +21,17 @@
 #include <ccsclientconversation.h>
 #include <ccsrequesthandler.h>
 #include <ccsconversationentry.h>
+#include <xqservicerequest.h>
+#include <QString>
 
 //USER INCLUDES
 #include "msgnotifier.h"
 #include "msgnotifier_p.h"
 #include "s60qconversions.h"
-
+#include "msgstorehandler.h"
+#include "msginfodefs.h"
 #include <QtDebug>
-  
+
 #define QDEBUG_WRITE(str) {qDebug() << str;}
 #define QDEBUG_WRITE_FORMAT(str, val) {qDebug() << str << val;}
 #define QCRITICAL_WRITE(str) {qCritical() << str;}
@@ -38,13 +41,13 @@
 // MsgNotifierPrivate::MsgNotifierPrivate
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
-MsgNotifierPrivate::MsgNotifierPrivate(MsgNotifier* MsgNotifier):
-q_ptr(MsgNotifier),
-mCvServer(NULL)
+MsgNotifierPrivate::MsgNotifierPrivate(MsgNotifier* MsgNotifier) :
+    q_ptr(MsgNotifier), mCvServer(NULL), iMsgStoreHandler(NULL)
 {
-QDEBUG_WRITE("MsgNotifierPrivate::MsgNotifierPrivate : Enter")
-TRAP_IGNORE(initL());
-QDEBUG_WRITE("MsgNotifierPrivate::MsgNotifierPrivate : Exit")
+    QDEBUG_WRITE("MsgNotifierPrivate::MsgNotifierPrivate : Enter")
+
+    TRAP_IGNORE(initL());
+    QDEBUG_WRITE("MsgNotifierPrivate::MsgNotifierPrivate : Exit")
 }
 
 // ----------------------------------------------------------------------------
@@ -53,14 +56,18 @@ QDEBUG_WRITE("MsgNotifierPrivate::MsgNotifierPrivate : Exit")
 // ----------------------------------------------------------------------------
 MsgNotifierPrivate::~MsgNotifierPrivate()
 {
-QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Enter")	
-if(mCvServer)
-    {
-    mCvServer->RemoveConversationListChangeEventL (this);
-    delete mCvServer;
-    mCvServer = NULL;
+    QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Enter")
+    if (mCvServer) {
+        mCvServer->RemoveConversationListChangeEventL(this);
+        delete mCvServer;
+        mCvServer = NULL;
     }
-QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Exit")    
+
+    if (iMsgStoreHandler) {
+        delete iMsgStoreHandler;
+        iMsgStoreHandler = NULL;
+    }
+    QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Exit")
 }
 
 // ----------------------------------------------------------------------------
@@ -68,66 +75,67 @@ QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Exit")
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
 void MsgNotifierPrivate::initL()
-    {
+{
     QDEBUG_WRITE("MsgNotifierPrivate::initL : Enter")
-    
+
     mCvServer = CCSRequestHandler::NewL();
     mCvServer->RequestConversationListChangeEventL(this);
-    updateIndications();
-    
+    iMsgStoreHandler = new MsgStoreHandler(this, mCvServer);
+    updateUnreadIndications(true); 
+    updateOutboxIndications();
+
     QDEBUG_WRITE("MsgNotifierPrivate::initL : Exit")
-    }
+}
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::AddConversationList
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
 void MsgNotifierPrivate::AddConversationList(
-           const CCsClientConversation& aClientConversation)
-    {
+                  const CCsClientConversation& aClientConversation)
+{
     QDEBUG_WRITE("MsgNotifierPrivate::AddConversationList : Enter")
-    
+
     processListEntry(aClientConversation);
-    updateIndications();
-    
+    updateUnreadIndications();
+
     QDEBUG_WRITE("MsgNotifierPrivate::AddConversationList : Exit")
-    }
+}
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::DeleteConversationList
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
-void MsgNotifierPrivate::DeleteConversationList(
-           const CCsClientConversation& /*aClientConversation*/) 
-    {
-    QDEBUG_WRITE("MsgNotifierPrivate::DeleteConversationList : Enter")	
-    updateIndications();
+void MsgNotifierPrivate::DeleteConversationList( 
+	                const CCsClientConversation& /*aClientConversation*/)
+{
+    QDEBUG_WRITE("MsgNotifierPrivate::DeleteConversationList : Enter")
+    updateUnreadIndications();
     QDEBUG_WRITE("MsgNotifierPrivate::DeleteConversationList : Exit")
-    }
+}
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::ModifyConversationList
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
-void MsgNotifierPrivate:: ModifyConversationList(
-           const CCsClientConversation& aClientConversation)
-    {
+void MsgNotifierPrivate::ModifyConversationList(const CCsClientConversation& aClientConversation)
+{
     QDEBUG_WRITE("MsgNotifierPrivate::ModifyConversationList : Enter")
-    
+
     processListEntry(aClientConversation);
-    updateIndications();
-    
+    updateUnreadIndications();
+
     QDEBUG_WRITE("MsgNotifierPrivate::ModifyConversationList : Exit")
-    }
-   
+}
+
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::RefreshConversationList
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
 void MsgNotifierPrivate::RefreshConversationList()
-    {
-    
-    }
+{
+
+}
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::processListEntry
@@ -147,9 +155,7 @@ void MsgNotifierPrivate::processListEntry(
                                                 convEntry->IsAttributeSet(ECsAttributeNewEntryAdded))
     QDEBUG_WRITE_FORMAT("MsgNotifierPrivate::processListEntry Unread Attribute",
                                                 convEntry->IsAttributeSet(ECsAttributeUnread))
-
-    bool newFlag=convEntry->IsAttributeSet(ECsAttributeNewEntryAdded);
-    
+   
     if((convEntry->ConversationDir() == ECsDirectionIncoming)
             && convEntry->IsAttributeSet(ECsAttributeNewEntryAdded) 
             && convEntry->IsAttributeSet(ECsAttributeUnread))
@@ -157,24 +163,19 @@ void MsgNotifierPrivate::processListEntry(
         QDEBUG_WRITE("processListEntry : Processing data for Notification")
         
         NotificationData notifData;
-        
+        notifData.msvEntryId = convEntry->EntryId(); 
         notifData.mConversationId = aClientConversation.GetConversationEntryId();
-        notifData.mMsgType = convEntry->GetType();
+        notifData.mMsgType = static_cast<int>(convEntry->GetType());
         
-        HBufC* firstName = aClientConversation.GetFirstName();
-        HBufC* lastName =  aClientConversation.GetLastName();
+        HBufC* displayName = aClientConversation.GetDisplayName();
         HBufC* number =  convEntry->Contact();
         HBufC* descrp =  convEntry->Description();
         
-        if(firstName)
+        if(displayName)
             {
-            notifData.mFirstName = 
-                                S60QConversions::s60DescToQString(*firstName);
-            }
-        if(lastName)
-            {
-            notifData.mLastName = S60QConversions::s60DescToQString(*lastName);
-            }
+            notifData.mDisplayName = 
+                                S60QConversions::s60DescToQString(*displayName);
+            }        
         if(number)
             {
             notifData.mContactNum =  S60QConversions::s60DescToQString(*number);
@@ -193,22 +194,97 @@ void MsgNotifierPrivate::processListEntry(
     }
 
 // ----------------------------------------------------------------------------
-// MsgNotifierPrivate::updateIndications
+// MsgNotifierPrivate::updateUnreadIndications
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
-void MsgNotifierPrivate::updateIndications()
-    {
-    QDEBUG_WRITE("MsgNotifierPrivate::updateIndicationsL : Enter")  
+void MsgNotifierPrivate::updateUnreadIndications(bool bootup)
+{
+    QDEBUG_WRITE("MsgNotifierPrivate::updateIndicationsL : Enter")
 
-    int unreadCount(0); 
-    TRAP_IGNORE(unreadCount = mCvServer->GetTotalUnreadCountL());
+    int unreadCount(0);
+   if(bootup)
+   {
+       TRAP_IGNORE(unreadCount = iMsgStoreHandler->GetUnreadMessageCountL());
+   }
+   else
+   {
+       TRAP_IGNORE(unreadCount = mCvServer->GetTotalUnreadCountL());
+   }
 
     QDEBUG_WRITE_FORMAT("MsgNotifierPrivate::"
-            "updateIndications unreadCount = ",unreadCount );
+        "updateIndications unreadCount = ",unreadCount );
 
     //activate or deactivate indications based on unread count
-    q_ptr->updateIndications(unreadCount);
+    q_ptr->updateUnreadIndications(unreadCount);
 
     QDEBUG_WRITE("MsgNotifierPrivate::updateIndicationsL : Exit")
+}
+
+// ----------------------------------------------------------------------------
+// MsgNotifierPrivate::updateOutboxIndications
+// @see MsgNotifierPrivate.h
+// ----------------------------------------------------------------------------
+void MsgNotifierPrivate::updateOutboxIndications()
+{
+
+    MsgInfo failedIndicatorData;
+    MsgInfo pendingIndicatorData;
+    TInt err = KErrNone;
+    
+    TRAP(err, iMsgStoreHandler->GetOutboxEntriesL(failedIndicatorData,pendingIndicatorData));
+
+    q_ptr->updateOutboxIndications(failedIndicatorData);
+    q_ptr->updateOutboxIndications(pendingIndicatorData);
+}
+
+
+// ----------------------------------------------------------------------------
+// MsgNotifierPrivate::displayOutboxIndications
+// @see MsgNotifierPrivate.h
+// ----------------------------------------------------------------------------
+
+void MsgNotifierPrivate::displayOutboxIndications(MsgInfo data)
+	{
+		q_ptr->updateOutboxIndications(data);
+	}
+
+// ----------------------------------------------------------------------------
+// MsgNotifierPrivate::displayFailedNote
+// @see MsgNotifierPrivate.h
+// ----------------------------------------------------------------------------
+void MsgNotifierPrivate::displayFailedNote(MsgInfo info)
+{
+    // TODO: use XQAiwRequest
+    QDEBUG_WRITE("[MsgNotifierPrivate::handleFailedState] : entered")
+    // change to com.nokia.symbian.messaging (servicename), IMsgErrorNotifier
+    // as the service name.
+    XQServiceRequest snd("messaging.com.nokia.symbian.MsgErrorNotifier",
+        "displayErrorNote(QVariantList)", false);
+
+    QVariantList args;
+    info.mDisplayName.removeDuplicates();
+    info.mDisplayName.sort();
+    
+    QString nameString;
+    
+    nameString.append(info.mDisplayName.at(0));
+    for(int i = 1; i < info.mDisplayName.count(); ++i){
+        nameString.append(", ");
+        nameString.append(info.mDisplayName.at(i));
     }
+      
+    //Even if name string is empty we shall add name into args
+    QVariant nameV(nameString);
+    args << nameV;
+
+    QDEBUG_WRITE("[MsgNotifierPrivate::handleFailedState] : name and contactnumber")
+
+    args << info.mConversationId;
+    args << info.mMessageType;
+    snd << args;
+    snd.send();
+    QDEBUG_WRITE("[MsgNotifierPrivate::handleFailedState] : left")
+
+}
+
 //EOF

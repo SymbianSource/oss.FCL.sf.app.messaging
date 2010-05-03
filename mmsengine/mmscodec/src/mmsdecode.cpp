@@ -3656,10 +3656,6 @@ TInt CMmsDecode::GetContentHeaderName( TPtrC8& aTextHeader )
     // The header has been set to KMmsTextHeader to indicate that the field value
     // is still available.
 
-    if ( ( header < 0 ) && ( iPosition < iLength ) )
-        {
-        SkipFieldValue();
-        }
 
     return header;
     }

@@ -19,65 +19,33 @@
 #define MSGINDICATOR_H
 
 #include <QObject>
-
+#include <QRunnable>
 #include <hbindicatorinterface.h>
 
+#include "msginfodefs.h"
 class MsgIndicatorPrivate;
 
-/**
- * Utility class used pass indication data 
- * from private to Qt- class.
- */
-class IndicatorData
-    {
+class ServiceRequestSenderTask : public QRunnable
+{
 public:
     /**
      * Constructor
      */
-    IndicatorData():mFromSingle(false),
-    mConversationId(-1),
-    mUnreadMsgCount(0){};
+    ServiceRequestSenderTask(qint64 conversationId);
     
     /**
-     * Message from single contact or many
+     * Destructor
      */
-    bool mFromSingle; 
-    
+    ~ServiceRequestSenderTask();
+     
     /**
-     * Conversation id
+     * create and send service request
      */
-    int mConversationId; 
-    
-    /**
-     * Unread message count
-     */
-    int mUnreadMsgCount;
-    
-    /**
-     * First name
-     */
-    QString mFirstName; 
-    
-    /**
-     * Last name
-     */
-    QString mLastName; 
-    
-    /**
-     * Nick name
-     */
-    QString mNickName; 
-    
-    /**
-     * Phone number
-     */
-    QString mContactNum; 
-    
-    /**
-     * Description
-     */
-    QString mDescription;
-    };
+     void run();
+
+private: 
+     qint64 mConvId;
+};
 
 /**
  * Message indicator class. 
@@ -105,6 +73,7 @@ public:
      * @see HbIndicatorInterface
      */
     QVariant indicatorData(int role) const;
+
     
 protected:
     /**
@@ -117,8 +86,28 @@ private:
      * Prepares the display name from stream.
      * @param IindicatorData inidcator data.
      */
-    QString prepareDisplayName(IndicatorData& indicatorData) const;
+    QString prepareDisplayName(MsgInfo& indicatorData) const;
     
+    /**
+     * Gets the primary text for an indicator type
+     * @param data MsgInfo the message information.
+     * @return QString the primary text
+     */
+    QString getPrimaryText(MsgInfo& data);
+
+    /**
+     * Gets the primary text for unread messages
+     * @param data MsgInfo the message information.
+     */
+    QString getUnreadPrimaryText(MsgInfo& data);
+    
+    /**
+     * Get the secondary Text for messages.
+     * @param type The type of the indicator
+     * @return QString the secondary text
+     */
+    QString getSecondaryText(MsgInfo& info);
+
 private:
     
     /**
@@ -132,6 +121,11 @@ private:
     mutable qint64 mConversationId;
     
     /**
+     * Message type
+     */
+    mutable int mMessageType;
+
+    /**
      * Message from single or multiple contact
      */
     mutable bool mConversationFromSingleContact;
@@ -141,6 +135,27 @@ private:
      * Owned.
      */
     MsgIndicatorPrivate* d_ptr;
+   
+    /**
+     * Primary Text
+     * 
+     */
+    QString mPrimaryText;
+    
+    /**
+     * Secondary Text
+     */
+    QString mSecondaryText;
+    
+    /**
+     * Number of messages
+     */    
+    int mCount;
+    
+    /**
+     * Indicator type
+     */
+    int mIndicatorType;
 };
 
 #endif // MSGINDICATOR_H

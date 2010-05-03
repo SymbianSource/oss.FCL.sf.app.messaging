@@ -54,23 +54,12 @@ public:
      * @param messageType
      */
     UniEditorPluginInterface* getUniEditorPlugin(ConvergedMessage::MessageType messageType);
-
-    /**
-     * Loads plugins
-     */
-    void loadPlugins();
-
+ 
 private:
-    /**
-     * This shall store all the message types
-     * mapped to plugin instance
-     */
-    QMap<int, UniEditorPluginInterface*> mEditorPluginMap;
-	
     /**
      * Keep a list of all the pluginloaders used
      */
-    QList<QPluginLoader* > mPluginLoaderList;
+    QList<QPluginLoader* > mPluginLoaderList;    
 };
 
 #endif //UNI_EDITOR_LOADER_H

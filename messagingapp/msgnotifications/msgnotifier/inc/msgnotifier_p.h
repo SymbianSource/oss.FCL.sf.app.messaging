@@ -24,6 +24,11 @@
 // CLASS DECLARATION
 class MsgNotifier;
 class CCSRequestHandler;
+class MsgStoreHandler;
+
+/**
+ * @class MsgNotifierPrivate
+ */
 
 class MsgNotifierPrivate : public MCsConversationListChangeObserver
     {
@@ -44,22 +49,27 @@ public:
      * AddConversationList
      * This is for handling new conversation event
      * asynchronously from the server 
+     * @param aClientConversation CCsClientConversation The conversation object
      */
-    void AddConversationList(
-            const CCsClientConversation& aClientConversation);
+    void
+            AddConversationList(
+                    const CCsClientConversation& aClientConversation);
 
     /**  
      * DeleteConversationList
      * This is for handling delete conversation event
      * asynchronously from the server 
+     * @param aClientConversation CCsClientConversation The conversation object
      */
     void DeleteConversationList(
-            const CCsClientConversation& aClientConversation) ;
+            const CCsClientConversation& aClientConversation);
 
     /**  
      * ModifyConversationList
      * This is for handling modify conversation asynchronously
      * from the server 
+     * @param aClientConversation CCsClientConversation The conversation object
+     * 
      */
     void ModifyConversationList(
             const CCsClientConversation& aClientConversation);
@@ -70,11 +80,37 @@ public:
      */
     void RefreshConversationList();
 
+public:
+
+    /**
+     * updateFailedIndications
+     * Activate/Deactivate message indications based on pending message count
+     */
+    void updateOutboxIndications();
+
+    /**
+     * displayOutboxIndications
+     * Display the outbox indications based on the data in MsgInfo
+     */
+    void displayOutboxIndications(MsgInfo data);
+
+    /**
+     * displayFailedNote
+     * Popup a message box when a message is not successfully sent.
+     * @param msgInfo MsgInfo The message information object
+     */
+    void displayFailedNote(MsgInfo msgInfo);
+
 private:
     /**
      * Does all the initializations. 
      */
     void initL();
+
+    /**
+     * Initializes the conversation store handler 
+     */
+    void initConvStoreHandler();
 
     /**
      * Process conversation entry for showing the notification.
@@ -85,23 +121,27 @@ private:
     /**
      * updateIndications
      * Activate/Deactivate message indications based on unread message count
+     * @param bootup, true, if called on bootup else false
      */
-    void updateIndications();
+    void updateUnreadIndications(bool bootup = false);
 
 private:
 
     /**
      * Pointer to msgnotifier
      */
-    MsgNotifier* q_ptr;  
+    MsgNotifier* q_ptr;
 
     /**
      * Conversation server client 
      */
     CCSRequestHandler* mCvServer;
 
+    /**
+     * Pointer to Conversation Msg Store Handler.
+     */
+    MsgStoreHandler* iMsgStoreHandler;
     };
 
 #endif // MSGNOTIFIER_PRIVATE_H
-
 //EOF

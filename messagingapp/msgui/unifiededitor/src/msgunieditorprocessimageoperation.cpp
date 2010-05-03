@@ -416,7 +416,7 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
     
     if ( conformance.iCanAdapt == EFalse )
         {
-        return ETrue;
+        return EFalse;
         }
         
     TSize origSize = iImageInfo->Dimensions();
@@ -505,8 +505,7 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
     //Large image query     
     if( largeImageQuery && iMmsCreationMode == EMmsCreationModeWarning)
     {
-        if(!HbMessageBox::
-                    launchQuestionMessageBox(LOC_LARGE_IMAGE_NOTE))
+        if(!HbMessageBox::question(LOC_LARGE_IMAGE_NOTE))
         {
             return EFalse; // Abort
         }

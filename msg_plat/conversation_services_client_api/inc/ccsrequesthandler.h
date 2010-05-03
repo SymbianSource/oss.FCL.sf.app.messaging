@@ -301,6 +301,13 @@ public: // New functions
      * @param aContactId Contact Id.
      */
     IMPORT_C void MarkMessagingHistoryReadL ( TInt aContactId );
+	
+	  /**
+     * Get the conversation for a message.
+     * @param Message Id.
+     * @return CCsClientConversation
+     */
+    IMPORT_C CCsClientConversation* GetConversationFromMessageIdL ( TInt aMessageId );
     
 protected: // Functions from base classes
 

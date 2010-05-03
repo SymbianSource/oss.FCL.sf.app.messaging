@@ -67,4 +67,6 @@ EXPORTS
 	?addCcRecipients@ConvergedMessage@@QAEXAAV?$QList@PAVConvergedMessageAddress@@@@@Z @ 66 NONAME ; void ConvergedMessage::addCcRecipients(class QList<class ConvergedMessageAddress *> &)
 	?deserialize@ConvergedMessage@@QAEXAAVQDataStream@@@Z @ 67 NONAME ; void ConvergedMessage::deserialize(class QDataStream &)
 	?setFilePath@ConvergedMessageAttachment@@QAEXABVQString@@@Z @ 68 NONAME ; void ConvergedMessageAttachment::setFilePath(class QString const &)
+	?setMessageSubType@ConvergedMessage@@QAEXW4MessageSubType@1@@Z @ 69 NONAME ; void ConvergedMessage::setMessageSubType(enum ConvergedMessage::MessageSubType)
+	?messageSubType@ConvergedMessage@@QBE?AW4MessageSubType@1@XZ @ 70 NONAME ; enum ConvergedMessage::MessageSubType ConvergedMessage::messageSubType(void) const
 

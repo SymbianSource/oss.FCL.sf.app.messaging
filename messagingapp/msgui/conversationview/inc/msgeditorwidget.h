@@ -24,6 +24,11 @@
 
 // FORWARD DECLARATIONS
 class HbPushButton;
+class HbFrameItem;
+class HbTextItem;
+class UniEditorPluginLoader;
+class UniEditorPluginInterface;
+class UniEditorGenUtils;
 
 /**
  * Custom editor class
@@ -93,11 +98,10 @@ public:
     void setContent(const QString &contentText);
 
     /**
-     * Getter method which returns the current service-id.
-     * @return service-id
+     * This function does initialisations needed for character counter
      */
-    const QString& serviceId();
-
+    void setEncodingSettings();
+   
 signals:
 
     /**
@@ -110,6 +114,11 @@ signals:
      * i.e. when editor is tapped for reply
      */ 
     void replyStarted();
+
+    /**
+     * Signal emitted when the sms char limit is reached
+     */ 
+    void smsCharLimitReached();
     
 public slots:
 
@@ -130,19 +139,31 @@ private slots:
      */
     void onClicked();
 
+    /**
+     * called the timer expires and handles the case when sms char limit is
+     * reached
+     */
+	 void handleSmsCharLimitReached();
+	 
+	 /**
+     * called when send button is pressed/released.
+     */  
+    void onPressed();
+    void onReleased();
+
 private:
 
     /**
      * Initialization function.
      */
     void init();
+    
+	/**
+	* To update back ground.
+	*/
+    void updateButtonBackground(const QString& bg);
 
 private:
-
-    /**
-     * Current service-id
-     */
-    QString mServiceId;
 
     /**
      * Instance of message edit.
@@ -157,6 +178,55 @@ private:
      * Own.
      */
     HbPushButton *mSendButton;
+
+    /**
+     * Instance of HbTextItem
+     * Will be deleted automatically by parent.
+     * Own.
+     */
+    HbTextItem *mCharCounter;
+
+    /**
+     * Instance of HbFrameItem
+     * Will be deleted automatically by parent.
+     * Own.
+     */
+    HbFrameItem* mBackgroundItem;
+    
+    /**
+     * Holds the previous buffer inside msgeditor
+     */
+    QString mPrevBuffer;
+
+    /**
+     * Holds char type supported
+     */
+    int mCharSupportType;
+
+    /**
+     * Instance of UniEditorPluginInterface
+     * Will be deleted automatically by parent.
+     * Own.
+     */
+    UniEditorPluginInterface* mPluginInterface;
+
+    /**
+     * Instance of UniEditorPluginLoader
+     * Will be deleted when UniEditorPluginInterface object is deleted
+     * Not Own.
+     */
+    UniEditorPluginLoader* mPluginLoader;
+
+    /**
+     * Instance of UniEditorGenUtils
+     * Own.
+     */
+    UniEditorGenUtils* mEditorUtils;
+
+    /**
+     * Indication for sms char limt reached
+     */
+    bool mSmsCharLimitReached;
 };
 
 #endif // MSGEDITORWIDGET_H

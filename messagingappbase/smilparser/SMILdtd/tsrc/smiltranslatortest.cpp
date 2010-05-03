@@ -59,7 +59,10 @@
 #include <txtetext.h>
 #include <gmxmlparser.h>
 #include <gmxmlcomposer.h>
-#include "smildtd.h"
+#ifdef SYMBIAN_ENABLE_SPLIT_HEADERS  
+#include "smildtdenum.h"
+#endif
+#include <smildtd.h>
 #include <bacline.h>
 
 // Constants

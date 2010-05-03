@@ -17,14 +17,15 @@
 TEMPLATE = app
 TARGET = msgnotifier
 
-DEPENDPATH += ../../../
+
 DEPENDPATH += . src
 HEADERS += $$PUBLIC_HEADERS
 INCLUDEPATH += . inc ../../../inc 
 INCLUDEPATH +=../../msgutils/s60qconversions/inc
-
 INCLUDEPATH += ../../msgsettings/msginit/inc
-
+INCLUDEPATH += ../inc
+INCLUDEPATH += $$APP_LAYER_INCLUDEPATH
+INCLUDEPATH += $$MW_LAYER_INCLUDEPATH
 symbian:
 {
 TARGET.CAPABILITY = ALL -TCB
@@ -37,20 +38,33 @@ symbian {
     BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
     "rom/msgnotifier.iby  CORE_APP_LAYER_IBY_EXPORT_PATH(msgnotifier.iby)"
 }
+
 QT -= gui
-CONFIG += hb
-CONFIG += NO_ICON
+CONFIG += NO_ICON hb
 
 # Input
 SOURCES += 	src/main.cpp \
 			src/msgnotifier.cpp \
-			src/msgnotifier_p.cpp
+			src/msgnotifier_p.cpp \
+			src/msgstorehandler.cpp
 
 HEADERS +=  inc/msgnotifier.h  \
-  		    inc/msgnotifier_p.h 
-  
+  		    inc/msgnotifier_p.h \
+  		    inc/msgstorehandler.h 
 
 LIBS += -lcsserverclientapi \
         -ls60qconversions \
         -lcsutils \
-        -lmsginit
+        -lmsginit \
+        -lmsgs \
+        -letext \
+        -lsmcm \
+        -ls60qconversions \
+        -lmmsmessage \
+        -lmmsserversettings \
+        -lmmscli \
+        -lxqservice \
+        -lQtContacts \
+        -lQtVersit \
+        -lunidatamodelloader 
+        

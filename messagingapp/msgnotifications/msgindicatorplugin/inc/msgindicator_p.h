@@ -18,7 +18,7 @@
 
 #ifndef MSGINDICATOR_PRIVATE_H
 #define MSGINDICATOR_PRIVATE_H
-
+#include "msginfodefs.h"
 class MsgIndicator;
 class CCSRequestHandler;
 class IndicatorData;
@@ -44,14 +44,14 @@ public:
     * Get the information required to show the inidctaions
     * @pamam indicatorData indicator data which will be filled
     */
-    void getIndicatorInfo(IndicatorData& indicatorData);
+    void getIndicatorInfo(MsgInfo& indicatorData);
 
     /**
      * Get the information required to show the inidctaions. 
      * Calls conversation sever to fetch the information.
-     * @pamam indicatorData indicator data which will be filled.
+     * @param indicatorData indicator data which will be filled.
      */
-    void getIndicatorInfoL(IndicatorData& indicatorData);
+    void getIndicatorInfoL(MsgInfo& indicatorData);
     
 private : 
     /**

@@ -21,6 +21,7 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 
 CONFIG += ordered
 
+SUBDIRS += conf/messaging_conf.pro
 SUBDIRS += msgutils/msgutils.pro
 SUBDIRS += msgappfw/msgappfw.pro
 SUBDIRS += msgsettings/msgsettings.pro

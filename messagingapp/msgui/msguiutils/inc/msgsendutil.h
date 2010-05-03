@@ -22,6 +22,13 @@
 #include <QObject>
 #include "convergedmessage.h"
 
+#ifdef BUILD_MSGUI_UTILS_DLL
+#define MSGUI_UTILS_DLL_EXPORT Q_DECL_EXPORT
+#else
+#define MSGUI_UTILS_DLL_EXPORT Q_DECL_IMPORT
+#endif
+
+
 class UniEditorPluginLoader;
 class UniEditorGenUtils;
 class UniEditorPluginInterface;
@@ -30,7 +37,7 @@ class UniEditorPluginInterface;
  * This class manages the message send functionality.
  * 
  */
-class MsgSendUtil : public QObject
+class MSGUI_UTILS_DLL_EXPORT MsgSendUtil : public QObject
 {
 Q_OBJECT
 

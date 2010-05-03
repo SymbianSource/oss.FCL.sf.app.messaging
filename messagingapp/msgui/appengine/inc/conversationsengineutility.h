@@ -45,6 +45,20 @@ public:
      */
     static int messageType(TInt32 value);
 
+    /**
+     * Map message type to ConvergedMessage::MessageSubType.
+     * @param value, TCsType
+     * @return ConvergedMessage::MessageSubType.
+     */
+    static int messageSubType(TCsType value);
+
+    /**
+     * Get display-name of a contact from VCard.
+     * @param filePath, VCard file-path
+     * @return display-name
+     */
+    static QString getVcardDisplayName(QString filePath);
+
     };
 
 #endif //CONVERSATIONS_ENGINE_UTILITY_H

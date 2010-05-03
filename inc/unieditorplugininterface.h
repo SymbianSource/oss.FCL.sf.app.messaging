@@ -20,12 +20,24 @@
 
 #include <QtPlugin>
 #include <msvstd.h>
+#include <gsmuelem.h>
 #include "convergedmessage.h"
 
 
 class UniEditorPluginInterface
 {
 public:
+    
+    /**
+     * Enum defining EditorOperation 
+     * @attention This enum can have values from 0 to 2 only.
+     */
+    enum EditorOperation
+    {
+        Forward = 0, 
+        ReplyAll, 
+        Default 
+    };
 
     /**
      * Destructor
@@ -41,13 +53,17 @@ public:
 	virtual ConvergedMessage::MessageType messageType()=0;
 
     /**
-     * Converts message from message store into ConvergedMessage
+     * Converts message from message store into ConvergedMessage 
+     * based on the operation
      * @param TMsvId id
+     * @param aOperation operation type
      * @return ConvergedMessage object is returned in successfull cases and 
      *         NULL is returned in failure cases. The ownership of the object
      *         is transferred to the caller. 
      */
-    virtual ConvergedMessage* convertFrom( TMsvId aId )=0;
+    virtual ConvergedMessage* convertFrom( TMsvId aId,
+        UniEditorPluginInterface::EditorOperation aOperation
+        =UniEditorPluginInterface::Default)=0;
 
     /**
      * delete entry from drafts folder
@@ -81,6 +97,19 @@ public:
      * @return true/false
      */
     virtual TBool validateService( TBool aEmailOverSms = EFalse ) = 0;
+    
+    /*
+     * Turkish SMS(PREQ2265) specific...
+     */
+    virtual void setEncodingSettings(TBool aUnicodeMode,
+        TSmsEncoding aAlternativeEncodingType, TInt charSupportType)=0;
+
+    /**
+     * for deciding on reduced or full charset support
+     */
+    virtual bool getNumPDUs(QString& aBuf, TInt& aNumOfRemainingChars,
+        TInt& aNumOfPDUs, TBool& aUnicodeMode,
+        TSmsEncoding& aAlternativeEncodingType)=0;
 
 };
 

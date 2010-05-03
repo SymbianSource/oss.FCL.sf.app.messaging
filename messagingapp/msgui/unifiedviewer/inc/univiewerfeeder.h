@@ -173,6 +173,12 @@ public:
      * @return QString
      */
     QString subject();
+
+    /**
+     * if the send state of message is failed, then return true.
+     * @return int The sending state 
+     */
+    int sendingState();
     
 signals:
     /**

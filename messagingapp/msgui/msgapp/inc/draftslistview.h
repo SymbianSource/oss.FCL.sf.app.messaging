@@ -21,6 +21,7 @@
 #include <msgbaseview.h>
 
 // FORWARD DECLARATIONS
+class HbToolBar;
 class HbListView;
 class HbListWidget;
 class HbListWidgetItem;
@@ -45,10 +46,6 @@ public:
     virtual ~DraftsListView();
 
 private:
-    /**
-     * Creates the view items like menu, toolbar & list etc.
-     */
-    void createView();
 
     /**
      * Creates the menu items.
@@ -66,6 +63,12 @@ private:
     void setupListView();
 
 private slots:
+
+    /**
+     * Do delayed loading.
+     */
+    void doDelayedLoading();
+
     /**
      * Opens a Draft message.
      */
@@ -75,6 +78,11 @@ private slots:
      * Deletes a Draft message.
      */
     void deleteDraftMessage();
+
+    /**
+     * Deletes all Draft messages.
+     */
+    void deleteAllDraftMessage();
 
     /**
      * Invokes editor for creating new message.
@@ -100,6 +108,11 @@ private slots:
      */
     void handleViewExtnActivated(HbListWidgetItem *item);
 
+    /**
+     * This slot is hit when rows are inserted/removed in model.
+     */
+    void handleModelChanged();
+
 private:
 
     /**
@@ -113,6 +126,12 @@ private:
      * ToolBar takes ownership.
      */
     HbListWidget *mViewExtnList;
+
+    /**
+     * Pointer to views toolbar.
+     * Not Own.
+     */
+    HbToolBar *mToolBar;
 
     /**
      * Views in toolbar extension.

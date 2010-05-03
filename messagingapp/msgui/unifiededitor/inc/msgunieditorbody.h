@@ -23,13 +23,16 @@
 #include "msgunieditorprocessimageoperation.h"
 
 class HbTextEdit;
+class HbTextItem;
 class HbFrameItem;
 class HbIconItem;
 class HbPushButton;
 class HbGestureSceneFilter;
 class CMsgMediaResolver;
 class CMsgImageInfo;
-class MmsInsertCheckOperation;
+class MmsConformanceCheck;
+class UniEditorPluginInterface;
+class UniEditorPluginLoader;
 
 
 class MsgUnifiedEditorBody : public HbWidget,public MUniEditorProcessImageOperationObserver
@@ -59,7 +62,24 @@ public:
      * Seeker method to return back data to editor's view
      */
     const QStringList mediaContent();
+    
+    /**
+     * get size of body content for MMS size calculations
+     * @return size of body content
+     */
+    int bodySize();
+    
+    /*
+     * Returns value of mUnicode 
+     * @return mUnicode   
+     */
+     bool isUnicode();
 
+     /*
+      * Disables char counter
+      */
+     void disableCharCounter();
+     
 public slots:
     /**
      * Called to insert image content in editor.
@@ -92,14 +112,9 @@ signals:
     void sendMessage();
 
     /**
-     * Emitted when MMS content is added or removed
+     * Emitted when msg-body content changes
      */
-    void mmContentAdded(bool isAdded);
-
-    /**
-     * Emitted when msg body size changes
-     */
-    void sizeChanged(int aSize);
+    void contentChanged();
 
 public: // from MUniEditorProcessImageOperationObserver
     
@@ -143,6 +158,16 @@ private slots:
      */
     void onTextChanged();
 
+    /**
+     * Service launch complete.
+     */
+    void handleOk(const QVariant& result);
+
+    /**
+     * Service launch errors.
+     */
+    void handleError(int errorCode, const QString& errorMessage);
+
 private:
     /**
      * Get to find body already contains an image
@@ -172,12 +197,6 @@ private:
      * @return region
      */
     QString getHitRegion(QPointF position);
-
-    /**
-     * get size of body content for MMS size calculations
-     * @return size of body content
-     */
-    int bodySize();
 
     /**
      * size of the msg
@@ -263,9 +282,9 @@ private:
     HbGestureSceneFilter* mGestureFilter;
 	
     /**
-     * MMs insert check utility class
+     * MMs conformance check utility class
      */
-    MmsInsertCheckOperation* mMmsInsertCheckOp;
+    MmsConformanceCheck* mMmsConformanceCheck;
 	
     /**
      * Size of image in body 
@@ -301,6 +320,49 @@ private:
      * CMsgImageInfo object
      */
     CMsgImageInfo *mImageInfo;    
+    
+    /**
+     * Instance of HbTextItem
+     * Will be deleted automatically by parent.
+     * Own.
+     */
+    HbTextItem *mCharCounter;
+
+    /**
+     * Instance of HbFrameItem
+     * Will be deleted automatically by parent.
+     * Own.
+     */
+    HbFrameItem* mBackgroundItem;
+    
+    /**
+     * Holds the previous buffer inside msgeditor
+     */
+    QString mPrevBuffer;
+
+    /**
+     * Holds char type supported
+     */
+    int mCharSupportType;
+
+    /**
+     * Instance of UniEditorPluginInterface
+     * Will be deleted automatically by parent.
+     * Own.
+     */
+    UniEditorPluginInterface* mPluginInterface;
+
+    /**
+     * Instance of UniEditorPluginLoader
+     * Will be deleted when UniEditorPluginInterface object is deleted
+     * Not Own.
+     */
+    UniEditorPluginLoader* mPluginLoader;
+
+    /*
+     * Maintains information if any unicode character has been entered or not
+     */
+    bool mUnicode;
 };
 
 #endif //UNIFIED_EDITOR_BODY_H

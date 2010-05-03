@@ -14,64 +14,63 @@
  * Description:This is the first view for msgsettings plugin 
  *
  */
-
-#include <hbaction.h>
 #include <hbmainwindow.h>
-#include <hbinstance.h>
 
 #include "msgsettingsview.h"
 #include "msgsettingsform.h"
-#include "msgsettingsdataformcustomitem.h"
-#include "msgsettingsviewmanager.h"
+#include "msgsmscenterview.h"
 #include "debugtraces.h"
 
 MsgSettingsView::MsgSettingsView(QGraphicsItem *parent) :
-    MsgBaseView(parent)
+    MsgBaseView(parent), mSMSCenterView(0)
 {
-    mSettingsViewManager = new MsgSettingsViewManager(this);
-    
-    MsgSettingsForm* settingForm = new MsgSettingsForm(
-                                                       mSettingsViewManager,
-                                                       this);
+    mSettingsForm = new MsgSettingsForm();
 
-    //custom prototype
-    MsgSettingsDataFormCustomItem* customPrototype =
-            new MsgSettingsDataFormCustomItem(settingForm);
-    //settingForm->setItemPrototype(customPrototype);
-    
-    QList<HbAbstractViewItem*> protos = settingForm->itemPrototypes();
-    protos.append(customPrototype);
-    settingForm->setItemPrototypes(protos);
+    setWidget(mSettingsForm);
+    mMainWindow = this->mainWindow();
 
-    setWidget(settingForm);
-
-    mMainWindow = hbInstance->allMainWindows().at(0);
-
-    mBackAction = new HbAction(Hb::BackAction, this);
-    
-    connectCloseAction();    
-    
-    connect (mSettingsViewManager,
-             SIGNAL(advancedSettingsViewClosed()),
-             this,
-             SLOT(connectCloseAction()));
+    connect(mSettingsForm,
+            SIGNAL(newSMSCCenterClicked(int)),
+            this,
+            SLOT(onNewSMSCCenterClicked(int)));
 }
 
 MsgSettingsView::~MsgSettingsView()
 {
-   //do nothing 
+    delete mSMSCenterView;
 }
 
-void MsgSettingsView::connectCloseAction()
+void MsgSettingsView::onNewSMSCCenterClicked(int index)
 {
-    this->setNavigationAction(mBackAction);
-    connect(mBackAction, SIGNAL(triggered()), this, SLOT(closeSettings()), Qt::UniqueConnection);
+    //open the sms center views
+    if (mSMSCenterView)
+    {
+        delete mSMSCenterView;
+        mSMSCenterView = NULL;
+    }
+
+    mSMSCenterView = new MsgSMSCenterView(index);
+    
+    connect(mSMSCenterView,
+            SIGNAL(smsCenterEditViewClosed()),
+            this,
+            SLOT(onSmsCenterEditViewClosed()));
+    
+    mMainWindow->addView(mSMSCenterView);        
+    mMainWindow->setCurrentView(mSMSCenterView);
 }
 
-void MsgSettingsView::closeSettings()
+void MsgSettingsView::onSmsCenterEditViewClosed()
 {
-    QVariantList param;
-    param << MsgBaseView::DEFAULT;
-    param << MsgBaseView::MSGSETTINGS;
-    emit switchView(param);
+    //remove the view 
+    mMainWindow->removeView(mSMSCenterView);
+
+    //refresh the form
+    mSettingsForm->refreshViewForm();
+
+    //add the current view on top
+    mMainWindow->setCurrentView(this);
 }
+
+//eof
+

@@ -100,8 +100,24 @@ void ConvergedMessage::setMessageType(ConvergedMessage::MessageType type)
     }
 
 //----------------------------------------------------------------
+// ConvergedMessage::messageSubType
+// @see header
+//----------------------------------------------------------------
+ConvergedMessage::MessageSubType ConvergedMessage::messageSubType() const
+    {
+    return mConvergedMessageImpl->messageSubType();
+    }
 
+//----------------------------------------------------------------
+// ConvergedMessage::setMessageSubType
+// @see header
+//----------------------------------------------------------------
+void ConvergedMessage::setMessageSubType(ConvergedMessage::MessageSubType type)
+    {
+    mConvergedMessageImpl->setMessageSubType(type);
+    }
 
+//----------------------------------------------------------------
 // ConvergedMessage::priority
 // @see header
 //----------------------------------------------------------------

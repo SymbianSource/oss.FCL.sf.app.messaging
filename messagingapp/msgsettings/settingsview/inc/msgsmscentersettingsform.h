@@ -34,12 +34,18 @@ public:
     ~MsgSMSCenterSettingsForm();
 
     void commitChanges();
-
+    
+signals:
+    void deleteMessageCentreAndClose();
+    
 public slots:
     void onItemShown(const QModelIndex& topLeft);
     
 private:
     void initSettingModel();
+    
+private slots:
+    void onPressedCustomButton();
     
 private:
     QString mCenterName;

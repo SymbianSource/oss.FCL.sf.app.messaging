@@ -44,6 +44,14 @@ void MsgServiceInterface::send(const QString phoneNumber, const qint32 contactId
     mViewManager->send(contactId, phoneNumber, displayName);    
     }
 
+
+void MsgServiceInterface::send(const QString phoneNumber, const QString alias, const QString bodyText)
+    {   
+    mViewManager->setServiceRequest(true);
+    mViewManager->send(phoneNumber, alias, bodyText);    
+    }
+
+
 void MsgServiceInterface::open(qint64 conversationId)
     {
     mViewManager->setServiceRequest(false);
@@ -56,6 +64,11 @@ void MsgServiceInterface::send(QVariant data)
     mViewManager->send(data);    
     }
 
+void MsgServiceInterface::view(int msgId)
+    {   
+    mViewManager->view(msgId); 
+    }
+    
 void MsgServiceInterface::openConversationView(QString number, QString name)
     {
     mViewManager->setServiceRequest(true);
@@ -71,15 +84,7 @@ void MsgServiceInterface::openConversationView(QString number, QString name)
         bool ret = resolveContact(address, contactDetail);
         if(ret)
             {
-            if(!contactDetail.lastName.isEmpty())
-                {
-                resolvedName += contactDetail.lastName;
-                if(!contactDetail.firstName.isEmpty())
-                    {
-                    resolvedName += ", ";
-                    }
-                }
-            resolvedName += contactDetail.firstName;
+            resolvedName = contactDetail.displayName;
             }
         }
     mViewManager->openEditor(number,resolvedName);
@@ -90,23 +95,24 @@ bool MsgServiceInterface::resolveContact(const ConvergedMessageAddress &address,
     {
     QContactManager* mPhonebookManager = new QContactManager("symbian");
     QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+    phoneFilter.setDetailDefinitionName(
+            QContactPhoneNumber::DefinitionName, 
+            QContactPhoneNumber::FieldNumber);
     phoneFilter.setValue(address.address());
     phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
 
-    QList<QContactLocalId> matchingContacts = mPhonebookManager->contacts(phoneFilter);
+    QList<QContactSortOrder> sortOrder;
+    QList<QContact> matchingContacts = mPhonebookManager->contacts(
+            phoneFilter,
+            sortOrder,
+            QStringList());
 
     if ( matchingContacts.count() > 0 ) {       
-    // Fill the contact details
-    contactDetail.contactId = matchingContacts.at(0);
-    QContact match = mPhonebookManager->contact(matchingContacts.at(0));
-
-    QContactName nameDetails = match.detail(QContactName::DefinitionName);
-
-    QContactName name = match.detail(QContactName::DefinitionName);
-    contactDetail.firstName = name.first();
-    contactDetail.lastName = name.last();
-    return true;
+        // Fill the contact details
+        QContact match = matchingContacts.at(0);                   
+        contactDetail.contactId = match.localId();
+        contactDetail.displayName = match.displayLabel();   
+        return true;
     }
     
     return false;

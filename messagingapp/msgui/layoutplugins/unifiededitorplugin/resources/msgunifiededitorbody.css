@@ -85,3 +85,12 @@ MsgUnifiedEditorBody::audioItem {
     left: -var(hb-param-margin-gene-left);
     right: var(hb-param-margin-gene-right);
 }
+
+/*************************** Character Counter ******************************/
+MsgUnifiedEditorBody::charCounter
+{
+	  size-policy:fixed fixed;
+	  pref-height:-1;
+	  pref-width:-1;
+	  text-height:var(hb-param-text-height-tiny);
+}

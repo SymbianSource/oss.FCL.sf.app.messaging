@@ -17,6 +17,7 @@
 
 // INCLUDES
 #include <HbTextEdit>
+#include <HbTextItem>
 #include <HbFrameItem>
 #include <HbFrameDrawer>
 #include <HbIconItem>
@@ -40,28 +41,47 @@
 #include <HbIconAnimator>
 #include <HbIcon>
 
+#include <csmsaccount.h>
+#include <smutset.h>
+#include <xqaiwrequest.h>
+#include <xqrequestinfo.h>
+#include <xqsharablefile.h>
+#include <xqappmgr.h>
+
 // USER INCLUDES
 #include "msgunieditorbody.h"
 #include "UniEditorGenUtils.h"
+#include "unisendingsettings.h"
 #include "msgmonitor.h"
 #include "s60qconversions.h"
-#include "mmsinsertcheckoperation.h"
+#include "mmsconformancecheck.h"
+#include "unieditorpluginloader.h"
+#include "unieditorplugininterface.h"
+#include "convergedmessage.h"
+#include "msgmediautil.h"
 
 // Constants
-const QString EDITOR_FRAME("qtg_fr_editor");
+const QString EDITOR_FRAME("qtg_fr_lineedit_normal");
+const QString BACKGROUND_FRAME("qtg_fr_btn_normal");
 const QString AUDIO_REGION("AudioRegion");
 const QString VIDEO_REGION("VideoRegion");
 const QString IMAGE_REGION("ImageRegion");
 const QString INVALID_REGION("InvalidRegion");
-const QString SEND_ICON("qtg_mono_send.svg");
+const QString SEND_ICON("qtg_mono_send");
 
-//Localized Constants
-#define LOC_COMMON_OPEN hbTrId("txt_common_menu_open")
-#define LOC_REMOVE_ATTACHMENT hbTrId("txt_messaging_menu_remove_attachment")
-#define LOC_COMMON_DETAILS hbTrId("txt_common_menu_details")
+//Localized Constants for item specific menu
+#define LOC_OPEN    hbTrId("txt_common_menu_open")
+#define LOC_REMOVE  hbTrId("txt_common_menu_remove")
+#define LOC_DETAILS hbTrId("txt_common_menu_details")
+#define LOC_TITLE   hbTrId("txt_messaging_title_messaging")
 
+const QString AUDIO_ICON("qtg_mono_audio");
+const QString ANIMATION_ICON(":/qtg_anim_longtap_2");
 
-MsgUnifiedEditorBody::MsgUnifiedEditorBody( const QString& pluginPath, QGraphicsItem *parent ) :
+const TInt KShowCounterLimit = 10;
+
+MsgUnifiedEditorBody::MsgUnifiedEditorBody( const QString& pluginPath, 
+    QGraphicsItem *parent ) :
 HbWidget(parent),
 mHasImage(false),
 mHasAudio(false),
@@ -83,12 +103,12 @@ mImageInfo(0)
     HbStyle::setItemName(mTextEdit,"textEdit");
 
     HbFrameDrawer* frameDrawer = new HbFrameDrawer(EDITOR_FRAME, 
-    		HbFrameDrawer::NinePieces);
+                                                   HbFrameDrawer::NinePieces);
     
     mEditorFrame = new HbFrameItem(frameDrawer,this);
     HbStyle::setItemName(mEditorFrame,"textEditFrame");
     mEditorFrame->setZValue(-1);
-
+    
     // add "Send" action in VKB
     HbEditorInterface editorInterface(mTextEdit);
     HbAction *sendAction = new HbAction(HbIcon(SEND_ICON), QString(),this);
@@ -97,7 +117,7 @@ mImageInfo(0)
 
     mGestureFilter = new HbGestureSceneFilter(Qt::LeftButton, this);
     mGestureFilter->setLongpressAnimation(true);
-    HbGesture *gesture = new HbGesture(HbGesture::longpress, 0);
+    HbGesture *gesture = new HbGesture(HbGesture::longpress, 5);
     mGestureFilter->addGesture(gesture);
     connect(gesture, SIGNAL(longPress(QPointF)), this, SLOT(longPressed(QPointF)));
     connect(mTextEdit, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
@@ -105,13 +125,54 @@ mImageInfo(0)
     mfs.Connect();
     mfs.ShareProtected();
 
-    mMmsInsertCheckOp = new MmsInsertCheckOperation;
+    mMmsConformanceCheck = new MmsConformanceCheck;
+    
+    mCharCounter = new HbTextItem(this);
+    HbStyle::setItemName(mCharCounter, "charCounter");
+    mCharCounter->setZValue(1.5);
+    mCharCounter->setText("160(1)");
+    
+    mBackgroundItem = new HbFrameItem(this);
+    HbStyle::setItemName(mBackgroundItem, "charCounterFrame");
+
+    mBackgroundItem->frameDrawer().setFrameType(HbFrameDrawer::NinePieces);
+    mBackgroundItem->frameDrawer().setFillWholeRect(true);
+    
+    mBackgroundItem->frameDrawer().setFrameGraphicsName(
+        BACKGROUND_FRAME);    
+    
+    mPluginLoader = new UniEditorPluginLoader(this);
+
+    mPluginInterface =
+                        mPluginLoader->getUniEditorPlugin(ConvergedMessage::Sms);    
+    
+    CSmsSettings* settings = CSmsSettings::NewLC();
+    CSmsAccount* account = CSmsAccount::NewLC();
+    account->LoadSettingsL( *settings );
+
+    if( settings->CharacterSet() == TSmsDataCodingScheme::ESmsAlphabetUCS2)
+    {
+    mCharSupportType = TUniSendingSettings::EUniCharSupportFull;
+    }
+    else
+    {
+    mCharSupportType = TUniSendingSettings::EUniCharSupportReduced;
+    }
+    
+    CleanupStack::PopAndDestroy( account );
+    CleanupStack::PopAndDestroy( settings );                
+
+    //Set the mPrevBuffer to NULL initially
+    mPrevBuffer = QString();
+    
+    mCharCounter->setVisible(false);
+    mBackgroundItem->setVisible(false);
 }
 
 MsgUnifiedEditorBody::~MsgUnifiedEditorBody()
 {
     style()->unregisterPlugin(mPluginPath);
-    delete mMmsInsertCheckOp;
+    delete mMmsConformanceCheck;
     delete mProcessImageOperation;
     delete mMediaResolver;
     delete mImageInfo;
@@ -154,11 +215,9 @@ void MsgUnifiedEditorBody::setImage(QString& imagefile)
         {
             mMediaResolver->SetCharacterSetRecognition(EFalse);
 
-            RFile file;
-
             HBufC *name = S60QConversions::qStringToS60Desc(imagefile);
-            file.Open(mfs, *name, EFileWrite);
-
+            RFile file = mMediaResolver->FileHandleL(*name);
+     
             TRAP(error,mImageInfo = static_cast<CMsgImageInfo*>
             (mMediaResolver->CreateMediaInfoL(file)));
             if (error == KErrNone)
@@ -189,7 +248,7 @@ void MsgUnifiedEditorBody::setImage(QString& imagefile)
 void MsgUnifiedEditorBody::handleSetImage()
 {   
     //check for insert conformance
-    if(EInsertSuccess != mMmsInsertCheckOp->checkModeForInsert(mImageFile))
+    if(EInsertSuccess != mMmsConformanceCheck->checkModeForInsert(mImageFile))
         return;
     
     int msgSize = messageSize();
@@ -220,17 +279,14 @@ void MsgUnifiedEditorBody::handleSetImage()
     // repolish the body widget
     this->repolish();
 
-    // emit signal to indicate addition of mms content
-    emit mmContentAdded(true);
-
-    // emit signal to indicate new body size
-    emit sizeChanged(bodySize());
+    // emit signal to indicate addition of image
+    emit contentChanged();
 }
 
 void MsgUnifiedEditorBody::setAudio(QString& audiofile)
 {
     //check for insert conformance
-    if(EInsertSuccess != mMmsInsertCheckOp->checkModeForInsert(audiofile))
+    if(EInsertSuccess != mMmsConformanceCheck->checkModeForInsert(audiofile))
         return;
 
     setAudio(true);
@@ -258,31 +314,28 @@ void MsgUnifiedEditorBody::setAudio(QString& audiofile)
     	return;
     }    
 
-    HbIconItem* audioIcon = new HbIconItem(":/qtg_mono_audio.svg");
+    HbIconItem* audioIcon = new HbIconItem(AUDIO_ICON);
     mAudioItem = new HbPushButton(this);
     mAudioItem->hide();
     HbStyle::setItemName(mAudioItem,"audioItem");
     mAudioItem->setIcon(audioIcon->icon());
     mAudioItem->setText(fileinfo.baseName());
-    //TODO: get actual play-time from utility
-    mAudioItem->setAdditionalText("00:00");
+    MsgMediaUtil mediaUtil;
+    mAudioItem->setAdditionalText(mediaUtil.mediaDuration(mAudioFile));
     mAudioItem->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
     connect(mAudioItem, SIGNAL(longPress(QPointF)), this, SLOT(longPressed(QPointF)));
 
     // repolish the body widget
     this->repolish();
 
-    // emit signal to indicate addition of mms content
-    emit mmContentAdded(true);
-
-    // emit signal to indicate new body size
-    emit sizeChanged(bodySize());
+    // emit signal to indicate addition of audio
+    emit contentChanged();
 }
 
 void MsgUnifiedEditorBody::setVideo(QString& videofile)
 {
     //check for insert conformance
-    if(EInsertSuccess != mMmsInsertCheckOp->checkModeForInsert(videofile))
+    if(EInsertSuccess != mMmsConformanceCheck->checkModeForInsert(videofile))
         return;
 
     // update the media file-list
@@ -307,11 +360,8 @@ void MsgUnifiedEditorBody::setVideo(QString& videofile)
     // repolish the body widget
     this->repolish();
 
-    // emit signal to indicate addition of mms content
-    emit mmContentAdded(true);
-
-    // emit signal to indicate new body size
-    emit sizeChanged(bodySize());
+    // emit signal to indicate addition of video
+    emit contentChanged();
 }
 
 void MsgUnifiedEditorBody::setText(QString& text)
@@ -445,9 +495,9 @@ QSizeF MsgUnifiedEditorBody::sizeHint(Qt::SizeHint which, const QSizeF &constrai
 void MsgUnifiedEditorBody::longPressed(QPointF position)
 {
     HbMenu* menu = new HbMenu;
-    menu->addAction(LOC_COMMON_OPEN, this, SLOT(openMedia()));
-    menu->addAction(LOC_REMOVE_ATTACHMENT, this, SLOT(removeMedia()));
-    menu->addAction(LOC_COMMON_DETAILS, this, SLOT(viewDetails()));
+    menu->addAction(LOC_OPEN, this, SLOT(openMedia()));
+    menu->addAction(LOC_REMOVE, this, SLOT(removeMedia()));
+    menu->addAction(LOC_DETAILS, this, SLOT(viewDetails()));
 
     menu->setDismissPolicy(HbPopup::TapAnywhere);
     menu->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -495,16 +545,89 @@ void MsgUnifiedEditorBody::removeMedia()
     }
 
     this->repolish();
-	emit mmContentAdded(false);
 
-    // emit signal to indicate new body size
-    emit sizeChanged(bodySize());
+	emit contentChanged();
 }
 
+//---------------------------------------------------------------
+// MsgUnifiedEditorBody :: openMedia
+// @see header file
+//---------------------------------------------------------------
 void MsgUnifiedEditorBody::openMedia()
 {
-    //open corresponding viewer app.
+    HbAction* action = qobject_cast<HbAction*>(sender());
+    QString objName = action->parent()->objectName();
+    
+    QString fileName;
+    if ( objName == IMAGE_REGION )
+    {
+        fileName = mImageFile;
+    }
+    else if ( objName == AUDIO_REGION )
+    {
+        fileName = mAudioFile;
+    }
+    else
+    {
+        return;
+    }
+    
+    XQSharableFile sf;
+    XQAiwRequest* request = 0;
+
+    if ( !sf.open(fileName) ) 
+        {
+        return;
+        }
+
+    // Get handlers
+    XQApplicationManager appManager;
+    QList<XQAiwInterfaceDescriptor> fileHandlers = appManager.list(sf);
+    if (fileHandlers.count() > 0)
+        {
+        XQAiwInterfaceDescriptor d = fileHandlers.first();
+        request = appManager.create(sf, d);
+    
+        if ( !request )
+            {
+            sf.close();
+            return ;
+            }
+        }
+    else
+        {
+        sf.close();
+        return;
+        }
+
+    // Result handlers
+    connect (request, SIGNAL(requestOk(const QVariant&)), 
+            this, SLOT(handleOk(const QVariant&)));
+    connect (request, SIGNAL(requestError(const QVariant&)), 
+            this, SLOT(handleError(const QVariant&)));
+
+    request->setEmbedded(true);
+    request->setSynchronous(true);
+
+    // Fill args
+    QList<QVariant> args;
+    args << qVariantFromValue(sf);
+    request->setArguments(args);
+
+    // Fill headers
+    QString key("WindowTitle");
+    QVariant value(QString(LOC_TITLE));
+    XQRequestInfo info;
+    info.setInfo(key, value);
+    request->setInfo(info);
+    
+    request->send();
+    
+    // Cleanup
+    sf.close();
+    delete request;
 }
+
 void MsgUnifiedEditorBody::viewDetails()
 {
     //open details view.
@@ -584,9 +707,62 @@ QString MsgUnifiedEditorBody::getHitRegion(QPointF position)
 }
 
 void MsgUnifiedEditorBody::onTextChanged()
-{
-    // emit signal to indicate new body size
-    emit sizeChanged(bodySize());
+{   
+    QString string = text();
+    
+    if(  !mPrevBuffer.isEmpty() &&
+         string.size() > mPrevBuffer.size() &&
+         MsgMonitor::messageType() == ConvergedMessage::Mms )
+    {
+        //Save the previous buffer
+        mPrevBuffer = string;
+        // emit signal to indicate change in content
+        emit contentChanged();
+                
+        return;
+    }
+
+    //Check done for optimization
+    //Only if content is deleted we need to call encodingsettings again
+    if (mPrevBuffer.isEmpty() || string.size() <= mPrevBuffer.size())
+    {
+        mPluginInterface->setEncodingSettings(EFalse, ESmsEncodingNone,
+            mCharSupportType);
+    }
+
+    TInt numOfRemainingChars;
+    TInt numOfPDUs;
+    TBool unicodeMode;
+    TSmsEncoding alternativeEncodingType;
+    mPluginInterface->getNumPDUs(string, numOfRemainingChars, numOfPDUs,
+        unicodeMode, alternativeEncodingType);
+
+    //Save the unicode value returned
+    mUnicode = unicodeMode;
+    //Save the old buffer
+    mPrevBuffer = string;
+    
+    // emit signal to indicate change in content
+    emit contentChanged();
+    
+    if(MsgMonitor::messageType() == ConvergedMessage::Sms)
+    {
+        //Set char counter value
+        QString display = QString("%1(%2)").arg(numOfRemainingChars).arg(
+            numOfPDUs);
+        mCharCounter->setText(display);
+        
+        if (numOfPDUs > 1 || numOfRemainingChars <= KShowCounterLimit)
+        {
+            mCharCounter->setVisible(true);
+            mBackgroundItem->setVisible(true);
+        }
+        else
+        {
+            mCharCounter->setVisible(false);
+            mBackgroundItem->setVisible(false);
+        }
+    }
 }
 
 void MsgUnifiedEditorBody::EditorOperationEvent(
@@ -625,7 +801,7 @@ void MsgUnifiedEditorBody::startResizeAnimation()
     mIconItem->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     mIconItem->setIcon(animIcon);
 
-    mImageFile = ":/qtg_anim_longtap_2.svg";
+    mImageFile = ANIMATION_ICON;
     HbIconAnimator animator;
     animator.setIcon(animIcon);
 
@@ -640,6 +816,45 @@ void MsgUnifiedEditorBody::stopResizeAnimation()
         delete mIconItem;
         mIconItem = NULL;     
     }   
+}
+
+// ---------------------------------------------------------
+// MsgUnifiedEditorBody::isUnicode
+// ---------------------------------------------------------
+//
+bool MsgUnifiedEditorBody::isUnicode()
+{
+    return mUnicode;
+}
+
+// ---------------------------------------------------------
+// MsgUnifiedEditorBody::disableCharCounter
+// ---------------------------------------------------------
+//
+void MsgUnifiedEditorBody::disableCharCounter()
+{
+    mCharCounter->setVisible(false);
+    mBackgroundItem->setVisible(false);
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorBody :: handleOk
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorBody::handleOk(const QVariant& result)
+{
+    Q_UNUSED(result)
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorBody :: handleError
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorBody::handleError(int errorCode, 
+    const QString& errorMessage)
+{
+    Q_UNUSED(errorMessage)
+    Q_UNUSED(errorCode)
 }
 
 // EOF

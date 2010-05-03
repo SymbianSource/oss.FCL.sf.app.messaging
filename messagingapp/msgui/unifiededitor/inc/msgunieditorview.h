@@ -24,9 +24,14 @@
 #define UNIFIEDEDITOR_EXPORT Q_DECL_IMPORT
 #endif
 
+#include <qmobilityglobal.h>
 #include "msgbaseview.h"
 #include "convergedmessage.h"
 #include "convergedmessageid.h"
+
+QTM_BEGIN_NAMESPACE
+QTM_END_NAMESPACE
+QTM_USE_NAMESPACE
 
 class HbWidget;
 class HbAction;
@@ -35,11 +40,10 @@ class QGraphicsLinearLayout;
 class MsgUnifiedEditorSubject;
 class MsgUnifiedEditorAddress;
 class MsgUnifiedEditorBody;
-class MsgTypeNotifier;
 class MsgMonitor;
-class MsgUiUtilsManager;
 class MsgAttachmentContainer;
 class UniEditorPluginLoader;
+class HbListWidgetItem;
 
 class UNIFIEDEDITOR_EXPORT MsgUnifiedEditorView : public MsgBaseView
     {
@@ -59,22 +63,22 @@ public:
 
     /**
      * Populate editor with passed information
+     * @param editorData data for editor's usage
      */
-    void populateContent(const ConvergedMessage& messageDetails, 
-        int editorFields = 0);
+    void populateContent(const QVariantList& editorData);
     
     /**
      * Opens the drafts message into editor
+     * @param editorData data for editor's usage
      */
-    void openDraftsMessage(ConvergedMessageId& messageId,
-        ConvergedMessage::MessageType messageType );
+    void openDraftsMessage(const QVariantList& editorData);
 
 
     /**
      * Saves the content inside editor to save
      */
-    bool saveContentToDrafts();
-
+    void saveContentToDrafts();
+    
 protected:
     /**
      * reimplemented from base class to provide proper geometry for scrolling.
@@ -104,10 +108,46 @@ private:
     void packMessage(ConvergedMessage &msg);
 
     /**
-     * Populate editor with Drafts msg content
+     * Populate editor with prepopulated msg content
      */
-    void populateDraftsContent(
+    void populateContentIntoEditor(
         const ConvergedMessage& messageDetails);
+    
+    /**
+     * Populate the editor with the forwarded message's content
+     */
+    void forwardMessage(ConvergedMessageId& messageId,
+        ConvergedMessage::MessageType messageType );
+    
+    /**
+     * Create VCards for all the contacts available in the list
+     * @param value list of fetched contacts
+     * @param [OUT]filelist list of newly added vcard files
+     * @return errId KErrNone if no error
+     */
+    int createVCards(const QVariant& value, QStringList& filelist);
+    
+    /**
+     * Resolve name conflict when adding attachments to editor
+     * @param suggestedName suggested file name to use
+     * @return fully qualified path of the file in unieditor's temp folder
+     */
+    QString generateFileName(QString& suggestedName);
+    
+    /**
+     * Fetch images 
+     */
+    void fetchImages();
+
+    /**
+     * Fectch conatcts
+     */
+    void fetchContacts();
+
+    /**
+     * Fectch audio
+     */
+    void fetchAudio();
 
 private slots:
 
@@ -142,16 +182,6 @@ private slots:
     void deleteMessage();
 
     /**
-     * slot to launch help.
-     */
-    void launchHelp();
-
-    /**
-     * slot to show attachment popup.
-     */
-    void showAttachmentPopup();
-
-    /**
      * slot to images fetched.
      */
     void imagesFetched(const QVariant& result );
@@ -160,6 +190,11 @@ private slots:
      * slot to fetch audio files
      */
     void audiosFetched(const QVariant& result );
+    
+    /**
+     * slot to receive fetched contacts
+     */
+    void contactsFetched(const QVariant& value);
 
     /**
      * slot to send message.
@@ -170,11 +205,40 @@ private slots:
      * slot to tell view to remove the attachment's container
      */
     void removeAttachmentContainer();
+
+    /**
+     * add attachments to the editor
+     * @param files list of file paths
+     */
+    void addAttachments(QStringList files);
+
+    /**
+     * add an attachment to the editor
+     * @return addition operation status
+     */
+    int addAttachment(const QString& filepath);
+
+	/**
+     * called when extention item is clicked.
+     */
+    void handleViewExtnActivated(HbListWidgetItem* item);
     
     /**
-     * add an attachment to editor
+     * Signal emitted when an error is generated.
+     * @param errorCode Error code.
+     * @param errorMessage Error description.
      */
-    void addAttachment(const QString& filepath);
+    void serviceRequestError(int errorCode, const QString& errorMessage);
+   
+    /**
+     * Activate Input Blocker
+     */
+    void activateInputBlocker();
+
+    /**
+     * Deactivate Input Blocker
+     */
+    void deactivateInputBlocker();
 
 private:
     HbAction* mSubjectAction;
@@ -186,17 +250,16 @@ private:
     MsgUnifiedEditorAddress* mBccField;
     MsgUnifiedEditorBody*   mBody;
 
-    HbMenu *mPrioritySubMenu;
     HbWidget* mContentWidget;
     QString mPluginPath;
 
-    MsgTypeNotifier* mNotifier;
     MsgMonitor* mMsgMonitor;
-    MsgUiUtilsManager* mUtilsManager;
     MsgAttachmentContainer* mAttachmentContainer;
     UniEditorPluginLoader* mPluginLoader;
     ConvergedMessageId mOpenedMessageId;
     ConvergedMessage::MessageType mmOpenedMessageType;
+	bool mCanSaveToDrafts;
+	friend class MsgMonitor;
     };
 
 #endif //UNIFIED_EDITOR_VIEW_H

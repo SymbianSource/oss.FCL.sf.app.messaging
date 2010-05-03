@@ -23,6 +23,8 @@ DEPENDPATH += . src inc ../inc
 INCLUDEPATH += .
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../appengine/inc
+INCLUDEPATH += ../msguiutils/inc
+INCLUDEPATH += . ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += . ../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
@@ -63,7 +65,8 @@ HEADERS += inc/unifiedviewer.h \
            inc/univieweraddresscontainer.h \
            inc/univiewermediawidget.h \
            inc/univiewerattachmentcontainer.h \
-           inc/univiewertextitem.h
+           inc/univiewertextitem.h \
+           inc/univiewerheadercontainer.h
 
 SOURCES += src/unifiedviewer.cpp \
            src/unicontentswidget.cpp \
@@ -79,7 +82,8 @@ SOURCES += src/unifiedviewer.cpp \
            src/univieweraddresscontainer.cpp \
            src/univiewermediawidget.cpp \
            src/univiewerattachmentcontainer.cpp \
-           src/univiewertextitem.cpp
+           src/univiewertextitem.cpp \
+           src/univiewerheadercontainer.cpp
 
 
 RESOURCES += unifiedviewer.qrc
@@ -92,4 +96,7 @@ LIBS = -ls60qconversions \
        -lappengine \
        -lunidatamodelloader \
        -lxqservice \
-       -lQtContacts 
+       -lQtContacts \
+       -lmsguiutils \
+       -lcentralrepository \
+       -lxqserviceutil

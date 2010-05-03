@@ -26,7 +26,6 @@ class HbListView;
 class HbAbstractViewItem;
 class HbListWidget;
 class HbListWidgetItem;
-class QSortFilterProxyModel;
 
 /**
  * This class provides the message list view for the messaging application.
@@ -47,11 +46,6 @@ public:
      */
     virtual ~MsgListView();
 
-    /**
-     * This function starts effect on ListView
-     */
-    void activateView();
-
 private slots:
     /*
      * Handler for long tap of a list item.
@@ -67,42 +61,10 @@ private slots:
      */
     void openConversation(const QModelIndex& index);
 
-    //----------------- View specific Menu Slots---------------------------//
-
-    /**
-     * Sorts conversation data model based on subject
-     */
-    void sortBySubject();
-
-    /**
-     * Sorts conversation data model based on timestamp
-     */
-    void sortByDate();
-
-    /**
-     * Sorts conversation data model based on sender
-     */
-    void sortBySender();
-
     /**
      * Handler for new message button trigger
      */
     void sendNewMessage();
-
-    /**
-     * Handler for closing all the active chats
-     */
-    void closeActiveChats();
-
-    /**
-     * Deletes all the conversations
-     */
-    void deleteAll();
-
-    /**
-     * Lists all the Im Messages separately
-     */
-    void viewImMessagesSeparately();
 
     /**
      *Popup the message settings dialog
@@ -126,25 +88,28 @@ private slots:
      */
     void deleteItem();
 
-    // ------------------------------- End ----------------------------- //
-
-    /**
-     * Connect Model to view
-     */
-    void populateListView();
-
     /**
      * Handles toolbar extension item clicks.
      * @param item Activated toolbar extension item.
      */
     void handleViewExtnActivated(HbListWidgetItem *item);
+    
+    /**
+     * Constructs view when viewReady is emitted.
+     */
+    void doDelayedConstruction();
+    
+    /**
+     * Handles saving to contacts
+     */
+    void saveToContacts();
+    
+    /**
+     * Opens contact card for resolved contact.
+     */
+    void contactInfo();
 
 private:
-
-    /**
-     * createView
-     */
-    void createView();
 
     /**
      * Initialize the list view inside the main view
@@ -167,12 +132,6 @@ private:
      * Own.
      */
     HbListView* mMsgList;
-
-    /**
-     * Proxy model for sorting and filtering.
-     * Own.
-     */
-    QSortFilterProxyModel *mProxyModel;
 
     /**
      * Container widget of toolbar extension.

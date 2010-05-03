@@ -28,7 +28,8 @@
 
 class HbMainWindow;
 class HbAction;
-class MsgSettingsViewManager;
+class MsgSMSCenterView;
+class MsgSettingsForm;
 
 class MSG_SETTING_VIEW_EXPORT MsgSettingsView: public MsgBaseView
 {
@@ -38,14 +39,15 @@ public:
     ~MsgSettingsView();
 
 public slots:
-    void closeSettings();
-    void connectCloseAction();
-    
+    void onNewSMSCCenterClicked(int index);
+    void onSmsCenterEditViewClosed();
+        
 private:
-    //Settings View Manager
-    MsgSettingsViewManager* mSettingsViewManager;
+    //Settings Form
+    MsgSettingsForm* mSettingsForm;
     
+    //Sms Center View
+    MsgSMSCenterView* mSMSCenterView;  
     HbMainWindow* mMainWindow;
-    HbAction* mBackAction;
 };
 #endif // MSGSETTINGSVIEW_H

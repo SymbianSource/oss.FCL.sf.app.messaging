@@ -24,8 +24,8 @@ DEPENDPATH += . \
 INCLUDEPATH += . inc
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../msguiutils/inc
-INCLUDEPATH += ../../msgutils/unieditorutils/inc
-INCLUDEPATH += ../../msgutils/unidatamodelloader/inc
+INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
+INCLUDEPATH += ../../msgutils/unidatautils/unidatamodelloader/inc
 INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
@@ -44,7 +44,6 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
 
 # Input
 HEADERS += msgmonitor.h \
-    msgtypenotifier.h \
     msgunieditoraddress.h \
     msgunieditorattachment.h \
     msgunieditorbody.h \
@@ -52,13 +51,12 @@ HEADERS += msgmonitor.h \
     msgunieditorview.h \
     msgunifiededitorlineedit.h \
     msgattachmentcontainer.h \
-    mmsinsertcheckoperation.h \
     msgbaseview.h \
     msgunieditorimageprocessor.h \
-    msgunieditorprocessimageoperation.h 
+    msgunieditorprocessimageoperation.h
 
-SOURCES += msgmonitor.cpp \
-    msgtypenotifier.cpp \
+SOURCES += msgmonitor.inl \
+    msgmonitor.cpp \
     msgunieditoraddress.cpp \
     msgunieditorattachment.cpp \
     msgunieditorbody.cpp \
@@ -68,8 +66,7 @@ SOURCES += msgmonitor.cpp \
     msgattachmentcontainer.cpp \
     msgunieditorimageprocessor.inl \
     msgunieditorimageprocessor.cpp \
-    msgunieditorprocessimageoperation.cpp \
-    mmsinsertcheckoperation.cpp 
+    msgunieditorprocessimageoperation.cpp
 
 RESOURCES += unifiededitor.qrc
 
@@ -78,14 +75,22 @@ LIBS += -ls60qconversions \
         -lconvergedmessageutils \
         -lmsguiutils \
         -lunieditorpluginloader \
-        -lunieditorutils \
+        -leditorgenutils \
         -lfbscli \
         -limageconversion \
         -lDRMHelper \
         -lbitmaptransforms \
+        -lQtVersit \
+        -lQtContacts \
+        -lxqutils \
+        -leuser \
         -lmsgmedia \
         -lapmime \
-        -lcentralrepository
+        -lcentralrepository \
+        -lxqservice \
+        -lgsmu \
+        -lsmcm \
+        -lxqserviceutil
 
 
         

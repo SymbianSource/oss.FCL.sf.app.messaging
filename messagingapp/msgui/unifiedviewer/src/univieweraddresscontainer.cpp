@@ -20,24 +20,25 @@
 // SYSTEM INCLUDES
 #include <QString>
 #include <QGraphicsLinearLayout>
+#include <HbIconItem>
 
 // USER INCLUDES
 #include "univieweraddresswidget.h"
 
 // LOCAL CONSTANTS
-#define LOC_FROM hbTrId("txt_messaging_formlabel_from    ")
-#define LOC_TO hbTrId("txt_messaging_viewer_formlabel_to        ")
-#define LOC_CC hbTrId("txt_messaging_viewer_formlabel_cc        ")
+#define LOC_FROM hbTrId("txt_messaging_formlabel_from")
+#define LOC_TO hbTrId("txt_messaging_viewer_formlabel_to")
+#define LOC_CC hbTrId("txt_messaging_viewer_formlabel_cc")
+
+// LOCAL CONSTANTS
+const QString DIVIDER_ICON("qtg_graf_divider_h_thin");
 
 //---------------------------------------------------------------
 // UniViewerAddressContainer :: UniViewerAddressContainer
 // @see header file
 //---------------------------------------------------------------
 UniViewerAddressContainer::UniViewerAddressContainer(QGraphicsItem *parent) :
-    HbWidget(parent), mMainLayout(NULL),
-    mFromWidget(NULL),
-    mToWidget(NULL),
-    mCcWidget(NULL)
+    HbWidget(parent), mMainLayout(0), mFromWidget(0), mToWidget(0), mCcWidget(0), mDivider(0)
 {
     mMainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     mMainLayout->setContentsMargins(0, 0, 0, 0);
@@ -58,11 +59,9 @@ UniViewerAddressContainer::~UniViewerAddressContainer()
 // UniViewerAddressContainer :: setFromField
 // @see header file
 //---------------------------------------------------------------
-void UniViewerAddressContainer::setFromField(const QString& fromRecipient,
-                                             const QString& alias)
+void UniViewerAddressContainer::setFromField(const QString& fromRecipient, const QString& alias)
 {
-    if (!mFromWidget)
-    {
+    if (!mFromWidget) {
         mFromWidget = new UniViewerAddressWidget();
     }
 
@@ -74,11 +73,9 @@ void UniViewerAddressContainer::setFromField(const QString& fromRecipient,
 // UniViewerAddressContainer :: setToField
 // @see header file
 //---------------------------------------------------------------
-void UniViewerAddressContainer::setToField(
-    ConvergedMessageAddressList toRecipients)
+void UniViewerAddressContainer::setToField(ConvergedMessageAddressList toRecipients)
 {
-    if (!mToWidget)
-    {
+    if (!mToWidget) {
         mToWidget = new UniViewerAddressWidget();
     }
 
@@ -90,11 +87,9 @@ void UniViewerAddressContainer::setToField(
 //UniViewerAddressContainer :: setCcField
 // @see header file
 //---------------------------------------------------------------
-void UniViewerAddressContainer::setCcField(
-    ConvergedMessageAddressList ccRecipients)
+void UniViewerAddressContainer::setCcField(ConvergedMessageAddressList ccRecipients)
 {
-    if (!mCcWidget)
-    {
+    if (!mCcWidget) {
         mCcWidget = new UniViewerAddressWidget();
     }
 
@@ -108,29 +103,48 @@ void UniViewerAddressContainer::setCcField(
 //---------------------------------------------------------------
 void UniViewerAddressContainer::clearContent()
 {
-    if (mFromWidget)
-    {
+    if (mFromWidget) {
         mMainLayout->removeItem(mFromWidget);
         mFromWidget->setParent(NULL);
         delete mFromWidget;
         mFromWidget = NULL;
     }
-    if (mToWidget)
-    {
+    if (mToWidget) {
         mMainLayout->removeItem(mToWidget);
         mToWidget->setParent(NULL);
         delete mToWidget;
         mToWidget = NULL;
     }
-    if (mCcWidget)
-    {
+    if (mCcWidget) {
         mMainLayout->removeItem(mCcWidget);
         mCcWidget->setParent(NULL);
         delete mCcWidget;
         mCcWidget = NULL;
     }
+    if (mDivider) {
+        mMainLayout->removeItem(mDivider);
+        mDivider->setParent(NULL);
+        delete mDivider;
+        mDivider = NULL;
+    }
 
     resize(rect().width(), -1);
+}
+
+//---------------------------------------------------------------
+// UniViewerAddressContainer :: insertDivider
+// @see header file
+//---------------------------------------------------------------
+void UniViewerAddressContainer::insertDivider()
+{
+    if (!mDivider) {
+        mDivider = new HbIconItem(this);
+    }
+
+    mDivider->sizePolicy().setHorizontalPolicy(QSizePolicy::Expanding);
+    mDivider->sizePolicy().setVerticalPolicy(QSizePolicy::Fixed);
+    mDivider->setIconName(DIVIDER_ICON);
+    mMainLayout->addItem(mDivider);
 }
 
 // EOF

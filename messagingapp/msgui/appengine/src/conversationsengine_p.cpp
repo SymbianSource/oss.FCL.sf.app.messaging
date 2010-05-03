@@ -147,6 +147,15 @@ void ConversationsEnginePrivate::deleteMessages(RArray<TInt>& aIdArray)
 }
 
 //---------------------------------------------------------------
+// ConversationsEnginePrivate::deleteallDraftMessages
+// @see header
+//---------------------------------------------------------------
+void ConversationsEnginePrivate::deleteAllDraftMessagesL()
+{
+    mConversationMsgStoreHandler->DeleteAllDraftMessagesL();
+}
+
+//---------------------------------------------------------------
 // ConversationsEnginePrivate::markConversationReadL
 // @see header
 //---------------------------------------------------------------
@@ -277,5 +286,44 @@ void ConversationsEnginePrivate::fetchMoreConversations()
         }
 }
 
+//---------------------------------------------------------------
+// ConversationsEnginePrivate::resendMessage()
+// @see header
+//---------------------------------------------------------------
+bool ConversationsEnginePrivate::resendMessage(TMsvId messageId)
+{
+    TInt err = KErrNone;
+    bool retval = true;
+    TRAP(err, retval = mConversationMsgStoreHandler->ResendMessageL(messageId));
+    return ((err == KErrNone) && (retval == true))?true:false;
+}
+
+//---------------------------------------------------------------
+// ConversationsEnginePrivate::downloadMessage
+// @see header
+//---------------------------------------------------------------
+TInt ConversationsEnginePrivate::downloadMessage(TMsvId messageId)
+{
+    TInt err = KErrNone;
+    TInt retval = KErrNone;
+    TRAP(err, retval = 
+            mConversationMsgStoreHandler->DownloadMessageL(messageId));
+            
+    if( err!=KErrNone)
+    {
+        retval = KErrGeneral;
+    }
+    
+    return retval;
+}
+
+//---------------------------------------------------------------
+// ConversationsEnginePrivate::downloadOperationSupported()
+// @see header
+//---------------------------------------------------------------
+bool ConversationsEnginePrivate::downloadOperationSupported(TMsvId messageId)
+{
+  return mConversationMsgStoreHandler->DownloadOperationSupported(messageId);   
+}
 //EOF
 

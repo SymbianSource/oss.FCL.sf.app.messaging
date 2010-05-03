@@ -110,11 +110,13 @@ void CCsConversationDeleteHandler::DeleteL(TInt aConversationId)
 // ----------------------------------------------------------------------------
 // Delete a message
 // ----------------------------------------------------------------------------
-void CCsConversationDeleteHandler::DeleteOneMessageL()
+void CCsConversationDeleteHandler::DeleteOneMessage()
     {
     CCsConversationEntry* entry = 
             static_cast<CCsConversationEntry*>((*iConversationEntryList)[iDeletedCount]);
+            
     TInt id = entry->EntryId();
+    
     if ( ECsSendStateSending != entry->GetSendState() )
         {
         iSession->RemoveEntry(id);
@@ -144,7 +146,7 @@ void CCsConversationDeleteHandler::RunL()
         
         case EDeleteNext:
             iDeletedCount--;
-            DeleteOneMessageL();
+            DeleteOneMessage();
             if ( iDeletedCount > 0 )
                 {
                 iState = EDeleteNext;

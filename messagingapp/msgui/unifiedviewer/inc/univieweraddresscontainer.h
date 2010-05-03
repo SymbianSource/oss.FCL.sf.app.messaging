@@ -26,6 +26,7 @@
 
 // FORWARD DECLARATIONS
 class QGraphicsLinearLayout;
+class HbIconItem;
 class UniViewerAddressWidget;
 
 /**
@@ -71,6 +72,11 @@ public:
      */
     void clearContent();
 
+    /**
+     * Inserts divider into layout.
+     */
+    void insertDivider();
+
 private:
 
     /**
@@ -96,6 +102,12 @@ private:
      * Own
      */
     UniViewerAddressWidget *mCcWidget;
+
+    /**
+     * Divider icon item.
+     * Own
+     */
+    HbIconItem *mDivider;
 };
 
 #endif // UNI_VIEWER_ADDRESS_CONTAINER_H

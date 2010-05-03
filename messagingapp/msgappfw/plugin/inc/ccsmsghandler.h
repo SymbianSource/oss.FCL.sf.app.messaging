@@ -55,13 +55,11 @@ enum TEventType
 enum TMsgHandlerState
     {
     EReadInbox,
-    EProcessInbox,
     EReadSent,
-    EProcessSent,
-    EReadDraft,
     EProcessDraft,
     EReadOutbox,
-    EProcessOutbox,
+    ESortEntries,
+    EProcessEntries,
     EComplete
     };
 
@@ -186,6 +184,7 @@ private:
      * @param aEntry, TMsvEntry
      */
     TCsType ExtractCsType( const TMsvEntry& aEntry);
+
 	
 private: //Data
 
@@ -247,6 +246,11 @@ private: //Data
      * Messages under root entry
      */
     CMsvEntrySelection* iMessages;
+
+    /**
+     * Master array for holding all the messages 
+     */
+   RArray<TMsvId>* iMessageArray;
 
     /**
      * State

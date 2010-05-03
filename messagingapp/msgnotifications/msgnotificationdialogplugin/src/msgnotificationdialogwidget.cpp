@@ -25,6 +25,9 @@
 #include <hbicon.h>
 #include <hbpopup.h>
 #include <xqservicerequest.h>
+#include <xqaiwrequest.h>
+#include <xqappmgr.h>
+
 #include "convergedmessage.h"
 
 #include "msgnotificationdialogpluginkeys.h"
@@ -33,33 +36,49 @@
 const int NoError = 0;
 const int ParameterError = 10000;
 
-
-//----------------------------------------------------------------
-
-class ServiceRequestSenderTask : public QRunnable
- {
-public:
-     ServiceRequestSenderTask(qint64 conversationId):mConvId(conversationId)  {}
-     
-     void run()
-     {
-     XQServiceRequest snd(
-            "com.nokia.services.hbserviceprovider.conversationview",
-                "open(qint64)",false);
-		  snd << mConvId;
-		  bool res=snd.send();    
+const QString BT_ICON("qtg_large_bluetooth");
+const QString SMS_ICON("qtg_large_new_message");
+const QString MMS_ICON("qtg_large_new_message");
+const QString RINGTONE_ICON("qtg_large_tone");
+const QString VCARD_ICON("qtg_large_new_message");
+// ----------------------------------------------------------------------------
+// ServiceRequestSenderTask::ServiceRequestSenderTask
+// @see msgnotificationdialogwidget.h
+// ----------------------------------------------------------------------------   
+ServiceRequestSenderTask::ServiceRequestSenderTask(qint64 conversationId):
+mConvId(conversationId)
+     {     
      }
-     
-     ~ServiceRequestSenderTask()
+
+// ----------------------------------------------------------------------------
+// ServiceRequestSenderTask::~ServiceRequestSenderTask
+// @see msgnotificationdialogwidget.h
+// ----------------------------------------------------------------------------   
+ServiceRequestSenderTask::~ServiceRequestSenderTask()
      {     
      }
      
- private: 
- 	qint64 mConvId;    
- };
-
-// ------------------------------------------------------------------------
-
+// ----------------------------------------------------------------------------
+// ServiceRequestSenderTask::run
+// @see msgnotificationdialogwidget.h
+// ----------------------------------------------------------------------------   
+void ServiceRequestSenderTask::run()
+     {
+     QList<QVariant> args;
+     QString serviceName("com.nokia.services.hbserviceprovider");
+     QString operation("open(qint64)");
+     XQAiwRequest* request;
+     XQApplicationManager appManager;
+     request = appManager.create(serviceName, "conversationview", operation, false); // not embedded
+     if ( request == NULL )
+         {
+         return;       
+         }
+     args << QVariant(mConvId);
+     request->setArguments(args);
+     request->send();
+     delete request;
+     }
 
 
 // ----------------------------------------------------------------------------
@@ -110,26 +129,46 @@ bool MsgNotificationDialogWidget::constructDialog(
     int messageType = parameters.value(KMessageTypeKey).toInt();
     if( messageType == ECsSMS)
         {
-        HbIcon icon(":/sms.svg");
+        HbIcon icon(SMS_ICON);
         setIcon(icon);
-        setText(parameters.value(KMessageBodyKey).toString());    
+        QString messageBody;
+        messageBody = parameters.value(KMessageBodyKey).toString();
+        messageBody.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
+        messageBody.replace('\r', QChar::LineSeparator);
+        setText(messageBody);    
         }
     else if(messageType == ECsMMS)
         {
-        HbIcon icon(":/mms.svg");
+        HbIcon icon(MMS_ICON);
+        setIcon(icon);
+        setText(parameters.value(KMessageSubjectKey).toString());       
+        }
+    else if(messageType == ECsMmsNotification)
+        {
+        HbIcon icon(MMS_ICON);
         setIcon(icon);
         setText(parameters.value(KMessageSubjectKey).toString());       
         }
     else if(messageType == ECsRingingTone)
         {
-        HbIcon icon(":/ringingtone.svg");
+        HbIcon icon(RINGTONE_ICON);
         setIcon(icon);
         setText(parameters.value(KMessageBodyKey).toString());      
         }
+    else if(messageType == ECsBlueTooth)
+        {
+        HbIcon icon(BT_ICON); // show default for other message types
+        setIcon(icon);
+        setText(parameters.value(KMessageBodyKey).toString());    
+        }
+    else if(messageType == ECsBioMsg_VCard)
+        {
+        HbIcon icon(VCARD_ICON); // show default for other message types
+        setIcon(icon);
+        setText(parameters.value(KMessageBodyKey).toString());    
+        }
     else
         {
-        HbIcon icon(":/sms.svg"); // show default for other message types
-        setIcon(icon);
         setText(parameters.value(KMessageBodyKey).toString());    
         }
     
@@ -219,37 +258,15 @@ void MsgNotificationDialogWidget::prepareDisplayName(
                                                 const QVariantMap &parameters)
 {
     //Set the Contact Name/Number
-    QString firstName = parameters.value(KFirstNameKey).toString();
-    QString lastName = parameters.value(KLastNameKey).toString();
+    QString displayName = parameters.value(KDisplayNameKey).toString();
     QString contactAddress = parameters.value(KContactAddressKey).toString();
-    QString nickName = parameters.value(KNickNameKey).toString();
     
-    QString displayName;
-    
-    if (!nickName.isEmpty())
+    if (displayName.isEmpty())
     {
-        displayName.append(nickName);
-    }
-    else if ( firstName.isEmpty() && lastName.isEmpty())
-    {
-        displayName.append(contactAddress);
-    }
-    else if (lastName.isEmpty() && !firstName.isEmpty())
-    {
-        displayName.append(firstName);
-    }
-    else if (firstName.isEmpty() && !lastName.isEmpty())
-    {
-        displayName.append(lastName);
+        setTitle(contactAddress);
     }
     else
     {
-        // If both first Name and last name are present
-        displayName.append(firstName);
-        displayName.append(" ");
-        displayName.append(lastName);
-    }
-    
-    // set the display name
-    setTitle(displayName);
+        setTitle(displayName);
+    }    
 }

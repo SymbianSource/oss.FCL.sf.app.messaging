@@ -16,7 +16,7 @@
  */
 
 // SYSTEM INCLUDES
-#include <HbWidget>
+#include <e32base.h>
 #include <HbMenu>
 #include <HbAction>
 #include <HbToolBar>
@@ -25,6 +25,27 @@
 #include <HbScrollArea>
 #include <QDateTime>
 #include <QDir>
+#include <QBuffer>
+#include <QFile>
+#include <QFileInfo>
+#include <xqconversions.h>
+#include <HbToolBarExtension>
+#include <HbListWidget>
+#include <HbFrameBackground>
+#include <HbListViewItem>
+#include <HbListWidgetItem>
+#include <HbNotificationDialog>
+#include <HbMessageBox>
+#include <xqaiwrequest.h>
+#include <xqappmgr.h>
+
+// QT Mobility for fetching business card
+#include <qversitwriter.h>
+#include <qversitdocument.h>
+#include <qcontact.h>
+#include <qcontactmanager.h>
+#include <qversitcontactexporter.h>
+#include <cntservicescontact.h>
 
 // USER INCLUDES
 #include "debugtraces.h"
@@ -32,61 +53,88 @@
 #include "msgunieditoraddress.h"
 #include "msgunieditorsubject.h"
 #include "msgunieditorbody.h"
-#include "msgtypenotifier.h"
 #include "msgmonitor.h"
 #include "msgattachmentcontainer.h"
-#include "msguiutilsmanager.h"
+#include "msgsendutil.h"
 #include "convergedmessageaddress.h"
-#include "matchphnumberutil.h"
 #include "unieditorgenutils.h"
 #include "unieditorpluginloader.h"
 #include "unieditorplugininterface.h"
 
 // Constants
-const QString SEND_ICON(":/qtg_mono_send.svg");
-const QString ATTACH_ICON(":/qtg_mono_attach.svg");
+const QString SEND_ICON("qtg_mono_send");
+const QString ATTACH_ICON("qtg_mono_attach");
+// temporary folder for unieditor
+const QString UNIFIED_EDITOR_TEMP_FOLDER("unifiededitor");
 
 const int INVALID_MSGID = -1;
+// vcard file extn.
+const QString FILE_EXTN(".vcf");
+// Max vcards inside a msg. Using a very large number.
+// TODO: how we can avoid this?
+const int MAX_VCARDS(1000);
 
 // LOCALIZED CONSTANTS
-#define LOC_TO hbTrId("txt_messaging_formlabel_to")
+//To,Cc.Bcc
+#define LOC_TO  hbTrId("txt_messaging_formlabel_to")
+#define LOC_CC hbTrId("txt_messaging_formlabel_cc")
+#define LOC_BCC hbTrId("txt_messaging_formlabel_bcc")
+
+//attach options
+#define LOC_PHOTO           hbTrId("txt_messaging_button_photo")
+#define LOC_SOUND           hbTrId("txt_messaging_button_sound")
+#define LOC_BUSINESS_CARD   hbTrId("txt_messaging_button_business_card")
+
+//options menu.
+#define LOC_ADD_SUBJECT     hbTrId("txt_messaging_opt_add_subject")
+#define LOC_ADD_CC_BCC      hbTrId("txt_messaging_opt_add_cc_bcc")
+#define LOC_PRIORITY        hbTrId("txt_messaging_setlabel_priority")
+#define LOC_SENDING_OPTIONS hbTrId("txt_messaging_opt_sending_options")
+#define LOC_DELETE_MESSAGE  hbTrId("txt_messaging_opt_delete_message")
+
+//priority sub menu
 #define LOC_HIGH hbTrId("txt_messaging_setlabel_priority_val_high")
 #define LOC_NORMAL hbTrId("txt_messaging_setlabel_priority_val_normal")
 #define LOC_LOW hbTrId("txt_messaging_setlabel_priority_val_low")
-#define LOC_SENDING_OPTIONS hbTrId("txt_messaging_opt_sending_options")
 
-#define LOC_DELETE_MESSAGE hbTrId("txt_messaging_opt_delete_message")
-#define LOC_CC hbTrId("txt_messaging_formlabel_cc")
-#define LOC_BCC hbTrId("txt_messaging_formlabel_bcc")
-#define LOC_OTHER_RECIPIENTS hbTrId("txt_messaging_group_title_ln_other_recipients")
+//group box
+#define LOC_OTHER_RECIPIENTS(n) hbTrId("txt_messaging_group_title_ln_other_recipients",n)
 
-#define LOC_PHOTO hbTrId("txt_messaging_button_photo")
-#define LOC_VIDEO hbTrId("txt_messaging_button_video")
-#define LOC_SOUND hbTrId("txt_messaging_button_sound")
-#define LOC_MORE hbTrId("txt_messaging_button_more")
+//saved to draft note
+#define LOC_SAVED_TO_DRAFTS    hbTrId("txt_messaging_dpopinfo_saved_to_drafts")
+
+//delete confermation
+#define LOC_NOTE_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
+#define LOC_BUTTON_DELETE       hbTrId("txt_common_button_delete")
+#define LOC_BUTTON_CANCEL       hbTrId("txt_common_button_cancel")
+#define LOC_DIALOG_OK           hbTrId("txt_common_button_ok")
+
+//extension list item frame.
+const QString POPUP_LIST_FRAME("qtg_fr_popup_list_normal");
+
+// LOCAL FUNCTIONS
+QString editorTempPath();
 
 //---------------------------------------------------------------
 // MsgUnifiedEditorView::MsgUnifiedEditorView
 // @see header file
 //---------------------------------------------------------------
 MsgUnifiedEditorView::MsgUnifiedEditorView( QGraphicsItem *parent ) :
-MsgBaseView(parent),
-mSubjectAction(0),
-mCcBccAction(0),
-mMainLayout(0),
-mSubjectField(0),
-mToField(0),
-mCcField(0),
-mBccField(0),
-mBody(0),
-mPrioritySubMenu(0),
-mContentWidget(0),
-mNotifier(0),
-mMsgMonitor(0),
-mUtilsManager(0),
-mAttachmentContainer(0),
-mPluginLoader(0)
-{
+    MsgBaseView(parent),
+    mSubjectAction(0),
+    mCcBccAction(0),
+    mMainLayout(0),
+    mSubjectField(0),
+    mToField(0),
+    mCcField(0),
+    mBccField(0),
+    mBody(0),
+    mContentWidget(0),
+    mMsgMonitor(0),    
+    mAttachmentContainer(0),
+    mPluginLoader(0),
+    mCanSaveToDrafts(true)
+    {
     addMenu();
     addToolBar();
 
@@ -96,20 +144,18 @@ mPluginLoader(0)
     mContentWidget = new HbWidget(this);
     scrollArea->setContentWidget(mContentWidget);
 
-    mPluginPath = pluginPath();
+    mPluginPath = pluginPath(); 
 
     mMainLayout = new QGraphicsLinearLayout(Qt::Vertical, mContentWidget);
-    mMainLayout->setContentsMargins(0,0,0,0);
-
-    //Adding suitable spacing between the Custom Widgets
+    qreal vTopSpacing = 0.0;
     qreal vItemSpacing = 0.0;
+    style()->parameter("hb-param-margin-gene-top",vTopSpacing);    
     style()->parameter("hb-param-margin-gene-middle-vertical",vItemSpacing);
+    
+    mMainLayout->setContentsMargins(0,vTopSpacing,0,0);
     mMainLayout->setSpacing(vItemSpacing);
 
-    // notifier for recording msg type transitions between sms & mms
-    mNotifier = new MsgTypeNotifier(this);
-    mMsgMonitor = new MsgMonitor(this);
-    mUtilsManager = new MsgUiUtilsManager(this);
+    mMsgMonitor = new MsgMonitor(this);    
 
     mToField = new MsgUnifiedEditorAddress( LOC_TO, mPluginPath, mContentWidget );
     mBody = new MsgUnifiedEditorBody(mPluginPath, mContentWidget);
@@ -119,18 +165,27 @@ mPluginLoader(0)
  
     //Set the invalid msg id
     mOpenedMessageId.setId(-1);
-    
+
+    // create editor's temp folder
+    QDir tempDir = QDir(QString());
+    QString tempPath(editorTempPath());
+    if(tempDir.mkpath(tempPath))
+    {
+        tempDir.cd(tempPath);
+        // remove stale folder content when freshly launched
+        QStringList contentList(tempDir.entryList());
+        int contentCount = contentList.count();
+        for(int i=0; i<contentCount; i++)
+        {
+            tempDir.remove(contentList.at(i));
+        }
+    }
+
     connect(mToField, SIGNAL(sendMessage()), this, SLOT(send()));
     connect(mBody, SIGNAL(sendMessage()), this, SLOT(send()));
-    connect(mBody, SIGNAL(mmContentAdded(bool)),
-                     mNotifier, SLOT(onMMContentAdded(bool)));
-    connect(mBody, SIGNAL(sizeChanged(int)),
-                     mMsgMonitor, SLOT(onSizeChanged(int)));
-    connect(mUtilsManager, SIGNAL(imagesFetched(const QVariant&)),
-                     this, SLOT(imagesFetched(const QVariant&)));
-    connect(mUtilsManager, SIGNAL(audiosFetched(const QVariant&)),
-                     this, SLOT(audiosFetched(const QVariant&)));
-}
+    connect(mBody, SIGNAL(contentChanged()),
+            mMsgMonitor, SLOT(checkMsgTypeChange()));
+    }
 
 //---------------------------------------------------------------
 // MsgUnifiedEditorView::~MsgUnifiedEditorView
@@ -138,6 +193,18 @@ mPluginLoader(0)
 //---------------------------------------------------------------
 MsgUnifiedEditorView::~MsgUnifiedEditorView()
 {
+    // clean editor's temporary contents before exiting
+    QDir tempDir = QDir(QString());
+    QString tempPath(editorTempPath());
+    tempDir.cd(tempPath);
+    QStringList contentList(tempDir.entryList());
+    int contentCount = contentList.count();
+    for(int i=0; i<contentCount; i++)
+    {
+        tempDir.remove(contentList.at(i));
+    }
+    tempDir.cdUp();
+    tempDir.rmdir(UNIFIED_EDITOR_TEMP_FOLDER);
 }
 
 void MsgUnifiedEditorView::addMenu()
@@ -146,23 +213,22 @@ void MsgUnifiedEditorView::addMenu()
     HbMenu* mainMenu = new HbMenu();
 
     //TODO:These 2 should be submenu option to Add
-    mSubjectAction = mainMenu->addAction(tr("Add Subject"));
-    mCcBccAction = mainMenu->addAction(tr("Add Cc/Bcc"));
+    mSubjectAction = mainMenu->addAction(LOC_ADD_SUBJECT);
+    mCcBccAction = mainMenu->addAction(LOC_ADD_CC_BCC);
     
-    mPrioritySubMenu = mainMenu->addMenu(tr("Add Priority"));
+    HbMenu* prioritySubMenu = mainMenu->addMenu(LOC_PRIORITY);
 
-    HbAction* highPriorityAction = mPrioritySubMenu->addAction(LOC_HIGH);
+    HbAction* highPriorityAction = prioritySubMenu->addAction(LOC_HIGH);
     highPriorityAction->setData(ConvergedMessage::High);
 
-    HbAction* normalPriorityAction = mPrioritySubMenu->addAction(LOC_NORMAL);
+    HbAction* normalPriorityAction = prioritySubMenu->addAction(LOC_NORMAL);
     normalPriorityAction->setData(ConvergedMessage::Normal);
 
-    HbAction* lowPriorityAction = mPrioritySubMenu->addAction(LOC_LOW);
+    HbAction* lowPriorityAction = prioritySubMenu->addAction(LOC_LOW);
     lowPriorityAction->setData(ConvergedMessage::Low);
 
     HbAction* sendOptionsAction = mainMenu->addAction(LOC_SENDING_OPTIONS);
     HbAction* deleteMsgAction = mainMenu->addAction(LOC_DELETE_MESSAGE);
-    HbAction* helpAction = mainMenu->addAction(tr("Help"));
 
     connect(mSubjectAction,SIGNAL(triggered()),this, SLOT(addSubject()));
     connect(mCcBccAction,SIGNAL(triggered()),this, SLOT(addCcBcc()));
@@ -171,127 +237,195 @@ void MsgUnifiedEditorView::addMenu()
     connect(lowPriorityAction, SIGNAL(triggered()), this, SLOT(changePriority()));
     connect(sendOptionsAction,SIGNAL(triggered()),this, SLOT(sendingOptions()));
     connect(deleteMsgAction,SIGNAL(triggered()),this, SLOT(deleteMessage()));
-    connect(helpAction,SIGNAL(triggered()),this, SLOT(launchHelp()));
 
     setMenu(mainMenu);
 }
 
-void MsgUnifiedEditorView::openDraftsMessage(ConvergedMessageId& messageId,
-    ConvergedMessage::MessageType messageType )
+void MsgUnifiedEditorView::openDraftsMessage(const QVariantList& editorData)
 {
+    // unpack editor's data
+    // first arg is convergedmessage
+    QByteArray dataArray = editorData.at(0).toByteArray();
+    ConvergedMessage* messageDetails = new ConvergedMessage;
+    QDataStream stream(&dataArray, QIODevice::ReadOnly);
+    messageDetails->deserialize(stream);
+    ConvergedMessage::MessageType messageType = messageDetails->messageType();
+    ConvergedMessageId messageId = *(messageDetails->id());
+    delete messageDetails;
+
     if(!mPluginLoader)
     {
         mPluginLoader = new UniEditorPluginLoader(this);
-        mPluginLoader->loadPlugins();
     }
-    
+
     UniEditorPluginInterface* pluginInterface =
         mPluginLoader->getUniEditorPlugin(messageType);
-    
+
     mOpenedMessageId.setId(messageId.getId());
     mmOpenedMessageType = messageType;
 
     //Fetch the converged message from the msgId
     ConvergedMessage* msg;
     msg = pluginInterface->convertFrom(messageId.getId());
-    
+
     if( msg != NULL )
-    {    
+    {
         //Populate the content inside editor
-        populateDraftsContent(*msg);
+        populateContentIntoEditor(*msg);
         delete msg;
     }
 }
 
-void MsgUnifiedEditorView::populateContent(const ConvergedMessage& messageDetails, int editorFields)
+void MsgUnifiedEditorView::forwardMessage(ConvergedMessageId& messageId,
+    ConvergedMessage::MessageType messageType )
 {
-    mToField->setAddresses(messageDetails.toAddressList());
-    QString bodyTxt = messageDetails.bodyText();
-    mBody->setText(bodyTxt);
-
-    int attachmentCount = messageDetails.attachments().count();
-    if(attachmentCount == 1)
+    if(!mPluginLoader)
     {
-        int imageSize=0;
-        QString mimeType;
-        TMsgMediaType mediaType = EMsgMediaUnknown;
-        QString filePath = messageDetails.attachments().at(0)->filePath();
-        UniEditorGenUtils* genUtils = new UniEditorGenUtils;
-        TRAP_IGNORE(genUtils->getFileInfoL(filePath,imageSize,
-                                           mimeType,mediaType));
-        delete genUtils;
-        switch(mediaType)
+        mPluginLoader = new UniEditorPluginLoader(this);
+  
+    }
+    UniEditorPluginInterface* pluginInterface = NULL;
+    if( messageType == ConvergedMessage::Mms )
+    {
+        pluginInterface =
+                mPluginLoader->getUniEditorPlugin(ConvergedMessage::Mms);
+    }
+    else // For sms,vcard,vcal cases
+    {
+        pluginInterface =
+                mPluginLoader->getUniEditorPlugin(ConvergedMessage::Sms);
+    }
+
+    //Fetch the converged message from the msgId
+    ConvergedMessage* msg;
+    msg = pluginInterface->convertFrom(messageId.getId(),
+        UniEditorPluginInterface::Forward);
+
+    if( msg != NULL )
+    {
+        //Populate the content inside editor
+        populateContentIntoEditor(*msg);
+        delete msg;
+    }
+}
+
+void MsgUnifiedEditorView::populateContent(const QVariantList& editorData)
+{
+    // unpack editor's data
+    // first arg is convergedmessage
+    QByteArray dataArray = editorData.at(0).toByteArray();
+    ConvergedMessage* messageDetails = new ConvergedMessage;
+    QDataStream stream(&dataArray, QIODevice::ReadOnly);
+    messageDetails->deserialize(stream);
+
+    // get next arg i.e. editor operation command
+    int editorOp = 0;
+    if(editorData.length() > 1)
+    {
+        editorOp = editorData.at(1).toInt();
+    }
+
+    // population logic based on editor Operation command
+    switch(editorOp)
+    {
+        case MsgBaseView::ADD_RECIPIENTS:
         {
-            case EMsgMediaImage:
+            addCcBcc();
+        }
+        break;
+        case MsgBaseView::ADD_SUBJECT:
+        {
+            addSubject();
+        }
+        break;
+        case MsgBaseView::ADD_VCARD:
+        {
+            contactsFetched(editorData.at(2));
+        }
+        break;
+        case MsgBaseView::FORWARD_MSG:
+        {
+            forwardMessage(*messageDetails->id(), messageDetails->messageType());
+        }
+        break;
+        default:
+        break;
+    }
+
+    // additional common operations for non-forwarded messages
+    if(editorOp != MsgBaseView::FORWARD_MSG)
+    {
+        mToField->setAddresses(messageDetails->toAddressList());
+        QString bodyTxt = messageDetails->bodyText();
+        mBody->setText(bodyTxt);
+
+        int attachmentCount = messageDetails->attachments().count();
+        QStringList pendingAttList;
+        for(int i=0; i<attachmentCount; i++)
+        {
+            int imageSize=0;
+            QString mimeType;
+            TMsgMediaType mediaType = EMsgMediaUnknown;
+            QString filePath = messageDetails->attachments().at(i)->filePath();
+            UniEditorGenUtils* genUtils = new UniEditorGenUtils;
+            TRAP_IGNORE(genUtils->getFileInfoL(filePath,imageSize,
+                                           mimeType,mediaType));
+            delete genUtils;
+            switch(mediaType)
             {
-                mBody->setImage(filePath);
+                case EMsgMediaImage:
+                {
+                    mBody->setImage(filePath);
+                    addSubject();
+                }
                 break;
-            }
-            case EMsgMediaVideo:
-            {
-                mBody->setVideo(filePath);
+                case EMsgMediaVideo:
+                {
+                    mBody->setVideo(filePath);
+                    addSubject();
+                }
                 break;
-            }
-            case EMsgMediaAudio:
-            {
-                mBody->setAudio(filePath);
+                case EMsgMediaAudio:
+                {
+                    mBody->setAudio(filePath);
+                    addSubject();
+                }
                 break;
-            }
-            case EMsgMediaUnknown:
-            case EMsgMediaText:
-            default:
-            {
-                addAttachment(filePath);
+                default:
+                {
+                    pendingAttList << filePath;
+                }
                 break;
             }
         }
-        
-        addSubject();
-	}
-	else if(attachmentCount > 1)
-	{
-		for(int i=0; i<attachmentCount; i++)
-		{
-		    QString filePath = messageDetails.attachments().at(i)->filePath();
-		    //TODO: put size checks and show size exceeded msg when appropriate
-		    addAttachment(filePath);
-		}
-		
-		addSubject();
-	}
-
-	if(editorFields & MsgBaseView::ADD_RECIPIENTS)
-	{
-		addCcBcc();
-	}
-	else if(editorFields & MsgBaseView::ADD_SUBJECT)
-  {
-		addSubject();
-	}    
+        // add pending attachments in bulk
+        addAttachments(pendingAttList);
+    }
+    delete messageDetails;
 }
 
-void MsgUnifiedEditorView::populateDraftsContent(
+void MsgUnifiedEditorView::populateContentIntoEditor(
     const ConvergedMessage& messageDetails)
 {
     // skip first-time MMS type switch note for draft
-    mNotifier->setSkipNote();
+    mMsgMonitor->setSkipNote(true);
     mToField->setAddresses(messageDetails.toAddressList());
     if(messageDetails.ccAddressList().count() > 0 )
-    {   
+    {
         if(!mCcField)
-        {    
+        {
         addCcBcc();
         }
         mCcField->setAddresses(messageDetails.ccAddressList());
-    }   
+    }
     if(messageDetails.bccAddressList().count() > 0 )
-    {   
+    {
         if(!mBccField)
-        {    
+        {
         addCcBcc();
         }
         mBccField->setAddresses(messageDetails.bccAddressList());
-    }    
+    }
     if(messageDetails.subject().size() > 0)
     {
        if(!mSubjectField)
@@ -300,8 +434,8 @@ void MsgUnifiedEditorView::populateDraftsContent(
        }
        mSubjectField->setText(messageDetails.subject());
     }
-    
-    if(messageDetails.priority()==ConvergedMessage::High || 
+
+    if(messageDetails.priority()==ConvergedMessage::High ||
             messageDetails.priority() == ConvergedMessage::Low)
     {
         if(!mSubjectField)
@@ -310,26 +444,27 @@ void MsgUnifiedEditorView::populateDraftsContent(
         }
         mSubjectField->setPriority(messageDetails.priority());
     }
-    
+
     QString bodyTxt = messageDetails.bodyText();
     mBody->setText(bodyTxt);
 
-    ConvergedMessageAttachmentList attachmentList = 
+    ConvergedMessageAttachmentList attachmentList =
         messageDetails.attachments();
     int attachmentCount = attachmentList.count();
-    
+
     UniEditorGenUtils* genUtils = new UniEditorGenUtils;
-                       
+
+    QStringList pendingAttList;
     for( int i=0; i < attachmentCount; i++ )
     {
         QString filePath = messageDetails.attachments().at(i)->filePath();
 
-        if(attachmentList.at(i)->attachmentType() == 
+        if(attachmentList.at(i)->attachmentType() ==
             ConvergedMessageAttachment::EInline)
         {
             int imageSize=0;
             QString mimeType;
-            TMsgMediaType mediaType = EMsgMediaUnknown;    
+            TMsgMediaType mediaType = EMsgMediaUnknown;
             TRAP_IGNORE(genUtils->getFileInfoL(filePath,imageSize,
                 mimeType,mediaType));
 
@@ -338,33 +473,39 @@ void MsgUnifiedEditorView::populateDraftsContent(
                 case EMsgMediaImage:
                 {
                     mBody->setImage(filePath);
+                    addSubject();
                     break;
                 }
                 case EMsgMediaVideo:
                 {
                     mBody->setVideo(filePath);
+                    addSubject();
                     break;
                 }
                 case EMsgMediaAudio:
                 {
                     mBody->setAudio(filePath);
+                    addSubject();
                     break;
                 }
-                case EMsgMediaUnknown:
-                case EMsgMediaText:
                 default:
                 {
-                    addAttachment(filePath);
+                    pendingAttList << filePath;
                     break;
                 }
             }
         }
         else
         {
-            addAttachment(filePath);
+            pendingAttList << filePath;
         }
-    }    
+    }
+    // add pending attachments to editor
+    addAttachments(pendingAttList);
+
     delete genUtils;
+    // ensure that any msg-type change after this are shown
+    mMsgMonitor->setSkipNote(false);
 }
 
 void MsgUnifiedEditorView::addToolBar()
@@ -372,13 +513,30 @@ void MsgUnifiedEditorView::addToolBar()
     //Create Tool Bar
     HbToolBar *toolBar = new HbToolBar();
     toolBar->setOrientation(Qt::Horizontal);
+    
+    //tool bar extension for attach action.
+    HbToolBarExtension* attachExtension = new HbToolBarExtension();
+    HbAction *attachAction = toolBar->addExtension(attachExtension);    
+    attachAction->setIcon(HbIcon(ATTACH_ICON));
+    
+    HbListWidget* extnList = new HbListWidget();
+    extnList->addItem(LOC_PHOTO);
+    extnList->addItem(LOC_SOUND);
+    extnList->addItem(LOC_BUSINESS_CARD);
+
+    HbListViewItem *prototype = extnList->listItemPrototype();
+    HbFrameBackground frame(POPUP_LIST_FRAME, HbFrameDrawer::NinePieces);
+    prototype->setDefaultFrame(frame);
+
+    connect(extnList, SIGNAL(activated(HbListWidgetItem*)), this,
+            SLOT(handleViewExtnActivated(HbListWidgetItem*)));
+    connect(extnList, SIGNAL(activated(HbListWidgetItem*)), attachExtension, SLOT(close()));
+
+    attachExtension->setContentWidget(extnList);
 
     //Add Action to the toolbar and show toolbar
-    HbAction* attachToolButton = toolBar->addAction(HbIcon(ATTACH_ICON), QString());
-    HbAction* sendToolButton = toolBar->addAction(HbIcon(SEND_ICON), QString());
+    toolBar->addAction(HbIcon(SEND_ICON),QString(),this,SLOT(send()));
 
-    connect(attachToolButton, SIGNAL(triggered()), this, SLOT(showAttachmentPopup()));
-    connect(sendToolButton, SIGNAL(triggered()), this, SLOT(send()));
 
     setToolBar(toolBar);
 }
@@ -405,10 +563,8 @@ void MsgUnifiedEditorView::addSubject()
 
     mSubjectField = new MsgUnifiedEditorSubject(mPluginPath, mContentWidget);
     mMainLayout->insertItem(index,mSubjectField);
-    connect(mSubjectField, SIGNAL(mmContentAdded(bool)),
-                     mNotifier, SLOT(onMMContentAdded(bool)));
-    connect(mSubjectField, SIGNAL(sizeChanged(int)),
-                     mMsgMonitor, SLOT(onSizeChanged(int)));
+    connect(mSubjectField, SIGNAL(contentChanged()),
+            mMsgMonitor, SLOT(checkMsgTypeChange()));    
 }
 
 void MsgUnifiedEditorView::addCcBcc()
@@ -428,25 +584,34 @@ void MsgUnifiedEditorView::addCcBcc()
     mBccField   = new MsgUnifiedEditorAddress( LOC_BCC, mPluginPath, mContentWidget );
 
     connect(mCcField, SIGNAL(sendMessage()), this, SLOT(send()));
-    connect(mCcField, SIGNAL(mmContentAdded(bool)), mNotifier, SLOT(onMMContentAdded(bool)));
+    connect(mCcField, SIGNAL(contentChanged()), mMsgMonitor, SLOT(checkMsgTypeChange()));
     connect(mBccField, SIGNAL(sendMessage()), this, SLOT(send()));
-    connect(mBccField, SIGNAL(mmContentAdded(bool)), mNotifier, SLOT(onMMContentAdded(bool)));
+    connect(mBccField, SIGNAL(contentChanged()), mMsgMonitor, SLOT(checkMsgTypeChange()));
 
     HbWidget* groupWidget = new HbWidget(mContentWidget);
     groupWidget->setContentsMargins(0,0,0,0);
+    
     QGraphicsLinearLayout* ccBccLayout = new QGraphicsLinearLayout(Qt::Vertical, groupWidget);
+    ccBccLayout->setContentsMargins(0,0,0,0);
+
+    qreal vItemSpacing = 0.0;    
+    style()->parameter("hb-param-margin-gene-middle-vertical",vItemSpacing);
+    ccBccLayout->setSpacing(vItemSpacing);
     ccBccLayout->addItem(mCcField);
     ccBccLayout->addItem(mBccField);
 
-    HbGroupBox* groupBox = new HbGroupBox(mContentWidget);
-    groupBox->setCollapsable(true);
+    HbGroupBox* groupBox = new HbGroupBox(0);    
+    groupBox->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Preferred);
+    
     groupBox->setContentWidget(groupWidget);
-    groupBox->setHeading(tr("Other recipients"));    
-    connect(groupBox, SIGNAL(toggled(bool)), this, SLOT(updateOtherRecipientCount(bool)));
-
+    groupBox->setHeading(LOC_OTHER_RECIPIENTS(-1));
     mMainLayout->insertItem(1,groupBox);
+    connect(groupBox, SIGNAL(toggled(bool)), this, SLOT(updateOtherRecipientCount(bool)));
+    
     // add subject field too
     addSubject();
+    
+    this->updateGeometry();
 }
 
 void MsgUnifiedEditorView::updateOtherRecipientCount(bool state)
@@ -456,15 +621,13 @@ void MsgUnifiedEditorView::updateOtherRecipientCount(bool state)
     {
         if(!state)
         {
-            groupBox->setHeading(tr("Other recipients"));
+           groupBox->setHeading(LOC_OTHER_RECIPIENTS(-1));
         }
         else
         {
             int addrCount = mCcField->addressCount();
             addrCount += mBccField->addressCount();
-            QString str;
-            str = QString(tr("%1 Other recipients")).arg(addrCount);
-            groupBox->setHeading(str);
+            groupBox->setHeading(LOC_OTHER_RECIPIENTS(addrCount));
         }
     }
 }
@@ -482,14 +645,6 @@ void MsgUnifiedEditorView::changePriority()
 
     addSubject();
     mSubjectField->setPriority(priority);
-    if(priority != ConvergedMessage::Normal)
-    {
-		mPrioritySubMenu->setTitle("Change Priority");
-	}
-   else
-   {
-       mPrioritySubMenu->setTitle("Add Priority");
-   }
 }
 
 void MsgUnifiedEditorView::sendingOptions()
@@ -498,24 +653,34 @@ void MsgUnifiedEditorView::sendingOptions()
 
 void MsgUnifiedEditorView::deleteMessage()
 {
-}
-
-void MsgUnifiedEditorView::launchHelp()
-{
-}
-
-void MsgUnifiedEditorView::showAttachmentPopup()
-{
-    HbMenu* attachMenu = new HbMenu();
-    attachMenu->deleteLater();
-    attachMenu->setFrameType(HbPopup::Strong);
-
-    HbAction* attachPhoto = attachMenu->addAction(LOC_PHOTO,mUtilsManager,SLOT(fetchImages()));
-    HbAction* attachVideo = attachMenu->addAction(LOC_VIDEO,mUtilsManager,SLOT(fetchVideo()));
-    HbAction* attachAudio = attachMenu->addAction(LOC_SOUND,mUtilsManager,SLOT(fetchAudio()));
-    HbAction* attachOther = attachMenu->addAction(LOC_MORE,mUtilsManager,SLOT(fetchOther()));
-    attachMenu->exec(QPoint());
-    delete attachMenu;
+    bool ok = HbMessageBox::question(LOC_NOTE_DELETE_MESSAGE,
+                                            LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
+    
+    if(ok)
+        {
+        mCanSaveToDrafts = false;
+    
+        //delete if draft entry opened
+        if( mOpenedMessageId.getId() != -1)
+            {    
+            if(!mPluginLoader)
+                {
+                mPluginLoader = new UniEditorPluginLoader(this);
+                }
+        
+            UniEditorPluginInterface* pluginInterface =
+                mPluginLoader->getUniEditorPlugin(MsgMonitor::messageType());
+        
+            pluginInterface->deleteDraftsEntry(mOpenedMessageId.getId());
+            }
+    
+        //trigger back action.
+        HbAction* backAction = this->navigationAction();
+        if(backAction)
+            {
+            backAction->trigger();
+            }
+        }
 }
 
 void MsgUnifiedEditorView::removeAttachmentContainer()
@@ -529,51 +694,56 @@ void MsgUnifiedEditorView::removeAttachmentContainer()
     }
 }
 
-void MsgUnifiedEditorView::addAttachment(const QString& filepath)
+void MsgUnifiedEditorView::addAttachments(QStringList files)
+{    
+    int fcount = files.count();
+    int i=0;
+    for(i=0; i<fcount; i++)
+    {
+        if(MsgAttachmentContainer::EAddSizeExceed 
+                == addAttachment(files.at(i)))
+        {
+            // size already exceeds max mms size-limit
+            break;
+        }
+    }
+    // check if some files failed to add
+    // happens only when size exceeded during addition
+    if(i<fcount)
+    {
+        // TODO: show a note for size exceed
+    }
+}
+
+int MsgUnifiedEditorView::addAttachment(const QString& filepath)
 {
     if(!mAttachmentContainer)
     {
         mAttachmentContainer = new MsgAttachmentContainer(mPluginPath, mContentWidget);
         connect(mAttachmentContainer, SIGNAL(emptyAttachmentContainer()),
                 this, SLOT(removeAttachmentContainer()));
-        connect(mAttachmentContainer, SIGNAL(mmContentAdded(bool)),
-                mNotifier, SLOT(onMMContentAdded(bool)));
-        connect(mAttachmentContainer, SIGNAL(sizeChanged(int)),
-                         mMsgMonitor, SLOT(onSizeChanged(int)));
+        connect(mAttachmentContainer, SIGNAL(contentChanged()),
+                mMsgMonitor, SLOT(checkMsgTypeChange()));
         int index = mMainLayout->count() - 1;
         mMainLayout->insertItem(index,mAttachmentContainer);
     }
-    mAttachmentContainer->addAttachment(filepath);
+
+    int ret = mAttachmentContainer->addAttachment(filepath);
+    if(ret != MsgAttachmentContainer::EAddSuccess)
+    {
+        // delete container, if it is empty
+        if(mAttachmentContainer->count() == 0)
+        {
+            removeAttachmentContainer();
+        }
+    }
+    else if(mAttachmentContainer->hasMMContent())
+    {
+        // when msg is converted to MMS, subject needs to be auto-inserted
+        addSubject();
+    }
+    return ret;
 }
-
-void MsgUnifiedEditorView::imagesFetched(const QVariant& result )
-    {
-    if(result.canConvert<QStringList>())
-        {
-        QStringList fileList = result.value<QStringList>();
-        if ( fileList.size()>0 )
-            {
-            QString filepath(fileList.at(0));
-            mBody->setImage(filepath);
-            addSubject();
-            }
-        }
-    }
-
-void MsgUnifiedEditorView::audiosFetched(const QVariant& result )
-    {
-    if(result.canConvert<QStringList>())
-        {
-        QStringList fileList = result.value<QStringList>();
-        if ( fileList.size()>0 && !fileList.at(0).isEmpty())
-            {
-            QString filepath(QDir::toNativeSeparators(fileList.at(0)));
-            QDEBUG_WRITE_FORMAT("Received audio file path = ", fileList.at(0));
-            mBody->setAudio(filepath);
-            addSubject();
-            }
-        }
-    }
 
 QString MsgUnifiedEditorView::pluginPath()
 {
@@ -590,11 +760,11 @@ QString MsgUnifiedEditorView::pluginPath()
 
 void MsgUnifiedEditorView::send()
 {
-    mUtilsManager->activateInputBlocker(this);
+    activateInputBlocker();
 
     // converged msg for sending
     ConvergedMessage msg;
-    ConvergedMessage::MessageType messageType = mNotifier->messageType();
+    ConvergedMessage::MessageType messageType = MsgMonitor::messageType();
     msg.setMessageType(messageType);
 
     ConvergedMessageAddressList addresses = mToField->addresses();
@@ -602,7 +772,7 @@ void MsgUnifiedEditorView::send()
        addresses.isEmpty())
     {
         // no recipient specified for sms, do not send msg
-        mUtilsManager->deactivateInputBlocker();
+        deactivateInputBlocker();
         return;
     }
 
@@ -622,18 +792,21 @@ void MsgUnifiedEditorView::send()
             bccAddresses.isEmpty())
     {
         // no recipient specified for mms, do not send msg
-        mUtilsManager->deactivateInputBlocker();
+        deactivateInputBlocker();
         return;
     }
 
     packMessage(msg);
-
-    int sendResult = mUtilsManager->send(msg);
+    
+    // send message
+    MsgSendUtil *sendUtil = new MsgSendUtil(this);
+    int sendResult = sendUtil->send(msg);
+    delete sendUtil;
     
     // all checks and validations happen before send
     if( sendResult == KErrNone)
     {
-        //After sending the new content to drafts chk if the msg 
+        //After sending the new content to drafts chk if the msg
         //was originally opened from drafts and delete the opened entry
         if( mOpenedMessageId.getId() != -1)
         {
@@ -641,7 +814,6 @@ void MsgUnifiedEditorView::send()
             if(!mPluginLoader)
             {
                 mPluginLoader = new UniEditorPluginLoader(this);
-                mPluginLoader->loadPlugins();
             }
 
             UniEditorPluginInterface* pluginInterface =
@@ -671,7 +843,7 @@ void MsgUnifiedEditorView::send()
 
             addrList = bccAddresses;
             int bccCount = addrList.count();
-            recepientCount += bccCount;        
+            recepientCount += bccCount;
             if(bccCount)
             {
                 receipient = addrList.at(0)->address();
@@ -685,33 +857,39 @@ void MsgUnifiedEditorView::send()
         {
         params << MsgBaseView::CV;  // target view
         params << MsgBaseView::UNIEDITOR; // source view
-        
+
         params << receipient;
         }
-    else 
+    else
         {
         params << MsgBaseView::CLV;// target view
         params << MsgBaseView::UNIEDITOR; // source view
         }
-        mUtilsManager->deactivateInputBlocker();
-    emit switchView(params);
+        deactivateInputBlocker();
+        emit switchView(params);
     }
     else
     {
-        mUtilsManager->deactivateInputBlocker();
+        deactivateInputBlocker();
         if(sendResult == KErrNotFound)
         {
-            QVariantList params;
-            params << MsgBaseView::MSGSETTINGS;// target view
-            params << MsgBaseView::UNIEDITOR; // source view
-            emit switchView(params);
+        	  bool result = HbMessageBox::question("Settings not defined\nDefine now ?",
+                                         LOC_DIALOG_OK,
+                                         LOC_BUTTON_CANCEL);
+            if (result)
+            {
+              QVariantList params;
+              params << MsgBaseView::MSGSETTINGS;// target view
+              params << MsgBaseView::UNIEDITOR; // source view
+              emit switchView(params);
+            }
         }
     }
 }
 
 void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg)
 {
-    ConvergedMessage::MessageType messageType = mNotifier->messageType();
+    ConvergedMessage::MessageType messageType = MsgMonitor::messageType();
     msg.setMessageType(messageType);
 
     ConvergedMessageAddressList addresses = mToField->addresses();
@@ -736,7 +914,7 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg)
             bccAddresses = mBccField->addresses();
         }
 
-        int matchDigitsCount = MatchPhNumberUtil::matchDigits();
+        int matchDigitsCount = MsgUnifiedEditorAddress::contactMatchDigits();
         //comapre cc and to field,remove duplicate from cc
         foreach(ConvergedMessageAddress *ccAddress,ccAddresses)
         {
@@ -750,7 +928,7 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg)
         }
         //comapre bcc and cc field,remove duplicate from bcc
         foreach(ConvergedMessageAddress *bccAddress,bccAddresses)
-        { 
+        {
           foreach(ConvergedMessageAddress *ccAddress,ccAddresses)
           {
              if(0 == bccAddress->address().right(matchDigitsCount).compare(ccAddress->address().right(matchDigitsCount)))
@@ -761,7 +939,7 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg)
         }
         //comapre bcc and to field,remove duplicate from bcc
         foreach(ConvergedMessageAddress *bccAddress,bccAddresses)
-        { 
+        {
           foreach(ConvergedMessageAddress *toAddress,addresses)
           {
              if(0 == bccAddress->address().right(matchDigitsCount).compare(toAddress->address().right(matchDigitsCount)))
@@ -805,13 +983,13 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg)
             msg.addAttachments(mediaList);
         }
     }
-    
+
     // sms/mms attachment list
     ConvergedMessageAttachmentList attachmentList;
         if(mAttachmentContainer)
         {
-            MsgUnifiedEditorAttachmentList editorAttachmentList = 
-                mAttachmentContainer->attachmentList(); 
+            MsgUnifiedEditorAttachmentList editorAttachmentList =
+                mAttachmentContainer->attachmentList();
                 for (int i = 0; i < editorAttachmentList.count(); ++i)
                 {
                     ConvergedMessageAttachment* attachment =
@@ -827,21 +1005,24 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg)
         }
 }
 
-bool MsgUnifiedEditorView::saveContentToDrafts()
+void MsgUnifiedEditorView::saveContentToDrafts()
 {
-    mUtilsManager->activateInputBlocker(this);
-    ConvergedMessage::MessageType messageType = mNotifier->messageType();
+    if(!mCanSaveToDrafts)
+        {
+        return;
+        }
+    activateInputBlocker();
+    ConvergedMessage::MessageType messageType = MsgMonitor::messageType();
 
     ConvergedMessageAddressList addresses = mToField->addresses();
 
     UniEditorPluginInterface* pluginInterface = NULL;
-    
+
     if( mOpenedMessageId.getId() != -1)
-    {    
+    {
         if(!mPluginLoader)
         {
             mPluginLoader = new UniEditorPluginLoader(this);
-            mPluginLoader->loadPlugins();
         }
 
         pluginInterface =
@@ -849,16 +1030,18 @@ bool MsgUnifiedEditorView::saveContentToDrafts()
     }
 
     if(messageType == ConvergedMessage::Sms &&
-            addresses.isEmpty() && MsgMonitor::bodySize() <= 0)
+            addresses.isEmpty() &&
+            MsgMonitor::bodySize() <= 0 &&
+            MsgMonitor::containerSize() <= 0)
     {
         if(mOpenedMessageId.getId() != -1)
         {
         pluginInterface->deleteDraftsEntry(mOpenedMessageId.getId());
         }
 
-        // no recipient specified for sms, do not send msg
-        mUtilsManager->deactivateInputBlocker();
-        return false;
+        // if empty msg, do not save
+        deactivateInputBlocker();
+        return;
     }
 
     ConvergedMessageAddressList ccAddresses;
@@ -889,26 +1072,34 @@ bool MsgUnifiedEditorView::saveContentToDrafts()
         {
             pluginInterface->deleteDraftsEntry(mOpenedMessageId.getId());
         }
-        // no recipient specified for mms, do not send msg
-        mUtilsManager->deactivateInputBlocker();
-        return false;
+        // if empty msg, do not send
+        deactivateInputBlocker();
+        return;
     }
     ConvergedMessage msg;
     packMessage(msg);
-    
-    int msgId = mUtilsManager->saveToDrafts(msg);
 
-    //After saving the new content to drafts chk if the msg 
-    //was originally opened from drafts and delete the opened entry
-    if(mOpenedMessageId.getId() != -1)
+    // save to drafts
+    MsgSendUtil *sendUtil = new MsgSendUtil(this);
+    int msgId = sendUtil->saveToDrafts(msg);
+    delete sendUtil;
+
+    // If saving new msg to draft succeeded and also if the originally
+    // opened msg was from drafts, then delete the original msg entry
+    if(msgId != -1 && mOpenedMessageId.getId() != -1)
     {
         pluginInterface->deleteDraftsEntry(mOpenedMessageId.getId());
         mOpenedMessageId.setId(INVALID_MSGID);
     }
-    
-    mUtilsManager->deactivateInputBlocker();
 
-    return ((msgId > INVALID_MSGID)? true : false);
+    deactivateInputBlocker();
+
+    bool res = ((msgId > INVALID_MSGID)? true : false);
+    
+    if(res)
+        {
+        HbNotificationDialog::launchDialog(LOC_SAVED_TO_DRAFTS);
+        }
 }
 
 void MsgUnifiedEditorView::resizeEvent( QGraphicsSceneResizeEvent * event )
@@ -920,5 +1111,353 @@ void MsgUnifiedEditorView::resizeEvent( QGraphicsSceneResizeEvent * event )
 
  mContentWidget->resize(this->rect().width(),this->rect().height()+1);
 }
+
+//---------------------------------------------------------------
+// editorTempPath
+// @return fullPath of unified editor's temporary dir
+//---------------------------------------------------------------
+QString editorTempPath()
+{
+    QDir tempDir = QDir(QString());
+    QString tempPath(QDir::toNativeSeparators(tempDir.tempPath()));
+    tempPath.append(QDir::separator());
+    tempPath.append(UNIFIED_EDITOR_TEMP_FOLDER);
+    tempPath.append(QDir::separator());
+    return tempPath;
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::createVCards
+// @see header file
+//---------------------------------------------------------------
+int MsgUnifiedEditorView::createVCards(
+        const QVariant& value, QStringList& filelist)
+{
+    // make sure that temp-folder is created for storing vcards
+    QDir tempDir = QDir(QString());
+    if(!tempDir.mkpath(editorTempPath()))
+    {
+        return KErrGeneral;
+    }
+    tempDir.cd(editorTempPath());
+
+
+    // extract contact-list
+    QContactManager* contactManager = new QContactManager("symbian");
+    CntServicesContactList cntServicesContacts = qVariantValue<CntServicesContactList>(value);
+    int cntCount = cntServicesContacts.count();
+    QList<QtMobility::QContact> contactList;
+    for(int i = 0; i < cntCount; i++ )
+    {
+        contactList << contactManager->contact( cntServicesContacts.at(i).mContactId );
+    }
+    delete contactManager;
+
+    // get list of all versit-documents
+    QVersitDocument::VersitType versitType(QVersitDocument::VCard21Type);
+    QVersitContactExporter* exporter = new QVersitContactExporter();
+    
+    bool ret_val = exporter->exportContacts(contactList, versitType);
+    QList<QtMobility::QVersitDocument> documentList = exporter->documents();    
+
+    delete exporter;
+
+    // loop though and create a vcard for each contact
+    QVersitWriter* writer = new QVersitWriter();
+    for(int i = 0; i < cntCount; i++ )
+    {
+        // buffer to hold vcard data fetched from contacts
+        QBuffer contactsbuf;
+        contactsbuf.open(QBuffer::ReadWrite);
+        writer->setDevice( &contactsbuf );
+
+        //write document data to buffer
+        QList<QtMobility::QVersitDocument> currDoc;
+        currDoc << documentList.at(i);
+        writer->startWriting(currDoc);
+        if(writer->waitForFinished())
+        {
+            // generate file name
+            QString displayLabel = contactList.at(i).displayLabel();
+            QString filepath = generateFileName(displayLabel);
+            QFile file(filepath);
+            if(file.open(QIODevice::WriteOnly))
+            {
+                // trap ignore so that, incase of multiselection, other vcards are still created
+                QByteArray bufArr;
+                TRAP_IGNORE(
+                CBufBase* contactbufbase = CBufFlat::NewL(contactsbuf.size());
+                CleanupStack::PushL(contactbufbase);
+                contactbufbase->InsertL( contactbufbase->Size(),
+                        *XQConversions::qStringToS60Desc8( contactsbuf.data() ) );
+                TPtr8 ptrbuf(contactbufbase->Ptr(0));
+                bufArr = XQConversions::s60Desc8ToQByteArray(ptrbuf);
+                CleanupStack::PopAndDestroy(contactbufbase);
+                );
+                file.write(bufArr);
+                file.close();
+                filelist << filepath;
+            }
+        }
+    }
+
+    // cleanup & return
+    delete writer;
+    return KErrNone;
+}
+
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::generateFileName
+// @param suggestedName suggested name of the file
+// @return fullPath of the generated filename
+// @algo For multiselected 'Unnamed' contacts, the filename should
+// be synthesized as unnamed.vcf, unnamed1.vcf, unnamed2.vcf etc.
+//---------------------------------------------------------------
+QString MsgUnifiedEditorView::generateFileName(QString& suggestedName)
+{
+    QDir editorTempDir = QDir(QString());
+    editorTempDir.cd(editorTempPath());
+
+    for(int i=0; i<MAX_VCARDS; i++)
+    {
+        QString searchFileName = suggestedName;
+        if(i>0)
+        {
+            searchFileName.append(QString::number(i));
+        }
+        searchFileName.append(FILE_EXTN);
+
+        // check if filename is already used by an attachment in container
+        bool alreadyExists = false;
+        if(mAttachmentContainer)
+        {
+            MsgUnifiedEditorAttachmentList attList =
+                    mAttachmentContainer->attachmentList();
+            int attCount = attList.count();
+            for(int j=0; j<attCount; j++)
+            {
+                QFileInfo fileinfo(attList.at(j)->path());
+                if(searchFileName == fileinfo.fileName())
+                {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+        }
+
+        if(!alreadyExists)
+        {
+            if(i>0)
+            {
+                suggestedName.append(QString::number(i));
+            }
+            break;
+        }
+    }
+    QString filepath(editorTempPath());
+    filepath.append(suggestedName);
+    filepath.append(FILE_EXTN);
+    return filepath;
+}
+
+void MsgUnifiedEditorView::handleViewExtnActivated(HbListWidgetItem* item)
+    {
+    QString itemText = item->text();
+    
+    if(itemText == LOC_PHOTO)
+        {
+        //launch photo picker.
+        fetchImages();  
+    }
+    else if(itemText == LOC_SOUND)
+        {
+        //launch audio picker
+        fetchAudio();
+    }
+    else if(itemText == LOC_BUSINESS_CARD)
+        {
+        //launch contact card picker.
+        fetchContacts();
+    }
+   
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::fetchContacts
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorView::fetchContacts()
+{
+    QList<QVariant> args;
+    QString serviceName("com.nokia.services.phonebookservices");
+    QString operation("fetch(QString,QString,QString)");
+    XQAiwRequest* request;
+    XQApplicationManager appManager;
+    request = appManager.create(serviceName, "Fetch", operation, true); //embedded
+    if ( request == NULL )
+    {
+        QCRITICAL_WRITE("AIW-ERROR: NULL request");
+        return;       
+    }
+
+    // Result handlers
+    connect (request, SIGNAL(requestOk(const QVariant&)), 
+        this, SLOT(contactsFetched(const QVariant&)));
+    connect (request, SIGNAL(requestError(int,const QString&)), 
+        this, SLOT(serviceRequestError(int,const QString&)));
+
+    args << QString(tr("Phonebook")); 
+    args << KCntActionAll;
+    args << KCntFilterDisplayAll;
+
+    request->setArguments(args);
+    if(!request->send())
+    {
+        QDEBUG_WRITE_FORMAT("AIW-ERROR: Request Send failed:",request->lastError());
+    }
+    delete request;
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::fetchImages
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorView::fetchImages()
+{
+    QString interface("Image");
+    QString operation("fetch(QVariantMap,QVariant)");
+    XQAiwRequest* request = NULL;
+    XQApplicationManager appManager;
+    request = appManager.create(interface, operation, true);//embedded
+    if(!request)
+    {     
+        QCRITICAL_WRITE("AIW-ERROR: NULL request");
+        return;
+    }
+
+    connect(request, SIGNAL(requestOk(const QVariant&)),
+        this, SLOT(imagesFetched(const QVariant&)));
+    connect(request, SIGNAL(requestError(int,const QString&)),
+        this, SLOT(serviceRequestError(int,const QString&)));
+   
+    // Make the request
+    if (!request->send())
+    {
+        QDEBUG_WRITE_FORMAT("AIW-ERROR: Request Send failed:" , request->lastError());
+    }  
+    delete request;
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::fetchAudio
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorView::fetchAudio()
+{
+    QString service("Music Fetcher");
+    QString interface("com.nokia.services.media.Music");
+    QString operation("fetch(QString)");
+    XQAiwRequest* request = NULL;
+    XQApplicationManager appManager;
+    request = appManager.create(service, interface, operation, true); //embedded
+    if(!request)
+    {
+        QCRITICAL_WRITE("AIW-ERROR: NULL request");
+        return;
+    }
+
+    connect(request, SIGNAL(requestOk(const QVariant&)),
+        this, SLOT(audiosFetched(const QVariant&)));
+    connect(request, SIGNAL(requestError(int,const QString&)),
+        this, SLOT(serviceRequestError(int,const QString&)));
+
+    // Make the request
+    if (!request->send())
+    {
+        QDEBUG_WRITE_FORMAT("AIW-ERROR: Request Send failed :",request->lastError());
+    }
+    delete request;
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::contactsFetched
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorView::contactsFetched(const QVariant& value)
+{
+    // create a vcard for each contact fetched and add as attachment
+    QStringList attachmentList;
+    if(createVCards(value, attachmentList) == KErrNone)
+    {
+        addAttachments(attachmentList);
+    }
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::imagesFetched
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorView::imagesFetched(const QVariant& result )
+{
+    if(result.canConvert<QStringList>())
+    {
+        QStringList fileList = result.value<QStringList>();
+        if ( fileList.size()>0 )
+        {
+            QString filepath(QDir::toNativeSeparators(fileList.at(0)));
+            mBody->setImage(filepath);
+            addSubject();
+        }
+    }
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::audiosFetched
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorView::audiosFetched(const QVariant& result )
+{
+    if(result.canConvert<QStringList>())
+    {
+        QStringList fileList = result.value<QStringList>();
+        if ( fileList.size()>0 && !fileList.at(0).isEmpty())
+        {
+            QString filepath(QDir::toNativeSeparators(fileList.at(0)));
+            QDEBUG_WRITE_FORMAT("Received audio file path = ", fileList.at(0));
+            mBody->setAudio(filepath);
+            addSubject();
+        }
+    }
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::serviceRequestError
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorView::serviceRequestError(int errorCode, const QString& errorMessage)
+{
+    QDEBUG_WRITE_FORMAT(errorMessage,errorCode);
+}
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::activateInputBlocker
+// @see header file
+//--------------------------------------------------------------
+void MsgUnifiedEditorView::activateInputBlocker()
+    {
+        this->grabMouse();
+        this->grabKeyboard();
+    }
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::deactivateInputBlocker
+// @see header file
+//--------------------------------------------------------------
+void MsgUnifiedEditorView::deactivateInputBlocker()
+    {    
+        this->ungrabKeyboard();
+        this->ungrabMouse();
+    }
 
 //EOF

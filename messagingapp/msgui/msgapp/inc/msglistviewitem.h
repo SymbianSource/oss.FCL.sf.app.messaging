@@ -72,7 +72,21 @@ public:
      * @return bool
      */
     bool hasUnReadMsg();
- 		    
+    
+private:
+
+    /**
+     * Returns the preview text based on message type, sub type and state.
+     * @return QString
+     */
+    QString previewText(int msgType, int msgSubType, int msgState,int msgDirection);
+ 
+    /**
+     * return the preview text based on state.
+     * @return bool
+     */
+    QString textBySendState(int sendState,int msgDirection);
+    
 private:
     /**
  	   * Property to change the color of text

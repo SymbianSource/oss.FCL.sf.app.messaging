@@ -29,7 +29,7 @@
 /** 
  * CS Server Conversation Contact Details class
  * This shall hold all the details of contact associated with a 
- * conversation like name, numbers and contact link
+ * conversation like name, numbers and contact id
  */
 class CCsConversationContact : public CBase
 {
@@ -46,52 +46,20 @@ public:
     ~CCsConversationContact();
 
     /**
-     * GetFirstName
+     * GetDisplayName
      * Get the first name of contact
      *  
      * @return  returns the First name        
      */
-    HBufC* GetFirstName() const;
+    HBufC* GetDisplayName() const;
 
     /**
-     * GetLastName
-     * Get the last name of contact 
-     *   
-     * @return  returns last name      
-     */
-    HBufC* GetLastName() const;
-    
-    /**
-     * GetNickName
-     * Get the nick name of contact 
-     *   
-     * @return  returns nick name      
-     */
-    HBufC* GetNickName() const;
-
-    /**
-     * SetFirstNameL
+     * SetDisplayNameL
      * Set the first name of contact  
      * 
-     * @param aFirstName first name       
+     * @param aDisplayName first name       
      */
-    void SetFirstNameL(const TDesC& aFirstName);
-
-    /**
-     * SetLastNameL
-     * Set the last name of contact  
-     *   
-     * @param aLastName  last name     
-     */
-    void SetLastNameL(const TDesC& aLastName);
-    
-    /**
-     * SetNickNameL
-     * Set the nick name of contact  
-     *   
-     * @param aNickName  nick name     
-     */
-    void SetNickNameL(const TDesC& aNickName);
+    void SetDisplayNameL(const TDesC& aDisplayName);
 
     /**
      * GetContactId
@@ -155,21 +123,7 @@ private:
      * Conversation first name
      * Own.
      */
-    HBufC* iFirstName;
-
-    /**
-     * iLastName
-     * Conversation last name
-     * Own.
-     */
-    HBufC* iLastName;
-
-    /**
-     * iNickName
-     * Conversation nick name
-     * Own.
-     */
-    HBufC* iNickName;
+    HBufC* iDisplayName;   
 
     /**
      * iContactId

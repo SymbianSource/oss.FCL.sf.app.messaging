@@ -17,11 +17,7 @@
  */
 #include "univiewerfeeder_p.h"
 // SYSTEM INCLUDES
-#include <mtclreg.h>
-#include <mtclbase.h>
 #include <msvstd.h>
-#include <txtetext.h>
-#include <txtrich.h>
 #include <s60qconversions.h>
 #include <msvids.h>
 #include <qtcontactsglobal.h>
@@ -53,10 +49,10 @@ UniViewerFeederPrivate::~UniViewerFeederPrivate()
 {
     q_ptr = NULL;
     clearContent();
-    if(pluginLoader)
+    if(mPluginLoader)
     {
-        delete pluginLoader;
-        pluginLoader = NULL;
+        delete mPluginLoader;
+        mPluginLoader = NULL;
     }
 }
 
@@ -69,13 +65,12 @@ void UniViewerFeederPrivate::initL(qint32 msgId)
 {
     QDEBUG_WRITE("UniViewerFeederPrivate::initL start");
     TMsvId serviceId = KMsvNullIndexEntryId;
-    pluginInterface = NULL;
+    mPluginInterface = NULL;
     mMsgId = msgId;
-    pluginLoader = new UniDataModelLoader();
-    pluginLoader->loadPlugins();
-    pluginInterface = pluginLoader->getDataModelPlugin("sms");
+    mPluginLoader = new UniDataModelLoader();
+    mPluginInterface = mPluginLoader->getDataModelPlugin(ConvergedMessage::Sms);
 
-    mSession = pluginInterface->session();
+    mSession = mPluginInterface->session();
     mSession->GetEntry(msgId, serviceId, mEntry);
     QDEBUG_WRITE("UniViewerFeederPrivate::initL end");
 }
@@ -134,9 +129,18 @@ int UniViewerFeederPrivate::priority()
 // ---------------------------------------------------------------------------
 QString UniViewerFeederPrivate::subject()
 {
-    return pluginInterface->subject();
+    return mPluginInterface->subject();
 }
 
+// ---------------------------------------------------------------------------
+// UniViewerFeederPrivate::subject
+// Returns the message subject.
+// ---------------------------------------------------------------------------
+
+int UniViewerFeederPrivate::sendingState()
+{
+    return mEntry.SendingState();
+}
 // ---------------------------------------------------------------------------
 // UniViewerFeederPrivate::timeStamp
 // Returns the time stamp
@@ -144,7 +148,7 @@ QString UniViewerFeederPrivate::subject()
 QDateTime UniViewerFeederPrivate::timeStamp()
 {
 
-    return pluginInterface->timeStamp();
+    return mPluginInterface->timeStamp();
 }
 
 // ---------------------------------------------------------------------------
@@ -154,14 +158,12 @@ QDateTime UniViewerFeederPrivate::timeStamp()
 void UniViewerFeederPrivate::fetchDetailsL()
 {
     QDEBUG_WRITE("UniViewerFeederPrivate fetchDetailsL : SMS start");
-
     if (msgType() == KSenduiMtmSmsUidValue)
     {
         QString body;
-        pluginInterface->body(body);
+        mPluginInterface->body(body);
         q_ptr->emitMsgBody(body);
     }
-
     QDEBUG_WRITE("UniViewerFeederPrivate fetchDetailsL : SMS END");
 }
 
@@ -171,7 +173,7 @@ void UniViewerFeederPrivate::fetchDetailsL()
 // ---------------------------------------------------------------------------
 bool UniViewerFeederPrivate::hasAttachments()
 {
-    return pluginInterface->hasAttachment();
+    return mPluginInterface->hasAttachment();
 }
 // ---------------------------------------------------------------------------
 // UniViewerFeederPrivate::attachmentsList
@@ -179,7 +181,7 @@ bool UniViewerFeederPrivate::hasAttachments()
 // ---------------------------------------------------------------------------
 UniMessageInfoList UniViewerFeederPrivate::attachmentsList()
 {
-    return pluginInterface->attachmentList();
+    return mPluginInterface->attachmentList();
 }
 
 // ---------------------------------------------------------------------------
@@ -188,7 +190,7 @@ UniMessageInfoList UniViewerFeederPrivate::attachmentsList()
 // ---------------------------------------------------------------------------
 int UniViewerFeederPrivate::attachmentCount()
 {
-    return pluginInterface->attachmentCount();
+    return mPluginInterface->attachmentCount();
 }
 
 // ---------------------------------------------------------------------------
@@ -197,7 +199,7 @@ int UniViewerFeederPrivate::attachmentCount()
 // ---------------------------------------------------------------------------
 UniMessageInfoList UniViewerFeederPrivate::objectsList()
 {
-    return pluginInterface->objectList();
+    return mPluginInterface->objectList();
 }
 
 // ---------------------------------------------------------------------------
@@ -206,7 +208,7 @@ UniMessageInfoList UniViewerFeederPrivate::objectsList()
 // ---------------------------------------------------------------------------
 int UniViewerFeederPrivate::objectCount()
 {
-    return pluginInterface->objectCount();
+    return mPluginInterface->objectCount();
 }
 
 // ---------------------------------------------------------------------------
@@ -224,7 +226,7 @@ int UniViewerFeederPrivate::slideCount()
 // ---------------------------------------------------------------------------
 UniMessageInfoList UniViewerFeederPrivate::slideContent(int slidenum)
 {
-    return pluginInterface->slideContent(slidenum);
+    return mPluginInterface->slideContent(slidenum);
 }
 
 // ---------------------------------------------------------------------------
@@ -244,18 +246,18 @@ void UniViewerFeederPrivate::updateContent(qint32 msgId)
 
     if (msgType() == KSenduiMtmSmsUidValue)
     {
-        pluginInterface = pluginLoader->getDataModelPlugin("sms");
-        pluginInterface->setMessageId(msgId);
+        mPluginInterface = mPluginLoader->getDataModelPlugin(ConvergedMessage::Sms);
+        mPluginInterface->setMessageId(msgId);
     }
 
     if (msgType() == KSenduiMtmMmsUidValue)
     {
-        pluginInterface = pluginLoader->getDataModelPlugin("mms");
-        pluginInterface->setMessageId(msgId);
-        mSlideCount = pluginInterface->slideCount();
+        mPluginInterface = mPluginLoader->getDataModelPlugin(ConvergedMessage::Mms);
+        mPluginInterface->setMessageId(msgId);
+        mSlideCount = mPluginInterface->slideCount();
     }
-    pluginInterface->toRecipientList(mToAddressList);
-    pluginInterface->ccRecipientList(mCcAddressList);
+    mPluginInterface->toRecipientList(mToAddressList);
+    mPluginInterface->ccRecipientList(mCcAddressList);
 }
 
 // ---------------------------------------------------------------------------
@@ -264,15 +266,12 @@ void UniViewerFeederPrivate::updateContent(qint32 msgId)
 // ---------------------------------------------------------------------------
 ConvergedMessageAddressList UniViewerFeederPrivate::toAddressList()
 {
+    QString alias = QString();
     for (int i = 0; i < mToAddressList.count(); ++i)
     {
-        if (mToAddressList.at(i)->alias().isEmpty())
-        {
-            QString alias = QString();
-            GetNameFromContacts(mToAddressList.at(i)->address(), alias);
-            mToAddressList.at(i)->setAlias(alias);
-            alias.clear();
-        }
+        GetNameFromContacts(mToAddressList.at(i)->address(), alias);
+        mToAddressList.at(i)->setAlias(alias);
+        alias.clear();
     }
     return mToAddressList;
 }
@@ -283,15 +282,13 @@ ConvergedMessageAddressList UniViewerFeederPrivate::toAddressList()
 // ---------------------------------------------------------------------------
 ConvergedMessageAddressList UniViewerFeederPrivate::ccAddressList()
 {
+    QString alias = QString();
     for (int i = 0; i < mCcAddressList.count(); ++i)
     {
-        if (mCcAddressList.at(i)->alias().isEmpty())
-        {
-            QString alias = QString();
-            GetNameFromContacts(mCcAddressList.at(i)->address(), alias);
-            mCcAddressList.at(i)->setAlias(alias);
-            alias.clear();
-        }
+        GetNameFromContacts(mCcAddressList.at(i)->address(), alias);
+        mCcAddressList.at(i)->setAlias(alias);
+        alias.clear();
+
     }
     return mCcAddressList;
 }
@@ -302,7 +299,7 @@ ConvergedMessageAddressList UniViewerFeederPrivate::ccAddressList()
 // ---------------------------------------------------------------------------
 int UniViewerFeederPrivate::messageSize()
 {
-    return pluginInterface->messageSize();
+    return mPluginInterface->messageSize();
 }
 
 // ---------------------------------------------------------------------------
@@ -311,7 +308,7 @@ int UniViewerFeederPrivate::messageSize()
 // ---------------------------------------------------------------------------
 void UniViewerFeederPrivate::fromAddressAndAlias(QString& from, QString& alias)
 {
-    pluginInterface->fromAddress(from);
+    mPluginInterface->fromAddress(from);
     GetNameFromContacts(from, alias);
 }
 
@@ -351,31 +348,30 @@ int UniViewerFeederPrivate::GetNameFromContacts(const QString& address,
 
     phoneFilter.setValue(address); // this is the phone number to be resolved
 
-    QList<QContactLocalId> matchingContacts =
-            contactManager.contacts(phoneFilter);
+    QList<QContactSortOrder> sortOrder;
+    QList<QContact> matchingContacts =
+            contactManager.contacts(phoneFilter,
+                                    sortOrder,
+                                    QStringList());
+                                    
     int count = 0;
     if (matchingContacts.count() > 0)
     {
-        QContact match = contactManager.contact(matchingContacts.at(0));
-        
-        QContactName name = match.detail(QContactName::DefinitionName);
-        QString nickName(match.detail<QContactNickname> ().nickname());
+        QContact match = matchingContacts.at(0);       
         
         QString displayLabel = match.displayLabel();
-          
-        QList<QContactPhoneNumber> numbers =
-                match.details<QContactPhoneNumber> ();
-        count = numbers.count();
-        if(displayLabel != "Unnamed")
+
+        if (displayLabel != "Unnamed")
         {
             alias.append(displayLabel);
         }
-        else if(!nickName.isEmpty())
-        {
-            alias.append(nickName);
-        }
-            
+        
+        QList<QContactPhoneNumber> numbers =
+                match.details<QContactPhoneNumber> ();
+        count = numbers.count();
+     
     }
+    
     return count;
 }
 

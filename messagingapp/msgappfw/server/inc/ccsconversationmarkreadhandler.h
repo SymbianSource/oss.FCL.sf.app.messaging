@@ -71,6 +71,7 @@ public:
 public: // From CActive
     void RunL();
     void DoCancel();
+    TInt RunError(TInt aError);
 
 private:    
     CCsConversationMarkReadHandler();

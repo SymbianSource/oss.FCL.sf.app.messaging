@@ -22,7 +22,7 @@
 // SYSTEM INCLUDES
 #include <ccsrequesthandler.h>
 #include <mcsresultsobserver.h>
-
+#include <msvstd.h>
 // USER INCLUDES
 
 // FORWARD DECLARATIONS
@@ -84,7 +84,12 @@ public:
      * Delete all messages.
      * @param msgIdList, message list.
      */ 
-    void deleteMessages(RArray<TInt>& aIdArray); 
+    void deleteMessages(RArray<TInt>& aIdArray);
+
+    /**
+     * Delete all draft messages.
+     */
+    void deleteAllDraftMessagesL();
 
     /**
      * Marks the unread conversations as read
@@ -131,6 +136,31 @@ public:
      *  Starts fetching remaing conversations
      */
     void fetchMoreConversations();
+
+    
+    /**
+     *  Resend a failed message
+	 * @param messageId TMsvId The msv id of the entry to resend
+	 * @return bool true if success
+     */
+    bool resendMessage(TMsvId messageId);
+    
+    /**
+     * Download a specified message
+     * @param aId TMsvId of the message 
+     * @return KErrNone if Download request is successful, 
+     *         KErrNotFound if settings are not available,
+     *         KErrGeneral for other cases
+     */
+    TInt downloadMessage(TMsvId messageId);
+    
+    /**
+     * Query if the download operation be performed for
+     * a message notification entry
+     * @param aId, message notification id
+     * @return true if download operation is possible
+     */
+    bool downloadOperationSupported(TMsvId messageId);
     
 public: // From MCsResultsObserver
 

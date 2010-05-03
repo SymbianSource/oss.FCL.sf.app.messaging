@@ -75,4 +75,6 @@ EXPORTS
 	_ZNK26ConvergedMessageAttachment8filePathEv @ 74 NONAME
 	_ZNK26ConvergedMessageAttachment9serializeER11QDataStream @ 75 NONAME
 	_ZNK26ConvergedMessageAttachmenteqERKS_ @ 76 NONAME
+	_ZN16ConvergedMessage17setMessageSubTypeENS_14MessageSubTypeE @ 77 NONAME
+	_ZNK16ConvergedMessage14messageSubTypeEv @ 78 NONAME
 

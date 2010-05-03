@@ -26,67 +26,63 @@
 
 const QString debugFileName("c:/msgnotifier.txt");
 
-
 #ifdef _DEBUG_TRACES_
 void debugInit(QtMsgType type, const char *msg)
- {
- 
- QFile ofile(debugFileName);
-    if (!ofile.open(QIODevice::Append | QIODevice::Text))
-    {
+{
+
+    QFile ofile(debugFileName);
+    if (!ofile.open(QIODevice::Append | QIODevice::Text)) {
         qFatal("error opening results file");
         return;
     }
     QDateTime dt = QDateTime::currentDateTime();
 
     QTextStream out(&ofile);
-    switch (type)
-    {
-        case QtDebugMsg:
+    switch (type) {
+    case QtDebugMsg:
         out << "\n DEBUG:";
         out << msg;
         break;
-        case QtWarningMsg:
+    case QtWarningMsg:
         out << "\n WARN:";
         out << msg;
         break;
-        case QtCriticalMsg:
+    case QtCriticalMsg:
         out << "\n ";
         out << dt.toString("dd/MM/yyyy hh:mm:ss.zzz:ap");
         out << " CRITICAL:";
         out << msg;
         break;
-        case QtFatalMsg:
+    case QtFatalMsg:
         out << "\n FATAL:";
         out << msg;
         abort();
         break;
-        default:
+    default:
         out << " No Log Selection Type:";
         out << msg;
         break;
 
     }
- }
+}
 #endif
 
-int main(int argc,char *argv[])
+int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc,argv);
-    
-#ifdef _DEBUG_TRACES_
-	//Debug Logs
-		QFile ofile;
-    if (ofile.exists(debugFileName)) {
-    ofile.remove(debugFileName);
-    }
-	qInstallMsgHandler(debugInit);
-#endif
+    QCoreApplication app(argc, argv);
 
-    // create harvester 
-    QPointer<MsgNotifier> msgNotifier = new MsgNotifier();   
-    int r = app.exec();    
+#ifdef _DEBUG_TRACES_
+    //Debug Logs
+    QFile ofile;
+    if (ofile.exists(debugFileName)) {
+        ofile.remove(debugFileName);
+    }
+    qInstallMsgHandler(debugInit);
+#endif
+	  // TODO: Get notifications at startup time.handled later
+    QPointer<MsgNotifier> msgNotifier = new MsgNotifier();
+    int r = app.exec();
     delete msgNotifier;
     return r;
- }
- 
+}
+

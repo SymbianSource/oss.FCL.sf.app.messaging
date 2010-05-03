@@ -33,27 +33,30 @@ const int SNAP_DELAY = 350;
 MsgUnifiedEditorLineEdit::MsgUnifiedEditorLineEdit(const QString& label,QGraphicsItem *parent):
 HbLineEdit(parent),
 mSelectionStart(-1),
-mSelectionEnd(-1)
+mSelectionEnd(-1),
+mDefaultBehaviour(false)
 {
+    QString labelStr = label.trimmed();
+    
     QTextCursor cursor(this->textCursor());
     QTextCharFormat colorFormat(cursor.charFormat());
    
-    QColor fgColor = colorFormat.foreground().color();     
+    QColor fgColor = this->palette().color(QPalette::Text);     
     fgColor.setAlpha(fadedAlpha);
     colorFormat.setForeground(fgColor);
-    cursor.insertText(label , colorFormat);
+    cursor.insertText(labelStr , colorFormat);
 
     fgColor.setAlpha(solidAlpha);
     colorFormat.setForeground(fgColor);
 
     cursor.insertText(" ",colorFormat);    
 
-    mLabelExpr.setPattern(QString("^"+label+" $"));
-    mLabel = label+" ";
+    mLabelExpr.setPattern(QString("^"+labelStr+" $"));
+    mLabel = labelStr+" ";
 
     connect(this,SIGNAL(selectionChanged(QTextCursor,QTextCursor)),
             this,SLOT(selectionChanged(QTextCursor,QTextCursor)));
-    connect(this, SIGNAL(textChanged(QString)), this, SLOT(onTextChanged(QString)));
+    connect(this, SIGNAL(contentsChanged()), this, SLOT(onContentsChanged()));
 }
 
 MsgUnifiedEditorLineEdit::~MsgUnifiedEditorLineEdit()
@@ -62,6 +65,14 @@ MsgUnifiedEditorLineEdit::~MsgUnifiedEditorLineEdit()
 
 void MsgUnifiedEditorLineEdit::inputMethodEvent(QInputMethodEvent *event)
 {
+    //let it go in default way.
+    if(mDefaultBehaviour)
+    {
+        HbAbstractEdit::inputMethodEvent(event);
+        event->accept();
+        return;
+    }
+
     if (!event->commitString().isEmpty() || event->replacementLength())
     {
         if (event->commitString().contains(expr))
@@ -95,6 +106,12 @@ void MsgUnifiedEditorLineEdit::keyPressEvent(QKeyEvent *event)
 
     if(event->key()== Qt::Key_Enter || event->key()== Qt::Key_Return)
     {
+        if(mDefaultBehaviour)
+        {
+            HbAbstractEdit::keyReleaseEvent(event);
+            event->accept();
+            return;
+        }
         if(this->text().isEmpty() || this->text().contains(sepAtEnd) || this->text().contains(mLabelExpr))
         {
             event->accept();
@@ -269,6 +286,12 @@ void MsgUnifiedEditorLineEdit::keyPressEvent(QKeyEvent *event)
 
     if(!str.isEmpty())
     {
+        if(mDefaultBehaviour)
+        {
+            HbAbstractEdit::keyPressEvent(event);
+            event->accept();
+            return;
+        }
         if (str.contains(expr))
         {
             if(this->text().isEmpty() || this->text().contains(sepAtEnd) || this->text().contains(mLabelExpr))
@@ -337,39 +360,47 @@ void MsgUnifiedEditorLineEdit::mouseReleaseEvent(QGraphicsSceneMouseEvent* event
 
 void MsgUnifiedEditorLineEdit::setText(const QString& text)
 {
-    QInputMethodEvent e;
-    //make sure previous text is complete.
-    e.setCommitString(";");
-    this->inputMethodEvent(&e);
-    this->setCursorPosition(this->text().length());
 
-    QTextCursor cursor(this->textCursor());
-    QTextCharFormat colorFormat(cursor.charFormat());
-    QColor fgColor = colorFormat.foreground().color();     
-    fgColor.setAlpha(fadedAlpha);
-    colorFormat.setUnderlineColor(fgColor);
+    if(!mDefaultBehaviour)
+    {
+        QInputMethodEvent e;
+        //make sure previous text is complete.
+        e.setCommitString(";");
+        this->inputMethodEvent(&e);
+        this->setCursorPosition(this->text().length());
 
-    colorFormat.setFontUnderline(true);  
-    cursor.insertText(text , colorFormat);
-    colorFormat.setFontUnderline(false);
-    
-    cursor.insertText(replacementStr,colorFormat);
+        QTextCursor cursor(this->textCursor());
+        QTextCharFormat colorFormat(cursor.charFormat());
+        QColor fgColor = colorFormat.foreground().color();
+        fgColor.setAlpha(fadedAlpha);
+        colorFormat.setUnderlineColor(fgColor);
+
+        colorFormat.setFontUnderline(true);
+        cursor.insertText(text , colorFormat);
+        colorFormat.setFontUnderline(false);
+
+        cursor.insertText(replacementStr,colorFormat);       
+    }
+    else
+    {
+       this->setCursorPosition(this->text().length());
+       QTextCursor cursor(this->textCursor());
+       cursor.insertText(text);
+    }
     
     this->setCursorVisibility(Hb::TextCursorHidden);
 }
 
 QStringList MsgUnifiedEditorLineEdit::addresses()
-{    
-    QString text = this->text();
-    text = text.remove(mLabel);
+{
+    QString text = this->content();
     QStringList list = text.split(replacementStr,QString::SkipEmptyParts);
-    //list.removeDuplicates();
     return list;
 }
 
 void MsgUnifiedEditorLineEdit::focusInEvent(QFocusEvent* event)
 {    
-    HbAbstractEdit::focusInEvent(event);
+    HbLineEdit::focusInEvent(event);
     this->setCursorVisibility(Hb::TextCursorVisible);
 }
 
@@ -432,16 +463,18 @@ void MsgUnifiedEditorLineEdit::selectionChanged(const QTextCursor &oldCursor, co
         return;
     }
 
-    mSelectionStart  = newCursor.selectionStart();
-    mSelectionEnd    = newCursor.selectionEnd();
+    if(!mDefaultBehaviour)
+        {
+        mSelectionStart  = newCursor.selectionStart();
+        mSelectionEnd    = newCursor.selectionEnd();
 
-    if(mSelectionStart == mSelectionEnd )
-    {
-        return;
-    }
-
-    mSelectionSnapTimer.start(SNAP_DELAY,this);
-
+        if(mSelectionStart == mSelectionEnd )
+            {
+            return;
+            }
+    
+        mSelectionSnapTimer.start(SNAP_DELAY,this);
+        }
 }
 
 void MsgUnifiedEditorLineEdit::timerEvent(QTimerEvent *event)
@@ -478,10 +511,25 @@ void MsgUnifiedEditorLineEdit::timerEvent(QTimerEvent *event)
     }
 }
 
-void MsgUnifiedEditorLineEdit::onTextChanged(const QString& text)
+void MsgUnifiedEditorLineEdit::setDefaultBehaviour(bool defaultBehaviour)
 {
-    const QString changedText = const_cast<QString&>(text).remove(mLabel);
-    emit addressTextChanged(changedText);
+    mDefaultBehaviour = defaultBehaviour;
 }
 
+QString MsgUnifiedEditorLineEdit::text() const
+{
+    return HbLineEdit::text();
+}
+
+QString MsgUnifiedEditorLineEdit::content() const
+{
+    QString text = this->text();
+    text.remove(mLabel);
+    return text;
+}
+
+void MsgUnifiedEditorLineEdit::onContentsChanged()
+{
+    emit contentsChanged(content());
+}
 // eof

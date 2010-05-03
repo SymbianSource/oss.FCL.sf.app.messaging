@@ -40,12 +40,11 @@ public:
     /**
      * Constructor
      */
-    ContactDetail():contactId(-1),firstName(QString()),
-                    lastName(QString()){};
+    ContactDetail():contactId(-1),displayName(QString()){};
+    
 public:
     int contactId;
-    QString firstName;
-    QString lastName;
+    QString displayName;
     QStringList addressList;
 };
 
@@ -82,11 +81,22 @@ public slots:
      */
     void send(QVariant data);
     
+     /**
+     * Opens the viewer to view the message.
+     * @param msgId message id of the message.
+     */
+    void view(int msgId);
+    
     /**
      * depricated api. will be removed in future.
      */
     void openConversationView(QString number, QString name);
-    
+
+    /**
+     * send called with prepopulated message body.
+     */
+    void send(const QString phoneNumber, const QString alias, const QString bodyText);
+
 signals:
 
 private:

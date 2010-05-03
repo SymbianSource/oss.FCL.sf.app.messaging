@@ -20,15 +20,21 @@
 
 // INCLUDES
 #include "msgbaseview.h"
+#include "convergedmessage.h"
 
 //Forward declarations
 class HbListView;
 class HbAbstractViewItem;
-class MsgUiUtilsManager;
-class ConvergedMessage;
+class MsgSendUtil;
 class QStandardItemModel;
 class MsgEditorWidget;
 class MsgContactCardWidget;
+class MsgConversationViewItem;
+class HbStaticVkbHost;
+class QGraphicsLinearLayout;
+
+//Defines
+#define INVALID_MSG_ID -1
 
 /**
  * This class provides the message chat view for the messaging application.
@@ -51,11 +57,6 @@ public:
      */
     ~MsgConversationView();
 
-    /**
-     * Set message data
-     * @param message converged message
-     */
-    void setMessageData(const ConvergedMessage &message);
 
     /**
      * Clear editors
@@ -69,7 +70,15 @@ public:
      */
     bool saveContentToDrafts();
 
-public:
+private slots:
+
+    /**
+     * Slot is called when menu is about to be shown.
+     * Populates the menu with relevant actions.
+     */
+    void menuAboutToShow();
+
+private:
 
     /**
      * View initialization function.
@@ -77,40 +86,9 @@ public:
     void setupView();
 
     /**
-     * Creates view menu items.
+     * Setup view menu items.
      */
-    void addMenu();
-
-public slots:
-
-    /**
-     * Slot to receive error sign.
-     * @param error The error as a string to be displayed on the screen.
-     */
-
-    void serviceError(const QString& error);
-   
-private:
-    /**
-     * Load command plugin
-     * @return true if plugin is loaded successfully else false
-     */
-    bool loadCommandPlugin();
-
-    /**
-     * This function shall parse the service Id and check for
-     * type of client
-     * @param serviceId string reference to service id
-     * @return String type the server name
-     */
-    QString parseServiceId(const QString &serviceId);
-
-    /**
-     * Returns the current message type selected in editor.
-     * @return returns message type
-     * @see ConvergedMessage::MessageType
-     */
-    int currentMessageType();
+    void setupMenu();
 
     /**
      * Populates ConvergedMessage for sending.
@@ -118,6 +96,73 @@ private:
      * @see ConvergedMessage::MessageType
      */
     void populateForSending(ConvergedMessage &message);
+    
+    /**
+     * Adds context menu entries to context menu
+     * @param HbMenu context menu
+     * @param int sendingstate.
+     * @see ConvergedMessage::MessageType
+     */
+    void setContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState);
+	
+    /**
+     * Adds context menu entry to context menu for Opening items
+	 * @param MsgConversationViewItem* item whose information is needed.
+     * @param HbMenu context menu
+     * @param int sendingstate.
+     * @see ConvergedMessage::MessageType
+     */
+    void addOpenItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState);
+
+    /**
+     * Adds context menu entry to context menu for Resending items
+     * @param MsgConversationViewItem* item whose information is needed.
+     * @param HbMenu context menu
+     * @param int sendingstate.
+     * @see ConvergedMessage::MessageType
+     */  
+    void addResendItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState);
+
+    /**
+     * Adds context menu entry to context menu for Forwarding items
+	 * @param MsgConversationViewItem* item whose information is needed.
+     * @param HbMenu context menu
+     * @param int sendingstate.
+     * @see ConvergedMessage::MessageType
+     */
+    void addForwardItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState);
+
+    /**
+     * Adds context menu entry to context menu for Deleting items
+	 * @param MsgConversationViewItem* item whose information is needed.
+     * @param HbMenu context menu
+     * @param int sendingstate.
+     * @see ConvergedMessage::MessageType
+     */
+    void addDeleteItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState);
+
+    /**
+     * Adds context menu entry to context menu for Downloading items
+     * @param MsgConversationViewItem* item whose information is needed.
+     * @param HbMenu context menu    
+     * @see ConvergedMessage::MessageType
+     */
+    void addDownloadItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu);
+    
+    /**
+     * Validates if message can be forwarded
+     * @param messageType
+     * @param messageId
+     * @return true if message can be forwarded
+     *         false if message cant be forwarded
+     */
+    bool validateMsgForForward(int &messageType,qint32 &messageId);
+
+    /**
+     * Launches the BT message display service.
+     * @param index Index of the item activated/touched
+     */
+    void launchBtDisplayService(const QModelIndex & index);
 
 public slots:
     /**
@@ -125,12 +170,6 @@ public slots:
      * data
      */
     void refreshView();
-
-    /**
-     * Effect finish handler
-     * data
-     */
-    void effectFinished(const HbEffect::EffectStatus &status);
     
 private slots:
 
@@ -159,40 +198,47 @@ private slots:
 
     // ----------------------------- View Specific Menu Slots--------------------//
 
+   
     /**
-     * Deletes all the conversations
+     * Fetch images 
      */
-    void deleteAll();
+    void fetchImages();
+
+    /**
+     * Fectch conatcts
+     */
+    void fetchContacts();
+
+    /**
+     * Fectch audio
+     */
+    void fetchAudio();
 
     /*
      * Get the photos and launch editor
      */
     void imagesFetched(const QVariant& result );
+    
+    /**
+     * slot to receive fetched contacts for addition
+     */
+    void contactsFetched(const QVariant& value);
 
     /*
      * Get audio files from audio-fetcher and launch editor
      */
     void audiosFetched(const QVariant& result );
-
-    /*
-     * Adds other recipients to editor
+    
+    /**
+     * slot to receive fetched contacts for vcard addition
      */
-    void addRecipients();
-
+    void contactsFetchedForVCards(const QVariant& value);
+    
     /*
      * Adds subject file to editor.
      */
     void addSubject();
 
-    /**
-     * Launches help
-     */
-    void launchHelp();
-
-    /**
-     * Exits the application
-     */
-    void exitApp();
 
     //----------------------Item Specific menu slots ---------------------//
 
@@ -205,6 +251,16 @@ private slots:
      * Deletes the item
      */
     void deleteItem();
+    
+    /**
+     * Resends the item. This is only valid in the failed message case.
+     */
+    void resendMessage();
+
+    /**
+     * Download the specified message
+     */
+    void downloadMessage();
 
     /**
      * Open the item
@@ -219,7 +275,12 @@ private slots:
     /**
      * Save ringing tone
      */
-    void saveRingingTone();
+    void saveRingingTone();   
+    
+    /**
+     * Launch Editor since sms character limit reached
+     */
+    void handleSmsCharLimitReached();   
     
 signals:
     /**
@@ -233,14 +294,48 @@ signals:
      * Emitted when editor is tapped to reply.
      */
     void replyStarted();
+    
+	/**
+	* This signal is emitted when vkb is open.
+	*/
+    void hideChrome(bool);
 
+private slots:
+    /**
+     * Resizes the view when VKB is opened.
+     * This slot is triggered when user taps on the CV editor
+     */
+    void vkbOpened();
+
+    /**
+     * Resizes the view when VKB is closed.
+     * This slot is triggered when VKB focus is lost.
+     */
+    void vkbClosed();
+    
 private:
     /**
      * launch editor when attachment is inserted
-     * @params eflag Editor content to be shown
-     * @params attachment file attachment for editor
+     * @params data used for launching editor with pre-populated content
      */
-    void launchUniEditor(const int editorFields, QString& attachment);
+    void launchUniEditor(const QVariantList& data);
+    
+    /**
+     * Signal emitted when an error is generated.
+     * @param errorCode Error code.
+     * @param errorMessage Error description.
+     */
+    void serviceRequestError(int errorCode, const QString& errorMessage);
+    
+    /**
+     * Activate Input Blocker
+     */
+    void activateInputBlocker();
+
+    /**
+     * Deactivate Input Blocker
+     */
+    void deactivateInputBlocker();
 
 private:
 
@@ -265,11 +360,31 @@ private:
      * Instance of Contact Card widget.
      */
     MsgContactCardWidget* mContactCardWidget;
-
+    
     /**
-     * Utils Manager instance
+     * Send utils instance
      */
-    MsgUiUtilsManager* mUiUtilsManager;
+    MsgSendUtil *mSendUtil;
+ 
+    /**
+     * Instance of the main layout.
+     */
+    QGraphicsLinearLayout *mMainLayout;
+
+	/**
+	 * Flag to track if item has been long pressed.
+	 */
+    bool mItemLongPressed;
+    /*
+     * Instance of VKB 
+     */
+    HbStaticVkbHost* mVkbHost;
+    
+    /**
+     * Flag to check it vkb is open.
+     */
+    bool mVkbopened;
+
 };
 
 #endif // MSG_CONVERSATION_VIEW_H

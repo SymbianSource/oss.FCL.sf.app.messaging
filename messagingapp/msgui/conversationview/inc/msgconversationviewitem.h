@@ -80,7 +80,24 @@ public:
 
 private:
 
+    /**
+     * Set the Icon that displays the message state.
+     */
     void setMessageStateIcon(int messageState);
+
+    /**
+     * Set the Icon that displays the message notification state.
+     */
+    void setNotificationStateIcon(int notificationState);
+
+protected:
+
+    /**
+     * Reimplemented from HbAbstractViewItem.
+     * This function is called whenever item press state changes.
+     * @see HbAbstractViewItem::pressStateChanged
+     */
+    virtual void pressStateChanged (bool pressed, bool animate);
 
 private:
 

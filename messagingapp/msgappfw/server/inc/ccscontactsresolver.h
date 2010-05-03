@@ -41,17 +41,15 @@ QTM_USE_NAMESPACE
 class CCsContactDetail
 {
 public:
+    
 	/**
 	 * Constructor
 	 */
-    CCsContactDetail():contactId(-1),firstName(QString()),
-					lastName(QString()),nickName(QString()){};
+    CCsContactDetail():contactId(-1),displayName(QString()){};
+    
 public:
-	int contactId;
-	QString firstName;
-	QString lastName;
-	QString nickName;
-	QString companyName;
+    int contactId;
+	QString displayName;
 	QStringList addressList;
 };
 

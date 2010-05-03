@@ -42,8 +42,11 @@ public:
      */
     QStringList addresses();
 
+    void setDefaultBehaviour(bool defaultBehaviour = false);
+    QString content() const;
+	
 signals:
-    void addressTextChanged(const QString& text);
+    void contentsChanged(const QString& text);
 
 public slots:
     void setText(const QString &text);
@@ -52,7 +55,7 @@ public slots:
 
 private slots:
     void selectionChanged(const QTextCursor &oldCursor, const QTextCursor& newCursor);
-    void onTextChanged(const QString& text);
+    void onContentsChanged();
     
 protected: // from HbLineEdit
     void inputMethodEvent(QInputMethodEvent *event);
@@ -64,7 +67,7 @@ protected: // from HbLineEdit
 
 private:
     void setHighlight(int currentPos);
-    void textChanged(const QString& text);
+    QString text() const;
 
 private:
     QRegExp mLabelExpr;
@@ -73,6 +76,7 @@ private:
 
     int mSelectionStart;
     int mSelectionEnd;
+    bool mDefaultBehaviour;
 };
 
 #endif // MSGUNIFIEDEDITORLINEEDIT_H

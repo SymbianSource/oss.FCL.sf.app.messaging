@@ -119,6 +119,7 @@ enum TCsServerRequestCommands
      EUserDeleteConversation,
      EGetConversationId,
      EGetConversationIdFromAddress,
+     EGetConversationFromMessageId,
      EUserMarkReadConversation
 };
 
@@ -146,6 +147,7 @@ enum TCsServerResponseCommand
     ERefreshConversationEvent,
     EGetConversationIdComplete,
     EGetConversationIdFromAddressComplete,
+    EGetConversationFromMessageIdComplete,
     EUserMarkReadConversationComplete    
 };
 

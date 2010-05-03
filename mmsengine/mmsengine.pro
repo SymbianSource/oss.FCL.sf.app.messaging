@@ -49,23 +49,7 @@ symbian {
     "./conf/mmsengine.confml                      APP_LAYER_CONFML(mmsengine.confml)" \
     "./conf/mmsengine_100058db.crml               APP_LAYER_CRML(mmsengine_100058db.crml)" \
     "./conf/mmsengine_101fb0d5.crml               APP_LAYER_CRML(mmsengine_101fb0d5.crml)" \
-    "./conf/mmsengine_101fb0d9.crml               APP_LAYER_CRML(mmsengine_101fb0d9.crml)" \
-    "./conf/messaging.confml APP_LAYER_CONFML(messaging.confml)" \
-		"./conf/messaging_101F87EB.crml APP_LAYER_CRML(messaging_101F87EB.crml)" \
-		"./conf/messaging_101F87EC.crml APP_LAYER_CRML(messaging_101F87EC.crml)" \
-		"./conf/messaging_101F87ED.crml APP_LAYER_CRML(messaging_101F87ED.crml)" \
-		"./conf/messaging_101F87EE.crml APP_LAYER_CRML(messaging_101F87EE.crml)" \
-		"./conf/messaging_101F87EF.crml APP_LAYER_CRML(messaging_101F87EF.crml)" \
-		"./conf/messaging_101F8873.crml APP_LAYER_CRML(messaging_101F8873.crml)" \
-		"./conf/messaging_102071F2.crml APP_LAYER_CRML(messaging_102071F2.crml)" \
-		"./conf/messaging_102072E2.crml APP_LAYER_CRML(messaging_102072E2.crml)" \
-		"./conf/messaging_102072E5.crml APP_LAYER_CRML(messaging_102072E5.crml)" \
-		"./conf/messaging_102824A0.crml APP_LAYER_CRML(messaging_102824A0.crml)" \
-		"./conf/messaging_1028281E.crml APP_LAYER_CRML(messaging_1028281E.crml)" \
-		"./conf/messaging_101F8F28.crml APP_LAYER_CRML(messaging_101F8F28.crml)"
-    
-    
-    
+    "./conf/mmsengine_101fb0d9.crml               APP_LAYER_CRML(mmsengine_101fb0d9.crml)"    
 }
 
 symbian {

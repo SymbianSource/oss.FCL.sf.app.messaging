@@ -77,6 +77,18 @@ public:
     void setMessageType(ConvergedMessage::MessageType type);
 
     /**
+     * Get the message sub-type
+     * @return message sub-type
+     */
+    ConvergedMessage::MessageSubType messageSubType() const;
+
+    /**
+     * Set the message sub-type
+     * @param type message sub-type
+     */
+    void setMessageSubType(ConvergedMessage::MessageSubType type);
+
+    /**
      * Get the message priority
      * @return message priority
      */
@@ -341,6 +353,11 @@ private:
      * Message type
      */
     quint8 mMessageType;
+
+    /**
+     * Message type
+     */
+    quint8 mMessageSubType;
 
     /**
      * Message priority

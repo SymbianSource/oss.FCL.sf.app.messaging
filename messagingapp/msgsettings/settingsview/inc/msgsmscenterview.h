@@ -29,10 +29,16 @@ Q_OBJECT
 public:
     explicit MsgSMSCenterView(int view = -1, QGraphicsItem *parent = 0);
     ~MsgSMSCenterView();
-
-    void commitChanges();
-
+    
+signals:
+    void smsCenterEditViewClosed();
+    
+private slots:
+    void onBackAction();
+    void onCloseMessageCenterView();
+    
 private:
+
     MsgSMSCenterSettingsForm* mSMSCenterSettingsForm;
 };
 

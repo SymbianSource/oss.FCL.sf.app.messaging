@@ -47,17 +47,25 @@ public:
         {        
         Sms = 0x00,
         Mms = 0x01,
-        MmsNotification = 0x02,
-        Audio = 0x03,
-        BioMsg = 0x04,
-        BT = 0x05,
-        RingingTone = 0x06,
-        Provisioning = 0x07,
-		VCard = 0x08,
-        VCal = 0x09,
+        MmsNotification = 0x02,        
+        BioMsg = 0x03,
+        BT = 0x04,
         None = 0x50,
         IM = 0x51 
         };
+    
+    /**
+     * Enum defining possible Message sub-types
+     * Ex. vCard, vCal etc..
+     */
+    enum MessageSubType
+    {
+        RingingTone = 0x00,
+        Provisioning = 0x01,
+        VCard = 0x02,
+        VCal = 0x03,
+        Audio = 0x04
+    };
 
     /**
 
@@ -124,6 +132,24 @@ public:
         SentState = 0x08,
         NotApplicable = 0x09
         };
+    
+    /**
+     * Enum defining MMS Notification's Msg State
+     * @attention This enum can have values from 0 to 255 only
+     * Add any new states only at the bottom of this enum
+     */
+    enum MmsNotificationState
+        {
+        NotifNull              = 0x00, // unknown status
+        NotifReadyForFetching  = 0x01, // first state when received in inbox
+        NotifRetrieving        = 0x02, // when MM is fetching ongoin
+        NotifForwarding        = 0x03, // forwarding without retrival
+        NotifForwarded         = 0x04, // state after successful forwarding
+        NotifWaiting           = 0x05, // when settings changed manual->automatic
+        NotifExpired           = 0x06, // expired time has exceed
+        NotifFailed            = 0x07, // when fetching has failed (forwarding?)
+        NotifDeleted           = 0x08  // when msg deleted from server
+        };
 
 public:
 
@@ -172,6 +198,18 @@ public:
      * @param type message type
      */
     void setMessageType(MessageType type);
+    
+    /**
+     * Get the message sub-type
+     * @return message sub-type
+     */
+    MessageSubType messageSubType() const;
+
+    /**
+     * Set the message sub-type
+     * @param type message sub-type
+     */
+    void setMessageSubType(MessageSubType type);
 
     /**
      * Get the message priority

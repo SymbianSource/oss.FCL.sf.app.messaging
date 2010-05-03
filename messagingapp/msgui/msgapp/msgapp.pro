@@ -17,7 +17,7 @@
 TEMPLATE = app
 TARGET = messaging101
 
-ICON = resources/qtg_large_message.svg
+ICON = resources/icons/qtg_large_message.svg
 
 DEPENDPATH += . inc src ../inc
 INCLUDEPATH += .
@@ -30,6 +30,7 @@ INCLUDEPATH += ../unifiedviewer/inc
 INCLUDEPATH += ../../msgsettings/settingsview/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
+INCLUDEPATH += ../../smartmessaging/ringbc/inc
 
 CONFIG += hb service
 
@@ -90,8 +91,10 @@ LIBS += -lappengine \
         -lxqservice \
         -lxqserviceutil \
         -lQtContacts \
-        -lsettingsview
-
+        -lsettingsview \
+        -lringbc \
+		-lunidatamodelloader
+		
 styleplugin.sources += conversationviewplugin.dll \
                        unifiededitorplugin.dll \
                        unifiedviewerplugin.dll

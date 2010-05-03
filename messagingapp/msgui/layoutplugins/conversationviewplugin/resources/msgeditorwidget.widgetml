@@ -1,11 +1,21 @@
 <hbwidget version="0.1">
   <layout name="layout-msg-editor" type="mesh">
-    <meshitem src="sendButton" srcEdge="TOP" dst="msgEditor" dstEdge="TOP" />
-    <meshitem src="sendButton" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
 
     <meshitem src="msgEditor" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="" srcEdge="TOP" dst="msgEditor" dstEdge="TOP" />
+    <meshitem src="msgEditor" srcEdge="TOP" dst="" dstEdge="TOP" />
     <meshitem src="msgEditor" srcEdge="RIGHT" dst="sendButton" dstEdge="LEFT" />
     <meshitem src="msgEditor" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
+    
+    <meshitem src="sendButton" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
+    <meshitem src="sendButton" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
+    
+    <meshitem src="charCounter" srcEdge="TOP" dst="msgEditor" dstEdge="TOP" />
+    <meshitem src="charCounter" srcEdge="RIGHT" dst="msgEditor" dstEdge="RIGHT" />
+
+    <meshitem src="charCounterFrame" srcEdge="LEFT" dst="charCounter" dstEdge="LEFT" />
+    <meshitem src="charCounterFrame" srcEdge="TOP" dst="charCounter" dstEdge="TOP" />
+    <meshitem src="charCounterFrame" srcEdge="RIGHT" dst="charCounter" dstEdge="RIGHT" />
+    <meshitem src="charCounterFrame" srcEdge="BOTTOM" dst="charCounter" dstEdge="BOTTOM" /> 
+    
   </layout>
 </hbwidget>

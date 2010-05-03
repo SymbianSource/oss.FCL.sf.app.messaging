@@ -30,6 +30,8 @@
 // FORWARD DECLARATIONS
 class MsgConversationView;
 class HbListWidgetItem;
+class MsgContactCardWidget;
+class QGraphicsLinearLayout;
 
 class CONVERSATION_VIEW_EXPORT MsgConversationBaseView : public MsgBaseView
     {
@@ -66,7 +68,7 @@ public:
      * saveContentToDrafts
      * Saves the editors content in cv to drafts
      */
-    bool saveContentToDrafts();
+    void saveContentToDrafts();
 
 public slots:   
     /**
@@ -80,14 +82,31 @@ public slots:
      * Slot is triiggered when replying started
      */
     void markMessagesAsRead();
-    
+	   
 private slots:
+   /**
+   * Slot for delayed construction
+   */
+    void doDelayedConstruction();
+    
+	/**
+	* Hides chrome when itu-t is up
+	*/
+    void hideChrome(bool hide);
+	
+	/**
+     * Slot for handling valid returns from the framework.
+     * 
+     * @param result const QVariant&
+     */
+    void handleOk(const QVariant& result);
     
     /**
-     * Open contact card
-     * Slot is triiggered when clicking on CV header
+     * Slot for handling errors. Error ids are provided as 
+     * 32-bit integers.
+     * @param errorCode qint32
      */
-    void openContactDetails();
+    void handleError(int errorCode, const QString& errorMessage);
     
  
  signals:
@@ -104,16 +123,26 @@ private :
     
 private:
    
+   /**
+     * Conversation ID
+     */
+    qint64 mConversationId;
+   
     /**
      * MsgConversationView, main view class
      * Owned
      */
-    MsgConversationView *mConversationView;
-   
+    MsgConversationView *mConversationView;  
+    
     /**
-     * Conversation ID
+     * Contact card widget.
      */
-    qint64 mConversationId;
+    MsgContactCardWidget* mContactCard;
+    
+    /**
+     * Main layout.
+     */
+    QGraphicsLinearLayout* mMainLayout;
 
     };
 

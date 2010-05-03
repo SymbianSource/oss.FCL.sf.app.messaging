@@ -20,6 +20,14 @@
      <meshitem src="textEditFrame" srcEdge="LEFT" dst="textEdit" dstEdge="LEFT" />
      <meshitem src="textEditFrame" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
      
+    <meshitem src="charCounter" srcEdge="TOP" dst="textEdit" dstEdge="TOP" />
+    <meshitem src="charCounter" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
+
+    <meshitem src="charCounterFrame" srcEdge="LEFT" dst="charCounter" dstEdge="LEFT" />
+    <meshitem src="charCounterFrame" srcEdge="TOP" dst="charCounter" dstEdge="TOP" />
+    <meshitem src="charCounterFrame" srcEdge="RIGHT" dst="charCounter" dstEdge="RIGHT" />
+    <meshitem src="charCounterFrame" srcEdge="BOTTOM" dst="charCounter" dstEdge="BOTTOM" />    
+     
   </layout>
   
   <layout name="layout-landscape-no-image" type="mesh">     
@@ -37,6 +45,14 @@
      <meshitem src="textEditFrame" srcEdge="LEFT" dst="textEdit" dstEdge="LEFT" />
      <meshitem src="textEditFrame" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
      <meshitem src="textEditFrame" srcEdge="BOTTOM" dst="textEdit" dstEdge="BOTTOM" />     
+
+     <meshitem src="charCounter" srcEdge="TOP" dst="textEdit" dstEdge="TOP" />
+     <meshitem src="charCounter" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
+
+     <meshitem src="charCounterFrame" srcEdge="LEFT" dst="charCounter" dstEdge="LEFT" />
+     <meshitem src="charCounterFrame" srcEdge="TOP" dst="charCounter" dstEdge="TOP" />
+     <meshitem src="charCounterFrame" srcEdge="RIGHT" dst="charCounter" dstEdge="RIGHT" />
+     <meshitem src="charCounterFrame" srcEdge="BOTTOM" dst="charCounter" dstEdge="BOTTOM" />    
   
   </layout>
   
@@ -59,7 +75,15 @@
      <meshitem src="pixmap" srcEdge="TOP" dst="audioItem" dstEdge="BOTTOM"  />    
      <meshitem src="pixmap" srcEdge="LEFT" dst="" dstEdge="LEFT" />
      <meshitem src="pixmap" srcEdge="RIGHT" dst="textEdit" dstEdge="LEFT" />
-  
+
+     <meshitem src="charCounter" srcEdge="TOP" dst="textEdit" dstEdge="TOP" />
+     <meshitem src="charCounter" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
+
+     <meshitem src="charCounterFrame" srcEdge="LEFT" dst="charCounter" dstEdge="LEFT" />
+     <meshitem src="charCounterFrame" srcEdge="TOP" dst="charCounter" dstEdge="TOP" />
+     <meshitem src="charCounterFrame" srcEdge="RIGHT" dst="charCounter" dstEdge="RIGHT" />
+     <meshitem src="charCounterFrame" srcEdge="BOTTOM" dst="charCounter" dstEdge="BOTTOM" />    
+
   </layout>
   
 </hbwidget>

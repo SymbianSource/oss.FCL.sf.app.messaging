@@ -20,9 +20,10 @@ TARGETTYPE		exe
 CAPABILITY All -TCB
 UID				0
 VENDORID 0x70000001
-SOURCEPATH 		..\tsrc
-USERINCLUDE		..\tinc
-SYSTEMINCLUDE	\epoc32\include
+SOURCEPATH 		../tsrc
+USERINCLUDE		../tinc
+APP_LAYER_SYSTEMINCLUDE_SYMBIAN
+OS_LAYER_ESTLIB_SYSTEMINCLUDE  
 SOURCE			t_SmilDom.cpp t_TestScript.cpp t_ScriptRunner.cpp t_LogFileWriter.cpp
 LIBRARY	      		euser.lib
 LIBRARY			bafl.lib

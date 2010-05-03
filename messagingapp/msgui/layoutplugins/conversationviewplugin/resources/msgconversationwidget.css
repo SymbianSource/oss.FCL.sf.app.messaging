@@ -56,7 +56,6 @@ MsgConversationWidget::bubble
   top:0.0un;
   right:0.0un;
   bottom:0.0un;
-  size-policy:expanding minimum-expanding;
 }
 
 /********************************** BODYTEXT **********************************/
@@ -71,7 +70,7 @@ MsgConversationWidget::bodyText
   font-variant:primary;
   text-align:left;
   text-line-count-min:1;
-  text-line-count-max:2;
+  text-line-count-max:100;
 }
 
 MsgConversationWidget[isMMS="true"][hasImage="true"]::bodyText:landscape
