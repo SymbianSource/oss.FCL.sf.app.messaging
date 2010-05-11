@@ -229,7 +229,8 @@ void CMceMainViewListItemArray::MakeItemL(
 
     aListItem.iMsvId = id;
     aListItem.iExtraItem = EFalse;
-    aListItem.iIconIndex = KErrNotFound;    
+    aListItem.iIconIndex = KErrNotFound;  
+    aListItem.iText.Zero();
     }
 
 // ---------------------------------------------------------------------------
@@ -353,7 +354,7 @@ void CMceMainViewListItemArray::AddExtraItemL( TMceListItem& aNewItem, TInt aInd
     aNewItem.iPrintableText.AppendNum( index );
     aNewItem.iPrintableText.Append( KColumnListSeparator );
     aNewItem.iPrintableText.Append( tempText );
-
+    aNewItem.iText.Zero();
     InsertL( aIndex, aNewItem );
     }
 
@@ -407,7 +408,7 @@ void CMceMainViewListItemArray::AddExtraItemWithIconL(
     aNewItem.iPrintableText.Append( tempText );
     aNewItem.iPrintableText.Append( KColumnListSeparator );
     aNewItem.iPrintableText.Append( secondarytxt );
-
+    aNewItem.iText.Zero();
     InsertL( aIndex, aNewItem );
     }
 
@@ -457,7 +458,7 @@ TPtrC CMceMainViewListItemArray::MakeStringForMainView( TInt aIndex ) const
     tempText.Zero();
     TMsvEntry entry;
     TMsvId serviceId;
-    TInt  visiblecount=0;
+    
     const TMceListItem& item = At( aIndex );
     if ( iSession->GetEntry( item.iMsvId, serviceId, entry ) == KErrNone )
         {
@@ -465,38 +466,26 @@ TPtrC CMceMainViewListItemArray::MakeStringForMainView( TInt aIndex ) const
             {
             TInt messageCount = 0;
             TMsvId id = entry.Id();
+            CONST_CAST( TMceListItem*, &item)->iIconIndex = iBitmapResolver.BitmapIndex( entry, messageCount );
             if(iDefaultViewSettings == KMceConversationview && id == KMsvGlobalInBoxIndexEntryId )
                 {
                 CONST_CAST( TMceListItem*, &item)->iIconIndex = EMceBitmapIndexInbox;
-                }
-            else
-                {
-                CONST_CAST( TMceListItem*, &item)->iIconIndex = iBitmapResolver.BitmapIndex( entry, messageCount );
-                }
+                }            
             CONST_CAST( TMceListItem*, &item)->iMessageCount = messageCount;
             }
+        else if(iListItemArrayObserver )
+            {
+             if(iListItemArrayObserver->MceListItemArrayFlickEvent())
+                 {
+                 return item.iText;
+                 }
+            }
+        
         tempText.AppendNum( item.iIconIndex );
         tempText.Append( KColumnListSeparator );
         tempText.Append( item.iPrintableText );
-        if((iSelectableEmail)||(iEmailFramework))
-            {
-         if( item.iMsvId == KMsvDraftEntryId || 
-                item.iMsvId == KMsvSentEntryId || 
-                item.iMsvId == KMsvDeletedEntryFolderEntryId || 
-                item.iMsvId == KMsvGlobalInBoxIndexEntryId || item.iMsvId == KMsvGlobalOutBoxIndexEntryId )
-               {
-         TRAP_IGNORE( visiblecount = FindVisibleCountL(item.iMsvId) );
-        AppendMessageCountString( tempText, visiblecount );
-               }
-			 else
-			 {
-			 AppendMessageCountString( tempText, item.iMessageCount );
-			 }
-         }
-        else
-        {
-            AppendMessageCountString( tempText, item.iMessageCount );
-        }
+        AppendMessageCountString( tempText, item.iMessageCount );
+               
         if ( entry.Connected() )
             {
             if ( iRoaming )
@@ -542,7 +531,6 @@ TPtrC CMceMainViewListItemArray::MakeStringForMainView( TInt aIndex ) const
                     tempText.AppendNum( (TInt) EMceBitmapIndexInactiveAdd );
                     }
                 }
-
             }
         }
     else
@@ -551,8 +539,11 @@ TPtrC CMceMainViewListItemArray::MakeStringForMainView( TInt aIndex ) const
         __ASSERT_DEBUG( 0, Panic(EMceListItemArrayEntryNotFound ) );
         tempText.AppendNum( (TInt)EMceBitmapIndexUnknown );
         tempText.Append( KColumnListSeparator );
-        tempText.Append( item.iPrintableText );
+        tempText.Append( item.iPrintableText );        
         }
+    //save the complete string as chache, will be used when flick will start
+    CONST_CAST( TMceListItem*, &item)->iText.Zero();
+    CONST_CAST( TMceListItem*, &item)->iText.Copy(tempText);
     return tempText;
     }
 
@@ -1029,15 +1020,12 @@ TBool CMceMainViewListItemArray::MMceUtilsIdleClassStepL( )
                 {
                 TInt messageCount = 0;
                 TMsvId id = entry.Id();
+                item.iIconIndex = iBitmapResolver.BitmapIndex( entry, messageCount );  
                 if(iDefaultViewSettings == KMceConversationview && id == KMsvGlobalInBoxIndexEntryId )
                     {
-                    item.iIconIndex = EMceBitmapIndexInbox;
+                    item.iIconIndex = EMceBitmapIndexInbox;                    
                     }
-                else
-                    {
-                    item.iIconIndex = iBitmapResolver.BitmapIndex( entry, messageCount );     
-                    }              
-                item.iMessageCount = messageCount;
+                  item.iMessageCount = messageCount;
 //                        item.iUnreadMessageCount = unreadMessageCount;
                 if ( iListItemArrayObserver )
                     {
@@ -1200,104 +1188,40 @@ void CMceMainViewListItemArray::ReadMainViewItemsFromRepositoryL()
     }
 
 // ----------------------------------------------------
-// CMceMainViewListItemArray::FindVisibleCountL()
-// ----------------------------------------------------
-TInt CMceMainViewListItemArray::FindVisibleCountL(TMsvId serviceId ) const
-    {
-    TInt visiblecount=0;
-    TInt emailcount=0;
-    TInt itemcount;
-    CMsvEntry* entry = iSession->GetEntryL( serviceId );
-    CleanupStack::PushL( entry );
-    itemcount=entry->Count();
-      
-    //Find email messages 
-    CMsvEntrySelection *smtpselection = entry->ChildrenWithMtmL( KUidMsgTypeSMTP );
-    CleanupStack::PushL( smtpselection );
-
-    CMsvEntrySelection *pop3selection = NULL;
-    CMsvEntrySelection *imapselection = NULL ;
-    CMsvEntrySelection *cmailselection = NULL ;
-    
-    if(!iEmailFramework)
-        {
-        pop3selection = entry->ChildrenWithMtmL( KUidMsgTypePOP3 );
-        CleanupStack::PushL( pop3selection );
-        imapselection = entry->ChildrenWithMtmL( KUidMsgTypeIMAP4 );
-        CleanupStack::PushL( imapselection );
-        }
-    else
-        {
-        cmailselection = entry->ChildrenWithMtmL( 
-                TUid::Uid(KUidMsgTypeFsMtmVal));
-        CleanupStack::PushL( cmailselection );
-        }
-
-    if ( smtpselection!=0 && smtpselection->Count()>0 )
-        {
-        emailcount=emailcount+smtpselection->Count();
-        }
-
-    if(!iEmailFramework)
-        {
-        if ( pop3selection!=0 && pop3selection->Count()>0 )
-            {
-            emailcount=emailcount+pop3selection->Count();
-            }
-        if ( imapselection!=0 && imapselection->Count()>0 )
-            {
-            emailcount=emailcount+imapselection->Count();
-            }        
-        }
-    else
-        {
-        if ( cmailselection!=0 && cmailselection->Count()>0 )
-            {
-            emailcount=emailcount+cmailselection->Count();
-            }
-        }
-
-    visiblecount = itemcount - emailcount;
-
-    if(iEmailFramework)
-        {
-        CleanupStack::PopAndDestroy( cmailselection );       
-        }
-    else
-        {
-        CleanupStack::PopAndDestroy(imapselection);
-        CleanupStack::PopAndDestroy( pop3selection );
-        }
-    CleanupStack::PopAndDestroy( smtpselection );
-    CleanupStack::PopAndDestroy( entry );
-    return visiblecount; 
-    }
-// ----------------------------------------------------
 // CMceMainViewListItemArray::CreateConversationsListItem()
 // ----------------------------------------------------
 TPtrC CMceMainViewListItemArray::CreateConversationsListItem( TInt aIndex ) const
     {
     const TMceListItem& item = At( aIndex );
-    TPtr tempText = iListBoxText->Des();        
-    tempText.Zero();
-    TInt bitmapidx = EMceBitmapIndexConversation;
-    if(iDefaultViewSettings == KMceConversationview )
-       {
-       TInt msgCount = 0;
-       TInt unreadCount = 0;
-       iBitmapResolver.HasUnreadMessagesL(KMsvGlobalInBoxIndexEntryId,msgCount,unreadCount);
-       if( unreadCount > 0 ) 
+    if(!iListItemArrayObserver->MceListItemArrayFlickEvent())
+       {       
+        TPtr tempText = iListBoxText->Des();        
+        tempText.Zero();
+        TInt bitmapidx = EMceBitmapIndexConversation;
+        if(iDefaultViewSettings == KMceConversationview )
            {
-           bitmapidx =  EMceBitmapIndexConversationNew ;
-           }
-       }    
-   tempText.AppendNum(bitmapidx);
-   TPtrC Ptr(item.iPrintableText); 
-   TInt len = Ptr.Length();
-   TInt  pos = Ptr.Locate(KColumnListSeparator);
-   TPtrC Ptr1(Ptr.Mid(pos));
-   tempText.Append(Ptr1);                
-   return tempText;    
+           TInt msgCount = 0;
+           TInt unreadCount = 0;
+           iBitmapResolver.HasUnreadMessagesL(KMsvGlobalInBoxIndexEntryId,msgCount,unreadCount);
+           if( unreadCount > 0 ) 
+               {
+               bitmapidx =  EMceBitmapIndexConversationNew ;
+               }
+           }    
+        tempText.AppendNum(bitmapidx);
+        TPtrC Ptr(item.iPrintableText); 
+        TInt len = Ptr.Length();
+        TInt  pos = Ptr.Locate(KColumnListSeparator);
+        TPtrC Ptr1(Ptr.Mid(pos));
+        tempText.Append(Ptr1);                
+        CONST_CAST( TMceListItem*, &item)->iText.Zero();
+        CONST_CAST( TMceListItem*, &item)->iText.Copy(tempText);
+        return tempText;
+       }
+    else
+       {
+       return item.iText;
+       }      
    }
 
 // ----------------------------------------------------

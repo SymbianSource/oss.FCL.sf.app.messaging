@@ -37,6 +37,8 @@
 #include "MsgBaseControl.h"                // for TMsgEditPermissionFlags
 #include "MsgBaseControlObserver.h"        // for MMsgBaseControlObserver
 #include "MsgEditorCustomDraw.h"           // for CMsgEditorCustomDraw
+#include "MsgEditor.hrh"
+#include <MmsViewer.rsg>            // resouce identifiers
 
 // ========== EXTERNAL DATA STRUCTURES =====================
 
@@ -81,7 +83,10 @@ CMsgBodyControlEditor::CMsgBodyControlEditor( const CCoeControl* aParent,
 //
 CMsgBodyControlEditor::~CMsgBodyControlEditor()
     {
- 
+    if (iItemFinder)
+        {
+        TRAP_IGNORE(iItemFinder->SetItemFinderObserverL( NULL ));
+        }
     }
 
 // ---------------------------------------------------------
@@ -114,6 +119,8 @@ void CMsgBodyControlEditor::ConstructL()
                                       CItemFinder::EUriScheme );
 
     iItemFinder->AddObserver( *this );
+    iItemFinder->SetItemFinderObserverL( this );  
+    
     iFocusChangedBeforeParseFinish = EFalse;
 
     CEikRichTextEditor::ConstructL( iParentControl, 0, iMaxNumberOfChars, edwinFlags );
@@ -250,6 +257,27 @@ TKeyResponse CMsgBodyControlEditor::OfferKeyEventL(
         {
         switch ( aKeyEvent.iCode )
             {
+            case EKeyDevice3:   
+            case EKeyEnter:
+                {
+                // Restore highlight
+                const CItemFinder::CFindItemExt& item =
+                    iItemFinder->CurrentItemExt();
+                                                            
+                if ( item.iItemType != CItemFinder::ENoneSelected )
+                    {
+                    SetSelectionL( item.iStart, item.iEnd + 1 );
+                    }
+                else if ( iInitTop )
+                    {
+                    SetHighlightL( 0, EMsgFocusDown, ETrue ); 
+                    }
+                else
+                    {
+                    SetHighlightL( TextLength(), EMsgFocusUp, ETrue ); 
+                    }
+                return EKeyWasConsumed;
+                }
             case EKeyUpArrow:
             case EKeyDownArrow:
                 break;
@@ -267,6 +295,35 @@ TKeyResponse CMsgBodyControlEditor::OfferKeyEventL(
     else
         {
         return CEikRichTextEditor::OfferKeyEventL( aKeyEvent, aType );
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgBodyControlEditor::HandleFindItemEventL
+//
+// Handles finditem events. 
+// ---------------------------------------------------------
+//
+void CMsgBodyControlEditor::HandleFindItemEventL(
+                        const CItemFinder::CFindItemExt& aItem,
+                        MAknItemFinderObserver::TEventFlag aEvent,
+                        TUint aFlags)
+    {     
+    // We will send new EMsgFindItemEvent so that we can separate 
+    // single click item activation and old key based activation.
+    // This is just quick fix for doing it, other implementations should
+    // be considered(e.g. storing state in editor or using some flags).
+    // This is done because in AppUI::HandleKeyEvent we must separate
+    // activation methods for enabling highlight when using keys.    
+    if ( MAknItemFinderObserver::EPointerEvent == aEvent )
+        {
+        TKeyEvent event;
+        event.iCode = EMsgFindItemKeyEvent;
+        event.iScanCode = EMsgFindItemKeyEvent;
+        event.iModifiers = 0;
+        event.iRepeats = 0;
+
+        iCoeEnv->WsSession().SimulateKeyEvent( event );
         }
     }
 
@@ -297,39 +354,14 @@ void CMsgBodyControlEditor::HandlePointerEventL( const TPointerEvent& aPointerEv
             
         if ( aPointerEvent.iType == TPointerEvent::EButton1Down )
             {
-            iPreviousItemStart = -1;
-            iPreviousItemLength = -1;
-            
-            if ( tappedOverTag )
+            if ( !tappedOverTag )
                 {
-                TPoint relativeTapPoint( aPointerEvent.iPosition - iPosition );
-                if ( iItemFinder->ItemWasTappedL( relativeTapPoint ) )
-                    {                
-                    iPreviousItemStart = start;
-                    iPreviousItemLength = length;
-                    
-                    forwardRequest = EFalse;
-                    }
+                // Reset current finditem
+                iItemFinder->ResetCurrentItem();
                 }
             else
                 {
-                iItemFinder->ResetCurrentItem();
-                }
-            }
-        else if ( aPointerEvent.iType == TPointerEvent::EButton1Up )
-            {
-            if ( tappedOverTag &&
-                 start >= iPreviousItemStart &&
-                 length <= iPreviousItemLength )
-                {
-                TKeyEvent event;
-                event.iCode = EKeyDevice3;
-                event.iScanCode = EStdKeyDevice3;
-                event.iModifiers = 0;
-                event.iRepeats = 0;
-                
-                iCoeEnv->WsSession().SimulateKeyEvent( event );
-                
+                // Find item tapped, do not forward event
                 forwardRequest = EFalse;
                 }
             }

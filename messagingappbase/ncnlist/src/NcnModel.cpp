@@ -26,8 +26,8 @@
 #include    "CVoiceMailManager.h"
 
 #include    <msgsimscnumberdetector.h>
-#include	<RSatRefresh.h>
-#include	<RSatSession.h>
+#include	<rsatrefresh.h>
+#include	<rsatsession.h>
 
 // ================= LOCAL CONSTANTS =======================
 namespace

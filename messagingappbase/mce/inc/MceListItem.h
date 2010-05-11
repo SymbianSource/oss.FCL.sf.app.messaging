@@ -40,6 +40,16 @@ class TMceListItem
         TBool                   iExtraItem;
         TMsvId                  iMsvId;
         TMcePrintableText       iPrintableText;
+        
+        /**
+         * It Refers to the complte string visble
+         * in main view for any folder.
+         * It is used as a chache to improve the
+         * performance when Flick is in progress
+         * in Main list view.
+         */
+        TMcePrintableText       iText;
+        
         TInt                    iIconIndex;
         TMcePrintableText       iSecondaryText;
         TInt                    iApplicationUid;

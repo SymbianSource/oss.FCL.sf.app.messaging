@@ -22,7 +22,7 @@
 #define CMUIUFLAGGER_H
 
 //  INCLUDES
-#include "MuiuFlags.h"
+#include "muiuflags.h"
 #include <e32cmn.h>
 
 // CONSTANTS

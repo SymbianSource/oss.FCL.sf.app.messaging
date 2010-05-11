@@ -165,6 +165,14 @@ class CMceMainViewListView :
         * From MMceMainViewListItemArrayObserver
         */
         virtual void MceListItemArrayChangedL( );
+        
+        /**
+         * Called Main view refresh is happening 
+         * and need to know flick is ON\OFF
+         * @return ETrue if flick is ON 
+         * otherwise OFF 
+         */
+        TBool MceListItemArrayFlickEvent();
 
     protected:  // Functions from base classes
 
@@ -298,6 +306,12 @@ class CMceMainViewListView :
          * KFeatureIdFfEmailFramework is enabled
          */
         TBool  iEmailFramework;        
+        /**
+         * Flag that shows Flicking status in Main View
+         * ETrue if ON
+         * otherwsie EFalse
+         */
+        TBool                           iFlick; 
     };
 
 #endif

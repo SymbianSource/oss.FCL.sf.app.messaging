@@ -4656,7 +4656,8 @@ void CUniEditorAppUi::DoUserInsertImageL( MsgAttachmentUtils::TMsgAttachmentFetc
                 //Enable the insert toolbar 
             if( iFixedToolbar )
                 {
-                iFixedToolbar->SetItemDimmed( EUniCmdFixedToolbarInsert, EFalse, ETrue );    
+                iFixedToolbar->SetItemDimmed( EUniCmdFixedToolbarInsert, EFalse, ETrue );
+                HandleResourceChangeL(KEikDynamicLayoutVariantSwitch);
                 }
             }
                                  
@@ -4724,7 +4725,8 @@ void CUniEditorAppUi::DoUserInsertVideoL( MsgAttachmentUtils::TMsgAttachmentFetc
                 //Enable the insert toolbar 
             if( iFixedToolbar )
                 {
-            iFixedToolbar->SetItemDimmed( EUniCmdFixedToolbarInsert, EFalse, ETrue );    
+                iFixedToolbar->SetItemDimmed( EUniCmdFixedToolbarInsert, EFalse, ETrue );    
+                HandleResourceChangeL(KEikDynamicLayoutVariantSwitch);
                 }
             }
                          
@@ -4791,7 +4793,8 @@ void CUniEditorAppUi::DoUserInsertAudioL( MsgAttachmentUtils::TMsgAttachmentFetc
                 //Enable the insert toolbar 
             if( iFixedToolbar )
                 {
-            iFixedToolbar->SetItemDimmed( EUniCmdFixedToolbarInsert, EFalse, ETrue );    
+                iFixedToolbar->SetItemDimmed( EUniCmdFixedToolbarInsert, EFalse, ETrue );    
+                HandleResourceChangeL(KEikDynamicLayoutVariantSwitch);
                 }
             }
                          

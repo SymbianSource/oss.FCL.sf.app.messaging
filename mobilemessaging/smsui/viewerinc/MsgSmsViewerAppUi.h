@@ -561,6 +561,18 @@ class CMsgSmsViewerAppUi : public CMsgEditorAppUi,
           */
          void QuickSmsMsgNaviHandlingL( CMsvStore* aStore );
          
+         /**
+         * Checks wheter current find item is highlighted
+         * @return ETrue if highlight enabled
+         */
+         TBool FindItemHighlighted();
+         
+         /**
+         * Returns id of focused control
+         * @return id of focused control
+         */
+         TInt FocusedControlId();
+         
     protected:     // Data
 
         // Note:

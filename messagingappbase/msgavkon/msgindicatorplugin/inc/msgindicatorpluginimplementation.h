@@ -24,7 +24,7 @@
 // Until aknstylusactivatedpopupcontent.h is fixed
 
 //  INCLUDES
-#include <aknlayout2scalabledef.h>
+#include <AknLayout2ScalableDef.h>
 #include <AknIndicatorPlugin.h> // CAknIndicatorPlugin
 #include <AknPreviewPopUpController.h> // Controlling the preview pop-up component
 #include <aknstylusactivatedpopupcontent.h> // Stylus activated pop-up conten

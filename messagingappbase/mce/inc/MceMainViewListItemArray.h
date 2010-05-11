@@ -65,6 +65,14 @@ class MMceMainViewListItemArrayObserver
         */
         virtual void MceListItemArrayChangedL(
         ) = 0;
+        
+        /**
+         * Called when Main view refresh is happening 
+         * and need to know flick is ON\OFF
+         */
+        virtual TBool MceListItemArrayFlickEvent(
+        ) = 0;
+        
     };
     
 
@@ -457,8 +465,6 @@ public:
         */
         void ReadMainViewItemsFromRepositoryL();
     
-        //Calculates the visible count excluding FS email stuff
-        TInt FindVisibleCountL(TMsvId serviceId) const;
          /**
          * Creates Conversation string for main view listbox. 
          * @param aIndex: index of the message to be drawn

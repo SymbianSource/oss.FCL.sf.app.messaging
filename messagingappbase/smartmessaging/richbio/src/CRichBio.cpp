@@ -25,7 +25,7 @@
 #include <calslbs.h>                        // Fonts
 #include <MsgExpandableControlEditor.h>     // CMsgExpandableControlEditor
 #include <MsgEditorCommon.h>                // MaxBodyHeight
-#include <aknlayoutdef.h>       // TAknLayoutId
+#include <AknLayoutDef.h>       // TAknLayoutId
 #include <AknUtils.h>
 
 #include    <applayout.cdl.h> // LAF

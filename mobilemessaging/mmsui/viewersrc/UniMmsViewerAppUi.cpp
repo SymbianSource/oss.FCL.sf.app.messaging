@@ -170,6 +170,7 @@
 #include <mmsclient.h>              // CMmsClientMtm, mmsconst.h
 #include <mmsgenutils.h>
 #include <mmsmsventry.h>
+#include <mmsversion.h>
 
 #include "MmsViewer.hrh"            // application specific commands & enums
 #include "UniMmsViewerDocument.h"      // CMmsViewerDocument
@@ -1160,10 +1161,24 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
                 return;
                 }
                     
-            TInt focusedControl = FocusedControlId( ); 
+            TInt focusedControl = FocusedControlId( );
+                      
+            TBool senderHighlighted = EFalse;
+            if ( focusedControl == EMsgComponentIdFrom )
+                {
+                CMsgAddressControl* address = static_cast<CMsgAddressControl*>(
+                    iView->ControlById( EMsgComponentIdFrom ) );
+                
+                if ( address && address->Editor().SelectionLength() )
+                    {
+                    senderHighlighted = ETrue;
+                    }
+                }
+            
             if ( !IsOwnMessage( ) )
                 {    
-                if( (FocusedControlId( ) == EMsgComponentIdFrom) && ( ( iMtm->Sender( ) ).Length() ) )
+                if( ( FocusedControlId( ) == EMsgComponentIdFrom) && ( ( iMtm->Sender( ) ).Length() ) 
+                      && senderHighlighted )
                     {
                     iFindItemMenu->SetSenderHighlightStatus( ETrue );
                     iFindItemMenu->SetSenderDisplayText( TMmsGenUtils::PureAddress( iMtm->Sender( ) ) );                
@@ -1173,11 +1188,14 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
                     iFindItemMenu->SetSenderHighlightStatus( EFalse );
 		            }
                 }
- 			iFindItemMenu->AddItemFindMenuL( 
-                ( focusedControl == EMsgComponentIdBody ) ? iView->ItemFinder( ) : 0,
+            
+            iFindItemMenu->AddItemFindMenuL( 
+                ( iView->ItemFinder()->CurrentSelection().Length() ) 
+                ? iView->ItemFinder( ) : 0,
                 aMenuPane, 
                 EFindItemMenuPlaceHolder,
-                TMmsGenUtils::PureAddress( iMtm->Sender( ) ),
+                senderHighlighted ? 
+                TMmsGenUtils::PureAddress( iMtm->Sender( ) ) : KNullDesC(),
                 iHeader->Alias( ) && !iHeader->IsRemoteAlias( ) ? ETrue : EFalse, //"Is sender known"
                 EFalse );
                 
@@ -1606,7 +1624,39 @@ TKeyResponse CMmsViewerAppUi::HandleKeyEventL(
             break;
         case EKeyDevice3:       //Selection key
         case EKeyEnter:         //Enter Key
-            {           
+            {                    
+            if( iView->FocusedControl()->ControlType() == EMsgAddressControl )
+                {
+                CMsgAddressControl* address = static_cast<CMsgAddressControl*>(
+                    iView->FocusedControl() );
+                if ( address && !address->Editor().SelectionLength() )
+                    {
+                    // restore highlight to address field
+                    return address->Editor().OfferKeyEventL( aKeyEvent, aType );
+                    }               
+                }
+            else if ( iView->FocusedControl()->ControlType() == EMsgBodyControl )
+                {       
+                CItemFinder* itemFinder = iView->ItemFinder();
+                if ( FocusedControlId() == EMsgComponentIdBody 
+                     && itemFinder )
+                    {                                                                          
+                    if ( !itemFinder->CurrentSelection().Length() )
+                        {
+                        CMsgBodyControl* body = static_cast<CMsgBodyControl*>(
+                            iView->FocusedControl() );
+                        if ( body )
+                            {                     
+                             // restore highlight to current itemfinder item
+                            return body->Editor().OfferKeyEventL( aKeyEvent, aType );
+                            }
+                        }
+                    }
+                }
+            // fall through
+            } 
+        case EMsgFindItemKeyEvent:
+            {
             TInt focusedControl = FocusedControlId( );
             CMsgMediaControl* control = MediaControlById(focusedControl);
             if (control)
@@ -1985,6 +2035,12 @@ TBool CMmsViewerAppUi::CanForwardL( TInt& aResourceId )
             }
         }
     TBool objectsOk = CanForwardObjectsL( aResourceId );
+	TInt conformanceSize = KClassMaxSizeVideoRich;
+	if(iMmsConformance->ConformanceVersion() > KMmsVersion12)
+	{
+		conformanceSize = KClassMaxSizeMegapixel;
+	}
+		
     if ( objectsOk && Document( )->CreationMode( ) == EMmsCreationModeWarning )
         {
         if ( Document( )->SmilType( ) != EMmsSmil ||
@@ -1993,7 +2049,7 @@ TBool CMmsViewerAppUi::CanForwardL( TInt& aResourceId )
             aResourceId = 0;
             return ShowGuidedModeConfirmationQueryL( R_MMSVIEWER_QUEST_GUIDED_PRESENTATION );
             }
-        else if ( msgSize > KClassMaxSizeVideoRich )
+        else if ( msgSize > conformanceSize )
             {
             aResourceId = 0;
             return ShowGuidedModeConfirmationQueryL( R_MMSVIEWER_QUEST_GUIDED_INC_OBJ );

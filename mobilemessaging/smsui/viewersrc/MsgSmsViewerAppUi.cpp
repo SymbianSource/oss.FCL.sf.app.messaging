@@ -965,7 +965,20 @@ void CMsgSmsViewerAppUi::DynInitMenuPaneL(
         case R_SMSV_OPTIONSMENUPANE_CLASS0:
             {
             TPtrC senderNumber = KNullDesC();
-            if ( iFlags.iValidSenderNumber )
+            
+            TBool senderHighlighted = EFalse;
+            if ( FocusedControlId( ) == EMsgComponentIdFrom )
+                {
+                CMsgAddressControl* address = static_cast<CMsgAddressControl*>(
+                    iView->ControlById( EMsgComponentIdFrom ) );
+                           
+                if ( address && address->Editor().SelectionLength() )
+                    {
+                    senderHighlighted = ETrue;
+                    }
+                }               
+            if ( iFlags.iValidSenderNumber 
+                 && senderHighlighted )
                 {
                 senderNumber.Set( iNumber );
                 }
@@ -978,7 +991,7 @@ void CMsgSmsViewerAppUi::DynInitMenuPaneL(
             else if(iFindItemMenu)
 	            {              
 	            iFindItemMenu->AddItemFindMenuL( 
-                IsBodyFocused() ? iView->ItemFinder() : 0,
+                FindItemHighlighted() ? iView->ItemFinder() : 0,
                 aMenuPane, EFindItemMenuPlaceHolder,
                 senderNumber, 
                 iRecipientstring.Length() != 0 ? ETrue : EFalse,
@@ -1078,14 +1091,31 @@ void CMsgSmsViewerAppUi::DynInitNonBioOptionsMenuL( CEikMenuPane* aMenuPane )
 
         // add automatic highlight menus
         TPtrC senderNumber = KNullDesC();
+             
+        TBool senderHighlighted = EFalse;
+        if ( FocusedControlId( ) == EMsgComponentIdFrom )
+            {
+            CMsgAddressControl* address = static_cast<CMsgAddressControl*>(
+                iView->ControlById( EMsgComponentIdFrom ) );
+                       
+            if ( address && address->Editor().SelectionLength() )
+                {
+                senderHighlighted = ETrue;
+                }
+            }          
+        
         if ( iFlags.iIsEmailMessage ) // SMS originating address is email address 
             {  
-            senderNumber.Set( iRecipientstring );
+            if ( senderHighlighted )
+                {
+                senderNumber.Set( iRecipientstring );
+                }
             iFindItemMenu->SetSenderDescriptorType( CItemFinder::EEmailAddress );
             }            
         else 
             {// SMS originating adddress is Phone number
-            if ( iFlags.iValidSenderNumber )
+            if ( iFlags.iValidSenderNumber
+                 && senderHighlighted )
                 {
                 senderNumber.Set( iNumber );
                 }
@@ -1099,7 +1129,7 @@ void CMsgSmsViewerAppUi::DynInitNonBioOptionsMenuL( CEikMenuPane* aMenuPane )
 	                iView->ControlById( EMsgComponentIdFrom ) == iView->FocusedControl() );
 	            iFindItemMenu->SetSenderDisplayText( senderNumber );
 	            iFindItemMenu->AddItemFindMenuL( 
-	                IsBodyFocused() ? iView->ItemFinder() : 0,
+	                FindItemHighlighted() ? iView->ItemFinder() : 0,
 	                aMenuPane, EFindItemMenuPlaceHolder,
 	                senderNumber, 
 	                iFlags.iIsEmailMessage ? EFalse : ( iRecipientstring.Length() != 0 ) );
@@ -1110,7 +1140,7 @@ void CMsgSmsViewerAppUi::DynInitNonBioOptionsMenuL( CEikMenuPane* aMenuPane )
 	                iView->ControlById( EMsgComponentIdFrom ) == iView->FocusedControl() );
 	            iFindItemMenu->SetSenderDisplayText( senderNumber );
 	            iFindItemMenu->AddItemFindMenuL( 
-	                IsBodyFocused() ? iView->ItemFinder() : 0,
+	                FindItemHighlighted() ? iView->ItemFinder() : 0,
 	                aMenuPane, EFindItemMenuPlaceHolder,
 	                senderNumber, 
 	                ETrue );
@@ -1580,7 +1610,40 @@ TKeyResponse CMsgSmsViewerAppUi::HandleKeyEventL(
                 }
             case EKeyDevice3:
             case EKeyEnter:	
-                {// Selection-key checking (Context sensitive menu)
+                {             
+                if( iView->FocusedControl()->ControlType() == EMsgAddressControl )
+                    {
+                    CMsgAddressControl* address = static_cast<CMsgAddressControl*>(
+                        iView->FocusedControl() );
+                    if ( address && !address->Editor().SelectionLength() )
+                        {
+                        // restore highlight to address field
+                        return address->Editor().OfferKeyEventL( aKeyEvent, aType );
+                        }               
+                    }
+                else if ( iView->FocusedControl()->ControlType() == EMsgBodyControl )
+                    {       
+                    CItemFinder* itemFinder = iView->ItemFinder();
+                    if ( FocusedControlId() == EMsgComponentIdBody 
+                         && itemFinder )
+                        {                                                                          
+                        if ( !itemFinder->CurrentSelection().Length() )
+                            {
+                            CMsgBodyControl* body = static_cast<CMsgBodyControl*>(
+                                iView->FocusedControl() );
+                            if ( body )
+                                {                     
+                                 // restore highlight to current itemfinder item
+                                return body->Editor().OfferKeyEventL( aKeyEvent, aType );
+                                }
+                            }
+                        }
+                    }
+                // fall through
+                }
+            case EMsgFindItemKeyEvent:
+                {
+                // Selection-key checking (Context sensitive menu)
                 // (with Class 0 just show the menu)
                 if ( !iClass0CBA )
                     {
@@ -3062,6 +3125,36 @@ void CMsgSmsViewerAppUi::QuickSmsMsgNaviHandlingL( CMsvStore* aStore )
         iFlags.iEmailSubjectControlPresent = EFalse;
         }
     iTypeMsg = pduType; //for successful launch save the PDU Type.
+    }
+
+// ---------------------------------------------------------
+// CMsgSmsViewerAppUi::FindItemHighlighted
+// Checks wheter current find item is highlighted
+// ---------------------------------------------------------
+//
+TBool CMsgSmsViewerAppUi::FindItemHighlighted()
+    {
+    if ( iView->ItemFinder() && 
+         iView->ItemFinder()->CurrentSelection().Length() )
+        {
+        return ETrue;
+        }
+    return EFalse;
+    }
+
+// ---------------------------------------------------------
+// CMsgSmsViewerAppUi::FocusedControlId
+// Returns id of focused control
+// ---------------------------------------------------------
+//
+TInt CMsgSmsViewerAppUi::FocusedControlId( )
+    {
+    TInt controlType = EMsgComponentIdNull;
+    if ( iView && iView->FocusedControl( ) )
+        {
+        controlType = iView->FocusedControl( )->ControlId( );
+        }
+    return controlType;
     }
 
 //  End of File  

@@ -25,6 +25,8 @@
 #include "MtmRegistryObserver.h" // mmtmuidataregistryobserver
 #include <msvuids.h>
 #include <msvids.h>         // fixed entry ids
+#include <MTMStore.h>       // cmtmstore
+#include <miutset.h>
 #include <gulicon.h>        // CGulIcon
 #include <AknIconArray.h>   // cakniconarray
 #include <fbs.h>            // CFbsFont
@@ -32,6 +34,8 @@
 #include <avkon.mbg>        // bitmap enums
 #include <mtud.hrh>         // EMtudEntryStateOpen
 #include <SenduiMtmUids.h>  // mtm uids
+#include <bldvariant.hrh>
+#include <featmgr.h>
 #include "MceUtils.h"
 #include "MceListItem.h"
 #include "MceBitmapResolver.h"
@@ -39,7 +43,6 @@
 #include <mceextraicons.mbg>
 // security data caging
 #include <data_caging_path_literals.hrh>
-#include <bldvariant.hrh>
 #include <AknIconUtils.h>
 
 
@@ -148,8 +151,8 @@ void CMceBitmapResolver::ConstructL()
     CreateAndAppendIconL( KAknsIIDQgnIndiConnectionAlwaysAdd, iFilenameMuiu, EMbmMuiuQgn_indi_connection_always_add, &listItem, ETrue );
     CreateAndAppendIconL( KAknsIIDQgnIndiConnectionInactiveAdd, iFilenameMuiu, EMbmMuiuQgn_indi_connection_inactive_add, &listItem, ETrue );
     CreateAndAppendIconL( KAknsIIDQgnIndiConnectionInactiveAdd, iFilenameMuiu, EMbmMuiuQgn_indi_connection_on_roam_add, &listItem, ETrue );
-    CreateAndAppendIconL( KAknsIIDQgnIndiMcePriorityHigh, iFilenameAvkon, EMbmAvkonQgn_indi_mce_priority_high, &listItem );
-    CreateAndAppendIconL( KAknsIIDQgnIndiMcePriorityLow, iFilenameAvkon, EMbmAvkonQgn_indi_mce_priority_low, &listItem );
+    CreateAndAppendIconL( KAknsIIDQgnIndiMcePriorityHigh, iFilenameAvkon, EMbmAvkonQgn_indi_mce_priority_high, &listItem, ETrue );
+    CreateAndAppendIconL( KAknsIIDQgnIndiMcePriorityLow, iFilenameAvkon, EMbmAvkonQgn_indi_mce_priority_low, &listItem, ETrue );
     
    _LIT( KMceExtraIconsDirAndFile,"MceExtraIcons.mbm" );
     TParse cvfp;
@@ -162,6 +165,13 @@ void CMceBitmapResolver::ConstructL()
     CreateAndAppendIconL( KAknsIIDQgnPropMceUnknownRead, EMbmMuiuQgn_prop_mce_unknown_read );
     
     iDescriptionLength = MceUtils::DescriptionLengthL();
+    FeatureManager::InitializeLibL();
+    iEmailFramework = EFalse;
+    if ( FeatureManager::FeatureSupported( KFeatureIdFfEmailFramework ) )
+        {
+        iEmailFramework = ETrue;
+        }
+    FeatureManager::UnInitializeLib();
     }
 
 // ----------------------------------------------------
@@ -208,8 +218,6 @@ void CMceBitmapResolver::CreateAndAppendIconL(
         {
         if ( aColorSkinnedIcon )
             {
-            TRgb rgb; // What to add here?
-                    
             AknsUtils::CreateColorIconL(
                 skins, 
                 aId, 
@@ -220,7 +228,7 @@ void CMceBitmapResolver::CreateAndAppendIconL(
                 aFileName, 
                 aBitmapIndex, 
                 aBitmapIndex + 1,
-                rgb );  
+                KRgbBlack);  
             }
         else
             {
@@ -396,7 +404,7 @@ TInt CMceBitmapResolver::BitmapIndex( const TMsvEntry& aEntry, TInt& aMessageCou
         {
         foundIndex = LocalEntryBitmapIndex( id );        
 
-        // check if folder has unread messages
+        //Get count and check if inbox folder has  unread messages
         if ( id ==  KMsvGlobalInBoxIndexEntryId ||
             id ==  KMceDocumentsEntryId ||
             id == KMsvDraftEntryIdValue ||
@@ -405,10 +413,39 @@ TInt CMceBitmapResolver::BitmapIndex( const TMsvEntry& aEntry, TInt& aMessageCou
             id >= KFirstFreeEntryId
             )
             {
-            TRAPD(err, ( unreadMessages = HasUnreadMessagesL( id, aMessageCount, unreadCount ) ) );
-            if (err == KErrNone && unreadMessages )
+            // In case of  inbox, need to know message count and is  
+            // there at least one unread message. 
+            // No need of unread count and sub folder checking
+        
+            if(id == KMsvGlobalInBoxIndexEntryId )
                 {
-                foundIndex++;
+                TRAPD(err, aMessageCount = 
+                    FindVisibleCountWithUnreadMessageL(id, unreadMessages)); 
+    
+                if (err == KErrNone && unreadMessages )
+                    {
+                    foundIndex++;
+                    }
+                }
+            // for Draft/outbox/sent no need to go for sub folder checking 
+            // and unread count checking
+            else if(id == KMsvDraftEntryIdValue ||
+               id == KMsvSentEntryIdValue ||
+               id == KMsvGlobalOutBoxIndexEntryIdValue)
+                {
+                TRAP_IGNORE(aMessageCount = FindVisibleCountL(id));                
+                }
+            
+            else if(id ==  KMceDocumentsEntryId)
+                {
+                // no logic change for draft
+                // need total count, including sub folder count
+                // need unread message info also to show proper icon.
+                TRAPD(err, ( unreadMessages = HasUnreadMessagesL( id, aMessageCount, unreadCount ) ) );
+                if (err == KErrNone && unreadMessages )
+                    {
+                    foundIndex++;
+                    }
                 }
             }
         }
@@ -653,7 +690,7 @@ TBool CMceBitmapResolver::HasUnreadMessagesL(
             }
         }
 
-    CleanupStack::PopAndDestroy(); // entry
+    CleanupStack::PopAndDestroy(entry); // entry
     return aUnreadMessages;
     }
     
@@ -959,4 +996,122 @@ TInt CMceBitmapResolver::DescriptionLength()
     return iDescriptionLength;
     }
 
+#ifdef RD_MSG_NAVIPANE_IMPROVEMENT
+// ----------------------------------------------------
+// CMceBitmapResolver::FindVisibleCountL
+// ----------------------------------------------------
+TInt CMceBitmapResolver::FindVisibleCountL(TMsvId aFolderId ) const
+    {
+    // This function can be optimzied further 
+    // after the new optimized API from message store
+    // This is applicable for Draft\sent\outbox
+    
+    TInt visiblecount=0;
+    TInt emailcount=0;
+    TInt itemcount;
+    
+    // Cmail message count needs to be filtered 
+    CMsvEntry* entry = iSession->GetEntryL( aFolderId );
+    CleanupStack::PushL( entry );
+    itemcount=entry->Count();
+         
+    //Find email messages 
+    CMsvEntrySelection *smtpselection = entry->ChildrenWithMtmL( KUidMsgTypeSMTP );
+    CleanupStack::PushL( smtpselection );
+
+    CMsvEntrySelection *pop3selection = NULL;
+    CMsvEntrySelection *imapselection = NULL ;
+    CMsvEntrySelection *cmailselection = NULL ;
+    
+    if(!iEmailFramework)
+        {
+        pop3selection = entry->ChildrenWithMtmL( KUidMsgTypePOP3 );
+        CleanupStack::PushL( pop3selection );
+        imapselection = entry->ChildrenWithMtmL( KUidMsgTypeIMAP4 );
+        CleanupStack::PushL( imapselection );
+        }
+    else
+        {
+        cmailselection = entry->ChildrenWithMtmL( 
+                TUid::Uid(KUidMsgTypeFsMtmVal));
+        CleanupStack::PushL( cmailselection );
+        }
+
+    if ( smtpselection!=0 && smtpselection->Count()>0 )
+        {
+        emailcount=emailcount+smtpselection->Count();
+        }
+
+    if(!iEmailFramework)
+        {
+        if ( pop3selection!=0 && pop3selection->Count()>0 )
+            {
+            emailcount=emailcount+pop3selection->Count();
+            }
+        if ( imapselection!=0 && imapselection->Count()>0 )
+            {
+            emailcount=emailcount+imapselection->Count();
+            }        
+        }
+    else
+        {
+        if ( cmailselection!=0 && cmailselection->Count()>0 )
+            {
+            emailcount=emailcount+cmailselection->Count();
+            }
+        }
+
+    visiblecount = itemcount - emailcount;
+
+    if(iEmailFramework)
+        {
+        CleanupStack::PopAndDestroy( cmailselection );       
+        }
+    else
+        {
+        CleanupStack::PopAndDestroy(imapselection);
+        CleanupStack::PopAndDestroy( pop3selection );
+        }
+    CleanupStack::PopAndDestroy( smtpselection );
+    CleanupStack::PopAndDestroy( entry );
+    return visiblecount; 
+    }
+
+// ----------------------------------------------------
+// CMceBitmapResolver::FindVisibleCountWithUnreadMessageL
+// ----------------------------------------------------
+TInt CMceBitmapResolver::FindVisibleCountWithUnreadMessageL(TMsvId aFolderId 
+                                             , TBool& aUnreadMessages) const
+    {
+    // This function can be optimzied further 
+    // after the new optimized API from message store
+    // This is applicable for Inbox
+    
+    aUnreadMessages = EFalse;    
+    TInt itemcount;
+    CMsvEntry* entry = iSession->GetEntryL( aFolderId );
+    CleanupStack::PushL( entry );
+    itemcount=entry->Count();
+        
+    // No need of cmail filtering, because Mailbox has its own
+    // Inbox folder    
+    // Check at least one Unread message
+    for ( TInt loop = 0; loop < itemcount; loop++ )
+        {
+        const TMsvEntry& tEntry = (*entry)[loop];
+        if ( tEntry.iType == KUidMsvMessageEntry )
+            {
+            if ( tEntry.Unread() )
+                {
+                aUnreadMessages= ETrue;
+                break;
+                }
+            }
+         }
+    CleanupStack::PopAndDestroy( entry );
+    
+    return itemcount; 
+    }
+
+#endif //RD_MSG_NAVIPANE_IMPROVEMENT
 //  End of File

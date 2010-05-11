@@ -23,6 +23,7 @@
 // ========== INCLUDE FILES ================================
 
 #include <ItemFinder.h>
+#include <itemfinderobserver.h>
 #include "MsgExpandableControlEditor.h"            // for CMsgExpandableControlEditor
 #include "MsgEditor.hrh"
 
@@ -44,7 +45,8 @@ class CMsgEditorCustomDraw;
 * Defines an editor for the body control.
 */
 class CMsgBodyControlEditor : public CMsgExpandableControlEditor,
-                              public MItemFinderObserver
+                              public MItemFinderObserver,
+                              public MAknItemFinderObserver
     {
     public:
 
@@ -138,6 +140,13 @@ class CMsgBodyControlEditor : public CMsgExpandableControlEditor,
     public: // from MItemFinderObserver
 
         void HandleParsingComplete();
+        
+    public: // from MAknItemFinderObserver  
+       
+        void HandleFindItemEventL(
+                        const CItemFinder::CFindItemExt& aItem,
+                        MAknItemFinderObserver::TEventFlag aEvent,
+                        TUint aFlags = 0 );
 
     public: // new
 

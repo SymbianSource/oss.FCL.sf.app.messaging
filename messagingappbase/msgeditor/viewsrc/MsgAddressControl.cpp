@@ -742,7 +742,6 @@ EXPORT_C TBool CMsgAddressControl::IsPriorCharSemicolonL() const
 EXPORT_C void CMsgAddressControl::SetAddressFieldAutoHighlight( TBool aValidHighlightable )
     {
     iAddressControlEditor->SetAddressFieldAutoHighlight( aValidHighlightable );    
-    TRAP_IGNORE( iAddressControlEditor->CheckHighlightingL() );
     DrawDeferred();
     }
 
@@ -821,8 +820,6 @@ void CMsgAddressControl::NotifyViewEvent( TMsgViewEvent aEvent, TInt aParam )
             {
             iAddressControlEditor->PrepareForViewing();
             
-            // TODO: Implement better error handling?
-            TRAP_IGNORE( iAddressControlEditor->CheckHighlightingL() );
             }
         }
     }
@@ -1149,15 +1146,6 @@ void CMsgAddressControl::FocusChanged( TDrawNow aDrawNow )
     {
     CMsgExpandableControl::FocusChanged( aDrawNow );
 
-    // TODO: Implement better error handling?
-    if ( !IsFocused() )
-        {
-        TRAP_IGNORE( iAddressControlEditor->TurnHighlightingOffL() );
-        }
-    else
-        {
-        TRAP_IGNORE( iAddressControlEditor->CheckHighlightingL() );
-        }
     }
 
 // ---------------------------------------------------------

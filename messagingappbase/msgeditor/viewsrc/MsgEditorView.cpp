@@ -2248,7 +2248,7 @@ TBool CMsgEditorView::EnsureCorrectFormPosition( TBool /*aScrollDown*/, TBool /*
 
     if ( lineRect.Height() )
         {
-        if ( lineRect.iBr.iY > iViewRect.Height() )
+		if (lineRect.Height() >= iViewRect.Height())
             {
             // the view must be scrolled up.
             delta = iViewRect.Height() - lineRect.iBr.iY;

@@ -1667,9 +1667,16 @@ TKeyResponse CMsgAddressControlEditor::OfferKeyEventL(
     const TKeyEvent& aKeyEvent, TEventCode aType )
     {
     if ( IsReadOnly() && 
-        aKeyEvent.iCode == EKeyUpArrow &&
+        ( aKeyEvent.iCode == EKeyUpArrow ||
+          aKeyEvent.iCode == EKeyEnter ||
+          aKeyEvent.iCode == EKeyDevice3 ) &&
         iValidHighlightable )
         {
+        if ( !SelectionLength() )
+            {
+            // Enable highlight if hw keys used
+            CheckHighlightingL();
+            }
         return EKeyWasConsumed;
         }
     return CMsgExpandableControlEditor::OfferKeyEventL( aKeyEvent, aType );
@@ -1723,22 +1730,40 @@ void CMsgAddressControlEditor::HandlePointerEventL( const TPointerEvent& aPointe
                 else
                     {
                     forwardRequest = EFalse;
-                    }
+                    
+                    if ( docPos < TextLength() )
+                        {
+                        // Enable highlight on pointer down
+                        CheckHighlightingL();
+                        } 
+                    }                
                 }
             else if ( aPointerEvent.iType == TPointerEvent::EButton1Up )
                 {
                 if ( currentField &&
                      iPreviousField == currentField )
                     {
+                    // We will send new EMsgFindItemEvent so that we can separate 
+                    // single click item activation and old key based activation.
+                    // This is just quick fix for doing it, other implementations should
+                    // be considered(e.g. storing state in editor or using some flags).
+                    // This is done because in AppUI::HandleKeyEvent we must separate
+                    // activation methods for enabling highlight when using keys. 
                     TKeyEvent event;
-                    event.iCode = EKeyDevice3;
-                    event.iScanCode = EStdKeyDevice3;
+                    event.iCode = EMsgFindItemKeyEvent;
+                    event.iScanCode = EMsgFindItemKeyEvent;
                     event.iModifiers = 0;
                     event.iRepeats = 0;
                     
                     iCoeEnv->WsSession().SimulateKeyEvent( event );
                     
                     forwardRequest = EFalse;
+                    }
+                
+                if ( SelectionLength() )
+                    {
+                    // Disable highlight on pointer up
+                    ClearSelectionL();
                     }
                 }
             }
@@ -1772,7 +1797,8 @@ void CMsgAddressControlEditor::HandlePointerEventL( const TPointerEvent& aPointe
         CMsgExpandableControlEditor::HandlePointerEventL( aPointerEvent );
         }
 #ifdef RD_TACTILE_FEEDBACK         
-    else if(aPointerEvent.iType == TPointerEvent::EButton1Down)
+    else if( aPointerEvent.iType == TPointerEvent::EButton1Down 
+             && SelectionLength() )
         {                                
         MTouchFeedback* feedback = MTouchFeedback::Instance();
         if ( feedback )
@@ -1977,10 +2003,6 @@ void CMsgAddressControlEditor::PrepareForReadOnlyL( TBool aReadOnly )
 #endif   
         
         SetWordWrapL( EFalse );
-        if ( AddressFieldAutoHighlight() )
-            {
-            SelectAllL(); // for automatic highlight
-            }
         }
     
     CMsgExpandableControlEditor::PrepareForReadOnlyL( aReadOnly );

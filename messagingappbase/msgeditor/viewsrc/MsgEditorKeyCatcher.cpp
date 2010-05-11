@@ -104,10 +104,13 @@ TKeyResponse CMsgEditorKeyCatcher::OfferKeyEventL( const TKeyEvent& aKeyEvent, T
         // All printable characters except # which means user is changing case.
         // SCT of address control contains less characters, however.
         // There is a drawback here: pressing cancel in SCT still may add delimiters.
-        if ( aKeyEvent.iCode >= 32 &&
-            aKeyEvent.iCode <= 255 &&
-            aKeyEvent.iCode != '#' )
-            {
+        if(aKeyEvent.iCode == ';')
+          {
+        	return EKeyWasNotConsumed;
+          }
+        else if ( aKeyEvent.iCode >= 32 && aKeyEvent.iCode <= 255 &&
+	          aKeyEvent.iCode != '#')
+          {
             iEditor->PreInsertEditorFormattingL( aKeyEvent );
             return EKeyWasNotConsumed;
             }

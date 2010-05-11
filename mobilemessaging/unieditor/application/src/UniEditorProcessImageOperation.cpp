@@ -44,6 +44,8 @@
 
 #include <mmssettingsdefs.h>
 
+#include <mmsversion.h>
+
 #include "UniClientMtm.h"
 #include "UniEditorEnum.h"
 #include "UniEditorDocument.h"
@@ -464,12 +466,20 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
         }
     
     TBool largeImageQuery = EFalse;
+    TInt conformanceWidth = KImageRichWidth;
+    TInt conformanceHeight = KImageRichHeight;
+    
+    if (iDocument.DataModel()->MmsConformance().ConformanceVersion()> KMmsVersion12)
+        {
+        conformanceWidth = KImageMegapixelWidth;
+        conformanceHeight = KImageMegapixelHeight;    
+        }
     
     if ( iProcessMethod == EUniProcessImgMethodNone )
         {
         // Image won't be processed
-        if ( ( origSize.iWidth > KImageRichWidth ||
-               origSize.iHeight > KImageRichHeight ) &&
+        if ( ( origSize.iWidth > conformanceWidth ||
+               origSize.iHeight > conformanceHeight ) &&
              ( iImageInfo->FileSize() + iMessageSize ) < iDocument.MaxMessageSize() )
             {
             // Original image width or height is "non-conformant" and original image would 
@@ -480,8 +490,8 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
     else
         {
         // Image will be processed
-        if ( scaleSize.iWidth > KImageRichWidth ||
-             scaleSize.iHeight > KImageRichHeight )
+        if ( scaleSize.iWidth > conformanceWidth ||
+             scaleSize.iHeight > conformanceHeight )
             {
             // Processed image is "non-conformant" after processing.
             largeImageQuery = ETrue;

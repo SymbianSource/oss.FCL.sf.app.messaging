@@ -113,9 +113,10 @@ CMceMainViewListView::CMceMainViewListView(
     iSelectedIndex( KErrNotFound ),
     iTopItemIndex( 0 ),
     iSelectionFolderId( KMsvNullIndexEntryId ), 
-		iEmailClientIntegration(EFalse),
-		iSelectableEmail(EFalse),
-		iEmailFramework(EFalse)
+    iEmailClientIntegration(EFalse),
+    iSelectableEmail(EFalse),
+    iEmailFramework(EFalse),
+    iFlick(EFalse)
     {
     iSessionHolder.AddClient();
     }
@@ -453,6 +454,12 @@ void CMceMainViewListView::HandleListBoxEventL(
                 iMsgListContainer->SetMskL();                
                 }
         break;
+        case EEventFlickStarted:
+            iFlick = ETrue;
+            break;        
+        case EEventFlickStopped:
+            iFlick = EFalse;
+            break;
         default:
         break;
 
@@ -1099,6 +1106,14 @@ void CMceMainViewListView::MceListItemArrayChangedL()
             listBox->DrawDeferred();
             }
         }
+    }
+
+// ----------------------------------------------------
+// CMceMainViewListView::MceListItemArrayFlickEvent
+// ----------------------------------------------------
+TBool CMceMainViewListView::MceListItemArrayFlickEvent()
+    {
+    return iFlick;
     }
 
 // ----------------------------------------------------

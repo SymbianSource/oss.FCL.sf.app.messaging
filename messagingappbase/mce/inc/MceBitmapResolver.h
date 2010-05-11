@@ -28,6 +28,9 @@
 #include "mcetemplate.h"
 #include <AknsUtils.h>
 
+//cmail update
+#define KUidMsgTypeFsMtmVal               0x2001F406
+
 // CONSTANTS
 const TInt KMceMmsPriority = 1;	// For loading the MMS priority icons
 
@@ -145,6 +148,26 @@ class CMceBitmapResolver : public CBase
         * @return ETrue if unread children found.
         */
         TBool HasUnreadMessagesL( const TMsvId aId, TInt& aMessages, TInt& aUnreadMessages );
+		
+        /**
+         * Find Visible Count for local service Draft\sent\outbox folder
+         * Unread message check is not required.
+         * @param aId: folder ID of local service.
+         * @return TInt Return Message Count visble in messaging main view
+         */
+        TInt FindVisibleCountL(TMsvId aFolderId ) const;
+         
+        /**
+         * Find Visible Count for local service Inbox folder
+         * Unread message check is  required here to show Inbox icon with u
+         * @param aId: folder ID of local service.
+         * @param aUnreadMessages: It will be True if Inbox has atleast
+         *        one unread message.
+         * @return TInt Return Message Count visble in messaging main view
+         */
+        TInt FindVisibleCountWithUnreadMessageL(TMsvId aFolderId , TBool& aUnreadMessages) const;
+         
+        
 #else
 
         /**
@@ -253,8 +276,13 @@ class CMceBitmapResolver : public CBase
         TInt                        iBitmapsLoaded;
         
         TInt                        iDescriptionLength;
-
-
+        
+        /**
+         * Email Framework Feature flag.
+         * ETure if Feature in ON
+         * otherwsie EFalse. 
+         */
+        TBool                       iEmailFramework;
     };
 
 
