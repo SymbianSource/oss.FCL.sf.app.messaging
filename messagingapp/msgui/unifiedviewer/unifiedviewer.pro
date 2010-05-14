@@ -39,7 +39,7 @@ TARGET.EPOCALLOWDLLDATA = 1
 TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 
 CONFIG += hb
-QT += sql
+HB += hbfeedback
 
 # Platforms
 SYMBIAN_PLATFORMS = WINSCW ARMV5
@@ -52,7 +52,6 @@ BLD_INF_RULES.prj_exports += \
 # Input
 HEADERS += inc/unifiedviewer.h \
            inc/unicontentswidget.h \
-           inc/unitexteditor.h \
 #           inc/unihighlighter.h \
            inc/univiewerfeeder.h \
            inc/univiewerfeeder_p.h \
@@ -66,11 +65,11 @@ HEADERS += inc/unifiedviewer.h \
            inc/univiewermediawidget.h \
            inc/univiewerattachmentcontainer.h \
            inc/univiewertextitem.h \
-           inc/univiewerheadercontainer.h
+           inc/univiewerheadercontainer.h \
+           inc/univiewerpixmapwidget.h
 
 SOURCES += src/unifiedviewer.cpp \
            src/unicontentswidget.cpp \
-           src/unitexteditor.cpp \
 #           src/unihighlighter.cpp \
            src/univiewerfeeder.cpp \
            src/univiewerfeeder_p.cpp \
@@ -83,8 +82,8 @@ SOURCES += src/unifiedviewer.cpp \
            src/univiewermediawidget.cpp \
            src/univiewerattachmentcontainer.cpp \
            src/univiewertextitem.cpp \
-           src/univiewerheadercontainer.cpp
-
+           src/univiewerheadercontainer.cpp \
+           src/univiewerpixmapwidget.cpp
 
 RESOURCES += unifiedviewer.qrc
 

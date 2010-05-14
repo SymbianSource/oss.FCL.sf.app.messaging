@@ -32,7 +32,7 @@ class MsgContactCardWidget;
 class MsgConversationViewItem;
 class HbStaticVkbHost;
 class QGraphicsLinearLayout;
-
+class HbAction;
 //Defines
 #define INVALID_MSG_ID -1
 
@@ -77,6 +77,30 @@ private slots:
      * Populates the menu with relevant actions.
      */
     void menuAboutToShow();
+    
+	/**
+     * This slot is called when settings dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogSettingsLaunch(HbAction* action);
+    
+	/**
+     * This slot is called when delete message centre dialog is launched.
+     * @param action selected action (yes or no).
+     */	
+    void onDialogdeleteMsg(HbAction* action);
+	
+	/**
+     * This slot is called when download message centre dialog is launched.
+     * @param action selected action (yes or no).
+     */	    
+    void onDialogDownLoadMsg(HbAction* action);
+	
+	/**
+     * This slot is called when save tone dialog is launched.
+     * @param action selected action (yes or no).
+     */	
+    void onDialogSaveTone(HbAction* action);
 
 private:
 
@@ -105,6 +129,15 @@ private:
      */
     void setContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState);
 	
+    /**
+     * Adds context menu entry to context menu for saving items
+     * @param MsgConversationViewItem* item whose information is needed.
+     * @param HbMenu context menu
+     * @param int sendingstate.
+     * @see ConvergedMessage::MessageType
+     */    
+    void addSaveItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState);
+    
     /**
      * Adds context menu entry to context menu for Opening items
 	 * @param MsgConversationViewItem* item whose information is needed.
@@ -336,6 +369,12 @@ private:
      * Deactivate Input Blocker
      */
     void deactivateInputBlocker();
+    
+    /**
+     * Handle provisioning message
+     * @param msgId message id
+     */
+    void handleProvisoningMsg(int msgId);
 
 private:
 
@@ -373,6 +412,7 @@ private:
 
 	/**
 	 * Flag to track if item has been long pressed.
+	 * TODO: Remove it, once unique longpress and click event signal released in week16
 	 */
     bool mItemLongPressed;
     /*

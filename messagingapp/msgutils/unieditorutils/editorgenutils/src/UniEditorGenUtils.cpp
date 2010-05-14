@@ -28,6 +28,16 @@
 #include "UniEditorGenUtils.h"
 #include "s60qconversions.h"
 
+// CONSTANTS
+const TInt KMuiuCharQuote = '\"';
+const TInt KMuiuCharBackSlash = '\\';
+const TInt KMuiuCharDot = '.';
+const TInt KMuiuCharSpace = ' ';
+const TInt KMuiuCharDel = 127;
+const TInt KMuiuCharAt = '@';
+const TInt KMuiuSpecialCharStrLen = 12;
+_LIT( KRFC822Specials,"()<>@,;:\\\"[]");
+
 // ============================ MEMBER FUNCTIONS ===============================
 
 // ----------------------------------------------------
@@ -163,20 +173,29 @@ TBool UniEditorGenUtils::AcceptEmailAddressesL()
 // UniEditorGenUtils::VerifyEmailAddressesL
 // @see header
 // ----------------------------------------------------
-TBool UniEditorGenUtils::VerifyEmailAddressesL( ConvergedMessageAddressList addr)
+TBool UniEditorGenUtils::VerifyEmailAddressesL( ConvergedMessageAddressList addrList)
 {
-  TBool emailAddrPresent =  EFalse;
-
-  for ( int i=0; i< addr.count(); i++)
-  {
-	  if( IsValidEmailAddress(addr[i]->address()) )
-	  {
-		  emailAddrPresent = ETrue;
-		  break;
-	  }
-  }
-
-  return emailAddrPresent;
+    TBool emailAddrPresent =  EFalse;
+    int addrCount = addrList.count();
+    for(int i=0; i< addrCount; i++)
+    {
+        QString addr = addrList.at(i)->address();
+        // check if email address, contains at least 3 characters
+        if(addr.size() >= 3)
+        {
+            // search for @ from the address
+            // however, it can't be the first or the last item
+            for(int i = 1; i < addr.size() - 1; i++)
+            {
+                if(addr.at(i) == '@')
+                {
+                    emailAddrPresent = ETrue;
+                    break;
+                }
+            }
+        }
+    }
+    return emailAddrPresent;
 }
 
 // ----------------------------------------------------
@@ -250,27 +269,6 @@ TInt UniEditorGenUtils::MaxMmsRecipientsL()
 
     return maxMmsRecipients;
 }
-
-// ----------------------------------------------------
-// UniEditorGenUtils::IsValidEmailAddress
-// @see header
-// ----------------------------------------------------
-TBool UniEditorGenUtils::IsValidEmailAddress( QString addr )
-    { 
-    // valid email address contains at least 3 characters
-    if( addr.size() >= 3 )
-        {
-        // search for @ from the address. however, it can't be the first or the last item
-        for ( int i = 1; i < addr.size() - 1; i++ )
-            {
-            if ( addr.at(i) == '@' )
-                {
-                return ETrue;
-                }
-            }
-        }
-    return EFalse;
-    }
 
 // ----------------------------------------------------
 // UniEditorGenUtils::MaxMmsMsgSizeL
@@ -480,6 +478,128 @@ void UniEditorGenUtils::ReplaceCharacters(TDes &aDes, const TDesC &aChars, TChar
         aDes[src] = TUint16(aReplacement);
     ++src;
         }
+    }
+
+// ----------------------------------------------------
+// UniEditorGenUtils::IsValidEmailAddressL
+// @see header
+// ----------------------------------------------------
+TBool UniEditorGenUtils::IsValidEmailAddress( const TDesC& aAddress )
+    {
+    TInt c;
+    TInt length = aAddress.Length ();
+    TBufC<KMuiuSpecialCharStrLen> rfc822Specials ( KRFC822Specials );
+        
+    // first we validate the name portion (name@domain)
+    if ( length && aAddress[0] == KMuiuCharDot )
+        {
+        return EFalse;
+        }
+    for ( c = 0 ; c < length ; c++ )
+        {
+        if ( aAddress[c] == KMuiuCharQuote && ( c == 0 || 
+        aAddress[c-1] == KMuiuCharDot || aAddress[c-1] == KMuiuCharQuote ) )
+            {
+            while ( ++c < length )
+                {
+                if ( aAddress[c] == KMuiuCharQuote )
+                    {
+                    if( (c + 1) == length)
+                        {
+                        return EFalse;
+                        }
+                    break;
+                    }
+                if ( aAddress[c] == KMuiuCharBackSlash && 
+                    ( aAddress[++c] == KMuiuCharSpace) ) 
+                    {
+                    continue;
+                    }  
+                if ( aAddress[c] <= KMuiuCharSpace || 
+                    aAddress[c] >= KMuiuCharDel ) 
+                    {
+                    return EFalse;
+                    }
+                }
+            if ( c++ == length )
+                {
+                return EFalse;
+                }
+            if ( aAddress[c] == KMuiuCharAt )
+                {
+                break;
+                }
+            if ( aAddress[c] != KMuiuCharDot )
+                {
+                return EFalse;
+                }
+            continue;
+            }
+        if ( aAddress[c] == KMuiuCharAt )
+            {
+            break; 
+            }
+        if ( aAddress[c] <= KMuiuCharSpace || aAddress[c] >= KMuiuCharDel )
+            {
+            return EFalse;
+            }    
+        if ( rfc822Specials.Locate ( aAddress[c] ) != KErrNotFound )
+            {
+            return EFalse;
+            }
+        }
+    if ( c == 0 || aAddress[c-1] == KMuiuCharDot )
+        {
+        return EFalse;
+        }
+    // next we validate the domain portion (name@domain)
+    if ( c == length )
+        {
+        return EFalse;
+        }
+    else
+        {
+        c++; 
+        return IsValidDomain ( aAddress.Mid ( ( c ) , length-c ) );
+        }
+    }
+
+// ----------------------------------------------------
+// UniEditorGenUtils::IsValidDomainL
+// @see header
+// ----------------------------------------------------
+TBool UniEditorGenUtils::IsValidDomain ( const TDesC& aDomain )
+    {
+    TInt c = 0;  
+    TInt length = aDomain.Length ();
+    TBufC<KMuiuSpecialCharStrLen> rfc822Specials ( KRFC822Specials );
+    
+    if ( length == 0 )
+        {
+        return EFalse;   
+        }
+    
+    do
+        {    
+        if ( aDomain[c] == KMuiuCharDot )
+            {
+            if ( c == 0 || aDomain[c-1] == KMuiuCharDot )
+                {
+                return EFalse;
+                }
+            }
+        if ( aDomain[c] <= KMuiuCharSpace || aDomain[c] >= KMuiuCharDel )
+            {
+            return EFalse;
+            }
+        if ( rfc822Specials.Locate( aDomain[c] ) != KErrNotFound )
+            {
+            return EFalse;
+            }
+        } 
+    while ( ++c < length );
+  
+    return ( aDomain[length-1] != '.' );
     }
 
 // End of file

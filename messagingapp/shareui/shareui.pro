@@ -39,6 +39,7 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 # Build.inf rules
 BLD_INF_RULES.prj_exports += \
      "$${LITERAL_HASH}include <platform_paths.hrh>" \
+     "sis/shareui_stub.sis   /epoc32/data/z/system/install/shareui_stub.sis" \
      "rom/shareui.iby  CORE_APP_LAYER_IBY_EXPORT_PATH(shareui.iby)" 
      
 

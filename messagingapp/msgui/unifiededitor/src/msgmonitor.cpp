@@ -39,6 +39,7 @@ int MsgMonitor::mSubjectSize;
 int MsgMonitor::mMaxMmsSize;
 int MsgMonitor::mMaxSmsRecipients;
 int MsgMonitor::mMaxMmsRecipients;
+int MsgMonitor::mMsgCurrAddressCount;
 
 //Localized strings
 #define LOC_POP_MESSAGE_CHANGE_MUL hbTrId("txt_messaging_dpopinfo_message_type_changed_to_mul")
@@ -75,6 +76,7 @@ void MsgMonitor::init()
     mBodySize = 0;
     mContainerSize = 0;
     mSubjectSize = 0;
+    mMsgCurrAddressCount = 0;
 
     UniEditorGenUtils* uniEditorGenUtils = new UniEditorGenUtils;
 
@@ -91,139 +93,104 @@ void MsgMonitor::init()
 }
 
 //---------------------------------------------------------------
-// MsgMonitor::checkMsgTypeChange
+// MsgMonitor::handleContentChange
 // @see header file
 //---------------------------------------------------------------
-void MsgMonitor::checkMsgTypeChange()
+void MsgMonitor::handleContentChange()
 {
-    // fetch editor's content 
-    MsgUnifiedEditorBody* edBody = view()->mBody;
-    QStringList objList = edBody->mediaContent();
-    QString bodyText = edBody->text();
-    
-    MsgUnifiedEditorSubject* edSubject = view()->mSubjectField;
-    ConvergedMessage::Priority priority = ConvergedMessage::Normal;
-    QString subjectText;
-    if(edSubject)
+    // get the projected message type & show the type change note
+    ConvergedMessage::MessageType newMsgType = projectedMsgType();    
+    if(mMessageType != newMsgType)
     {
-        priority = edSubject->priority();
-        subjectText = edSubject->text();
-    }
-
-    MsgUnifiedEditorAddress* edCc = view()->mCcField;
-    MsgUnifiedEditorAddress* edBcc = view()->mBccField;
-    int ccCount = 0;
-    int bccCount = 0;
-    if(edCc && edBcc)
-    {
-        ccCount = edCc->addressCount();
-        bccCount = edBcc->addressCount();
-    }
-    
-    MsgAttachmentContainer* edContainer = view()->mAttachmentContainer;
-    bool hasMMAttachmentContent = false;
-    int attachmentCount = 0;
-    if(edContainer)
-    {
-        hasMMAttachmentContent = edContainer->hasMMContent();
-        attachmentCount = edContainer->count();
-    }
-
-    // find out the msgtype based on content
-    ConvergedMessage::MessageType projectedMsgType = ConvergedMessage::Sms;
-
-    // check for presence of MMS content
-    // 1. If any media-object is present inside body
-    // 2. If priority is set to other than Normal
-    // 3. If subject has some content
-    // 4. If CC/BCC has some content
-    // 5. If MM attachments are present
-    // 6. If only one non-MM attachment is present e.g. vcf 
-    //    and body text is also present
-    // 7. If body text size exceeds sms text-size limit
-    if( !objList.isEmpty() || 
-        (priority != ConvergedMessage::Normal) || 
-        !subjectText.isEmpty() ||
-        (ccCount || bccCount) ||
-        hasMMAttachmentContent ||
-        ((attachmentCount == 1) && !bodyText.isEmpty())
-      )
-    {
-        projectedMsgType = ConvergedMessage::Mms;
-    }
-    else
-    {
-        projectedMsgType = ConvergedMessage::Sms;
-    }
-
-    // optimization 1: if projected type is still sms means
-    // the message under composition has only plain text
-    if(projectedMsgType == ConvergedMessage::Sms)
-    {
-        bool hasUnicodeText = edBody->isUnicode();
-        int bodyTextSize = mUniEditorGenUtils->UTF8Size(bodyText);
-        int maxSmsSize = mUniEditorGenUtils->MaxSmsMsgSizeL(hasUnicodeText);
-        if(bodyTextSize > maxSmsSize)
-        {
-            projectedMsgType = ConvergedMessage::Mms;
-        }
-    }
-        
-    // show type change note, if needed
-    if(mMessageType != projectedMsgType)
-    {
-        mMessageType = projectedMsgType;
+        mMessageType = newMsgType;
         QString noteStr;
-        if(projectedMsgType == ConvergedMessage::Sms)
+        if(newMsgType == ConvergedMessage::Sms)
         {
             noteStr = LOC_POP_MESSAGE_CHANGE_TEXT;
         }
         else
         {
             noteStr = LOC_POP_MESSAGE_CHANGE_MUL;
-            
-            //Disable char counter
-            edBody->disableCharCounter();
         }
         showPopup(noteStr);
     }
-    
-    // update size of editor component
+
     HbWidget* senderWidget = qobject_cast<HbWidget*>(sender());
-    updateSizeInfo(senderWidget);
+    updateMsgInfo(senderWidget);
 }
 
 //---------------------------------------------------------------
-// MsgMonitor::updateSizeInfo
+// MsgMonitor::projectedMsgType
 // @see header file
 //---------------------------------------------------------------
-void MsgMonitor::updateSizeInfo(HbWidget* aWidget)
+ConvergedMessage::MessageType MsgMonitor::projectedMsgType()
 {
-    // if sent by body widget
-    MsgUnifiedEditorBody* body = NULL;    
-    body = qobject_cast<MsgUnifiedEditorBody*>(aWidget);
+    ConvergedMessage::MessageType newMsgType = ConvergedMessage::Sms;
+
+    // check if MMS content is present in any of the editor component
+    if( bodyHasMMSContent() ||
+        subjectHasMMSContent() ||
+        containerHasMMSContent() ||
+        otherMMSCriteriaMet() )
+    {
+        newMsgType = ConvergedMessage::Mms;
+    }
+    return newMsgType;
+}
+
+//---------------------------------------------------------------
+// MsgMonitor::updateMsgInfo
+// @see header file
+//---------------------------------------------------------------
+void MsgMonitor::updateMsgInfo(HbWidget* senderWidget)
+{
+    if(mMessageType == ConvergedMessage::Mms)
+    {
+        //Disable char counter & add subject
+        view()->mBody->disableCharCounter();
+        view()->addSubject();
+    }
+
+    // check if sent by body widget
+    MsgUnifiedEditorBody* body = NULL;
+    body = qobject_cast<MsgUnifiedEditorBody*>(senderWidget);
     if(body)
     {
         mBodySize = view()->mBody->bodySize();
+        view()->setAttachOptionEnabled(
+                MsgUnifiedEditorView::TBE_PHOTO, !view()->mBody->hasImage());
+        view()->setAttachOptionEnabled(
+                MsgUnifiedEditorView::TBE_SOUND, !view()->mBody->hasAudio());
         return;
     }
     
-    // if sent by attachment container widget
+    // check if sent by subject widget
+    MsgUnifiedEditorSubject* subject = NULL;
+    subject = qobject_cast<MsgUnifiedEditorSubject*>(senderWidget);
+    if(subject)
+    {
+        mSubjectSize = view()->mSubjectField->subjectSize();
+        return;
+    }
+
+    // check if sent by attachment container widget
     MsgAttachmentContainer* container = NULL;
-    container = qobject_cast<MsgAttachmentContainer*>(aWidget);
+    container = qobject_cast<MsgAttachmentContainer*>(senderWidget);
     if(container)
     {
         mContainerSize = view()->mAttachmentContainer->containerSize();
         return;
     }
 
-    // if sent by subject widget
-    MsgUnifiedEditorSubject* subject = NULL;
-    subject = qobject_cast<MsgUnifiedEditorSubject*>(aWidget);
-    if(subject)
+    // handle content change from other widgets e.g. To, Cc, Bcc address field
+    int totalAddressCount = view()->mToField->addressCount();
+    if(view()->mCcField && view()->mBccField)
     {
-        mSubjectSize = view()->mSubjectField->subjectSize();
+        totalAddressCount += view()->mCcField->addressCount() +
+                view()->mBccField->addressCount();
     }
+    mMsgCurrAddressCount = totalAddressCount;
+    return;
 }
 
 //---------------------------------------------------------------
@@ -252,6 +219,114 @@ void MsgMonitor::showPopup(const QString& text)
 MsgUnifiedEditorView* MsgMonitor::view()
 {
     return static_cast<MsgUnifiedEditorView*>(this->parent());
+}
+
+//---------------------------------------------------------------
+// MsgMonitor::bodyHasMMSContent
+// @see header file
+//---------------------------------------------------------------
+bool MsgMonitor::bodyHasMMSContent()
+{
+    MsgUnifiedEditorBody* edBody = view()->mBody;
+    // If any media-object is present inside body
+    if(!edBody->mediaContent().isEmpty())
+    {
+        return true;
+    }
+    
+    int bodyTextSize = mUniEditorGenUtils->UTF8Size(edBody->text());
+    int maxSmsSize = 0;
+    TRAP_IGNORE(maxSmsSize = 
+           mUniEditorGenUtils->MaxSmsMsgSizeL(edBody->isUnicode()));
+    // If body text size exceeds sms text-size limit
+    if(bodyTextSize > maxSmsSize)
+    {
+        return true;
+    }
+    return false;
+}
+
+//---------------------------------------------------------------
+// MsgMonitor::subjectHasMMSContent
+// @see header file
+//---------------------------------------------------------------
+bool MsgMonitor::subjectHasMMSContent()
+{
+    MsgUnifiedEditorSubject* edSubject = view()->mSubjectField;
+    ConvergedMessage::Priority priority = ConvergedMessage::Normal;
+    QString subjectText;
+    if(edSubject)
+    {
+        priority = edSubject->priority();
+        subjectText = edSubject->text();
+    }
+    // If priority is set to other than Normal or
+    // If subject has some content
+    if( (priority != ConvergedMessage::Normal) ||
+        !subjectText.isEmpty() )
+    {
+        return true;
+    }
+    return false;
+}
+
+//---------------------------------------------------------------
+// MsgMonitor::containerHasMMSContent
+// @see header file
+//---------------------------------------------------------------
+bool MsgMonitor::containerHasMMSContent()
+{
+    QString bodyText = view()->mBody->text();
+    MsgAttachmentContainer* edContainer = view()->mAttachmentContainer;
+    bool hasMMAttachmentContent = false;
+    int attachmentCount = 0;
+    if(edContainer)
+    {
+        hasMMAttachmentContent = edContainer->hasMMContent();
+        attachmentCount = edContainer->count();
+    }
+    // If MM attachments are present or
+    // If only one non-MM attachment is present e.g. vcf along with body text
+    if( hasMMAttachmentContent ||
+        ((attachmentCount == 1) && !bodyText.isEmpty()) )
+    {
+        return true;
+    }
+    return false;
+}
+
+//---------------------------------------------------------------
+// MsgMonitor::otherMMSCriteriaMet
+// @see header file
+//---------------------------------------------------------------
+bool MsgMonitor::otherMMSCriteriaMet()
+{
+    MsgUnifiedEditorAddress* edCc = view()->mCcField;
+    MsgUnifiedEditorAddress* edBcc = view()->mBccField;
+    int ccCount = 0;
+    int bccCount = 0;
+    if(edCc && edBcc)
+    {
+        ccCount = edCc->addressCount();
+        bccCount = edBcc->addressCount();
+    }
+    // If CC/BCC has some content or
+    // If to-recipients count exceeds max sms recipient count
+    if( ccCount || bccCount ||
+        (view()->mToField->addressCount() > mMaxSmsRecipients) )
+    {
+        return true;
+    }
+    
+    // If to-field contains an email address
+    bool isEmailPresent = false;
+    ConvergedMessageAddressList addrList = view()->mToField->addresses();
+    TRAP_IGNORE(isEmailPresent = mUniEditorGenUtils->VerifyEmailAddressesL(addrList));
+    if(isEmailPresent)
+    {
+        return true;
+    }
+    return false;
 }
 
 //EOF

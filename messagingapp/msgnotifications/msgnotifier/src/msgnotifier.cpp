@@ -20,10 +20,7 @@
 #include <hbdevicedialog.h>
 #include <hbindicator.h>
 #include <qfileinfo.h>
-#include <qversitcontactimporter.h>
-#include <qversitreader.h>
-#include <qtcontacts.h>
-QTM_USE_NAMESPACE
+
 //USER INCLUDES
 #include "msgnotifier.h"
 #include "msgnotifier_p.h"
@@ -33,6 +30,8 @@ QTM_USE_NAMESPACE
 #include "ccsdefs.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
+#include "msgcontacthandler.h"
+
 #include "debugtraces.h"
 
 // LOCALIZATION CONSTANTS
@@ -114,7 +113,8 @@ void MsgNotifier::displayNewMessageNotification(NotificationData& data)
             QString attachmentPath = attList[0]->path();
             description = LOC_BUSINESS_CARD;
             description.append(CARD_SEPERATOR);
-            description.append(getVcardDisplayName(attachmentPath));
+            description.append(
+                    MsgContactHandler::getVCardDisplayName(attachmentPath));
             } 
         delete pluginLoader;
         }
@@ -195,41 +195,6 @@ void MsgNotifier::updateOutboxIndications(MsgInfo& data)
     }
 
     QDEBUG_WRITE("MsgNotifier::updateOutboxIndications  Exit")
-}
-
-//---------------------------------------------------------------
-// MsgNotifier::getVcardDisplayName
-// @see header
-//---------------------------------------------------------------
-QString MsgNotifier::getVcardDisplayName(const QString& filePath)
-{
-    QString displayName;
-    //open file for parsing
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return displayName;
-    }
-    // parse contents
-    QVersitReader reader;
-    reader.setDevice(&file);
-    if (reader.startReading()) {
-        if (reader.waitForFinished()) {
-            QList<QVersitDocument> versitDocuments = reader.results();
-            // Use the resulting document
-            if (versitDocuments.count() > 0) {
-                QVersitContactImporter importer;
-                QList<QContact> contacts = importer.importContacts(versitDocuments);
-                // get display-name
-                if (contacts.count() > 0) {
-                    QContactManager* contactManager = new QContactManager("symbian");
-                    displayName = contactManager->synthesizedDisplayLabel(contacts[0]);
-                    delete contactManager;
-                }
-            }
-        }
-    }
-    file.close();
-    return displayName;
 }
 
 //EOF

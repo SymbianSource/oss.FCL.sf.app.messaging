@@ -34,8 +34,7 @@ public:
     /**
      * Constructor
      */
-    MsgUnifiedEditorAttachment( const QString& pluginPath,
-                                const QString& attachmentpath,
+    MsgUnifiedEditorAttachment( const QString& attachmentpath,
                                 const int filesize,
                                 QGraphicsItem *parent = 0 );
 
@@ -68,7 +67,10 @@ public:
      */
     bool isMultimediaContent();
     
-    HbFeedback::InstantEffect overrideFeedback(Hb::InstantInteraction interaction) const;
+    /*
+     * Depricated
+     */
+  //  HbFeedback::InstantEffect overrideFeedback(Hb::InstantInteraction interaction) const;
 
 protected:
     /**
@@ -118,11 +120,6 @@ private slots:
     void viewDetails();
 
 private:
-    /**
-	 * style plugin path
-	 */
-    QString mPluginPath;
-
     /**
 	 * attachment file's path
 	 */

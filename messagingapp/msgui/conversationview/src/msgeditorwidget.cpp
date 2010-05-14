@@ -24,6 +24,7 @@
 #include <qgraphicsscene.h>
 #include <HbFrameDrawer>
 #include <HbFrameItem>
+#include <HbAction>
 #include <csmsaccount.h>
 #include <smutset.h>
 #include <hbmessagebox.h>
@@ -35,7 +36,6 @@
 #include "debugtraces.h"
 
 // LOCAL CONSTANTS
-const QString PLUGINPATH("conversationviewplugin.dll");
 
 const QString SEND_ICON("qtg_mono_send");
 const QString BACKGROUND("qtg_fr_input_bg");
@@ -61,14 +61,6 @@ MsgEditorWidget::MsgEditorWidget(QGraphicsItem *parent) :
     HbWidget(parent), mMsgEditor(NULL),
     mSendButton(NULL),mPluginLoader(NULL)
 {
-    int baseId = style()->registerPlugin(PLUGINPATH);
-    
-    #ifdef _DEBUG_TRACES_
-    qDebug() << "MsgEditorWidget BASE ID --->" << baseId;
-    #endif
-    
-    setPluginBaseId(baseId);
-    
     //setting background.
     HbFrameItem* backGround = new HbFrameItem(this);
     backGround->frameDrawer().setFrameGraphicsName(BACKGROUND);
@@ -133,7 +125,6 @@ void MsgEditorWidget::init()
 //---------------------------------------------------------------
 MsgEditorWidget::~MsgEditorWidget()
 {
-    style()->unregisterPlugin(PLUGINPATH);
     delete mEditorUtils;
 }
 
@@ -229,7 +220,8 @@ void MsgEditorWidget::onTextChanged(const QString& str)
     //Check if sms segment limit has been reached
     bool unicode = (unicodeMode) ? true : false;
     int contentSize = mEditorUtils->UTF8Size(string);
-    int maxSmsSize =  mEditorUtils->MaxSmsMsgSizeL(unicode);
+    int maxSmsSize =  0;
+    TRAP_IGNORE(maxSmsSize = mEditorUtils->MaxSmsMsgSizeL(unicode));
     
     if(contentSize > maxSmsSize)
     {        
@@ -259,20 +251,11 @@ void MsgEditorWidget::handleSmsCharLimitReached()
 {
     mSmsCharLimitReached = false;
     
-    if(HbMessageBox::question(LOC_SMS_CHAR_LIMIT_REACHED,
+    HbMessageBox::question(LOC_SMS_CHAR_LIMIT_REACHED,
+        this,SLOT(onSmsCharLimitReached(HbAction*)),
         LOC_DIALOG_OK,
-        LOC_BUTTON_CANCEL))
-    {
-        //Launch UniEditor 
-        emit smsCharLimitReached();
-        return;
-    }
-    else
-    {
-        //Set the previous content
-        setContent(QString(mPrevBuffer));
-        return;
-    }
+        LOC_BUTTON_CANCEL);
+
 
 }
 
@@ -327,10 +310,10 @@ void MsgEditorWidget::onReleased()
     }
 	
 //---------------------------------------------------------------
-// MsgEditor::setEncodingSettings
+// MsgEditor::setEncodingSettingsL
 // @see header
 //---------------------------------------------------------------
-void MsgEditorWidget::setEncodingSettings()
+void MsgEditorWidget::setEncodingSettingsL()
 { 
     if( mPluginLoader )
     {
@@ -406,5 +389,22 @@ void MsgEditor::focusOutEvent(QFocusEvent * event)
     HbLineEdit::focusOutEvent(event);  
     }
 
+//---------------------------------------------------------------
+// MsgEditor::onSmsCharLimitReached
+// @see header
+//---------------------------------------------------------------
+void MsgEditorWidget::onSmsCharLimitReached(HbAction* action)
+{
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+
+        //Launch UniEditor 
+        emit smsCharLimitReached();
+    }
+    else {
+        //Set the previous content
+        setContent( QString(mPrevBuffer));
+    }
+}
 
 // EOF

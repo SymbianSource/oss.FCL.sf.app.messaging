@@ -99,4 +99,13 @@ inline int MsgMonitor::maxMmsRecipients()
     return mMaxMmsRecipients;
 }
 
+//---------------------------------------------------------------
+// MsgMonitor::msgAddressCount
+// @see header file
+//---------------------------------------------------------------
+inline int MsgMonitor::msgAddressCount()
+{
+    return mMsgCurrAddressCount;
+}
+
 //  End of File

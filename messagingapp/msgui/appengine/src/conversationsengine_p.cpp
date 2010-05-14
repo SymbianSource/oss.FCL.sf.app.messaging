@@ -26,6 +26,7 @@
 #include "conversationsmodel.h"
 #include "conversationchangehandler.h"
 #include "conversationlistchangehandler.h"
+#include "debugtraces.h"
 
 //---------------------------------------------------------------
 // ConversationsEnginePrivate::ConversationsEnginePrivate
@@ -58,16 +59,17 @@ ConversationsEnginePrivate::~ConversationsEnginePrivate()
     {        
         if(mServer)
         {    
-        mServer->RemoveConversationChangeEventL (mConvChangeHandler,
-            mClientConv);
+        TRAP_IGNORE(mServer->RemoveConversationChangeEventL(
+                mConvChangeHandler,mClientConv));
         }
         delete mClientConv;
         mClientConv = NULL;
     }
     if(mServer)
     {
-        mServer->RemoveConversationListChangeEventL (mConvListChangeHandler);
-        mServer->RemoveResultsEventL ( this );
+        TRAP_IGNORE(mServer->RemoveConversationListChangeEventL(
+                mConvListChangeHandler));
+        TRAP_IGNORE(mServer->RemoveResultsEventL ( this ));
         mServer->Cancel();
         delete mServer;
         mServer = NULL;
@@ -113,6 +115,7 @@ void ConversationsEnginePrivate::getConversationsL( TInt aConversationId)
 {	
     if(!mClientConv)
     {
+        QCRITICAL_WRITE("ConversationsEnginePrivate::getConversationsL start.");
         //Clear the model before issueing fetch
         mConversationsModel->clear();
         //create a client conversation
@@ -120,12 +123,15 @@ void ConversationsEnginePrivate::getConversationsL( TInt aConversationId)
         mClientConv->SetConversationEntryId(aConversationId);
         //set dummy entry
         CCsConversationEntry *entry = CCsConversationEntry::NewL();
-		CleanupStack::PushL(entry);
+        CleanupStack::PushL(entry);
         mClientConv->SetConversationEntryL(entry);
-		CleanupStack::PopAndDestroy(entry);
+        CleanupStack::PopAndDestroy(entry);
         //Get the conversations for new conversationId 
-        mServer->GetConversationsL( mClientConv ); 
-    }   
+        mServer->GetConversationsL(mClientConv);
+
+        QCRITICAL_WRITE("ConversationsEnginePrivate::getConversationsL end.");
+        }   
+    
 }
 
 //---------------------------------------------------------------
@@ -220,6 +226,8 @@ TInt ConversationsEnginePrivate::getConversationIdFromAddressL(TDesC& contactAdd
 //---------------------------------------------------------------
 void ConversationsEnginePrivate::clearConversationsL()
 {    
+    QCRITICAL_WRITE("ConversationsEnginePrivate::clearConversationsL start.");
+    
     mConvChangeHandler->Cancel();
     //Clear conversations model before populating with new data 
     mConversationsModel->clear();  
@@ -232,6 +240,8 @@ void ConversationsEnginePrivate::clearConversationsL()
         delete mClientConv;
         mClientConv = NULL;
     }
+    
+    QCRITICAL_WRITE("ConversationsEnginePrivate::clearConversationsL end.");
 }
 
 //---------------------------------------------------------------
@@ -267,10 +277,14 @@ void ConversationsEnginePrivate::Conversations(
     RPointerArray<CCsConversationEntry>& aConversationEntryList)
 {
     int error;
-    if(mClientConv)
-    {    
+    if (mClientConv)
+        {
+        QCRITICAL_WRITE("ConversationsEnginePrivate::Conversations start.");
+
         TRAP(error,mConvChangeHandler->ConversationsL(aConversationEntryList));
-    }
+
+        QCRITICAL_WRITE("ConversationsEnginePrivate::Conversations end.");
+        }
 }
 
 
@@ -280,9 +294,9 @@ void ConversationsEnginePrivate::Conversations(
 //---------------------------------------------------------------
 void ConversationsEnginePrivate::fetchMoreConversations()
 {
-    if(mClientConv)
-        {    
-            mConvChangeHandler->restartHandleConversations();
+    if (mClientConv)
+        {
+        mConvChangeHandler->restartHandleConversations();
         }
 }
 

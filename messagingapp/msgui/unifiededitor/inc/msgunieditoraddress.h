@@ -18,7 +18,7 @@
 #ifndef UNIFIED_EDITOR_ADDRESS_H
 #define UNIFIED_EDITOR_ADDRESS_H
 
-#include <hbwidget.h>
+#include <msgunifiededitorbasewidget.h>
 
 #include <convergedmessageaddress.h>
 #include <QMap>
@@ -26,9 +26,10 @@
 class HbTextItem;
 class HbPushButton;
 class HbLineEdit;
+class HbAction;
 class MsgUnifiedEditorLineEdit;
 
-class MsgUnifiedEditorAddress : public HbWidget
+class MsgUnifiedEditorAddress : public MsgUnifiedEditorBaseWidget
     {
     Q_OBJECT
 
@@ -38,7 +39,6 @@ public:
      * Constructor
      */
     MsgUnifiedEditorAddress(const QString& label,
-                            const QString& pluginPath,
                             QGraphicsItem *parent = 0);
 
     /**
@@ -48,9 +48,10 @@ public:
 
     /**
      * Seeker method to return back data to editor's view
-     * Removes duplicates.
+     * By default, does not remove duplicates.
+     * @param removeDuplicates, True if duplicate removal is needed
      */
-    ConvergedMessageAddressList addresses();
+    ConvergedMessageAddressList addresses(bool removeDuplicates=false);
 
     /**
      * Get total number of recipient's (including duplicates)
@@ -59,14 +60,31 @@ public:
 
     /**
      * setter method to set address
+     * @param addrlist, list of addresses to be set in address editor
      */
     void setAddresses(ConvergedMessageAddressList addrlist);
-    
+
     /**
      * Get amount of digits to be used in contact matching
      */
     static int contactMatchDigits();
-        
+
+    /**
+     * setter method to enable flag to skip max recipient limit query
+     */
+    void skipMaxRecipientQuery(bool skip);
+
+    /**
+     * validate contacts
+     */
+    bool validateContacts();
+
+public slots:
+    /**
+     * To set focus on editable field.
+     */
+    void setFocus();
+
 signals:
     /**
      * Emitted when send button from virtual ITUT is pressed.
@@ -79,7 +97,7 @@ signals:
     void contentChanged();
 
 private slots:
-   
+
     /**
      * called after selection from pbk.
      */
@@ -88,22 +106,32 @@ private slots:
      * Slot for handling valid returns from the phonebook contacts fetched.
      */
     void handleOk(const QVariant& result);
-    
+
     /**
-     * Slot for handling errors. Error ids are provided as 
+     * Slot for handling errors. Error ids are provided as
      */
     void handleError(int errorCode, const QString& errorMessage);
 
     /**
      * Called when contentsChanged signal is emitted by the line edit
      */
-    void onContentsAdded(const QString&);
+    void onContentsChanged(const QString&);
 
     /**
-     * Called when contentsChanged signal is emitted by the line edit
-     * Checks for empty text content
+     * launch query for recipient limit usecase
      */
-    void onContentsRemoved(const QString& text);
+    void handleRecipientLimitReached();
+   
+	/**
+     * This slot is called when max recipients reached dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onMaxRecipientsReached(HbAction*);
+
+    /**
+     * Handle invalid contact dialog useraction
+     */
+    void handleInvalidContactDialog(HbAction* act);
 
 private:
     /**
@@ -115,13 +143,19 @@ private:
      * Add edit-field's user-added addresses to Map
      */
     void syncAdditionsToMap();
-    
+
     /**
      * Removes duplicate addresses and gives unique address list
      */
     QStringList uniqueAddressList();
+
+    /**
+     * Reset the addresslist to previous list
+     */
+    void resetToPrevious();
+
 private:
-    
+
     /**
      * Push button to launch phone book.
      */
@@ -133,15 +167,39 @@ private:
     MsgUnifiedEditorLineEdit* mAddressEdit;
 
     /**
-     * string to hold plugin path.
-     */
-    QString mPluginPath;
-
-    /**
      * address map.
      */
     QMap<QString, QString> mAddressMap;
-   
+
+    /**
+     * holds the previous buffer inside address field
+     */
+    QString mPrevBuffer;
+
+    /**
+     * flag to skip max recipient limit query
+     */
+    bool mSkipMaxRecipientQuery;
+
+    /**
+     * flag to indicate that the SMS recipient limit is about
+     * to be exceeded by a bulk insertion of addresses e.g. multiple
+     * selection from contact selection dialog
+     */
+    bool mAboutToExceedMaxSmsRecipients;
+
+    /**
+     * flag to indicate that the MMS recipient limit is about
+     * to be exceeded by a bulk insertion of addresses e.g. multiple
+     * selection from contact selection dialog
+     */
+    bool mAboutToExceedMaxMmsRecipients;
+
+    /**
+     * count by which a bulk-insertion will exceed max MMS recipient
+     * limit e.g. multiple selection from contact selection dialog
+     */
+    int mExceedsMaxMmsRecipientsBy;
     };
 
 #endif //UNIFIED_EDITOR_ADDRESS_H

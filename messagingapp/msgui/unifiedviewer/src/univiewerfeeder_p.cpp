@@ -20,14 +20,12 @@
 #include <msvstd.h>
 #include <s60qconversions.h>
 #include <msvids.h>
-#include <qtcontactsglobal.h>
-#include "qtcontacts.h"
-#include "qcontactdetailfilter.h"
 
 // USER INCLUDES
 #include "nativemessageconsts.h"
 #include "univiewerfeeder.h"
 #include "unidatamodelloader.h"
+#include "msgcontacthandler.h"
 #include "debugtraces.h"
 
 // ---------------------------------------------------------------------------
@@ -269,7 +267,10 @@ ConvergedMessageAddressList UniViewerFeederPrivate::toAddressList()
     QString alias = QString();
     for (int i = 0; i < mToAddressList.count(); ++i)
     {
-        GetNameFromContacts(mToAddressList.at(i)->address(), alias);
+        MsgContactHandler::resolveContactDisplayName(
+                mToAddressList.at(i)->address(),
+                alias,
+                0);
         mToAddressList.at(i)->setAlias(alias);
         alias.clear();
     }
@@ -285,7 +286,10 @@ ConvergedMessageAddressList UniViewerFeederPrivate::ccAddressList()
     QString alias = QString();
     for (int i = 0; i < mCcAddressList.count(); ++i)
     {
-        GetNameFromContacts(mCcAddressList.at(i)->address(), alias);
+        MsgContactHandler::resolveContactDisplayName(
+                        mToAddressList.at(i)->address(),
+                        alias,
+                        0);
         mCcAddressList.at(i)->setAlias(alias);
         alias.clear();
 
@@ -309,7 +313,10 @@ int UniViewerFeederPrivate::messageSize()
 void UniViewerFeederPrivate::fromAddressAndAlias(QString& from, QString& alias)
 {
     mPluginInterface->fromAddress(from);
-    GetNameFromContacts(from, alias);
+    MsgContactHandler::resolveContactDisplayName(
+                    from,
+                    alias,
+                    0);
 }
 
 // ---------------------------------------------------------------------------
@@ -330,49 +337,6 @@ void UniViewerFeederPrivate::clearContent()
     }
 
     mCcAddressList.clear();
-}
-
-// ---------------------------------------------------------------------------
-// UniViewerFeederPrivate::GetNameFromContacts
-// @see header file
-//----------------------------------------------------------------------------
-int UniViewerFeederPrivate::GetNameFromContacts(const QString& address,
-                                                QString& alias)
-{
-    QContactManager contactManager("symbian");
-    //set filter
-    QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName,
-                                        QContactPhoneNumber::FieldNumber);
-    phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
-
-    phoneFilter.setValue(address); // this is the phone number to be resolved
-
-    QList<QContactSortOrder> sortOrder;
-    QList<QContact> matchingContacts =
-            contactManager.contacts(phoneFilter,
-                                    sortOrder,
-                                    QStringList());
-                                    
-    int count = 0;
-    if (matchingContacts.count() > 0)
-    {
-        QContact match = matchingContacts.at(0);       
-        
-        QString displayLabel = match.displayLabel();
-
-        if (displayLabel != "Unnamed")
-        {
-            alias.append(displayLabel);
-        }
-        
-        QList<QContactPhoneNumber> numbers =
-                match.details<QContactPhoneNumber> ();
-        count = numbers.count();
-     
-    }
-    
-    return count;
 }
 
 // EOF

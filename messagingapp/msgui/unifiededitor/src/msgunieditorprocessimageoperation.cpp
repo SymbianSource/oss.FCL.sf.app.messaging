@@ -45,6 +45,7 @@
 #include <MmsEngineDomainCRKeys.h>
 #include <mmssettingsdefs.h>
 #include <HbMessageBox>
+#include <HbAction>
 #include <mmsconst.h>
 
 #include "msgmonitor.h"
@@ -77,11 +78,10 @@ _LIT(KTempFilePath,"c:\\temp\\unieditor\\");
 // ---------------------------------------------------------
 //
 CUniEditorProcessImageOperation* CUniEditorProcessImageOperation::NewL(
-    MUniEditorProcessImageOperationObserver &aObserver,
-    RFs& aFs )
+    MUniEditorProcessImageOperationObserver &aObserver)
     {
     CUniEditorProcessImageOperation* self = new ( ELeave ) 
-    CUniEditorProcessImageOperation(aObserver,aFs );
+                    CUniEditorProcessImageOperation(aObserver);
             
     CleanupStack::PushL( self );
     self->ConstructL();
@@ -95,10 +95,9 @@ CUniEditorProcessImageOperation* CUniEditorProcessImageOperation::NewL(
 // ---------------------------------------------------------
 //
 CUniEditorProcessImageOperation::CUniEditorProcessImageOperation(
-    MUniEditorProcessImageOperationObserver &aObserver,
-    RFs& aFs ) :    CActive( EPriorityStandard ),
-    iObserver(aObserver),
-    iFs( aFs )
+    MUniEditorProcessImageOperationObserver &aObserver) 
+    :    CActive( EPriorityStandard ),
+         iObserver(aObserver)
     {
             CActiveScheduler::Add( this );
     }
@@ -111,6 +110,8 @@ CUniEditorProcessImageOperation::CUniEditorProcessImageOperation(
 //
 void CUniEditorProcessImageOperation::ConstructL()
     {
+    User::LeaveIfError(iFs.Connect());
+    iFs.ShareProtected();            
 
     TInt featureBitmask( 0 );
     
@@ -164,9 +165,13 @@ CUniEditorProcessImageOperation::~CUniEditorProcessImageOperation()
     delete iImageProcessor;
 
     //Since iFs doesnot have recursive dir deletion use file manager
-    CFileMan *fm = CFileMan::NewL(iFs);
-    fm->RmDir(KTempFilePath);
-    delete fm;
+    TRAP_IGNORE(
+        CFileMan *fm = CFileMan::NewL(iFs);
+        fm->RmDir(KTempFilePath);
+        delete fm;
+        );
+
+    iFs.Close();
     }
 
 // ---------------------------------------------------------
@@ -269,7 +274,7 @@ void CUniEditorProcessImageOperation::DoStartCheck()
         {
         iOperationState = EUniProcessImgProcess;
         }
-    CompleteSelf( KErrNone );
+    checkLargeImage();
     }
   
 // ---------------------------------------------------------
@@ -312,6 +317,7 @@ void CUniEditorProcessImageOperation::DoStartResolveL()
     
     //Delete the previous object if present
     delete iNewImageInfo;
+    iNewImageInfo = NULL;
     iNewImageInfo = static_cast<CMsgImageInfo*>(mediaResolver->CreateMediaInfoL( iNewImageFile ) );
     
     mediaResolver->ParseInfoDetailsL( iNewImageInfo, iNewImageFile );
@@ -408,11 +414,14 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
     {
     iProcessMethod = EUniProcessImgMethodNone;
     
-    CMmsConformance* mmsConformance = CMmsConformance::NewL();
-    mmsConformance->CheckCharacterSet( EFalse );
-
-    TMmsConformance conformance = 
-        mmsConformance->MediaConformance( *iImageInfo );
+    CMmsConformance* mmsConformance = NULL;
+    TRAP_IGNORE(mmsConformance = CMmsConformance::NewL());
+    TMmsConformance conformance;
+    if(mmsConformance)
+    {
+        mmsConformance->CheckCharacterSet( EFalse );
+        conformance = mmsConformance->MediaConformance( *iImageInfo );
+    }
     
     if ( conformance.iCanAdapt == EFalse )
         {
@@ -477,7 +486,7 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
         iProcessMethod |= EUniProcessImgMethodCompress;
         }
     
-    TBool largeImageQuery = EFalse;
+    largeImageQuery = EFalse;
     
     if ( iProcessMethod == EUniProcessImgMethodNone )
         {
@@ -501,20 +510,30 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
             largeImageQuery = ETrue;
             }
         }
-
-    //Large image query     
-    if( largeImageQuery && iMmsCreationMode == EMmsCreationModeWarning)
-    {
-        if(!HbMessageBox::question(LOC_LARGE_IMAGE_NOTE))
-        {
-            return EFalse; // Abort
-        }
-        
-    }
-        
+ 
     iScaleSize = scaleSize;
     return ETrue;
     }
+
+// ---------------------------------------------------------
+// CUniEditorProcessImageOperation::checkLargeImage
+// ---------------------------------------------------------
+//
+void CUniEditorProcessImageOperation::checkLargeImage()
+{
+    //Large image query     
+    if( largeImageQuery && iMmsCreationMode == EMmsCreationModeWarning)
+    {
+        HbMessageBox::question(LOC_LARGE_IMAGE_NOTE, this,
+            SLOT(onDialogLargeImage(HbAction*))); 
+    }
+    else
+    {
+        CompleteSelf(KErrNone);
+    }
+        
+}
+       
 
 // ---------------------------------------------------------
 // CUniEditorProcessImageOperation::CreateEmptyAttachmentL
@@ -676,5 +695,17 @@ void CUniEditorProcessImageOperation::DoCancel()
         }
     }
 
+// ---------------------------------------------------------
+// CUniEditorProcessImageOperation::onDialogLargeImage
+// ---------------------------------------------------------
+//
+void CUniEditorProcessImageOperation::onDialogLargeImage(HbAction* action)
+    {
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(1)) {
+        iOperationState = EUniProcessImgError;
+        }
+    CompleteSelf(KErrNone);
+    }
 
 // End of file

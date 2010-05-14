@@ -31,7 +31,6 @@
 MsgMainWindow::MsgMainWindow(bool serviceRequest, QWidget *parent) :
 HbMainWindow(parent), mMsgSI(0), mMsgSendSI(0)
 {
-    hideItems(Hb::NaviPaneItem);
     MsgViewManager* viewManager = new MsgViewManager(serviceRequest,this,this);
     mMsgSI = new MsgServiceInterface(NULL,viewManager);
     mMsgSendSI = new MsgSendServiceInterface(NULL,viewManager);

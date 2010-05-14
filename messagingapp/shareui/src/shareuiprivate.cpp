@@ -78,22 +78,10 @@ ShareUiPrivate::~ShareUiPrivate()
 void ShareUiPrivate::reset()
     {
     mFileList.clear();
-    
-    mIndexActionMap.clear(); // TODO Is there MEM leak.
-    mAiwRequestList.clear(); // TODO Is there MEM leak.
-    
-    if ( mContentItemModel )
-        {
-        delete mContentItemModel;
-        mContentItemModel = 0;
-        }
-    
-    if ( mContentListView )
-        {
-        delete mContentListView;
-        mContentListView = 0;
-        }
-    
+
+    mIndexActionMap.clear();
+    mAiwRequestList.clear();
+
     if ( mSharePopup )
         {
         delete mSharePopup;
@@ -201,7 +189,7 @@ bool ShareUiPrivate::init(QStringList& fileList, bool embedded)
             return true;
             }
 
-        mSharePopup->exec();
+        mSharePopup->show();
         }
     else
         {
@@ -218,13 +206,13 @@ void ShareUiPrivate::initializeUi()
     {
     // Dialog
     mSharePopup = new HbDialog();
-    
+    // make it delete itself on close
+    mSharePopup->setAttribute( Qt::WA_DeleteOnClose, true );
     HbTextItem* heading = new HbTextItem(LOC_SEND_SELECTED_ITEM, mSharePopup);
     heading->setAlignment(Qt::AlignCenter);
+    mSharePopup->setDismissPolicy(HbDialog::NoDismiss);
     mSharePopup->setHeadingWidget(heading);
-    mSharePopup->setTimeout(HbDialog::NoTimeout);  
     mSharePopup->setFrameType(HbDialog::Strong);
-    mSharePopup->setPrimaryAction(new HbAction(LOC_BUTTON_CANCEL, mSharePopup));
         
     // Content widget
     mContentListView = new HbListView(mSharePopup);
@@ -237,6 +225,9 @@ void ShareUiPrivate::initializeUi()
     mSharePopup->setContentWidget(mContentListView);
     connect(mContentListView, SIGNAL(activated(QModelIndex)),
             this, SLOT(itemActivated(QModelIndex)));  
+    
+    HbAction* cancelAction = new HbAction(LOC_BUTTON_CANCEL,mSharePopup);
+    mSharePopup->addAction(cancelAction);
     }
 
 /**

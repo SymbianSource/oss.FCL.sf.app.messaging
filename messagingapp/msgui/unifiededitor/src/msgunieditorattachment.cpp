@@ -25,8 +25,8 @@
 #include <HbMenu>
 #include <MsgMimeTypes.h>
 #include <HbFrameItem>
-#include <HbGestureSceneFilter>
-#include <HbGesture>
+//#include <HbGestureSceneFilter>
+//#include <HbGesture>
 #include <QGraphicsSceneMouseEvent>
 #include <HbWidgetFeedback>
 
@@ -49,26 +49,17 @@ const QString LIST_ITEM_BG_FRAME_PRESSED("qtg_fr_list_pressed");
 
 const QString ATTACHMENT_ICON("qtg_small_attachment");
 
-MsgUnifiedEditorAttachment::MsgUnifiedEditorAttachment( const QString& pluginPath,
-                                                        const QString& attachmentpath,
+MsgUnifiedEditorAttachment::MsgUnifiedEditorAttachment( const QString& attachmentpath,
                                                         const int filesize,
                                                         QGraphicsItem *parent ) :
 HbWidget(parent),
-mPluginPath(pluginPath),
 mPath(attachmentpath),
 mSize(filesize),
-mMimeType(QString()),
 mAttachmentIcon(0),
 mAttachmentName(0),
-mGestureFilter(0),
+//mGestureFilter(0),
 mMaxSmsSize(KFirstNormalSmsLength)
 {
-#ifdef _DEBUG_TRACES_
-    qDebug() << "MsgUnifiedEditorAttachment calling HbStyle::registerPlugin";
-#endif
-    
-        setPluginBaseId(style()->registerPlugin(mPluginPath));
-		     
         //back ground
         HbFrameItem* backGround = new HbFrameItem(this);
         backGround->frameDrawer().setFrameGraphicsName(LIST_ITEM_BG_FRAME_NORMAL);
@@ -119,12 +110,10 @@ mMaxSmsSize(KFirstNormalSmsLength)
 
 MsgUnifiedEditorAttachment::~MsgUnifiedEditorAttachment()
 {
-    style()->unregisterPlugin(mPluginPath);
-    
-    if(mGestureFilter)
+  /*  if(mGestureFilter)
         {
         removeSceneEventFilter(mGestureFilter);
-        }
+        }*/
 }
 
 const QString& MsgUnifiedEditorAttachment::path()
@@ -223,7 +212,7 @@ void MsgUnifiedEditorAttachment::mouseReleaseEvent(QGraphicsSceneMouseEvent *eve
 void MsgUnifiedEditorAttachment::initGesture()
 {
     // Create gesture filter
-    mGestureFilter = new HbGestureSceneFilter( Qt::LeftButton, this );
+ /*   mGestureFilter = new HbGestureSceneFilter( Qt::LeftButton, this );
     
     // Add gestures for longpress
     HbGesture* gestureLongpressed = new HbGesture( HbGesture::longpress,5 );
@@ -234,10 +223,10 @@ void MsgUnifiedEditorAttachment::initGesture()
              this, SLOT(longPressed(QPointF)) );
 
     //install gesture filter.
-    this->installSceneEventFilter(mGestureFilter);
+    this->installSceneEventFilter(mGestureFilter);*/
 }
 
-HbFeedback::InstantEffect MsgUnifiedEditorAttachment::overrideFeedback(Hb::InstantInteraction interaction) const
+/*HbFeedback::InstantEffect MsgUnifiedEditorAttachment::overrideFeedback(Hb::InstantInteraction interaction) const
         {
         switch(interaction)
             {
@@ -245,8 +234,8 @@ HbFeedback::InstantEffect MsgUnifiedEditorAttachment::overrideFeedback(Hb::Insta
             case Hb::InstantClicked:
                 return HbFeedback::Basic;
             default:
-                return HbFeedback::NoOverride;
+                return HbFeedback::None;
             }
-        }
+        }*/
 
 // EOF

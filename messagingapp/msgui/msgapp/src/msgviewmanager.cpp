@@ -26,6 +26,7 @@
 #include <HbApplication>
 #include <xqappmgr.h>
 #include <HbMessageBox.h>
+#include <HbView>
 
 #include "conversationsengine.h"
 #include "msglistview.h"
@@ -43,16 +44,18 @@
 #define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
 #define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
+#define LOC_DIALOG_SAVE_RINGTONE hbTrId("txt_conversations_dialog_save_ringing_tone")
+#define LOC_COMMON_SAVE  hbTrId("txt_common_menu_save")
 
 const qint64 NULL_CONVERSATIONID = -1;
 
 MsgViewManager::MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QObject* parent) :
     QObject(parent), mMainWindow(mainWindow), mUniEditor(0), mListView(0), mConversationView(0),
         mUniViewer(0), mDraftsListView(0), mSettingsView(0), mBackAction(0), mServiceRequest(
-            serviceRequest), mConversationId(-1), mViewServiceRequest(false)
+            serviceRequest), mConversationId(-1), mViewServiceRequest(false),mMessageId(-1)
 {
     //creating back action.
-    mBackAction = new HbAction(Hb::BackAction, this);
+    mBackAction = new HbAction(Hb::BackNaviAction, this);
     connect(mBackAction, SIGNAL(triggered()), this, SLOT(onBackAction()));
 
     //create clv as first view if not a service request.
@@ -61,6 +64,13 @@ MsgViewManager::MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QO
         param << MsgBaseView::CLV;
         param << MsgBaseView::CLV;
         switchView(param);
+    }
+    else
+    {
+        mDummyview = new HbView();
+        mMainWindow->addView(mDummyview);
+        mMainWindow->setCurrentView(mDummyview);
+        mViewTobeDeleted << mDummyview;
     }
 }
 
@@ -98,6 +108,9 @@ void MsgViewManager::onBackAction()
         //marking messages as red in CV.
         mConversationView->markMessagesAsRead();
 
+        // reset the conversation id published
+        mConversationView->setPSCVId(false);
+        
         //clearing content of cv.
         mConversationView->clearContent();
 
@@ -150,14 +163,6 @@ void MsgViewManager::onBackAction()
             break;
         }
 
-        //Now UE can be launched from viewer and on its back
-        //we need to clear viewer
-        if (mUniViewer) {
-            mMainWindow->removeView(mUniViewer);
-            delete mUniViewer;
-            mUniViewer = NULL;
-        }
-
         //switch to clv.
         if (mServiceRequest) {
             completeServiceRequest();
@@ -186,8 +191,6 @@ void MsgViewManager::onBackAction()
             param << mConversationId;
             switchView(param);
 
-            delete mUniViewer;
-            mUniViewer = NULL;
         }
         break;
     }
@@ -208,7 +211,12 @@ void MsgViewManager::onBackAction()
 
 void MsgViewManager::switchView(const QVariantList& data)
 {
+   
+    connect(mMainWindow, SIGNAL(viewReady()),this,SLOT(setViewInteractive()));
+    mMainWindow->setInteractive(false);
+    
     int viewId = data.at(0).toInt();
+    
     switch (viewId) {
     case MsgBaseView::DEFAULT:
     {
@@ -217,15 +225,16 @@ void MsgViewManager::switchView(const QVariantList& data)
     }
     case MsgBaseView::CLV:
     {
-        switchToClv(data);
-        break;
-    }
+            switchToClv(data);
+            break;
+        }
 
-    case MsgBaseView::CV:
-    {
-        switchToCv(data);
-        break;
-    }
+        case MsgBaseView::CV:
+        {
+
+            switchToCv(data);
+            break;
+        }
 
     case MsgBaseView::DLV:
     {
@@ -252,6 +261,18 @@ void MsgViewManager::switchView(const QVariantList& data)
     }
     }
 }
+
+void MsgViewManager::deletePreviousView()
+{
+    while(mViewTobeDeleted.count())
+    {
+        HbView* v = mViewTobeDeleted.takeAt(0);
+        mMainWindow->removeView(v);
+        delete v;
+    }
+    disconnect(mMainWindow, SIGNAL(viewReady()), this, SLOT(deletePreviousView()));
+}
+
 
 void MsgViewManager::send(const qint32 contactId, const QString phoneNumber,
     const QString displayName)
@@ -348,6 +369,11 @@ void MsgViewManager::open(qint64 conversationId)
     if (conversationId < 0) {
         param << MsgBaseView::CLV;
         param << MsgBaseView::SERVICE;
+        
+        if( mCurrentView == MsgBaseView::CV && mConversationView)
+            {
+            mConversationView->setPSCVId(false);
+            }
     }
     else {
         param << MsgBaseView::CV;
@@ -433,13 +459,8 @@ void MsgViewManager::switchToClv(const QVariantList& data)
         HbApplication::quit();
     }
 
-    //remove the settings view from main window
-    if (mSettingsView) {
-        mMainWindow->removeView(mSettingsView);
-        mSettingsView->setNavigationAction(mBackAction);
-        connect(mBackAction, SIGNAL(triggered()), this, SLOT(onBackAction()), Qt::UniqueConnection);
-    }
     if (mConversationView) {
+        mConversationView->saveContentToDrafts();
         //clearing content of cv.
         mConversationView->clearContent();
     }
@@ -452,20 +473,21 @@ void MsgViewManager::switchToClv(const QVariantList& data)
         mMainWindow->addView(mListView);
     }
 
-    //delete uni editor.
-    if (mUniEditor) {
-        mMainWindow->removeView(mUniEditor);
-        delete mUniEditor;
+    mMainWindow->setCurrentView(mListView);
+    
+    //delete UniEditor
+    if (mUniEditor)
+    {
+        appendViewToBeDeleted(mUniEditor);
         mUniEditor = NULL;
     }
-
-    if (mUniViewer) {
-        mMainWindow->removeView(mUniViewer);
-        delete mUniViewer;
+    
+    //delete UniViewer
+    if (mUniViewer)
+    {
+        appendViewToBeDeleted(mUniViewer);
         mUniViewer = NULL;
     }
-
-    mMainWindow->setCurrentView(mListView);
 }
 
 void MsgViewManager::switchToCv(const QVariantList& data)
@@ -480,19 +502,6 @@ void MsgViewManager::switchToCv(const QVariantList& data)
         HbApplication::quit();
     }
 
-    //delete uni editor.
-    if (mUniEditor) {
-        mMainWindow->removeView(mUniEditor);
-        delete mUniEditor;
-        mUniEditor = NULL;
-    }
-
-    if (mUniViewer) {
-        mMainWindow->removeView(mUniViewer);
-        delete mUniViewer;
-        mUniViewer = NULL;
-    }
-
     QVariant var = data.at(2);
     qint64 conversationId;
     if (var.type() == QVariant::String) {
@@ -503,6 +512,11 @@ void MsgViewManager::switchToCv(const QVariantList& data)
             QVariantList param;
             param << MsgBaseView::CLV;
             param << MsgBaseView::CV;
+            
+            if( mCurrentView == MsgBaseView::CV && mConversationView){
+                mConversationView->setPSCVId(false);
+                }
+            
             switchView(param);
             return;
         }
@@ -512,9 +526,15 @@ void MsgViewManager::switchToCv(const QVariantList& data)
         // Unified viewer  set curent view as conversation view 
         // and return
         mMainWindow->setCurrentView(mConversationView);
-
-        delete mUniViewer;
-        mUniViewer = NULL;
+		
+		// publish already opened conversation's id
+        mConversationView->setPSCVId(true);
+		
+        if (mUniViewer)
+        {
+            appendViewToBeDeleted(mUniViewer);
+            mUniViewer = NULL;
+        }
 
         return;
     }
@@ -532,6 +552,12 @@ void MsgViewManager::switchToCv(const QVariantList& data)
 
         mMainWindow->addView(mConversationView);
     }
+    else if (mConversationView->conversationId() != mConversationId){
+  		//Save content to drafts before switching to different CV
+        mConversationView->saveContentToDrafts();
+        //clearing content of current cv.
+        mConversationView->clearContent();
+  	}	
 
     mConversationView->openConversation(conversationId);
 
@@ -541,6 +567,20 @@ void MsgViewManager::switchToCv(const QVariantList& data)
     else {
         mMainWindow->setCurrentView(mConversationView);
     }
+    
+    //delete UniEditor
+    if (mUniEditor)
+    {
+        appendViewToBeDeleted(mUniEditor);
+        mUniEditor = NULL;
+    }
+    
+    //delete UniViewer
+    if (mUniViewer)
+    {
+        appendViewToBeDeleted(mUniViewer);
+        mUniViewer = NULL;
+    }
 }
 
 void MsgViewManager::switchToDlv(const QVariantList& data)
@@ -548,13 +588,6 @@ void MsgViewManager::switchToDlv(const QVariantList& data)
     //switch to DLV.
     mCurrentView = MsgBaseView::DLV;
     mPreviousView = data.at(1).toInt();
-
-    //delete uni editor.
-    if (mUniEditor) {
-        mMainWindow->removeView(mUniEditor);
-        delete mUniEditor;
-        mUniEditor = NULL;
-    }
 
     if (!mDraftsListView) {
         mDraftsListView = new DraftsListView();
@@ -585,6 +618,12 @@ void MsgViewManager::switchToUniEditor(const QVariantList& data)
         mConversationView->clearContent();
     }
 
+     // reset conversation id published
+     if(mPreviousView == MsgBaseView::CV && mConversationView)
+         {
+         mConversationView->setPSCVId(false);
+         }
+     
     //swich to unieditor.
     if (!mUniEditor) {
         mUniEditor = new MsgUnifiedEditorView();
@@ -615,6 +654,12 @@ void MsgViewManager::switchToUniEditor(const QVariantList& data)
     }
     else {
         mMainWindow->setCurrentView(mUniEditor);
+    }
+    //delete UniViewer
+    if (mUniViewer )
+    {
+        appendViewToBeDeleted(mUniViewer);
+        mUniViewer = NULL;
     }
 }
 
@@ -651,6 +696,12 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
         mUniViewer->populateContent(messageId, true, msgCount);
         delete message;
     }
+    
+    if(mPreviousView==MsgBaseView::CV && mConversationView)
+        {
+        mConversationView->setPSCVId(false);
+        }
+    
     mMainWindow->setCurrentView(mUniViewer);
 }
 void MsgViewManager::switchToMsgSettings(const QVariantList& data)
@@ -659,11 +710,22 @@ void MsgViewManager::switchToMsgSettings(const QVariantList& data)
     mPreviousView = data.at(1).toInt();
 
     if (!mSettingsView) {
-        mSettingsView = new MsgSettingsView();
+        
+        MsgSettingsView::SettingsView view = MsgSettingsView::DefaultView;
+        if (mPreviousView == MsgBaseView::UNIEDITOR || mPreviousView
+                        == MsgBaseView::CV)
+                {
+                    view = (MsgSettingsView::SettingsView)data.at(2).toInt();         
+                }
+        
+        mSettingsView = new MsgSettingsView(view);
         mSettingsView->setNavigationAction(mBackAction);
         mMainWindow->addView(mSettingsView);
         mMainWindow->setCurrentView(mSettingsView);
     }
+    if(mPreviousView==MsgBaseView::CV && mConversationView){
+        mConversationView->setPSCVId(false);
+        }
 }
 
 void MsgViewManager::handleDefault(const QVariantList& data)
@@ -675,9 +737,9 @@ void MsgViewManager::handleDefault(const QVariantList& data)
         mCurrentView = mPreviousView;
         mPreviousView = previousViewId;
         //remove the settings view from main window
-        if (mSettingsView) {
-            mMainWindow->removeView(mSettingsView);
-            delete mSettingsView;
+        if (mSettingsView)
+        {
+            appendViewToBeDeleted(mSettingsView);
             mSettingsView = NULL;
         }
         switch (mCurrentView) {
@@ -717,7 +779,7 @@ void MsgViewManager::view(int msgId)
 {
     int msgType;
     int msgSubType;
-
+    mMessageId = msgId;
     qint32 messageId(msgId);
     ConversationsEngine::instance()->markAsReadAndGetType(messageId, msgType, msgSubType);
 
@@ -747,14 +809,9 @@ void MsgViewManager::view(int msgId)
     default:
     {
         // for un supported message show delete option
-        bool result = HbMessageBox::question(LOC_DELETE_MESSAGE, LOC_BUTTON_DELETE,
+        HbMessageBox::question(LOC_DELETE_MESSAGE,this,SLOT(onDialogDeleteMsg(HbAction*)),
+            LOC_BUTTON_DELETE,
             LOC_BUTTON_CANCEL);
-        if (result) {
-            QList<int> msgIdList;
-            msgIdList << msgId;
-            ConversationsEngine::instance()->deleteMessages(msgIdList);
-        }
-        HbApplication::quit(); // exit after handling
         break;
     }
     }
@@ -788,29 +845,9 @@ void MsgViewManager::handleSmsMmsMsg(int msgId)
 // ----------------------------------------------------------------------------
 void MsgViewManager::handleRingtoneMsg(int msgId)
 {
-    if (RingBc::askSaveQuery()) {
-        UniDataModelLoader* pluginLoader = new UniDataModelLoader();
-        UniDataModelPluginInterface* pluginInterface = pluginLoader->getDataModelPlugin(
-            ConvergedMessage::BioMsg);
-        pluginInterface->setMessageId(msgId);
-        UniMessageInfoList attachments = pluginInterface->attachmentList();
-
-        QString attachmentPath = attachments.at(0)->path();
-
-        RingBc* ringBc = new RingBc();
-        ringBc->saveTone(attachmentPath);
-
-        // clear attachement list : its allocated at data model
-        while (!attachments.isEmpty()) {
-            delete attachments.takeFirst();
-        }
-
-        delete ringBc;
-        delete pluginLoader;
-    }
-
-    // close the application once its handled
-    HbApplication::quit();
+    mMessageId = msgId;
+    HbMessageBox::question(LOC_DIALOG_SAVE_RINGTONE, this,
+        SLOT(onDialogSaveTone(HbAction*)), LOC_COMMON_SAVE, LOC_BUTTON_CANCEL);
 }
 
 // ----------------------------------------------------------------------------
@@ -844,3 +881,70 @@ void MsgViewManager::handleProvisoningMsg(int msgId)
     // close the application once its handled
     HbApplication::quit();
 }
+
+void MsgViewManager::setViewInteractive()
+{
+    if(!mMainWindow->isInteractive())
+    {
+        mMainWindow->setInteractive(true);
+    }
+    
+    disconnect(mMainWindow, SIGNAL(viewReady()),this,SLOT(setViewInteractive()));
+}
+
+void  MsgViewManager::appendViewToBeDeleted(HbView* view)
+{
+    if (view)
+    {
+        mViewTobeDeleted << view;
+        connect(mMainWindow, SIGNAL(viewReady()), this, SLOT(deletePreviousView()));
+    }
+}
+
+// ----------------------------------------------------------------------------
+// MsgViewManager::onDialogDeleteMsg
+// @see header
+// ----------------------------------------------------------------------------
+void MsgViewManager::onDialogDeleteMsg(HbAction* action)
+{
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+        QList<int> msgIdList;
+        msgIdList << mMessageId;
+        ConversationsEngine::instance()->deleteMessages(msgIdList);
+    }
+    HbApplication::quit(); // exit after handling
+}
+
+// ----------------------------------------------------------------------------
+// MsgViewManager::onDialogSaveTone
+// @see header
+// ----------------------------------------------------------------------------
+void MsgViewManager::onDialogSaveTone(HbAction* action)
+    {
+        HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+        if (action == dlg->actions().at(0)) {
+            UniDataModelLoader* pluginLoader = new UniDataModelLoader();
+            UniDataModelPluginInterface* pluginInterface = pluginLoader->getDataModelPlugin(
+                ConvergedMessage::BioMsg);
+            pluginInterface->setMessageId(mMessageId);
+            UniMessageInfoList attachments = pluginInterface->attachmentList();
+
+            QString attachmentPath = attachments.at(0)->path();
+
+            RingBc* ringBc = new RingBc();
+            ringBc->saveTone(attachmentPath);
+
+            // clear attachement list : its allocated at data model
+            while (!attachments.isEmpty()) {
+                delete attachments.takeFirst();
+            }
+
+            delete ringBc;
+            delete pluginLoader;
+        }
+
+        // close the application once its handled
+        HbApplication::quit();
+}
+

@@ -25,6 +25,7 @@
 #define CONVERSATION_VIEW_EXPORT Q_DECL_IMPORT
 #endif
 
+#include <xqsettingskey.h>
 #include "msgbaseview.h"
 
 // FORWARD DECLARATIONS
@@ -32,6 +33,8 @@ class MsgConversationView;
 class HbListWidgetItem;
 class MsgContactCardWidget;
 class QGraphicsLinearLayout;
+class XQSettingsManager;
+class XQPublishAndSubscribeUtils;
 
 class CONVERSATION_VIEW_EXPORT MsgConversationBaseView : public MsgBaseView
     {
@@ -69,6 +72,12 @@ public:
      * Saves the editors content in cv to drafts
      */
     void saveContentToDrafts();
+    
+    /**
+     * conversationId
+     * Get the conversationId
+     */
+     qint64 conversationId();
 
 public slots:   
     /**
@@ -82,6 +91,13 @@ public slots:
      * Slot is triiggered when replying started
      */
     void markMessagesAsRead();
+    
+    /**
+     * Publish the conversation id based on the flag.
+     * @param setId if true previous conversation id 
+     * will be published else -1 will be published.
+     */
+    void setPSCVId(bool setId);
 	   
 private slots:
    /**
@@ -107,8 +123,12 @@ private slots:
      * @param errorCode qint32
      */
     void handleError(int errorCode, const QString& errorMessage);
+
+    /**
+     * Slot for handling the timer expiry event fired from view reay indication
+     */    
+    void handleViewReady();
     
- 
  signals:
      /**
       * Signal emitted when the conversation view is closed.
@@ -143,7 +163,19 @@ private:
      * Main layout.
      */
     QGraphicsLinearLayout* mMainLayout;
+    
+	/**
+     * Object of XQSettingsKey. 
+     */ 
+    XQSettingsKey mCVIdkey;
 
+    /**
+     * mSettingsManager
+     * Instance of the XQSettingsManager
+     * Own.
+     */ 
+    XQSettingsManager* mSettingsManager;    
+    
     };
 
 #endif // MSG_CONVERSATION_VIEW_INTERFACE_H

@@ -21,11 +21,6 @@
 #define UNIVIEWERTEXTITEM_H
 
 #include <HbTextEdit>
-#include <xqappmgr.h>
-
-//forward declarations
-class QRegExp;
-class XQAiwRequest;
 
 class UniViewerTextItem : public HbTextEdit
 {
@@ -68,15 +63,6 @@ private:
      */
     void highlightText(bool highlight);
 	
-    /** Helper method to get contact id against phone number or e-mail id.
-     * @param value phone number or email id.
-     * @param fieldName name of field to be matched.
-     * @param fieldType type of field to be matched.
-     */
-    int resolveContactId(const QString& value,
-                         const QString& fieldName, 
-                         const QString& fieldType);
-
 private slots:
     /**
       * called when aboutToShowContextMenu signal is emitted.
@@ -142,8 +128,6 @@ private:
 
     //Current cursor position.
     int mCursorPos;
-
-    XQApplicationManager mAppManager;
 };
 
 #endif // UNIVIEWERTEXTITEM_H

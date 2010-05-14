@@ -15,24 +15,43 @@
  *
  */
 #include <hbmainwindow.h>
+#include <hbgroupbox.h>
+#include <QGraphicsLinearLayout>
 
 #include "msgsettingsview.h"
 #include "msgsettingsform.h"
 #include "msgsmscenterview.h"
 #include "debugtraces.h"
 
-MsgSettingsView::MsgSettingsView(QGraphicsItem *parent) :
-    MsgBaseView(parent), mSMSCenterView(0)
-{
-    mSettingsForm = new MsgSettingsForm();
+//LOCALAIZED CONSTANTS 
+#define LOC_MESSAGE_SETTINGS_HEADING hbTrId("txt_messaging_title_messaging_settings")
 
-    setWidget(mSettingsForm);
+MsgSettingsView::MsgSettingsView(SettingsView settingsView,
+                                 QGraphicsItem *parent) :
+    MsgBaseView(parent), mSMSCenterView(0), mSettingsForm(0)
+{
     mMainWindow = this->mainWindow();
+
+    // Create parent layout.
+    QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
+
+    // Create view heading.
+    HbGroupBox *viewHeading = new HbGroupBox();
+    viewHeading->setHeading(LOC_MESSAGE_SETTINGS_HEADING);
+
+    mSettingsForm = new MsgSettingsForm(settingsView);
 
     connect(mSettingsForm,
             SIGNAL(newSMSCCenterClicked(int)),
             this,
             SLOT(onNewSMSCCenterClicked(int)));
+
+    mainLayout->addItem(viewHeading);
+    mainLayout->addItem(mSettingsForm);
+
+    this->setLayout(mainLayout);
 }
 
 MsgSettingsView::~MsgSettingsView()
@@ -50,13 +69,13 @@ void MsgSettingsView::onNewSMSCCenterClicked(int index)
     }
 
     mSMSCenterView = new MsgSMSCenterView(index);
-    
+
     connect(mSMSCenterView,
             SIGNAL(smsCenterEditViewClosed()),
             this,
             SLOT(onSmsCenterEditViewClosed()));
-    
-    mMainWindow->addView(mSMSCenterView);        
+
+    mMainWindow->addView(mSMSCenterView);
     mMainWindow->setCurrentView(mSMSCenterView);
 }
 

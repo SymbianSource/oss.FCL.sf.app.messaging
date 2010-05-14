@@ -23,6 +23,7 @@
 class HbLineEdit;
 class MsgSettingEngine;
 class HbDataFormModelItem;
+class HbAction;
 
 class MsgSMSCenterSettingsForm : public HbDataForm
 {
@@ -46,6 +47,12 @@ private:
     
 private slots:
     void onPressedCustomButton();
+	
+	/**
+     * This slot is called delete message centre dialog launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogDeleteMsgCentre(HbAction* action);
     
 private:
     QString mCenterName;

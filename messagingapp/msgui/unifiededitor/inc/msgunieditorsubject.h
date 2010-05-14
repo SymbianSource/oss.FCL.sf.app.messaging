@@ -17,7 +17,7 @@
 #ifndef UNIFIED_EDITOR_SUBJECT_H
 #define UNIFIED_EDITOR_SUBJECT_H
 
-#include <hbwidget.h>
+#include <msgunifiededitorbasewidget.h>
 
 #include "convergedmessage.h"
 
@@ -25,7 +25,7 @@ class HbIconItem;
 class UniEditorGenUtils;
 class MsgUnifiedEditorLineEdit;
 
-class MsgUnifiedEditorSubject : public HbWidget
+class MsgUnifiedEditorSubject : public MsgUnifiedEditorBaseWidget
     {
     Q_OBJECT
 
@@ -34,7 +34,7 @@ public:
     /**
      * Constructor
      */
-    MsgUnifiedEditorSubject(const QString& pluginPath, QGraphicsItem *parent = 0);
+    MsgUnifiedEditorSubject(QGraphicsItem *parent = 0);
 
     /**
      * Destructor
@@ -67,6 +67,11 @@ public:
      * @param text
      */
     void setText(const QString& text);
+    
+    /**
+     * To set focus on editable field.
+     */
+    void setFocus();
 
 signals:
     /**
@@ -78,13 +83,7 @@ private slots:
     /**
      * called when contentsChanged signal is emitted by the line edit
      */
-    void onContentsAdded(const QString&);
-    
-    /**
-     * Called when contentsChanged signal is emitted by the line edit
-     * Checks for empty text content 
-     */
-    void onContentsRemoved(const QString& text);
+    void onContentsChanged(const QString&);
     
 private:
     /**
@@ -94,11 +93,6 @@ private:
     bool subjectOkInSms();
 
 private:
-    
-    /**
-     * plug in path.
-     */
-    QString mPluginPath;
     
     /**
      * line edit to input subject.
@@ -119,6 +113,11 @@ private:
      * general utilities
      */
     UniEditorGenUtils* mGenUtils;
+    
+    /**
+     * Holds the previous buffer inside subject field
+     */
+    QString mPrevBuffer;
     };
 
 #endif //UNIFIED_EDITOR_SUBJECT_H

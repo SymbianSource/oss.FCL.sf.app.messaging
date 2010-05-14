@@ -21,6 +21,7 @@
 // INCLUDES
 #include <QObject>
 #include <QStandardItemModel>
+#include <sqldb.h>
 
 #ifdef BUILD_DLL
 #define CONVERSATIONS_ENGINE_API_EXPORT Q_DECL_EXPORT
@@ -202,6 +203,13 @@ public:
     void markAsReadAndGetType( qint32 messageId,
                                int& msgType,
                                int& msgSubType);
+    
+    /*
+     * Get SQL DB handle
+     * @param isOpen, set to true if open, check this before using the handle
+     */
+    RSqlDatabase& getDBHandle(TBool& isOpen);
+    
 private:
 
     /**

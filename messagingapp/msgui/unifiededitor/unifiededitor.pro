@@ -27,6 +27,8 @@ INCLUDEPATH += ../msguiutils/inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../../msgutils/unidatautils/unidatamodelloader/inc
 INCLUDEPATH += ../../msgutils/s60qconversions/inc
+INCLUDEPATH += ../../msgsettings/settingsview/inc
+
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 CONFIG += hb
@@ -53,7 +55,8 @@ HEADERS += msgmonitor.h \
     msgattachmentcontainer.h \
     msgbaseview.h \
     msgunieditorimageprocessor.h \
-    msgunieditorprocessimageoperation.h
+    msgunieditorprocessimageoperation.h \
+    msgunifiededitorbasewidget.h
 
 SOURCES += msgmonitor.inl \
     msgmonitor.cpp \
@@ -90,7 +93,8 @@ LIBS += -ls60qconversions \
         -lxqservice \
         -lgsmu \
         -lsmcm \
-        -lxqserviceutil
+        -lxqserviceutil \
+        -lcommonengine
 
 
         

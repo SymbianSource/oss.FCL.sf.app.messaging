@@ -89,10 +89,18 @@ CUniEditorMmsPluginPrivate::~CUniEditorMmsPluginPrivate()
     delete iUniDataModel;
     ifsSession.Close();
 
-    delete iMmsMtm;
+    if(iMmsMtm)
+    {
+        delete iMmsMtm;
+    }
+
     delete iMtmRegistry;
     delete iDataModelPluginLoader;
-    delete iSession;
+
+    if(iSession)
+    {
+        delete iSession;
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -102,7 +110,7 @@ CUniEditorMmsPluginPrivate::~CUniEditorMmsPluginPrivate()
 //
 CUniEditorMmsPluginPrivate::CUniEditorMmsPluginPrivate( )
 {
-    iSession = CMsvSession::OpenSyncL(*this);
+    TRAP_IGNORE(iSession = CMsvSession::OpenSyncL(*this));
 }
 
 // -----------------------------------------------------------------------------
@@ -570,7 +578,7 @@ TBool CUniEditorMmsPluginPrivate::isServiceValidL()
 //
 CMmsClientMtm* CUniEditorMmsPluginPrivate::MmsMtmL()
 {
-    if ( !iMmsMtm )
+    if ( !iMmsMtm && iSession )
     {
         if ( !iMtmRegistry )
         {            
@@ -782,10 +790,13 @@ void CUniEditorMmsPluginPrivate::populateRecipientsL(
 //
 void CUniEditorMmsPluginPrivate::deleteDraftsEntryL( TMsvId aId )
 {
-    CMsvEntry* pEntry = iSession->GetEntryL(KMsvDraftEntryIdValue);
-    CleanupStack::PushL(pEntry);
-    pEntry->DeleteL( aId );
-    CleanupStack::PopAndDestroy(pEntry);
+    if(iSession)
+    {
+        CMsvEntry* pEntry = iSession->GetEntryL(KMsvDraftEntryIdValue);
+        CleanupStack::PushL(pEntry);
+        pEntry->DeleteL( aId );
+        CleanupStack::PopAndDestroy(pEntry);    
+    }
 }
 
 

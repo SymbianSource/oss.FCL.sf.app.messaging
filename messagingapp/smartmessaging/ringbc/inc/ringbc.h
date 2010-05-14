@@ -63,12 +63,6 @@ public:
 	  */
 	 QString toneTitle(const QString &path);
 	 
-	 /**
-	  * Asks the save query.
-	  * @return bool true if user selected save else flase
-	  */
-	static bool askSaveQuery();
-	 
 private:
    
     /**

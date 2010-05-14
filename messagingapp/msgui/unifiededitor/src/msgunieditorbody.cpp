@@ -22,24 +22,22 @@
 #include <HbFrameDrawer>
 #include <HbIconItem>
 #include <HbPushButton>
-#include <QFileInfo>
 #include <HbAction>
 #include <hbinputeditorinterface.h>
-#include <QGraphicsLayout>
-#include <HbGestureSceneFilter>
-#include <HbGesture>
+//#include <HbGestureSceneFilter>
+//#include <HbGesture>
 #include <HbMenu>
 #include <HbMainWindow>
-#include <hbinstance.h>
 #include <HbDeviceProfile>
 #include <QImageReader>
 #include <QFileInfo>
-#include <apmstd.h>
 #include <MsgMediaResolver.h>
 #include <MsgImageInfo.h>
 #include <HbIconAnimationManager>
 #include <HbIconAnimator>
 #include <HbIcon>
+#include <QGraphicsLinearLayout>
+#include <HbNotificationDialog>
 
 #include <csmsaccount.h>
 #include <smutset.h>
@@ -68,37 +66,59 @@ const QString VIDEO_REGION("VideoRegion");
 const QString IMAGE_REGION("ImageRegion");
 const QString INVALID_REGION("InvalidRegion");
 const QString SEND_ICON("qtg_mono_send");
+const int KShowCounterLimit = 10;
+const int BYTES_TO_KBYTES_FACTOR = 1024; 
 
 //Localized Constants for item specific menu
 #define LOC_OPEN    hbTrId("txt_common_menu_open")
 #define LOC_REMOVE  hbTrId("txt_common_menu_remove")
 #define LOC_DETAILS hbTrId("txt_common_menu_details")
 #define LOC_TITLE   hbTrId("txt_messaging_title_messaging")
+#define LOC_UNABLE_TO_ADD_CONTENT hbTrId("txt_messaging_dpopinfo_unable_to_add_more_content")
+#define LOC_UNABLE_TO_ATTACH_ITEM hbTrId("txt_messaging_dpopinfo_unable_to_attach_item_avai")
+#define LOC_PROCESSING hbTrId("txt_messaging_formlabel_loading")
 
 const QString AUDIO_ICON("qtg_mono_audio");
-const QString ANIMATION_ICON(":/qtg_anim_longtap_2");
+const QString ANIMATION_ICON("qtg_anim_loading");
+const QString ANIMATION_FILE(":/qtg_anim_loading.axml");
+// LOCAL FUNCTIONS
 
-const TInt KShowCounterLimit = 10;
+//---------------------------------------------------------------
+// showInsertFailureNote
+// @return fullPath of unified editor's temporary dir
+//---------------------------------------------------------------
+void showInsertFailureNote()
+{
+    int availableSize =
+            (MsgMonitor::maxMmsSize() - MsgMonitor::messageSize())
+            /BYTES_TO_KBYTES_FACTOR;
+    QString displayStr = QString(LOC_UNABLE_TO_ATTACH_ITEM)
+            .arg(availableSize);
+    HbNotificationDialog* dlg = new HbNotificationDialog();
+    dlg->setFocusPolicy(Qt::NoFocus);
+    dlg->setDismissPolicy(HbPopup::TapAnywhere);
+    dlg->setAttribute(Qt::WA_DeleteOnClose, true);
+    dlg->setText(displayStr);
+    dlg->show();
+}
 
-MsgUnifiedEditorBody::MsgUnifiedEditorBody( const QString& pluginPath, 
-    QGraphicsItem *parent ) :
-HbWidget(parent),
+
+MsgUnifiedEditorBody::MsgUnifiedEditorBody( QGraphicsItem *parent ) :
+MsgUnifiedEditorBaseWidget(parent),
 mHasImage(false),
 mHasAudio(false),
 mTextEdit(0),
 mEditorFrame(0),
 mIconItem(0),
 mAudioItem(0),
-mPluginPath(pluginPath),
 mImageSize(0),
 mAudioSize(0),
 mVideoSize(0),
 mProcessImageOperation(0),
 mMediaResolver(0),
-mImageInfo(0)
+mImageInfo(0),
+mProcessingWidget(0)
 {
-    setPluginBaseId(style()->registerPlugin(mPluginPath));
-
     mTextEdit = new HbTextEdit(this);
     HbStyle::setItemName(mTextEdit,"textEdit");
 
@@ -115,15 +135,12 @@ mImageInfo(0)
     connect(sendAction, SIGNAL(triggered()),this, SIGNAL(sendMessage()));
     editorInterface.addAction(sendAction);
 
-    mGestureFilter = new HbGestureSceneFilter(Qt::LeftButton, this);
+  /*  mGestureFilter = new HbGestureSceneFilter(Qt::LeftButton, this);
     mGestureFilter->setLongpressAnimation(true);
     HbGesture *gesture = new HbGesture(HbGesture::longpress, 5);
     mGestureFilter->addGesture(gesture);
-    connect(gesture, SIGNAL(longPress(QPointF)), this, SLOT(longPressed(QPointF)));
+    connect(gesture, SIGNAL(longPress(QPointF)), this, SLOT(longPressed(QPointF)));*/
     connect(mTextEdit, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
-
-    mfs.Connect();
-    mfs.ShareProtected();
 
     mMmsConformanceCheck = new MmsConformanceCheck;
     
@@ -146,6 +163,7 @@ mImageInfo(0)
     mPluginInterface =
                         mPluginLoader->getUniEditorPlugin(ConvergedMessage::Sms);    
     
+    TRAP_IGNORE(
     CSmsSettings* settings = CSmsSettings::NewLC();
     CSmsAccount* account = CSmsAccount::NewLC();
     account->LoadSettingsL( *settings );
@@ -161,23 +179,18 @@ mImageInfo(0)
     
     CleanupStack::PopAndDestroy( account );
     CleanupStack::PopAndDestroy( settings );                
+    );
 
-    //Set the mPrevBuffer to NULL initially
-    mPrevBuffer = QString();
-    
     mCharCounter->setVisible(false);
     mBackgroundItem->setVisible(false);
 }
 
 MsgUnifiedEditorBody::~MsgUnifiedEditorBody()
 {
-    style()->unregisterPlugin(mPluginPath);
     delete mMmsConformanceCheck;
     delete mProcessImageOperation;
     delete mMediaResolver;
     delete mImageInfo;
-    //Close has to be called after ProcessImageOperation object is deleted
-    mfs.Close();
 }
 
 QString MsgUnifiedEditorBody::text()
@@ -204,7 +217,7 @@ void MsgUnifiedEditorBody::setImage(QString& imagefile)
         if( !mProcessImageOperation )
         {
         TRAP(error,mProcessImageOperation = 
-            CUniEditorProcessImageOperation::NewL(*this, mfs));
+            CUniEditorProcessImageOperation::NewL(*this));
         }
         if( !mMediaResolver && error == KErrNone )
         {
@@ -214,21 +227,23 @@ void MsgUnifiedEditorBody::setImage(QString& imagefile)
         if( error == KErrNone)
         {
             mMediaResolver->SetCharacterSetRecognition(EFalse);
-
             HBufC *name = S60QConversions::qStringToS60Desc(imagefile);
-            RFile file = mMediaResolver->FileHandleL(*name);
-     
-            TRAP(error,mImageInfo = static_cast<CMsgImageInfo*>
-            (mMediaResolver->CreateMediaInfoL(file)));
-            if (error == KErrNone)
+            RFile file;
+            TRAP(error, file = mMediaResolver->FileHandleL(*name));
+            if(error == KErrNone)
             {
-                TRAP(error, mMediaResolver->ParseInfoDetailsL(mImageInfo, file));
+                TRAP(error,mImageInfo = static_cast<CMsgImageInfo*>
+                (mMediaResolver->CreateMediaInfoL(file)));
+                if (error == KErrNone)
+                {
+                    TRAP(error, mMediaResolver->ParseInfoDetailsL(
+                            mImageInfo, file));
+                }
+                file.Close();
             }
-
-            file.Close();
             delete name;
         }
-        
+
         if (error == KErrNone)
         {
             mSavedImageFile = imagefile;
@@ -263,6 +278,7 @@ void MsgUnifiedEditorBody::handleSetImage()
         mImageFile.clear();
         setImage(false);
         //Show appropriate note and leave
+        showInsertFailureNote();
         return;
     }
 
@@ -274,7 +290,7 @@ void MsgUnifiedEditorBody::handleSetImage()
 
     HbStyle::setItemName(mIconItem, "pixmap");
     mIconItem->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    mIconItem->installSceneEventFilter(mGestureFilter);
+   // mIconItem->installSceneEventFilter(mGestureFilter);
 
     // repolish the body widget
     this->repolish();
@@ -298,7 +314,6 @@ void MsgUnifiedEditorBody::setAudio(QString& audiofile)
         mAudioSize = 0;
     }
 
-    //TODO: Add conformance checks before calculating the size    
     int msgSize = messageSize();
     QFileInfo fileinfo(mAudioFile);
     int audioSize = fileinfo.size() + KEstimatedMimeHeaderSize;
@@ -311,6 +326,7 @@ void MsgUnifiedEditorBody::setAudio(QString& audiofile)
     	mAudioFile.clear();
     	setAudio(false);
     	//Show appropriate note and leave
+    	showInsertFailureNote();
     	return;
     }    
 
@@ -329,38 +345,6 @@ void MsgUnifiedEditorBody::setAudio(QString& audiofile)
     this->repolish();
 
     // emit signal to indicate addition of audio
-    emit contentChanged();
-}
-
-void MsgUnifiedEditorBody::setVideo(QString& videofile)
-{
-    //check for insert conformance
-    if(EInsertSuccess != mMmsConformanceCheck->checkModeForInsert(videofile))
-        return;
-
-    // update the media file-list
-    mVideoFile = videofile;
-
-    //TODO: Add conformance checks before calculating the size    
-    int msgSize = messageSize();
-    QFileInfo fileinfo(mVideoFile);
-    int videoSize = fileinfo.size() + KEstimatedMimeHeaderSize;
-    if((videoSize + msgSize) <= MsgMonitor::maxMmsSize() )    
-    {
-    	mVideoSize = videoSize;
-    }
-    else
-    {
-    	//Show appropriate note and leave
-    	return;
-    }    
-
-    //TODO: create video item instance
-
-    // repolish the body widget
-    this->repolish();
-
-    // emit signal to indicate addition of video
     emit contentChanged();
 }
 
@@ -387,9 +371,12 @@ const QStringList MsgUnifiedEditorBody::mediaContent()
 QSizeF MsgUnifiedEditorBody::sizeHint(Qt::SizeHint which, const QSizeF &constraint) const
 {
     QSizeF szHint = HbWidget::sizeHint(which,constraint);
-    
-    QList<HbMainWindow *> windowList = hbInstance->allMainWindows();
-    HbMainWindow* mMainWindow = windowList[0];
+
+    HbMainWindow* mMainWindow = this->mainWindow();    
+    if(!mMainWindow)
+    {
+        return szHint;
+    }
 
     qreal leftMargin = 0.0;
     qreal rightMargin = 0.0;
@@ -440,7 +427,7 @@ QSizeF MsgUnifiedEditorBody::sizeHint(Qt::SizeHint which, const QSizeF &constrai
         mAudioItem->show();
     }
     
-    if(mIconItem)
+    if(mIconItem || mProcessingWidget)
         {
         QSizeF imageSize(0.0,0.0);
         QSizeF defaultImageSize(QImageReader(mImageFile).size());
@@ -474,6 +461,8 @@ QSizeF MsgUnifiedEditorBody::sizeHint(Qt::SizeHint which, const QSizeF &constrai
                 imageSize.setWidth(newWidth);
             }
 
+            if(mIconItem)
+            {
             mIconItem->setPreferredSize(imageSize);
             mIconItem->setSize(imageSize);
             if(mMainWindow->orientation() == Qt::Horizontal)
@@ -483,9 +472,18 @@ QSizeF MsgUnifiedEditorBody::sizeHint(Qt::SizeHint which, const QSizeF &constrai
                 mIconItem->setPos(currPos);
             }
             mIconItem->show();
+            }
+            
+            if(mProcessingWidget)
+            {
+                imageSize.setHeight(mProcessingWidget->preferredHeight());
+                mProcessingWidget->setPreferredSize(imageSize);
+                mProcessingWidget->show();
+            }
             szHint.rheight() += imageSize.height();
         }
     }
+    
 
     mTextEdit->setMinimumHeight(maxHeight);
     szHint.rheight() += bodyItemSpacing;
@@ -516,7 +514,7 @@ void MsgUnifiedEditorBody::removeMedia()
         mImageFile.clear();
         if(mIconItem)
         {
-            mIconItem->removeSceneEventFilter(mGestureFilter);
+      //      mIconItem->removeSceneEventFilter(mGestureFilter);
             delete mIconItem;
             mIconItem = NULL;
         }
@@ -709,17 +707,28 @@ QString MsgUnifiedEditorBody::getHitRegion(QPointF position)
 void MsgUnifiedEditorBody::onTextChanged()
 {   
     QString string = text();
-    
-    if(  !mPrevBuffer.isEmpty() &&
-         string.size() > mPrevBuffer.size() &&
-         MsgMonitor::messageType() == ConvergedMessage::Mms )
+
+    if( string.size() > mPrevBuffer.size() &&
+        MsgMonitor::messageType() == ConvergedMessage::Mms )
     {
-        //Save the previous buffer
-        mPrevBuffer = string;
-        // emit signal to indicate change in content
-        emit contentChanged();
-                
-        return;
+        // reject any text input if mms size limit is reached
+        int futureSize = bodySize() +
+                MsgMonitor::containerSize() + MsgMonitor::subjectSize();
+        if(futureSize > MsgMonitor::maxMmsSize())
+        {
+            mTextEdit->setPlainText(mPrevBuffer);
+            HbNotificationDialog::launchDialog(LOC_UNABLE_TO_ADD_CONTENT);
+            mTextEdit->setCursorPosition(mPrevBuffer.length());
+            return;
+        }
+        else if(!mPrevBuffer.isEmpty())
+        {
+            //Save the previous buffer
+            mPrevBuffer = string;
+            // emit signal to indicate change in content
+            emit contentChanged();
+            return;
+        }
     }
 
     //Check done for optimization
@@ -789,33 +798,36 @@ void MsgUnifiedEditorBody::EditorOperationEvent(
 
 void MsgUnifiedEditorBody::startResizeAnimation()
 {
-    HbIconAnimationManager *manager = HbIconAnimationManager::global();
-    bool defined = manager->addDefinitionFile(":/animation.axml");
-
-    HbIcon animIcon;
-    animIcon.setIconName("frame_anim_looping");
-
-    mIconItem = new HbIconItem(this);
-    mIconItem->hide();
-    HbStyle::setItemName(mIconItem,"pixmap");
-    mIconItem->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    mIconItem->setIcon(animIcon);
-
-    mImageFile = ANIMATION_ICON;
-    HbIconAnimator animator;
-    animator.setIcon(animIcon);
-
-    animator.startAnimation();
-    this->repolish();
+    QGraphicsLinearLayout* processingLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    
+    mProcessingWidget = new HbWidget(this);
+    HbStyle::setItemName(mProcessingWidget,"pixmap"); 
+    mProcessingWidget->hide();
+    mProcessingWidget->setLayout(processingLayout);
+    
+    HbTextItem* processingText = new HbTextItem(LOC_PROCESSING,mProcessingWidget);
+    processingText->setAlignment(Qt::AlignCenter);
+    processingLayout->addItem(processingText);
+    
+    HbIconItem* animationItem = new HbIconItem(ANIMATION_ICON,mProcessingWidget);
+    processingLayout->addItem(animationItem);
+    
+    HbIconAnimator& iconAnimator = animationItem->animator();
+    HbIconAnimationManager* iconAnimationManager = HbIconAnimationManager::global();
+    iconAnimationManager->addDefinitionFile(ANIMATION_FILE);
+    
+    iconAnimator.startAnimation();
+    
+    this->repolish();    
 }
 
 void MsgUnifiedEditorBody::stopResizeAnimation()
 {
-    if (mIconItem)
+    if(mProcessingWidget)
     {
-        delete mIconItem;
-        mIconItem = NULL;     
-    }   
+        delete mProcessingWidget;
+        mProcessingWidget = NULL;
+    }
 }
 
 // ---------------------------------------------------------
@@ -857,4 +869,12 @@ void MsgUnifiedEditorBody::handleError(int errorCode,
     Q_UNUSED(errorCode)
 }
 
+//---------------------------------------------------------------
+// MsgUnifiedEditorBody :: setFocus
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorBody::setFocus()
+{
+    mTextEdit->setFocus(Qt::MouseFocusReason);
+}
 // EOF

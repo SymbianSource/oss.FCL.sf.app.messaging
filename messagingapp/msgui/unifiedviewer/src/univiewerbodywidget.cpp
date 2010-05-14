@@ -20,30 +20,27 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QPixmap>
-#include <QGraphicsLayout>
 #include <QSignalMapper>
 
 #include <HbTextItem>
-#include <HbIconItem>
 #include <HbPushButton>
-#include <HbAction>
 #include <HbMenu>
 #include <HbMainWindow>
-#include <HbInstance>
-#include <HbGesture>
-#include <HbGestureSceneFilter>
 
 #include <xqaiwrequest.h>
 #include <xqrequestinfo.h>
 #include <xqappmgr.h>
 
 #include "univiewertextitem.h"
+#include "univiewerpixmapwidget.h"
 #include "msgmediautil.h"
 // LOCAL CONSTANTS
 const QString AUDIO_ICON("qtg_mono_audio");
 
 // Localization
 #define LOC_TITLE   hbTrId("txt_messaging_title_messaging")
+#define LOC_OPEN    hbTrId("txt_common_menu_open")
+#define LOC_SAVE    hbTrId("txt_common_menu_save")
 
 //---------------------------------------------------------------
 //UniViewerBodyWidget::UniViewerBodyWidget
@@ -51,14 +48,9 @@ const QString AUDIO_ICON("qtg_mono_audio");
 //---------------------------------------------------------------
 UniViewerBodyWidget::UniViewerBodyWidget(QGraphicsItem *parent) :
     HbWidget(parent), mHasText(false), mHasPixmap(false), mTextItem(0), mSlideCounter(0),
-        mIconItem(0), mAudioItem(0)
+        mPixmapItem(0), mAudioItem(0)
 {
-    //Gesture filter for the image
-    gestureFilter = new HbGestureSceneFilter(Qt::LeftButton, this);
-    gestureFilter->setLongpressAnimation(true);
-    HbGesture *gesture = new HbGesture(HbGesture::longpress, 20);
-    gestureFilter->addGesture(gesture);
-    connect(gesture, SIGNAL(longPress(QPointF)), this, SLOT(longPressed(QPointF)));
+    this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     // Signal mapper for opening media files
     mSignalMapper = new QSignalMapper(this);
     connect(mSignalMapper, SIGNAL(mapped(const QString &)), this, SLOT(openMedia(const QString &)));
@@ -76,21 +68,18 @@ UniViewerBodyWidget::~UniViewerBodyWidget()
 //UniViewerBodyWidget::setImage
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setImage(QString imagefile)
+void UniViewerBodyWidget::setPixmap(QString pixmapFile)
 {
     setHasPixmap(true);
     //create image item instance
-    if (!mIconItem) {
-        mIconItem = new HbIconItem(this);
-        HbStyle::setItemName(mIconItem, "pixmap");
+    if (!mPixmapItem) {
+        mPixmapItem = new UniViewerPixmapWidget(this);
+        HbStyle::setItemName(mPixmapItem, "pixmap");
+        connect(mPixmapItem, SIGNAL(shortTap(QString)), this, SLOT(openMedia(QString)));
     }
 
-    QPixmap pixmap(imagefile);
-    mIconItem->setIcon(HbIcon(pixmap));
-
-    // TODO
-    // Implementation for short tap action is unclear
-    // Connect to signal mapper
+    mPixmapItem->hide();
+    mPixmapItem->setPixmap(pixmapFile);
 
     this->repolish();
 }
@@ -105,6 +94,7 @@ void UniViewerBodyWidget::setAudio(QString audiofile)
         mAudioItem = new HbPushButton(this);
         HbStyle::setItemName(mAudioItem, "audioItem");
     }
+    mAudioItem->hide();
     QFileInfo fileInfo(audiofile);
     mAudioItem->setIcon(HbIcon(AUDIO_ICON));
     mAudioItem->setText(fileInfo.baseName());
@@ -142,6 +132,7 @@ void UniViewerBodyWidget::setTextContent(QString text)
         connect(mTextItem, SIGNAL(sendMessage(const QString&)), this,
             SIGNAL(sendMessage(const QString&)));
     }
+    mTextItem->hide();
     text.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
     text.replace('\r', QChar::LineSeparator);
     mTextItem->setText(text);
@@ -159,6 +150,7 @@ void UniViewerBodyWidget::setSlideCounter(QString &slideCounter)
         HbStyle::setItemName(mSlideCounter, "slideCounter");
     }
 
+    mSlideCounter->hide();
     mSlideCounter->setText(slideCounter);
     this->repolish();
 }
@@ -216,12 +208,10 @@ void UniViewerBodyWidget::setSlideContents(UniMessageInfoList objList, QString s
 
         if (type.contains("text")) {
             QFile file(info->path());
-            if (file.open(QIODevice::ReadOnly))
-			{
-			QString textContent(file.readAll());
-            setTextContent(textContent);
-			}
-            
+            if (file.open(QIODevice::ReadOnly)) {
+                QString textContent(file.readAll());
+                setTextContent(textContent);
+            }
         }
         else if (type.contains("video")) {
             setVideo(info->path());
@@ -230,7 +220,7 @@ void UniViewerBodyWidget::setSlideContents(UniMessageInfoList objList, QString s
             setAudio(info->path());
         }
         else if (type.contains("image")) {
-            setImage(info->path());
+            setPixmap(info->path());
         }
 
         delete info;
@@ -244,10 +234,10 @@ void UniViewerBodyWidget::setSlideContents(UniMessageInfoList objList, QString s
 void UniViewerBodyWidget::clearContent()
 {
     // delete the temp items(pixmap) & clear permanent items(text)
-    if (mIconItem) {
-        mIconItem->setParent(NULL);
-        delete mIconItem;
-        mIconItem = NULL;
+    if (mPixmapItem) {
+        mPixmapItem->setParent(NULL);
+        delete mPixmapItem;
+        mPixmapItem = NULL;
     }
 
     if (mAudioItem) {
@@ -268,93 +258,149 @@ void UniViewerBodyWidget::clearContent()
 }
 
 //---------------------------------------------------------------
-//UniViewerBodyWidget::resizeEvent
+//UniViewerBodyWidget::sizeHint
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::resizeEvent(QGraphicsSceneResizeEvent* event)
+QSizeF UniViewerBodyWidget::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
 {
-    Q_UNUSED(event)
+    QSizeF szHint = HbWidget::sizeHint(which, constraint);
 
     HbMainWindow *mainWindow = this->mainWindow();
-    if (mainWindow) {
-        qreal screenWidth = 0.0;
-        qreal screenHeight = 0.0;
-        qreal leftMargin = 0.0;
-        qreal rightMargin = 0.0;
-        qreal chromeHeight = 0.0;
-        qreal toolbarHeight = 0.0;
-        qreal iconSize = 0.0;
-        qreal unitSize = HbDeviceProfile::profile(mIconItem).unitValue();
-        style()->parameter("hb-param-screen-width", screenWidth);
-        style()->parameter("hb-param-screen-height", screenHeight);
-        style()->parameter("hb-param-margin-gene-left", leftMargin);
-        style()->parameter("hb-param-margin-gene-right", rightMargin);
-        style()->parameter("hb-param-widget-chrome-height", chromeHeight);
-        style()->parameter("hb-param-widget-toolbar-height", toolbarHeight);
-        style()->parameter("hb-param-graphic-size-primary-large", iconSize);
+    if (!mainWindow) {
+        return szHint;
+    }
 
-        qreal maxWidth = 0.0;
-        qreal maxHeight = 0.0;
+    qreal screenWidth = 0.0;
+    qreal screenHeight = 0.0;
+    qreal leftMargin = 0.0;
+    qreal rightMargin = 0.0;
+    qreal chromeHeight = 0.0;
+    qreal toolbarHeight = 0.0;
+    qreal iconSize = 0.0;
+    qreal spacing = 0.0;
+    qreal unitSize = HbDeviceProfile::profile(mPixmapItem).unitValue();
+    style()->parameter("hb-param-screen-width", screenWidth);
+    style()->parameter("hb-param-screen-height", screenHeight);
+    style()->parameter("hb-param-margin-gene-left", leftMargin);
+    style()->parameter("hb-param-margin-gene-right", rightMargin);
+    style()->parameter("hb-param-widget-chrome-height", chromeHeight);
+    style()->parameter("hb-param-widget-toolbar-height", toolbarHeight);
+    style()->parameter("hb-param-graphic-size-primary-large", iconSize);
+    style()->parameter("hb-param-margin-gene-middle-vertical", spacing);
 
-        if (mainWindow->orientation() == Qt::Horizontal) {
-            qreal temp;
-            temp = screenWidth;
-            screenWidth = screenHeight;
-            screenHeight = temp;
-            if (mIconItem) {
-                if (mHasText) {
-                    maxWidth = (screenWidth / 2) - leftMargin - unitSize;
-                }
-                else {
-                    maxWidth = screenWidth - leftMargin - rightMargin;
-                }
-                maxHeight = screenHeight - chromeHeight - toolbarHeight;
-            }
-            if (mAudioItem) {
-                mAudioItem->setStretched(true);
-            }
+    qreal maxWidth = 0.0;
+    qreal maxHeight = 0.0;
+
+    // Calculate max height & max width.
+    if (mainWindow->orientation() == Qt::Horizontal) {
+        qreal temp;
+        temp = screenWidth;
+        screenWidth = screenHeight;
+        screenHeight = temp;
+
+        if (mPixmapItem && mHasText) {
+            maxWidth = (screenWidth / 2) - leftMargin - unitSize;
         }
-        else if (mainWindow->orientation() == Qt::Vertical) {
-            if (mIconItem) {
-                maxWidth = screenWidth - leftMargin - rightMargin;
-                maxHeight = screenHeight - chromeHeight - toolbarHeight;
-            }
-            if (mAudioItem) {
-                mAudioItem->setStretched(false);
-            }
+        else {
+            maxWidth = screenWidth - leftMargin - rightMargin;
         }
+        maxHeight = screenHeight - chromeHeight - toolbarHeight;
 
-        if (mIconItem) {
-            qreal imageWidth = mIconItem->icon().defaultSize().width();
-            qreal imageHeight = mIconItem->icon().defaultSize().height();
-
-            qreal widthToSet = 0.0;
-            qreal heightToSet = 0.0;
-
-            if (imageWidth < iconSize) {
-                widthToSet = iconSize;
-                heightToSet = iconSize;
-            }
-            else if (imageWidth <= maxWidth) {
-                // resize not needed
-                widthToSet = imageWidth;
-                heightToSet = qMin(imageHeight, maxHeight);
-            }
-            else {
-                // resize needed, keep aspect-ratio and resize
-                widthToSet = maxWidth;
-                heightToSet = maxWidth * (imageHeight / imageWidth);
-                heightToSet = qMin(heightToSet, maxHeight);
-
-            }
-            if (heightToSet == maxHeight) {
-                widthToSet = heightToSet * (imageWidth / imageHeight);
-            }
-
-            mIconItem->setPreferredWidth(widthToSet);
-            mIconItem->setPreferredHeight(heightToSet);
+        if (mAudioItem) {
+            mAudioItem->setStretched(true);
         }
     }
+    else if (mainWindow->orientation() == Qt::Vertical) {
+        maxWidth = screenWidth - leftMargin - rightMargin;
+        maxHeight = screenHeight - chromeHeight - toolbarHeight;
+
+        if (mAudioItem) {
+            mAudioItem->setStretched(false);
+        }
+    }
+
+    // Slide Counter
+    QSizeF slideCounterSize(0, 0);
+    if (mSlideCounter) {
+        slideCounterSize = mSlideCounter->effectiveSizeHint(which, constraint);
+        mSlideCounter->show();
+    }
+    // Audio Item
+    QSizeF audioSize(0, 0);
+    if (mAudioItem) {
+        audioSize = mAudioItem->effectiveSizeHint(which, constraint);
+        mAudioItem->show();
+    }
+
+    // Text Item
+    QSizeF textSize(0, 0);
+    if (mTextItem) {
+        textSize = mTextItem->effectiveSizeHint(which, constraint);
+        mTextItem->show();
+    }
+
+    // Pixmap Item
+    QSizeF pixmapSize(0, 0);
+    if (mPixmapItem) {
+        qreal imageWidth = mPixmapItem->icon().defaultSize().width();
+        qreal imageHeight = mPixmapItem->icon().defaultSize().height();
+
+        qreal widthToSet = 0.0;
+        qreal heightToSet = 0.0;
+
+        if (imageWidth < iconSize) {
+            widthToSet = iconSize;
+            heightToSet = iconSize;
+        }
+        else if (imageWidth <= maxWidth) {
+            // resize not needed
+            widthToSet = imageWidth;
+            heightToSet = qMin(imageHeight, maxHeight);
+        }
+        else {
+            // resize needed, keep aspect-ratio and resize
+            widthToSet = maxWidth;
+            heightToSet = maxWidth * (imageHeight / imageWidth);
+            heightToSet = qMin(heightToSet, maxHeight);
+
+        }
+        if (heightToSet == maxHeight) {
+            widthToSet = heightToSet * (imageWidth / imageHeight);
+        }
+
+        pixmapSize.setHeight(heightToSet);
+        pixmapSize.setWidth(widthToSet);
+        mPixmapItem->setPreferredSize(pixmapSize);
+        mPixmapItem->show();
+    }
+
+    // Calculate the size hint to be returned.
+    szHint.setHeight(0);
+
+    if (!slideCounterSize.isNull()) {
+        szHint.rheight() += (slideCounterSize.height() + spacing);
+    }
+    if (!audioSize.isNull()) {
+        szHint.rheight() += (audioSize.height() + spacing);
+    }
+
+    if (mainWindow->orientation() == Qt::Horizontal) {
+        qreal remainingHeight = qMax(pixmapSize.height(), textSize.height());
+        if (remainingHeight > 0.0) {
+            szHint.rheight() += (remainingHeight + spacing);
+        }
+    }
+    else if (mainWindow->orientation() == Qt::Vertical) {
+        if (!pixmapSize.isNull()) {
+            szHint.rheight() += (pixmapSize.height() + spacing);
+        }
+        if (!textSize.isNull()) {
+            szHint.rheight() += (textSize.height() + spacing);
+        }
+    }
+    szHint.rheight() = qMax(maxHeight, szHint.height());
+
+    return szHint;
 }
 
 //---------------------------------------------------------------
@@ -365,10 +411,11 @@ void UniViewerBodyWidget::longPressed(QPointF position)
 {
 
     HbMenu* menu = new HbMenu;
-    menu->addAction(tr("Open"), this, SLOT(openMedia()));
-    menu->addAction(tr("View details"), this, SLOT(viewDetails()));
-    menu->exec(position);
-    delete menu;
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    menu->addAction(LOC_OPEN, this, SLOT(openMedia()));
+    menu->addAction(LOC_SAVE, this, SLOT(saveMedia()));
+    menu->setPreferredPos(position);
+    menu->show();
 }
 
 //---------------------------------------------------------------
@@ -437,12 +484,11 @@ void UniViewerBodyWidget::openMedia(const QString& fileName)
 }
 
 //---------------------------------------------------------------
-//UniViewerBodyWidget::viewDetails
+//UniViewerBodyWidget::saveMedia
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::viewDetails()
+void UniViewerBodyWidget::saveMedia()
 {
-    //open details view.
 }
 
 //---------------------------------------------------------------

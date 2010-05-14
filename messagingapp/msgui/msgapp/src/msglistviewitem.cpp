@@ -43,7 +43,6 @@
 #define LOC_RECEIVED_FILES hbTrId("txt_messaging_list_received_files")
 
 const QString NEW_ITEM_FRAME("qtg_fr_list_new_item");
-const QString LIST_ITEM_BG_FRAME("qtg_fr_list_normal");
 const QString BT_ICON("qtg_large_bluetooth");
 const QString MSG_OUTGOING_ICON("qtg_mono_outbox");
 const QString MSG_FAILED_ICON("qtg_mono_failed");
@@ -56,7 +55,6 @@ MsgListViewItem::MsgListViewItem(QGraphicsItem* parent) :
     HbListViewItem(parent),
     mUnReadMsg(false),
     mNewMsgIndicatorItem(NULL),
-    mBgFrameItem(NULL),
     mAddressLabelItem(NULL),
     mTimestampItem(NULL),
     mPreviewLabelItem(NULL),
@@ -108,15 +106,6 @@ void MsgListViewItem::updateChildItems()
 
         mNewMsgIndicatorItem->frameDrawer().setFrameType(
             HbFrameDrawer::ThreePiecesVertical);
-    }
-    if (!mBgFrameItem)
-    {
-        mBgFrameItem = new HbFrameItem(this);
-        mBgFrameItem->setZValue(-1.0);
-        HbStyle::setItemName(mBgFrameItem, "bgFrame");
-        
-        mBgFrameItem->frameDrawer().setFrameGraphicsName(LIST_ITEM_BG_FRAME);
-        mBgFrameItem->frameDrawer().setFrameType(HbFrameDrawer::NinePieces);
     }
 
     // Set the message text depending upon the message type
@@ -194,6 +183,9 @@ QString MsgListViewItem::previewText(int msgType,
             previewText.append(QChar::LineSeparator);
             previewText.append(bodyText);
         }
+        else if (msgSubType == ConvergedMessage::Provisioning) {
+                previewText = bodyText;
+                }
         else {
             previewText = LOC_UNSUPPORTED_MSG_TYPE;
         }

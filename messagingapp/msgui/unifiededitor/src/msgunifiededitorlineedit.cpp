@@ -151,14 +151,19 @@ void MsgUnifiedEditorLineEdit::keyPressEvent(QKeyEvent *event)
             //if already selected delete it.
             if(this->hasSelectedText())
             {
+                // deleting phbkContact is an atomic operation
+                // ensure that the signal is emitted only once
+                disconnect(this, SIGNAL(contentsChanged()), 
+                        this, SLOT(onContentsChanged()));
                 HbLineEdit::keyPressEvent(event);
                 event->accept();
-
                 //delete seperator (i.e."; ").
                 QKeyEvent eve(event->type(), Qt::Key_Delete, Qt::NoModifier);
                 HbLineEdit::keyPressEvent(&eve);
                 HbLineEdit::keyPressEvent(&eve);
-
+                connect(this, SIGNAL(contentsChanged()), 
+                        this, SLOT(onContentsChanged()));
+                onContentsChanged();
             }
             else //make it selected
             {                
@@ -171,10 +176,17 @@ void MsgUnifiedEditorLineEdit::keyPressEvent(QKeyEvent *event)
             QString str = text.right(2);
             if(str == replacementStr)
             {
+                // deleting contact is an atomic operation
+                // ensure that the signal is emitted only once
+                disconnect(this, SIGNAL(contentsChanged()), 
+                        this, SLOT(onContentsChanged()));
                 //delete seperator (i.e."; ").
                 QKeyEvent eve(event->type(), Qt::Key_Backspace, Qt::NoModifier);
                 HbLineEdit::keyPressEvent(&eve);
                 HbLineEdit::keyPressEvent(&eve);
+                connect(this, SIGNAL(contentsChanged()), 
+                        this, SLOT(onContentsChanged()));
+                onContentsChanged();
             }
             else
             {
@@ -185,7 +197,6 @@ void MsgUnifiedEditorLineEdit::keyPressEvent(QKeyEvent *event)
         
         event->accept();
         return;
-
     }
 
     if (event->key() == Qt::Key_Left )
@@ -358,28 +369,38 @@ void MsgUnifiedEditorLineEdit::mouseReleaseEvent(QGraphicsSceneMouseEvent* event
     event->accept();
 }
 
-void MsgUnifiedEditorLineEdit::setText(const QString& text)
+void MsgUnifiedEditorLineEdit::setText(const QString& text, bool underlined)
 {
 
     if(!mDefaultBehaviour)
     {
-        QInputMethodEvent e;
+        // atomic operation, ensure one signal only at the end
+        disconnect(this, SIGNAL(contentsChanged()), this, SLOT(onContentsChanged()));
+
         //make sure previous text is complete.
-        e.setCommitString(";");
-        this->inputMethodEvent(&e);
+        if(this->content().length() > 0)
+        {
+            QInputMethodEvent e;
+            e.setCommitString(";");
+            this->inputMethodEvent(&e);
+        }
         this->setCursorPosition(this->text().length());
 
         QTextCursor cursor(this->textCursor());
         QTextCharFormat colorFormat(cursor.charFormat());
-        QColor fgColor = colorFormat.foreground().color();
-        fgColor.setAlpha(fadedAlpha);
-        colorFormat.setUnderlineColor(fgColor);
-
-        colorFormat.setFontUnderline(true);
+        if(underlined)
+        {
+            QColor fgColor = colorFormat.foreground().color();
+            fgColor.setAlpha(fadedAlpha);
+            colorFormat.setUnderlineColor(fgColor);
+            colorFormat.setFontUnderline(true);        
+        }
         cursor.insertText(text , colorFormat);
         colorFormat.setFontUnderline(false);
 
-        cursor.insertText(replacementStr,colorFormat);       
+        cursor.insertText(replacementStr,colorFormat);
+        connect(this, SIGNAL(contentsChanged()), this, SLOT(onContentsChanged()));
+        onContentsChanged();
     }
     else
     {
@@ -387,8 +408,6 @@ void MsgUnifiedEditorLineEdit::setText(const QString& text)
        QTextCursor cursor(this->textCursor());
        cursor.insertText(text);
     }
-    
-    this->setCursorVisibility(Hb::TextCursorHidden);
 }
 
 QStringList MsgUnifiedEditorLineEdit::addresses()
@@ -402,6 +421,12 @@ void MsgUnifiedEditorLineEdit::focusInEvent(QFocusEvent* event)
 {    
     HbLineEdit::focusInEvent(event);
     this->setCursorVisibility(Hb::TextCursorVisible);
+}
+
+void MsgUnifiedEditorLineEdit::focusOutEvent(QFocusEvent* event)
+{    
+    HbLineEdit::focusOutEvent(event);
+    this->setCursorVisibility(Hb::TextCursorHidden);
 }
 
 void MsgUnifiedEditorLineEdit::setHighlight(int currentPos)
@@ -528,8 +553,44 @@ QString MsgUnifiedEditorLineEdit::content() const
     return text;
 }
 
+void MsgUnifiedEditorLineEdit::clearContent()
+{
+    // avoid getting updates during local editing
+    disconnect(this, SIGNAL(contentsChanged()), this, SLOT(onContentsChanged()));
+    
+    int startPos = mLabel.length();
+    this->setSelection(startPos, content().length());
+    QKeyEvent eve(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier);
+    this->keyPressEvent(&eve);
+    this->deselect();
+
+    // re-connect signal to start getting updates
+    connect(this, SIGNAL(contentsChanged()), this, SLOT(onContentsChanged()));
+}
+
 void MsgUnifiedEditorLineEdit::onContentsChanged()
 {
     emit contentsChanged(content());
 }
+
+void MsgUnifiedEditorLineEdit::highlightInvalidString(QString invalidStr)
+{
+    // for only address editor
+    if(!mDefaultBehaviour)
+    {
+        QString txtContent = this->text();
+        int searchStartPos = mLabel.length();
+        int startPos = txtContent.indexOf(invalidStr, searchStartPos);
+        disconnect(this,SIGNAL(selectionChanged(QTextCursor,QTextCursor)),
+                   this,SLOT(selectionChanged(QTextCursor,QTextCursor)));
+        // if invalidStr found
+        if(startPos > 0)
+        {
+            this->setSelection(startPos, invalidStr.length());
+        }
+        connect(this,SIGNAL(selectionChanged(QTextCursor,QTextCursor)),
+                this,SLOT(selectionChanged(QTextCursor,QTextCursor)));
+    }
+}
+
 // eof

@@ -438,10 +438,10 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
     {
         HBufC* addr = S60QConversions::qStringToS60Desc( addrList.at(i)->address() );
         HBufC* alt_alias = S60QConversions::qStringToS60Desc( addrList.at(i)->alias() );
-        if(addr)
+        if(addr->Length() > 0)
         {
             CleanupStack::PushL(addr);
-            if(alt_alias)
+            if(alt_alias->Length() > 0)
                 CleanupStack::PushL(alt_alias);
             HBufC* pureAddr = TMmsGenUtils::PureAddress( *addr ).AllocLC();
             HBufC* aliasAddr = TMmsGenUtils::Alias( *addr ).AllocLC();
@@ -461,7 +461,7 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
                 }
                 else
                 {
-                    if(alt_alias)
+                    if(alt_alias->Length() > 0)
                     {
                         SmsMtmL()->AddAddresseeL( *pureAddr, *alt_alias );
                         appendbuf.Set(alt_alias->Des().Left(appendLen));
@@ -482,7 +482,7 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
 
             // cleanup
             CleanupStack::PopAndDestroy(2, pureAddr );            
-            if(alt_alias)
+            if(alt_alias->Length() > 0)
             {
                 CleanupStack::PopAndDestroy( alt_alias );
             }
@@ -740,7 +740,7 @@ void UniEditorSmsPluginPrivate::SetSmsSettingsL()
     
 
     //Initialize the settings
-    SetEncodingSettings( iUnicodeMode, ESmsEncodingNone, 
+    SetEncodingSettingsL( iUnicodeMode, ESmsEncodingNone, 
             iCharSupportType);
     
     //get bodytext
@@ -1623,7 +1623,7 @@ TBool UniEditorSmsPluginPrivate::IsEmailAddress( const TPtrC& aAddress ) const
 // encoding or char support
 // when corresponding feilds change. Hence aUnicodeMode is always set to false
 //------------------------------------------------------------------------------
-void UniEditorSmsPluginPrivate::SetEncodingSettings( TBool aUnicodeMode,
+void UniEditorSmsPluginPrivate::SetEncodingSettingsL( TBool aUnicodeMode,
     TSmsEncoding aAlternativeEncodingType, 
     TInt aCharSupportType)
     {
@@ -1708,7 +1708,7 @@ void UniEditorSmsPluginPrivate::GetNumPDUsL(
             {
             //switch to Unicode
             //iUnicodeMode = ETrue;
-            SetEncodingSettings( ETrue, iAlternativeEncodingType, TUniSendingSettings::EUniCharSupportFull);
+            SetEncodingSettingsL( ETrue, iAlternativeEncodingType, TUniSendingSettings::EUniCharSupportFull);
             }
         else
             {

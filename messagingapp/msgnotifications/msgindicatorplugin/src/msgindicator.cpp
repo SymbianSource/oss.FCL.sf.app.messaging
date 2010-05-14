@@ -116,7 +116,7 @@ void ServiceRequestSenderTask::run()
 // @see msgindicator.h
 // ----------------------------------------------------------------------------
 MsgIndicator::MsgIndicator(const QString &indicatorType) :
-    HbIndicatorInterface(indicatorType, HbIndicatorInterface::GroupPriorityHigh,
+    HbIndicatorInterface(indicatorType, HbIndicatorInterface::NotificationCategory,
         InteractionActivated),
 		mIndicatorType(NULL)
 {
@@ -165,8 +165,18 @@ QVariant MsgIndicator::indicatorData(int role) const
     }
     case DecorationNameRole:
     {
-        return IndicatorInfo[mIndicatorType].icon;
-
+        return IndicatorInfo[mIndicatorType].icon;        
+    }
+    case MonoDecorationNameRole:
+    {
+        if (NewIndicatorPlugin == mIndicatorType) {
+            return IndicatorInfo[mIndicatorType].icon;
+        }
+        else {
+            // Don't show status-bar icons for indications other 
+			// than new-message
+            return QVariant();
+        }
     }
     default:
         return QVariant();

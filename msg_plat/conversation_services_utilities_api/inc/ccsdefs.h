@@ -283,6 +283,21 @@ _LIT(KVPbkDefaultCntDbURI, "cntdb://c:contacts.cdb"); //Phone Store
  */
 const TInt KSimIdOffset = 99999;
 
+/**
+ * @typedef TCsMsgPreviewProperty
+ */
+
+enum 
+{
+	EPreviewNone       = 0x00,
+	EPreviewImage      = 0x01,
+	EPreviewAudio      = 0x02,
+	EPreviewVideo      = 0x04,
+	EPreviewAttachment = 0x08
+};
+
+typedef TUint8 TCsMsgPreviewProperty;
+
 #endif // __C_CSSERVER_DEFS_H__
 
 // End of file

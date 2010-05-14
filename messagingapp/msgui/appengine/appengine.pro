@@ -22,6 +22,7 @@ DEPENDPATH += . src
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../../msgutils/s60qconversions/inc
+INCLUDEPATH += ../../smartmessaging/ringbc/inc
 INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
@@ -84,7 +85,9 @@ LIBS += -lcsserverclientapi \
         -lmmscli \
         -lcommonengine \
         -lmmsserversettings \
-	-lFeatMgr
-
+        -lsqldb \
+        -lestor \
+	-lFeatMgr \
+        -lringbc 
 
 

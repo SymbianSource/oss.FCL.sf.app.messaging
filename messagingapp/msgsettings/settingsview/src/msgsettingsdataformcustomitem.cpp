@@ -49,10 +49,7 @@ HbWidget* MsgSettingsDataFormCustomItem::createCustomWidget()
         case HbDataFormModelItem::CustomItemBase + 1:
             {
             //custom button
-            QString
-                    str =
-                            modelIndex().data(HbDataFormModelItem::KeyRole).toString();
-            HbPushButton *button = new HbPushButton(str);
+            HbPushButton *button = new HbPushButton();
 
             return button;
             }

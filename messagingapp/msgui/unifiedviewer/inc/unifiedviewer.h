@@ -28,14 +28,13 @@
 
 #include "convergedmessage.h"
 
-class QGraphicsLinearLayout;
 class UniViewerFeeder;
 class ConvergedMessage;
 class HbScrollArea;
 class UniScrollArea;
 class UniContentsWidget;
 class MessageDeleteAction;
-
+class HbAction;
 /**
  * Main view of unified viewer.
  */
@@ -102,15 +101,15 @@ private slots:
      * This slot is called when sendMessage signal is emitted for a highlighted
      * phone number, from body widget.
      */
-    void sendMessage(const QString& phoneNumber);
-
-private:
+    void sendMessage(const QString& phoneNumber, const QString& alias = QString());
 
     /**
-     * Main grid layout
-     * Owned
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
      */
-    QGraphicsLinearLayout* mMainLayout;
+    void onDialogDeleteMsg(HbAction* action);
+    
+private:
 
     /**
      * Feeder object

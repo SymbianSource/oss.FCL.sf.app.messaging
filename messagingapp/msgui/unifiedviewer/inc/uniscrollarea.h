@@ -49,16 +49,6 @@ public:
      */
     void setPosToStart();
 
-    /**
-     * Handler for UpGesture
-     */
-    void upGesture(int value);
-
-    /**
-     * Handler for DownGesture
-     */
-    void downGesture(int value);
-
 public slots:
     /**
      * Handle scrolling started signal

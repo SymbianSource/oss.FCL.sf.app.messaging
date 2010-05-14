@@ -34,9 +34,8 @@
 // MsgAttachmentContainer::MsgAttachmentContainer
 // @see header file
 //---------------------------------------------------------------
-MsgAttachmentContainer::MsgAttachmentContainer( const QString& pluginPath, QGraphicsItem *parent ) :
+MsgAttachmentContainer::MsgAttachmentContainer( QGraphicsItem *parent ) :
 HbWidget(parent),
-mPluginPath(pluginPath),
 mIsMMContent(false)
 {
     mLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
@@ -72,7 +71,7 @@ MsgAttachmentContainer::AddAttachmentStatus
     if( (fileSize + msgSize) <= MsgMonitor::maxMmsSize())
     {
         MsgUnifiedEditorAttachment* att = new MsgUnifiedEditorAttachment(
-            mPluginPath, filepath, fileSize, this);
+            filepath, fileSize, this);
         if( ((mAttachmentList.count() == 0) && att->isMultimediaContent()) ||
                 ((mAttachmentList.count() == 1) && !mIsMMContent) )
         {

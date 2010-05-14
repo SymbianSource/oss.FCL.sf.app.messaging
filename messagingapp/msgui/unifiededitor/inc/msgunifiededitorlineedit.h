@@ -42,14 +42,34 @@ public:
      */
     QStringList addresses();
 
+    /**
+     * Flag to retain or override base-class behaviour
+     * Needed because address & subject field classes derieve
+     * from this class, but have different behaviour
+     */
     void setDefaultBehaviour(bool defaultBehaviour = false);
+    
+    /**
+     * seeker method for getting the text content held by editing field
+     */
     QString content() const;
-	
+    
+    /**
+     * setter method to clear text content of the editing field
+     */
+    void clearContent();
+    
+    /**
+     * set highlight on invalid contact
+     * @param invalidStr, String to be highlighted
+     */
+    void highlightInvalidString(QString invalidStr);
+
 signals:
     void contentsChanged(const QString& text);
 
 public slots:
-    void setText(const QString &text);
+    void setText(const QString &text, bool underlined = true);
     void cut();
     void selectAll();
 
@@ -62,6 +82,7 @@ protected: // from HbLineEdit
     void keyPressEvent(QKeyEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
     void focusInEvent(QFocusEvent* event);
+    void focusOutEvent(QFocusEvent *event);
     void timerEvent (QTimerEvent *event);
 
 

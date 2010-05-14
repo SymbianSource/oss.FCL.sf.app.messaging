@@ -143,22 +143,5 @@ void UniScrollArea::setPosToStart()
     widgetItem->setPos(0, 0);
 }
 
-//---------------------------------------------------------------
-//UniScrollArea :: upGesture
-// @see header file
-//---------------------------------------------------------------
-void UniScrollArea::upGesture(int value)
-{
-    Q_UNUSED(value)
-}
-
-//---------------------------------------------------------------
-//UniScrollArea :: downGesture
-// @see header file
-//---------------------------------------------------------------
-void UniScrollArea::downGesture(int value)
-{
-    Q_UNUSED(value)
-}
 
 // EOF

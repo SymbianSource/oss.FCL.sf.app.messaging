@@ -29,6 +29,7 @@
 #include <MmsEngineInternalCRKeys.h>
 #include <hbmessagebox.h>
 #include <hbnotificationdialog>
+#include <hbaction.h>
 
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
@@ -107,7 +108,7 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
         mediaResolver->ParseInfoDetailsL(info,fileHandle);
         
         TMmsConformance conformance = mmsConformance->MediaConformance(*info);
-        TUint32 confStatus = conformance.iConfStatus;
+        iConfStatus = conformance.iConfStatus;
 
         CleanupStack::PopAndDestroy(4);
 
@@ -121,22 +122,19 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
                     | EMmsConfNokTooBig);
 
             // If user answers yes to Guided mode confirmation query he/she moves to free mode
-            if ( (confStatus & i) && ! (confStatus & j))
+            if ( (iConfStatus & i) && ! (iConfStatus & j))
             {
                 if (iCreationMode == EMmsCreationModeFree || info->Protection()
                         & EFileProtSuperDistributable)
                 {
                     // SuperDistribution not checked here
                     // Mask "FreeModeOnly" and "ScalingNeeded" away in free mode
-                    confStatus &= ~EMmsConfNokFreeModeOnly;
-                    confStatus &= ~EMmsConfNokScalingNeeded;
+                    iConfStatus &= ~EMmsConfNokFreeModeOnly;
+                    iConfStatus &= ~EMmsConfNokScalingNeeded;
                 }
-                else if (showNote && launchEditorQuery())
+                else if (showNote)
                 {
-                    // Query accepted.
-                    // Mask "FreeModeOnly" and "ScalingNeeded" away in free mode
-                    confStatus &= ~EMmsConfNokFreeModeOnly;
-                    confStatus &= ~EMmsConfNokScalingNeeded;
+                    HbMessageBox::question(INSERT_QUERY_CONFRM, this, SLOT(onDialogInsertMedia(HbAction*)));
                 }
                 else
                 {
@@ -145,10 +143,10 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
                 }
             }
         }
-        else if (confStatus & EMmsConfNokDRM || confStatus
-                & EMmsConfNokNotEnoughInfo || confStatus
-                & EMmsConfNokNotSupported || confStatus
-                & EMmsConfNokFreeModeOnly || confStatus & EMmsConfNokCorrupt)
+        else if (iConfStatus & EMmsConfNokDRM || iConfStatus
+                & EMmsConfNokNotEnoughInfo || iConfStatus
+                & EMmsConfNokNotSupported || iConfStatus
+                & EMmsConfNokFreeModeOnly || iConfStatus & EMmsConfNokCorrupt)
         {
             // Sanity check
             // "Not conformant" assumed if check fails.
@@ -237,13 +235,20 @@ bool MmsConformanceCheck::validateMsgForForward(int messageId)
     return retValue;
 }
 
-// ---------------------------------------------------------
-// MmsConformanceCheck::launchEditorQuery
-// ---------------------------------------------------------
+// -----------------------------------------------------------------------------
+// MmsConformanceCheck::onDialogInsertMedia
+// -----------------------------------------------------------------------------
 //
-bool MmsConformanceCheck::launchEditorQuery()
+void MmsConformanceCheck::onDialogInsertMedia(HbAction* action)
 {
-    return HbMessageBox::question(INSERT_QUERY_CONFRM);
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+        // Query accepted.
+        // Mask "FreeModeOnly" and "ScalingNeeded" away in free mode
+        iConfStatus &= ~EMmsConfNokFreeModeOnly;
+        iConfStatus &= ~EMmsConfNokScalingNeeded;
+    }
+
 }
 
 // -----------------------------------------------------------------------------

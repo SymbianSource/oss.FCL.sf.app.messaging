@@ -140,8 +140,10 @@ TBool UniEditorSmsPlugin::validateService( TBool aEmailOverSms/* = EFalse */)
 void UniEditorSmsPlugin::setEncodingSettings(TBool aUnicodeMode,
     TSmsEncoding aAlternativeEncodingType, TInt charSupportType)
 {
-    d_ptr->SetEncodingSettings(aUnicodeMode, aAlternativeEncodingType,
-        charSupportType);
+    TRAPD(error, d_ptr->SetEncodingSettingsL(aUnicodeMode,
+            aAlternativeEncodingType,
+            charSupportType));
+    QDEBUG_WRITE_FORMAT("UniEditorSmsPlugin::setEncodingSettings error = ",error);
 }
 
 //---------------------------------------------------------------

@@ -25,6 +25,7 @@
 #include <xqaiwrequest.h>
 #include <xqappmgr.h>
 #include <ccsdefs.h>
+#include <qaction.h>
 
 #define LOC_VIEW hbTrId("txt_messaging_button_view")
 #define LOC_CANCEL hbTrId("txt_common_button_cancel")
@@ -79,19 +80,19 @@ void MsgErrorNotifierSvc::displayErrorNote(QVariantList displayParams)
     
     messageBox.setTimeout(HbPopup::NoTimeout);
     messageBox.setText(errorNote);
-    HbAction* actionView = new HbAction(LOC_VIEW);
-    messageBox.setPrimaryAction(actionView);
+    QAction* actionView = new QAction(LOC_VIEW,this);
+    messageBox.setAction(actionView,HbDeviceMessageBox::AcceptButtonRole);
 
-    HbAction* actionQuit = new HbAction(LOC_CANCEL);
-    actionQuit->setCommandRole(HbAction::QuitRole);
-    messageBox.setSecondaryAction(actionQuit);
+    QAction* actionQuit = new QAction(LOC_CANCEL,this);
+    actionQuit->setMenuRole(QAction::QuitRole);
+    messageBox.setAction(actionView,HbDeviceMessageBox::RejectButtonRole);
 
     setCurrentRequestAsync();
 
-    HbAction* result = messageBox.exec();
+    const QAction* result = messageBox.exec();
 
     // TODO: use XQAiwrequest
-    if (result->commandRole() != HbAction::QuitRole) {
+    if (result->menuRole() != QAction::QuitRole) {
         QList<QVariant> args;
         QString serviceName("com.nokia.services.hbserviceprovider");
         QString operation("open(qint64)");

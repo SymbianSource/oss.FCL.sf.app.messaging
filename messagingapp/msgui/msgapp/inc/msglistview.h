@@ -26,7 +26,7 @@ class HbListView;
 class HbAbstractViewItem;
 class HbListWidget;
 class HbListWidgetItem;
-
+class HbAction;
 /**
  * This class provides the message list view for the messaging application.
  * Data source for this view is the conversation list model.
@@ -109,6 +109,12 @@ private slots:
      */
     void contactInfo();
 
+	/**
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogDeleteMsg(HbAction* action);
+    
 private:
 
     /**
@@ -147,6 +153,11 @@ private:
         DRAFTS_EXTN = 0x00, CONVERSATIONS_EXTN = 0x01
     };
 
+    /**
+     * Flag to track if item has been long pressed.
+     * TODO: Remove it, once unique longpress and click event signal released in week16
+     */
+    bool mItemLongPressed;
 };
 
 #endif // MSG_LIST_VIEW_H

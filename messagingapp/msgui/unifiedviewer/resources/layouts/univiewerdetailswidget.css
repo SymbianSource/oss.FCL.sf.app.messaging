@@ -19,7 +19,7 @@ UniViewerDetailsWidget::timeLabel
   text-height:var(hb-param-text-height-secondary);
   text-line-count-min:1;
   text-line-count-max:1;
-  text-align: left;
+  text-align:left center;
  }
 
 UniViewerDetailsWidget::subjectLabel
@@ -31,16 +31,15 @@ UniViewerDetailsWidget::subjectLabel
   text-height:var(hb-param-text-height-primary);
   text-line-count-min:1;
   text-line-count-max:10;
-  text-align:left;
+  text-align:left center;
 }
 
 UniViewerDetailsWidget::priorityIcon
 {
   top:-var(hb-param-margin-gene-top);
   right:var(hb-param-margin-gene-right);
-  aspect-ratio:ignore;
-  size-policy:fixed fixed;
   pref-width:var(hb-param-graphic-size-secondary);
   pref-height:var(hb-param-graphic-size-secondary);
+  size-policy:fixed fixed;
 }
 

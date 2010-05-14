@@ -19,19 +19,18 @@
 #include <ccsconversationentry.h>
 #include "ccsconversationcache.h"
 #include "ccsconversationdeletehandler.h"
-#include "mcsconversationdeleteobserver.h"
 
 // ----------------------------------------------------------------------------
 // CCsConversationDeleteHandler::NewL
 // Two Phase Construction
 // ----------------------------------------------------------------------------
 CCsConversationDeleteHandler* CCsConversationDeleteHandler::
-NewL(CCsConversationCache* aCache, MCsConversationDeleteObserver* aObserver)
+NewL(CCsConversationCache* aCache)
     {
     CCsConversationDeleteHandler* self = 
             new (ELeave) CCsConversationDeleteHandler();
     CleanupStack::PushL(self);
-    self->ConstructL(aCache, aObserver);
+    self->ConstructL(aCache);
     CleanupStack::Pop(self); // self
     return self;
     }
@@ -48,13 +47,11 @@ CCsConversationDeleteHandler::CCsConversationDeleteHandler():
 // ----------------------------------------------------------------------------
 // Constructor
 // ----------------------------------------------------------------------------
-void CCsConversationDeleteHandler::ConstructL(CCsConversationCache* aCache,
-        MCsConversationDeleteObserver* aObserver)
+void CCsConversationDeleteHandler::ConstructL(CCsConversationCache* aCache)
     {
     iCache = aCache;
     iState = EIdle;
-    iObserver = aObserver;
-    
+     
     iConversationEntryList = new (ELeave)RPointerArray<CCsConversationEntry> ();  
     iSession = CMsvSession::OpenSyncL(*this);
     }
@@ -63,9 +60,17 @@ void CCsConversationDeleteHandler::ConstructL(CCsConversationCache* aCache,
 // Destructor
 // ----------------------------------------------------------------------------
 CCsConversationDeleteHandler::~CCsConversationDeleteHandler()
+{
+    if (iConversationEntryList)
     {
-    if(iSession)
-        {
+        iConversationEntryList->ResetAndDestroy();
+        iConversationEntryList->Close();
+        delete iConversationEntryList;
+        iConversationEntryList = NULL;
+    }
+
+    if (iSession)
+    {
         delete iSession;
         iSession = NULL;
         }
@@ -79,7 +84,8 @@ void CCsConversationDeleteHandler::DeleteL(TInt aConversationId)
     // Check if delete in progress
     if ( iCache->IsDeleted(aConversationId) )
         {
-        iObserver->DeleteInProgress(this);
+        // Deletion is in progress for this conversation, so clean up this AO
+        delete this;
         return;
         }
     
@@ -90,10 +96,7 @@ void CCsConversationDeleteHandler::DeleteL(TInt aConversationId)
     CCsClientConversation* clientConversation = CCsClientConversation::NewL();
     clientConversation->SetConversationEntryId(iConversationId);
     CleanupStack::PushL(clientConversation);
-    
-    // Create entry list
-    iConversationEntryList = new (ELeave)RPointerArray<CCsConversationEntry> ();  
-    
+
     // Get conversationlist for given client conversation
     iCache->GetConversationsL (clientConversation, iConversationEntryList);
     iCache->MarkConversationAsDeleted(iConversationId, ETrue);
@@ -162,15 +165,9 @@ void CCsConversationDeleteHandler::RunL()
         case EDeleteComplete:
             // Mark delete complete.
             iCache->MarkConversationAsDeleted(iConversationId, EFalse);
-            // Cleanup
-            iDeletedCount = 0;
-            iConversationEntryList->ResetAndDestroy();
-            iConversationEntryList->Close();
-            delete iConversationEntryList;
-            iConversationEntryList = NULL;  
-            
-            // Notify observers
-            iObserver->DeleteComplete(this);
+            // Done with the processing , cleanup the AO since this is the last 
+            //call to the delete handler.
+            delete this;
             break;
         }
     }

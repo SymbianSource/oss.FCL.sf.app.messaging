@@ -39,7 +39,7 @@ public:
     /**
      * Constructor
      */
-    MsgAttachmentContainer(const QString& pluginPath, QGraphicsItem *parent = 0);
+    MsgAttachmentContainer( QGraphicsItem *parent = 0);
 
     /**
      * Destructor
@@ -104,11 +104,7 @@ private:
     int messageSize();
     
 private:
-    /**
-     * style plugin's path
-     */
-    QString mPluginPath;
-
+    
     /**
      * container's layout
      */

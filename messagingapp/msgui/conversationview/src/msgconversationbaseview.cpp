@@ -29,6 +29,8 @@
 #include <qtcontactsglobal.h>
 #include <qtcontacts.h>
 #include <ccsdefs.h>
+#include <XQSettingsManager>
+#include <QTimer>
 
 // USER INCLUDES
 #include "msgconversationview.h"
@@ -36,6 +38,7 @@
 #include "msgviewdefines.h"
 #include "conversationsenginedefines.h"
 #include "msgcontactcardwidget.h"
+#include "conversationidpsconsts.h"
 
 QTM_USE_NAMESPACE
 
@@ -48,8 +51,9 @@ QTM_USE_NAMESPACE
 //---------------------------------------------------------------
 MsgConversationBaseView::MsgConversationBaseView(QGraphicsItem* parent) :
 MsgBaseView(parent),
-mConversationView(NULL),
-mConversationId(-1)
+mConversationId(-1),
+mCVIdkey(XQSettingsKey::TargetPublishAndSubscribe,KMsgCVIdProperty, 
+        KMsgCVIdKey)
 { 
     connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));   
     initView();
@@ -72,6 +76,9 @@ void MsgConversationBaseView::openConversation(qint64 convId)
     ConversationsEngine::instance()->getConversations(convId);
     mConversationId = convId;
     connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
+    
+	// publsih conversation id
+    mSettingsManager->writeItemValue(mCVIdkey,(int)mConversationId);
     
     if(mConversationView)
         {
@@ -123,7 +130,9 @@ void MsgConversationBaseView::initView()
     mMainLayout->addItem(mConversationView);
 
     this->setLayout(mMainLayout);
-
+    
+    mSettingsManager = new XQSettingsManager(this);
+          
 }
 
 //---------------------------------------------------------------
@@ -165,6 +174,15 @@ void MsgConversationBaseView::saveContentToDrafts()
         }
     }
 
+//--------------------------------------------------------------- 
+// MsgConversationBaseView::conversationId 
+// get the conversation ID 
+//---------------------------------------------------------------     
+qint64 MsgConversationBaseView::conversationId() 
+    { 
+    return mConversationId; 
+    }
+
 //---------------------------------------------------------------
 // MsgConversationBaseView::clearContent
 // clears conversation view content
@@ -201,8 +219,18 @@ void MsgConversationBaseView::handleError(int errorCode, const QString& errorMes
 void MsgConversationBaseView::doDelayedConstruction()
 {
     disconnect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
-    ConversationsEngine::instance()->fetchMoreConversations();
+    QTimer::singleShot(50,this,SLOT(handleViewReady()));    
 }
+
+
+//---------------------------------------------------------------
+// MsgConversationBaseView::handleViewReady
+//
+//---------------------------------------------------------------	
+void MsgConversationBaseView::handleViewReady()
+    {
+    ConversationsEngine::instance()->fetchMoreConversations();
+    }
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::hideChrome
@@ -234,4 +262,17 @@ void MsgConversationBaseView::hideChrome(bool hide)
         }
     }
 
+//---------------------------------------------------------------
+// MsgConversationBaseView::setPSCVId
+//
+//---------------------------------------------------------------
+void MsgConversationBaseView::setPSCVId(bool setId)
+{
+    if(setId){
+    mSettingsManager->writeItemValue(mCVIdkey,(int)mConversationId);
+    }
+    else {
+    mSettingsManager->writeItemValue(mCVIdkey,-1);
+    }
+}
 // EOF

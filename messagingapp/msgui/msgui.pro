@@ -19,7 +19,6 @@ TEMPLATE = subdirs
 SYMBIAN_PLATFORMS = WINSCW ARMV5
 
 # DLLs
-SUBDIRS += layoutplugins/layoutplugins.pro
 SUBDIRS += msguiutils/msguiutils.pro
 SUBDIRS += appengine/appengine.pro
 SUBDIRS += conversationview/conversationview.pro

@@ -23,8 +23,10 @@
 #include <HbListView>
 #include <HbMessageBox>
 #include <HbNotificationDialog>
+#include <HbFrameBackground>
 #include <XQServiceRequest.h>
 #include <HbStaticVkbHost>
+#include <HbStyleLoader>
 #include <xqaiwrequest.h>
 #include <xqappmgr.h>
 
@@ -52,6 +54,7 @@
 #include "unidatamodelplugininterface.h"
 #include "ringbc.h"
 #include "mmsconformancecheck.h"
+#include "msgsettingsview.h"
 
 //Item specific menu.
 
@@ -60,7 +63,7 @@
 #define LOC_COMMON_FORWARD hbTrId("txt_common_menu_forward")
 #define LOC_COMMON_DOWNLOAD hbTrId("txt_messaging_menu_download")
 #define LOC_COMMON_SEND  hbTrId("txt_common_menu_send") 
-
+#define LOC_COMMON_SAVE  hbTrId("txt_common_menu_save")
 #define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
 #define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
 #define LOC_BUTTON_OK hbTrId("txt_common_button_ok")
@@ -77,8 +80,10 @@
 
 #define LOC_MSG_SEND_FAILED hbTrId("txt_messaging_dpopinfo_sending_failed")
 
+#define LOC_DIALOG_SMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_sms_settings_incomplete")
+#define LOC_DIALOG_SAVE_RINGTONE hbTrId("txt_conversations_dialog_save_ringing_tone")
 
-const QString PLUGINPATH("conversationviewplugin.dll");
+
 
 const int INVALID_MSGID = -1;
 const int INVALID_CONVID = -1;
@@ -124,10 +129,15 @@ void MsgConversationView::setupView()
 {
     // Create HbListView and set properties
     mConversationList = new HbListView();
-    style()->registerPlugin(PLUGINPATH);
+    if (!HbStyleLoader::registerFilePath(":/layouts")) {
+        QDEBUG_WRITE("ERROR: ConversationView -> HbStyleLoader::registerFilePath");
+    }
     mConversationList->setLayoutName("custom");
     mConversationList->setItemRecycling(true);
     MsgConversationViewItem *item = new MsgConversationViewItem(this);
+    HbFrameBackground defaultBackground;
+    defaultBackground.setFrameGraphicsName(QString(""));
+    item->setDefaultFrame(defaultBackground);
     mConversationList->setItemPrototype(item);
     mConversationList->setSelectionMode(HbListView::NoSelection);
     mConversationList->setClampingStyle(HbScrollArea::BounceBackClamping);
@@ -206,7 +216,7 @@ void MsgConversationView::refreshView()
         }
         else {
             mMainLayout->addItem(mEditorWidget);
-            mEditorWidget->setEncodingSettings();
+            TRAP_IGNORE(mEditorWidget->setEncodingSettingsL());
             mEditorWidget->show();
         }
         mContactCardWidget->updateContents();
@@ -242,15 +252,18 @@ void MsgConversationView::longPressed(HbAbstractViewItem* viewItem,
         //If message is in Sending state or is Scheduled to be sent later,
         //do not allow any operations on the message
         int sendingState = item->modelIndex().data(SendingState).toInt();
+        if(sendingState == ConvergedMessage::Scheduled ||
+                   sendingState == ConvergedMessage::Sending ||
+                   sendingState == ConvergedMessage::Waiting)
+           {
+               return;
+           }
         // Create new menu
         HbMenu* contextMenu = new HbMenu();
+        contextMenu->setAttribute(Qt::WA_DeleteOnClose);
+        contextMenu->setPreferredPos(point);
         setContextMenu(item, contextMenu, sendingState);
-        
-        //Before showing menu reset the flag
-        mItemLongPressed = false;
-        contextMenu->exec(point);
-        // Cleanup
-        delete contextMenu;
+        contextMenu->show();
 
     }
     else
@@ -271,7 +284,25 @@ void MsgConversationView::setContextMenu(MsgConversationViewItem* item, HbMenu* 
     addResendItemToContextMenu(item, contextMenu, sendingState);
     addForwardItemToContextMenu(item, contextMenu, sendingState);
     addDownloadItemToContextMenu(item, contextMenu);
-    addDeleteItemToContextMenu(item, contextMenu, sendingState);  
+    addDeleteItemToContextMenu(item, contextMenu, sendingState);
+    addSaveItemToContextMenu(item , contextMenu,sendingState);
+}
+
+
+//---------------------------------------------------------------
+// MsgEditorPrivate::addSaveItemToContextMenu
+// @see header
+//---------------------------------------------------------------
+void MsgConversationView::addSaveItemToContextMenu(MsgConversationViewItem* item,
+    HbMenu* contextMenu, int sendingState)
+{
+    int messageSubType = item->modelIndex().data(MessageSubType).toInt();
+    int direction =  item->modelIndex().data(Direction).toInt();
+    if ((messageSubType == ConvergedMessage::RingingTone) && 
+        (direction == ConvergedMessage::Incoming)) {
+        HbAction *contextItem = contextMenu->addAction(LOC_COMMON_SAVE);
+        connect(contextItem, SIGNAL(triggered()), this, SLOT(saveRingingTone()));
+    }
 }
 
 //---------------------------------------------------------------
@@ -431,17 +462,7 @@ void MsgConversationView::send()
     deactivateInputBlocker();
     if( sendResult == KErrNotFound)
     {
-    bool result = HbMessageBox::question("SMS Settings not defined\nDefine now ?",
-            LOC_BUTTON_OK,
-            LOC_BUTTON_CANCEL);
-        if (result)
-        {
-            //switch to settings view
-            QVariantList param;
-            param << MsgBaseView::MSGSETTINGS;
-            param << MsgBaseView::CV;
-            emit switchView(param);
-        }
+    HbMessageBox::question(LOC_DIALOG_SMS_SETTINGS_INCOMPLETE, this, SLOT(onDialogSettingsLaunch(HbAction*)), LOC_BUTTON_OK, LOC_BUTTON_CANCEL);
     }
 }
 
@@ -519,7 +540,8 @@ void MsgConversationView::fetchImages()
     QString operation("fetch(QVariantMap,QVariant)");
     XQAiwRequest* request = NULL;
     XQApplicationManager appManager;
-    request = appManager.create(interface, operation, true);//embedded
+    request = appManager.create(interface, operation, true); // embedded
+    request->setSynchronous(true); // synchronous
     if(!request)
     {
         QDEBUG_WRITE("AIW-ERROR: NULL request");
@@ -530,7 +552,12 @@ void MsgConversationView::fetchImages()
         this, SLOT(imagesFetched(const QVariant&)));
     connect(request, SIGNAL(requestError(int,const QString&)),
         this, SLOT(serviceRequestError(int,const QString&)));
-   
+
+    // Set arguments for request
+    QList<QVariant> args;
+    args << QVariantMap();
+    args << QVariant();
+    request->setArguments(args);
     // Make the request
     if (!request->send())
     {
@@ -545,12 +572,13 @@ void MsgConversationView::fetchImages()
 //---------------------------------------------------------------
 void MsgConversationView::fetchAudio()
 {
-    QString service("Music Fetcher");
-    QString interface("com.nokia.services.media.Music");
-    QString operation("fetch(QString)");
+    QString service("musicplayer");
+    QString interface("com.nokia.symbian.IMusicFetch");
+    QString operation("fetch()");
     XQAiwRequest* request = NULL;
     XQApplicationManager appManager;
     request = appManager.create(service, interface, operation, true); //embedded
+    request->setSynchronous(true); // synchronous
     if(!request)
     {
         QDEBUG_WRITE("AIW-ERROR: NULL request");
@@ -576,38 +604,16 @@ void MsgConversationView::fetchAudio()
 //---------------------------------------------------------------
 void MsgConversationView::contactsFetched(const QVariant& value)
 {
-    CntServicesContactList contactList;
-    contactList = qVariantValue<CntServicesContactList>(value);
-    ConvergedMessageAddressList addresses;
+    CntServicesContactList contactList = 
+            qVariantValue<CntServicesContactList>(value);
 	int count = contactList.count();
 	if(count > 0)
-      {
-	  ConvergedMessageAddress* address = new ConvergedMessageAddress;
-      address->setAlias(mContactCardWidget->address().at(0)->alias());
-      address->setAddress(mContactCardWidget->address().at(0)->address());
-      addresses.append(address);
-    	for(int i = 0; i < contactList.count(); i++ )
-	    {
-	    ConvergedMessageAddress* address = new ConvergedMessageAddress;
-	    address->setAlias(contactList[i].mDisplayName);
-	    address->setAddress(contactList[i].mPhoneNumber);
-	    addresses.append(address);
-	    }
-
-      ConvergedMessage message;
-      message.setBodyText(mEditorWidget->content());
-      message.addToRecipients(addresses);//takes the ownership of list elements
-      QByteArray dataArray;
-      QDataStream messageStream
-      (&dataArray, QIODevice::WriteOnly | QIODevice::Append);
-      message.serialize(messageStream);
-      QVariantList params;
-      params << MsgBaseView::UNIEDITOR; // target view
-      params << MsgBaseView::CV; // source view
-      params << dataArray;
-      clearEditors();
-      emit switchView(params);
-     }    
+    {
+        QVariantList params;
+        params << MsgBaseView::ADD_RECIPIENTS;
+        params << value;
+        launchUniEditor(params);
+    }
 }
 
 //---------------------------------------------------------------
@@ -731,31 +737,9 @@ void MsgConversationView::downloadMessage()
 //---------------------------------------------------------------
 void MsgConversationView::deleteItem()
     {
-    QModelIndex index = mConversationList->currentIndex();
-    int count = mMessageModel->rowCount();
-    //delete message
-    qint32 messageId = index.data(ConvergedMsgId).toLongLong();    
-
-    bool result = HbMessageBox::question(LOC_DELETE_MESSAGE,
+    HbMessageBox::question(LOC_DELETE_MESSAGE,this,SLOT(onDialogdeleteMsg(HbAction*)),
                              LOC_BUTTON_DELETE,
                              LOC_BUTTON_CANCEL);
-    if(result)
-        {        
-        if (messageId)
-            {
-            QList<int> msgIdList;
-            msgIdList.append(messageId);          
-            ConversationsEngine::instance()->deleteMessages(msgIdList);
-            //switch view               
-            if (count == 1)
-                {
-                QVariantList param;
-                param << MsgBaseView::CLV; // target view
-                param << MsgBaseView::CV; // source view
-                emit switchView(param);
-                }  
-            }             
-        }
 }
 
 //---------------------------------------------------------------
@@ -885,22 +869,37 @@ void MsgConversationView::openItem(const QModelIndex & index)
         }
 
     if(mItemLongPressed)
+        {
+        //reset the flag
+        mItemLongPressed = false;
         return;
+        }
     
     int messageType = index.data(MessageType).toInt();
     int messageSubType = index.data(MessageSubType).toInt();
     
     if (ConvergedMessage::BioMsg == messageType) {
         if (ConvergedMessage::RingingTone == messageSubType) {
-            if (RingBc::askSaveQuery()) {
-                saveRingingTone();
-            }
+            HbMessageBox::question(LOC_DIALOG_SAVE_RINGTONE, this,
+                    SLOT(onDialogSaveTone(HbAction*)), LOC_COMMON_SAVE, LOC_BUTTON_CANCEL);
             return;
         }
+        else if(ConvergedMessage::Provisioning == messageSubType)
+            {
+            int messageId = index.data(ConvergedMsgId).toInt();
+            handleProvisoningMsg(messageId);
+            QList<int> msgIdList;
+            if(index.data(UnReadStatus).toInt())
+                {
+                msgIdList.clear();
+                msgIdList << messageId;
+                ConversationsEngine::instance()->markMessagesRead(msgIdList);
+                }
+            return;
+            }
         // Unsupported messages
         else if (ConvergedMessage::VCard == messageSubType
-            || ConvergedMessage::VCal == messageSubType
-            || ConvergedMessage::Provisioning == messageSubType) {
+            || ConvergedMessage::VCal == messageSubType) {
             return;
         }
     }
@@ -923,12 +922,9 @@ void MsgConversationView::openItem(const QModelIndex & index)
         else
         {
             //TODO: use logical str name
-            if(HbMessageBox::question("Download Message?",
+            HbMessageBox::question("Download Message?",this,SLOT(onDialogDownLoadMsg(HbAction*)),
                 LOC_COMMON_DOWNLOAD,
-                LOC_BUTTON_CANCEL))
-            {
-                downloadMessage();
-            }
+                LOC_BUTTON_CANCEL);
             return;
         }
     }
@@ -1050,6 +1046,7 @@ void MsgConversationView::launchUniEditor(const QVariantList& data)
     {
         message.setBodyText(mEditorWidget->content());
 
+        // add address from contact-card to to-field
         ConvergedMessageAddress address;
         address.setAlias(mContactCardWidget->address().at(0)->alias());
         address.setAddress(mContactCardWidget->address().at(0)->address());
@@ -1076,6 +1073,21 @@ void MsgConversationView::launchUniEditor(const QVariantList& data)
             // filepath is not sent in cases like VCards & recipients
             // instead, we will get a list of contacts. Pass it as it is.
             data2 = data.at(1);
+        }
+        else if(editorOperation == MsgBaseView::ADD_RECIPIENTS)
+        {
+            ConvergedMessageAddressList addresses;
+            CntServicesContactList contactList = 
+                    qVariantValue<CntServicesContactList>(data.at(1));
+            // now add fetched contacts from contact selection dialog
+            for(int i = 0; i < contactList.count(); i++ )
+            {
+                ConvergedMessageAddress* address = new ConvergedMessageAddress;
+                address->setAlias(contactList[i].mDisplayName);
+                address->setAddress(contactList[i].mPhoneNumber);
+                addresses.append(address);
+            }
+            message.addToRecipients(addresses);
         }
     }
     else
@@ -1223,6 +1235,8 @@ void MsgConversationView::vkbClosed()
     
     this->setMaximumHeight(-1);
     connect(mVkbHost,SIGNAL(keypadOpened()),this,SLOT(vkbOpened()));
+    
+    scrollToBottom();
 }
 
 //---------------------------------------------------------------
@@ -1254,5 +1268,107 @@ void MsgConversationView::deactivateInputBlocker()
         this->ungrabMouse();
     }
 
+//---------------------------------------------------------------
+// MsgConversationView::handleProvisoningMsg
+// @see header file
+//--------------------------------------------------------------
+void MsgConversationView::handleProvisoningMsg(int msgId)
+	{
+		QString messageId;
+    messageId.setNum(msgId);
+
+    XQApplicationManager* aiwMgr = new XQApplicationManager();
+
+    XQAiwRequest* request = aiwMgr->create("com.nokia.services.MDM", 
+            "Provisioning",
+            "ProcessMessage(QString)", true); // embedded
+
+    if (request) {
+    QList<QVariant> args;
+    args << QVariant(messageId);
+    request->setArguments(args);
+
+    // Send the request
+    bool res = request->send();
+
+    // Cleanup
+    delete request;
+    }
+
+    delete aiwMgr;
+	}
+
+//---------------------------------------------------------------
+// MsgConversationView::onDialogSettingsLaunch
+// @see header file
+//--------------------------------------------------------------
+void MsgConversationView::onDialogSettingsLaunch(HbAction* action)
+{
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+        //switch to settings view
+         QVariantList param;
+         param << MsgBaseView::MSGSETTINGS;
+         param << MsgBaseView::CV;
+         param << MsgSettingsView::SMSView;
+         emit switchView(param);
+    }
+
+}
+
+//---------------------------------------------------------------
+// MsgConversationView::onDialogdeleteMsg
+// @see header file
+//--------------------------------------------------------------
+void MsgConversationView::onDialogdeleteMsg(HbAction* action)
+{
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+        QModelIndex index = mConversationList->currentIndex();
+        if (index.isValid()) {
+            int count = mMessageModel->rowCount();
+            //delete message
+            qint32 messageId = index.data(ConvergedMsgId).toLongLong();
+            if (messageId) {
+                QList<int> msgIdList;
+                msgIdList.append(messageId);
+                ConversationsEngine::instance()->deleteMessages(msgIdList);
+                //switch view               
+                if (count == 1) {
+                    QVariantList param;
+                    param << MsgBaseView::CLV; // target view
+                    param << MsgBaseView::CV; // source view
+                    emit switchView(param);
+                }
+            }
+        }
+
+    }
+
+}
+
+//---------------------------------------------------------------
+// MsgConversationView::onDialogDownLoadMsg
+// @see header file
+//--------------------------------------------------------------
+void MsgConversationView::onDialogDownLoadMsg(HbAction* action)
+{
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+        downloadMessage();
+    }
+}
+
+//---------------------------------------------------------------
+// MsgConversationView::onDialogSaveTone
+// @see header file
+//--------------------------------------------------------------
+void MsgConversationView::onDialogSaveTone(HbAction* action)
+    {
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+        saveRingingTone();
+    }
+}
 
 // EOF

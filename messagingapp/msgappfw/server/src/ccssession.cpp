@@ -1303,28 +1303,12 @@ void CCsSession::DeleteConversationL(const RMessage2& aMessage)
     // Delete handler
     CCsConversationCache* cache = iServer->ConversationCacheInterface();
     CCsConversationDeleteHandler* deleteHandler =
-            CCsConversationDeleteHandler::NewL(cache, this);
+            CCsConversationDeleteHandler::NewL(cache);
 
     deleteHandler->DeleteL(conversationId);
     aMessage.Complete(EUserDeleteConversationComplete);
 
     PRINT ( _L("End CCsSession::DeleteConversationL") );
-}
-
-// ----------------------------------------------------------------------------
-// CCsSession::DeleteComplete
-// ----------------------------------------------------------------------------
-void CCsSession::DeleteComplete(CCsConversationDeleteHandler* aHandler)
-{
-    delete aHandler;
-}
-
-// ----------------------------------------------------------------------------
-// CCsSession::DeleteInProgress
-// ----------------------------------------------------------------------------
-void CCsSession::DeleteInProgress(CCsConversationDeleteHandler* aHandler)
-{
-    delete aHandler;
 }
 
 // ----------------------------------------------------------------------------
@@ -1521,8 +1505,7 @@ void CCsSession::MarkConversationReadL(const RMessage2& aMessage)
 
     // Mark read handler
     CCsConversationCache* cache = iServer->ConversationCacheInterface();
-    CCsConversationMarkReadHandler* markHandler = 
-        CCsConversationMarkReadHandler::NewL(cache, this);
+    CCsConversationMarkReadHandler* markHandler = CCsConversationMarkReadHandler::NewL(cache);
 
     markHandler->MarkReadL(conversationId);
     
@@ -1530,13 +1513,4 @@ void CCsSession::MarkConversationReadL(const RMessage2& aMessage)
 
     PRINT ( _L("End CCsSession::MarkConversationReadL") );
 }
-
-// ----------------------------------------------------------------------------
-// CCsSession::MarkReadComplete
-// ----------------------------------------------------------------------------
-void CCsSession::MarkReadComplete(CCsConversationMarkReadHandler* aHandler)
-{
-    delete aHandler;
-}
-
 //EOF

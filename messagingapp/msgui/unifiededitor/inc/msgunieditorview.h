@@ -24,14 +24,9 @@
 #define UNIFIEDEDITOR_EXPORT Q_DECL_IMPORT
 #endif
 
-#include <qmobilityglobal.h>
 #include "msgbaseview.h"
 #include "convergedmessage.h"
 #include "convergedmessageid.h"
-
-QTM_BEGIN_NAMESPACE
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
 
 class HbWidget;
 class HbAction;
@@ -44,6 +39,9 @@ class MsgMonitor;
 class MsgAttachmentContainer;
 class UniEditorPluginLoader;
 class HbListWidgetItem;
+class HbAbstractVkbHost;
+class MsgUnifiedEditorBaseWidget;
+class HbListWidget;
 
 class UNIFIEDEDITOR_EXPORT MsgUnifiedEditorView : public MsgBaseView
     {
@@ -98,14 +96,12 @@ private:
     void addToolBar();
 
     /**
-     * helper method to get style plugin path.
-     */
-    QString pluginPath();
-
-    /**
      * Packs the content inside editor into converged message
+     * @param [OUT]msg, converged message to hold editor data
+     * @param isSave, flag to indicate that msg needs to be packed
+     * for saving to draft or not
      */
-    void packMessage(ConvergedMessage &msg);
+    void packMessage(ConvergedMessage &msg, bool isSave=false);
 
     /**
      * Populate editor with prepopulated msg content
@@ -140,14 +136,51 @@ private:
     void fetchImages();
 
     /**
-     * Fectch conatcts
+     * Fetch contacts
      */
     void fetchContacts();
 
     /**
-     * Fectch audio
+     * Fetch audio
      */
     void fetchAudio();
+
+    /**
+     * To hide/show chrome.
+     */
+    void hideChrome(bool hide);
+    
+    /**
+     * To initialize view.
+     */
+    void initView();
+    
+    /**
+     * Creates temp folder for editor.
+     */
+    bool createTempFolder();
+    
+    /**
+     * Removes editors temp folder.
+     */
+    void removeTempFolder();
+
+    /**
+     * Attachment options in TBE
+     * Row number of the TBE actions
+     */
+    enum TBE_AttachOption
+    {
+        TBE_PHOTO = 0x00, TBE_SOUND = 0x01, TBE_VCARD = 0x02
+    };
+
+    /**
+     * Enable/Disable attachment options for slide-conformance
+     * @param opt, row number of action in TBE
+     * @param isEnabled, true/false
+     */
+    void setAttachOptionEnabled(MsgUnifiedEditorView::TBE_AttachOption opt,
+            bool enable);
 
 private slots:
 
@@ -239,7 +272,52 @@ private slots:
      * Deactivate Input Blocker
      */
     void deactivateInputBlocker();
+    
+    /**
+     * Resizes the view when VKB is opened.
+     * This slot is triggered when vkb is opened.
+     */
+    void vkbOpened();
 
+    /**
+     * Resizes the view when VKB is closed.
+     * This slot is triggered when VKB focus is lost.
+     */
+    void vkbClosed();
+    
+    /**
+     * Slot to do delayed construction.
+     */
+    void doDelayedConstruction();
+    
+    /**
+     * Sets focus to item.
+     */
+    void setFocus(MsgUnifiedEditorBaseWidget* item);
+    
+    /**
+     * Listens to contentChanged signal of various fields.
+     */
+    void onContentChanged();
+
+	/**
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogDeleteMsg(HbAction* action);
+
+	/**
+     * This slot is called when define sms settings dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogSmsSettings(HbAction* action);
+    
+    /**
+     * This slot is called when define mms settings dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogMmsSettings(HbAction* action);    
+    
 private:
     HbAction* mSubjectAction;
     HbAction* mCcBccAction;
@@ -251,7 +329,6 @@ private:
     MsgUnifiedEditorBody*   mBody;
 
     HbWidget* mContentWidget;
-    QString mPluginPath;
 
     MsgMonitor* mMsgMonitor;
     MsgAttachmentContainer* mAttachmentContainer;
@@ -259,6 +336,17 @@ private:
     ConvergedMessageId mOpenedMessageId;
     ConvergedMessage::MessageType mmOpenedMessageType;
 	bool mCanSaveToDrafts;
+
+	/**
+	 * TBE's content widget
+	 */
+	HbListWidget* mTBExtnContentWidget;
+	
+    /**
+     * Instance of VKB host
+     */
+	HbAbstractVkbHost* mVkbHost;
+	
 	friend class MsgMonitor;
     };
 

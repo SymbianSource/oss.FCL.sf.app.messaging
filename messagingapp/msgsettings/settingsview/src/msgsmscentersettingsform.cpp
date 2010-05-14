@@ -26,11 +26,10 @@
 #include <HbNotificationDialog>
 #include <hbinputeditorinterface.h>
 #include <hbmessagebox.h>
+#include <HbAction>
 #include "debugtraces.h"
 
 //Localized constants
-#define LOC_NEW_SMS_CENTRE hbTrId("txt_messaging_title_new_sms_message_centre")
-#define LOC_EDIT_SMS_CENTRE hbTrId("txt_messaging_title_edit_sms_message_centre")
 #define LOC_SMS_CENTRE_NAME hbTrId("txt_messaging_setlabel_message_centre_name")
 #define LOC_SMS_CENTRE_NUMBER hbTrId("txt_messaging_setlabel_message_centre_number")
 #define LOC_SMS_CENTRE_DELETE hbTrId("txt_messaging_button_delete_message_centre")
@@ -43,14 +42,9 @@ MsgSMSCenterSettingsForm::MsgSMSCenterSettingsForm(int view,
     HbDataForm(parent), mEdit1(0), mEdit2(0), mView(view)
 {
     QString heading;
-    if (mView == -1)
+    if (mView > -1)
     {
-        heading = LOC_NEW_SMS_CENTRE;
-    }
-    else
-    {
-        heading = LOC_EDIT_SMS_CENTRE;
-        //custom prototype
+        //add the custom prototype only for edit items
         MsgSettingsDataFormCustomItem* customPrototype =
                 new MsgSettingsDataFormCustomItem(this);
 
@@ -58,8 +52,6 @@ MsgSMSCenterSettingsForm::MsgSMSCenterSettingsForm(int view,
         protos.append(customPrototype);
         this->setItemPrototypes(protos);
     }
-
-    this->setHeading(heading);
 
     bool b = connect(this,
                      SIGNAL(itemShown(const QModelIndex&)),
@@ -182,37 +174,34 @@ void MsgSMSCenterSettingsForm::onItemShown(const QModelIndex& topLeft)
     if (itemData && itemData == messageCenterName && !mEdit1)
     {
         QDEBUG_WRITE("messageCenterName updated..");
-        mEdit1
-                = static_cast<HbLineEdit *> (
-                        this->dataFormViewItem(
-                                topLeft)->dataItemContentWidget());
+        HbDataFormViewItem* item1 = 
+                static_cast<HbDataFormViewItem*>(this->itemByIndex(topLeft));
+        mEdit1 =  static_cast<HbLineEdit*>(item1->dataItemContentWidget());
     }
     else if (itemData && itemData == messageCenterNumber && !mEdit2)
     {
         QDEBUG_WRITE("messageCenterNumber updated..");
-        mEdit2
-                = static_cast<HbLineEdit *> (
-                        this->dataFormViewItem(
-                                topLeft)->dataItemContentWidget());
-        
-        HbEditorInterface editorInterface(mEdit2);
-        editorInterface.setUpAsPhoneNumberEditor();
+        HbDataFormViewItem* item1 = 
+                 static_cast<HbDataFormViewItem*>(this->itemByIndex(topLeft));
+        mEdit2 =  static_cast<HbLineEdit*>(item1->dataItemContentWidget());       
+        mEdit2->setInputMethodHints(Qt::ImhPreferNumbers);
 
     }
 }
 
 void MsgSMSCenterSettingsForm::onPressedCustomButton()
 {
-    bool result = HbMessageBox::question("Delete message centre ?",
-                                         LOC_BUTTON_DELETE,
-                                         LOC_BUTTON_CANCEL);                                         
+   HbMessageBox::question(LOC_SMS_CENTRE_DELETE, this, SLOT(onDialogDeleteMsgCentre(HbAction*)), LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
+}
 
-    if (result)
-    {
+void MsgSMSCenterSettingsForm::onDialogDeleteMsgCentre(HbAction* action)
+{
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender()); 
+    if (action == dlg->actions().at(0)) {
         //delete from m/w -- mView is the index to delete
-        mSettingEngine->deleteSmsMessageCenter(mView);
-        emit deleteMessageCentreAndClose();
-    }    
+               mSettingEngine->deleteSmsMessageCenter(mView);
+               emit deleteMessageCentreAndClose();
+    }   
 }
 
 //eof

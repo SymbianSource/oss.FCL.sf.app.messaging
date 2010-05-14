@@ -38,7 +38,7 @@ UniViewSlideWidget::UniViewSlideWidget(UniViewerFeeder* feeder, int slideNumber,
         mHeaderContainer(0)
 
 {
-    mMainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mMainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     mMainLayout->setSpacing(0);
     mMainLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -54,6 +54,11 @@ UniViewSlideWidget::UniViewSlideWidget(UniViewerFeeder* feeder, int slideNumber,
 
         // Always connect to populate sms content
         connect(mViewFeeder, SIGNAL(msgBody(QString)), mBody, SLOT(setTextContent(QString)));
+        
+        connect(mHeaderContainer,SIGNAL(sendMessage(const QString&,const QString&)),
+                this, SIGNAL(sendMessage(const QString&,const QString&)));
+        
+        
 
         mMainLayout->addItem(mHeaderContainer);
     }

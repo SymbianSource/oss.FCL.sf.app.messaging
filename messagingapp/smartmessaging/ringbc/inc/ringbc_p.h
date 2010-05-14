@@ -60,7 +60,7 @@ private:
      * @param path ringing tone file path.
      * @return error code 
      */  
-    int saveToneL(const TDesC& aFileName);
+    void saveToneL(const QString& aFileName);
     
     /**
      * Returns title for the given ringing tone.

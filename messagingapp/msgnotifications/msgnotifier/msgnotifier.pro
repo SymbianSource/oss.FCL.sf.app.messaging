@@ -66,5 +66,7 @@ LIBS += -lcsserverclientapi \
         -lxqservice \
         -lQtContacts \
         -lQtVersit \
-        -lunidatamodelloader 
+        -lunidatamodelloader \
+	-lxqsettingsmanager \
+        -apgrfx.lib
         

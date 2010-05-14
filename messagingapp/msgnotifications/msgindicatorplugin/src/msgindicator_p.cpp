@@ -134,7 +134,7 @@ void MsgIndicatorPrivate::getIndicatorInfoL(MsgInfo& indicatorData)
         indicatorData.mDescription = nameList.join(QString(", "));
         indicatorData.mMessageType = ECsSMS;
     }
-    else{
+    else if (nameList.count() == 1){
         // only 1 sender.
         // displayname will have the name of the sender.
         // description will contain latest message if more than 1 message

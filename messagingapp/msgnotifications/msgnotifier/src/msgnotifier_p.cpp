@@ -23,6 +23,10 @@
 #include <ccsconversationentry.h>
 #include <xqservicerequest.h>
 #include <QString>
+#include <w32std.h>
+#include <APGTASK.H> 
+#include <XQSettingsManager>
+#include <xqpublishandsubscribeutils.h>
 
 //USER INCLUDES
 #include "msgnotifier.h"
@@ -30,19 +34,17 @@
 #include "s60qconversions.h"
 #include "msgstorehandler.h"
 #include "msginfodefs.h"
-#include <QtDebug>
+#include "conversationidpsconsts.h"
+#include "debugtraces.h"
 
-#define QDEBUG_WRITE(str) {qDebug() << str;}
-#define QDEBUG_WRITE_FORMAT(str, val) {qDebug() << str << val;}
-#define QCRITICAL_WRITE(str) {qCritical() << str;}
-#define QCRITICAL_WRITE_FORMAT(str, val) {qCritical() << str << val;}
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::MsgNotifierPrivate
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
 MsgNotifierPrivate::MsgNotifierPrivate(MsgNotifier* MsgNotifier) :
-    q_ptr(MsgNotifier), mCvServer(NULL), iMsgStoreHandler(NULL)
+    q_ptr(MsgNotifier), mCvServer(NULL), iMsgStoreHandler(NULL),
+    mSettingsManager(NULL),mPSUtils(NULL)
 {
     QDEBUG_WRITE("MsgNotifierPrivate::MsgNotifierPrivate : Enter")
 
@@ -67,6 +69,17 @@ MsgNotifierPrivate::~MsgNotifierPrivate()
         delete iMsgStoreHandler;
         iMsgStoreHandler = NULL;
     }
+    
+    if(mPSUtils)
+        {
+        delete mPSUtils;
+        }
+    
+    if(mSettingsManager)
+        {
+        delete mSettingsManager;
+        }
+    
     QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Exit")
 }
 
@@ -84,6 +97,24 @@ void MsgNotifierPrivate::initL()
     updateUnreadIndications(true); 
     updateOutboxIndications();
 
+    mSettingsManager = new XQSettingsManager();
+    
+    // define property
+    mPSUtils = new XQPublishAndSubscribeUtils(*mSettingsManager);
+    XQPublishAndSubscribeSettingsKey convIdKey(
+            KMsgCVIdProperty, KMsgCVIdKey);
+    bool success = mPSUtils->defineProperty(convIdKey, 
+                            XQSettingsManager::TypeInt);
+    
+    QDEBUG_WRITE_FORMAT("MsgNotifierPrivate::initL "
+                        "property creation ret value",success)
+    
+    // write -1 initially 
+    success = mSettingsManager->writeItemValue(convIdKey,-1);
+    
+    QDEBUG_WRITE_FORMAT("MsgNotifierPrivate::initL "
+                           "writing ret value",success)
+    
     QDEBUG_WRITE("MsgNotifierPrivate::initL : Exit")
 }
 
@@ -185,9 +216,14 @@ void MsgNotifierPrivate::processListEntry(
             notifData.mDescription = S60QConversions::s60DescToQString(*descrp);
             }
         
-        q_ptr->displayNewMessageNotification(notifData);
-        
-        QDEBUG_WRITE("processListEntry : Notification display called")
+        // check whether opened cv id and received 
+        // cv id are same and show notification
+        if( showNotification(notifData.mConversationId ))
+            {
+             q_ptr->displayNewMessageNotification(notifData);
+             QDEBUG_WRITE("processListEntry : Notification display called")
+            }
+       
         }
     
     QDEBUG_WRITE("MsgNotifierPrivate::processListEntry : Exit")
@@ -287,4 +323,44 @@ void MsgNotifierPrivate::displayFailedNote(MsgInfo info)
 
 }
 
+// ----------------------------------------------------------------------------
+// MsgNotifierPrivate::showNotification
+// @see MsgNotifierPrivate.h
+// ----------------------------------------------------------------------------
+bool MsgNotifierPrivate::showNotification(int receivedMsgConvId)
+{
+    bool showNotification = true;
+    
+    RWsSession wsSession ;
+    wsSession.Connect();
+
+    TApaTaskList taskList( wsSession );
+    TApaTask task = taskList.FindApp(KMsgAppUid); // find msgapp is running
+
+    if(task.Exists())
+        {
+        TApaTask foregndtask =   taskList.FindByPos(0) ;  // foreground app
+        // compare  window group id  
+        // if application is in foregorund, then check the currently
+        // opened conversation is same as received one.
+        if(task.WgId() == foregndtask.WgId() )
+            {
+            // get the current conversation ID
+            XQPublishAndSubscribeSettingsKey convIdKey( KMsgCVIdProperty, 
+                    KMsgCVIdKey);
+            QVariant value = mSettingsManager->readItemValue(convIdKey, 
+                    XQSettingsManager::TypeInt);
+
+            int openedConvId  = value.toInt();
+            if( openedConvId == receivedMsgConvId)
+                {
+                showNotification = false;
+                QDEBUG_WRITE("processListEntry : Notification not shown")
+                }
+            }
+        }
+
+    wsSession.Close();
+    return showNotification;
+}
 //EOF

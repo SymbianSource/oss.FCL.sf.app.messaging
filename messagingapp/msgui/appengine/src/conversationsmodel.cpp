@@ -23,11 +23,21 @@
 #include "conversationsengineutility.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
+#include "ringbc.h"
+#include "msgcontacthandler.h"
 #include <ccsconversationentry.h>
+
+#include "debugtraces.h"
+
 #include <QFile>
 #include <QFileInfo>
+#include <s32mem.h>
+#include <ccsdefs.h>
 
-// LOCAL CONSTANTS
+//CONSTANTS
+_LIT(KDbFileName, "c:[2002A542]conversations.db");
+// preview sql query
+_LIT(KSelectConvMsgsStmt, "SELECT message_id, subject, body_text, preview_path, msg_property FROM conversation_messages WHERE message_id=:message_id ");
 
 //---------------------------------------------------------------
 // ConversationsModel::ConversationsModel
@@ -35,8 +45,13 @@
 //---------------------------------------------------------------
 ConversationsModel::ConversationsModel(ConversationMsgStoreHandler* msgStoreHandler,
     QObject* parent) :
-    QStandardItemModel(parent), mMsgStoreHandler(msgStoreHandler)
+    QStandardItemModel(parent), mMsgStoreHandler(msgStoreHandler), iSqlDbOpen(EFalse)
 {
+    //Open SQL DB
+    if (KErrNone == iSqlDb.Open(KDbFileName))
+    {
+        iSqlDbOpen = ETrue;
+    }
     iDataModelPluginLoader = new UniDataModelLoader;
     iMmsDataPlugin = iDataModelPluginLoader->getDataModelPlugin(ConvergedMessage::Mms);
     iBioMsgPlugin = iDataModelPluginLoader->getDataModelPlugin(ConvergedMessage::BioMsg);
@@ -48,6 +63,9 @@ ConversationsModel::ConversationsModel(ConversationMsgStoreHandler* msgStoreHand
 //---------------------------------------------------------------
 ConversationsModel::~ConversationsModel()
 {
+    //Close SQL-DB
+    iSqlDb.Close();
+
     if (iDataModelPluginLoader) {
         delete iDataModelPluginLoader;
         iDataModelPluginLoader = NULL;
@@ -244,6 +262,8 @@ void ConversationsModel::deleteRow(int msgId)
 //---------------------------------------------------------------
 void ConversationsModel::populateItem(QStandardItem& item, const CCsConversationEntry& entry)
 {
+    QCRITICAL_WRITE("ConversationsModel::populateItem start.");
+
     int msgId = entry.EntryId();
     // id
     item.setData(msgId, ConvergedMsgId);
@@ -304,7 +324,9 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
 
     //message specific handling    
     if (msgType == ConvergedMessage::Mms) {
+        QCRITICAL_WRITE("ConversationsModel::populateItem  MMS start.")
         handleMMS(item, entry);
+        QCRITICAL_WRITE("ConversationsModel::populateItem MMS end.")
     }
     else if(msgType == ConvergedMessage::MmsNotification) {
         item.setData(subject, Subject);
@@ -320,6 +342,8 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
         // sms bodytext
         item.setData(subject, BodyText);
     }
+
+    QCRITICAL_WRITE("ConversationsModel::populateItem end.");
 }
 
 //---------------------------------------------------------------
@@ -328,46 +352,159 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
 //---------------------------------------------------------------
 void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEntry& entry)
 {
-    iMmsDataPlugin->setMessageId(entry.EntryId());
-    if (iMmsDataPlugin->attachmentCount() > 0) {
-        item.setData(ConvergedMessage::Attachment, MessageProperty);
-    }
+    //msg_id
+    int msgId = entry.EntryId();
 
-    int slideCount = iMmsDataPlugin->slideCount();
-    bool isBodyTextSet = false;
-    QString textContent;
-    QStringList attachmentPaths;
+    bool isEntryInDb = false;
+    TInt err = KErrNone;
+    
+    //check if db is open and query db
+    if (iSqlDbOpen)
+    {
+        RSqlStatement sqlSelectStmt;
+        err = sqlSelectStmt.Prepare(iSqlDb, KSelectConvMsgsStmt);
 
-    for (int i = 0; i < slideCount; ++i) {
-        UniMessageInfoList objectList = iMmsDataPlugin->slideContent(i);
-        for (int index = 0; index < objectList.count(); ++index) {
-            attachmentPaths.append(objectList[index]->path());
-            if (!isBodyTextSet && objectList[index]->mimetype().contains("text")) {
-                QFile file(objectList[index]->path());
-                if(file.open(QIODevice::ReadOnly))
+        // move to fallback option
+        if (KErrNone == err)
+            {
+            TInt msgIdIndex = sqlSelectStmt.ParameterIndex(_L(":message_id"));
+            TInt subjectIndex = sqlSelectStmt.ColumnIndex(_L("subject"));
+            TInt bodyIndex = sqlSelectStmt.ColumnIndex(_L("body_text"));
+            TInt previewPathIndex = sqlSelectStmt.ColumnIndex(
+                    _L("preview_path"));
+            TInt msgpropertyIndex = sqlSelectStmt.ColumnIndex(
+                    _L("msg_property"));
+
+            err = sqlSelectStmt.BindInt(msgIdIndex, msgId);
+            
+            // populate item
+            if ((KErrNone == err) && (sqlSelectStmt.Next() == KSqlAtRow))
                 {
+                RBuf subjectBuffer;
+                subjectBuffer.Create(sqlSelectStmt.ColumnSize(subjectIndex));
+                sqlSelectStmt.ColumnText(subjectIndex, subjectBuffer);
+
+                item.setData(
+                        S60QConversions::s60DescToQString(subjectBuffer),
+                        Subject);
+                subjectBuffer.Close();
+
+                RBuf bodyBuffer;
+                bodyBuffer.Create(sqlSelectStmt.ColumnSize(bodyIndex));
+                sqlSelectStmt.ColumnText(bodyIndex, bodyBuffer);
+
+                item.setData(S60QConversions::s60DescToQString(bodyBuffer),
+                        BodyText);
+                bodyBuffer.Close();
+
+                RBuf previewPathBuffer;
+                previewPathBuffer.Create(sqlSelectStmt.ColumnSize(
+                        previewPathIndex));
+                sqlSelectStmt.ColumnText(previewPathIndex, previewPathBuffer);
+
+                //Rightnow set inside attachments
+                item.setData(S60QConversions::s60DescToQString(
+                        previewPathBuffer), Attachments);
+                previewPathBuffer.Close();
+
+                int msgProperty = 0;
+                msgProperty = sqlSelectStmt.ColumnInt(msgpropertyIndex);
+                item.setData(msgProperty, MessageProperty);
+
+                //set flag to disable fallback option
+                isEntryInDb = true;
+                }
+            }
+        sqlSelectStmt.Close();
+        }
+
+    //fallback option incase of db operation failure or enry not found in DB
+    //populate from data plugins
+    if (!isEntryInDb || err != KErrNone)
+    {
+        iMmsDataPlugin->setMessageId(entry.EntryId());
+        int msgProperty = 0;
+
+        if (iMmsDataPlugin->attachmentCount() > 0)
+        {
+            msgProperty |= EPreviewAttachment;
+        }
+
+        //subject
+        item.setData(iMmsDataPlugin->subject(), Subject);
+
+        int slideCount = iMmsDataPlugin->slideCount();
+        bool isBodyTextSet = false;
+        bool isAudioSet = false;
+        bool isImageSet = false;
+        bool isVideoSet = false;
+        QString textContent;
+        QString videoPath;
+        QString imagePath;
+
+        for (int i = 0; i < slideCount; ++i)
+        {
+            UniMessageInfoList objectList = iMmsDataPlugin->slideContent(i);
+            for (int index = 0; index < objectList.count(); ++index)
+            {
+                if (!isBodyTextSet && objectList[index]->mimetype().contains(
+                    "text"))
+                {
+                    QFile file(objectList[index]->path());
+                    file.open(QIODevice::ReadOnly);
                     textContent = file.readAll();
                     item.setData(textContent, BodyText);
                     isBodyTextSet = true;
                     file.close();
                 }
+                if (!isImageSet && objectList[index]->mimetype().contains(
+                    "image"))
+                {
+                    isImageSet = true;
+                    msgProperty |= EPreviewImage;
+                    imagePath = objectList[index]->path();
+                }
+                if (!isAudioSet && objectList[index]->mimetype().contains(
+                    "audio"))
+                {
+                    msgProperty |= EPreviewAudio;
+                    isAudioSet = true;
+                }
+                if (!isVideoSet && objectList[index]->mimetype().contains(
+                    "video"))
+                {
+                    isVideoSet = true;
+                    msgProperty |= EPreviewVideo;
+                    videoPath = objectList[index]->path();
+                }
             }
+            foreach(UniMessageInfo* slide,objectList)
+                {
+                    delete slide;
+                }
         }
-        foreach(UniMessageInfo* slide,objectList)
-            {
-                delete slide;
-            }
+        //populate item  with the attachment list
+        if (isVideoSet)
+        {
+            item.setData(videoPath, Attachments);
+        }
+        else if (isImageSet)
+        {
+            item.setData(imagePath, Attachments);
+        }
+        //populate msgProperty
+        item.setData(msgProperty, MessageProperty);
     }
-    //populate item  with the attachment list
-    item.setData(attachmentPaths.join("|"), Attachments);
-    if (entry.IsAttributeSet(ECsAttributeHighPriority)) {
+
+    // fill other attributes
+    if (entry.IsAttributeSet(ECsAttributeHighPriority))
+    {
         item.setData(ConvergedMessage::High, MessagePriority);
     }
-    else if (entry.IsAttributeSet(ECsAttributeLowPriority)) {
+    else if (entry.IsAttributeSet(ECsAttributeLowPriority))
+    {
         item.setData(ConvergedMessage::Low, MessagePriority);
     }
-    //subject
-    item.setData(iMmsDataPlugin->subject(), Subject);
 }
 
 //---------------------------------------------------------------
@@ -378,12 +515,18 @@ void ConversationsModel::handleMMSNotification(QStandardItem& item,
     const CCsConversationEntry& entry)
 {
     // set context to current entry
-    mMsgStoreHandler->setNotificationMessageId(entry.EntryId());
+    TRAPD(err, mMsgStoreHandler->setNotificationMessageIdL(entry.EntryId()));
+    if(err != KErrNone)
+    {
+        return;
+    }
     
     // fetch relevent info to show in CV
     // msg size
-    QString estimatedMsgSizeStr = 
-            mMsgStoreHandler->NotificationMsgSize();
+    QString estimatedMsgSizeStr = QString("%1").arg(0);
+    estimatedMsgSizeStr.append(" Kb");
+    TRAP_IGNORE(estimatedMsgSizeStr = 
+            mMsgStoreHandler->NotificationMsgSizeL());
     
     // msg class type
     QString classInfoStr = mMsgStoreHandler->NotificationClass();
@@ -445,7 +588,8 @@ void ConversationsModel::handleBlueToothMessages(QStandardItem& item,
         item.setData(ConvergedMessage::VCard, MessageSubType);
 
         //parse vcf file to get the details
-        QString displayName = ConversationsEngineUtility::getVcardDisplayName(description);
+        QString displayName = MsgContactHandler::getVCardDisplayName(
+                description);
         item.setData(displayName, BodyText);
     }    
     else 
@@ -482,7 +626,9 @@ void ConversationsModel::handleBioMessages(QStandardItem& item, const CCsConvers
             QString attachmentPath = attList[0]->path();
 
             //get display-name and set as bodytext
-            QString displayName = ConversationsEngineUtility::getVcardDisplayName(attachmentPath);
+            QString displayName = 
+                    MsgContactHandler::getVCardDisplayName(
+                            attachmentPath);
             item.setData(displayName, BodyText);
 
             // clear attachement list : its allocated at data model
@@ -493,6 +639,20 @@ void ConversationsModel::handleBioMessages(QStandardItem& item, const CCsConvers
     }
     else if (ConvergedMessage::VCal == msgSubType) {
         //not supported
+    }
+    else if (ConvergedMessage::RingingTone == msgSubType) {
+        if (iBioMsgPlugin->attachmentCount() > 0) {
+            UniMessageInfoList attList = iBioMsgPlugin->attachmentList();
+            QString attachmentPath = attList[0]->path();
+
+            //get tone title, and set as bodytext
+            RingBc ringBc;
+            item.setData(ringBc.toneTitle(attachmentPath), BodyText);
+            while (!attList.isEmpty()) {
+                delete attList.takeFirst();
+            }
+        }
+
     }
     else {
         // description
@@ -505,4 +665,13 @@ void ConversationsModel::handleBioMessages(QStandardItem& item, const CCsConvers
     }
 }
 
+//---------------------------------------------------------------
+// ConversationsModel::getDBHandle()
+// @see header
+//---------------------------------------------------------------
+RSqlDatabase& ConversationsModel::getDBHandle(TBool& isOpen)
+{
+    isOpen = iSqlDbOpen;
+    return iSqlDb;
+}
 //EOF

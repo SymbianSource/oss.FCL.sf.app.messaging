@@ -43,7 +43,6 @@
 #include "convergedmessageid.h"
 
 // LOCAL CONSTANTS
-const QString LIST_ITEM_FRAME("qtg_fr_list_normal");
 const QString POPUP_LIST_FRAME("qtg_fr_popup_list_normal");
 const QString NEW_MESSAGE_ICON("qtg_mono_create_message");
 const QString SORT_ICON("qtg_mono_sort");
@@ -75,7 +74,11 @@ const QString SORT_ICON("qtg_mono_sort");
 // @see header
 //---------------------------------------------------------------
 DraftsListView::DraftsListView(QGraphicsItem *parent) :
-    MsgBaseView(parent), mListView(0), mViewExtnList(0), mToolBar(0)
+    MsgBaseView(parent),
+    mListView(0), 
+    mViewExtnList(0),
+    mToolBar(0),
+    mItemLongPressed(false)
 {
     // Delayed loading.
     connect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(doDelayedLoading()));
@@ -163,7 +166,7 @@ void DraftsListView::setupListView()
         mListView->setClampingStyle(HbScrollArea::BounceBackClamping);
 
         // Register the custorm css path.
-        HbStyleLoader::registerFilePath(":/xml/hblistviewitem.css");
+        HbStyleLoader::registerFilePath(":/dlv");
         //    mListView->setLayoutName("custom");
 
         // Set list item properties.
@@ -171,8 +174,6 @@ void DraftsListView::setupListView()
         prototype->setGraphicsSize(HbListViewItem::SmallIcon);
         prototype->setStretchingStyle(HbListViewItem::StretchLandscape);
         prototype->setSecondaryTextRowCount(1, 1);
-        HbFrameBackground frame(LIST_ITEM_FRAME, HbFrameDrawer::NinePieces);
-        prototype->setDefaultFrame(frame);
 
         // Create and set model
         QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
@@ -229,14 +230,9 @@ void DraftsListView::deleteDraftMessage()
         return;
     }
 
-    bool result = HbMessageBox::question(LOC_DELETE_MESSAGE, LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
-
-    if (result) {
-        int msgId = index.data(ConvergedMsgId).toInt();
-        QList<int> msgIdList;
-        msgIdList.append(msgId);
-        ConversationsEngine::instance()->deleteMessages(msgIdList);
-    }
+    HbMessageBox::question(LOC_DELETE_MESSAGE,
+        this,SLOT(onDialogDeleteMsg(HbAction*)),
+        LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
 
 }
 
@@ -246,12 +242,10 @@ void DraftsListView::deleteDraftMessage()
 //------------------------------------------------------------------------------
 void DraftsListView::deleteAllDraftMessage()
 {
-    bool result = HbMessageBox::question(LOC_DELETE_ALL_DRAFTS, LOC_BUTTON_DELETE,
+    HbMessageBox::question(LOC_DELETE_ALL_DRAFTS,
+        this,SLOT(onDialogDeleteAllMessages(HbAction*)),
+        LOC_BUTTON_DELETE,
         LOC_BUTTON_CANCEL);
-
-    if (result) {
-        ConversationsEngine::instance()->deleteAllDraftMessages();
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -273,6 +267,12 @@ void DraftsListView::createNewMessage()
 //------------------------------------------------------------------------------
 void DraftsListView::openDraftMessage(const QModelIndex &index)
 {
+    if(mItemLongPressed)
+        {
+        //reset the flag
+         mItemLongPressed = false;
+         return;
+        }
     QVariant msgId = index.data(ConvergedMsgId);
     QVariant msgType = index.data(MessageType);
     ConvergedMessageId convergedMsgId = ConvergedMessageId(msgId.toInt());
@@ -299,13 +299,14 @@ void DraftsListView::openDraftMessage(const QModelIndex &index)
 //------------------------------------------------------------------------------
 void DraftsListView::handleLongPressed(HbAbstractViewItem *item, const QPointF &coords)
 {
+    mItemLongPressed = true;
     if (this->isVisible()) {
 
         // Set the current index as tapped items index.
         mListView->setCurrentIndex(item->modelIndex(), QItemSelectionModel::Select);
 
         HbMenu *contextMenu = new HbMenu();
-
+        contextMenu->setAttribute(Qt::WA_DeleteOnClose);
         // Open
         HbAction* openAction = contextMenu->addAction(LOC_COMMON_OPEN);
         connect(openAction, SIGNAL(triggered()), this, SLOT(openDraftMessage()));
@@ -314,8 +315,8 @@ void DraftsListView::handleLongPressed(HbAbstractViewItem *item, const QPointF &
         HbAction *deletAction = contextMenu->addAction(LOC_COMMON_DELETE);
         connect(deletAction, SIGNAL(triggered()), this, SLOT(deleteDraftMessage()));
 
-        contextMenu->exec(coords);
-        delete contextMenu;
+        contextMenu->setPreferredPos(coords);
+        contextMenu->show();
     }
 }
 
@@ -350,6 +351,37 @@ void DraftsListView::handleModelChanged()
         if (this->menu()->isEmpty()) {
             mainMenu->addAction(LOC_MENU_DELETE_ALL, this, SLOT(deleteAllDraftMessage()));
         }
+    }
+}
+
+//------------------------------------------------------------------------------
+// DraftsListView::onDialogDeleteMsg
+// @see header
+//------------------------------------------------------------------------------
+void DraftsListView::onDialogDeleteMsg(HbAction* action)
+{
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+        QModelIndex index = mListView->currentIndex();
+        if (index.isValid()) {
+            int msgId = index.data(ConvergedMsgId).toInt();
+            QList<int> msgIdList;
+            msgIdList.append(msgId);
+            ConversationsEngine::instance()->deleteMessages(msgIdList);
+        }
+
+    }
+}
+
+//------------------------------------------------------------------------------
+// DraftsListView::onDialogDeleteMsg
+// @see header
+//------------------------------------------------------------------------------
+void DraftsListView::onDialogDeleteAllMessages(HbAction* action)
+{
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+        ConversationsEngine::instance()->deleteAllDraftMessages();
     }
 }
 

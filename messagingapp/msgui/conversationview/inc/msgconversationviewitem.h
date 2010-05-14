@@ -20,6 +20,7 @@
 
 // INCLUDES
 #include <HbListViewItem>
+#include "convergedmessage.h"
 
 //Forward Declarations
 class MsgConversationWidget;
@@ -89,6 +90,16 @@ private:
      * Set the Icon that displays the message notification state.
      */
     void setNotificationStateIcon(int notificationState);
+    
+    /*
+     * Update item with sms content
+     */
+    void updateSmsTypeItem(const QModelIndex& index,int messageSubType = ConvergedMessage::None);
+    
+    /*
+     * Update item with mms type content
+     */
+    void updateMmsTypeItem(const QModelIndex& index, int messageType,int messageSubType);
 
 protected:
 

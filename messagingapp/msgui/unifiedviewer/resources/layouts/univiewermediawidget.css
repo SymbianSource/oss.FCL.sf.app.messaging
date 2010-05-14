@@ -31,13 +31,11 @@ UniViewerMediaWidget::text-2
   left:-var(hb-param-margin-gene-middle-horizontal);
   right:var(hb-param-margin-gene-right);
   center-vertical:0un;
-  text-height:var(hb-param-text-height-tiny);
+  size-policy-horizontal:fixed;
   font-variant:secondary;
-  text-align:right;
+  text-height:var(hb-param-text-height-tiny);
   text-line-count-min:1;
   text-line-count-max:1;
-  size-policy-horizontal:fixed;
-  pref-width:13un;
 }
 
 UniViewerMediaWidget::bgFrame

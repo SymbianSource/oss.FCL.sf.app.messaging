@@ -18,9 +18,7 @@
 #include "univieweraddresscontainer.h"
 
 // SYSTEM INCLUDES
-#include <QString>
 #include <QGraphicsLinearLayout>
-#include <HbIconItem>
 
 // USER INCLUDES
 #include "univieweraddresswidget.h"
@@ -29,122 +27,76 @@
 #define LOC_FROM hbTrId("txt_messaging_formlabel_from")
 #define LOC_TO hbTrId("txt_messaging_viewer_formlabel_to")
 #define LOC_CC hbTrId("txt_messaging_viewer_formlabel_cc")
-
-// LOCAL CONSTANTS
-const QString DIVIDER_ICON("qtg_graf_divider_h_thin");
+#define LOC_BCC hbTrId("txt_messaging_viewer_formlabel_bcc")
 
 //---------------------------------------------------------------
-// UniViewerAddressContainer :: UniViewerAddressContainer
+// UniViewerAddressContainer::UniViewerAddressContainer
 // @see header file
 //---------------------------------------------------------------
-UniViewerAddressContainer::UniViewerAddressContainer(QGraphicsItem *parent) :
-    HbWidget(parent), mMainLayout(0), mFromWidget(0), mToWidget(0), mCcWidget(0), mDivider(0)
+UniViewerAddressContainer::UniViewerAddressContainer(QGraphicsItem* parent) :
+    HbWidget(parent)
 {
-    mMainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mMainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     mMainLayout->setContentsMargins(0, 0, 0, 0);
     mMainLayout->setSpacing(0);
     setLayout(mMainLayout);
 }
 
 //---------------------------------------------------------------
-// UniViewerAddressContainer :: ~UniViewerAddressContainer
+// UniViewerAddressContainer::~UniViewerAddressContainer
 // @see header file
 //---------------------------------------------------------------
 UniViewerAddressContainer::~UniViewerAddressContainer()
 {
-
 }
 
 //---------------------------------------------------------------
-// UniViewerAddressContainer :: setFromField
+// UniViewerAddressContainer::setFromField
 // @see header file
 //---------------------------------------------------------------
 void UniViewerAddressContainer::setFromField(const QString& fromRecipient, const QString& alias)
 {
-    if (!mFromWidget) {
-        mFromWidget = new UniViewerAddressWidget();
-    }
+    UniViewerAddressWidget* fromWidget = new UniViewerAddressWidget(this);
 
-    mMainLayout->addItem(mFromWidget);
-    mFromWidget->populate(LOC_FROM, fromRecipient, alias);
+    connect(fromWidget, SIGNAL(sendMessage(const QString&,const QString&)), this,
+        SIGNAL(sendMessage(const QString&,const QString&)));
+
+    mMainLayout->addItem(fromWidget);
+
+    fromWidget->populate(LOC_FROM, fromRecipient, alias);
 }
 
 //---------------------------------------------------------------
-// UniViewerAddressContainer :: setToField
+// UniViewerAddressContainer::setToField
 // @see header file
 //---------------------------------------------------------------
 void UniViewerAddressContainer::setToField(ConvergedMessageAddressList toRecipients)
 {
-    if (!mToWidget) {
-        mToWidget = new UniViewerAddressWidget();
-    }
+    UniViewerAddressWidget* toWidget = new UniViewerAddressWidget();
 
-    mMainLayout->addItem(mToWidget);
-    mToWidget->populate(LOC_TO, toRecipients);
+    connect(toWidget, SIGNAL(sendMessage(const QString&,const QString&)), this,
+        SIGNAL(sendMessage(const QString&,const QString&)));
+
+    mMainLayout->addItem(toWidget);
+
+    toWidget->populate(LOC_TO, toRecipients);
+
 }
 
 //---------------------------------------------------------------
-//UniViewerAddressContainer :: setCcField
+// UniViewerAddressContainer::setCcField
 // @see header file
 //---------------------------------------------------------------
 void UniViewerAddressContainer::setCcField(ConvergedMessageAddressList ccRecipients)
 {
-    if (!mCcWidget) {
-        mCcWidget = new UniViewerAddressWidget();
-    }
+    UniViewerAddressWidget* ccWidget = new UniViewerAddressWidget();
 
-    mMainLayout->addItem(mCcWidget);
-    mCcWidget->populate(LOC_CC, ccRecipients);
-}
+    connect(ccWidget, SIGNAL(sendMessage(const QString&,const QString&)), this,
+        SIGNAL(sendMessage(const QString&,const QString&)));
 
-//---------------------------------------------------------------
-// UniViewerAddressContainer :: clearContent
-// @see header file
-//---------------------------------------------------------------
-void UniViewerAddressContainer::clearContent()
-{
-    if (mFromWidget) {
-        mMainLayout->removeItem(mFromWidget);
-        mFromWidget->setParent(NULL);
-        delete mFromWidget;
-        mFromWidget = NULL;
-    }
-    if (mToWidget) {
-        mMainLayout->removeItem(mToWidget);
-        mToWidget->setParent(NULL);
-        delete mToWidget;
-        mToWidget = NULL;
-    }
-    if (mCcWidget) {
-        mMainLayout->removeItem(mCcWidget);
-        mCcWidget->setParent(NULL);
-        delete mCcWidget;
-        mCcWidget = NULL;
-    }
-    if (mDivider) {
-        mMainLayout->removeItem(mDivider);
-        mDivider->setParent(NULL);
-        delete mDivider;
-        mDivider = NULL;
-    }
+    mMainLayout->addItem(ccWidget);
 
-    resize(rect().width(), -1);
-}
-
-//---------------------------------------------------------------
-// UniViewerAddressContainer :: insertDivider
-// @see header file
-//---------------------------------------------------------------
-void UniViewerAddressContainer::insertDivider()
-{
-    if (!mDivider) {
-        mDivider = new HbIconItem(this);
-    }
-
-    mDivider->sizePolicy().setHorizontalPolicy(QSizePolicy::Expanding);
-    mDivider->sizePolicy().setVerticalPolicy(QSizePolicy::Fixed);
-    mDivider->setIconName(DIVIDER_ICON);
-    mMainLayout->addItem(mDivider);
+    ccWidget->populate(LOC_CC, ccRecipients);
 }
 
 // EOF

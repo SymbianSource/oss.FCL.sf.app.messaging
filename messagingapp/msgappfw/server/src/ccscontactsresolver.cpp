@@ -58,11 +58,7 @@ bool CCsContactsResolver::resolveContact(
     phoneFilter.setValue(address);
     phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
 
-    QList<QContactSortOrder> sortOrder;
-    QList<QContact> matchingContacts = mPhonebookManager->contacts(
-                                                phoneFilter,
-                                                sortOrder,
-                                                QStringList());
+    QList<QContact> matchingContacts = mPhonebookManager->contacts(phoneFilter);
 
     if ( matchingContacts.count() > 0 ) {	        
         QContact match = matchingContacts.at(0);

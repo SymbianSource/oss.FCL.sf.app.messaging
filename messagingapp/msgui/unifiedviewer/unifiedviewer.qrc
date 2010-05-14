@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/layouts">
-        <file alias="univieweraddresswidget.css">resources/layouts/univieweraddresswidget.css</file>
-        <file alias="univieweraddresswidget.widgetml">resources/layouts/univieweraddresswidget.widgetml</file>
         <file alias="univiewerbodywidget.css">resources/layouts/univiewerbodywidget.css</file>
         <file alias="univiewerbodywidget_color.css">resources/layouts/univiewerbodywidget_color.css</file>
         <file alias="univiewerbodywidget.widgetml">resources/layouts/univiewerbodywidget.widgetml</file>

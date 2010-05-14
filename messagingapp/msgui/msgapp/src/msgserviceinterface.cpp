@@ -17,15 +17,11 @@
  */
 
 //TODO: to be deprecated
-#include <qtcontactsglobal.h>
-#include "qcontactdetailfilter.h"
-#include "qcontactdetail.h"
-#include "qtcontacts.h" 
 #include "convergedmessageaddress.h"
 
 #include "msgserviceinterface.h"
 #include "msgviewmanager.h"
-//INCLUDES
+#include "msgcontacthandler.h"
 
 MsgServiceInterface::MsgServiceInterface(QObject* parent, MsgViewManager* manager)
 :XQServiceProvider( QLatin1String("com.nokia.services.hbserviceprovider.conversationview"),parent),
@@ -90,28 +86,20 @@ void MsgServiceInterface::openConversationView(QString number, QString name)
     mViewManager->openEditor(number,resolvedName);
     }
 
-bool MsgServiceInterface::resolveContact(const ConvergedMessageAddress &address,
-        ContactDetail &contactDetail)
+bool MsgServiceInterface::resolveContact(
+                                         const ConvergedMessageAddress &address,
+                                         ContactDetail &contactDetail)
+{
+    QString displayLabel = QString("");
+    int localId =
+            MsgContactHandler::resolveContactDisplayName(address.address(),
+                                                         displayLabel,
+                                                         0);
+
+    if (localId != -1)
     {
-    QContactManager* mPhonebookManager = new QContactManager("symbian");
-    QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName(
-            QContactPhoneNumber::DefinitionName, 
-            QContactPhoneNumber::FieldNumber);
-    phoneFilter.setValue(address.address());
-    phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
-
-    QList<QContactSortOrder> sortOrder;
-    QList<QContact> matchingContacts = mPhonebookManager->contacts(
-            phoneFilter,
-            sortOrder,
-            QStringList());
-
-    if ( matchingContacts.count() > 0 ) {       
-        // Fill the contact details
-        QContact match = matchingContacts.at(0);                   
-        contactDetail.contactId = match.localId();
-        contactDetail.displayName = match.displayLabel();   
+        contactDetail.contactId = localId;
+        contactDetail.displayName = displayLabel;
         return true;
     }
     

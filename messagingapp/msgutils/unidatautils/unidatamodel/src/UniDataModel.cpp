@@ -21,7 +21,6 @@
 
 // ========== INCLUDE FILES ================================
 
-#include "debugtraces.h"
 
 #include <eikenv.h>
 #include <eikdoc.h>

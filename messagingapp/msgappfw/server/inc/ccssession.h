@@ -18,17 +18,11 @@
 #ifndef __C_CS_SESSION_H
 #define __C_CS_SESSION_H
 
-// USER INCLUDE FILES
-#include "mcsconversationdeleteobserver.h"
-#include "mcsconversationmarkreadobserver.h"
-
 // FORWARD DECLARATIONS
 class CCsServer;
 class CCsPluginInterface;
 class CCsClientConversation;
 class CCsConversationEvent;
-class CCsConversationDeleteHandler;
-class CCsConversationMarkReadHandler;
 
 // CLASS DECLARATIONS
 
@@ -36,9 +30,7 @@ class CCsConversationMarkReadHandler;
  * Represents a session (version 2) for a client thread on 
  * the server side
  */
-class CCsSession : public CSession2,
-public MCsConversationDeleteObserver,
-public MCsConversationMarkReadObserver
+class CCsSession : public CSession2
     {
 public:
 
@@ -152,15 +144,7 @@ public:
      */
     void HandleRefreshConversationL();
 
-public:
-    // From MCsConversationDeleteObserver
-    void DeleteComplete(CCsConversationDeleteHandler* aHandler);
-    void DeleteInProgress(CCsConversationDeleteHandler* aHandler);
-
-public:
-    // From MCsConversationMarkReadObserver
-    void MarkReadComplete(CCsConversationMarkReadHandler* aHandler);
-    
+   
 private:
 
     /**

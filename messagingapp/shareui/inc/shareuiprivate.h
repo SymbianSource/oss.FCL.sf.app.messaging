@@ -36,7 +36,7 @@ class HbListViewItem;
 class HbTextItem;
 class HbIconItem;
 
-#define SERVICE_INTERFACE "imessage.send"
+#define SERVICE_INTERFACE "com.nokia.symbian.IFileShare"
 #define SHARE_OP "send(QVariant)"
 
 /**

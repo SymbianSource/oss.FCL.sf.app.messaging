@@ -44,7 +44,6 @@ UniViewerDetailsWidget::UniViewerDetailsWidget(QGraphicsItem *parent) :
     HbWidget(parent), mSubjectLabel(0), mPriorityIcon(0)
 {
     // Permanent items & will not be removed
-
     mTime = new HbTextItem(this);
     HbStyle::setItemName(mTime, "timeLabel");
 }

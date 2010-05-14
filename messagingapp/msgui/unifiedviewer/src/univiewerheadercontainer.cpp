@@ -36,42 +36,50 @@
 // LOCAL CONSTANTS
 const QString ADDR_LIST_SEPARATOR(", ");
 const QString BG_FRAME_GRAPHICS("qtg_fr_form_heading");
+const QString DIVIDER_FRAME("qtg_graf_divider_h_thin");
 
 //---------------------------------------------------------------
 // UniViewerHeaderContainer :: UniViewerHeaderContainer
 // @see header file
 //---------------------------------------------------------------
 UniViewerHeaderContainer::UniViewerHeaderContainer(UniViewerFeeder* feeder, QGraphicsItem *parent) :
-    HbWidget(parent), mViewFeeder(feeder), mViewerDetails(0), mHeaderGroupBox(0),
+    HbWidget(parent), mViewFeeder(feeder), mViewerDetails(0), mHeaderGroupBox(0), mSeparator(0),
         mAddressContainer(0), mAttachmentContainer(0)
 {
+    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
     HbFrameItem *bgItem = new HbFrameItem(BG_FRAME_GRAPHICS, HbFrameDrawer::NinePieces, this);
     this->setBackgroundItem(bgItem);
 
-    QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    mainLayout->setSpacing(0);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mMainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    mMainLayout->setSpacing(0);
+    mMainLayout->setContentsMargins(0, 0, 0, 0);
 
     // Address Group box
     mHeaderGroupBox = new HbGroupBox(this);
+    connect(mHeaderGroupBox, SIGNAL(toggled(bool)), this, SLOT(addressBoxToggled(bool)));
 
     // Address container
-    mAddressContainer = new UniViewerAddressContainer(mHeaderGroupBox);
+    mAddressContainer = new UniViewerAddressContainer(this);
+    connect(mAddressContainer,SIGNAL(sendMessage(const QString&,const QString&)),
+            this, SIGNAL(sendMessage(const QString&,const QString&)));
 
     mHeaderGroupBox->setContentWidget(mAddressContainer);
+
+    // Separator
+    mSeparator = new HbFrameItem(DIVIDER_FRAME, HbFrameDrawer::OnePiece, this);
+    mSeparator->setMaximumHeight(1);
+    mSeparator->hide();
 
     // Viewer Details widget
     mViewerDetails = new UniViewerDetailsWidget(this);
 
-    // Attachment Container
-    mAttachmentContainer = new UniViewerAttachmentContainer(this);
-
     //Add address group box and insert into layout
-    mainLayout->addItem(mHeaderGroupBox);
-    mainLayout->addItem(mViewerDetails);
-    mainLayout->addItem(mAttachmentContainer);
+    mMainLayout->addItem(mHeaderGroupBox);
+    mMainLayout->addItem(mSeparator);
+    mMainLayout->addItem(mViewerDetails);
 
-    this->setLayout(mainLayout);
+    this->setLayout(mMainLayout);
 }
 
 //---------------------------------------------------------------
@@ -124,9 +132,6 @@ void UniViewerHeaderContainer::clearContent()
     if (mViewerDetails) {
         mViewerDetails->clearContent();
     }
-    if (mAddressContainer) {
-        mAddressContainer->clearContent();
-    }
     if (mAttachmentContainer) {
         mAttachmentContainer->clearContent();
     }
@@ -162,6 +167,12 @@ void UniViewerHeaderContainer::populateSubject()
 //---------------------------------------------------------------
 void UniViewerHeaderContainer::populateAttachments()
 {
+    if (!mAttachmentContainer) {
+        // Attachment Container
+        mAttachmentContainer = new UniViewerAttachmentContainer(this);
+        mMainLayout->addItem(mAttachmentContainer);
+    }
+
     UniMessageInfoList attachList = mViewFeeder->attachmentsList();
     for (int a = 0; a < attachList.count(); ++a) {
         UniMessageInfo* info = attachList.at(a);
@@ -184,20 +195,22 @@ void UniViewerHeaderContainer::populateAddressContainer()
     if (mViewFeeder->isIncoming()) {
         mAddressContainer->setFromField(from, alias);
     }
-    // TO field is added ONLY for outgoing messages.
-    else if (!toList.isEmpty()) {
+    // For outgoing SMS messages add TO field.
+    else if (mViewFeeder->msgType() == KSenduiMtmSmsUidValue && !toList.isEmpty()) {
         mAddressContainer->setToField(toList);
     }
 
-    // CC field is added ONLY for MMS messages.
+    // For MMS messages add TO, CC, BCC fields irrespective of incoming/outgoing.
     if (mViewFeeder->msgType() == KSenduiMtmMmsUidValue) {
+        if (!toList.isEmpty()) {
+            mAddressContainer->setToField(toList);
+        }
         ConvergedMessageAddressList ccList = mViewFeeder->ccAddressList();
         if (!ccList.isEmpty()) {
             mAddressContainer->setCcField(ccList);
         }
     }
 
-    mAddressContainer->insertDivider();
 }
 //---------------------------------------------------------------
 // UniViewerHeaderContainer :: setAddrGroupBoxHeading
@@ -236,4 +249,13 @@ QString UniViewerHeaderContainer::createAddressList(const ConvergedMessageAddres
     }
     address.chop(ADDR_LIST_SEPARATOR.size());
     return address;
+}
+
+//---------------------------------------------------------------
+// UniViewerHeaderContainer :: addressBoxToggled
+// @see header file
+//---------------------------------------------------------------
+void UniViewerHeaderContainer::addressBoxToggled(bool state)
+{
+    (state) ? mSeparator->hide() : mSeparator->show();
 }

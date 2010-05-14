@@ -26,6 +26,7 @@
 class HbPushButton;
 class HbFrameItem;
 class HbTextItem;
+class HbAction;
 class UniEditorPluginLoader;
 class UniEditorPluginInterface;
 class UniEditorGenUtils;
@@ -100,7 +101,7 @@ public:
     /**
      * This function does initialisations needed for character counter
      */
-    void setEncodingSettings();
+    void setEncodingSettingsL();
    
 signals:
 
@@ -150,6 +151,12 @@ private slots:
      */  
     void onPressed();
     void onReleased();
+	
+	/**
+     * This slot is called when sms char limit reached dialog is launched.
+     * @param action selected action (yes or no).
+     */	
+    void onSmsCharLimitReached(HbAction* action);
 
 private:
 

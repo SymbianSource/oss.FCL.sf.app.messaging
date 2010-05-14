@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QStandardItemModel>
 #include <ccsdefs.h>
+#include <sqldb.h>
 
 // FORWARD DECLARATIONS
 class CCsConversationEntry;
@@ -75,6 +76,12 @@ public:
      * @param msgId, Message Id
      */
     void deleteRow(int msgId);
+    
+    /*
+     * Get SQL DB handle
+     * @param isOpen, set to true if open, check this before using the handle
+     */
+    RSqlDatabase& getDBHandle(TBool& isOpen);
 
 private:
 
@@ -141,6 +148,16 @@ private:
      * Not Own
      */
     UniDataModelPluginInterface* iBioMsgPlugin;
+    
+    /*
+     * SQL DB handle
+     */
+    RSqlDatabase iSqlDb;
+
+    /*
+     * DB open.
+     */
+    TBool iSqlDbOpen;
 };
 
 #endif // CONVERSATIONS_MODEL_H

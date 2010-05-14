@@ -335,7 +335,14 @@ mConversationMsgStoreHandler->markAsReadAndGetType(messageId,
                                                     msgSubType);
 }
 
-
+//---------------------------------------------------------------
+// ConversationsEngine::getDBHandle()
+// @see header
+//---------------------------------------------------------------
+RSqlDatabase& ConversationsEngine::getDBHandle(TBool& isOpen)
+    {
+    return mConversationsModel->getDBHandle(isOpen);
+    }
 
 //EOF
 

@@ -2,35 +2,25 @@
 UniViewerBodyWidget[hasText="true"]:portrait
 {
   layout: layout-portrait;
-  size-policy-vertical:minimum-expanding;
-  min-height:expr(var(hb-param-screen-height)-var(hb-param-widget-chrome-height)-var(hb-param-widget-toolbar-height)+1un);
 }
 
 UniViewerBodyWidget[hasText="false"]:portrait
 {
   layout: layout-portrait-no-text;
-  size-policy-vertical:minimum-expanding;
-  min-height:expr(var(hb-param-screen-height)-var(hb-param-widget-chrome-height)-var(hb-param-widget-toolbar-height)+1un);
 }
 
 UniViewerBodyWidget:landscape
 {
-  size-policy-vertical:minimum-expanding;
-  min-height:expr(var(hb-param-screen-height)-var(hb-param-widget-toolbar-height)+1un);
   layout: layout-landscape;
 }
 
 UniViewerBodyWidget[hasText="true"][hasPixmap="false"]:landscape
 {
-  size-policy-vertical:minimum-expanding;
-  min-height:expr(var(hb-param-screen-height)-var(hb-param-widget-toolbar-height)+1un);
   layout: layout-landscape-no-pixmap;
 }
 
 UniViewerBodyWidget[hasText="false"][hasPixmap="true"]:landscape
 {
-  size-policy-vertical:minimum-expanding;
-  min-height:expr(var(hb-param-screen-height)-var(hb-param-widget-toolbar-height)+1un);
   layout: layout-landscape-no-text;
 }
 
@@ -95,7 +85,6 @@ UniViewerBodyWidget::textItem
   text-line-count-max:100;
   text-align: left top;
   font-variant:secondary;
-  size-policy-vertical:minimum-expanding;
 }
 
 UniViewerBodyWidget::textItem:portrait

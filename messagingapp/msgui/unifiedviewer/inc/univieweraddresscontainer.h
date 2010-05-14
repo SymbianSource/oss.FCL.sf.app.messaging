@@ -26,8 +26,6 @@
 
 // FORWARD DECLARATIONS
 class QGraphicsLinearLayout;
-class HbIconItem;
-class UniViewerAddressWidget;
 
 /**
  * Container widget for all the address widgets
@@ -72,42 +70,18 @@ public:
      */
     void clearContent();
 
+signals:
     /**
-     * Inserts divider into layout.
+     * this signal is emitted when send message is triggered form UniViewerAddressWidget
      */
-    void insertDivider();
+    void sendMessage(const QString& phoneNumber,const QString& alias);
 
 private:
 
     /**
-     * Main layout reference.
-     * Own
+     * Main Layout
      */
-    QGraphicsLinearLayout *mMainLayout;
-
-    /**
-     * From widget reference.
-     * Own
-     */
-    UniViewerAddressWidget *mFromWidget;
-
-    /**
-     * To widget reference.
-     * Own
-     */
-    UniViewerAddressWidget *mToWidget;
-
-    /**
-     * Cc widget reference.
-     * Own
-     */
-    UniViewerAddressWidget *mCcWidget;
-
-    /**
-     * Divider icon item.
-     * Own
-     */
-    HbIconItem *mDivider;
+    QGraphicsLinearLayout* mMainLayout;
 };
 
 #endif // UNI_VIEWER_ADDRESS_CONTAINER_H

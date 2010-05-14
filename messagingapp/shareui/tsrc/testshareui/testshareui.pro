@@ -17,27 +17,33 @@
 TEMPLATE = app
 TARGET = testshareui
 
-DEPENDPATH  += .
-INCLUDEPATH += .
-INCLUDEPATH += ../../inc
+DEPENDPATH += . inc src 
+INCLUDEPATH += inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
-
-QT += core
-DEFINES+=_DEBUG
 
 CONFIG += hb
 
-HEADERS += ./testshareuimainwindow.h \
-           ./testshareuiview.h
+
+
+TARGET.UID3 = 0x2002DD18
+TARGET.CAPABILITY = All -TCB
+TARGET.EPOCHEAPSIZE = 0x20000 0x1000000
+  
+# Platforms
+SYMBIAN_PLATFORMS = WINSCW ARMV5
+
+# Build.inf rules
+BLD_INF_RULES.prj_exports += \
+     "$${LITERAL_HASH}include <platform_paths.hrh>" 
+     
+
+# Input
+HEADERS += testshareuimainwindow.h \
+           testshareuiview.h 
 
 SOURCES += main.cpp \
-		   testshareuimainwindow.cpp \
-		   testshareuiview.cpp
+          testshareuimainwindow.cpp \
+          testshareuiview.cpp  
 
-LIBS += -lshareui
-
-
-TARGET.CAPABILITY = ALL -TCB
-TARGET.EPOCHEAPSIZE = 0x20000 0x25000
-symbian:TARGET.UID3 = 0x2002DD18
+# Libs
+LIBS += -lshareui		

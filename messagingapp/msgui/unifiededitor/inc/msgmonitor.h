@@ -93,12 +93,17 @@ public:
      * seeker funtion to get max recipient count for mms
      */
     static inline int maxMmsRecipients();
+    
+    /**
+     * get total address count in To, Cc & Bcc fields
+     */
+    static inline int msgAddressCount();
 
 public slots:
     /**
-     * slot to find any msg type change during editor operations
+     * slot to handle content change in any editor component
      */
-    void checkMsgTypeChange();
+    void handleContentChange();
 
 private:
     /**
@@ -107,9 +112,16 @@ private:
     void init();
 
     /**
-     * handle size change of editor components
+     * Determine the projected msg type due to change in editor content
      */
-    void updateSizeInfo(HbWidget* aWidget);
+    ConvergedMessage::MessageType projectedMsgType();
+
+    /**
+     * update various msg info changes during editing
+     * @param senderWidget, Editor widget which triggered 
+     * content change slot
+     */
+    void updateMsgInfo(HbWidget* senderWidget);
     
     /**
      * show type change discreet note
@@ -120,8 +132,33 @@ private:
      * accessor for view
      */
     MsgUnifiedEditorView* view();
-        
+    
+    /**
+     * check editor body for MMS content
+     * @return true if MMS content is present
+     */
+    bool bodyHasMMSContent();
+    
+    /**
+     * check editor subject for MMS content
+     * @return true if MMS content is present
+     */
+    bool subjectHasMMSContent();
+    
+    /**
+     * check editor attachment container for MMS content
+     * @return true if MMS content is present
+     */
+    bool containerHasMMSContent();
+    
+    /**
+     * check for other MMS content criteria
+     * @return true if MMS criteria is met
+     */
+    bool otherMMSCriteriaMet();
+
 private:
+
     /**
      * Flag to skip showing the type change popup.
      * Note need to be skipped when an mms is opened from draft.
@@ -162,6 +199,11 @@ private:
      * max recipient count in an sms
      */
     static int mMaxMmsRecipients;
+    
+    /**
+     * current msg address count (to + cc + bcc)
+     */
+    static int mMsgCurrAddressCount;
 
     /**
      * UniEditorGenUtils object

@@ -80,7 +80,8 @@ const QString SORT_ICON("qtg_mono_sort");
 // @see header
 //---------------------------------------------------------------
 MsgListView::MsgListView(QGraphicsItem *parent) :
-    MsgBaseView(parent)
+    MsgBaseView(parent),
+    mItemLongPressed(false)
 {
     connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
 }
@@ -100,6 +101,7 @@ MsgListView::~MsgListView()
 //---------------------------------------------------------------
 void MsgListView::longPressed(HbAbstractViewItem* viewItem, const QPointF& point)
 {
+    mItemLongPressed = true;
     if (this->isVisible()) {
         // Set the current index as the present Item's index.
         // By default it will not be set.
@@ -107,7 +109,7 @@ void MsgListView::longPressed(HbAbstractViewItem* viewItem, const QPointF& point
 
         // Create new menu
         HbMenu *contextMenu = new HbMenu();
-
+        contextMenu->setAttribute(Qt::WA_DeleteOnClose);
         //open menu option
         contextMenu->addAction(LOC_OPEN,this,SLOT(openConversation()));
         
@@ -131,9 +133,8 @@ void MsgListView::longPressed(HbAbstractViewItem* viewItem, const QPointF& point
         //delete conversation
         contextMenu->addAction(LOC_DELETE_CONVERSATION,this,SLOT(deleteItem()));
 
-        contextMenu->exec(point);
-        // Cleanup
-        delete contextMenu;
+        contextMenu->setPreferredPos(point);    
+        contextMenu->show();
     }
 }
 
@@ -143,6 +144,11 @@ void MsgListView::longPressed(HbAbstractViewItem* viewItem, const QPointF& point
 //---------------------------------------------------------------
 void MsgListView::openConversation(const QModelIndex& index)
 {
+    if(mItemLongPressed)
+     {
+     mItemLongPressed = false;
+     return;
+     }
     //TODO: model populating possibilities.
     if (index.isValid()) {
         QVariant conversationId = index.data(ConversationId);
@@ -211,18 +217,10 @@ void MsgListView::deleteItem()
 #ifdef _DEBUG_TRACES_
     qDebug() << "Inside MsgListView::deleteItem";
 #endif
-
-    QModelIndex index = mMsgList->currentIndex();
-    qint64 conversationId = index.data(ConversationId).toLongLong();
-
     //confirmation dialog.
-    bool result = HbMessageBox::question(LOC_DIALOG_DELETE_CONVERSATION,
-                                         LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
-    if (result) 
-        {
-        ConversationsEngine::instance()->deleteConversations(conversationId);
-        }
-    
+    HbMessageBox::question(LOC_DIALOG_DELETE_CONVERSATION,
+                                this,SLOT(onDialogDeleteMsg(HbAction*)),
+                                LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);    
 #ifdef _DEBUG_TRACES_	
     qDebug() << " Leaving MsgConversationView::deleteItem";
 #endif
@@ -244,8 +242,7 @@ void MsgListView::setupListView()
     viewHeading->setHeading(LOC_VIEW_HEADING);
 
     // Register the custorm css path.
-    HbStyleLoader::registerFilePath(":/xml/msglistviewitem.css");
-    HbStyleLoader::registerFilePath(":/xml/msglistviewitem.widgetml");
+    HbStyleLoader::registerFilePath(":/clv");
 
     mMsgList = new HbListView(this);
     mMsgList->setScrollingStyle(HbScrollArea::PanOrFlick);
@@ -422,5 +419,23 @@ void MsgListView::contactInfo()
     
     delete request;
     }
+
+//---------------------------------------------------------------
+// MsgListView::onDialogDeleteMsg
+// @see header
+//---------------------------------------------------------------
+void MsgListView::onDialogDeleteMsg(HbAction* action)
+{
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(0)) {
+        QModelIndex index = mMsgList->currentIndex();
+        if(index.isValid())
+        {
+            qint64 conversationId = index.data(ConversationId).toLongLong();
+                    ConversationsEngine::instance()->deleteConversations(conversationId);    
+        }
+        
+    }
+}
 
 //EOF

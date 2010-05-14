@@ -31,6 +31,7 @@ class MsgBaseView;
 class DraftsListView;
 class MsgSettingsView;
 class HbAction;
+class HbView;
 
 class MsgViewManager: public QObject
 {
@@ -152,7 +153,12 @@ private:
      * @param msgId message id
      */
     void handleProvisoningMsg(int msgId);
-
+    
+	/**
+	* Appends the views to be deleted into a QList to be deleted when view is ready
+	*/
+    void appendViewToBeDeleted(HbView* view);
+    
 private slots:
     /**
      * this slot is called on mainwindows back action.
@@ -164,6 +170,28 @@ private slots:
      */
     void switchView(const QVariantList& data);
 
+    /**
+     * This slot is called when viewReady signal is emitted from main window.
+     */
+    void setViewInteractive();
+
+    /**
+     * Slot to delete previous view instances on view switch
+     */
+    void deletePreviousView();
+	
+	/**
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
+     */	
+    void onDialogDeleteMsg(HbAction* action);
+    
+	/**
+     * This slot is called when save tone dialog is launched.
+     * @param action selected action (yes or no).
+     */	
+    void onDialogSaveTone(HbAction* action);
+	
 private:
     /**
      * main window reference not owned.
@@ -187,6 +215,9 @@ private:
     bool mServiceRequest;
     qint64 mConversationId;
     bool mViewServiceRequest;
+    QList<HbView*> mViewTobeDeleted;
+    HbView* mDummyview;
+    int mMessageId;
 };
 
 #endif /* MSGVIEWMANAGER_H_ */

@@ -35,7 +35,18 @@ class MSG_SETTING_VIEW_EXPORT MsgSettingsView: public MsgBaseView
 {
     Q_OBJECT
 public:
-    MsgSettingsView(QGraphicsItem *parent = 0);
+    enum SettingsView
+    {
+    DefaultView = 0,
+    SMSView,
+    MMSView
+    };
+    
+public:
+    MsgSettingsView(
+            SettingsView settingsView = MsgSettingsView::DefaultView,
+            QGraphicsItem *parent = 0);
+    
     ~MsgSettingsView();
 
 public slots:

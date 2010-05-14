@@ -19,5 +19,6 @@
 
 REM DLL
 file=ABI_DIR\UREL\shareui.dll                   SHARED_LIB_DIR\shareui.dll
+data=DATAZ_\system\install\shareui_stub.sis					           system\install\shareui_stub.sis
 
 #endif // __SHAREUI_IBY__

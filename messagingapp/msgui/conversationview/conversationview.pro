@@ -29,6 +29,7 @@ INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../appengine/inc
 INCLUDEPATH += ../../smartmessaging/ringbc/inc
+INCLUDEPATH += ../../msgsettings/settingsview/inc
 
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += /ext/mw/qthighway/inc
@@ -54,8 +55,6 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
 HEADERS += inc/msgconversationview.h \
     inc/msgconversationviewitem.h \
     inc/msgconversationwidget.h \
-    inc/msgcharcounter_p.h \
-    inc/msgcharcounter.h \
     inc/msgviewutils.h \
     ../../../inc/msgconversationviewdefines.h \
     inc/msgcontactcardwidget.h \
@@ -67,8 +66,6 @@ HEADERS += inc/msgconversationview.h \
 SOURCES += src/msgconversationview.cpp \
     src/msgconversationviewitem.cpp \
     src/msgconversationwidget.cpp \
-    src/msgcharcounter_p.cpp \
-    src/msgcharcounter.cpp \
     src/msgviewutils.cpp \
     src/msgcontactcardwidget.cpp \
     src/msgeditorwidget.cpp \
@@ -97,5 +94,10 @@ LIBS += -lappengine \
     -lunieditorpluginloader \
     -lgsmu \
     -lsmcm \
-    -leditorgenutils
+    -leditorgenutils \
+    -lthumbnailmanagerqt \
+    -lfbscli \
+    -lestor \
+    -lsqldb \
+    -lxqsettingsmanager
 

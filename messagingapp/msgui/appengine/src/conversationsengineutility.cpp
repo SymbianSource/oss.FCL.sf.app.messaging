@@ -119,40 +119,4 @@ int ConversationsEngineUtility::messageSubType(TCsType value)
     return messageSubType;
 }
 
-//---------------------------------------------------------------
-// ConversationsEngineUtility::getVcardDisplayName
-// @see header
-//---------------------------------------------------------------
-QString ConversationsEngineUtility::getVcardDisplayName(QString filePath)
-{
-    QString displayName;
-    //open file for parsing
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return displayName;
-    }
-    // parse contents
-    QVersitReader reader;
-    reader.setDevice(&file);
-    if (reader.startReading()) {
-        if (reader.waitForFinished()) {
-            QList<QVersitDocument> versitDocuments = reader.results();
-            // Use the resulting document
-            if (versitDocuments.count() > 0) {
-                QVersitContactImporter importer;
-                QList<QContact> contacts = importer.importContacts(versitDocuments);
-                // get display-name
-                if (contacts.count() > 0) {
-                    QContactManager* contactManager = new QContactManager("symbian");
-                    displayName = contactManager->synthesizedDisplayLabel(contacts[0]);
-                    delete contactManager;
-                }
-            }
-        }
-    }
-    file.close();
-
-    return displayName;
-}
-
 // End of file

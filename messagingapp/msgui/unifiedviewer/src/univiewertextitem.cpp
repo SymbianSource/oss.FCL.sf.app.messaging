@@ -18,6 +18,7 @@
  */
 
 #include "univiewertextitem.h"
+#include "msgcontacthandler.h"
 
 #include <QRegExp>
 #include <QGraphicsSceneMouseEvent>
@@ -27,12 +28,12 @@
 
 #include <HbMenu>
 #include <HbAction>
+#include <HbFrameItem>
 #include <cntservicescontact.h>
-#include <qtcontacts.h>
 #include <XQServiceRequest.h>
 #include <xqaiwrequest.h>
+#include <xqappmgr.h>
 
-QTM_USE_NAMESPACE
 
 //consts
 
@@ -65,7 +66,11 @@ mFindOn(true),
 mCursorPos(-1)
 {
     this->setReadOnly(true);
+    this->setScrollable(false);
     this->setCursorVisibility(Hb::TextCursorHidden);
+    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    HbFrameItem *noBackground = new HbFrameItem(this);
+    this->setBackgroundItem(noBackground);
 
     //inserting rules and patterns to map.
     mRules.insert(NUMBER_RULE,NUMBER_PATTERN);
@@ -346,7 +351,8 @@ void UniViewerTextItem::createEmail()
         QString serviceName("com.nokia.services.commonemail");
         QString interfaceName("imessage.send");
         QString operation("send(QVariant)");
-        XQAiwRequest* request = mAppManager.create(serviceName, interfaceName, 
+        XQApplicationManager appManager;
+        XQAiwRequest* request = appManager.create(serviceName, interfaceName, 
 			operation, true); 
         if ( request == NULL )
             {
@@ -414,9 +420,10 @@ void UniViewerTextItem::openContactInfo()
         {
             data.remove(NUMBER_RULE);
     
-            int contactId = resolveContactId(data, 
-                                             QContactPhoneNumber::DefinitionName,
-                                             QContactPhoneNumber::FieldNumber);
+            int contactId = MsgContactHandler::resolveContactDisplayName(
+                                         data, 
+                                         QContactPhoneNumber::DefinitionName,
+                                         QContactPhoneNumber::FieldNumber);
     
             if(contactId > 0)
                 {
@@ -439,9 +446,10 @@ void UniViewerTextItem::openContactInfo()
         {
             data.remove(EMAIL_RULE);
     
-            int contactId = resolveContactId(data,
-                                             QContactEmailAddress::DefinitionName,
-                                             QContactEmailAddress::FieldEmailAddress);
+            int contactId = MsgContactHandler::resolveContactDisplayName(
+                    data,
+                    QContactEmailAddress::DefinitionName,
+                    QContactEmailAddress::FieldEmailAddress);
             
             if(contactId > 0)
                 {
@@ -466,7 +474,8 @@ void UniViewerTextItem::openContactInfo()
         QString serviceName("com.nokia.services.phonebookservices");
      
         XQAiwRequest* request;
-        request = mAppManager.create(serviceName, "Fetch", operation, true); // embedded
+        XQApplicationManager appManager;
+        request = appManager.create(serviceName, "Fetch", operation, true); // embedded
         if ( request == NULL )
             {
             return;       
@@ -500,33 +509,6 @@ void UniViewerTextItem::onServiceRequestCompleted()
         {
         delete request;
         }
-    }
-
-int UniViewerTextItem::resolveContactId(const QString& value,
-                                        const QString& fieldName,
-                                        const QString& fieldType)
-    {
-    int contactId = -1;
-    
-    QContactManager phonebookManager("symbian");
-    
-    QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName(fieldName, fieldType);
-    phoneFilter.setValue(value);
-    phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
-
-    QList<QContactSortOrder> sortOrder;
-    QList<QContact> matchingContacts = phonebookManager.contacts(
-            phoneFilter,
-            sortOrder,
-            QStringList());
-
-    if ( matchingContacts.count() > 0 ) 
-        {       
-        contactId = matchingContacts.at(0).localId();;   
-        }
-    
-    return contactId;
     }
 
 void UniViewerTextItem::menuClosed()
@@ -565,6 +547,7 @@ void UniViewerTextItem::highlightText(bool highlight)
             }
 
             cursor.clearSelection();
+            break;
         }
     }
 }

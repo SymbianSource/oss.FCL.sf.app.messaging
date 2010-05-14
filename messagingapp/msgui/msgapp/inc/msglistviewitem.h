@@ -99,11 +99,6 @@ private:
     HbFrameItem* mNewMsgIndicatorItem;
     
     /**
-     * Background frame for item.
-     */
-    HbFrameItem* mBgFrameItem;
-
-    /**
      * To display address.
      * Owned
      */

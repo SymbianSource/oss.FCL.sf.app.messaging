@@ -18,7 +18,7 @@
 #ifndef UNIFIED_EDITOR_BODY_H
 #define UNIFIED_EDITOR_BODY_H
 
-#include <hbwidget.h>
+#include <msgunifiededitorbasewidget.h>
 #include <f32file.h>
 #include "msgunieditorprocessimageoperation.h"
 
@@ -27,7 +27,7 @@ class HbTextItem;
 class HbFrameItem;
 class HbIconItem;
 class HbPushButton;
-class HbGestureSceneFilter;
+//class HbGestureSceneFilter;
 class CMsgMediaResolver;
 class CMsgImageInfo;
 class MmsConformanceCheck;
@@ -35,7 +35,8 @@ class UniEditorPluginInterface;
 class UniEditorPluginLoader;
 
 
-class MsgUnifiedEditorBody : public HbWidget,public MUniEditorProcessImageOperationObserver
+class MsgUnifiedEditorBody : public MsgUnifiedEditorBaseWidget,
+                             public MUniEditorProcessImageOperationObserver
 {
     Q_OBJECT
 
@@ -46,7 +47,7 @@ public:
     /**
      * Constructor
      */
-    MsgUnifiedEditorBody(const QString& pluginPath, QGraphicsItem *parent = 0);
+    MsgUnifiedEditorBody(QGraphicsItem *parent = 0);
 
     /**
      * Destructor
@@ -80,6 +81,23 @@ public:
       */
      void disableCharCounter();
      
+     /**
+      * To set focus on editable field.
+      */
+     void setFocus();
+
+     /**
+      * Get to find body already contains an image
+      * @return bool
+      */
+     bool hasImage();
+
+     /**
+      * Get to find body already contains an audio
+      * @return bool
+      */
+     bool hasAudio();
+
 public slots:
     /**
      * Called to insert image content in editor.
@@ -92,12 +110,6 @@ public slots:
      * @param medialist list of absolute paths of media.
      */
     void setAudio(QString& audiofile);
-
-    /**
-     * Called to insert video content in editor.
-     * @param medialist list of absolute paths of media.
-     */
-    void setVideo(QString& videofile);
 
     /**
      * Called to insert body text in editor.
@@ -169,23 +181,12 @@ private slots:
     void handleError(int errorCode, const QString& errorMessage);
 
 private:
-    /**
-     * Get to find body already contains an image
-     * @return bool
-     */
-    bool hasImage();
 
     /**
      * Get to find body already contains an image
      * @return bool
      */
     void setImage(bool image = false);
-
-    /**
-     * Get to find body already contains an audio
-     * @return bool
-     */
-    bool hasAudio();
 
     /**
      * Set that body now contains an audio
@@ -251,11 +252,6 @@ private:
      */
     HbPushButton* mAudioItem;
 
-    /**
-     * string to hold plug in path.
-     */
-    QString mPluginPath;
-
 	/**
 	 * Image file contained inside body
 	 */
@@ -279,7 +275,7 @@ private:
     /**
      * To setup longpress gesture on media objects
      */
-    HbGestureSceneFilter* mGestureFilter;
+    //HbGestureSceneFilter* mGestureFilter;
 	
     /**
      * MMs conformance check utility class
@@ -300,11 +296,6 @@ private:
      * Size of video in body
      */
     int mVideoSize;
-
-    /**
-     * Rfs object
-     */
-    RFs mfs;
 
     /**
      * CUniEditorProcessImageOperation object
@@ -363,6 +354,11 @@ private:
      * Maintains information if any unicode character has been entered or not
      */
     bool mUnicode;
+    
+    /**
+     * Content widget for processing animation.
+     */
+    HbWidget* mProcessingWidget;
 };
 
 #endif //UNIFIED_EDITOR_BODY_H

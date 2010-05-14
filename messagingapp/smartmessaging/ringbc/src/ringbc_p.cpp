@@ -80,11 +80,11 @@ void RingBcPrivate::initL()
 void RingBcPrivate::saveTone(const QString &path)
     {
     QDEBUG_WRITE("RingBcPrivate::saveTone : Enter")
-    
+
     int error(KErrNone);
-    HBufC* fileName = S60QConversions::qStringToS60Desc(path);
-    TRAP(error, error = saveToneL(*fileName));
-    if(error)
+
+    TRAP(error, saveToneL(path));
+    if (error)
         {
         QDEBUG_WRITE_FORMAT("RingBcPrivate::saveTone Error code =",error)
         
@@ -109,30 +109,110 @@ void RingBcPrivate::saveTone(const QString &path)
         HbMessageBox::information("Saved succesfully");
         QDEBUG_WRITE("RingBcPrivate::saveTone : Ringing tone saved successfully")
         }
-        
-    delete fileName;
-    
+
     QDEBUG_WRITE("RingBcPrivate::saveTone : Exit")
     }
-    
+
 // ----------------------------------------------------------------------------
 // RingBcPrivate::saveToneL
 // @see ringbc_p.h
 // ----------------------------------------------------------------------------
-int  RingBcPrivate::saveToneL(const TDesC& aFileName)
+void RingBcPrivate::saveToneL(const QString& path)
     {
     QDEBUG_WRITE("RingBcPrivate::saveToneL : Enter")
+
+    QStringList pathList = path.split(".");
+    QString extension = QString(".") + pathList.at(pathList.count() - 1);
+
+    RFs fsSession;
+    User::LeaveIfError(fsSession.Connect());
+
+    CleanupClosePushL(fsSession);
+
+    HBufC* fileName = S60QConversions::qStringToS60Desc(path);
+
+    RFile file;
+    User::LeaveIfError(file.Open(fsSession, fileName->Des(),
+            EFileShareReadersOnly));
+
+    CleanupClosePushL(file);
+    TInt size;
+    User::LeaveIfError(file.Size(size));
     
+    HBufC8* dataBuf = HBufC8::NewLC(size);
+    TPtr8 data(dataBuf->Des());
+    User::LeaveIfError(file.Read(data, size));
+    CleanupStack::PopAndDestroy(&file);
+
+    TBool valid = mConverter->IsRingToneMimeTypeL(data);
+
+    if (valid)
+        {
+        HBufC* title = mConverter->TitleLC(data);
+        TFileName path = PathInfo::PhoneMemoryRootPath();
+        path.Append(PathInfo::SimpleSoundsPath());
+        path.Append(*title);
+        HBufC* fileExtension = S60QConversions::qStringToS60Desc(extension);
+        path.Append(fileExtension->Des());
+
+        CFileMan* fileMan = CFileMan::NewL(fsSession);
+        CleanupStack::PushL(fileMan);
+        if(fileMan)
+            {
+            TInt err = fileMan->Copy(fileName->Des(), path, CFileMan::ECopy | CFileMan::EOverWrite);
+            User::LeaveIfError(err);
+            }
+        CleanupStack::PopAndDestroy(2); // title,fileMan        
+        }
+
+    CleanupStack::PopAndDestroy(); // dataBuf
+    CleanupStack::PopAndDestroy(); //fsSession
+
+
+    QDEBUG_WRITE("RingBcPrivate::saveToneL : Exit")
+    }
+
+// ----------------------------------------------------------------------------
+// RingBcPrivate::toneTitle
+// @see ringbc_p.h
+// ----------------------------------------------------------------------------
+QString RingBcPrivate::toneTitle(const QString &path)
+    {
+    QDEBUG_WRITE("RingBcPrivate::toneTitle : Enter")
+
+    QString title;
+    QStringList pathList = path.split(".");
+    QString extension = pathList.at(pathList.count() - 1);
+
+    HBufC* fileName = S60QConversions::qStringToS60Desc(path);
+    TRAP_IGNORE( title = titleL(*fileName));
+    
+    title.append(QChar('.'));
+    title.append(extension);
+    
+    QDEBUG_WRITE("RingBcPrivate::toneTitle : Exit")
+    return title;
+    }
+
+// ----------------------------------------------------------------------------
+// RingBcPrivate::titleL
+// @see ringbc_p.h
+// ----------------------------------------------------------------------------
+QString RingBcPrivate::titleL(const TDesC& aFileName)
+    {
+    QDEBUG_WRITE("RingBcPrivate::titleL : Enter")
+
+    QString title; // initialize to null string
     RFs fsSession;
     TInt error = fsSession.Connect();
-    if( error == KErrNone)
+    if (error == KErrNone)
         {
         CleanupClosePushL(fsSession);
 
         RFile file;
-        error = file.Open(fsSession,aFileName, EFileRead);
+        error = file.Open(fsSession, aFileName, EFileRead);
 
-        if(error == KErrNone)
+        if (error == KErrNone)
             {
             CleanupClosePushL(file);
             TInt size;
@@ -141,97 +221,23 @@ int  RingBcPrivate::saveToneL(const TDesC& aFileName)
                 {
                 HBufC8* dataBuf = HBufC8::NewLC(size);
                 TPtr8 data(dataBuf->Des());
-                User::LeaveIfError(file.Read(data, size));             
-             
-                TBool valid = mConverter->IsRingToneMimeTypeL(data);
-                if(valid)
-                    {
-                    HBufC* title = mConverter->TitleLC(data);
-                    TFileName path = PathInfo::PhoneMemoryRootPath();
-                    path.Append( PathInfo::SimpleSoundsPath() );
-                    path.Append(*title);
-                    path.Append(KRingingToneFileExtension);
+                User::LeaveIfError(file.Read(data, size));
 
-                    CFileMan* fileMan = CFileMan::NewL(fsSession);
-                    CleanupStack::PushL( fileMan );
-                    error = fileMan->Copy( file, path );
-                    CleanupStack::PopAndDestroy(2); // title,fileMan        
-                    }
-                else 
+                TBool valid = mConverter->IsRingToneMimeTypeL(data);
+                if (valid)
                     {
-                    error = KErrCorrupt;
+                    HBufC* toneTitle = mConverter->TitleLC(data);
+                    title = S60QConversions::s60DescToQString(*toneTitle);
+                    CleanupStack::PopAndDestroy(); //title
                     }
-                CleanupStack::PopAndDestroy(); // dataBuf      
-                }   
+                CleanupStack::PopAndDestroy(); //dataBuf
+                }
             CleanupStack::PopAndDestroy(); //file
             }
         CleanupStack::PopAndDestroy(); //fsSession
         }
-    
-    QDEBUG_WRITE("RingBcPrivate::saveToneL : Exit")
-    return error;
+    QDEBUG_WRITE("RingBcPrivate::titleL : Exit")
+    return title;
     }
 
-// ----------------------------------------------------------------------------
-// RingBcPrivate::toneTitle
-// @see ringbc_p.h
-// ----------------------------------------------------------------------------
- QString RingBcPrivate::toneTitle(const QString &path)
-     {
-     QDEBUG_WRITE("RingBcPrivate::toneTitle : Enter")
-     
-     QString title; 
-     HBufC* fileName = S60QConversions::qStringToS60Desc(path);
-     TRAP_IGNORE( title = titleL(*fileName));
-     
-     QDEBUG_WRITE("RingBcPrivate::toneTitle : Exit")
-     return title;         
-     }
-
- // ----------------------------------------------------------------------------
- // RingBcPrivate::titleL
- // @see ringbc_p.h
- // ----------------------------------------------------------------------------
- QString RingBcPrivate::titleL(const TDesC& aFileName)
-     {
-     QDEBUG_WRITE("RingBcPrivate::titleL : Enter")
-     
-     QString title; // initialize to null string
-     RFs fsSession;
-     TInt error = fsSession.Connect();
-     if( error == KErrNone)
-         {
-         CleanupClosePushL(fsSession);
-
-         RFile file;
-         error = file.Open(fsSession,aFileName, EFileRead);
-        
-         if(error == KErrNone)
-             {
-             CleanupClosePushL(file);
-             TInt size;
-             User::LeaveIfError(file.Size(size));
-             if (size)
-                 {
-                 HBufC8* dataBuf = HBufC8::NewLC(size);
-                 TPtr8 data(dataBuf->Des());
-                 User::LeaveIfError(file.Read(data, size));             
-
-                 TBool valid = mConverter->IsRingToneMimeTypeL(data);
-                 if(valid)
-                     {
-                     HBufC* toneTitle = mConverter->TitleLC(data);
-                     title = S60QConversions::s60DescToQString(*toneTitle);
-                     CleanupStack::PopAndDestroy(); //title
-                     }
-                 CleanupStack::PopAndDestroy(); //dataBuf
-                 }
-             CleanupStack::PopAndDestroy(); //file
-             }
-         CleanupStack::PopAndDestroy(); //fsSession
-         }
-     QDEBUG_WRITE("RingBcPrivate::titleL : Exit")
-     return title;           
-     }
- 
 //  End of File  

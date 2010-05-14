@@ -17,7 +17,7 @@
 &EN
 
 ; SIS header: name, uid, version
-#{"shareui"},(0xEEB59ABB),1,0,0, TYPE = SA,RU
+#{"shareui"},(0x2002DD00),1,0,0, TYPE = SA,RU
 
 ; Localised Vendor name
 %{"Nokia"}
@@ -27,4 +27,4 @@
 
 ; Executable and default resource files
 "/epoc32/release/armv5/urel/shareui.dll"    - "!:\sys\bin\shareui.dll",FR,RI
-"/epoc32/data/z/pluginstub/unifiededitorplugin.qtplugin"    - "!:\private\2002bce7\unifiededitorplugin.qtplugin"
+

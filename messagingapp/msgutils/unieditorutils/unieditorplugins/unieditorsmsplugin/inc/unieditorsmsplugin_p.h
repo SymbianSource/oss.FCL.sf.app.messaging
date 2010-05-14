@@ -110,7 +110,7 @@ class UniEditorSmsPluginPrivate :public MMsvSessionObserver
         inline void SetUnicodeMode( TBool aUnicodeMode );
         
         //Turkish SMS(PREQ2265) specific...
-        void SetEncodingSettings(TBool aUnicodeMode, TSmsEncoding aAlternativeEncodingType, TInt charSupportType);
+        void SetEncodingSettingsL(TBool aUnicodeMode, TSmsEncoding aAlternativeEncodingType, TInt charSupportType);
        
         /**
          * for deciding on reduced or full charset support

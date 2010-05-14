@@ -15,27 +15,50 @@
  *
  */
 #include <hbaction.h>
+#include <hbgroupbox.h>
+#include <QGraphicsLinearLayout>
 
 #include "msgsmscenterview.h"
 #include "msgsmscentersettingsform.h"
 #include "debugtraces.h"
 
+#define LOC_NEW_SMS_CENTRE hbTrId("txt_messaging_title_new_sms_message_centre")
+#define LOC_EDIT_SMS_CENTRE hbTrId("txt_messaging_title_edit_sms_message_centre")
+
 MsgSMSCenterView::MsgSMSCenterView(int view, QGraphicsItem *parent) :
     MsgBaseView(parent)
 {
+    // Create parent layout.
+    QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->setSpacing(0);
+
+    // Create view heading.
+    HbGroupBox *viewHeading = new HbGroupBox();
+    if (view == -1)
+    {
+        viewHeading->setHeading(LOC_NEW_SMS_CENTRE);
+    }
+    else
+    {
+        viewHeading->setHeading(LOC_EDIT_SMS_CENTRE);
+    }
+
     mSMSCenterSettingsForm = new MsgSMSCenterSettingsForm(view);
 
-    setWidget(mSMSCenterSettingsForm);
-
-    HbAction* backAction = new HbAction(Hb::BackAction, this);
+    HbAction* backAction = new HbAction(Hb::BackNaviAction, this);
     setNavigationAction(backAction);
 
     connect(mSMSCenterSettingsForm,
             SIGNAL(deleteMessageCentreAndClose()),
             this,
             SLOT(onCloseMessageCenterView()));
-    
+
     connect(backAction, SIGNAL(triggered()), this, SLOT(onBackAction()));
+    
+    mainLayout->addItem(viewHeading);
+    mainLayout->addItem(mSMSCenterSettingsForm);
+    this->setLayout(mainLayout);
 }
 
 MsgSMSCenterView::~MsgSMSCenterView()

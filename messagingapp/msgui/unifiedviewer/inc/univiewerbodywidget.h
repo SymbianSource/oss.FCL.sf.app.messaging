@@ -23,10 +23,10 @@
 #include "unidatamodelplugininterface.h"
 
 class UniViewerTextItem;
-class HbIconItem;
+class UniViewerPixmapWidget;
 class HbTextItem;
 class HbPushButton;
-class HbGestureSceneFilter;
+//class HbGestureSceneFilter;
 class QSignalMapper;
 
 /**
@@ -57,7 +57,7 @@ public slots:
      * Called to insert image content in viewer.
      * @param medialist list of absolute paths of media.
      */
-    void setImage(QString imagefile);
+    void setPixmap(QString pixmapFile);
 
     /**
      * Called to insert audio content in viewer.
@@ -120,13 +120,12 @@ public slots:
     void clearContent();
 
 protected:
-    // from HbWidget
 
     /**
-     * reimplemented from base class to provide proper geometry for scrolling.
+     * Reimplemented from base class to provide proper geometry for scrolling.
      * @see HbWidget
      */
-    void resizeEvent(QGraphicsSceneResizeEvent* event);
+    QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
 
 private slots:
 
@@ -148,7 +147,7 @@ private slots:
     /**
      * called from the media object's item specific menu
      */
-    void viewDetails();
+    void saveMedia();
 
     /**
      * Service launch complete.
@@ -192,7 +191,7 @@ private:
     /**
      * Icon item to preview images.
      */
-    HbIconItem* mIconItem;
+    UniViewerPixmapWidget *mPixmapItem;
 
     /**
      * Media widget for embedded audio content.
@@ -202,7 +201,7 @@ private:
     /**
      * To setup longpress gesture on media objects
      */
-    HbGestureSceneFilter* gestureFilter;
+   // HbGestureSceneFilter* gestureFilter;
 
     /**
      * File mapper for opening media

@@ -95,8 +95,4 @@ LIBS += -lappengine \
         -lringbc \
 		-lunidatamodelloader
 		
-styleplugin.sources += conversationviewplugin.dll \
-                       unifiededitorplugin.dll \
-                       unifiedviewerplugin.dll
 
-DEPLOYMENT += styleplugin

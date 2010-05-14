@@ -22,7 +22,8 @@
 #include "convergedmessage.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
-
+#include "ringbc.h"
+#include "msgcontacthandler.h"
 #include <ccsclientconversation.h>
 #include <ccsconversationentry.h>
 #include <QFile>
@@ -301,7 +302,8 @@ void ConversationsSummaryModel::handleBlueToothMessages(QStandardItem& item,
         item.setData(ConvergedMessage::VCard, MessageSubType);
 
         //parse vcf file to get the details
-        QString displayName = ConversationsEngineUtility::getVcardDisplayName(description);
+        QString displayName = MsgContactHandler::getVCardDisplayName(
+                description);
         item.setData(displayName, BodyText);
     }
     else 
@@ -341,7 +343,8 @@ void ConversationsSummaryModel::handleBioMessages(QStandardItem& item, const CCs
             QString attachmentPath = attList[0]->path();
 
             //get display-name and set as bodytext
-            QString displayName = ConversationsEngineUtility::getVcardDisplayName(attachmentPath);
+            QString displayName = MsgContactHandler::getVCardDisplayName(
+                    attachmentPath);
             item.setData(displayName, BodyText);
 
             // clear attachement list : its allocated at data model
@@ -352,6 +355,19 @@ void ConversationsSummaryModel::handleBioMessages(QStandardItem& item, const CCs
     }
     else if (ConvergedMessage::VCal == msgSubType) {
         //not supported
+    }
+    else if (ConvergedMessage::RingingTone == msgSubType) {
+        if (bioMsgPlugin->attachmentCount() > 0) {
+            UniMessageInfoList attList = bioMsgPlugin->attachmentList();
+            QString attachmentPath = attList[0]->path();
+            	
+            //get tone title, and set as bodytext
+            RingBc ringBc;
+            item.setData(ringBc.toneTitle(attachmentPath), BodyText);
+            while (!attList.isEmpty()) {
+                delete attList.takeFirst();
+            }
+        }
     }
     else {
         // description

@@ -23,7 +23,4 @@ data=DATAZ_\resource\apps\0x2001FE79.mif                        resource\apps\0x
 
 data=DATAZ_\system\install\msgapp_stub.sis					           system\install\msgapp_stub.sis
 
-data=\epoc32\data\z\private\2001fe79\conversationviewplugin.qtplugin  \private\2001fe79\conversationviewplugin.qtplugin
-data=\epoc32\data\z\private\2001fe79\unifiededitorplugin.qtplugin  \private\2001fe79\unifiededitorplugin.qtplugin
-
 #endif // __MSGAPP_IBY__

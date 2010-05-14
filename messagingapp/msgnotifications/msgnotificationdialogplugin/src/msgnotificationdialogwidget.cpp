@@ -247,7 +247,8 @@ void MsgNotificationDialogWidget::showEvent(QShowEvent *event)
 void MsgNotificationDialogWidget::widgetActivated()
 {
 QThreadPool::globalInstance()->start(
-        	new ServiceRequestSenderTask(mConversationId));  
+        	new ServiceRequestSenderTask(mConversationId));
+    enableTouchActivation(false);  
 }
 
 // ----------------------------------------------------------------------------

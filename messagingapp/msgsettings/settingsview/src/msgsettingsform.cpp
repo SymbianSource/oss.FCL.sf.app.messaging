@@ -22,12 +22,10 @@
 #include <hbdataformmodel.h>
 #include <hbcombobox.h>
 #include <hbpushbutton.h>
-#include <QStandardItemModel>
 
 #include "debugtraces.h"
 
 //Localized constants
-#define LOC_MESSAGE_SETTINGS_HEADING hbTrId("txt_messaging_title_messaging_settings")
 #define LOC_RECEIVING_SERVICE_MESSAGES hbTrId("txt_messaging_setlabel_receiving_service_messages")
 #define LOC_ON hbTrId("txt_messaging_setlabel_val_on")
 #define LOC_OFF hbTrId("txt_messaging_setlabel_val_off")
@@ -51,11 +49,11 @@
 #define LOC_MMS_YES hbTrId("txt_messaging_setlabel_allow_anonymous_mms_val_yes")
 #define LOC_MMS_NO hbTrId("txt_messaging_setlabel_allow_anonymous_mms_val_no")
 
-MsgSettingsForm::MsgSettingsForm(QGraphicsItem *parent) :
+MsgSettingsForm::MsgSettingsForm(
+        MsgSettingsView::SettingsView settingsView,
+        QGraphicsItem *parent) :
     HbDataForm(parent)
 {
-    this->setHeading(LOC_MESSAGE_SETTINGS_HEADING);
-
     mSettingEngine = new MsgSettingEngine();
 
     //custom prototype
@@ -69,7 +67,7 @@ MsgSettingsForm::MsgSettingsForm(QGraphicsItem *parent) :
     mSmsMCSettingsGroup << LOC_SMS_CENTRE_IN_USE << LOC_ADD_NEW;
 
     //initialize the form model
-    initSettingModel();
+    initSettingModel(settingsView);
 }
 
 MsgSettingsForm::~MsgSettingsForm()
@@ -77,7 +75,8 @@ MsgSettingsForm::~MsgSettingsForm()
     delete mSettingEngine;
 }
 
-void MsgSettingsForm::initSettingModel()
+void MsgSettingsForm::initSettingModel(
+        MsgSettingsView::SettingsView settingsView)
 {
     settingsModel = new HbDataFormModel(0);
 
@@ -154,6 +153,19 @@ void MsgSettingsForm::initSettingModel()
     addSmsMCGroupItem(mSmsMCGroup);
 
     this->setModel(settingsModel);
+    
+    if (settingsView == MsgSettingsView::MMSView)
+    {
+        //set MMS Settings as expanded
+        QModelIndex index_mms = settingsModel->indexFromItem(mmsGroup);
+        //TODO: dataform issue on expanding one group item
+        //this->setExpanded(index_mms, true);
+    }
+    else if(settingsView == MsgSettingsView::SMSView)
+    {
+        //expandSMSSettings();
+    }
+        
 }
 
 void MsgSettingsForm::refreshViewForm()
@@ -168,24 +180,13 @@ void MsgSettingsForm::updateSmsMCGroupItem(HbDataFormModelItem* parent)
     mSmsServiceList.clear();
     mSettingEngine->allSMSMessageCenter(mSmsServiceList, defaultServiceCenter);
 
-    mSmsServiceCenterModel->clear();
-    
-    //recreate all the model items 
-    int itemCount = mSmsServiceList.count();
-    for (int i = 0; i < itemCount; ++i)
+    //set the content widget data again    
+    smsMessageCenter->setContentWidgetData("items", mSmsServiceList);
+    if(defaultServiceCenter > 0)
     {
-        QStandardItem *item = new QStandardItem;
-        item->setData(mSmsServiceList.at(i), Qt::DisplayRole);
-        mSmsServiceCenterModel->appendRow(item);
-    }
-    //set the content widget data again
-    if(itemCount > 0)
-    {
-       smsMessageCenter->setContentWidgetData("items", mSmsServiceList);
-    }
-
     smsMessageCenter->setContentWidgetData("currentIndex",
                                                defaultServiceCenter);
+    }
     
     //2. refresh all the custom buttons again
     int childCount = parent->childCount();
@@ -303,20 +304,10 @@ void MsgSettingsForm::addMMSGroupItem(HbDataFormModelItem* parent)
                                     LOC_MMS_AP_IN_USE,
                                     0);
 
-    QStandardItemModel* comboModel = new QStandardItemModel();
-
     QStringList mmsList;
     int defaultAccessPointIndex = -1;
 
     mSettingEngine->allMMsAcessPoints(mmsList, defaultAccessPointIndex);
-    int accessPoints = mmsList.count();
-    for (int a = 0; a < accessPoints; ++a)
-    {
-        QStandardItem* item = new QStandardItem();
-        item->setData(mmsList[a], Qt::DisplayRole);
-        comboModel->appendRow(item);
-    }
-    accessPoint->setModel(comboModel);
     accessPoint->setContentWidgetData("items", mmsList);
     if (defaultAccessPointIndex >= 0)
     {
@@ -345,20 +336,9 @@ void MsgSettingsForm::addSmsMCGroupItem(HbDataFormModelItem* parent)
 
     int defaultServiceCenter = -1;
     mSmsServiceList.clear();
+    
     mSettingEngine->allSMSMessageCenter(mSmsServiceList, defaultServiceCenter);
-    mSmsServiceCenterModel = new QStandardItemModel(this);
-
-    int itemCount = mSmsServiceList.count();
-    for (int i = 0; i < itemCount; ++i)
-    {
-        QStandardItem *item = new QStandardItem;
-        item->setData(mSmsServiceList.at(i), Qt::DisplayRole);
-        mSmsServiceCenterModel->appendRow(item);
-    }
-
-    smsMessageCenter->setModel(mSmsServiceCenterModel);
     smsMessageCenter->setContentWidgetData("items", mSmsServiceList);
-
     if (defaultServiceCenter >= 0)
     {
         smsMessageCenter->setContentWidgetData("currentIndex",

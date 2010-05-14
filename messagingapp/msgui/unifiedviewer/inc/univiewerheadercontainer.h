@@ -22,8 +22,10 @@
 
 #include <convergedmessageaddress.h>
 
+class QGraphicsLinearLayout;
 class UniViewerDetailsWidget;
 class HbGroupBox;
+class HbFrameItem;
 class UniViewerAddressContainer;
 class UniViewerAttachmentContainer;
 class UniViewerFeeder;
@@ -83,7 +85,25 @@ private:
      */
     QString createAddressList(const ConvergedMessageAddressList &addressList);
 
+private slots:
+
+    /**
+     * Slot to know address box state.
+     */
+    void addressBoxToggled(bool state);
+
+signals:
+    /**
+     * this signal is emitted when send message is triggered form UniViewerAddressWidget
+     */
+    void sendMessage(const QString& phoneNumber,const QString& alias);
+
 private:
+
+    /**
+     * Main layout.
+     */
+    QGraphicsLinearLayout *mMainLayout;
 
     /**
      * UniViewerFeeder object
@@ -102,6 +122,12 @@ private:
      * owned.
      */
     HbGroupBox *mHeaderGroupBox;
+
+    /**
+     * Separator line
+     * Owned.
+     */
+    HbFrameItem *mSeparator;
 
     /**
      * UniViewerAddressContainer object
