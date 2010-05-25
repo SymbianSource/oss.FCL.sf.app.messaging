@@ -1274,13 +1274,7 @@ void CMsgExpandableControlEditor::PrepareForReadOnlyL( TBool aReadOnly )
 //
 void CMsgExpandableControlEditor::SetTextSkinColorIdL()
     {
-    TAknsQsnTextColorsIndex colorId = EAknsCIQsnTextColorsCG6;
-    if ( !IsReadOnly() && IsFocused() )
-        {
-        colorId = EAknsCIQsnTextColorsCG8;
-        }
-        
-    CEikEdwin::SetTextSkinColorIdL( colorId );
+    CEikEdwin::SetTextSkinColorIdL( EAknsCIQsnTextColorsCG6 );
     }
 
 // ---------------------------------------------------------

@@ -88,8 +88,10 @@ const TUid KMailTechnologyTypeUid = { 0x10001671 };
 //
 CMceOneRowMessageListContainer::CMceOneRowMessageListContainer( CMceMessageListView& aParentView ) :
     CMceMessageListContainerBase( aParentView ),
-    iEmailFramework(EFalse)
+    iEmailFramework(EFalse),
+    iDeletedMessges(0)
     {
+    iSelectedSubTitles.Reset();
     }
 
 
@@ -107,6 +109,7 @@ CMceOneRowMessageListContainer::~CMceOneRowMessageListContainer()
     delete iSelectedEntries;
     delete iTreeListBox;
     delete iUiRegistry;
+    iSelectedSubTitles.Close();
     }
 
 
@@ -1090,9 +1093,10 @@ void CMceOneRowMessageListContainer::AddAllToSelectionL()
                  !entry.Unread() )
                 {
                 TAknTreeItemID treeItemId = iListItems->TreeItemId( i );
-                iTreeListBox->SetMarked( treeItemId, ETrue, ETrue );
+                iTreeListBox->SetMarked( treeItemId, ETrue, EFalse );
                 }
             }
+        iTreeListBox->DrawNow();
         }
     }
 
@@ -2264,21 +2268,34 @@ void CMceOneRowMessageListContainer::EntryDeletedL(
             {
             // this removes node and child
             iTreeListBox->RemoveItem( parentTreeItemId, EFalse );
+            TInt deleteSubtitle = iSelectedSubTitles.Find( parentTreeItemId );
+            if ( deleteSubtitle != KErrNotFound )
+                 {
+                 iSelectedSubTitles.Remove( deleteSubtitle );
+                 }
             }
         else if ( treeItemId > KAknTreeIIDRoot )
             {
             // delete only one child, there are other children left so leave node untouched
             iTreeListBox->RemoveItem( treeItemId, EFalse );
-            if ( parentTreeItemId > KAknTreeIIDRoot )
+            if ( parentTreeItemId > KAknTreeIIDRoot &&
+                 iSelectedSubTitles.Find( parentTreeItemId ) == KErrNotFound )
                 {
-                UpdateSubtitleIconL( parentTreeItemId, EFalse );        
+                iSelectedSubTitles.AppendL( parentTreeItemId ) ;                           
                 }
             }
         }
 
-    if ( aDraw )
+    iDeletedMessges += count;  
+    if ( iSelectedEntries->Count() == iDeletedMessges )
         {
-        RefreshListbox();
+        TInt subTitleCount = iSelectedSubTitles.Count();
+        for ( TInt i = 0; i < subTitleCount; i++ )
+            {
+            UpdateSubtitleIconL( iSelectedSubTitles[i], EFalse );
+            }
+        iDeletedMessges = 0;
+        iSelectedSubTitles.Reset();
         }
     }
 

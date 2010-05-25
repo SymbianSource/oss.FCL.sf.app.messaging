@@ -22,6 +22,7 @@
 
 TARGET          audiomessage.exe
 EPOCSTACKSIZE   0x5000
+EPOCHEAPSIZE    0x1 0x800000        // As KBs. Latter about 8MB
 TARGETTYPE      exe
 UID             0x100039CE 0x1020745A
 VERSION 	10.0

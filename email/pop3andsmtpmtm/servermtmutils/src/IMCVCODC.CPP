@@ -1469,14 +1469,14 @@ Search for one or more encoded words in aLine
 
 	// Intermediate buffer for decoding, prior to converting
 
-      HBufC8* decodeBuf8 = HBufC8::NewLC(aBufOut.MaxLength());
+    HBufC8* decodeBuf8 = HBufC8::NewLC(aBufOut.MaxLength());
 
 	decodeBuf8->Des().Copy( aBufIn.Mid(i+1, j -i-1));
 
    	// Depending on type of encoding Q or B, decode.
 
 	TPtr8 dataPtr8(dataBuf8->Des());
-
+	TPtr8 decodePtr8(decodeBuf8->Des());
 	switch (iEncodingInfo.EncodingType())
 		{
 		case TImHeaderEncodingInfo::EBase64 :
@@ -1484,14 +1484,13 @@ Search for one or more encoded words in aLine
 			break;
 		case TImHeaderEncodingInfo::EQP :
 			// Replace all underscores in text with SPACE.
-			iQPCodec.Decode( *decodeBuf8, dataPtr8 );
-
-			i=dataPtr8.Length();
+			i=decodePtr8.Length();
 			while (i--)
 				{
-				if (dataPtr8[i] == KImcvUnderScore)
-					dataPtr8[i] = KImcvSpaceChar;	
+				if (decodePtr8[i] == KImcvUnderScore)
+				    decodePtr8[i] = KImcvSpaceChar;
 				}
+            iQPCodec.Decode( *decodeBuf8, dataPtr8 );
 			break;
 		default:
 			dataBuf8->Des().Copy(*decodeBuf8); 

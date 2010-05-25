@@ -1880,7 +1880,7 @@ TBool CMceOneRowListItemArrayLoader::EntryDeletedL(
                 {
                 TInt i = parentIndex+1;
                 TInt count = iHCListItemArray.Count();
-                while ( i < count && iHCListItemArray[i].iItemType == EHListItemEntry )
+                if( i < count && iHCListItemArray[i].iItemType == EHListItemEntry )
                     {
                     i++;
                     }

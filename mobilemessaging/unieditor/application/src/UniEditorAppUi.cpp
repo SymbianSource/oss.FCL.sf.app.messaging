@@ -2760,21 +2760,35 @@ void CUniEditorAppUi::DynInitFocusedMediaBasedOptionsL( CEikMenuPane* aMenuPane 
 
     aMenuPane->SetItemDimmed( EUniCmdPlayPreview, ETrue );                    
     aMenuPane->SetItemDimmed( EUniCmdSendSMS, ETrue );
+    
+    // Completely dim PlaceTextFirst and PlaceTextSecond from options menu
+    aMenuPane->SetItemDimmed( EUniCmdPlaceTextFirst, ETrue );
+    aMenuPane->SetItemDimmed( EUniCmdPlaceTextSecond, ETrue );
 
     if ( Document()->DataModel()->SmilType() != EMmsSmil ) 
+        { 
+        // It's 3GPP presentation
+        aMenuPane->SetItemDimmed( EUniCmdInsertMedia, ETrue );    
+        }
+    
+    
+    /* This code can be used if PlaceTextFirst and PlaceTextSecond 
+     * functionality is needed.
+     if ( Document()->DataModel()->SmilType() != EMmsSmil ) 
         { 
         // It's 3GPP presentation
         aMenuPane->SetItemDimmed( EUniCmdInsertMedia, ETrue );
         aMenuPane->SetItemDimmed( EUniCmdPlaceTextFirst, ETrue );
         aMenuPane->SetItemDimmed( EUniCmdPlaceTextSecond, ETrue );
         }
-    else if ( iSupportedFeatures & EUniFeatureJapanese )
+      
+     else if ( iSupportedFeatures & EUniFeatureJapanese )
         {
         // Not shown on japanese variant ever.
         aMenuPane->SetItemDimmed( EUniCmdPlaceTextFirst, ETrue );
         aMenuPane->SetItemDimmed( EUniCmdPlaceTextSecond, ETrue );        
         }
-    else
+     else
         {
         if ( iSmilModel->Layout() == EUniImageFirst )
             {
@@ -2784,7 +2798,7 @@ void CUniEditorAppUi::DynInitFocusedMediaBasedOptionsL( CEikMenuPane* aMenuPane 
             {
             aMenuPane->SetItemDimmed( EUniCmdPlaceTextFirst, ETrue );
             }
-        }
+        } */
 
     if ( Document()->DataModel()->SmilType() != EMmsSmil || 
          iSmilModel->SlideCount() <= 1 )

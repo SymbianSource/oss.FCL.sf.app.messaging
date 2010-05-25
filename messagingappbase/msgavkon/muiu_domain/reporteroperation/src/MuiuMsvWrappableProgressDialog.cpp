@@ -348,12 +348,6 @@ void CMsvWrappableProgressDialog::PostLayoutDynInitL()
 //
 void CMsvWrappableProgressDialog::PreLayoutDynInitL()
     {
-    CEikProgressInfo* bar = GetProgressInfoL();
-    if( bar )
-        {
-        bar->MakeVisible( EFalse );
-        }
-
     CAknProgressDialog::PreLayoutDynInitL();
     if ( iDisplayWaitAnimation )
         {

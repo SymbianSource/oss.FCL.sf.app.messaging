@@ -221,24 +221,24 @@ void CMceMessageListView::DoActivateL(
     // Set the default sort order
     iSortOrder = EMceCmdSortByDate;
     iOrdering = EFalse;
-	    if ( iMsgListContainer )
-	        {
-            TMsvId fId = iMsgListContainer->CurrentFolderId();
-            for( TInt loop = 0; loop < iFolderItemArray->Count() ; loop++ )
-                {
-                TMceFolderItem item = ((*iFolderItemArray)[loop]);
-                if ( item.iFolderId == fId && aPrevViewId == TDRVIEWID)
-                    {        
-                    iSortOrder = item.iSortOrder;
-                    iOrdering = item.iOrdering;
-                    }
-                }
-	        }
-	    if (aPrevViewId != TDRVIEWID ) 
+    if ( iMsgListContainer )
         {
-    // Reset the sort order
-    iFolderItemArray->Reset();
-       }
+        TMsvId fId = iMsgListContainer->CurrentFolderId();
+        for( TInt loop = 0; loop < iFolderItemArray->Count() ; loop++ )
+            {
+            TMceFolderItem item = ((*iFolderItemArray)[loop]);
+            if ( item.iFolderId == fId && aPrevViewId == TDRVIEWID)
+                {        
+                iSortOrder = item.iSortOrder;
+                iOrdering = item.iOrdering;
+                }
+            }
+        }
+    if (aPrevViewId != TDRVIEWID ) 
+        {
+        // Reset the sort order
+    	iFolderItemArray->Reset();
+        }
 	    
     if ( iMsgListContainer )
         {
@@ -249,47 +249,51 @@ void CMceMessageListView::DoActivateL(
     TBool editorLaunched = EFalse;
     TBool launchingFromOutside = EFalse;  
     TMsvId service = KMsvLocalServiceIndexEntryId;
-    TMsvEntry entry;
+    TMsvEntry entry;    
+    TInt msgMtmUid = 0;
     
     if ( aCustomMessageId.iUid > KMsvRootIndexEntryId )
         {
-        
+
         if ( iSession->GetEntry( aCustomMessageId.iUid, service, entry ) != KErrNone )
             {
             iSession->GetEntry( KMsvGlobalInBoxIndexEntryId, service, entry ); // this should always succeed!
             }
-        
+
         // outside the app.
         launchingFromOutside = ETrue;
-        //check, if message store has been changed from MMC to phone
-        iMceUi->ToPhoneMemoryQueryL( ETrue );
-
         // Set the forder containing the entry
-    	if ( entry.iType == KUidMsvMessageEntry )
-        	{
-        // The aCustomMessageId is an ID of a message, set Inbox
-        	SetFolderL( entry.Parent() );
-        	id = aCustomMessageId.iUid;
-        	}
-    	else
-        	{
+        if ( entry.iType == KUidMsvMessageEntry )
+            {
+            // The aCustomMessageId is an ID of a message, set Inbox
+            SetFolderL( entry.Parent() );
+            id = aCustomMessageId.iUid;
+            }
+        else
+            {
             // Set the folder based on the given ID
             iFolderId = aCustomMessageId.iUid;
-
-        	}
+            // this is performance optimization, start to launch viewer before container creation
+            if ( !iMsgListContainer && entry.Id() == KMsvGlobalInBoxIndexEntryId )
+                {
+                if ( LaunchViewerWhenOneUnreadL( msgMtmUid ) > KErrNotFound )
+                    {
+                    editorLaunched = ETrue;
+                    }
+                }
+            }
         iMceUi->SetDontExitOnNextOperationComplete();
         }
-	if ( iMsgListContainer &&
-	     iCurrentListType != GetFolderListBoxType())
-	    {
-	    ListboxTypeChangedL();
-	    }
-	else
-	    {
-	    CreateListboxL();        
-	    }
     
-    
+    if ( iMsgListContainer &&
+            iCurrentListType != GetFolderListBoxType())
+        {
+        ListboxTypeChangedL();
+        }
+    else
+        {
+        CreateListboxL();        
+        }           
     if ( iMsgListContainer && aPrevViewId == TDRVIEWID )
         {
         // Save the sort ordering in the message store
@@ -977,6 +981,16 @@ void CMceMessageListView::DynInitMenuPaneL(
     TInt aResourceId,
     CEikMenuPane* aMenuPane )
     {
+    TInt listPopulated = 1;
+    //Get the value, accordingly we can dim/undim mark/unmark for one row list only
+    if ( iCurrentListType == EMceListTypeOneRow )
+        {
+        TInt r = RProperty::Get(KPSUidMuiu, KMuiuOneRowListPopulated,listPopulated);
+        if ( r!= KErrNone )
+            {
+            User::LeaveIfError(r);
+            }
+        }
     if ( !iMceViewActivated )
         {
         return;
@@ -1001,6 +1015,10 @@ void CMceMessageListView::DynInitMenuPaneL(
     switch ( aResourceId )
         {
         case R_MCE_FOLDER_MENU:
+            if(!listPopulated)
+                {
+            	aMenuPane->SetItemDimmed( EMceCmdEditList, ETrue );
+                }
             aMenuPane->SetItemDimmed( EAknCmdHelp,
                 !FeatureManager::FeatureSupported( KFeatureIdHelp ) );
 
@@ -1834,8 +1852,6 @@ void CMceMessageListView::FolderMenuOneItemL( CEikMenuPane* aMenuPane,
                 // Coverty change, NULL Return, http://ousrv057/cov.cgi?cid=101800
                 if ( uiData )
                     {
-                    aMenuPane->SetItemDimmed( EAknCmdOpen, 
-                     uiData->OperationSupportedL( KMtmUiFunctionOpenMessage, currentEntry ) );
                     aMenuPane->SetItemDimmed( EMceCmdDelete, 
                      uiData->OperationSupportedL( KMtmUiFunctionDeleteMessage, currentEntry ) );
                     }                 
@@ -2294,18 +2310,8 @@ void CMceMessageListView::FolderMenuSyncMLFolderL( CEikMenuPane *aMenuPane )
 // ----------------------------------------------------
 void CMceMessageListView::EditMenuL( CEikMenuPane* aMenuPane ) const
     {
-    TInt listPopulated =1;
-    //Get the value, accordingly we can dim/undim mark all for one row list only
-    if(!iCurrentListType)
-        {
-        TInt r = RProperty::Get( KPSUidMuiu, KMuiuOneRowListPopulated, listPopulated );
-        if ( r != KErrNone )
-        	{
-            User::LeaveIfError( r );
-            }
-        }
-    // This function is not called if empty folder because in that case
-    // EditMenu is hidden
+    // This function is not called if empty folder/list is yet to be populated
+    // because in that case EditMenu is hidden
     aMenuPane->SetItemDimmed( EAknCmdMarkReadMsgs, ETrue );
 
     TInt count = iMsgListContainer->SelectionCount();
@@ -2326,7 +2332,7 @@ void CMceMessageListView::EditMenuL( CEikMenuPane* aMenuPane ) const
             }
        }   
 
-    if ( ( count + SubfolderCount() ) == iMsgListContainer->Count() || !listPopulated)
+    if ( ( count + SubfolderCount() ) == iMsgListContainer->Count())
        {
        //if all selected, disable markall
        aMenuPane->SetItemDimmed( EAknMarkAll, ETrue );

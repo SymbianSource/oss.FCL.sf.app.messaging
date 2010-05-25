@@ -249,6 +249,7 @@ A list if MMS account Ids
 */                   
 EXPORT_C void CMmsAccounts::GetMMSAccountsL(RArray<TMmsAccountId>& aAccountIds) const
 	{
+    CleanupClosePushL( aAccountIds );
 	aAccountIds.Reset();
 	RArray<TUint32> accountIds;	
 	CleanupClosePushL(accountIds);	
@@ -268,7 +269,8 @@ EXPORT_C void CMmsAccounts::GetMMSAccountsL(RArray<TMmsAccountId>& aAccountIds) 
 		aAccountIds.AppendL(accountId);		
 		}
 		
-	CleanupStack::PopAndDestroy(&accountIds);				
+	CleanupStack::PopAndDestroy(&accountIds);
+	CleanupStack::Pop(&aAccountIds);  // aAccountIds
 	}
 
 /**

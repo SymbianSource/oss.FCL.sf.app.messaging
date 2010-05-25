@@ -587,7 +587,17 @@ class  CMceOneRowMessageListContainer :
          * KFeatureIdFfEmailFramework is enabled
          */
         TBool                       iEmailFramework;
-        CMtmUiDataRegistry*             iUiRegistry;
+        CMtmUiDataRegistry*         iUiRegistry;
+        /**
+         * For mass deletion of messages in onerowlist 
+         * iDeletedMessges will keeptrack of no of messages got actually 
+         *                 deleted and we got the call back from m/w
+         * iSelectedSubTitles will keep list of all the subtitles from where
+         *                 messages got deleted but not the subtitle.  
+         */
+        TInt                        iDeletedMessges;
+        RArray<TAknTreeItemID>      iSelectedSubTitles;
+
     };
 
 #endif

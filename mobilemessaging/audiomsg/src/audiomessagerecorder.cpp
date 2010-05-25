@@ -469,10 +469,6 @@ void CAudioMessageRecorder::InitializeAudioRoutingL()
 		if ( !iAudioOutput )
 			{
 		    TRAPD( err, iAudioOutput = CAudioOutput::NewL( *iRecUtility, EFalse ) );
-			if (err == KErrNone)
-				{
-				iAudioOutput->SetSecureOutputL( EFalse );//DRM
-				}
 			}
 		}
 	}

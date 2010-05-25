@@ -375,6 +375,7 @@ void CMsgSmsViewerAppUi::LaunchViewL()
         return;
         }
     
+    TBool toolbarVisible = EFalse;
 #ifdef RD_SCALABLE_UI_V2
     if ((!iToolbar)&& (AknLayoutUtils::PenEnabled() && !msvEntry1.iBioType && !iFlags.iGms) )
     	{
@@ -392,15 +393,15 @@ void CMsgSmsViewerAppUi::LaunchViewL()
         
         appUiFactory->SetViewFixedToolbar( iToolbar );    	
         iToolbar->SetToolbarVisibility( ETrue, EFalse ); 
-	    }
-	    
-	//handling the case of iToolbar already created [delete the toolbar incase of biomsgs]
-	else if((iToolbar)&&(AknLayoutUtils::PenEnabled() && msvEntry1.iBioType && iFlags.iGms)) 
-		{
-		    delete iToolbar;
-    		iToolbar = NULL;
-		}
-	
+        toolbarVisible = ETrue;
+	    }	    
+    //handling the case of iToolbar already created [delete the toolbar incase of biomsgs]
+    else if((iToolbar)&&(AknLayoutUtils::PenEnabled() && msvEntry1.iBioType && iFlags.iGms)) 
+        {
+            delete iToolbar;
+            iToolbar = NULL;
+        }
+        
 #endif	
     // Creating view (exits app immediately if fails)
     iView = CMsgEditorView::NewL( *this, CMsgEditorView::EMsgReadOnly );
@@ -535,19 +536,25 @@ void CMsgSmsViewerAppUi::LaunchViewL()
        	iNaviDecorator->SetNaviDecoratorObserver( this );
        	if ( iToolbar )
        		{
-       		//By Default make take touchbar invisible, dimmed and disabled
-       		iToolbar->SetToolbarVisibility(EFalse, EFalse);
-       		iToolbar->SetDimmed(ETrue);
-       		iToolbar->DisableToolbarL( ETrue );
-
+       	
+       	   if ( iFlags.iBioMsg || iFlags.iGms ) 
+       	        {
+                //By Default make take touchbar invisible, dimmed and disabled
+                iToolbar->SetToolbarVisibility(EFalse, EFalse);
+                iToolbar->SetDimmed(ETrue);
+                iToolbar->DisableToolbarL( ETrue );
+       	        }
+       	   
        		//Test that message type is normal SMS
        		if ( !iFlags.iBioMsg && !iFlags.iGms) 
        			{
-       			//Enable the touchbar, make it visible and undimmed
-       			iToolbar->DisableToolbarL( EFalse );
-       			iToolbar->SetDimmed(EFalse);
-       			iToolbar->SetToolbarVisibility(ETrue, EFalse);
-
+       		    if(!toolbarVisible)
+       		        {
+                    //Enable the touchbar, make it visible and undimmed
+                    iToolbar->DisableToolbarL( EFalse );
+                    iToolbar->SetDimmed(EFalse);
+                    iToolbar->SetToolbarVisibility(ETrue, EFalse);
+       		        }
                	// default state, nothing dimmed. Uncomment the below lines only if necessary to force set it dim again
                  /*
                		iToolbar->SetItemDimmed(ESmsViewerToolbarReply, EFalse, EFalse);
@@ -2049,12 +2056,20 @@ void CMsgSmsViewerAppUi::CheckDiskAndReplyForwardL( TBool aForward )
         User::Leave( KErrDiskFull );
         }
 
-
+    //to reduce flickering after sending a message.
+	if (!(iEditorBaseFeatures & EStayInViewerAfterReply ))
+        {
+        iToolbar->SetToolbarVisibility( EFalse );
+        iView->MakeVisible( EFalse );
+        iNaviDecorator->MakeVisible( EFalse );
+        }
         
     TRAPD(err, DoReplyFwdL( aForward ));
     if(!(err == KErrNone) )
         {
+        iNaviDecorator->MakeVisible( ETrue );
         iView->MakeVisible( ETrue );
+        iToolbar->SetToolbarVisibility( ETrue );
         }    
     
     }
