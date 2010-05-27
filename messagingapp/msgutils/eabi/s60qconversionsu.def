@@ -1,6 +1,0 @@
-EXPORTS
-	_ZN15S60QConversions16qStringToS60DescERK7QString @ 1 NONAME
-	_ZN15S60QConversions16s60DescToQStringERK7TDesC16 @ 2 NONAME
-	_ZN15S60QConversions17qStringToS60Desc8ERK7QString @ 3 NONAME
-	_ZN15S60QConversions17s60Desc8ToQStringERK6TDesC8 @ 4 NONAME
-
