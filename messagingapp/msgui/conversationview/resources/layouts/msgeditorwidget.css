@@ -1,0 +1,30 @@
+MsgEditorWidget
+{
+  layout:layout-msg-editor;
+}
+
+MsgEditorWidget::msgEditor
+{
+  left:-var(hb-param-margin-gene-middle-horizontal);
+  right:var(hb-param-margin-gene-middle-horizontal);
+  bottom:var(hb-param-margin-gene-middle-vertical);
+  top:-var(hb-param-margin-gene-middle-vertical); 
+  min-height:7.46un;
+}
+
+MsgEditorWidget::sendButton
+{
+  top:-var(hb-param-margin-gene-middle-vertical);
+  right:var(hb-param-margin-gene-middle-horizontal);
+  bottom:var(hb-param-margin-gene-middle-vertical);
+  fixed-width: 9.34un;
+  fixed-height: 7.46un;
+}
+
+MsgEditorWidget::charCounter
+{
+	  size-policy:fixed fixed;
+	  pref-height:-1;
+	  pref-width:-1;
+	  text-height:var(hb-param-text-height-tiny);
+}
