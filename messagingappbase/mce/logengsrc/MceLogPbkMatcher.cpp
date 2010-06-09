@@ -255,7 +255,7 @@ void CMceLogPbkMatcher::RunL()
 
 TInt CMceLogPbkMatcher::RunError(TInt aError)
     {
-    if( aError == KErrAccessDenied ) // backup active
+    if( aError == KErrAccessDenied || aError == KErrInUse ) // backup active
         {
         return KErrNone;
         }

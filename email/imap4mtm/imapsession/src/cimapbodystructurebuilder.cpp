@@ -216,8 +216,16 @@ void CImapBodyStructureBuilder::ParseLoopL()
 				// Found a "MESSAGE/RFC822" body structure.
 				// This contains an embedded bodystructure, so parse up to the structure,
 				// and then allow the loop to parse the embedded structure.
-				ParseBodyTypeMessageRfc822L();
-				parseStep = EParseNewBodyStructure;
+				TRAPD(err, ParseBodyTypeMessageRfc822L());
+				if(err == KErrImapCorrupt)
+				    {
+				parseStep =EParseRemainderMessageRfc822;
+				    }
+				else
+				    {
+                    parseStep = EParseNewBodyStructure;
+				    }
+				
 				}
 				break;
 			case EParseRemainderMessageRfc822:
@@ -520,13 +528,14 @@ void CImapBodyStructureBuilder::ParseBodyTypeMessageRfc822L()
 	{
 	// body-fields SP SP body SP body-fld-lines
 	ParseBodyFieldsL();
-	
-	// envelope
-	ParseEnvelopeL();
-	
-	// Expect a body substructure next.
-	// Position iAtomWalker at the opening bracket, ready for ParseBodyStructureTypeL
-	iAtomWalker->WalkAcrossL(ETrue);
+	//Sometime RFCb22  message has empty evvelopel, in that case we are traping this and  processed.
+    TRAPD(err, ParseEnvelopeL());
+   
+    // Expect a body substructure next.
+    // Position iAtomWalker at the opening bracket, ready for ParseBodyStructureTypeL
+    iAtomWalker->WalkAcrossL(ETrue);
+    if(err == KErrImapCorrupt)
+        CImapCommand::CorruptDataL(iLogId);
 	}
 
 /**

@@ -121,6 +121,11 @@ class CMsgBodyControlEditor : public CMsgExpandableControlEditor,
          * For handling dynamic layout switch.
          */
          void HandleResourceChange( TInt aType );
+         
+         /**
+         * Preparing for readonly/ viewers
+         */
+         void PrepareForReadOnlyL( TBool aReadOnly );
         
     public:  // from CEikRichTextEditor
 

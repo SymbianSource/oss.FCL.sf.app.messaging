@@ -1190,7 +1190,7 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
                 }
             
             iFindItemMenu->AddItemFindMenuL( 
-                ( iView->ItemFinder()->CurrentSelection().Length() ) 
+                ( iView->ItemFinder() && iView->ItemFinder()->CurrentSelection().Length() ) 
                 ? iView->ItemFinder( ) : 0,
                 aMenuPane, 
                 EFindItemMenuPlaceHolder,

@@ -1130,11 +1130,11 @@ void CMsgSmsViewerAppUi::DynInitNonBioOptionsMenuL( CEikMenuPane* aMenuPane )
         //Added to remove Copy-option when sender number is not valid (for example it has alphabets)    
         if ( iFlags.iValidSenderNumber || IsBodyFocused() )
         	{
+            iFindItemMenu->SetSenderHighlightStatus( ( senderHighlighted && 
+                            iView->ControlById( EMsgComponentIdFrom ) == iView->FocusedControl() ) );
+            iFindItemMenu->SetSenderDisplayText( senderNumber );
 	        if( !iFlags.iVoIPNumber )
 	            {
-	            iFindItemMenu->SetSenderHighlightStatus( 
-	                iView->ControlById( EMsgComponentIdFrom ) == iView->FocusedControl() );
-	            iFindItemMenu->SetSenderDisplayText( senderNumber );
 	            iFindItemMenu->AddItemFindMenuL( 
 	                FindItemHighlighted() ? iView->ItemFinder() : 0,
 	                aMenuPane, EFindItemMenuPlaceHolder,
@@ -1143,9 +1143,6 @@ void CMsgSmsViewerAppUi::DynInitNonBioOptionsMenuL( CEikMenuPane* aMenuPane )
 	            }
 	        else
 	            {
-	            iFindItemMenu->SetSenderHighlightStatus( 
-	                iView->ControlById( EMsgComponentIdFrom ) == iView->FocusedControl() );
-	            iFindItemMenu->SetSenderDisplayText( senderNumber );
 	            iFindItemMenu->AddItemFindMenuL( 
 	                FindItemHighlighted() ? iView->ItemFinder() : 0,
 	                aMenuPane, EFindItemMenuPlaceHolder,
@@ -2059,7 +2056,10 @@ void CMsgSmsViewerAppUi::CheckDiskAndReplyForwardL( TBool aForward )
     //to reduce flickering after sending a message.
 	if (!(iEditorBaseFeatures & EStayInViewerAfterReply ))
         {
-        iToolbar->SetToolbarVisibility( EFalse );
+			if(iToolbar)
+			{
+        		iToolbar->SetToolbarVisibility( EFalse );
+			}
         iView->MakeVisible( EFalse );
         iNaviDecorator->MakeVisible( EFalse );
         }
@@ -2069,7 +2069,10 @@ void CMsgSmsViewerAppUi::CheckDiskAndReplyForwardL( TBool aForward )
         {
         iNaviDecorator->MakeVisible( ETrue );
         iView->MakeVisible( ETrue );
-        iToolbar->SetToolbarVisibility( ETrue );
+			if(iToolbar)
+			{
+        		iToolbar->SetToolbarVisibility( ETrue );
+			}
         }    
     
     }

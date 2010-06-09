@@ -3565,11 +3565,15 @@ void CUniEditorAppUi::DoUserAddRecipientL()
     CleanupStack::PushL( TCleanupItem( DisableSendKey, this ) );
     // add to current control or To control
     TBool addressesAdded(EFalse);
-    TRAP_IGNORE( addressesAdded = iHeader->AddRecipientL(  iView->FocusedControl(), 
+    TRAPD( err, addressesAdded = iHeader->AddRecipientL(  iView->FocusedControl(), 
                                                     iView, 
                                                     AcceptEmailAddresses(),
-                                                    invalid ));
-    
+                                                    invalid ) );
+    if( err == KLeaveExit )
+        {
+        CAknEnv::RunAppShutter();
+        }
+
     CleanupStack::PopAndDestroy(2);//DisableSendKey,UpdateFixedToolbar
     iEditorFlags &= ~EMsgEditInProgress;
 

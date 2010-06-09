@@ -254,7 +254,8 @@ void CNcnSession::ServiceNewMessages1L( const RMessage2& aMessage )
     MNcnNotification::TIndicationType indicationType =
         static_cast <MNcnNotification::TIndicationType> ( aMessage.Int1() );
     CNcnUnpackDescrArray* packedInfo = CNcnUnpackDescrArray::NewLC();
-    packedInfo->UnpackL( aMessage, 2 );
+    //Code is commented as a fix for JLEG-843DKF.Since third argument is not used, we don't process it.
+    //packedInfo->UnpackL( aMessage, 2 );
     iObserver.HandleNewMessagesL( mailBox, indicationType, *packedInfo );
     CleanupStack::PopAndDestroy( packedInfo );
     }

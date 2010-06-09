@@ -119,7 +119,6 @@ void CMsgBodyControlEditor::ConstructL()
                                       CItemFinder::EUriScheme );
 
     iItemFinder->AddObserver( *this );
-    iItemFinder->SetItemFinderObserverL( this );  
     
     iFocusChangedBeforeParseFinish = EFalse;
 
@@ -738,5 +737,29 @@ void CMsgBodyControlEditor::HandleResourceChange( TInt aType )
          MsgEditorCustomDraw()->SkinChanged();;    
     	}
     }
+// ---------------------------------------------------------
+// CMsgBodyControlEditor::PrepareForReadOnlyL
+//
+// Sets SetItemFinderObserverL for viewers
+// ---------------------------------------------------------
+//
+
+void CMsgBodyControlEditor::PrepareForReadOnlyL( TBool aReadOnly )
+   {
+   if ( iItemFinder )
+       {
+       if ( aReadOnly )
+           {
+           iItemFinder->SetItemFinderObserverL( this ); 
+           }
+       else
+           {
+           iItemFinder->SetItemFinderObserverL( NULL );
+           }
+       } 
+
+   CMsgExpandableControlEditor::PrepareForReadOnlyL( aReadOnly );
+   }
+
 
 //  End of File

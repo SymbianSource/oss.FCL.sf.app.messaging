@@ -50,6 +50,7 @@ protected:
 	void DoRunL();
 	void DoCancel();
 private:
+	CImapSettings*              iImapSettings;
 	CMsvServerEntry& 			iServerEntry;
 	CImapProtocolController& 	iImapProtocolController;
 	CMsvEntrySelection* 		iEntrySelection;

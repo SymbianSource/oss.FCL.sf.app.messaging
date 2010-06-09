@@ -37,7 +37,8 @@ Default constructor.
 CImapUpsResponseWaiter::CImapUpsResponseWaiter(CMsvServerEntry& aServerEntry, CImapProtocolController& aImapProtocolController)
 	:CMsgActive(EPriorityStandard), iServerEntry(aServerEntry), iImapProtocolController(aImapProtocolController)
 	{
-	CActiveScheduler::Add(this);
+    iImapSettings = CImapSettings::NewL(iServerEntry);
+    CActiveScheduler::Add(this);
 	}
 
 /**
@@ -46,6 +47,7 @@ Destructor.
 CImapUpsResponseWaiter::~CImapUpsResponseWaiter()
 	{
 	Cancel();
+	delete iImapSettings;
 	iUpsSubsession.Close();
 	iUpsSession.Close(); 
 	}
@@ -73,28 +75,32 @@ void CImapUpsResponseWaiter::AuthoriseAndConnectL(CMsvEntrySelection& aEntrySele
 		{
 		iState = EIMAP4MTMConnectAndSynchronise;
 		}
-	iEntrySelection = &aEntrySelection;
+	
+    iEntrySelection = &aEntrySelection;
 	
 	iDecision = EUpsDecNo;
 	
-	CImapSettings* imapSettings = CImapSettings::NewL(iServerEntry);
-	CleanupStack::PushL(imapSettings);
-	imapSettings->LoadSettingsL(iServerEntry.Entry().Id());
+	if( iImapSettings->SettingsLoaded() == EFalse)
+	    {
+	    iImapSettings->LoadSettingsL(iServerEntry.Entry().Id());
+	    }
 
 	// Connect to UPS service.....
 	User::LeaveIfError(iUpsSession.Connect());
+
 	RThread clientThread;
  	User::LeaveIfError(clientThread.Open(aClientThreadId));
 	CleanupClosePushL(clientThread);
- 	User::LeaveIfError(iUpsSubsession.Initialise(iUpsSession, clientThread));
+
+    User::LeaveIfError(iUpsSubsession.Initialise(iUpsSession, clientThread));
 	CleanupStack::PopAndDestroy(&clientThread);
 	
-	
 	iStatus=KRequestPending;
-	iUpsSubsession.Authorise(aHasCapability, KUidIMAPService, imapSettings->ServerAddress(), iDecision, iStatus);
+	iUpsSubsession.Authorise(aHasCapability, KUidIMAPService, iImapSettings->ServerAddress(), iDecision, iStatus);
+
 	Queue(aStatus);
 	SetActive();
-	CleanupStack::PopAndDestroy();// imapSettings
+    	
 	}
 
 

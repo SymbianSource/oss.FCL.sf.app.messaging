@@ -203,5 +203,5 @@ RESOURCE LBUF partial_download_footer_message
 
 RESOURCE INT8 store_plain_body_text
 	{
-	value = 0;
+	value = 1;
 	}

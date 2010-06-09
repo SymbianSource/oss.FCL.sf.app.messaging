@@ -125,7 +125,7 @@ void CMceDeliveryReportView::HandleCommandL( TInt aCommandId )
             	{
             	TPhCltNameBuffer recipientstring( KNullDesC );
             	iAvkonAppUi->SetKeyEventFlags( CAknAppUiBase::EDisableSendKeyShort | CAknAppUiBase::EDisableSendKeyLong );
-			        MsvUiServiceUtilitiesInternal::CallToSenderQueryL( tel, recipientstring, EFalse );
+			        MsvUiServiceUtilitiesInternal::CallToSenderQueryL( tel, recipientstring, ETrue );
 			        iAvkonAppUi->SetKeyEventFlags( 0x00 );
               }
             }

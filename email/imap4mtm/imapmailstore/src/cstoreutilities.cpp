@@ -48,7 +48,6 @@ CStoreUtilities* CStoreUtilities::NewL(TImEncodingType aEncodingType,TUint aChar
 	
 void CStoreUtilities::ConstructL()
 	{
-	User::LeaveIfError(iFs.Connect());
 	// Create converter objects
 	iCharacterConverter=CCnvCharacterSetConverter::NewL();
 	iCharConv=CImConvertCharconv::NewL(*iCharacterConverter, iFs);	
