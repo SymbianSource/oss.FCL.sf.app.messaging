@@ -52,9 +52,9 @@ public:
                                          QString& displayName,
                                          int& countPhoneNumber)
     {
-        QContactManager * phonebookManager;
+        QContactManager phonebookManager;
         QContactDetailFilter phoneFilter;
-        phonebookManager = new QContactManager("symbian");
+        
         phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName,
                                             QContactPhoneNumber::FieldNumber);
 
@@ -63,7 +63,7 @@ public:
         phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
 
         QList<QContact> matchingContacts =
-                phonebookManager->contacts(phoneFilter);
+                phonebookManager.contacts(phoneFilter);
 
         if (matchingContacts.count() > 0)
         {
@@ -161,17 +161,20 @@ public:
                 if (versitDocuments.count() > 0)
                 {
                     QVersitContactImporter importer;
-                    QList<QContact> contacts =
-                            importer.importContacts(versitDocuments);
-                    // get display-name
-                    if (contacts.count() > 0)
+                    bool import_docs = importer.importDocuments(versitDocuments);
+                    if(import_docs)
                     {
-                        //resolveSynthesizedDisplayLabel
-                        QContactManager* contactManager =
+                       QList<QContact> contacts = importer.contacts();
+                       // get display-name
+                       if (contacts.count() > 0)
+                       {
+                          //resolveSynthesizedDisplayLabel
+                          QContactManager* contactManager =
                                 new QContactManager("symbian");
-                        displayName
+                          displayName
                                 = contactManager->synthesizedDisplayLabel(contacts[0]);
-                        delete contactManager;
+                          delete contactManager;
+                       }
                     }
                 }
             }

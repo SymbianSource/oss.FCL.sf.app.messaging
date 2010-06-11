@@ -25,6 +25,13 @@
 #include <e32const.h>
 #include <SendUiConsts.h>
 #include <utf.h>
+#include <centralrepository.h>
+#include <MmsConformance.h>
+#include <mmsconst.h>
+#include <msgmediainfo.h>
+#include <MsgMediaResolver.h>
+#include <fileprotectionresolver.h>
+#include <MmsEngineInternalCRKeys.h>
 //CONSTANTS
 //DB-file
 _LIT(KDbFileName, "c:[2002A542]conversations.db");
@@ -33,15 +40,21 @@ _LIT(KEncodingStmnt,"PRAGMA encoding=\"UTF-8\"");
 //Size
 _LIT(KCacheSizeStmnt,"PRAGMA default_cache_size = 1024");
 // Create table query statement
-_LIT(KSqlCreateStmt, "CREATE TABLE IF NOT EXISTS conversation_messages ( message_id  INTEGER PRIMARY KEY, msg_parsed  INTEGER DEFAULT 0, subject TEXT(100), body_text TEXT(160), preview_path TEXT, msg_property INTEGER, preview_icon BLOB DEFAULT NULL ) " );
+_LIT(KSqlCreateStmt, "CREATE TABLE IF NOT EXISTS conversation_messages ( message_id  INTEGER PRIMARY KEY, msg_processingstate INTEGER DEFAULT 0, subject TEXT(100), body_text TEXT(160), preview_path TEXT, msg_property INTEGER, preview_icon BLOB DEFAULT NULL ) " );
+//Create an empty record for the given message id
+_LIT(KSqlBasicInsertStmt, "INSERT OR REPLACE INTO conversation_messages ( message_id ) VALUES( :message_id )");
 //Insert without bitmap query
-_LIT(KSqlInsertStmt, "INSERT OR REPLACE INTO conversation_messages (message_id, msg_parsed, subject, body_text, preview_path, msg_property ) VALUES( :message_id, :msg_parsed, :subject, :body_text, :preview_path,  :msg_property )");
+_LIT(KSqlInsertStmt, "INSERT OR REPLACE INTO conversation_messages ( message_id, msg_processingstate, subject, body_text, preview_path, msg_property ) VALUES( :message_id, :msg_processingstate, :subject, :body_text, :preview_path,  :msg_property )");
+//update processing-state flag of a message
+_LIT(KSqlUpdateProcessingStateStmt, "UPDATE conversation_messages SET msg_processingstate=:msg_processingstate WHERE message_id=:message_id " );
 //update with bitmap query
 _LIT(KSqlUpdateBitmapStmt, "UPDATE conversation_messages SET preview_icon=:preview_icon WHERE message_id=:message_id " );
-// query to see if msg_parsed is set
-_LIT(KSelectMsgParsedStmt, " SELECT message_id, msg_parsed  FROM conversation_messages WHERE message_id=:message_id ");
+// query to see if msg is under process at the moment
+_LIT(KSelectProcessingStateStmt, " SELECT message_id, msg_processingstate FROM conversation_messages WHERE message_id=:message_id ");
 // Remove record from conversation_messages table.
 _LIT(KRemoveMsgStmnt,"DELETE FROM conversation_messages WHERE message_id=:message_id");
+
+const TInt KDefaultMaxSize = 300 * 1024;
 
 // NOTE:- DRAFTS ENTRIES ARE NOT HANDLED IN THE PLUGIN
 
@@ -162,6 +175,23 @@ void CCsPreviewPluginHandler::ConstructL(CCsPreviewPlugin *aMsgObserver)
         User::LeaveIfError(error);
     }
 
+    //get the max size of mms from the repository
+    TRAP_IGNORE(
+            CRepository* repository = CRepository::NewL(KCRUidMmsEngine);
+            CleanupStack::PushL(repository);
+
+            //Fetch and set max mms composition size
+            TInt maxSize = KDefaultMaxSize;
+            repository->Get( KMmsEngineMaximumSendSize, maxSize );
+            iMaxMmsSize = maxSize;
+
+            //Fetch and set creation mode
+            TInt creationMode = EMmsCreationModeRestricted;
+            repository->Get(KMmsEngineCreationMode, creationMode);
+            iCreationMode = creationMode;
+
+            CleanupStack::PopAndDestroy(repository);
+    );
     PRINT ( _L("End CCsPreviewPluginHandler::ConstructL") );
 }
 
@@ -259,28 +289,17 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
 
             TInt msgId = entry.Id();
 
-            //check if the message is already parsed
-            RSqlStatement sqlSelectStmt;
-            CleanupClosePushL(sqlSelectStmt);
-            sqlSelectStmt.PrepareL(iSqlDb,KSelectMsgParsedStmt);
-            TInt messageIdIndex = sqlSelectStmt.ParameterIndex(
-                _L(":message_id"));
-
-            User::LeaveIfError(sqlSelectStmt.BindInt(messageIdIndex, msgId));
-
-            if (sqlSelectStmt.Next() == KSqlAtRow)
+            // check if the msg is already under processing Or processed
+            if( EPreviewMsgNotProcessed != msgProcessingState(msgId) )
             {
-                TInt parsedColIndex = sqlSelectStmt.ColumnIndex(
-                    _L("msg_parsed"));
-                TInt msgParsed = sqlSelectStmt.ColumnInt(parsedColIndex);
-                //if message alresdy parsed, move to next message.
-                if (msgParsed)
-                {
-                    CleanupStack::PopAndDestroy(&sqlSelectStmt);
-                    continue;
-                }
+                // skip processing this event for the given message
+                continue;
             }
-            CleanupStack::PopAndDestroy(&sqlSelectStmt);
+            else
+            {
+                // start processing message, set flag
+                setMsgProcessingState(msgId, EPreviewMsgProcessing);
+            }
 
             // update db with message preview data
             RSqlStatement sqlInsertStmt;
@@ -301,6 +320,13 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
             if (iUniDataModel->AttachmentList().Count() > 0)
             {
                 msgProperty |= EPreviewAttachment;
+            }
+
+            //check for msg forward
+            //Validate if the mms msg can be forwarded or not
+            if (ValidateMsgForForward(iUniDataModel))
+            {
+                msgProperty |= EPreviewForward;
             }
 
             TPtrC videoPath;
@@ -393,10 +419,9 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
             User::LeaveIfError(sqlInsertStmt.BindInt(msgPropertyIndex,
                 msgProperty));
 
-            //msg-parsed
-            TInt msgParsedIndex = sqlInsertStmt.ParameterIndex(
-                _L(":msg_parsed"));
-            User::LeaveIfError(sqlInsertStmt.BindInt(msgParsedIndex, 1)); // 1 as true
+            //msg_processingstate
+            TInt msgProcessingStateIndex = sqlInsertStmt.ParameterIndex(_L(":msg_processingstate"));
+            User::LeaveIfError(sqlInsertStmt.BindInt(msgProcessingStateIndex, EPreviewMsgProcessed));
 
             //execute sql stament
             User::LeaveIfError(sqlInsertStmt.Exec());
@@ -505,6 +530,180 @@ void CCsPreviewPluginHandler::HandleThumbnailReadyL(MThumbnailData& aThumbnail,
     CleanupStack::PopAndDestroy(2,&sqlInsertStmt);//sqlInsertStmt,previewIconStream
 }
 
+TBool CCsPreviewPluginHandler::ValidateMsgForForward(CUniDataModel* aUniDataModel)
+{
+    TBool retValue = ETrue;
+
+    //1. Check the slide count more than 1
+    if (aUniDataModel->SmilModel().SlideCount() > 1)
+    {
+        retValue = EFalse;
+        return retValue;
+    }
+
+    //2. message sixe check
+    //Fetch and set max mms composition size
+    if (iMmsMtm->MessageSize() > iMaxMmsSize)
+    {
+        retValue = EFalse;
+        return retValue;
+    }
+
+    //3. If there is restricted content then return false
+    RArray<TMsvAttachmentId>* pathList = GetSlideAttachmentIds(
+            0, 
+            aUniDataModel);
+    
+    CleanupStack::PushL(pathList);
+
+    for (int i = 0; i < pathList->Count(); i++)
+    {
+        TMsvAttachmentId aId = (*pathList)[i];
+        CMsvStore * store = iMmsMtm->Entry().ReadStoreL();
+        CleanupStack::PushL(store);
+        MMsvAttachmentManager& attachMan = store->AttachmentManagerL();
+        RFile fileHandle = attachMan.GetAttachmentFileL(aId);
+        //close the store
+        CleanupStack::PopAndDestroy(store);
+
+        if (CheckModeForInsertL(fileHandle) != EInsertSuccess)
+        {
+            retValue = EFalse;
+            break;
+        }
+    }
+
+    if (retValue == EFalse)
+    {
+        CleanupStack::PopAndDestroy(pathList);
+        return retValue;
+    }
+
+    CleanupStack::Pop(pathList);
+    delete pathList;
+    pathList = NULL;
+
+    //4. check the same case for all attachments
+    pathList = GetAttachmentIdList(aUniDataModel);
+    CleanupStack::PushL(pathList);
+
+    for (int i = 0; i < pathList->Count(); i++)
+    {
+        TMsvAttachmentId aId = (*pathList)[i];
+        CMsvStore * store = iMmsMtm->Entry().ReadStoreL();
+        CleanupStack::PushL(store);
+        MMsvAttachmentManager& attachMan = store->AttachmentManagerL();
+        RFile fileHandle = attachMan.GetAttachmentFileL(aId);
+        //close the store
+        CleanupStack::PopAndDestroy(store);
+        
+        if (CheckModeForInsertL(fileHandle) != EInsertSuccess)
+        {
+            retValue = EFalse;
+            break;
+        }
+    }
+
+    CleanupStack::PopAndDestroy(pathList);
+    return retValue;
+}
+
+RArray<TMsvAttachmentId>*
+CCsPreviewPluginHandler::GetSlideAttachmentIds(TInt aSlideNum,
+                                        CUniDataModel* aUniDataModel)
+{
+    TInt slideObjectCount =
+            aUniDataModel->SmilModel().SlideObjectCount(aSlideNum);
+
+    RArray<TMsvAttachmentId> *attachmentIdList = new (ELeave) RArray<
+            TMsvAttachmentId> ();
+    for (TInt i = 0; i < slideObjectCount; i++)
+    {
+        CUniObject *obj =
+                aUniDataModel->SmilModel().GetObjectByIndex(aSlideNum, i);
+        attachmentIdList->Append(obj->AttachmentId());
+    }
+    return attachmentIdList;
+}
+
+RArray<TMsvAttachmentId>*
+CCsPreviewPluginHandler::GetAttachmentIdList(CUniDataModel* aUniDataModel)
+{
+    TInt attcount = aUniDataModel->AttachmentList().Count();
+    RArray<TMsvAttachmentId> *attachmentIdList = new (ELeave) RArray<
+            TMsvAttachmentId> ();
+
+    for (TInt i = 0; i < attcount; i++)
+    {
+        CUniObject *obj = aUniDataModel->AttachmentList().GetByIndex(i);
+
+        attachmentIdList->AppendL(obj->AttachmentId());
+    }
+    return attachmentIdList;
+}
+
+TInt CCsPreviewPluginHandler::CheckModeForInsertL(RFile aFileHandle)
+{
+    CleanupClosePushL(aFileHandle);
+
+    CMmsConformance* mmsConformance = CMmsConformance::NewL();
+    mmsConformance->CheckCharacterSet(EFalse);
+
+    CleanupStack::PushL(mmsConformance);
+
+    CMsgMediaResolver* mediaResolver = CMsgMediaResolver::NewL();
+    mediaResolver->SetCharacterSetRecognition(EFalse);
+
+    CleanupStack::PushL(mediaResolver);
+
+    CMsgMediaInfo* info = mediaResolver->CreateMediaInfoL(aFileHandle);
+    mediaResolver->ParseInfoDetailsL(info, aFileHandle);
+
+    TMmsConformance conformance = mmsConformance->MediaConformance(*info);
+    iConfStatus = conformance.iConfStatus;
+
+    CleanupStack::PopAndDestroy(3);
+
+    // In "free" mode user can insert images that are larger by dimensions than allowed by conformance
+    if (iCreationMode != EMmsCreationModeRestricted)
+    {
+        TInt i = EMmsConfNokFreeModeOnly | EMmsConfNokScalingNeeded
+                | EMmsConfNokTooBig;
+        TInt j = ~ (EMmsConfNokFreeModeOnly | EMmsConfNokScalingNeeded
+                | EMmsConfNokTooBig);
+
+        // If user answers yes to Guided mode confirmation query he/she moves to free mode
+        if ( (iConfStatus & i) && ! (iConfStatus & j))
+        {
+            if (iCreationMode == EMmsCreationModeFree || info->Protection()
+                    & EFileProtSuperDistributable)
+            {
+                // SuperDistribution not checked here
+                // Mask "FreeModeOnly" and "ScalingNeeded" away in free mode
+                iConfStatus &= ~EMmsConfNokFreeModeOnly;
+                iConfStatus &= ~EMmsConfNokScalingNeeded;
+            }
+            else
+            {
+                delete info;
+                //query not accepted. Stop insertion.
+                return EInsertQueryAbort;
+            }
+        }
+    }
+    else if (iConfStatus & EMmsConfNokDRM || iConfStatus
+            & EMmsConfNokNotEnoughInfo || iConfStatus & EMmsConfNokNotSupported
+            || iConfStatus & EMmsConfNokFreeModeOnly || iConfStatus
+            & EMmsConfNokCorrupt)
+    {
+        delete info;
+        return EInsertNotSupported;
+    }
+
+    delete info;
+    return EInsertSuccess;
+}
+
 //-----------------------------------------------------------------------------
 // CCsPreviewPluginHandler::CompareByRequestId
 // Compare to conversation entry object based on Entry Ids
@@ -562,8 +761,10 @@ void CCsPreviewPluginHandler::GetThumbNailL(TMsvAttachmentId attachmentId,
 {
     //Scale the image
     iThumbnailManager->SetFlagsL(CThumbnailManager::ECropToAspectRatio);
-    // Preferred size is 100x100 (or less)
-    iThumbnailManager->SetThumbnailSizeL(TSize(100, 100));
+
+    //TODO replace with hb-param-graphic-size-image-portrait * value of un in pixcels
+    iThumbnailManager->SetThumbnailSizeL(TSize(63.65, 63.65)); 
+    
     //optimize for performace
     iThumbnailManager->SetQualityPreferenceL(
         CThumbnailManager::EOptimizeForPerformance);
@@ -590,6 +791,71 @@ void CCsPreviewPluginHandler::GetThumbNailL(TMsvAttachmentId attachmentId,
     iThumbnailRequestArray.Append(reqObject);
 
     CleanupStack::PopAndDestroy(4, mimeInfo);//mimeInfo,store,file,source
+}
+
+// -----------------------------------------------------------------------------
+// CCsPreviewPluginHandler::msgProcessingState
+// 
+// -----------------------------------------------------------------------------
+//
+TInt CCsPreviewPluginHandler::msgProcessingState(TMsvId aMsgId)
+{
+    TInt retState = EPreviewMsgNotProcessed;
+
+    // sql-statement to check if msg's under processing flag is set or not
+    RSqlStatement sqlSelectStmt;
+    CleanupClosePushL(sqlSelectStmt);
+    sqlSelectStmt.PrepareL(iSqlDb,KSelectProcessingStateStmt);
+
+    TInt msgIdIndex = sqlSelectStmt.ParameterIndex(_L(":message_id"));
+    User::LeaveIfError(sqlSelectStmt.BindInt(msgIdIndex, aMsgId));
+
+    // read the flag
+    TInt msgProcessingStateIndex = sqlSelectStmt.ColumnIndex(_L("msg_processingstate"));
+    if (sqlSelectStmt.Next() == KSqlAtRow)
+    {
+         retState = static_cast<TInt>(sqlSelectStmt.ColumnInt(msgProcessingStateIndex));
+    }
+    else
+    {
+        // this is first event for this msgid, hence record doesn't exist
+        // create an empty record, so that we can set & use flags
+        RSqlStatement sqlBasicInsertStmt;
+        CleanupClosePushL(sqlBasicInsertStmt);
+        sqlBasicInsertStmt.PrepareL(iSqlDb, KSqlBasicInsertStmt);
+        TInt index_msgid = sqlBasicInsertStmt.ParameterIndex(_L(":message_id"));
+        User::LeaveIfError(sqlBasicInsertStmt.BindInt(index_msgid, aMsgId));
+        User::LeaveIfError(sqlBasicInsertStmt.Exec());
+        CleanupStack::PopAndDestroy(&sqlBasicInsertStmt);
+    }
+    // cleanup
+    CleanupStack::PopAndDestroy(&sqlSelectStmt);
+    return retState;
+}
+
+// -----------------------------------------------------------------------------
+// CCsPreviewPluginHandler::setMsgProcessingState
+// 
+// -----------------------------------------------------------------------------
+//
+void CCsPreviewPluginHandler::setMsgProcessingState(TMsvId aMsgId, TInt aState)
+{
+    // sql-statment to set/reset msg's under processing flag
+    RSqlStatement sqlUpdateStmt;
+    CleanupClosePushL(sqlUpdateStmt);
+    sqlUpdateStmt.PrepareL(iSqlDb, KSqlUpdateProcessingStateStmt);
+
+    TInt msgIdIndex = sqlUpdateStmt.ParameterIndex(_L(":message_id"));
+    User::LeaveIfError(sqlUpdateStmt.BindInt(msgIdIndex, aMsgId));
+
+    // bind data
+    TInt msgProcessingStateIndex = sqlUpdateStmt.ParameterIndex(_L(":msg_processingstate"));
+    User::LeaveIfError(sqlUpdateStmt.BindInt(msgProcessingStateIndex, aState));
+
+    // execute the statement
+    User::LeaveIfError(sqlUpdateStmt.Exec());
+    // cleanup
+    CleanupStack::PopAndDestroy(&sqlUpdateStmt);
 }
 
 // End of file

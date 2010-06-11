@@ -20,25 +20,21 @@
 
 // SYSTEM INCLUDES
 #include <QTextCursor>
-#include <HbMenu>
-#include <QGraphicsSceneMouseEvent>
-#include <HbAction>
-#include <HbFrameItem>
 #include <QTextBlock>
 #include <QApplication>
-#include <QClipBoard>
-#include <xqservicerequest.h>
+#include <QClipboard>
 
+#include <HbMenu>
+#include <HbAction>
+#include <HbTapGesture>
+
+#include <xqservicerequest.h>
 #include <xqappmgr.h>
 #include <cntservicescontact.h>
 #include <qtcontacts.h>
-#include <XQServiceRequest.h>
+#include <xqservicerequest.h>
 #include <xqaiwrequest.h>
 #include "msgcontacthandler.h"
-
-
-
-
 
 // LOCAL CONSTANTS
 const QString ADDRESS_SEPARATOR("; ");
@@ -63,11 +59,11 @@ UniViewerAddressWidget::UniViewerAddressWidget(QGraphicsItem * parent) :
 HbTextEdit(parent),
 mCursorPos(-1)
 {
-    this->setReadOnly(true);
-    this->setCursorVisibility(Hb::TextCursorHidden);
+    this->setReadOnly(true);    
     this->setScrollable(false);
-    HbFrameItem *noBackground = new HbFrameItem(this);
-    this->setBackgroundItem(noBackground);
+    this->setFlag(QGraphicsItem::ItemIsFocusable,false);
+    this->setCursorVisibility(Hb::TextCursorHidden);
+    this->setBackgroundItem(0);   
 
     HbFontSpec fontSpec(HbFontSpec::Secondary);
     QFont font = fontSpec.font();
@@ -92,37 +88,71 @@ UniViewerAddressWidget::~UniViewerAddressWidget()
 }
 
 //---------------------------------------------------------------
-//UniViewerAddressWidget :: mousePressEvent
+//UniViewerAddressWidget :: gestureEvent
 // @see header file
 //---------------------------------------------------------------
-void UniViewerAddressWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void UniViewerAddressWidget::gestureEvent(QGestureEvent* event)
 {
-    HbTextEdit::mousePressEvent(event);
-
-    QTextDocument* doc = this->document();
-
-    mCursorPos = doc->documentLayout()->hitTest(event->pos(), Qt::ExactHit);
-
-    highlightText(true);
-}
-
-//---------------------------------------------------------------
-//UniViewerAddressWidget :: mouseReleaseEvent
-// @see header file
-//---------------------------------------------------------------
-void UniViewerAddressWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    HbTextEdit::mouseReleaseEvent(event);
-
-    highlightText(false);
-
-    QString anchor = this->anchorAt(event->pos());
-
-    if(!anchor.isEmpty() && !this->textCursor().hasSelection())
+    //handle gesture to highlight and dehighlight find item.
+    
+    if(HbTapGesture *tap = qobject_cast<HbTapGesture*>(event->gesture(Qt::TapGesture)))
     {
-        shortTapAction(anchor);
+        //capturing gesture position, and map to local co-ordinates.
+        QPointF pos = mapFromScene(tap->scenePosition());
+        
+        switch (tap->state()) 
+        {
+            case Qt::GestureStarted:
+            {
+                //highlight find item.
+                QTextDocument* doc = this->document();
+                mCursorPos = doc->documentLayout()->hitTest(pos, Qt::ExactHit);
+                highlightText(true);
+                break;
+            }  
+            
+            case Qt::GestureFinished:
+            {
+                if (HbTapGesture::Tap == tap->tapStyleHint()) 
+                {
+                    //gesture is finshed dehighlight text.
+                    highlightText(false);
+                    
+                    QString anchor = this->anchorAt(pos);
+                    
+                    //do short tap action.
+                    if (!anchor.isEmpty() && !this->textCursor().hasSelection())
+                    {
+                        shortTapAction(anchor);
+                    }
+                }
+                break;
+            }
+            
+            case Qt::GestureCanceled:
+            {
+                //gesture is canceled due to pan or swipe, dehighlight text.
+                if (HbTapGesture::Tap == tap->tapStyleHint()) 
+                {
+                highlightText(false);
+                break;
+                }
+            }
+            default:
+                break;
+        }
+        
+        event->accept();
     }
+    else
+    {
+        event->ignore();
+    }
+    
+    //passing gesture event to base class.
+    HbTextEdit::gestureEvent(event);
 }
+
 
 //----------------------------------------------------------------------------
 // UniViewerAddressWidget::populate
@@ -372,7 +402,7 @@ void UniViewerAddressWidget::call()
         QString phoneNumber = action->data().toString();
         
         //invoke dialer service and pass phoneNumber.        
-        QString serviceName("com.nokia.services.telephony");
+        QString serviceName("com.nokia.symbian.ICallDial");
         QString operation("dial(QString)");
         
         XQServiceRequest* serviceRequest = new XQServiceRequest(serviceName,operation,false);

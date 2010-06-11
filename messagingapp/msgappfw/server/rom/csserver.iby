@@ -22,8 +22,4 @@ data=DATAZ_\system\install\csserver_stub.sis			system\install\csserver_stub.sis
 
 file=ABI_DIR\BUILD_DIR\csserver.exe            				PROGRAMS_DIR\csserver.exe
 
-data=DATAZ_\RESOURCE_FILES_DIR\cscontacts.rsc					RESOURCE_FILES_DIR\cscontacts.rsc
-
-
-
 #endif // __CSSERVER_IBY__

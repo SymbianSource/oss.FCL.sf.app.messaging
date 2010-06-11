@@ -18,7 +18,7 @@
 #ifndef MSGSETTINGENGINE_H_
 #define MSGSETTINGENGINE_H_
 
-#include <QObject.h>
+#include <qobject.h>
 
 //FORWARD DECLARATION
 class SmsSettingsPrivate;

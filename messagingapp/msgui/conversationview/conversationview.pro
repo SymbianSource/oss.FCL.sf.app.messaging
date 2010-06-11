@@ -21,7 +21,7 @@ DEPENDPATH += . \
               inc \
               ../inc \ 
               src
-    					
+
 INCLUDEPATH += .
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../msguiutils/inc
@@ -37,6 +37,7 @@ INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
 INCLUDEPATH += ../../msgutils/unidatamodel/univcaldataplugin/inc
 
 CONFIG += hb
+HB += hbfeedback
 QT += sql
 
 TARGET.UID3 = 0x20024322
@@ -95,9 +96,6 @@ LIBS += -lappengine \
     -lgsmu \
     -lsmcm \
     -leditorgenutils \
-    -lthumbnailmanagerqt \
-    -lfbscli \
-    -lestor \
-    -lsqldb \
+    -lthumbnailmanagerqt \    
     -lxqsettingsmanager
 

@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef UNIFIED_EDITOR_VIEW_H
-#define UNIFIED_EDITOR_VIEW_H
+#ifndef MSG_UNIFIED_EDITOR_VIEW_H
+#define MSG_UNIFIED_EDITOR_VIEW_H
 
 #ifdef UNIFIEDEDITOR_DLL
 #define UNIFIEDEDITOR_EXPORT Q_DECL_EXPORT
@@ -35,7 +35,7 @@ class QGraphicsLinearLayout;
 class MsgUnifiedEditorSubject;
 class MsgUnifiedEditorAddress;
 class MsgUnifiedEditorBody;
-class MsgMonitor;
+class MsgUnifiedEditorMonitor;
 class MsgAttachmentContainer;
 class UniEditorPluginLoader;
 class HbListWidgetItem;
@@ -105,9 +105,11 @@ private:
 
     /**
      * Populate editor with prepopulated msg content
+     * @param messageDetails message details
+     * @param draftMessage boolean for specifying draft message
      */
     void populateContentIntoEditor(
-        const ConvergedMessage& messageDetails);
+        const ConvergedMessage& messageDetails, bool draftMessage = false);
     
     /**
      * Populate the editor with the forwarded message's content
@@ -317,10 +319,17 @@ private slots:
      * @param action selected action (yes or no).
      */
     void onDialogMmsSettings(HbAction* action);    
+	
+	/**
+     * Enable/Disable send tool button.
+     * @param true/false to enable/disable.
+     */
+     void enableSendButton(bool enable);
     
 private:
     HbAction* mSubjectAction;
     HbAction* mCcBccAction;
+    HbAction* mSendAction;
     QGraphicsLinearLayout* mMainLayout;
     MsgUnifiedEditorSubject* mSubjectField;
     MsgUnifiedEditorAddress* mToField;
@@ -330,7 +339,7 @@ private:
 
     HbWidget* mContentWidget;
 
-    MsgMonitor* mMsgMonitor;
+    MsgUnifiedEditorMonitor* mMsgMonitor;
     MsgAttachmentContainer* mAttachmentContainer;
     UniEditorPluginLoader* mPluginLoader;
     ConvergedMessageId mOpenedMessageId;
@@ -347,7 +356,7 @@ private:
      */
 	HbAbstractVkbHost* mVkbHost;
 	
-	friend class MsgMonitor;
+	friend class MsgUnifiedEditorMonitor;
     };
 
-#endif //UNIFIED_EDITOR_VIEW_H
+#endif //MSG_UNIFIED_EDITOR_VIEW_H

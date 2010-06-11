@@ -20,7 +20,7 @@
 #include <HbMainWindow>
 #include <HbAction>
 #include <HbApplication>
-#include <HbMessageBox.h>
+#include <hbmessagebox.h>
 
 #include <xqserviceutil.h>
 #include <xqappmgr.h>

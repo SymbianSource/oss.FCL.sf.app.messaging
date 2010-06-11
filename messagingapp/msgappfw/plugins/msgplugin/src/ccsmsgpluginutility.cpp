@@ -72,7 +72,8 @@ CCsConversationEntry* CCsMsgPluginUtility::CreateConversationEntryL(
     CleanupStack::PushL(conversationEntry);
         
     //set the values
-    conversationEntry->SetContactL( *aContact );
+    if(aContact)
+        conversationEntry->SetContactL( *aContact );
     conversationEntry->SetEntryId( aEnryId );
     conversationEntry->SetTimeStampL( aTimeStamp );
     conversationEntry->SetDescriptionL( *aDescription );

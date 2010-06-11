@@ -33,6 +33,7 @@ SERVICE.OPTIONS += hidden
 
 symbian:TARGET.UID3 = 0x2001FE74
 
+TRANSLATIONS = messaging.ts
 
 BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
                              ".\rom\msgerrornotifier.iby CORE_APP_LAYER_IBY_EXPORT_PATH(msgerrornotifier.iby)"

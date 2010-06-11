@@ -27,6 +27,8 @@ class HbAbstractViewItem;
 class HbListWidget;
 class HbListWidgetItem;
 class HbAction;
+class QGraphicsLinearLayout;
+
 /**
  * This class provides the message list view for the messaging application.
  * Data source for this view is the conversation list model.
@@ -154,10 +156,10 @@ private:
     };
 
     /**
-     * Flag to track if item has been long pressed.
-     * TODO: Remove it, once unique longpress and click event signal released in week16
-     */
-    bool mItemLongPressed;
+     * Main layout
+     * Own
+     */    
+    QGraphicsLinearLayout *mMainLayout;
 };
 
 #endif // MSG_LIST_VIEW_H

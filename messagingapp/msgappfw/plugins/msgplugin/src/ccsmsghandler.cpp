@@ -823,14 +823,17 @@ TCsType CCsMsgHandler::ExtractCsType( const TMsvEntry& aEntry)
             else if (aEntry.iBioType == KMsgBioUidVCalendar.iUid)
                 {
                 type = ECsBioMsg_VCal;
-                }            
-            }
-            break;
-        default:
-            type = ECsUnknown;           
-	    	break;
+       		 }
+       		 else if (aEntry.iBioType == KMsgBioNokiaServiceMessage.iUid) {
+            	type = ECsBioMgs_NokiaService;
         }
-    return (type);  
     }
+        break;
+    default:
+        type = ECsUnknown;
+        break;
+    }
+    return (type);
+}
 // End of file
 

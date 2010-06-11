@@ -19,8 +19,15 @@
 
 file=ABI_DIR\UREL\messaging101.exe                              SHARED_LIB_DIR\messaging101.exe
 data=DATAZ_\private\10003a3f\import\apps\messaging101_reg.rsc   private\10003a3f\import\apps\messaging101_reg.rsc
-data=DATAZ_\resource\apps\0x2001FE79.mif                        resource\apps\0x2001FE79.mif
+data=DATAZ_\resource\apps\messaging101.mif                        resource\apps\messaging101.mif
 
 data=DATAZ_\system\install\msgapp_stub.sis					           system\install\msgapp_stub.sis
+
+<clip>
+      data=ZRESOURCE\hb\splashml\messaging101.splashml  RESOURCE_FILES_DIR\hb\splashml\messaging101.splashml
+      data=ZRESOURCE\hb\splashml\messaging101.docml  RESOURCE_FILES_DIR\hb\splashml\messaging101.docml
+      data=ZRESOURCE\hb\splashml\messaging101_dummy.splashml  RESOURCE_FILES_DIR\hb\splashml\messaging101_dummy.splashml
+      data=ZRESOURCE\hb\splashml\messaging101_dummy.docml  RESOURCE_FILES_DIR\hb\splashml\messaging101_dummy.docml
+</clip>
 
 #endif // __MSGAPP_IBY__

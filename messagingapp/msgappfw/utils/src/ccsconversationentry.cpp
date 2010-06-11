@@ -135,12 +135,9 @@ EXPORT_C HBufC* CCsConversationEntry::Contact() const
 // Sets the Conversation contact of this object
 // ----------------------------------------------------------------------------
 EXPORT_C void CCsConversationEntry::SetContactL(const TDesC& aContact)
-    {
-    if((&aContact))
-        {
-        iContact = aContact.AllocL();
-        }
-    }
+{
+    iContact = aContact.AllocL();
+}
 
 // ----------------------------------------------------------------------------
 // CCsConversationEntry::ConversationDir
@@ -255,7 +252,9 @@ EXPORT_C CCsConversationEntry* CCsConversationEntry::CloneL() const
     CCsConversationEntry* cloneObject = CCsConversationEntry::NewL();
     CleanupStack::PushL(cloneObject);
 
-    cloneObject->SetContactL(*iContact);
+    if (iContact)
+        cloneObject->SetContactL(*iContact);
+
     cloneObject->SetConversationDir(iConversationDir);
     cloneObject->SetType(iConversationType);
     cloneObject->SetEntryId(iEntryID);

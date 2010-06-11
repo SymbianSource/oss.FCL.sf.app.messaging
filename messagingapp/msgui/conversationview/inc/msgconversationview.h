@@ -102,6 +102,22 @@ private slots:
      */	
     void onDialogSaveTone(HbAction* action);
 
+    /**
+     * This slot is called when the orientation is changed
+     * @param newOrientation orientation
+     */
+    void onOrientationChanged(Qt::Orientation newOrientation);
+
+    /**
+     * This slot is called when the orientation is about to bechanged
+     */
+    void onOrientationAboutToBeChanged();
+    
+    /**
+     * This slot is called when the view is successfully added to main window
+     */
+    void onViewReady();
+    
 private:
 
     /**
@@ -181,15 +197,6 @@ private:
      * @see ConvergedMessage::MessageType
      */
     void addDownloadItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu);
-    
-    /**
-     * Validates if message can be forwarded
-     * @param messageType
-     * @param messageId
-     * @return true if message can be forwarded
-     *         false if message cant be forwarded
-     */
-    bool validateMsgForForward(int &messageType,qint32 &messageId);
 
     /**
      * Launches the BT message display service.
@@ -328,10 +335,11 @@ signals:
      */
     void replyStarted();
     
-	/**
-	* This signal is emitted when vkb is open.
-	*/
-    void hideChrome(bool);
+   /**
+    * This signal is emitted when vkb is open/closed.
+    * @param state True if keypad is opened else false.
+    */
+    void vkbOpened(bool state);
 
 private slots:
     /**
@@ -410,11 +418,6 @@ private:
      */
     QGraphicsLinearLayout *mMainLayout;
 
-	/**
-	 * Flag to track if item has been long pressed.
-	 * TODO: Remove it, once unique longpress and click event signal released in week16
-	 */
-    bool mItemLongPressed;
     /*
      * Instance of VKB 
      */
@@ -424,6 +427,11 @@ private:
      * Flag to check it vkb is open.
      */
     bool mVkbopened;
+
+    /**
+     * variable holding the visible model index
+     */
+    QModelIndex mVisibleIndex;
 
 };
 

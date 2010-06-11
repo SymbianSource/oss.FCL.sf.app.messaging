@@ -1043,8 +1043,11 @@ void CCsSession::HandleNewConversationEventL(
     if (!iConversationChangeObserver)
         return;
 
-    if (aClientConversation->GetConversationEntryId()
+    if ((aClientConversation->GetContactId()
+            != iMonitoredConversation->GetContactId()) &&
+            (aClientConversation->GetConversationEntryId()
             != iMonitoredConversation->GetConversationEntryId())
+              )
         return;
 
     if (! (iNotifyHandling))
@@ -1103,8 +1106,11 @@ void CCsSession::HandleDeleteConversationEventL(
     if (!iConversationChangeObserver)
         return;
 
-    if (aClientConversation->GetConversationEntryId()
-            != iMonitoredConversation->GetConversationEntryId())
+    if ((aClientConversation->GetContactId()
+               != iMonitoredConversation->GetContactId()) &&
+               (aClientConversation->GetConversationEntryId()
+               != iMonitoredConversation->GetConversationEntryId())
+                 )
         return;
 
     if (! (iNotifyHandling))
@@ -1163,8 +1169,11 @@ void CCsSession::HandleModifyConversationEventL(
     if (!iConversationChangeObserver)
         return;
 
-    if (aClientConversation->GetConversationEntryId()
-            != iMonitoredConversation->GetConversationEntryId())
+    if ((aClientConversation->GetContactId()
+                != iMonitoredConversation->GetContactId()) &&
+                (aClientConversation->GetConversationEntryId()
+                != iMonitoredConversation->GetConversationEntryId())
+                  )
         return;
 
     if (! (iNotifyHandling))

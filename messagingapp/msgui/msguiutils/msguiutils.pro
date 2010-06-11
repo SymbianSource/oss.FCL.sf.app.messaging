@@ -46,11 +46,13 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
 # Input
 HEADERS += msgsendutil.h \
            mmsconformancecheck.h \
-           msgmediautil.h
+           msgmediautil.h \
+           msgcontactsutil.h
            
 SOURCES += msgsendutil.cpp \
            mmsconformancecheck.cpp \
-           msgmediautil.cpp
+           msgmediautil.cpp \
+           msgcontactsutil.cpp
     
 # Libs
 LIBS += -lxqservice \

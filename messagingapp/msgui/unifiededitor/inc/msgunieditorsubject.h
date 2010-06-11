@@ -14,10 +14,10 @@
  * Description:
  */
 
-#ifndef UNIFIED_EDITOR_SUBJECT_H
-#define UNIFIED_EDITOR_SUBJECT_H
+#ifndef MSG_UNIFIED_EDITOR_SUBJECT_H
+#define MSG_UNIFIED_EDITOR_SUBJECT_H
 
-#include <msgunifiededitorbasewidget.h>
+#include <msgunieditorbasewidget.h>
 
 #include "convergedmessage.h"
 
@@ -120,4 +120,4 @@ private:
     QString mPrevBuffer;
     };
 
-#endif //UNIFIED_EDITOR_SUBJECT_H
+#endif //MSG_UNIFIED_EDITOR_SUBJECT_H

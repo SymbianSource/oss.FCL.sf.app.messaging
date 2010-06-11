@@ -53,7 +53,7 @@ UniViewSlideWidget::UniViewSlideWidget(UniViewerFeeder* feeder, int slideNumber,
         mHeaderContainer = new UniViewerHeaderContainer(mViewFeeder, this);
 
         // Always connect to populate sms content
-        connect(mViewFeeder, SIGNAL(msgBody(QString)), mBody, SLOT(setTextContent(QString)));
+        connect(mViewFeeder, SIGNAL(msgBody(QString)), mBody, SLOT(setText(QString)));
         
         connect(mHeaderContainer,SIGNAL(sendMessage(const QString&,const QString&)),
                 this, SIGNAL(sendMessage(const QString&,const QString&)));

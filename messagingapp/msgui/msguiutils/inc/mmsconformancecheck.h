@@ -20,7 +20,7 @@
 
 #include <QObject>
 
-#include <msgmediainfo.h>
+#include <MsgMediaInfo.h>
 #include <qstring.h>
 
 #ifdef BUILD_MSGUI_UTILS_DLL
@@ -69,16 +69,6 @@ public:
      * @return EInsertSuccess for successfull cases
      */
     int checkModeForInsert(const QString& file,bool showNote = true);
-
-    /**
-     * Validates if message can be forwarded
-     * The validation checks include slide count check,MMS size check and
-     * media conformance checks and this fucntion should be called only for mms
-     * @param  messageId message Id of the message to be validate
-     * @return true if message can be forwarded
-     *         false if message cant be forwarded
-     */
-    bool validateMsgForForward(int messageId);
 
 private:
 

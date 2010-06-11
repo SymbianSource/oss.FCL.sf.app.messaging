@@ -42,6 +42,7 @@ symbian {
 QT -= gui
 CONFIG += NO_ICON hb
 
+TRANSLATIONS = messaging.ts
 # Input
 SOURCES += 	src/main.cpp \
 			src/msgnotifier.cpp \

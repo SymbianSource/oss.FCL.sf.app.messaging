@@ -122,6 +122,12 @@ UniMessageInfoList UniBioMessageDataPlugin::attachmentList()
 {
     RFile file = d_ptr->attachmentL();
 
+    if(attachmentCount() == 0)
+    {
+        file.Close();
+        return QList<UniMessageInfo*> ();
+    }
+     
     UniMessageInfoList attlist;
 
     QString path;
@@ -170,7 +176,11 @@ int UniBioMessageDataPlugin::attachmentCount()
 //---------------------------------------------------------------
 bool UniBioMessageDataPlugin::hasAttachment()
 {
-    return true;
+    if(attachmentCount() > 0)
+        return true;
+    else
+        return false; 
+        
 }
 
 // UniBioMessageDataPlugin::objectCount()

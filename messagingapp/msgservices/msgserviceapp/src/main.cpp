@@ -15,7 +15,7 @@
 *
 */
 
-#include <HbApplication.h>
+#include <hbapplication.h>
 #include <QTranslator>
 #include <QLocale>
 #include <QFile>

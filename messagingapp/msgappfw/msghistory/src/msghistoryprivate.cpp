@@ -101,6 +101,9 @@ TBool MsgHistoryPrivate::Subscribe( const TInt aContactId )
             conversationId = handler->GetConversationIdL(aContactId));
     CCsClientConversation* clientConversation = CCsClientConversation::NewL();
     clientConversation->SetConversationEntryId(conversationId);
+    // set the contact id, which will be used in case when the 
+    // conversation entry id is -1.
+    clientConversation->SetContactId(aContactId);
     //set dummy entry
     CCsConversationEntry *entry = CCsConversationEntry::NewL();
     clientConversation->SetConversationEntryL(entry);
@@ -125,6 +128,9 @@ TBool MsgHistoryPrivate::UnSubscribe( const TInt aContactId )
             conversationId = handler->GetConversationIdL(aContactId));
     CCsClientConversation* clientConversation = CCsClientConversation::NewL();
     clientConversation->SetConversationEntryId(conversationId);
+    // set the contact id, which will be used in case when the 
+    // conversation entry id is -1.
+    clientConversation->SetContactId(aContactId);
     //set dummy entry
     CCsConversationEntry *entry = CCsConversationEntry::NewL();
     clientConversation->SetConversationEntryL(entry);

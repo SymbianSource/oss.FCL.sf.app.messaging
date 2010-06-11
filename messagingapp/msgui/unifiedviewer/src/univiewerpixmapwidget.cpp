@@ -17,19 +17,28 @@
 
 #include "univiewerpixmapwidget.h"
 
+// SYSTEM INCLUDES
 #include <HbTapGesture>
 #include <HbWidget>
 #include <HbInstantFeedback>
+#include <HbMenu>
 #include <QPixmap>
+#include <QTimer>
+
+// USER INCLUDES
+#include "univiewerutils.h"
+
+// LOCAL CONSTANTS
+#define LOC_OPEN    hbTrId("txt_common_menu_open")
+#define LOC_SAVE    hbTrId("txt_common_menu_save")
 
 //---------------------------------------------------------------
 // UniViewerPixmapWidget::UniViewerPixmapWidget
 // @see header file
 //---------------------------------------------------------------
 UniViewerPixmapWidget::UniViewerPixmapWidget(QGraphicsItem *parent) :
-    HbIconItem(parent)
+    HbIconItem(parent), mViewerUtils(0)
 {
-    mPixmapFile = QString("");
     this->grabGesture(Qt::TapGesture);
 }
 
@@ -45,10 +54,11 @@ UniViewerPixmapWidget::~UniViewerPixmapWidget()
 // UniViewerPixmapWidget::setPixmap
 // @see header file
 //---------------------------------------------------------------
-void UniViewerPixmapWidget::setPixmap(const QString &pixmapPath)
+void UniViewerPixmapWidget::populate(const QString &mimeType, const QString &pixmapPath)
 {
-    mPixmapFile = pixmapPath;
-    QPixmap pixmap(pixmapPath);
+    mMimeType = mimeType;
+    mPixmapPath = pixmapPath;
+    QPixmap pixmap(mPixmapPath);
     this->setIcon(HbIcon(pixmap));
 }
 
@@ -70,24 +80,91 @@ void UniViewerPixmapWidget::gestureEvent(QGestureEvent *event)
         case Qt::GestureUpdated:
         {
             if (HbTapGesture::TapAndHold == tapGesture->tapStyleHint()) {
-                // emit longtap
+                // Handle longtap.
+                handleLongTap(tapGesture->scenePosition());
             }
             break;
         }
         case Qt::GestureFinished:
         {
+            HbInstantFeedback::play(HbFeedback::Basic);
             if (HbTapGesture::Tap == tapGesture->tapStyleHint()) {
-                // Emit short tap
-                emit shortTap(mPixmapFile);
+                // Handle short tap
+                handleShortTap();
             }
             break;
         }
         case Qt::GestureCanceled:
         {
+            HbInstantFeedback::play(HbFeedback::Basic);
             break;
         }
         }
     }
+    else {
+        HbIconItem::gestureEvent(event);
+    }
 }
 
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::handleOpen
+// @see header file
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::handleOpen()
+{
+    this->ungrabGesture(Qt::TapGesture);
+    
+    if (!mViewerUtils) {
+        mViewerUtils = new UniViewerUtils(this);
+    }
+    mViewerUtils->launchContentViewer(mMimeType, mPixmapPath);
+    
+    //fire timer to regrab gesture after some delay.
+    QTimer::singleShot(300,this,SLOT(regrabGesture()));
+}
+
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::handleSave
+// @see header file
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::handleSave()
+{
+}
+
+//----------------------------------------------------------------------------
+// UniViewerPixmapWidget::handleShortTap
+// @see header file
+//----------------------------------------------------------------------------
+void UniViewerPixmapWidget::handleShortTap()
+{
+    emit shortTap(mPixmapPath);
+
+    // Open the media.
+    handleOpen();
+}
+
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::handleLongTap
+// @see header file
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::handleLongTap(const QPointF &position)
+{
+    emit longTap(position);
+
+    HbMenu* menu = new HbMenu;
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    menu->addAction(LOC_OPEN, this, SLOT(handleOpen()));
+    menu->addAction(LOC_SAVE, this, SLOT(handleSave()));
+    menu->setPreferredPos(position);
+    menu->show();
+}
+
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::regrabGesture
+// @see header file
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::regrabGesture()
+{
+    this->grabGesture(Qt::TapGesture);
+}
 // EOF

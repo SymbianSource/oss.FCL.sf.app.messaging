@@ -8,11 +8,11 @@ EXPORTS
 	_ZN13UnifiedViewer15handleFwdActionEv @ 7 NONAME
 	_ZN13UnifiedViewer15populateContentEibi @ 8 NONAME
 	_ZN13UnifiedViewer16staticMetaObjectE @ 9 NONAME DATA 16
-	_ZN13UnifiedViewer18handleDeleteActionEv @ 10 NONAME
-	_ZN13UnifiedViewer19getStaticMetaObjectEv @ 11 NONAME
-	_ZN13UnifiedViewer21validateMsgForForwardEv @ 12 NONAME
-	_ZN13UnifiedViewerC1EiP13QGraphicsItem @ 13 NONAME
-	_ZN13UnifiedViewerC2EiP13QGraphicsItem @ 14 NONAME
+	_ZN13UnifiedViewer17onDialogDeleteMsgEP8HbAction @ 10 NONAME
+	_ZN13UnifiedViewer18handleDeleteActionEv @ 11 NONAME
+	_ZN13UnifiedViewer19getStaticMetaObjectEv @ 12 NONAME
+	_ZN13UnifiedViewerC1EiiP13QGraphicsItem @ 13 NONAME
+	_ZN13UnifiedViewerC2EiiP13QGraphicsItem @ 14 NONAME
 	_ZN13UnifiedViewerD0Ev @ 15 NONAME
 	_ZN13UnifiedViewerD1Ev @ 16 NONAME
 	_ZN13UnifiedViewerD2Ev @ 17 NONAME
@@ -23,5 +23,4 @@ EXPORTS
 	_ZThn16_N13UnifiedViewerD1Ev @ 22 NONAME
 	_ZThn8_N13UnifiedViewerD0Ev @ 23 NONAME
 	_ZThn8_N13UnifiedViewerD1Ev @ 24 NONAME
-	_ZN13UnifiedViewer17onDialogDeleteMsgEP8HbAction @ 25 NONAME
 

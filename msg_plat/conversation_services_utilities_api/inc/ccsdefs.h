@@ -194,6 +194,7 @@ ECsRingingTone,
 ECsProvisioning,
 ECsBioMsg_VCard,
 ECsBioMsg_VCal,
+ECsBioMgs_NokiaService,
 ECsUnknown
 };
 
@@ -289,11 +290,22 @@ const TInt KSimIdOffset = 99999;
 
 enum 
 {
-	EPreviewNone       = 0x00,
-	EPreviewImage      = 0x01,
-	EPreviewAudio      = 0x02,
-	EPreviewVideo      = 0x04,
-	EPreviewAttachment = 0x08
+	EPreviewNone       = 0x0000,
+	EPreviewImage      = 0x0001,
+	EPreviewAudio      = 0x0002,
+	EPreviewVideo      = 0x0004,
+	EPreviewAttachment = 0x0008,
+	EPreviewForward    = 0x0010
+};
+
+/**
+ * @typedef TCsPreviewMsgProcessingState
+ */
+enum
+{
+    EPreviewMsgNotProcessed       = 0,
+    EPreviewMsgProcessing         = 1,
+    EPreviewMsgProcessed          = 2
 };
 
 typedef TUint8 TCsMsgPreviewProperty;

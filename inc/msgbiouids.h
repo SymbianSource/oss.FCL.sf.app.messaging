@@ -63,6 +63,10 @@ const TUid KMsgBioUidICalendar	   = {0x101F8849};
 /// UID for the Provisioning Message type for BIO database
 const TUid KMsgBioProvisioningMessage = {0x101F84D1};
 
+const TUid KMsgBioNokiaServiceMessage = {0x102832EA};
+
+const TUid KMsgBioNokiaServiceSentMessage = {0x20022FE6};
+
 //// PoC
 const TUid KMsgBioUidPoC			= {0x101FD869};
 

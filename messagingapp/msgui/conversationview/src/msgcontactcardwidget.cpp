@@ -21,27 +21,24 @@
 #include <HbStyle>
 #include <HbIconItem>
 #include <HbTextItem>
-#include <HbFrameDrawer>
-//#include <HbGesture>
-//#include <HbGestureSceneFilter>
-#include <HbWidgetFeedback>
+#include <HbTapGesture>
+#include <HbInstantFeedback>
 #include <HbFrameItem>
 #include <qcontactphonenumber.h>
 #include <qcontactavatar.h>
 #include <xqaiwrequest.h>
 #include <xqappmgr.h>
-#include <XQServiceRequest.h>
+#include <xqservicerequest.h>
 #include <cntservicescontact.h>
 #include <QGraphicsSceneMouseEvent>
 #include <HbMenu>
-#include <HbMainWindow>
 #include <thumbnailmanager_qt.h>
+#include <QTimer>
 
 #include <ccsdefs.h>
 
 // USER INCLUDES
 #include "conversationsenginedefines.h"
-#include "debugtraces.h"
 #include "conversationsengine.h"
 #include "convergedmessage.h"
 #include "msgcontacthandler.h"
@@ -49,9 +46,8 @@
 // LOCAL CONSTANTS
 const QString DEFAULT_AVATAR_ICON("qtg_large_avatar");
 const QString BT_ICON("qtg_large_bluetooth");
-const QString BACKGROUND_FRAME_NORMAL("qtg_fr_groupbox");
-const QString GROUPBOX_BG_FRAME_PRESSED("qtg_fr_groupbox_pressed");
-
+const QString BG_FRAME_NORMAL("qtg_fr_groupbox_normal");
+const QString BG_FRAME_PRESSED("qtg_fr_groupbox_pressed");
 
 // LOCALIZATION CONSTANTS
 #define LOC_RECEIVED_FILES hbTrId("txt_messaging_title_received_files")
@@ -66,14 +62,10 @@ const QString GROUPBOX_BG_FRAME_PRESSED("qtg_fr_groupbox_pressed");
 // @see header
 //---------------------------------------------------------------
 MsgContactCardWidget::MsgContactCardWidget(QGraphicsItem *parent) :
-    HbWidget(parent), mMenuShown(false), mAvatarIconItem(NULL), mPresenceIconItem(NULL),
-        mAddressTextItem(NULL),mThumbnailManager(NULL)
+    HbWidget(parent), mIgnoreEvents(false), mAvatarIconItem(NULL), mPresenceIconItem(NULL),
+        mAddressTextItem(NULL), mThumbnailManager(NULL)
 {
     init();
-    setBackGround(BACKGROUND_FRAME_NORMAL);
-    connectSignals(true);
-
-    connect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(initGesture()));
 }
 
 //---------------------------------------------------------------
@@ -82,9 +74,6 @@ MsgContactCardWidget::MsgContactCardWidget(QGraphicsItem *parent) :
 //---------------------------------------------------------------
 MsgContactCardWidget::~MsgContactCardWidget()
 {
-  /*  if (mGestureFilter) {
-        removeSceneEventFilter(mGestureFilter);
-    }*/
 }
 
 //---------------------------------------------------------------
@@ -93,6 +82,12 @@ MsgContactCardWidget::~MsgContactCardWidget()
 //---------------------------------------------------------------
 void MsgContactCardWidget::init()
 {
+    this->setProperty("state", "normal");
+    this->grabGesture(Qt::TapGesture);
+
+    HbFrameItem *frameItem = new HbFrameItem(BG_FRAME_NORMAL, HbFrameDrawer::NinePieces, this);
+    this->setBackgroundItem(frameItem);
+
     mAvatarIconItem = new HbIconItem(this);
     HbStyle::setItemName(mAvatarIconItem, "avatar");
 
@@ -194,16 +189,13 @@ void MsgContactCardWidget::updateContents()
         setAddress(contactName);
 
         // Set Avatar
-        QList<QContact> contactList = 
-                MsgContactHandler::findContactList(mContactNumber);
-        
+        QList<QContact> contactList = MsgContactHandler::findContactList(mContactNumber);
+
         if (!contactList.isEmpty()) {
-            QList<QContactAvatar> avatarDetails = 
-                    contactList.at(0).details<QContactAvatar> ();
-            
+            QList<QContactAvatar> avatarDetails = contactList.at(0).details<QContactAvatar> ();
+
             if (!avatarDetails.isEmpty()) {
-                mThumbnailManager->getThumbnail(
-                        avatarDetails.at(0).imageUrl().toString());
+                mThumbnailManager->getThumbnail(avatarDetails.at(0).imageUrl().toString());
             }
         }
 
@@ -223,78 +215,81 @@ void MsgContactCardWidget::clearContent()
 }
 
 //---------------------------------------------------------------
-// MsgContactCardWidget::initGesture
+// MsgContactCardWidget::gestureEvent
 // @see header file
 //---------------------------------------------------------------
-void MsgContactCardWidget::initGesture()
+void MsgContactCardWidget::gestureEvent(QGestureEvent *event)
 {
-    // Create gesture filter
-  /*  QGraphicsScene* sc = this->scene();
-    mGestureFilter = new HbGestureSceneFilter(Qt::LeftButton, this);
-
-    // Add gestures for longpress
-    HbGesture* gestureLongpressed = new HbGesture(HbGesture::longpress, 5);
-
-    mGestureFilter->addGesture(gestureLongpressed);
-
-    connect(gestureLongpressed, SIGNAL(longPress(QPointF)), this, SLOT(handleLongPress(QPointF)));
-
-    //install gesture filter.
-    this->installSceneEventFilter(mGestureFilter);
-
-    disconnect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(initGesture()));*/
-}
-
-//---------------------------------------------------------------
-// MsgContactCardWidget::mousePressEvent
-// @see header file
-//---------------------------------------------------------------
-void MsgContactCardWidget::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    mMenuShown = false;
-
-    HbWidgetFeedback::triggered(this, Hb::InstantPressed);
-
-    setBackGround(GROUPBOX_BG_FRAME_PRESSED);
-
-    event->accept();
-}
-
-//---------------------------------------------------------------
-// MsgContactCardWidget::mouseReleaseEvent
-// @see header file
-//---------------------------------------------------------------
-void MsgContactCardWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    setBackGround(BACKGROUND_FRAME_NORMAL);
-
-    if (this->rect().contains(event->pos()) && !mMenuShown) {
-        HbWidgetFeedback::triggered(this, Hb::InstantClicked);
-        emit clicked();
+    HbTapGesture *tapGesture = qobject_cast<HbTapGesture*> (event->gesture(Qt::TapGesture));
+    if (tapGesture) {
+        switch (tapGesture->state()) {
+        case Qt::GestureStarted:
+        {
+            // Trigger haptic feedback.
+            HbInstantFeedback::play(HbFeedback::Basic);
+            setPressed(true);
+            break;
+        }
+        case Qt::GestureUpdated:
+        {
+            if (HbTapGesture::TapAndHold == tapGesture->tapStyleHint()) {
+                // Handle longtap.
+                setPressed(false);
+                handleLongPress(tapGesture->scenePosition());
+            }
+            break;
+        }
+        case Qt::GestureFinished:
+        {
+            HbInstantFeedback::play(HbFeedback::Basic);
+            if (HbTapGesture::Tap == tapGesture->tapStyleHint()) {
+                // Handle short tap.
+                setPressed(false);
+                openContactInfo();
+            }
+            break;
+        }
+        case Qt::GestureCanceled:
+        {
+            HbInstantFeedback::play(HbFeedback::Basic);
+            setPressed(false);
+            break;
+        }
+        }
     }
-
-    event->accept();
+    else {
+        HbWidget::gestureEvent(event);
+    }
 }
 
 //---------------------------------------------------------------
-// MsgContactCardWidget::setBackGround
+// MsgContactCardWidget::setPressed
 // @see header file
 //---------------------------------------------------------------
-void MsgContactCardWidget::setBackGround(const QString& bg)
+void MsgContactCardWidget::setPressed(bool pressed)
 {
-    HbFrameItem* backGround = new HbFrameItem(this);
-    backGround->frameDrawer().setFrameGraphicsName(bg);
-    backGround->frameDrawer().setFrameType(HbFrameDrawer::NinePieces);
-    this->setBackgroundItem(backGround);
-    this->repolish();
+    HbFrameItem *frameItem = static_cast<HbFrameItem *> (this->backgroundItem());
+    if (pressed) {
+        this->setProperty("state", "pressed");
+        frameItem->frameDrawer().setFrameGraphicsName(BG_FRAME_PRESSED);
+    }
+    else {
+        this->setProperty("state", "normal");
+        frameItem->frameDrawer().setFrameGraphicsName(BG_FRAME_NORMAL);
+    }
 }
 
 //---------------------------------------------------------------
 // MsgContactCardWidget::handleLongPress
 // @see header file
 //---------------------------------------------------------------
-void MsgContactCardWidget::handleLongPress(QPointF position)
+void MsgContactCardWidget::handleLongPress(const QPointF &position)
 {
+    // Check if events need to be ignored/accepted
+    if (mIgnoreEvents) {
+        return;
+    }
+
     if (KBluetoothMsgsConversationId != ConversationsEngine::instance()->getCurrentConversationId()) {
         HbMenu* contextMenu = new HbMenu();
         contextMenu->setDismissPolicy(HbPopup::TapAnywhere);
@@ -311,25 +306,8 @@ void MsgContactCardWidget::handleLongPress(QPointF position)
         }
 
         contextMenu->show();
-
-        mMenuShown = true;
     }
 }
-
-//---------------------------------------------------------------
-// MsgContactCardWidget::overrideFeedback
-// @see header file
-//---------------------------------------------------------------
-/*HbFeedback::InstantEffect MsgContactCardWidget::overrideFeedback(Hb::InstantInteraction interaction) const
-{
-    switch (interaction) {
-    case Hb::InstantPressed:
-    case Hb::InstantClicked:
-        return HbFeedback::Basic;   
-    default:
-        return HbFeedback::None;
-    }
-}*/
 
 //---------------------------------------------------------------
 // MsgContactCardWidget::openContactInfo
@@ -337,6 +315,13 @@ void MsgContactCardWidget::handleLongPress(QPointF position)
 //---------------------------------------------------------------
 void MsgContactCardWidget::openContactInfo()
 {
+    this->ungrabGesture(Qt::TapGesture);
+    
+    // Check if events need to be ignored/accepted
+    if (mIgnoreEvents) {
+        return;
+    }
+
     QString operation;
     QList<QVariant> args;
     if (KBluetoothMsgsConversationId != ConversationsEngine::instance()->getCurrentConversationId()) {
@@ -373,6 +358,9 @@ void MsgContactCardWidget::openContactInfo()
         request->send();
         delete request;
     }
+    
+    //fire timer to regrab gesture after some delay.
+    QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
 
 //---------------------------------------------------------------
@@ -382,11 +370,9 @@ void MsgContactCardWidget::openContactInfo()
 int MsgContactCardWidget::resolveContactId(const QString& value)
 {
     QString displayLabel;
-    
-    return MsgContactHandler::resolveContactDisplayName(
-            value, 
-            displayLabel,
-            0);    
+
+    int count;
+    return MsgContactHandler::resolveContactDisplayName(value, displayLabel, count);
 }
 
 //---------------------------------------------------------------
@@ -396,7 +382,7 @@ int MsgContactCardWidget::resolveContactId(const QString& value)
 void MsgContactCardWidget::call()
 {
     //Launch dialer service     
-    QString serviceName("com.nokia.services.telephony");
+    QString serviceName("com.nokia.symbian.ICallDial");
     QString operation("dial(QString)");
 
     XQServiceRequest* serviceRequest = new XQServiceRequest(serviceName, operation, false);
@@ -426,18 +412,15 @@ void MsgContactCardWidget::handleOk(const QVariant& result)
 {
     Q_UNUSED(result)
 
-    QList<QContact> matchingContacts = 
-            MsgContactHandler::findContactList(mContactNumber);
+    QList<QContact> matchingContacts = MsgContactHandler::findContactList(mContactNumber);
 
     if (!matchingContacts.isEmpty()) {
         setAddress(matchingContacts.at(0).displayLabel());
-        
-        QList<QContactAvatar> avatarDetails = 
-                matchingContacts.at(0).details<QContactAvatar> ();
-        
+
+        QList<QContactAvatar> avatarDetails = matchingContacts.at(0).details<QContactAvatar> ();
+
         if (!avatarDetails.isEmpty()) {
-            mThumbnailManager->getThumbnail(
-                    avatarDetails.at(0).imageUrl().toString());
+            mThumbnailManager->getThumbnail(avatarDetails.at(0).imageUrl().toString());
         }
     }
 }
@@ -482,17 +465,22 @@ void MsgContactCardWidget::thumbnailReady(const QPixmap& pixmap, void *data, int
         setAvatar(HbIcon(DEFAULT_AVATAR_ICON));
     }
 }
+
 //---------------------------------------------------------------
-// MsgContactCardWidget::connectSignals
+// MsgContactCardWidget::ignoreSignals
 // @see header
 //---------------------------------------------------------------
-void MsgContactCardWidget::connectSignals(bool yes)
+void MsgContactCardWidget::ignoreSignals(bool yes)
 {
-    if (yes) {
-        connect(this, SIGNAL(clicked()), this, SLOT(openContactInfo()));
-    }
-    else {
-        disconnect(this, SIGNAL(clicked()), this, SLOT(openContactInfo()));
-    }
+    mIgnoreEvents = yes;
+}
+
+//---------------------------------------------------------------
+// MsgContactCardWidget::regrabGesture
+// @see header file
+//---------------------------------------------------------------
+void MsgContactCardWidget::regrabGesture()
+{
+    this->grabGesture(Qt::TapGesture);
 }
 // EOF

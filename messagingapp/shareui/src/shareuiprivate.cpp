@@ -82,11 +82,6 @@ void ShareUiPrivate::reset()
     mIndexActionMap.clear();
     mAiwRequestList.clear();
 
-    if ( mSharePopup )
-        {
-        delete mSharePopup;
-        mSharePopup = 0;
-        }
     }
 
 /**
@@ -99,7 +94,7 @@ void ShareUiPrivate::reset()
 bool ShareUiPrivate::init(QStringList& fileList, bool embedded)
     {    
     reset();
-    
+    mIsEmbedded = embedded;
     // No input files
     if ( fileList.count() == 0 )
         {
@@ -280,6 +275,7 @@ void ShareUiPrivate::onTriggered(void)
         QList<QVariant> args;
         QVariant fileList(mFileList);
         args << fileList;
+        request->setEmbedded(mIsEmbedded);
         request->setArguments(args);
         }
     }

@@ -33,9 +33,10 @@ EXPORTS
 	?getConversations@ConversationsEngine@@QAE_N_J@Z @ 32 NONAME ; bool ConversationsEngine::getConversations(long long)
 	?clearConversations@ConversationsEngine@@QAE_NXZ @ 33 NONAME ; bool ConversationsEngine::clearConversations(void)
 	?getDBHandle@ConversationsEngine@@QAEAAVRSqlDatabase@@AAH@Z @ 34 NONAME ; class RSqlDatabase & ConversationsEngine::getDBHandle(int &)
-	?getConversationIdFromContactId@ConversationsEngine@@QAE_JH@Z @ 35 NONAME ; long long ConversationsEngine::getConversationIdFromContactId(int)
-	?staticMetaObject@ConversationsEngine@@2UQMetaObject@@B @ 36 NONAME ; struct QMetaObject const ConversationsEngine::staticMetaObject
-	?deleteMessages@ConversationsEngine@@QAEXAAV?$QList@H@@@Z @ 37 NONAME ; void ConversationsEngine::deleteMessages(class QList<int> &)
-	?emitConversationModelPopulated@ConversationsEngine@@QAEXXZ @ 38 NONAME ; void ConversationsEngine::emitConversationModelPopulated(void)
-	?qt_metacall@ConversationsEngine@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 39 NONAME ; int ConversationsEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?getMsgSubType@ConversationsEngine@@QAEHH@Z @ 35 NONAME ; int ConversationsEngine::getMsgSubType(int)
+	?getConversationIdFromContactId@ConversationsEngine@@QAE_JH@Z @ 36 NONAME ; long long ConversationsEngine::getConversationIdFromContactId(int)
+	?staticMetaObject@ConversationsEngine@@2UQMetaObject@@B @ 37 NONAME ; struct QMetaObject const ConversationsEngine::staticMetaObject
+	?deleteMessages@ConversationsEngine@@QAEXAAV?$QList@H@@@Z @ 38 NONAME ; void ConversationsEngine::deleteMessages(class QList<int> &)
+	?emitConversationModelPopulated@ConversationsEngine@@QAEXXZ @ 39 NONAME ; void ConversationsEngine::emitConversationModelPopulated(void)
+	?qt_metacall@ConversationsEngine@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 40 NONAME ; int ConversationsEngine::qt_metacall(enum QMetaObject::Call, int, void * *)
 

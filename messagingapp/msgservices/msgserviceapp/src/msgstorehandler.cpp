@@ -20,7 +20,7 @@
 #include <SendUiConsts.h>
 
 #include "msgstorehandler.h"
-#include "MsgBioUids.h"
+#include "msgbiouids.h"
 #include "convergedmessage.h"
 
 //----------------------------------------------------------------------------

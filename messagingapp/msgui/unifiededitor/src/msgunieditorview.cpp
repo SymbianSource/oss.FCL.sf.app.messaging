@@ -57,11 +57,11 @@
 #include "msgunieditoraddress.h"
 #include "msgunieditorsubject.h"
 #include "msgunieditorbody.h"
-#include "msgmonitor.h"
-#include "msgattachmentcontainer.h"
+#include "msgunieditormonitor.h"
+#include "msgunieditorattachmentcontainer.h"
 #include "msgsendutil.h"
 #include "convergedmessageaddress.h"
-#include "unieditorgenutils.h"
+#include "UniEditorGenUtils.h"
 #include "unieditorpluginloader.h"
 #include "unieditorplugininterface.h"
 #include "msgsettingsview.h"
@@ -122,8 +122,8 @@ const int MAX_VCARDS(1000);
 const QString POPUP_LIST_FRAME("qtg_fr_popup_list_normal");
 
 //settings confirmation
-#define LOC_DIALOG_SMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_sms_settings_incomplete")
-#define LOC_DIALOG_MMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_mms_settings_incomplete")
+#define LOC_DIALOG_SMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_sms_message_centre_does_not_e")
+#define LOC_DIALOG_MMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_mms_access_point_not_defined")
 // LOCAL FUNCTIONS
 
 //---------------------------------------------------------------
@@ -148,6 +148,7 @@ MsgUnifiedEditorView::MsgUnifiedEditorView( QGraphicsItem *parent ) :
     MsgBaseView(parent),
     mSubjectAction(0),
     mCcBccAction(0),
+    mSendAction(0),
     mMainLayout(0),
     mSubjectField(0),
     mToField(0),
@@ -201,7 +202,7 @@ void MsgUnifiedEditorView::initView()
     mMainLayout->setContentsMargins(0,vTopSpacing,0,0);
     mMainLayout->setSpacing(vItemSpacing);
 
-    mMsgMonitor = new MsgMonitor(this);    
+    mMsgMonitor = new MsgUnifiedEditorMonitor(this);    
 
     mToField = new MsgUnifiedEditorAddress( LOC_TO, mContentWidget );
     
@@ -222,6 +223,7 @@ void MsgUnifiedEditorView::initView()
     connect(mBody, SIGNAL(contentChanged()),this,SLOT(onContentChanged()));
     connect(mBody, SIGNAL(contentChanged()),
             mMsgMonitor, SLOT(handleContentChange()));
+    connect(mBody, SIGNAL(enableSendButton(bool)), this, SLOT(enableSendButton(bool)));    
     
 }
 
@@ -297,7 +299,7 @@ void MsgUnifiedEditorView::openDraftsMessage(const QVariantList& editorData)
     if( msg != NULL )
     {
         //Populate the content inside editor
-        populateContentIntoEditor(*msg);
+        populateContentIntoEditor(*msg,true); // true as it is  draft message
         delete msg;
     }
     
@@ -450,7 +452,7 @@ void MsgUnifiedEditorView::populateContent(const QVariantList& editorData)
 }
 
 void MsgUnifiedEditorView::populateContentIntoEditor(
-    const ConvergedMessage& messageDetails)
+    const ConvergedMessage& messageDetails,bool draftMessage)
 {
     // skip first-time MMS type switch note for draft
     mMsgMonitor->setSkipNote(true);
@@ -519,7 +521,7 @@ void MsgUnifiedEditorView::populateContentIntoEditor(
             {
                 case EMsgMediaImage:
                 {
-                    mBody->setImage(filePath);
+                    mBody->setImage(filePath,draftMessage);
                     break;
                 }
                 case EMsgMediaAudio:
@@ -576,7 +578,7 @@ void MsgUnifiedEditorView::addToolBar()
     attachExtension->setContentWidget(mTBExtnContentWidget);
 
     //Add Action to the toolbar and show toolbar
-    toolBar->addAction(HbIcon(SEND_ICON),QString(),this,SLOT(send()));
+    mSendAction = toolBar->addAction(HbIcon(SEND_ICON),QString(),this,SLOT(send()));
 
 
     setToolBar(toolBar);
@@ -797,7 +799,7 @@ void MsgUnifiedEditorView::send()
 
     // converged msg for sending
     ConvergedMessage msg;
-    ConvergedMessage::MessageType messageType = MsgMonitor::messageType();
+    ConvergedMessage::MessageType messageType = MsgUnifiedEditorMonitor::messageType();
     msg.setMessageType(messageType);
 
     // we need to remove duplicate addresses
@@ -931,7 +933,7 @@ void MsgUnifiedEditorView::send()
 
 void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg, bool isSave)
 {
-    ConvergedMessage::MessageType messageType = MsgMonitor::messageType();
+    ConvergedMessage::MessageType messageType = MsgUnifiedEditorMonitor::messageType();
     msg.setMessageType(messageType);
     // If isSave is true (save to draft usecase), then don't remove duplicates
     // If isSave is false (send usecase), then remove duplicates
@@ -1060,7 +1062,7 @@ void MsgUnifiedEditorView::saveContentToDrafts()
         return;
         }
     activateInputBlocker();
-    ConvergedMessage::MessageType messageType = MsgMonitor::messageType();
+    ConvergedMessage::MessageType messageType = MsgUnifiedEditorMonitor::messageType();
 
     ConvergedMessageAddressList addresses = mToField->addresses();
 
@@ -1079,8 +1081,8 @@ void MsgUnifiedEditorView::saveContentToDrafts()
 
     if(messageType == ConvergedMessage::Sms &&
             addresses.isEmpty() &&
-            MsgMonitor::bodySize() <= 0 &&
-            MsgMonitor::containerSize() <= 0)
+            MsgUnifiedEditorMonitor::bodySize() <= 0 &&
+            MsgUnifiedEditorMonitor::containerSize() <= 0)
     {
         if(mOpenedMessageId.getId() != -1)
         {
@@ -1113,8 +1115,8 @@ void MsgUnifiedEditorView::saveContentToDrafts()
             ccAddresses.isEmpty() &&
             bccAddresses.isEmpty() &&
             subectSize <= 0 &&
-            MsgMonitor::bodySize() <= 0 &&
-            MsgMonitor::containerSize() <= 0)
+            MsgUnifiedEditorMonitor::bodySize() <= 0 &&
+            MsgUnifiedEditorMonitor::containerSize() <= 0)
     {
         if(mOpenedMessageId.getId() != -1)
         {
@@ -1356,11 +1358,12 @@ void MsgUnifiedEditorView::fetchContacts()
 //---------------------------------------------------------------
 void MsgUnifiedEditorView::fetchImages()
 {
-    QString interface("Image");
-    QString operation("fetch(QVariantMap,QVariant)");
+    QString service("photos");
+    QString interface("com.nokia.symbian.IImageFetch");
+    QString operation("fetch(void)");
     XQAiwRequest* request = NULL;
     XQApplicationManager appManager;
-    request = appManager.create(interface, operation, true);//embedded
+    request = appManager.create(service,interface, operation, true);//embedded
     request->setSynchronous(true); // synchronous
     if(!request)
     {     
@@ -1373,11 +1376,6 @@ void MsgUnifiedEditorView::fetchImages()
     connect(request, SIGNAL(requestError(int,const QString&)),
         this, SLOT(serviceRequestError(int,const QString&)));
     
-    // Set arguments for request
-    QList<QVariant> args;
-    args << QVariantMap();
-    args << QVariant();
-    request->setArguments(args);
     // Make the request
     if (!request->send())
     {
@@ -1482,8 +1480,7 @@ void MsgUnifiedEditorView::serviceRequestError(int errorCode, const QString& err
 //--------------------------------------------------------------
 void MsgUnifiedEditorView::activateInputBlocker()
 {
-    this->grabMouse();
-    this->grabKeyboard();
+    mainWindow()->setInteractive(false);
 }
 
 //---------------------------------------------------------------
@@ -1491,9 +1488,8 @@ void MsgUnifiedEditorView::activateInputBlocker()
 // @see header file
 //--------------------------------------------------------------
 void MsgUnifiedEditorView::deactivateInputBlocker()
-{    
-    this->ungrabKeyboard();
-    this->ungrabMouse();
+{
+    mainWindow()->setInteractive(true);
 }
 
 //---------------------------------------------------------------
@@ -1637,7 +1633,7 @@ void MsgUnifiedEditorView::onDialogDeleteMsg(HbAction* action)
             }
 
             UniEditorPluginInterface* pluginInterface = mPluginLoader->getUniEditorPlugin(
-                MsgMonitor::messageType());
+                MsgUnifiedEditorMonitor::messageType());
 
             pluginInterface->deleteDraftsEntry(mOpenedMessageId.getId());
         }
@@ -1683,5 +1679,20 @@ void MsgUnifiedEditorView::onDialogMmsSettings(HbAction* action)
         emit switchView(params); 
     }
 }
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::enableSendButton
+// @see header file
+//--------------------------------------------------------------
+void MsgUnifiedEditorView::enableSendButton(bool enable)
+    {
+    if(mSendAction)
+        {
+         // enable/disable based on only if its disabled/enabled.
+         // this check is to avoid unnecessary calls to mSendAction->setEnabled(enable);
+        if(mSendAction->isEnabled() != enable )
+            mSendAction->setEnabled(enable);
+        }
+    }
 
 //EOF

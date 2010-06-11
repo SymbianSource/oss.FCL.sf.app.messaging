@@ -80,9 +80,26 @@ const QString SORT_ICON("qtg_mono_sort");
 // @see header
 //---------------------------------------------------------------
 MsgListView::MsgListView(QGraphicsItem *parent) :
-    MsgBaseView(parent),
-    mItemLongPressed(false)
+    MsgBaseView(parent)
 {
+    //These changes are needed for splash implementation to avoid flicker
+    setupToolBar();    
+    setupMenu();
+
+    // Create parent layout.
+    mMainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mMainLayout->setContentsMargins(0, 0, 0, 0);
+    mMainLayout->setSpacing(0);
+    
+    // Create view heading.
+    HbGroupBox *viewHeading = new HbGroupBox();
+    viewHeading->setHeading(LOC_VIEW_HEADING);
+    
+    // Add view heading widget to main layout.
+    mMainLayout->addItem(viewHeading);
+
+    this->setLayout(mMainLayout);
+
     connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
 }
 
@@ -101,7 +118,6 @@ MsgListView::~MsgListView()
 //---------------------------------------------------------------
 void MsgListView::longPressed(HbAbstractViewItem* viewItem, const QPointF& point)
 {
-    mItemLongPressed = true;
     if (this->isVisible()) {
         // Set the current index as the present Item's index.
         // By default it will not be set.
@@ -144,11 +160,6 @@ void MsgListView::longPressed(HbAbstractViewItem* viewItem, const QPointF& point
 //---------------------------------------------------------------
 void MsgListView::openConversation(const QModelIndex& index)
 {
-    if(mItemLongPressed)
-     {
-     mItemLongPressed = false;
-     return;
-     }
     //TODO: model populating possibilities.
     if (index.isValid()) {
         QVariant conversationId = index.data(ConversationId);
@@ -232,15 +243,6 @@ void MsgListView::deleteItem()
 //---------------------------------------------------------------
 void MsgListView::setupListView()
 {
-    // Create parent layout.
-    QGraphicsLinearLayout *mainLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(0);
-
-    // Create view heading.
-    HbGroupBox *viewHeading = new HbGroupBox();
-    viewHeading->setHeading(LOC_VIEW_HEADING);
-
     // Register the custorm css path.
     HbStyleLoader::registerFilePath(":/clv");
 
@@ -275,11 +277,8 @@ void MsgListView::setupListView()
     connect(mMsgList, SIGNAL(longPressed(HbAbstractViewItem*, const QPointF&)),
             this, SLOT(longPressed(HbAbstractViewItem*, const QPointF&)));
 
-    // Add all widgets to main layout.
-    mainLayout->addItem(viewHeading);
-    mainLayout->addItem(mMsgList);
-
-    this->setLayout(mainLayout);
+    // Add list view to main layout.
+    mMainLayout->addItem(mMsgList);
 }
 
 //---------------------------------------------------------------
@@ -347,10 +346,8 @@ void MsgListView::handleViewExtnActivated(HbListWidgetItem *item)
 // @see header
 //---------------------------------------------------------------
 void MsgListView::doDelayedConstruction()
-    {
-    setupToolBar();    
+    {    
     setupListView();
-    setupMenu();
     
     disconnect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
     }

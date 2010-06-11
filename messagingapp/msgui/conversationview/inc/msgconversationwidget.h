@@ -20,6 +20,7 @@
 
 // SYSTEM INCLUDES
 #include <hbwidget.h>
+#include <HbIcon>
 
 // FORWORD DECLARATIONS
 class HbFrameItem;
@@ -86,10 +87,10 @@ public:
     void setBodyText(const QString &bodyText);
 
     /**
-     * Set preview icon path for this widget
-     * @param QString
+     * Set preview icon for this widget
+     * @param HbIcon, preview-icon
      */
-    void setPreviewIconPath(const QString& filePath,int msgId);
+    void setPreviewIcon(HbIcon& icon);
 
     /**
      * Set priority property

@@ -344,5 +344,16 @@ RSqlDatabase& ConversationsEngine::getDBHandle(TBool& isOpen)
     return mConversationsModel->getDBHandle(isOpen);
     }
 
+
+//---------------------------------------------------------------
+// ConversationsEngine::getMsgSubType()
+// @see header
+//---------------------------------------------------------------
+int ConversationsEngine::getMsgSubType(int messageId)
+{
+ return mConversationMsgStoreHandler->getMsgSubType(messageId);
+}
+
+
 //EOF
 

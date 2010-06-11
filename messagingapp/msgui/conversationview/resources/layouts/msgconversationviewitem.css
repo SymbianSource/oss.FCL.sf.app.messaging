@@ -1,28 +1,20 @@
-MsgConversationViewItem[isIncoming="true"]
+MsgConversationViewItem
 {
-    layout:layout-incoming;
+    layout:layout-conversation;
     pref-height:-1;
     pref-width:-1;
     size-policy-vertical:minimum-expanding;
 }
 
-MsgConversationViewItem[isIncoming="false"]
+MsgConversationViewItem::msgconvwidget
 {
-    layout:layout-outgoing;
-    pref-height:-1;
-    pref-width:-1;
-    size-policy-vertical:minimum-expanding;
-}
-
-MsgConversationViewItem[isIncoming="true"]::msgconvwidget
-{
-  left:-var(hb-param-margin-gene-left);
+  left:-var(hb-param-margin-gene-middle-horizontal);
   top:0.0un;
   right:var(hb-param-margin-gene-middle-horizontal);
   bottom:0.0un;
 }
 
-MsgConversationViewItem[isIncoming="true"]::msgStateIcon
+MsgConversationViewItem::msgStateIconIncoming
 {
   right:var(hb-param-margin-gene-right);
   size-policy:fixed fixed;
@@ -31,15 +23,7 @@ MsgConversationViewItem[isIncoming="true"]::msgStateIcon
   pref-width:var(hb-param-graphic-size-primary-small);
 }
 
-MsgConversationViewItem[isIncoming="false"]::msgconvwidget
-{
-  top:0.0un;
-  right:var(hb-param-margin-gene-right);
-  bottom:0.0un;
-  left:-var(hb-param-margin-gene-middle-horizontal);
-}
-
-MsgConversationViewItem[isIncoming="false"]::msgStateIcon
+MsgConversationViewItem::msgStateIconOutgoing
 {
   left:-var(hb-param-margin-gene-left);
   size-policy:fixed fixed;

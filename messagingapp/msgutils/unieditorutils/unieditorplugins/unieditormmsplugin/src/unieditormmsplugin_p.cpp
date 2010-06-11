@@ -204,12 +204,20 @@ void CUniEditorMmsPluginPrivate::convertFromForwardHandlerL(
     ConvergedMessage &aMessage)
 {
     QDEBUG_WRITE("Enter convertFromForwardHandlerL");
-
-    TMsvEntry entry =MmsMtmL()->Entry().Entry();
+    iMessageForwarded = EFalse;
+    TMsvEntry entry = MmsMtmL()->Entry().Entry();
 
     //populate convergedmessage with the subject prepended with FW:
-    QString subject = LOC_FWD + S60QConversions::s60DescToQString(
-        MmsMtmL()->SubjectL());     
+    QString subject =
+            S60QConversions::s60DescToQString(MmsMtmL()->SubjectL());
+
+    if (!(entry.Forwarded() || subject.startsWith(LOC_FWD,
+            Qt::CaseInsensitive)))
+        {
+        subject.insert(0, LOC_FWD);
+        iMessageForwarded = ETrue;
+        }
+
     aMessage.setSubject(subject);
 
     // Priority
@@ -382,6 +390,12 @@ void CUniEditorMmsPluginPrivate::DoConvertToL(ConvergedMessage *aMessage,
 
      //There is no size check inside plugin as it assumes 
      //we get proper data from editor
+     entry = MmsMtmL()->Entry().Entry();
+     if (iMessageForwarded)
+        {
+        entry.SetForwarded(ETrue);
+        iMessageForwarded = EFalse;
+        }
      HBufC* sub = S60QConversions::qStringToS60Desc(aMessage->subject());
      if( sub )
      {
@@ -507,8 +521,8 @@ void CUniEditorMmsPluginPrivate::DoConvertToL(ConvergedMessage *aMessage,
      //Saving the changes
      MmsMtmL()->SaveMessageL();
 
+     
      entry = MmsMtmL()->Entry().Entry();
-
      TBuf<KMaxDetailsLength> detailsBuf;
      MakeDetailsL( detailsBuf );
      entry.iDetails.Set( detailsBuf );

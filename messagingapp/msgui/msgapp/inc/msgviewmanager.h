@@ -84,6 +84,11 @@ public:
      */
     void view(int msgId);
 
+    /**
+     * Returns the current active view.
+     */
+    int currentView();
+    
 private:
     /**
      * swiches back to last view after service request is complete.

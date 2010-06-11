@@ -46,7 +46,9 @@ public:
     /**
      * Constructor
      */
-    UnifiedViewer(const qint32 messageId, QGraphicsItem *parent = 0);
+    UnifiedViewer(const qint32 messageId, 
+                  int canForwardMessage = 0,
+                  QGraphicsItem *parent = 0);
 
     /**
      * Destructor
@@ -73,13 +75,7 @@ private:
      * @see HbView
      */
     void createToolBar();
-
-    /**
-     * Validates if message can be forwarded
-     * @return true if message can be forwarded
-     *         false if message cant be forwarded
-     */
-    bool validateMsgForForward();
+   
 
 public slots:
 
@@ -143,6 +139,11 @@ private:
      * Message count
      */
     int mMsgCount;
+    
+	/**
+	 * Forward status of message
+	 */
+    bool mForwardMessage;
 };
 
 #endif

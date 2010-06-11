@@ -19,7 +19,7 @@
 #include <qversitreader.h>
 #include <qtcontacts.h>
 #include <qmobilityglobal.h>
-#include <senduiconsts.h>
+#include <SendUiConsts.h>
 
 #include "conversationsengineutility.h"
 #include "convergedmessage.h"
@@ -47,6 +47,7 @@ int ConversationsEngineUtility::messageType(TCsType value)
     case ECsProvisioning:
     case ECsBioMsg_VCard:
     case ECsBioMsg_VCal:
+    case ECsBioMgs_NokiaService:
         mMessageType = ConvergedMessage::BioMsg;
         break;
     case ECsBlueTooth:
@@ -111,6 +112,9 @@ int ConversationsEngineUtility::messageSubType(TCsType value)
         break;
     case ECsAudio:
         messageSubType = ConvergedMessage::Audio;
+        break;
+    case ECsBioMgs_NokiaService:
+        messageSubType = ConvergedMessage::NokiaService;
         break;
     default:
         messageSubType = ConvergedMessage::None;

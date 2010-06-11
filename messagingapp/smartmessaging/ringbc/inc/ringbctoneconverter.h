@@ -23,7 +23,7 @@
 
 //  INCLUDES
 #include <e32base.h>
-#include "NsmRingTone.h"
+#include "nsmringtone.h"
 
 // FORWARD DECLARATIONS
 NONSHARABLE_STRUCT( TInstruction )

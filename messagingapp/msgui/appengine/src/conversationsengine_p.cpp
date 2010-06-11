@@ -230,7 +230,7 @@ void ConversationsEnginePrivate::clearConversationsL()
     
     mConvChangeHandler->Cancel();
     //Clear conversations model before populating with new data 
-    mConversationsModel->clear();  
+    mConversationsModel->clearModel();
     
     // Delete old CCsClientConversation object 
     // Remove the old Conversation change observer

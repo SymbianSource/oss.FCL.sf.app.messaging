@@ -167,6 +167,24 @@ ConvergedMessageAddressList UniViewerFeeder::ccAddressList()
 }
 
 // ---------------------------------------------------------------------------
+// UniViewerFeeder::bccAddressList
+// @see header file
+// ---------------------------------------------------------------------------
+ConvergedMessageAddressList UniViewerFeeder::bccAddressList()
+{
+    return d_ptr->bccAddressList();
+}
+
+// ---------------------------------------------------------------------------
+// UniViewerFeeder::recipientCount
+// @see header file
+// ---------------------------------------------------------------------------
+int UniViewerFeeder::recipientCount()
+{
+    return d_ptr->recipientCount();
+}
+
+// ---------------------------------------------------------------------------
 // UniViewerFeeder::messageSize
 // @see header file
 // ---------------------------------------------------------------------------

@@ -15,11 +15,6 @@
      <meshitem src="textEdit" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
      <meshitem src="textEdit" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
      
-     <meshitem src="textEditFrame" srcEdge="TOP" dst="textEdit" dstEdge="TOP" />
-     <meshitem src="textEditFrame" srcEdge="BOTTOM" dst="textEdit" dstEdge="BOTTOM" />
-     <meshitem src="textEditFrame" srcEdge="LEFT" dst="textEdit" dstEdge="LEFT" />
-     <meshitem src="textEditFrame" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
-     
     <meshitem src="charCounter" srcEdge="TOP" dst="textEdit" dstEdge="TOP" />
     <meshitem src="charCounter" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
 
@@ -41,11 +36,6 @@
      <meshitem src="textEdit" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
      <meshitem src="textEdit" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
      
-     <meshitem src="textEditFrame" srcEdge="TOP" dst="textEdit" dstEdge="TOP" />
-     <meshitem src="textEditFrame" srcEdge="LEFT" dst="textEdit" dstEdge="LEFT" />
-     <meshitem src="textEditFrame" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
-     <meshitem src="textEditFrame" srcEdge="BOTTOM" dst="textEdit" dstEdge="BOTTOM" />     
-
      <meshitem src="charCounter" srcEdge="TOP" dst="textEdit" dstEdge="TOP" />
      <meshitem src="charCounter" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
 
@@ -66,11 +56,6 @@
      <meshitem src="textEdit" srcEdge="LEFT" dst="" dstEdge="CENTERH" />
      <meshitem src="textEdit" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
      <meshitem src="textEdit" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
-     
-     <meshitem src="textEditFrame" srcEdge="TOP" dst="textEdit" dstEdge="TOP" />
-     <meshitem src="textEditFrame" srcEdge="LEFT" dst="textEdit" dstEdge="LEFT" />
-     <meshitem src="textEditFrame" srcEdge="RIGHT" dst="textEdit" dstEdge="RIGHT" />
-     <meshitem src="textEditFrame" srcEdge="BOTTOM" dst="textEdit" dstEdge="BOTTOM" />     
      
      <meshitem src="pixmap" srcEdge="TOP" dst="audioItem" dstEdge="BOTTOM"  />    
      <meshitem src="pixmap" srcEdge="LEFT" dst="" dstEdge="LEFT" />

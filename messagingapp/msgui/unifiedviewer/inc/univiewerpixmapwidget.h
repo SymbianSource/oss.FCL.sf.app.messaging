@@ -20,6 +20,9 @@
 
 #include <HbIconItem>
 
+// FORWARD DECLARATIONS
+class UniViewerUtils;
+
 /**
  * This widget displays the pixmap content in viewer.
  */
@@ -41,17 +44,24 @@ public:
 
     /**
      * Sets the pixmap content to be displayed.
+     * @param mimeType Mime type of the pixmap.
      * @param pixmapPath File path of the pixmap.
      */
-    void setPixmap(const QString &pixmapPath);
+    void populate(const QString &mimeType, const QString &pixmapPath);
 
 signals:
 
     /**
-     * Signal emitted for short tap on pixmap.
-     * @param pixmapPath File path of the pixmap being clicked.
+     * Signal emitted when widget is clicked.
+     * @param mediaPath File path of the media.
      */
-    void shortTap(const QString &pixmapPath);
+    void shortTap(const QString &mediaPath);
+
+    /**
+     * Signal emitted when widget is long tapped.
+     * @param position Scene coordinates of tap.
+     */
+    void longTap(const QPointF &position);
 
 protected:
 
@@ -62,12 +72,54 @@ protected:
      */
     virtual void gestureEvent(QGestureEvent *event);
 
+private slots:
+
+    /**
+     *
+     */
+    void handleOpen();
+
+    /**
+     *
+     */
+    void handleSave();
+    
+    /**
+     * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture
+     * events back to back.  
+     */
+    void regrabGesture();
+
 private:
+
+    /**
+     * Handles short tap event.
+     */
+    void handleShortTap();
+
+    /**
+     * Handles long tap event.
+     * @param position Scene coordinates of tap.
+     */
+    void handleLongTap(const QPointF &position);
+
+private:
+
+    /**
+     * UniViewerUtils object.
+     * Own
+     */
+    UniViewerUtils *mViewerUtils;
+
+    /**
+     * Mime Type of pixmap.
+     */
+    QString mMimeType;
 
     /**
      * Pixmap file path being set.
      */
-    QString mPixmapFile;
+    QString mPixmapPath;
 };
 
 #endif /* UNI_VIEWER_PIXMAP_WIDGET_H */

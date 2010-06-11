@@ -76,21 +76,26 @@ public:
 private:
 
     /**
-     * Returns the preview text based on message type, sub type and state.
+     * Create permanent items.
+     */
+    void initItems();
+
+    /**
+     * Returns the preview text based on message type, sub type.
+     * Also sets the indicator icon.
      * @return QString
      */
-    QString previewText(int msgType, int msgSubType, int msgState,int msgDirection);
+    QString defaultPreviewText(int msgType, int msgSubType);
  
     /**
-     * return the preview text based on state.
-     * @return bool
+     * Sets the preview text and timestamp.
      */
-    QString textBySendState(int sendState,int msgDirection);
-    
+    void setTimestampAndPreviewText();
+
 private:
     /**
- 	   * Property to change the color of text
-	   */
+     * Property to change the color of text
+     */
     bool mUnReadMsg;
 
     /**

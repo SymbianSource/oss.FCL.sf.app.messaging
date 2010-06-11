@@ -505,8 +505,8 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
         CMsvEntry& entry = SmsMtmL()->Entry();
         TMsvEntry msvEntry( entry.Entry() );
         msvEntry.iDetails.Set( idetailsBuf );
-        SmsMtmL()->SaveMessageL();
         entry.ChangeL( msvEntry );
+        SmsMtmL()->SaveMessageL();
     }
 
     // set subject
@@ -890,8 +890,7 @@ void UniEditorSmsPluginPrivate::MoveMessagesToOutboxL()
             {
             CreateVCardSMSL(filehandle);
             CleanupStack::Pop(&filehandle);
-            filehandle.Close();
-            managerSync.RemoveAttachmentL(0);
+            filehandle.Close();         
             }
         else if (mimetype.CompareF(KMsgMimeVCal) == 0 || 
                  mimetype.CompareF(KMsgMimeICal) == 0)

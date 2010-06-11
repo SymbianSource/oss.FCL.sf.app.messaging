@@ -24,6 +24,8 @@
 #include "unidatamodelplugininterface.h"
 #include "ringbc.h"
 #include "msgcontacthandler.h"
+#include "debugtraces.h"
+
 #include <ccsclientconversation.h>
 #include <ccsconversationentry.h>
 #include <QFile>
@@ -204,6 +206,8 @@ void ConversationsSummaryModel::deleteRow(qint64 convId)
 void ConversationsSummaryModel::populateItem(QStandardItem& item, 
         const CCsClientConversation& conversation)
     {
+    QCRITICAL_WRITE("ConversationsSummaryModel::populateItem start.");
+            
     //get entry
     CCsConversationEntry* conEntry = conversation.GetConversationEntry(); 
     //error scenario
@@ -281,7 +285,9 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
     item.setData(contactId, ContactId);
     
     // unread status        
-    item.setData(conEntry->IsAttributeSet(ECsAttributeUnread),UnReadStatus);      
+    item.setData(conEntry->IsAttributeSet(ECsAttributeUnread),UnReadStatus); 
+    
+    QCRITICAL_WRITE("ConversationsSummaryModel::populateItem start.");
     }
 
 
@@ -369,7 +375,25 @@ void ConversationsSummaryModel::handleBioMessages(QStandardItem& item, const CCs
             }
         }
     }
-    else {
+
+   else if(ConvergedMessage::NokiaService == msgSubType){
+        // This is a bio message so lets parse it and see if it has a associated attachment ..        
+        if (bioMsgPlugin->attachmentCount() > 0) {
+				// TODO : need to confirm if we need to read from attachment
+        }
+        else {// description
+            HBufC* description = entry.Description();
+            QString subject("");
+            if (description && description->Length()) {
+                subject = (S60QConversions::s60DescToQString(*description));
+                item.setData(subject, BodyText);
+            }
+
+        }
+
+    }
+
+   else {
         // description
         HBufC* description = entry.Description();
         QString subject("");

@@ -11,5 +11,6 @@
         <file alias="msgunifiededitorbody.widgetml">resources/layouts/msgunifiededitorbody.widgetml</file>
         <file alias="msgunifiededitorsubject.css">resources/layouts/msgunifiededitorsubject.css</file>
         <file alias="msgunifiededitorsubject.widgetml">resources/layouts/msgunifiededitorsubject.widgetml</file>
+        <file alias="msgunifiededitorattachment_color.css">resources/layouts/msgunifiededitorattachment_color.css</file>
     </qresource>
 </RCC>

@@ -25,7 +25,7 @@
 #include <QSqlError>
 #include <HbApplication>
 #include <xqappmgr.h>
-#include <HbMessageBox.h>
+#include <hbmessagebox.h>
 #include <HbView>
 
 #include "conversationsengine.h"
@@ -211,9 +211,6 @@ void MsgViewManager::onBackAction()
 
 void MsgViewManager::switchView(const QVariantList& data)
 {
-   
-    connect(mMainWindow, SIGNAL(viewReady()),this,SLOT(setViewInteractive()));
-    mMainWindow->setInteractive(false);
     
     int viewId = data.at(0).toInt();
     
@@ -679,22 +676,18 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
     //switch to univiewer.
     if (data.length() > 2) {
         qint32 contactId = data.at(2).toLongLong();
-        QByteArray dataArray = data.at(3).toByteArray();
+        qint32 messageId = data.at(3).toInt();
         int msgCount = data.at(4).toInt();
-
-        ConvergedMessage *message = new ConvergedMessage;
-        QDataStream stream(&dataArray, QIODevice::ReadOnly);
-        message->deserialize(stream);
-        qint32 messageId = message->id()->getId();
+        int canForwardMessage = data.at(5).toInt();
+        
         if (!mUniViewer) {
-            mUniViewer = new UnifiedViewer(messageId);
+            mUniViewer = new UnifiedViewer(messageId, canForwardMessage);
             mUniViewer->setNavigationAction(mBackAction);
             mMainWindow->addView(mUniViewer);
             connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,
                 SLOT(switchView(const QVariantList&)));
         }
-        mUniViewer->populateContent(messageId, true, msgCount);
-        delete message;
+        mUniViewer->populateContent(messageId, true, msgCount);        
     }
     
     if(mPreviousView==MsgBaseView::CV && mConversationView)
@@ -948,3 +941,11 @@ void MsgViewManager::onDialogSaveTone(HbAction* action)
         HbApplication::quit();
 }
 
+// ----------------------------------------------------------------------------
+// MsgViewManager::currentView
+// @see header
+// ----------------------------------------------------------------------------
+int MsgViewManager::currentView()
+    {
+    return mCurrentView;
+    }

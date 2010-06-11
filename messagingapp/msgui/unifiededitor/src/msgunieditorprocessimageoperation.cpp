@@ -19,13 +19,13 @@
 
 // ========== INCLUDE FILES ================================
 
-#include <BASCHED.H>
+#include <basched.h>
 #include <icl/imagedata.h>
 
 #include <centralrepository.h>
 
-#include <messagingvariant.hrh>
-#include <messaginginternalcrkeys.h> // for Central Repository keys
+#include <MessagingVariant.hrh>
+#include <MessagingInternalCRKeys.h> // for Central Repository keys
 
 #include <MsgMediaResolver.h>
 #include <MsgImageInfo.h>
@@ -43,12 +43,12 @@
 
 #include <msvids.h>
 #include <MmsEngineDomainCRKeys.h>
-#include <mmssettingsdefs.h>
+#include <msgunieditormmssettingsdefs.h>
 #include <HbMessageBox>
 #include <HbAction>
 #include <mmsconst.h>
 
-#include "msgmonitor.h"
+#include "msgunieditormonitor.h"
 #include "msgunieditorprocessimageoperation.h"
 
 // ========== CONSTANTS ====================================
@@ -85,7 +85,7 @@ CUniEditorProcessImageOperation* CUniEditorProcessImageOperation::NewL(
             
     CleanupStack::PushL( self );
     self->ConstructL();
-    CleanupStack::Pop( self );
+    CleanupStack::Pop();
     
     return self;
     }
@@ -149,7 +149,7 @@ void CUniEditorProcessImageOperation::ConstructL()
     
     delete repository;
 
-    iMaxMmsSize = MsgMonitor::maxMmsSize();
+    iMaxMmsSize = MsgUnifiedEditorMonitor::maxMmsSize();
     }
 
 // ---------------------------------------------------------
@@ -476,9 +476,9 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
 
     if ( !( iProcessMethod & EUniProcessImgMethodScale ) &&
          ( iImageInfo->FileSize() + 
-           MsgMonitor::messageSize() ) > iMaxMmsSize &&
+           MsgUnifiedEditorMonitor::messageSize() ) > iMaxMmsSize &&
          iImageInfo->MimeType().CompareF( KMsgMimeImageJpeg ) == 0 &&
-         (MsgMonitor::messageSize()) < KUniCompressionMargin )
+         (MsgUnifiedEditorMonitor::messageSize()) < KUniCompressionMargin )
         {
         // Only compression needed as image is JPEG that is larger than can be fitted
         // into the message and scaling is not performed. Also current message size
@@ -493,7 +493,7 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
         // Image won't be processed
         if ( ( origSize.iWidth > KImageRichWidth ||
                origSize.iHeight > KImageRichHeight ) &&
-             ( iImageInfo->FileSize() + MsgMonitor::messageSize() ) < iMaxMmsSize )
+             ( iImageInfo->FileSize() + MsgUnifiedEditorMonitor::messageSize() ) < iMaxMmsSize )
             {
             // Original image width or height is "non-conformant" and original image would 
             // fit to into the message without any processing.

@@ -88,6 +88,7 @@ LIBS += -lcsserverclientapi \
         -lsqldb \
         -lestor \
 	-lFeatMgr \
+	-lfbscli \
         -lringbc 
 
 

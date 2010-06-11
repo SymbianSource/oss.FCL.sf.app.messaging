@@ -31,14 +31,14 @@
 #include <QTimer>
 #include "unieditorpluginloader.h"
 #include "unieditorplugininterface.h"
-#include "unisendingsettings.h"
-#include "unieditorgenutils.h"
+#include "UniSendingSettings.h"
+#include "UniEditorGenUtils.h"
 #include "debugtraces.h"
 
 // LOCAL CONSTANTS
 
 const QString SEND_ICON("qtg_mono_send");
-const QString BACKGROUND("qtg_fr_input_bg");
+const QString BACKGROUND("qtg_fr_input_v_bg");
 const QString BACKGROUND_FRAME("qtg_fr_btn_normal");
 
 const QString SEND_BUTTON_NORMAL("qtg_fr_input_btn_function_normal");
@@ -48,6 +48,8 @@ const QString SEND_BUTTON_DISABLED("qtg_fr_input_btn_function_disabled");
 #define LOC_SMS_CHAR_LIMIT_REACHED hbTrId("txt_messaging_dialog_sms_character_count_exceeded")
 #define LOC_DIALOG_OK hbTrId("txt_common_button_ok")
 #define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
+#define LOC_HINT_TEXT hbTrId("txt_messaging_formlabel_enter_message_here")
+
   
 const TInt KShowCounterLimit = 10;
 
@@ -356,7 +358,8 @@ void MsgEditorWidget::setEncodingSettingsL()
 MsgEditor::MsgEditor(QGraphicsItem *parent)
 :HbLineEdit(parent)
     {
-    
+     this->setSmileysEnabled(true);
+     this->setPlaceholderText(LOC_HINT_TEXT);
     }
 
 //---------------------------------------------------------------

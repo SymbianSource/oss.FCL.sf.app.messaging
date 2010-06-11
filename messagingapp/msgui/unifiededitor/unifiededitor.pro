@@ -32,6 +32,7 @@ INCLUDEPATH += ../../msgsettings/settingsview/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 CONFIG += hb
+HB += hbfeedback
 
 TARGET.EPOCALLOWDLLDATA = 1
 TARGET.CAPABILITY = All -TCB
@@ -45,31 +46,37 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
     "rom/unifiededitor.iby CORE_APP_LAYER_IBY_EXPORT_PATH(unifiededitor.iby)"
 
 # Input
-HEADERS += msgmonitor.h \
+HEADERS += msgunieditormonitor.h \
     msgunieditoraddress.h \
     msgunieditorattachment.h \
     msgunieditorbody.h \
     msgunieditorsubject.h \
     msgunieditorview.h \
-    msgunifiededitorlineedit.h \
-    msgattachmentcontainer.h \
+    msgunieditorlineedit.h \
+    msgunieditorattachmentcontainer.h \
     msgbaseview.h \
     msgunieditorimageprocessor.h \
     msgunieditorprocessimageoperation.h \
-    msgunifiededitorbasewidget.h
+    msgunieditorbasewidget.h \
+    msgunieditorpixmapwidget.h \
+    msgunieditorutils.h \
+    msgunieditoraudiowidget.h
 
-SOURCES += msgmonitor.inl \
-    msgmonitor.cpp \
+SOURCES += msgunieditormonitor.inl \
+    msgunieditormonitor.cpp \
     msgunieditoraddress.cpp \
     msgunieditorattachment.cpp \
     msgunieditorbody.cpp \
     msgunieditorsubject.cpp \
     msgunieditorview.cpp \
-    msgunifiededitorlineedit.cpp \
-    msgattachmentcontainer.cpp \
+    msgunieditorlineedit.cpp \
+    msgunieditorattachmentcontainer.cpp \
     msgunieditorimageprocessor.inl \
     msgunieditorimageprocessor.cpp \
-    msgunieditorprocessimageoperation.cpp
+    msgunieditorprocessimageoperation.cpp \
+    msgunieditorpixmapwidget.cpp \
+    msgunieditorutils.cpp \
+    msgunieditoraudiowidget.cpp
 
 RESOURCES += unifiededitor.qrc
 

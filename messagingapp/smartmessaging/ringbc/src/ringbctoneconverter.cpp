@@ -24,7 +24,7 @@
 
 // USER INCLUDES
 #include "ringbctoneconverter.h"
-#include "NsmRingTone.h"
+#include "nsmringtone.h"
 #include "debugtraces.h"
 
 

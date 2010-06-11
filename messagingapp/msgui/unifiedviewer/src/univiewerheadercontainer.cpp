@@ -24,9 +24,9 @@
 
 // USER INCLUDES
 #include "univieweraddresscontainer.h"
-#include "univiewerattachmentcontainer.h"
 #include "univiewerdetailswidget.h"
 #include "univiewerfeeder.h"
+#include "univiewerattachmentwidget.h"
 
 #include "nativemessageconsts.h"
 
@@ -44,12 +44,12 @@ const QString DIVIDER_FRAME("qtg_graf_divider_h_thin");
 //---------------------------------------------------------------
 UniViewerHeaderContainer::UniViewerHeaderContainer(UniViewerFeeder* feeder, QGraphicsItem *parent) :
     HbWidget(parent), mViewFeeder(feeder), mViewerDetails(0), mHeaderGroupBox(0), mSeparator(0),
-        mAddressContainer(0), mAttachmentContainer(0)
+        mAddressContainer(0)
 {
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     HbFrameItem *bgItem = new HbFrameItem(BG_FRAME_GRAPHICS, HbFrameDrawer::NinePieces, this);
-    this->setBackgroundItem(bgItem);
+    this->setBackgroundItem(bgItem, -2.0);
 
     mMainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     mMainLayout->setSpacing(0);
@@ -132,9 +132,17 @@ void UniViewerHeaderContainer::clearContent()
     if (mViewerDetails) {
         mViewerDetails->clearContent();
     }
-    if (mAttachmentContainer) {
-        mAttachmentContainer->clearContent();
+
+    // Clear the attachments.
+    for (int i = 0; i < mUniViewerAttachmentstList.count(); ++i) {
+        mMainLayout->removeItem(mUniViewerAttachmentstList[i]);
+        mUniViewerAttachmentstList[i]->setParent(NULL);
+        delete mUniViewerAttachmentstList[i];
+        mUniViewerAttachmentstList[i] = NULL;
     }
+    mUniViewerAttachmentstList.clear();
+
+    resize(rect().width(), -1);
 }
 
 //---------------------------------------------------------------
@@ -167,17 +175,14 @@ void UniViewerHeaderContainer::populateSubject()
 //---------------------------------------------------------------
 void UniViewerHeaderContainer::populateAttachments()
 {
-    if (!mAttachmentContainer) {
-        // Attachment Container
-        mAttachmentContainer = new UniViewerAttachmentContainer(this);
-        mMainLayout->addItem(mAttachmentContainer);
-    }
-
     UniMessageInfoList attachList = mViewFeeder->attachmentsList();
     for (int a = 0; a < attachList.count(); ++a) {
         UniMessageInfo* info = attachList.at(a);
-        mAttachmentContainer->addAttachmentWidget(info->mimetype(), info->path());
+        UniViewerAttachmentWidget *attachmentWidget = new UniViewerAttachmentWidget(this);
+        mUniViewerAttachmentstList.append(attachmentWidget);
+        attachmentWidget->populate(info->mimetype(), info->path());
         delete info;
+        mMainLayout->addItem(attachmentWidget);
     }
 }
 
@@ -208,6 +213,10 @@ void UniViewerHeaderContainer::populateAddressContainer()
         ConvergedMessageAddressList ccList = mViewFeeder->ccAddressList();
         if (!ccList.isEmpty()) {
             mAddressContainer->setCcField(ccList);
+        }
+        ConvergedMessageAddressList bccList = mViewFeeder->bccAddressList();
+        if (!bccList.isEmpty()) {
+            mAddressContainer->setBccField(bccList);
         }
     }
 

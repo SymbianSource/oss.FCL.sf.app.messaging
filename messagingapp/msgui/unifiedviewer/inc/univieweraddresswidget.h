@@ -60,16 +60,10 @@ public:
     void clearContent();
 
 protected:
-
     /**
-     * called when mouse is pressed.
+     * Gesture event, overridden from base class.
      */
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-
-    /**
-     * called when mouse is released.
-     */
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void gestureEvent(QGestureEvent* event);
     
 private:
     /**
@@ -106,14 +100,18 @@ private slots:
      */
     void menuClosed();
     
-    //handlers for phone number specific menu items.
+    /**
+     * handlers for phone number specific menu items.
+     */
     void openContactInfo();
     void call();
     void saveToContacts();
     void sendMessage();
     void copyToClipboard();
     
-    //called after service request is completed.
+    /**
+     * called after service request is completed.
+     */
     void onServiceRequestCompleted();
     
     /**

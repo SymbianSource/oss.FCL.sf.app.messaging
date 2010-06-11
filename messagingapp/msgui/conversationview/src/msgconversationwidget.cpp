@@ -56,9 +56,6 @@ const QString CV_SENT_PRESSED_FR("qtg_fr_convlist_sent_pressed");
 const QString CV_SENT_HIGHLIGHT_FR("qtg_fr_convlist_sent_highlight");
 const QString NEW_ITEM_FRAME("qtg_fr_list_new_item");
 
-//selecet preview-icon query
-_LIT(KSelectPreviewIconStmt,"SELECT  message_id, preview_icon FROM conversation_messages WHERE message_id = :message_id ");
-
 //---------------------------------------------------------------
 // MsgConversationWidget::MsgConversationWidget
 // @see header file
@@ -130,7 +127,7 @@ void MsgConversationWidget::setSubject(const QString &subject)
     if (!mSubjectTextItem)
     {
         mSubjectTextItem = new HbTextItem(this);  
-        mSubjectTextItem->setTextWrapping(Hb::TextWordWrap);      
+        mSubjectTextItem->setTextWrapping(Hb::TextNoWrap);      
     }
     HbStyle::setItemName(mSubjectTextItem, "subject");
     mSubjectTextItem->setText(subject);
@@ -155,107 +152,28 @@ void MsgConversationWidget::setBodyText(const QString &body)
 }
 
 //---------------------------------------------------------------
-// MsgConversationWidget::setPreviewIconPath
+// MsgConversationWidget::setPreviewIcon
 // @see header file
 //---------------------------------------------------------------
-void MsgConversationWidget::setPreviewIconPath(const QString &filePath,int msgId)
+void MsgConversationWidget::setPreviewIcon(HbIcon& icon)
 {
+    QCRITICAL_WRITE("setPreviewIcon start.")
+
     if (!mPreviewIconItem)
     {
         mPreviewIconItem = new HbIconItem(this);
-        mPreviewIconItem->setAlignment(Qt::AlignHCenter | Qt::AlignTop);        
+        mPreviewIconItem->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     }
 
     HbStyle::setItemName(mPreviewIconItem, "preview");
-    //sql query to get preview-icon from DB
-    TBool isOpen = EFalse;
-    bool imagePreviewed = false;
 
-    //get DB handle and check if it is open
-    RSqlDatabase& sqlDb = ConversationsEngine::instance()->getDBHandle(isOpen);
-    if (isOpen)
-    {
-        RSqlStatement sqlSelectPreviewIconStmt;
-        TInt err = sqlSelectPreviewIconStmt.Prepare(sqlDb,
-            KSelectPreviewIconStmt);
+    mPreviewIconItem->setIcon(icon);
+    mPreviewIconItem->setPreferredSize(icon.size());
+    mPreviewIconItem->show();
 
-        QCRITICAL_WRITE_FORMAT("Error from Prepare()", err)
-
-        if (err == KErrNone)
-        {
-            //msg_id
-            TInt msgIdIndex = sqlSelectPreviewIconStmt.ParameterIndex(
-                _L(":message_id"));
-            sqlSelectPreviewIconStmt.BindInt(msgIdIndex, msgId);
-
-            // get preview-icon from DB
-            err = sqlSelectPreviewIconStmt.Next();
-            QCRITICAL_WRITE_FORMAT("Error from Next()", err)
-
-            if (err == KSqlAtRow)
-            {
-                TInt previewIconIndex = sqlSelectPreviewIconStmt.ColumnIndex(
-                    _L("preview_icon"));
-
-                RSqlColumnReadStream stream;
-
-                //Get data from binary column BLOB
-                err = stream.ColumnBinary(sqlSelectPreviewIconStmt,
-                    previewIconIndex);
-
-                QCRITICAL_WRITE_FORMAT("Error from ColumnBinary()", err)
-
-                if (err == KErrNone)
-                {
-                    CFbsBitmap *bitmap = new CFbsBitmap;
-                    TRAPD(err,bitmap->InternalizeL(stream));
-                    QCRITICAL_WRITE_FORMAT("Error from bitmap InternalizeL()", err)
-
-                    //convert bitmap to pixmap
-                    if (err == KErrNone)
-                    {
-                        TSize size = bitmap->SizeInPixels();
-                        int bytesPerLine = bitmap->ScanLineLength(size.iWidth,
-                            bitmap->DisplayMode());
-                        const uchar* dataPtr =
-                                (const uchar*) bitmap->DataAddress();
-
-                        QPixmap pixmap = QPixmap::fromImage(QImage(dataPtr,
-                            size.iWidth, size.iHeight, bytesPerLine,
-                            QImage::Format_RGB16));
-
-                        mPreviewIconItem->setIcon(HbIcon(pixmap));
-                        mPreviewIconItem->setPreferredSize(pixmap.size());
-                        mPreviewIconItem->setEnabled(true);
-                        mPreviewIconItem->show();
-                        imagePreviewed = true;
-                                                
-                        QCRITICAL_WRITE("Bitmap Conversion completed")
-                    }
-					//remove bitmap
-                    delete bitmap;                    
-                }
-                //close stream
-                stream.Close();
-            }
-        }
-        sqlSelectPreviewIconStmt.Close();
-    }
-
-    // if not found in db, set from file path
-    if(!imagePreviewed)
-    {
-        QPixmap pixmap(filePath);
-        QPixmap scaledPixmap =pixmap.scaled(100,100,Qt::IgnoreAspectRatio);
-        mPreviewIconItem->setIcon(HbIcon(scaledPixmap));
-        mPreviewIconItem->setPreferredSize(scaledPixmap.size());
-	    mPreviewIconItem->setEnabled(true);
-        mPreviewIconItem->show();
-    }
-    
-    QCRITICAL_WRITE("MsgConversationWidget::setPreviewIconPath end.")  
-
+    QCRITICAL_WRITE("setPreviewIcon end.")
 }
+
 
 //---------------------------------------------------------------
 // MsgConversationWidget::setPriority
@@ -698,7 +616,11 @@ void MsgConversationWidget::pressStateChanged(bool pressed, bool animate)
     }
 }
 
-    void MsgConversationWidget::resetProperties()
+//---------------------------------------------------------------
+// MsgConversationWidget::resetProperties
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::resetProperties()
     	{
         mHasAttachment = false;
         mHasImage = false;
@@ -761,8 +683,12 @@ void MsgConversationWidget::pressStateChanged(bool pressed, bool animate)
 	        mPreviewIconItem->hide();               
 	       }    
     	}
-    
-    void MsgConversationWidget::repolishWidget()
+
+//---------------------------------------------------------------
+// MsgConversationWidget::repolishWidget
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::repolishWidget()
     	{
     	QCoreApplication::postEvent(this, new HbEvent(HbEvent::ThemeChanged));	
     	repolish();

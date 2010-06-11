@@ -17,6 +17,8 @@
 
 //SYSTEM INCLUDES
 #include <QCoreApplication>
+#include <QTranslator>
+#include <QLocale>
 #include <QFile>
 #include <QDateTime>
 #include <QPointer>
@@ -70,7 +72,15 @@ void debugInit(QtMsgType type, const char *msg)
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-
+    QString locale = QLocale::system().name();
+    QString path = "z:/resource/qt/translations/";
+    QTranslator translator;
+    QTranslator translator_comm;
+    translator.load(path + QString("messaging_") + locale);
+    translator_comm.load(path + QString("common_") + locale);
+    app.installTranslator(&translator);
+    app.installTranslator(&translator_comm);
+    
 #ifdef _DEBUG_TRACES_
     //Debug Logs
     QFile ofile;

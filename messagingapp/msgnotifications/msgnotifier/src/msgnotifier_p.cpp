@@ -24,7 +24,7 @@
 #include <xqservicerequest.h>
 #include <QString>
 #include <w32std.h>
-#include <APGTASK.H> 
+#include <apgtask.h> 
 #include <XQSettingsManager>
 #include <xqpublishandsubscribeutils.h>
 

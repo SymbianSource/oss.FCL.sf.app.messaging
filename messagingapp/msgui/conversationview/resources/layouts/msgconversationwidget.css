@@ -86,7 +86,6 @@ MsgConversationWidget::subject
   left:-var(hb-param-margin-gene-left);
   top:-var(hb-param-margin-gene-top);
   bottom:var(hb-param-margin-gene-middle-vertical);
-  right:var(hb-param-margin-gene-middle-horizontal);
   text-align:left;
   text-height:var(hb-param-text-height-primary);
   font-variant:primary;
@@ -115,7 +114,8 @@ MsgConversationWidget[hasImage="false"][hasAudio="true"]::subject:landscape
 
 MsgConversationWidget::attachment
 {
-  right:1.0un;
+  right:var(hb-param-margin-gene-right);
+  left:-var(hb-param-margin-gene-middle-horizontal);
   center-vertical:0.0un;
   aspect-ratio:ignore;
   size-policy:fixed fixed;
@@ -127,7 +127,7 @@ MsgConversationWidget::attachment
 
 MsgConversationWidget::priority
 {
-  right:0.5un;
+  left:-var(hb-param-margin-gene-middle-horizontal);
   center-vertical:0.0un;
   aspect-ratio:ignore;
   size-policy:fixed fixed;
@@ -142,13 +142,14 @@ MsgConversationWidget[hasImage="true"]::preview:portrait
   left:-var(hb-param-margin-gene-left);
   right:1.0un;
   bottom:var(hb-param-margin-gene-middle-vertical);
-  aspect-ratio:keep;
+  /*aspect-ratio:keep;*/
   /*max-width:var(bubble_width);*/
-  max-width:41.36un;
-  max-height:31.02un;
+  /*max-width:41.36un;
+  max-height:31.02un;*/
   /*max-height:var(bubble_height);*/
-  min-width:16un;
-  min-height:12un;
+  /*min-width:16un;
+  min-height:12un;*/
+  size-policy:fixed fixed;
 }
 
 MsgConversationWidget[hasImage="true"]::preview:landscape
@@ -156,11 +157,12 @@ MsgConversationWidget[hasImage="true"]::preview:landscape
   left:-var(hb-param-margin-gene-left);
   top:-var(hb-param-margin-gene-top);
   bottom:var(hb-param-margin-gene-bottom);
-  aspect-ratio:keep;
+  /*aspect-ratio:keep;
   max-width:41.36un;
   max-height:31.02un;
   min-width:16un;
-  min-height:12un;
+  min-height:12un;*/
+  size-policy:fixed fixed;
 }
 
 /****************************** TIMESTAMP TEXT ********************************/

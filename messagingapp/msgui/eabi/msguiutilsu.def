@@ -23,23 +23,25 @@ EXPORTS
 	_ZN12MsgMediaUtilC2Ev @ 22 NONAME
 	_ZN12MsgMediaUtilD1Ev @ 23 NONAME
 	_ZN12MsgMediaUtilD2Ev @ 24 NONAME
-	_ZN19MmsConformanceCheck11qt_metacallEN11QMetaObject4CallEiPPv @ 25 NONAME
-	_ZN19MmsConformanceCheck11qt_metacastEPKc @ 26 NONAME
-	_ZN19MmsConformanceCheck16staticMetaObjectE @ 27 NONAME DATA 16
-	_ZN19MmsConformanceCheck18checkModeForInsertERK7QStringb @ 28 NONAME
-	_ZN19MmsConformanceCheck19getStaticMetaObjectEv @ 29 NONAME
-	_ZN19MmsConformanceCheck19onDialogInsertMediaEP8HbAction @ 30 NONAME
-	_ZN19MmsConformanceCheck21validateMsgForForwardEi @ 31 NONAME
-	_ZN19MmsConformanceCheck9showPopupERK7QString @ 32 NONAME
-	_ZN19MmsConformanceCheckC1Ev @ 33 NONAME
-	_ZN19MmsConformanceCheckC2Ev @ 34 NONAME
-	_ZN19MmsConformanceCheckD0Ev @ 35 NONAME
-	_ZN19MmsConformanceCheckD1Ev @ 36 NONAME
-	_ZN19MmsConformanceCheckD2Ev @ 37 NONAME
-	_ZNK11MsgSendUtil10metaObjectEv @ 38 NONAME
-	_ZNK19MmsConformanceCheck10metaObjectEv @ 39 NONAME
-	_ZTI11MsgSendUtil @ 40 NONAME
-	_ZTI19MmsConformanceCheck @ 41 NONAME
-	_ZTV11MsgSendUtil @ 42 NONAME
-	_ZTV19MmsConformanceCheck @ 43 NONAME
+	_ZN15MsgContactsUtil15copyVCardToTempERK7QString @ 25 NONAME
+	_ZN15MsgContactsUtil17launchVCardViewerERK7QString @ 26 NONAME
+	_ZN15MsgContactsUtil19deleteVCardFromTempERK7QString @ 27 NONAME
+	_ZN19MmsConformanceCheck11qt_metacallEN11QMetaObject4CallEiPPv @ 28 NONAME
+	_ZN19MmsConformanceCheck11qt_metacastEPKc @ 29 NONAME
+	_ZN19MmsConformanceCheck16staticMetaObjectE @ 30 NONAME DATA 16
+	_ZN19MmsConformanceCheck18checkModeForInsertERK7QStringb @ 31 NONAME
+	_ZN19MmsConformanceCheck19getStaticMetaObjectEv @ 32 NONAME
+	_ZN19MmsConformanceCheck19onDialogInsertMediaEP8HbAction @ 33 NONAME
+	_ZN19MmsConformanceCheck9showPopupERK7QString @ 34 NONAME
+	_ZN19MmsConformanceCheckC1Ev @ 35 NONAME
+	_ZN19MmsConformanceCheckC2Ev @ 36 NONAME
+	_ZN19MmsConformanceCheckD0Ev @ 37 NONAME
+	_ZN19MmsConformanceCheckD1Ev @ 38 NONAME
+	_ZN19MmsConformanceCheckD2Ev @ 39 NONAME
+	_ZNK11MsgSendUtil10metaObjectEv @ 40 NONAME
+	_ZNK19MmsConformanceCheck10metaObjectEv @ 41 NONAME
+	_ZTI11MsgSendUtil @ 42 NONAME
+	_ZTI19MmsConformanceCheck @ 43 NONAME
+	_ZTV11MsgSendUtil @ 44 NONAME
+	_ZTV19MmsConformanceCheck @ 45 NONAME
 

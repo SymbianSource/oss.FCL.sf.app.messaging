@@ -47,11 +47,14 @@ public:
      */
     virtual ~MsgMainWindow();
     
-    
+    /**
+     * Returns view manager.
+     */
+    MsgViewManager* viewManager();
 private:
     MsgServiceInterface* mMsgSI;
     MsgSendServiceInterface* mMsgSendSI;
-
+    MsgViewManager* mViewManager;
 };
 
 #endif // MSG_MAIN_WINDOW_H

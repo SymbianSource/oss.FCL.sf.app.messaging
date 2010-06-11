@@ -103,6 +103,8 @@ void TConversationEngine::MarkConversationReadAndUpdateCV()
             UpdateConvEntry(TestConversationEngineStub::Instance()->
                                 GetConversationID());
     
+    ConversationsEngine::instance()->emitConversationModelUpdated();
+    
     //conversation engine should have emitted signal
     QCOMPARE( convModify.count(), 1 );
 }
@@ -125,6 +127,8 @@ void TConversationEngine::DeleteConversationAndUpdateCV()
     // update the conversation view with deleted entry  
     TestConversationEngineStub::Instance()->UpdateDeletedConvEntry();
 
+    ConversationsEngine::instance()->emitConversationModelUpdated();
+    
     //conversation engine should have emitted signal
     QCOMPARE( convDelete.count(), 1 );
 }
@@ -320,3 +324,16 @@ void TConversationEngine::cleanupTestCase()
     //delete the stub data
     delete TestConversationEngineStub::Instance();
 }
+
+
+//main entry point
+int main(int argc, char *argv[])
+    { 
+    int ret = -1;
+    QCoreApplication app(argc, argv);
+    QObject* tc = new TConversationEngine();
+    ret =  QTest::qExec(tc, argc, argv);
+	delete tc;
+    return ret;
+    }
+

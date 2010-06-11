@@ -52,38 +52,38 @@ BLD_INF_RULES.prj_exports += \
 # Input
 HEADERS += inc/unifiedviewer.h \
            inc/unicontentswidget.h \
-#           inc/unihighlighter.h \
            inc/univiewerfeeder.h \
            inc/univiewerfeeder_p.h \
            inc/univiewslidewidget.h \
            inc/uniscrollarea.h \
            ../inc/msgbaseview.h \
+           inc/univiewerutils.h \
            inc/univiewerbodywidget.h \
            inc/univiewerdetailswidget.h \
            inc/univieweraddresswidget.h \
            inc/univieweraddresscontainer.h \
-           inc/univiewermediawidget.h \
-           inc/univiewerattachmentcontainer.h \
+           inc/univiewerattachmentwidget.h \
            inc/univiewertextitem.h \
            inc/univiewerheadercontainer.h \
-           inc/univiewerpixmapwidget.h
+           inc/univiewerpixmapwidget.h \
+           inc/univieweraudiowidget.h
 
 SOURCES += src/unifiedviewer.cpp \
            src/unicontentswidget.cpp \
-#           src/unihighlighter.cpp \
            src/univiewerfeeder.cpp \
            src/univiewerfeeder_p.cpp \
            src/univiewslidewidget.cpp \
            src/uniscrollarea.cpp \
+           src/univiewerutils.cpp \
            src/univiewerbodywidget.cpp \
            src/univiewerdetailswidget.cpp \
            src/univieweraddresswidget.cpp \
            src/univieweraddresscontainer.cpp \
-           src/univiewermediawidget.cpp \
-           src/univiewerattachmentcontainer.cpp \
+           src/univiewerattachmentwidget.cpp \
            src/univiewertextitem.cpp \
            src/univiewerheadercontainer.cpp \
-           src/univiewerpixmapwidget.cpp
+           src/univiewerpixmapwidget.cpp \
+           src/univieweraudiowidget.cpp
 
 RESOURCES += unifiedviewer.qrc
 

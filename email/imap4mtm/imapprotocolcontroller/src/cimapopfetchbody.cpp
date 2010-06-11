@@ -167,7 +167,12 @@ be fetched, up to the entire message contents.
 void CImapOpFetchBody::FetchBodyL(TRequestStatus& aRequestStatus, const TMsvId aPart, const TImImap4GetPartialMailInfo& aGetPartialMailInfo)
 	{
 	__LOG_TEXT(iSession->LogId(), "CImapOpFetchBody::FetchBodyL(): fetching message");
-
+	
+	if(IsActive())
+	{
+	    Cancel();
+	}
+	
 	iRequestedPart=aPart;
 	iGetPartialMailInfo=aGetPartialMailInfo;
 	Queue(aRequestStatus);
@@ -1408,6 +1413,7 @@ void CImapOpFetchBody::ProcessTextSubtypeL(CImapBodyStructure* aBodyStructure, C
 		{
 		// Set vCard flag in message
 		aMessage.SetVCard(ETrue);
+		aMessage.iType=KUidMsvEmailTextEntry;
 		}
 	// text/x-vcalendar
 	else if (aMime.ContentSubType().CompareF(KMIME_VCALENDAR)==0)
@@ -1415,6 +1421,7 @@ void CImapOpFetchBody::ProcessTextSubtypeL(CImapBodyStructure* aBodyStructure, C
 		// Set vCalendar flag in message
 		aMessage.SetVCalendar(ETrue);
 		iIsVCalendar = ETrue;
+		aMessage.iType=KUidMsvEmailTextEntry;
 		}
 	// text/calendar
 	else if (aMime.ContentSubType().CompareF(KMIME_ICALENDAR)==0)
@@ -1422,6 +1429,7 @@ void CImapOpFetchBody::ProcessTextSubtypeL(CImapBodyStructure* aBodyStructure, C
 		// Set iCalendar flag in message
 		aMessage.SetICalendar(ETrue);
 		iIsICalendar = ETrue;
+		aMessage.iType=KUidMsvEmailTextEntry;
 		}
 	else
 		aMessage.iType=KUidMsvEmailTextEntry;
@@ -1502,6 +1510,7 @@ void CImapOpFetchBody::ProcessExtendedFieldsL(CImapBodyStructure* aBodyStructure
 	TPtrC8 dispositionName = aBodyStructure->ExtDispositionName();
 	if (dispositionName.Size() != 0)
 		{
+		aMime.SetContentDispositionL(dispositionName);	
 		__LOG_FORMAT((iSession->LogId(), "    adding disp name: %S", &dispositionName));
 		aMime.ContentDispositionParams().AppendL(dispositionName);
 		aMime.ContentDispositionParams().AppendL(KNullDesC8);

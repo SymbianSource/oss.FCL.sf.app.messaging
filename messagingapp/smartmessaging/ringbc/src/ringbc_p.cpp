@@ -142,7 +142,6 @@ void RingBcPrivate::saveToneL(const QString& path)
     HBufC8* dataBuf = HBufC8::NewLC(size);
     TPtr8 data(dataBuf->Des());
     User::LeaveIfError(file.Read(data, size));
-    CleanupStack::PopAndDestroy(&file);
 
     TBool valid = mConverter->IsRingToneMimeTypeL(data);
 
@@ -166,8 +165,8 @@ void RingBcPrivate::saveToneL(const QString& path)
         }
 
     CleanupStack::PopAndDestroy(); // dataBuf
+    CleanupStack::PopAndDestroy(); //file
     CleanupStack::PopAndDestroy(); //fsSession
-
 
     QDEBUG_WRITE("RingBcPrivate::saveToneL : Exit")
     }

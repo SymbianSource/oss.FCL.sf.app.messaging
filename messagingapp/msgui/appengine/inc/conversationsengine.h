@@ -210,6 +210,12 @@ public:
      */
     RSqlDatabase& getDBHandle(TBool& isOpen);
     
+    /**
+     * Get the biotype of a message
+     * @param messageId
+     */
+    int getMsgSubType(int messageId);
+    
 private:
 
     /**

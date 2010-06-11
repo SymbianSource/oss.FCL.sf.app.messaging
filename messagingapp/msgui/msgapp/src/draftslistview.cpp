@@ -77,8 +77,7 @@ DraftsListView::DraftsListView(QGraphicsItem *parent) :
     MsgBaseView(parent),
     mListView(0), 
     mViewExtnList(0),
-    mToolBar(0),
-    mItemLongPressed(false)
+    mToolBar(0)
 {
     // Delayed loading.
     connect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(doDelayedLoading()));
@@ -267,12 +266,6 @@ void DraftsListView::createNewMessage()
 //------------------------------------------------------------------------------
 void DraftsListView::openDraftMessage(const QModelIndex &index)
 {
-    if(mItemLongPressed)
-        {
-        //reset the flag
-         mItemLongPressed = false;
-         return;
-        }
     QVariant msgId = index.data(ConvergedMsgId);
     QVariant msgType = index.data(MessageType);
     ConvergedMessageId convergedMsgId = ConvergedMessageId(msgId.toInt());
@@ -299,7 +292,6 @@ void DraftsListView::openDraftMessage(const QModelIndex &index)
 //------------------------------------------------------------------------------
 void DraftsListView::handleLongPressed(HbAbstractViewItem *item, const QPointF &coords)
 {
-    mItemLongPressed = true;
     if (this->isVisible()) {
 
         // Set the current index as tapped items index.

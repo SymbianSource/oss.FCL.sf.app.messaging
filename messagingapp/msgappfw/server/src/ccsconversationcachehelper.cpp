@@ -523,26 +523,23 @@ void CCsConversationCacheHelper::DeleteConversationEntryL(
             }
 
             // Notify client of conversation change
-            if (!conversation->IsDeleted())
-            {
-                CCsClientConversation
-                        * clientConv =
-                                iConversationCache->CreateClientConvLC(conversation,
-                                                                       aConversationEntry);
-                iConversationCache->NotifyL(clientConv,
-                                            KConversationEventDelete);
-                CleanupStack::PopAndDestroy(clientConv);
-            }
-
+            CCsClientConversation
+                    * clientConv =
+                            iConversationCache->CreateClientConvLC(conversation,
+                                                                   aConversationEntry);
+            iConversationCache->NotifyL(clientConv,
+                                        KConversationEventDelete);
+            CleanupStack::PopAndDestroy(clientConv);
             // check if all entries are deleted then 
             // delete the conversation from cache
             if (conversation->GetEntryCount() == 0
                     && !conversation->IsSpecialConversation())
             {
-                conversationList->Remove(loop);
-                delete conversation;
-                //reset the counters
-                loop -= 1;
+            
+            conversationList->Remove(loop);
+            delete conversation;
+            //reset the counters
+            loop -= 1;
             }
 
             // Stop searching    
@@ -598,6 +595,9 @@ void CCsConversationCacheHelper::AddNewConversationL(
         }
 
     iConversationCache->NotifyL(clientConv, KConversationListEventNew);
+    // send the new conversation event as well, so that if there are nay listeners for the cv
+    // then they will get the notification.
+    iConversationCache->NotifyL(clientConv, KConversationEventNew);
     CleanupStack::PopAndDestroy(clientConv);
 
     CleanupStack::Pop(conversation);
