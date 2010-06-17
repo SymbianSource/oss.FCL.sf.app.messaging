@@ -79,7 +79,7 @@ LIBRARY         DRMHelper.lib
 LIBRARY         msgcommonutils.lib
 STATICLIBRARY   hxmetadatautil.lib
 
-#if defined( ARMCC )
+#if defined( EABI )
 deffile         ./eabi.def
 #elif defined( WINS )
 deffile         ./wins.DEF

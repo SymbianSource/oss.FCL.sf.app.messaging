@@ -49,7 +49,7 @@ LIBRARY			mmsconninit.lib
 
 
 
-#if defined(ARMCC)
+#if defined(EABI)
 deffile ../eabi/mmsapplicationadapter.def
 //#elif defined( WINSCW )
 //deffile ../bwinscw/mmsapplicationadapter.def

@@ -77,7 +77,7 @@ LIBRARY         flogger.lib
 DEBUGLIBRARY    flogger.lib
 #endif
 
-/*#if defined(ARMCC)
+/*#if defined(EABI)
 deffile       ../eabi/mmswatcher.def
 #elif defined( WINSCW )
 deffile       ../bwinscw/mmswatcher.def

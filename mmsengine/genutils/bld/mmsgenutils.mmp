@@ -54,7 +54,7 @@ LIBRARY         msgcommonutils.lib
 //LIBRARY         Pbk2Presentation.lib
 DEBUGLIBRARY    flogger.lib
 
-#if defined(ARMCC)
+#if defined(EABI)
 deffile       ../eabi/mmsgenutils.def
 #elif defined( WINS )
 DEFFILE       ../bwins/wins.def

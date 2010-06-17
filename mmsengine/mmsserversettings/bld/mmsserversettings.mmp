@@ -50,7 +50,7 @@ LIBRARY         efsrv.lib
 LIBRARY         mmsconninit.lib
 LIBRARY			bafl.lib 
 
-#if defined( ARMCC )
+#if defined( EABI )
 deffile         ../eabi/mmsserversettings.def
 #elif defined( WINSCW )
 deffile         ../bwinscw/mmsserversettings.def

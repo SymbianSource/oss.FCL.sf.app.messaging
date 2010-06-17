@@ -94,7 +94,7 @@ LIBRARY         flogger.lib
 DEBUGLIBRARY    flogger.lib
 #endif
 
-#if defined(ARMCC)
+#if defined(EABI)
 deffile         ../eabi/mmsserver.def
 #elif defined( WINS )
 DEFFILE         ../bwins/mmsserver.def

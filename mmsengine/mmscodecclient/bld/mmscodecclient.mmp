@@ -50,7 +50,7 @@ DEBUGLIBRARY    flogger.lib // for logging
 
 LANG            SC
  
-#if defined(ARMCC)
+#if defined(EABI)
 deffile ../eabi/mmscodecclient.def
 //#elif defined( WINSCW )
 //deffile ../bwinscw/mmscodecclient.def

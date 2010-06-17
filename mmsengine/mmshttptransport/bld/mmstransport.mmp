@@ -73,7 +73,7 @@ LIBRARY         flogger.lib
 DEBUGLIBRARY    flogger.lib
 #endif
 
-#if defined( ARMCC )
+#if defined( EABI )
 deffile         ../eabi/mmstransport.def
 #elif defined( WINSCW )
 deffile         ../bwinscw/mmstransport.def

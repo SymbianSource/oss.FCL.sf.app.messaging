@@ -58,7 +58,7 @@ MACRO _MANUAL_MODES_
 // remove comments from this macro if no logging wanted 
 MACRO _NO_MMSC_LOGGING_
 
-#if defined(ARMCC)
+#if defined(EABI)
 deffile ../eabi/mmscli.def
 //#elif defined( WINSCW )
 //deffile ../bwinscw/mmscli.def

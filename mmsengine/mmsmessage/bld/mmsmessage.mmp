@@ -71,7 +71,7 @@ LIBRARY         drmrights.lib
 
 DEBUGLIBRARY    flogger.lib
 
-#if defined(ARMCC)
+#if defined(EABI)
 deffile       ../eabi/mmsmessage.def
 #elif defined( WINS )
 DEFFILE       ../bwins/wins.def
