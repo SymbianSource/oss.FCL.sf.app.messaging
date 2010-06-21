@@ -897,20 +897,33 @@ RCmConnectionMethod CAlwaysOnlineEmailAgentBase::GetConnectionMethodLC()
     CleanupStack::PopAndDestroy( accounts ); // accounts
 
     // Check ap preferences
-    TImIAPChoice iapChoice = apPrefs->IAPPreference( KMailSettingsIapPreferenceNumber );
-    TInt iapId = iapChoice.iIAP;
+    TInt iapId;
+    if ( apPrefs->NumberOfIAPs()>0 )
+        {
+        TImIAPChoice iapChoice = apPrefs->IAPPreference( KMailSettingsIapPreferenceNumber );
+        iapId = iapChoice.iIAP;
+        }
+    else if( apPrefs->SNAPDefined() )
+        {
+        iapId = apPrefs->SNAPPreference();
+        }
+    else
+        {
+        iapId = 0;
+        }
+    
 
     // if iapId is 0, assume default connection
     // else the iapId points to the actual iap
     if( iapId == 0 )
-    	{
-    	// Default Connection is in use
+        {
+        // Default Connection is in use
         TCmDefConnValue defConSetting;
         iCmManager.ReadDefConnL( defConSetting );
         if( defConSetting.iType == ECmDefConnAlwaysAsk ||
-        	defConSetting.iType == ECmDefConnAskOnce )
-        	{
-        	// always ask not supported in always online plugin
+            defConSetting.iType == ECmDefConnAskOnce )
+            {
+            // always ask not supported in always online plugin
         	User::Leave( KErrNotSupported );
         	}
         else

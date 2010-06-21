@@ -1201,16 +1201,15 @@ TPtrC CMceMainViewListItemArray::CreateConversationsListItem( TInt aIndex ) cons
         if(iDefaultViewSettings == KMceConversationview )
            {
            TInt msgCount = 0;
-           TInt unreadCount = 0;
-           iBitmapResolver.HasUnreadMessagesL(KMsvGlobalInBoxIndexEntryId,msgCount,unreadCount);
+           TInt unreadCount = 0;                   
+           TRAPD(Errcode,iBitmapResolver.HasUnreadMessagesL(KMsvGlobalInBoxIndexEntryId,msgCount,unreadCount));         
            if( unreadCount > 0 ) 
                {
                bitmapidx =  EMceBitmapIndexConversationNew ;
                }
            }    
         tempText.AppendNum(bitmapidx);
-        TPtrC Ptr(item.iPrintableText); 
-        TInt len = Ptr.Length();
+        TPtrC Ptr(item.iPrintableText);          
         TInt  pos = Ptr.Locate(KColumnListSeparator);
         TPtrC Ptr1(Ptr.Mid(pos));
         tempText.Append(Ptr1);                

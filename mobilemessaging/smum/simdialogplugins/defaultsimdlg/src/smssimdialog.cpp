@@ -563,12 +563,6 @@ TKeyResponse CSmsSimDialog::OfferKeyEventL(
             }        	
         return EKeyWasConsumed;
         }
-    if( aType == EEventKey && aKeyEvent.iCode == EKeyEscape ) 
-        {
-        iExitCode = EEikCmdExit;
-        TryExitL( EAknCmdExit ); 
-        return EKeyWasConsumed;     
-        }
     if( aType == EEventKeyUp )
         {
         UpdateMskL( );

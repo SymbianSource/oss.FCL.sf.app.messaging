@@ -366,32 +366,43 @@ void CImumMboxManager::LoadAccountFillIapL(
     IMUM_CONTEXT( CImumMboxManager::LoadAccountFillIapL, 0, KLogData );
     IMUM_IN();
 	
-	//check IAP number 
+	//check Incoming IAP number 
     if ( aSettings.iIncomingIapPref->NumberOfIAPs() > 0 )
-    	{
-    // Set internet access point (incoming IAP)
-    TImIAPChoice incomingIapChoice =
+        {
+        // Set internet access point (incoming IAP)
+        TImIAPChoice incomingIapChoice =
         aSettings.iIncomingIapPref->IAPPreference( 0 );
-    aSettings.iIncomingIap = incomingIapChoice.iIAP;
-
+        aSettings.iIncomingIap = incomingIapChoice.iIAP;
+        }
+    
+    //check SNAP define    
+    else if( aSettings.iIncomingIapPref->SNAPDefined() )
+        {
+        aSettings.iIncomingIap = aSettings.iIncomingIapPref->SNAPPreference();
+        }    
+    else 
+        {
+        aSettings.iIncomingIap = 0;
+        }
+    
+    //check Outgoing IAP number 
+    if ( aSettings.iOutgoingIapPref->NumberOfIAPs() > 0 )
+        {
     // Set internet access point (Outgoing IAP)
     TImIAPChoice outgoingIapChoice =
         aSettings.iOutgoingIapPref->IAPPreference( 0 );
     aSettings.iOutgoingIap = outgoingIapChoice.iIAP;
-    	}
-		
-	//check SNAP define	
-    else if( aSettings.iIncomingIapPref->SNAPDefined() )
-    	{
-    	aSettings.iIncomingIap = aSettings.iIncomingIapPref->SNAPPreference();
-    	aSettings.iOutgoingIap = aSettings.iOutgoingIapPref->SNAPPreference();
-    	}	
-    else 
-    	{
-    	aSettings.iIncomingIap = 0;
-    	aSettings.iOutgoingIap = 0;
-    	}
-    	
+       }
+    //check SNAP define    
+    else if( aSettings.iOutgoingIapPref->SNAPDefined() )
+        {
+        aSettings.iOutgoingIap = aSettings.iOutgoingIapPref->SNAPPreference();
+        }    
+   else 
+       {
+        aSettings.iOutgoingIap = 0;
+       }
+        
     IMUM_OUT();
     }
 
@@ -413,7 +424,7 @@ void CImumMboxManager::DetermineDefaultAccountL(
     // Set the newly created one as a default account
     if ( aSettings.iDefaultAccountId == KMsvUnknownServiceIndexEntryId )
         {
-		if( !FeatureManager::FeatureSupported( KFeatureIdSelectableEmail ) ||
+    	if( !FeatureManager::FeatureSupported( KFeatureIdSelectableEmail ) ||
 			!MsvUiServiceUtilitiesInternal::OtherEmailMTMExistL( 
 			iMailboxApi.MsvSession(), aSettings.iMailboxId ) )
 			{

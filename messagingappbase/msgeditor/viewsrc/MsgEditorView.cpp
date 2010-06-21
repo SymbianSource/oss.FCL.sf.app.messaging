@@ -93,7 +93,9 @@ CMsgEditorView::CMsgEditorView( MMsgEditorObserver& aObserver,
     iEditorModeFlags( aEditorModeFlags ),
     iLineHeight( MsgEditorCommons::MsgBaseLineDelta() ),
     iBaseLineOffset( MsgEditorCommons::MsgBaseLineOffset() ),
-    iResourceLoader( *iCoeEnv )
+    iResourceLoader( *iCoeEnv ),
+    iPrevFocus( EMsgNoneFocused ), 
+    iMoveUpDownEvent( EFalse) 
     {
     }
 
@@ -243,11 +245,13 @@ EXPORT_C void CMsgEditorView::ExecuteL( const TRect& aRect,
         TInt newFocus = iHeader->FirstFocusableControl( 0, EMsgFocusDown );
         if ( newFocus == KErrNotFound )
             {
+            iPrevFocus = EMsgHeaderFocused; 
             iCurrentFocus = EMsgBodyFocused;
             newFocus = iBody->FirstFocusableControl( 0, EMsgFocusDown );
             
             if ( newFocus == KErrNotFound )
                 {
+				iPrevFocus = EMsgNoneFocused;
                 iCurrentFocus = EMsgNoneFocused;
                 }
             else
@@ -782,7 +786,9 @@ EXPORT_C TKeyResponse CMsgEditorView::OfferKeyEventL( const TKeyEvent& aKeyEvent
             }
         }
     
+    iMoveUpDownEvent = ETrue; 
     EnsureCorrectFormPosition( ( aKeyEvent.iCode == EKeyDownArrow ) && focusRotated, forceScrollUp );
+    iMoveUpDownEvent = EFalse; 
 
     UpdateScrollBarL();
 
@@ -1764,7 +1770,8 @@ void CMsgEditorView::SetFocusByControlIdL( TInt aControlId,
                     iHeader->NotifyControlsForEvent( EMsgViewEventPrepareFocusTransitionDown, 0 ); 
                     }
                 }
-            TMsgFocus previousMsgPart = iCurrentFocus;    
+            TMsgFocus previousMsgPart = iCurrentFocus;
+            iPrevFocus = iCurrentFocus; 
             iCurrentFocus = EMsgBodyFocused;
             
             TInt delta = componentIndex - iBody->CurrentFocus();
@@ -2238,6 +2245,34 @@ TBool CMsgEditorView::EnsureCorrectFormPosition( TBool /*aScrollDown*/, TBool /*
         {
         return EFalse;
         }
+    else 
+        {
+        if ( ctrl->ControlType() == EMsgBodyControl 
+             && ctrl->ItemFinder()
+             && ctrl->IsReadOnly()
+             && !iMoveUpDownEvent ) 
+            {
+            TInt countHeader = iHeader->CountMsgControls();
+            for ( TInt i = 0; i < countHeader; i++ )
+                 {
+                 CMsgBaseControl* headerCtrl = iHeader->MsgControl( i );
+                 if ( headerCtrl )
+                     {
+                     TInt controlType;
+                     controlType = headerCtrl->ControlType();
+                     if ( controlType == EMsgAddressControl ||
+                          controlType == EMsgExpandableControl ||
+                          controlType == EMsgAttachmentControl )
+                         {
+                         if ( ControlFullyVisible(headerCtrl) || iPrevFocus == EMsgHeaderFocused )
+                             {
+                             return EFalse; // Ignoring Scroll Event
+                             }
+                         }
+                      }
+                 }
+            }        
+        }
 
     iStateFlags |= EMsgEnsureCorrectFormPositionRequestIssued;
 
@@ -2248,8 +2283,8 @@ TBool CMsgEditorView::EnsureCorrectFormPosition( TBool /*aScrollDown*/, TBool /*
 
     if ( lineRect.Height() )
         {
-		if (lineRect.Height() >= iViewRect.Height())
-            {
+        if ( lineRect.iBr.iY > iViewRect.Height() ) 
+           {
             // the view must be scrolled up.
             delta = iViewRect.Height() - lineRect.iBr.iY;
             }

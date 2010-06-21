@@ -791,26 +791,13 @@ Tidy up and complete the caller.
 */
 void CMsgImOutboxSend::Complete(TInt status)
 	{
-	if (iState != EStateMobilityError)
-		{
-		// Respond to any outstanding bearer mobility requests as we are about
-		// to exit and we don't need to hold up the migration.
-		if (PreparingForMigration())
-			{
-			SignalMigrate();
-			}
-		else if (iMobilityOperation == EMobilityOperationMigrating &&
-		         iState == EStateConnectingSession)
-			{
-			if (iMobilityManager)
-				{
-				iMobilityManager->NewCarrierAccepted();
-				}
-			}
-		}
-
+    // sending of all the emails has completed, no need listen for Mobility Manager
+	delete iMobilityManager;
+    iMobilityManager=NULL;
+	
 	delete iSession;
 	iSession = NULL;
+	
 	delete iSessionManager;
 	iSessionManager = NULL;
 
@@ -1224,8 +1211,8 @@ CMsgImOutboxSend::~CMsgImOutboxSend( )
 	delete iWaiter;	
 #endif
 
-	delete iSessionManager;
 	delete iMobilityManager;
+	delete iSessionManager;
 	}
 
 CDesCArray& CMsgImOutboxSend::BccRcptArray()

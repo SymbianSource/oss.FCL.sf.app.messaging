@@ -1412,14 +1412,21 @@ void CImapSession::ProcessInputBufferL()
 				
 			if (err != KErrNone)
 				{
-				// As well as completing, destroy the command to help free up resources.
-				CompleteAndDestroyCommand(err, ETrue);
+                if(err == KErrImapCorrupt)
+                    {
+                    continueReadingData = ETrue;
+                    }
+                else
+                    {
+                    // As well as completing, destroy the command to help free up resources.
+                    CompleteAndDestroyCommand(err, ETrue);
 
-				// Don't allow the session to be called again.
-				SetSessionState(ESessionUnrecoverable);
-				
-				return;
-				}
+                    // Don't allow the session to be called again.
+                    SetSessionState(ESessionUnrecoverable);
+                    
+                    return;
+                    }
+				}// end of  if (err != KErrNone)
 				
 			// If a literal block is expected next, then find out how big it is expected to be.
 			switch (commandParseState)

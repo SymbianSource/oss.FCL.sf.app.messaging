@@ -662,6 +662,8 @@ class CMsgEditorView : public CCoeControl,
     	
     	MEikEdwinObserver*   iEdwinObserver;
     	RConeResourceLoader  iResourceLoader;
+    	TMsgFocus            iPrevFocus; 
+    	TBool                iMoveUpDownEvent; 
     };
 
 #include <MsgEditorView.inl>

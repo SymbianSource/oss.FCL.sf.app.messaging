@@ -4865,6 +4865,7 @@ void CMceUi::ReplyL(TInt /*aReplyCommand*/)
 
             CMsvOperation* oper = mtmUi->ReplyL(
                 KMsvDraftEntryIdValue, parts, singleOpWatcher->iStatus );
+            iEditorOperation = singleOpWatcher;
 
             CleanupStack::PushL( oper );
             iOperations.AppendL( singleOpWatcher );
@@ -4894,6 +4895,7 @@ void CMceUi::ReplyL(TInt /*aReplyCommand*/)
 
         CMsvOperation* oper = ui.ReplyL(
             KMsvDraftEntryIdValue, parts, singleOpWatcher->iStatus );
+        iEditorOperation = singleOpWatcher;
 
         CleanupStack::PushL( oper );
         iOperations.AppendL( singleOpWatcher );
@@ -6463,6 +6465,7 @@ void CMceUi::ForwardL(TInt /*aForwardCommand*/)
 
     CMsvOperation* oper = ui.ForwardL(
         KMsvDraftEntryIdValue, parts, singleOpWatcher->iStatus );
+    iEditorOperation = singleOpWatcher;
 
     CleanupStack::PushL( oper );
     iOperations.AppendL( singleOpWatcher );

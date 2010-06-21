@@ -499,17 +499,13 @@ TBool CGenericMtmPlugin::IsWaitNoteNeededL(
     TInt                    aAttachmentCount )
     {
     LOGTEXT(_L8("CGenericMtmPlugin::IsWaitNoteNeededL >>"));
-    if ( aMtmUid != KSenduiMtmIrUid && aMtmUid != KSenduiMtmBtUid )
-        {
-        return ETrue;       
-        }
+
 
     const CRichText* bodyText = aMessageData.BodyText();
     const CMessageAddressArray& toAddresses = aMessageData.ToAddressArray();
 
     if ( aAttachmentCount > 0 ||
-       ( bodyText && bodyText->DocumentLength() ) ||
-       ( toAddresses.Count() > 2 ) )
+       ( bodyText && bodyText->DocumentLength() ) )
         {
         LOGTEXT(_L8("CGenericMtmPlugin::IsWaitNoteNeededL <<"));
         return ETrue;
