@@ -19,7 +19,7 @@
 #include <ccsrequesthandler.h>
 #include <ccsconversationentry.h>
 #include <ccsclientconversation.h>
-#include <s60qconversions.h>
+#include <xqconversions.h>
 
 //USER INCLUDES
 #include "msghistoryprivate.h"
@@ -236,7 +236,7 @@ void MsgHistoryPrivate::PopulateMsgItem
     HBufC* description = entry.Description();    
     if( description && description->Length())
         {
-        item.setBody(S60QConversions::s60DescToQString(*description)); 
+        item.setBody(XQConversions::s60DescToQString(*description)); 
         }
 
     // time stamp 
@@ -250,7 +250,7 @@ void MsgHistoryPrivate::PopulateMsgItem
     HBufC* contact = entry.Contact();
     if( contact && contact->Length())
         {
-        item.setPhoneNumber(S60QConversions::s60DescToQString(*contact));      
+        item.setPhoneNumber(XQConversions::s60DescToQString(*contact));      
         }
 
     //sending state

@@ -26,7 +26,7 @@
 #include "MessagingVariant.hrh"
 #include "MessagingInternalCRKeys.h"  // Keys
 #include "UniEditorGenUtils.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 
 // CONSTANTS
 const TInt KMuiuCharQuote = '\"';
@@ -204,7 +204,7 @@ TBool UniEditorGenUtils::VerifyEmailAddressesL( ConvergedMessageAddressList addr
 // ----------------------------------------------------
 TInt UniEditorGenUtils::UTF8Size( QString aText )
     {
-    HBufC* text = S60QConversions::qStringToS60Desc(aText);
+    HBufC* text = XQConversions::qStringToS60Desc(aText);
     TPtrC ptr = text->Des();
     
     TInt count = 0;
@@ -301,7 +301,7 @@ void UniEditorGenUtils::getFileInfoL(QString filePath,
                                     QString& mimetype,
                                     TMsgMediaType& mediaType)
 {
-    HBufC* filepath = S60QConversions::qStringToS60Desc(filePath);
+    HBufC* filepath = XQConversions::qStringToS60Desc(filePath);
     int fileSize = 0;
     
 	CMsgMediaResolver* mediaResolver;
@@ -318,7 +318,7 @@ void UniEditorGenUtils::getFileInfoL(QString filePath,
     size = fileSize;
     TDataType datatype;
     mediaResolver->RecognizeL( file, datatype );
-    mimetype = S60QConversions::s60Desc8ToQString(datatype.Des8());
+    mimetype = XQConversions::s60Desc8ToQString(datatype.Des8());
     mediaType = mediaResolver->MediaType(datatype.Des8());
     
     CleanupStack::PopAndDestroy(mediaResolver);

@@ -11,13 +11,26 @@
 *
 * Contributors:
 *
-* Description:
+* Description:  ?Description
 *
 */
-#ifndef __S60QCONVERSIONS_IBY__
-#define __S60QCONVERSIONS_IBY__
 
-REM DLL
-file=ABI_DIR\UREL\s60qconversions.dll                   SHARED_LIB_DIR\s60qconversions.dll
+#define BLD_INF_GROUP_0496D339
 
-#endif // __S60QCONVERSIONS_IBY__
+
+prj_platforms
+
+WINSCW GCCE ARMV5 ARMV6
+
+prj_testmmpfiles
+
+test_pluginpreview.mmp
+
+prj_extensions
+
+
+#if defined(WINSCW)
+#else
+#endif
+
+

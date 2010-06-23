@@ -23,7 +23,6 @@ DEPENDPATH += . ./inc ./src
 
 INCLUDEPATH += ./inc \
                ./../utils/inc \
-               ./../../msgutils/s60qconversions/inc \
                ./../../../mmsengine/inc
 
 INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
@@ -88,6 +87,6 @@ LIBS += -leuser \
         -lcentralrepository \
         -limcm \
         -lQtContacts \
-        -ls60qconversions
+        -lxqutils 
         
         

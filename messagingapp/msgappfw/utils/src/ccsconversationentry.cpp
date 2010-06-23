@@ -208,17 +208,15 @@ EXPORT_C HBufC* CCsConversationEntry::Description() const
 // Sets the Conversation description of this object
 // ----------------------------------------------------------------------------
 EXPORT_C void CCsConversationEntry::SetDescriptionL(const TDesC& aDescription)
-    {
-    if((&aDescription))
-        {
-        TInt descrLength = aDescription.Length();
-        if ( descrLength > KMaxDescrSize )
-            descrLength = KMaxDescrSize;
-        
-        iDescription = HBufC::NewL(descrLength);
-        iDescription->Des().Copy(aDescription.Left(descrLength));
-        }
-    }
+{
+
+    TInt descrLength = aDescription.Length();
+    if (descrLength > KMaxDescrSize)
+        descrLength = KMaxDescrSize;
+    iDescription = HBufC::NewL(descrLength);
+    iDescription->Des().Copy(aDescription.Left(descrLength));
+
+}
 
 // ----------------------------------------------------------------------------
 // CCsConversationEntry::ChangeAttributes
@@ -260,7 +258,8 @@ EXPORT_C CCsConversationEntry* CCsConversationEntry::CloneL() const
     cloneObject->SetEntryId(iEntryID);
     cloneObject->SetSendState(iConversationStatus);
     cloneObject->ChangeAttributes(iConversationAttrib, ECsAttributeNone);
-    cloneObject->SetDescriptionL(*iDescription);
+    if(iDescription)
+        cloneObject->SetDescriptionL(*iDescription);
     cloneObject->SetTimeStampL(iTimeStamp);
 
     CleanupStack::Pop(cloneObject);

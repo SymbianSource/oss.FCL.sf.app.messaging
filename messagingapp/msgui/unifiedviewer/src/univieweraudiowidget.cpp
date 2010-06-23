@@ -24,12 +24,14 @@
 // USER INCLUDES
 #include "msgmediautil.h"
 #include "univiewerutils.h"
+#include "unidatamodelplugininterface.h"
 
 // LOCAL CONSTANTS
 #define LOC_OPEN    hbTrId("txt_common_menu_open")
 #define LOC_SAVE    hbTrId("txt_common_menu_save")
 
 const QString AUDIO_ICON("qtg_mono_audio");
+const QString CORRUPTED_AUDIO_ICON("qtg_mono_corrupted");
 
 //----------------------------------------------------------------------------
 // UniViewerAudioWidget::UniViewerAudioWidget
@@ -54,12 +56,23 @@ UniViewerAudioWidget::~UniViewerAudioWidget()
 // UniViewerAudioWidget::~UniViewerAudioWidget
 // @see header file
 //----------------------------------------------------------------------------
-void UniViewerAudioWidget::populate(const QString &mimeType, const QString &filePath)
+void UniViewerAudioWidget::populate(UniMessageInfo *info)
 {
-    mMimeType = mimeType;
-    mMediaPath = filePath;
+    mMimeType = info->mimetype();
+    mMediaPath = info->path();
 
-    this->setIcon(HbIcon(AUDIO_ICON));
+    HbIcon audioIcon;
+    if (info->isProtected()) {
+        audioIcon.setIconName(AUDIO_ICON);
+    }
+    else if (info->isCorrupted()) {
+        audioIcon.setIconName(CORRUPTED_AUDIO_ICON);
+    }
+    else {
+        audioIcon.setIconName(AUDIO_ICON);
+    }
+
+    this->setIcon(audioIcon);
     QFileInfo fileInfo(mMediaPath);
     this->setText(fileInfo.baseName());
     this->setTextAlignment(Qt::AlignLeft);

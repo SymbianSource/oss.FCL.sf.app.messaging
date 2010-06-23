@@ -290,13 +290,21 @@ const TInt KSimIdOffset = 99999;
 
 enum 
 {
-	EPreviewNone       = 0x0000,
-	EPreviewImage      = 0x0001,
-	EPreviewAudio      = 0x0002,
-	EPreviewVideo      = 0x0004,
-	EPreviewAttachment = 0x0008,
-	EPreviewForward    = 0x0010
+  EPreviewNone           = 0x0000,
+  EPreviewImage          = 0x0001,
+  EPreviewAudio          = 0x0002,
+  EPreviewVideo          = 0x0004,
+  EPreviewAttachment     = 0x0008,
+  EPreviewForward        = 0x0010,
+  EPreviewProtectedImage = 0x0020,
+  EPreviewProtectedAudio = 0x0040,
+  EPreviewProtectedVideo = 0x0080,
+  EPreviewCorruptedImage = 0x0100,
+  EPreviewCorruptedAudio = 0x0200,
+  EPreviewCorruptedVideo = 0x0400
 };
+
+typedef TUint16 TCsMsgPreviewProperty;
 
 /**
  * @typedef TCsPreviewMsgProcessingState
@@ -307,8 +315,6 @@ enum
     EPreviewMsgProcessing         = 1,
     EPreviewMsgProcessed          = 2
 };
-
-typedef TUint8 TCsMsgPreviewProperty;
 
 #endif // __C_CSSERVER_DEFS_H__
 

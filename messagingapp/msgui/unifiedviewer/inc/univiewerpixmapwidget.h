@@ -22,6 +22,9 @@
 
 // FORWARD DECLARATIONS
 class UniViewerUtils;
+class UniMessageInfo;
+class ThumbnailManager;
+
 
 /**
  * This widget displays the pixmap content in viewer.
@@ -44,10 +47,9 @@ public:
 
     /**
      * Sets the pixmap content to be displayed.
-     * @param mimeType Mime type of the pixmap.
-     * @param pixmapPath File path of the pixmap.
+     * @param info Object information.
      */
-    void populate(const QString &mimeType, const QString &pixmapPath);
+    void populate(UniMessageInfo *info);
 
 signals:
 
@@ -83,14 +85,24 @@ private slots:
      *
      */
     void handleSave();
-    
+
     /**
      * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture
      * events back to back.  
      */
     void regrabGesture();
 
+    /**
+     * Slot hit when the thumbnail is ready.
+     */
+   void thumbnailReady(const QPixmap& pixmap, void *data, int id, int error);
+
 private:
+
+    /**
+     * Initialization function.
+     */
+    void init();
 
     /**
      * Handles short tap event.
@@ -110,6 +122,12 @@ private:
      * Own
      */
     UniViewerUtils *mViewerUtils;
+
+    /**
+     * ThumbnailManager
+     * Own.
+     */
+   ThumbnailManager *mThumbnailManager;
 
     /**
      * Mime Type of pixmap.

@@ -25,7 +25,7 @@
 #include <ccsdefs.h>
 #include <telconfigcrkeys.h>        // KCRUidTelephonyConfiguration
 #include <centralrepository.h>
-
+#include <xqconversions.h>
 // USER INCLUDE FILES
 #include "ccsconversationcache.h"
 #include "ccsconversationcachehelper.h"
@@ -35,7 +35,6 @@
 #include "ccscontactsresolver.h"
 #include "ccsconversationevent.h"
 #include "ccsserver.h"
-#include "s60qconversions.h"
 #include "ccsdebug.h"
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -513,7 +512,7 @@ void CCsConversationCache::HandleAddContact(CCsContactDetail& aDetail)
     {
         QString phoneNumber = phoneNumberList.at(i);
         HBufC* phoneNumber_s60 = 
-            S60QConversions::qStringToS60Desc(phoneNumber);
+            XQConversions::qStringToS60Desc(phoneNumber);
         TInt cIndex = FindConversation(*phoneNumber_s60);
         if (cIndex != KErrNotFound)
         {
@@ -553,7 +552,7 @@ void CCsConversationCache::HandleContactChange(CCsContactDetail& aDetail)
     {
         QString phoneNumber = phoneNumberList.at(i);
         HBufC* phoneNumber_s60 = 
-                    S60QConversions::qStringToS60Desc(phoneNumber);
+                    XQConversions::qStringToS60Desc(phoneNumber);
                 
         TInt cIndex = FindConversation(*phoneNumber_s60);
         if ( cIndex != KErrNotFound )

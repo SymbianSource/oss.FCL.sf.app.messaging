@@ -69,8 +69,10 @@ public:
     /**
      * saveContentToDrafts
      * Saves the editors content in cv to drafts
+     * @return valid message id if save is success
+     * else invalid message id ( i.e. -1 )
      */
-    void saveContentToDrafts();
+    int saveContentToDrafts();
 
     /**
      * conversationId

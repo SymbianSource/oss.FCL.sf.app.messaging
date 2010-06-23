@@ -17,7 +17,7 @@
 #include <QtDebug>
 #include <QTimer>
 #include <QSignalSpy>
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include <csmsaccount.h>
 
 #include "convergedmessage.h"
@@ -111,7 +111,7 @@ void TestUniDataModelSMSPlugin::createInboxSMS()
     //AddBody
     QString body(TEST_MSG_BODY);
 
-    HBufC* bodyText = S60QConversions::qStringToS60Desc(body);
+    HBufC* bodyText = XQConversions::qStringToS60Desc(body);
     if (bodyText)
     {
         CleanupStack::PushL(bodyText);
@@ -131,9 +131,9 @@ void TestUniDataModelSMSPlugin::createInboxSMS()
     QString recepient2(TEST_MSG_FROM2);
     QString alias(TEST_MSG_ALIAS1);
 
-    HBufC* addr = S60QConversions::qStringToS60Desc(recepient);
-    HBufC* addr2 = S60QConversions::qStringToS60Desc(recepient2);
-    HBufC* alias1 = S60QConversions::qStringToS60Desc(alias);
+    HBufC* addr = XQConversions::qStringToS60Desc(recepient);
+    HBufC* addr2 = XQConversions::qStringToS60Desc(recepient2);
+    HBufC* alias1 = XQConversions::qStringToS60Desc(alias);
 
     if (addr)
     {
@@ -183,7 +183,7 @@ void TestUniDataModelSMSPlugin::createOutboxSMS()
     //AddBody
     QString body(TEST_MSG_BODY);
 
-    HBufC* bodyText = S60QConversions::qStringToS60Desc(body);
+    HBufC* bodyText = XQConversions::qStringToS60Desc(body);
     if (bodyText)
     {
         CleanupStack::PushL(bodyText);
@@ -203,9 +203,9 @@ void TestUniDataModelSMSPlugin::createOutboxSMS()
     QString recepient2(TEST_MSG_FROM2);
     QString alias(TEST_MSG_ALIAS1);
 
-    HBufC* addr = S60QConversions::qStringToS60Desc(recepient);
-    HBufC* addr2 = S60QConversions::qStringToS60Desc(recepient2);
-    HBufC* alias1 = S60QConversions::qStringToS60Desc(alias);
+    HBufC* addr = XQConversions::qStringToS60Desc(recepient);
+    HBufC* addr2 = XQConversions::qStringToS60Desc(recepient2);
+    HBufC* alias1 = XQConversions::qStringToS60Desc(alias);
 
     if (addr)
     {
@@ -258,7 +258,7 @@ void TestUniDataModelSMSPlugin::createSentSMS()
     //AddBody
     QString body(TEST_MSG_BODY);
 
-    HBufC* bodyText = S60QConversions::qStringToS60Desc(body);
+    HBufC* bodyText = XQConversions::qStringToS60Desc(body);
     if (bodyText)
     {
         CleanupStack::PushL(bodyText);
@@ -278,9 +278,9 @@ void TestUniDataModelSMSPlugin::createSentSMS()
     QString recepient2(TEST_MSG_FROM2);
     QString alias(TEST_MSG_ALIAS1);
 
-    HBufC* addr = S60QConversions::qStringToS60Desc(recepient);
-    HBufC* addr2 = S60QConversions::qStringToS60Desc(recepient2);
-    HBufC* alias1 = S60QConversions::qStringToS60Desc(alias);
+    HBufC* addr = XQConversions::qStringToS60Desc(recepient);
+    HBufC* addr2 = XQConversions::qStringToS60Desc(recepient2);
+    HBufC* alias1 = XQConversions::qStringToS60Desc(alias);
 
     if (addr)
     {
@@ -331,7 +331,7 @@ void TestUniDataModelSMSPlugin::createDraftsSMS()
     //AddBody
     QString body(TEST_MSG_BODY);
 
-    HBufC* bodyText = S60QConversions::qStringToS60Desc(body);
+    HBufC* bodyText = XQConversions::qStringToS60Desc(body);
     if (bodyText)
     {
         CleanupStack::PushL(bodyText);
@@ -351,9 +351,9 @@ void TestUniDataModelSMSPlugin::createDraftsSMS()
     QString recipient2(TEST_MSG_FROM2);
     QString alias(TEST_MSG_ALIAS1);
 
-    HBufC* addr = S60QConversions::qStringToS60Desc(recipient);
-    HBufC* addr2 = S60QConversions::qStringToS60Desc(recipient2);
-    HBufC* alias1 = S60QConversions::qStringToS60Desc(alias);
+    HBufC* addr = XQConversions::qStringToS60Desc(recipient);
+    HBufC* addr2 = XQConversions::qStringToS60Desc(recipient2);
+    HBufC* alias1 = XQConversions::qStringToS60Desc(alias);
 
     if (addr)
     {
@@ -396,7 +396,7 @@ void TestUniDataModelSMSPlugin::createDraftsSMSNoRecipient()
     //AddBody
     QString body(TEST_MSG_BODY);
 
-    HBufC* bodyText = S60QConversions::qStringToS60Desc(body);
+    HBufC* bodyText = XQConversions::qStringToS60Desc(body);
     if (bodyText)
     {
         CleanupStack::PushL(bodyText);

@@ -24,7 +24,6 @@ TARGET.EPOCALLOWDLLDATA = 1
 # UID 3
 TARGET.UID3 = 0x102072DA
 
-INCLUDEPATH += ../../../s60qconversions/inc
 INCLUDEPATH += ../../editorgenutils/inc
 INCLUDEPATH += ../../../../../inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
@@ -48,7 +47,6 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
 
 LIBS += -leuser \
     -lconvergedmessageutils \
-    -ls60qconversions \
     -lMsgMedia \
     -leditorgenutils \
     -lcone \
@@ -67,7 +65,8 @@ LIBS += -leuser \
     -lCdlEngine \
     -lFeatMgr \
     -lapmime \
-    -lunidatamodelloader
+    -lunidatamodelloader \
+    -lxqutils
 
 # plugin stub deployment
 plugin.sources = unieditorsmsplugin.dll

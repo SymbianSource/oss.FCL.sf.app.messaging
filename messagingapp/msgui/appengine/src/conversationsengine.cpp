@@ -24,7 +24,7 @@
 #include "draftsmodel.h"
 #include "conversationsengine_p.h"
 #include "debugtraces.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 
 //---------------------------------------------------------------
 // ConversationsEngine::instance
@@ -224,7 +224,7 @@ qint64 ConversationsEngine::getConversationIdFromAddress(QString address)
     qint64 conversationId = -1;
 
     int error;
-    HBufC* number = S60QConversions::qStringToS60Desc(address);
+    HBufC* number = XQConversions::qStringToS60Desc(address);
     TRAP(error,conversationId = 
         d_ptr->getConversationIdFromAddressL(*number));
 

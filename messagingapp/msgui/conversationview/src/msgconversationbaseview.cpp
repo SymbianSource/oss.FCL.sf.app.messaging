@@ -42,6 +42,8 @@
 
 QTM_USE_NAMESPACE
 
+const int INVALID_MSGID = -1;
+
 // LOCALIZATION
 #define LOC_SAVED_TO_DRAFTS    hbTrId("txt_messaging_dpopinfo_saved_to_drafts")
 
@@ -154,16 +156,18 @@ void MsgConversationBaseView::markMessagesAsRead()
 // MsgConversationBaseView::saveContentToDrafts
 // saves the editors content to drafts
 //---------------------------------------------------------------
-void MsgConversationBaseView::saveContentToDrafts()
+int MsgConversationBaseView::saveContentToDrafts()
 {
+    int msgId = INVALID_MSGID;
     bool result = false;
     if (mConversationId >= 0) {
-        result = mConversationView->saveContentToDrafts();
+    msgId = mConversationView->saveContentToDrafts();
     }
 
-    if (result) {
+    if (msgId != INVALID_MSGID) {
         HbNotificationDialog::launchDialog(LOC_SAVED_TO_DRAFTS);
     }
+    return msgId;
 }
 
 //--------------------------------------------------------------- 

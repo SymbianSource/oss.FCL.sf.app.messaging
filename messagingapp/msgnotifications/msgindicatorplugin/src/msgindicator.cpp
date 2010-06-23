@@ -42,6 +42,7 @@
 #define LOC_OUTGOING_SINGLE_MESSAGE hbTrId("Outgoing Message")
 #define LOC_OUTGOING_MULTIPLE_MESSAGES hbTrId("Outgoing Messages")
 #define STATUS_MONO_NEW_MESSAGE QString("qtg_status_new_message")
+#define LOC_BUSINESSCARD hbTrId("Business card")
 /**
  * The number of indicators.
  */
@@ -318,6 +319,9 @@ QString MsgIndicator::getSecondaryText(MsgInfo& info)
             if (ECsBlueTooth == info.mMessageType) {
                 QFileInfo fname(secondaryText);
                 secondaryText = fname.fileName();
+            }
+            else if(ECsBioMsg_VCard == info.mMessageType) {
+            secondaryText = LOC_BUSINESSCARD;
             }
         }
         else {

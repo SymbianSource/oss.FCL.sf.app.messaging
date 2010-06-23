@@ -16,7 +16,7 @@
  */
 
 #include "msgviewutils.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 
 // ---------------------------------------------------------------------------
 // Constructor
@@ -44,7 +44,7 @@ QString MsgViewUtils::mimeTypeL(QString aFileName)
     RFs rfs;
     RFile file;
 
-    HBufC* fileName = S60QConversions::qStringToS60Desc(aFileName);
+    HBufC* fileName = XQConversions::qStringToS60Desc(aFileName);
 
     //TODO: The RFs and RApaLsSession has to be connected 1's, not for every mms
 
@@ -69,7 +69,7 @@ QString MsgViewUtils::mimeTypeL(QString aFileName)
             rfs.Close();
             apaSession.Close();
 
-            return S60QConversions::s60Desc8ToQString(fileType);
+            return XQConversions::s60Desc8ToQString(fileType);
             }
         }
 

@@ -18,7 +18,7 @@
 #include "conversationssummarymodel.h"
 #include "conversationsenginedefines.h"
 #include "conversationsengineutility.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "convergedmessage.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
@@ -244,7 +244,7 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
         HBufC* body = conEntry->Description();
         if( body && body->Length())
         {     
-            QString bodytext(S60QConversions::s60DescToQString(*body));
+            QString bodytext(XQConversions::s60DescToQString(*body));
             item.setData(bodytext, BodyText); 
             item.setData(bodytext, Subject );
         }
@@ -267,7 +267,7 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
     //display name
     if(disName && disName->Length())
         {
-        displayName = S60QConversions::s60DescToQString(*disName);
+        displayName = XQConversions::s60DescToQString(*disName);
         item.setData(displayName,DisplayName); 
         }
     
@@ -276,7 +276,7 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
     QString contactNumber("");
     if ( contactno && contactno->Length() )
         {
-        contactNumber = S60QConversions::s60DescToQString(*contactno);                  
+        contactNumber = XQConversions::s60DescToQString(*contactno);                  
         }        
     item.setData(contactNumber, ConversationAddress);
 
@@ -300,7 +300,7 @@ void ConversationsSummaryModel::handleBlueToothMessages(QStandardItem& item,
 {
     //TODO, needs to be revisited again, once BT team provides the solution for
     //BT received as Biomsg issue.
-    QString description = S60QConversions::s60DescToQString(*(entry.Description()));
+    QString description = XQConversions::s60DescToQString(*(entry.Description()));
 
     if (description.contains(".vcf") || description.contains(".ics")) // "vCard"
     {
@@ -385,7 +385,7 @@ void ConversationsSummaryModel::handleBioMessages(QStandardItem& item, const CCs
             HBufC* description = entry.Description();
             QString subject("");
             if (description && description->Length()) {
-                subject = (S60QConversions::s60DescToQString(*description));
+                subject = (XQConversions::s60DescToQString(*description));
                 item.setData(subject, BodyText);
             }
 
@@ -398,7 +398,7 @@ void ConversationsSummaryModel::handleBioMessages(QStandardItem& item, const CCs
         HBufC* description = entry.Description();
         QString subject("");
         if (description && description->Length()) {
-            subject = (S60QConversions::s60DescToQString(*description));
+            subject = (XQConversions::s60DescToQString(*description));
             item.setData(subject, BodyText);
         }
     }

@@ -27,11 +27,12 @@
 #include <apgtask.h> 
 #include <XQSettingsManager>
 #include <xqpublishandsubscribeutils.h>
+#include <xqsystemtoneservice.h>
 
 //USER INCLUDES
 #include "msgnotifier.h"
 #include "msgnotifier_p.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "msgstorehandler.h"
 #include "msginfodefs.h"
 #include "conversationidpsconsts.h"
@@ -80,6 +81,12 @@ MsgNotifierPrivate::~MsgNotifierPrivate()
         delete mSettingsManager;
         }
     
+    if(mSts)
+        {
+        delete mSts;
+        mSts = NULL;
+        }
+    
     QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Exit")
 }
 
@@ -114,6 +121,8 @@ void MsgNotifierPrivate::initL()
     
     QDEBUG_WRITE_FORMAT("MsgNotifierPrivate::initL "
                            "writing ret value",success)
+    
+    mSts = new XQSystemToneService();
     
     QDEBUG_WRITE("MsgNotifierPrivate::initL : Exit")
 }
@@ -205,16 +214,19 @@ void MsgNotifierPrivate::processListEntry(
         if(displayName)
             {
             notifData.mDisplayName = 
-                                S60QConversions::s60DescToQString(*displayName);
+                                XQConversions::s60DescToQString(*displayName);
             }        
         if(number)
             {
-            notifData.mContactNum =  S60QConversions::s60DescToQString(*number);
+            notifData.mContactNum =  XQConversions::s60DescToQString(*number);
             }
         if(descrp)
             {
-            notifData.mDescription = S60QConversions::s60DescToQString(*descrp);
+            notifData.mDescription = XQConversions::s60DescToQString(*descrp);
             }
+        
+        //Play new message alert tone.
+        mSts->playTone(XQSystemToneService::SmsAlertTone);
         
         // check whether opened cv id and received 
         // cv id are same and show notification

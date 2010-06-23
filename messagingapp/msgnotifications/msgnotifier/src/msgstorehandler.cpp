@@ -16,7 +16,7 @@
  */
 
 #include "msgstorehandler.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "msgnotifier_p.h"
 #include <ccsrequesthandler.h>
 #include <ccsconversationentry.h>
@@ -273,12 +273,12 @@ void MsgStoreHandler::ProcessIndicatorDataL(TMsvId msgId, MsgInfo& indicatorData
     HBufC* displayName = conversation->GetDisplayName();
 
     if (displayName) {
-        indicatorData.mDisplayName.append(S60QConversions::s60DescToQString(*displayName));
+        indicatorData.mDisplayName.append(XQConversions::s60DescToQString(*displayName));
     }
     else {
         HBufC* number = convEntry->Contact();
         if (number)
-            indicatorData.mDisplayName.append(S60QConversions::s60DescToQString(*number));
+            indicatorData.mDisplayName.append(XQConversions::s60DescToQString(*number));
     }
     delete conversation;
 }

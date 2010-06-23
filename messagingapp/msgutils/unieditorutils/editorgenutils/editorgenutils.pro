@@ -21,7 +21,6 @@ DEPENDPATH += . inc src
 
 INCLUDEPATH += .
 INCLUDEPATH += ../../../../inc
-INCLUDEPATH += ../../s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_MUIU_UITLS_DLL
@@ -50,11 +49,22 @@ HEADERS += inc/MuiuOperationWait.h \
 SOURCES += src/MuiuOperationWait.cpp \
     src/UniEditorGenUtils.cpp
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/editorgenutils.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/editorgenutils.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
 LIBS += -leuser \
     -lCentralRepository \
     -lconvergedmessageutils \
     -lsssettings \
-    -ls60qconversions \
     -lMsgMedia \
-    -lapmime
+    -lapmime \
+    -lxqutils \
+    -lavkon \
+    -lefsrv 
 

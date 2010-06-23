@@ -27,6 +27,7 @@ class CCSRequestHandler;
 class MsgStoreHandler;
 class XQSettingsManager;
 class XQPublishAndSubscribeUtils;
+class XQSystemToneService;
 
 /**
  * @class MsgNotifierPrivate
@@ -162,6 +163,11 @@ private:
      * Owned.
      */
     XQPublishAndSubscribeUtils* mPSUtils;
+    
+    /**
+     * Object to handle audio alert when new message is received
+     */
+    XQSystemToneService* mSts;
     };
 
 #endif // MSGNOTIFIER_PRIVATE_H

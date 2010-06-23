@@ -1055,12 +1055,13 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg, bool isSave)
         }
 }
 
-void MsgUnifiedEditorView::saveContentToDrafts()
+int MsgUnifiedEditorView::saveContentToDrafts()
 {
     if(!mCanSaveToDrafts)
         {
-        return;
+        return mOpenedMessageId.getId(); // return currently opened message id
         }
+    
     activateInputBlocker();
     ConvergedMessage::MessageType messageType = MsgUnifiedEditorMonitor::messageType();
 
@@ -1091,7 +1092,7 @@ void MsgUnifiedEditorView::saveContentToDrafts()
 
         // if empty msg, do not save
         deactivateInputBlocker();
-        return;
+        return INVALID_MSGID;
     }
 
     ConvergedMessageAddressList ccAddresses;
@@ -1124,7 +1125,7 @@ void MsgUnifiedEditorView::saveContentToDrafts()
         }
         // if empty msg, do not send
         deactivateInputBlocker();
-        return;
+        return INVALID_MSGID;
     }
     ConvergedMessage msg;
     packMessage(msg, true);
@@ -1150,6 +1151,7 @@ void MsgUnifiedEditorView::saveContentToDrafts()
         {
         HbNotificationDialog::launchDialog(LOC_SAVED_TO_DRAFTS);
         }
+    return msgId;
 }
 
 void MsgUnifiedEditorView::resizeEvent( QGraphicsSceneResizeEvent * event )
@@ -1360,7 +1362,7 @@ void MsgUnifiedEditorView::fetchImages()
 {
     QString service("photos");
     QString interface("com.nokia.symbian.IImageFetch");
-    QString operation("fetch(void)");
+    QString operation("fetch()");
     XQAiwRequest* request = NULL;
     XQApplicationManager appManager;
     request = appManager.create(service,interface, operation, true);//embedded
@@ -1390,30 +1392,11 @@ void MsgUnifiedEditorView::fetchImages()
 //---------------------------------------------------------------
 void MsgUnifiedEditorView::fetchAudio()
 {
-    QString service("musicplayer");
-    QString interface("com.nokia.symbian.IMusicFetch");
-    QString operation("fetch()");
-    XQAiwRequest* request = NULL;
-    XQApplicationManager appManager;
-    request = appManager.create(service, interface, operation, true); //embedded
-    request->setSynchronous(true); // synchronous
-    if(!request)
-    {
-        QCRITICAL_WRITE("AIW-ERROR: NULL request");
-        return;
-    }
-
-    connect(request, SIGNAL(requestOk(const QVariant&)),
-        this, SLOT(audiosFetched(const QVariant&)));
-    connect(request, SIGNAL(requestError(int,const QString&)),
-        this, SLOT(serviceRequestError(int,const QString&)));
-
-    // Make the request
-    if (!request->send())
-    {
-        QDEBUG_WRITE_FORMAT("AIW-ERROR: Request Send failed :",request->lastError());
-    }
-    delete request;
+    // Launch Audio fetcher view
+    QVariantList params;
+    params << MsgBaseView::AUDIOFETCHER; // target view
+    params << MsgBaseView::UNIEDITOR; // source view
+    emit switchView(params);
 }
 
 //---------------------------------------------------------------
@@ -1443,24 +1426,6 @@ void MsgUnifiedEditorView::imagesFetched(const QVariant& result )
         {
             QString filepath(QDir::toNativeSeparators(fileList.at(0)));
             mBody->setImage(filepath);
-        }
-    }
-}
-
-//---------------------------------------------------------------
-// MsgUnifiedEditorView::audiosFetched
-// @see header file
-//---------------------------------------------------------------
-void MsgUnifiedEditorView::audiosFetched(const QVariant& result )
-{
-    if(result.canConvert<QStringList>())
-    {
-        QStringList fileList = result.value<QStringList>();
-        if ( fileList.size()>0 && !fileList.at(0).isEmpty())
-        {
-            QString filepath(QDir::toNativeSeparators(fileList.at(0)));
-            QDEBUG_WRITE_FORMAT("Received audio file path = ", fileList.at(0));
-            mBody->setAudio(filepath);
         }
     }
 }

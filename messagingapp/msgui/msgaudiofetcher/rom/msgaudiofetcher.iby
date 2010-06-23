@@ -11,20 +11,13 @@
 *
 * Contributors:
 *
-* Description:  Global DLL defines 
- *
+* Description:
+*
 */
+#ifndef __MSGAUDIOFETCHER_IBY__
+#define __MSGAUDIOFETCHER_IBY__
 
+REM DLL
+file=ABI_DIR\UREL\msgaudiofetcher.dll                   SHARED_LIB_DIR\msgaudiofetcher.dll
 
-#ifndef S60QCONV_DEFINES_H
-#define S60QCONV_DEFINES_H 
-
-#include <QObject>
-
-#ifdef BUILD_S60QCONV_DLL
-#define S60QCONV_EXPORT Q_DECL_EXPORT
-#else
-#define S60QCONV_EXPORT Q_DECL_IMPORT
-#endif
-
-#endif // S60QCONV_DEFINES_H
+#endif // __MSGAUDIOFETCHER_IBY__

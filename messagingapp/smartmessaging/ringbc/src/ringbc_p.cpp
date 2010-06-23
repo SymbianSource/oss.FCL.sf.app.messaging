@@ -25,7 +25,7 @@
 // USER INCLUDES
 #include "ringbc_p.h"
 #include "ringbctoneconverter.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "debugtraces.h"
 
 //CONSTANTS 
@@ -129,7 +129,7 @@ void RingBcPrivate::saveToneL(const QString& path)
 
     CleanupClosePushL(fsSession);
 
-    HBufC* fileName = S60QConversions::qStringToS60Desc(path);
+    HBufC* fileName = XQConversions::qStringToS60Desc(path);
 
     RFile file;
     User::LeaveIfError(file.Open(fsSession, fileName->Des(),
@@ -151,7 +151,7 @@ void RingBcPrivate::saveToneL(const QString& path)
         TFileName path = PathInfo::PhoneMemoryRootPath();
         path.Append(PathInfo::SimpleSoundsPath());
         path.Append(*title);
-        HBufC* fileExtension = S60QConversions::qStringToS60Desc(extension);
+        HBufC* fileExtension = XQConversions::qStringToS60Desc(extension);
         path.Append(fileExtension->Des());
 
         CFileMan* fileMan = CFileMan::NewL(fsSession);
@@ -183,7 +183,7 @@ QString RingBcPrivate::toneTitle(const QString &path)
     QStringList pathList = path.split(".");
     QString extension = pathList.at(pathList.count() - 1);
 
-    HBufC* fileName = S60QConversions::qStringToS60Desc(path);
+    HBufC* fileName = XQConversions::qStringToS60Desc(path);
     TRAP_IGNORE( title = titleL(*fileName));
     
     title.append(QChar('.'));
@@ -226,7 +226,7 @@ QString RingBcPrivate::titleL(const TDesC& aFileName)
                 if (valid)
                     {
                     HBufC* toneTitle = mConverter->TitleLC(data);
-                    title = S60QConversions::s60DescToQString(*toneTitle);
+                    title = XQConversions::s60DescToQString(*toneTitle);
                     CleanupStack::PopAndDestroy(); //title
                     }
                 CleanupStack::PopAndDestroy(); //dataBuf

@@ -32,16 +32,17 @@ EXPORTS
 	_ZN19MmsConformanceCheck18checkModeForInsertERK7QStringb @ 31 NONAME
 	_ZN19MmsConformanceCheck19getStaticMetaObjectEv @ 32 NONAME
 	_ZN19MmsConformanceCheck19onDialogInsertMediaEP8HbAction @ 33 NONAME
-	_ZN19MmsConformanceCheck9showPopupERK7QString @ 34 NONAME
-	_ZN19MmsConformanceCheckC1Ev @ 35 NONAME
-	_ZN19MmsConformanceCheckC2Ev @ 36 NONAME
-	_ZN19MmsConformanceCheckD0Ev @ 37 NONAME
-	_ZN19MmsConformanceCheckD1Ev @ 38 NONAME
-	_ZN19MmsConformanceCheckD2Ev @ 39 NONAME
-	_ZNK11MsgSendUtil10metaObjectEv @ 40 NONAME
-	_ZNK19MmsConformanceCheck10metaObjectEv @ 41 NONAME
-	_ZTI11MsgSendUtil @ 42 NONAME
-	_ZTI19MmsConformanceCheck @ 43 NONAME
-	_ZTV11MsgSendUtil @ 44 NONAME
-	_ZTV19MmsConformanceCheck @ 45 NONAME
+	_ZN19MmsConformanceCheck21validateMsgForForwardEi @ 34 NONAME
+	_ZN19MmsConformanceCheck9showPopupERK7QString @ 35 NONAME
+	_ZN19MmsConformanceCheckC1Ev @ 36 NONAME
+	_ZN19MmsConformanceCheckC2Ev @ 37 NONAME
+	_ZN19MmsConformanceCheckD0Ev @ 38 NONAME
+	_ZN19MmsConformanceCheckD1Ev @ 39 NONAME
+	_ZN19MmsConformanceCheckD2Ev @ 40 NONAME
+	_ZNK11MsgSendUtil10metaObjectEv @ 41 NONAME
+	_ZNK19MmsConformanceCheck10metaObjectEv @ 42 NONAME
+	_ZTI11MsgSendUtil @ 43 NONAME
+	_ZTI19MmsConformanceCheck @ 44 NONAME
+	_ZTV11MsgSendUtil @ 45 NONAME
+	_ZTV19MmsConformanceCheck @ 46 NONAME
 

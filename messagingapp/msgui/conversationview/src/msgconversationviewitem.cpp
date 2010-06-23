@@ -27,6 +27,7 @@
 #include <HbIconAnimationManager>
 #include <HbIconAnimator>
 #include <ccsdefs.h>
+#include <hbinstance>
 
 // USER INCLUDES
 #include "msgconversationwidget.h"
@@ -41,6 +42,9 @@ const QString MSG_FAIL_ICON("qtg_small_fail");
 const QString ANIMATION_FILE(":/qtg_anim_loading.axml");
 const QString ANIMATION_ICON_NAME("qtg_anim_loading");
 const QString VCARD_ICON("qtg_large_mycard");
+const QString IMAGE_ICON("qtg_small_image");
+const QString CORRUPTED_ICON("qtg_large_corrupted");
+const QString MSG_VIDEO_ICON("qtg_large_video_player");
 
 // LOCALIZATION
 #define LOC_RINGING_TONE hbTrId("txt_messaging_dpopinfo_ringing_tone")
@@ -286,32 +290,53 @@ void MsgConversationViewItem::updateMmsTypeItem(const QModelIndex& index,
         
         //preview image
         bool hasImage = (msgProperty & EPreviewImage) ? true : false;
-
         if (hasImage)
-        {
-            QVariant previewData = index.data(PreviewIcon);
-
-            HbIcon previewIcon;
-            previewIcon = qvariant_cast<HbIcon> (previewData);
-
-            mConversation->setPreviewIcon(previewIcon);
+          {
             mConversation->setImage(true);
-            }
+            HbIcon previewIcon;
+            if (msgProperty & EPreviewProtectedImage)
+              {
+                // TODO: Change to official icon.
+                previewIcon = HbIcon(IMAGE_ICON);
+              }
+            else if (msgProperty & EPreviewCorruptedImage)
+              {
+                // TODO: Change to official icon.
+                previewIcon = HbIcon(CORRUPTED_ICON);
+              }
+            else
+              {
+                QVariant previewData = index.data(PreviewIcon);
+                previewIcon = qvariant_cast<HbIcon> (previewData);
+              }
+            mConversation->setPreviewIcon(previewIcon);
+          }
 
         bool hasVideo = (msgProperty & EPreviewVideo) ? true : false;
-        
         if (hasVideo)
-            {
+          {
             mConversation->setVideo(true);
-            }
+          }
 
-        bool hasAudio = (msgProperty & EPreviewAudio) ? true : false;              
+        bool hasAudio = (msgProperty & EPreviewAudio) ? true : false;
         if (hasAudio)
-            {
+          {
             mConversation->setAudio(true);
-            }
-
-        mConversation->displayAudioIcon();
+            // Protected content is also set as corrupted hence first check protected.
+            if (msgProperty & EPreviewProtectedAudio)
+              {
+                mConversation->displayAudioIcon();
+              }
+            else if (msgProperty & EPreviewCorruptedAudio)
+              {
+                // TODO: Change to official icon.
+                mConversation->displayAudioIcon(CORRUPTED_ICON);
+              }
+            else
+              {
+                mConversation->displayAudioIcon();
+              }
+          }
 
         int priority = index.data(MessagePriority).toInt();
         mConversation->setPriority(priority);
@@ -392,15 +417,17 @@ void MsgConversationViewItem::setIncoming(bool incoming)
     {
         HbStyle::setItemName(mOutgoingMsgStateIconItem, "");
         mOutgoingMsgStateIconItem->setVisible(false);
-        HbStyle::setItemName(mIncomingMsgStateIconItem,
-            "msgStateIconIncoming");
+        HbStyle::setItemName(mIncomingMsgStateIconItem, "msgStateIconIncoming");
+        mIncomingMsgStateIconItem->setIcon(HbIcon());
+        mIncomingMsgStateIconItem->setVisible(false);
     }
     else
     {
         HbStyle::setItemName(mIncomingMsgStateIconItem, "");
         mIncomingMsgStateIconItem->setVisible(false);
-        HbStyle::setItemName(mOutgoingMsgStateIconItem,
-            "msgStateIconOutgoing");
+        HbStyle::setItemName(mOutgoingMsgStateIconItem, "msgStateIconOutgoing");
+        mOutgoingMsgStateIconItem->setIcon(HbIcon());
+        mOutgoingMsgStateIconItem->setVisible(false);
     }
 }
 
@@ -524,8 +551,31 @@ void MsgConversationViewItem::init()
     HbStyle::setItemName(mConversation, "msgconvwidget");
 
     mIncomingMsgStateIconItem = new HbIconItem(this);
+    HbStyle::setItemName(mIncomingMsgStateIconItem, "msgStateIconIncoming");
 
     mOutgoingMsgStateIconItem = new HbIconItem(this);
+    HbStyle::setItemName(mOutgoingMsgStateIconItem, "msgStateIconOutgoing");
+
+    HbMainWindow *mainWindow = hbInstance->allMainWindows()[0];
+
+    connect(mainWindow, SIGNAL(orientationChanged(Qt::Orientation)), this,
+        SLOT(orientationchanged(Qt::Orientation)), Qt::UniqueConnection);
+
+    // Force polish to get all the sub-item properties right.
+    polishEvent();
+}
+
+//---------------------------------------------------------------
+// MsgConversationViewItem::orientationchanged
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationViewItem::orientationchanged(Qt::Orientation orientation)
+{
+    QDEBUG_WRITE("MsgConversationViewItem:orientationchanged start.")
+
+    repolish();
+
+    QDEBUG_WRITE("MsgConversationViewItem:orientationchanged end.")
 }
 
 // EOF

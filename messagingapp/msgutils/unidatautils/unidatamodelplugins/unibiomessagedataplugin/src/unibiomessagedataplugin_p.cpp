@@ -30,7 +30,7 @@
 #include "debugtraces.h"
 
 #include <QDateTime>
-#include <s60qconversions.h>
+#include <xqconversions.h>
 #include <mmsvattachmentmanager.h>
 #include <mmsvattachmentmanagersync.h>
 #include "convergedmessage.h"
@@ -150,7 +150,7 @@ void UniBioMessageDataPluginPrivate::body(QString& aBodyText)
     HBufC* buf = HBufC::NewL(len);
     TPtr bufPtr = buf->Des();
     textBody.ExtractSelectively(bufPtr, 0, len, CPlainText::EExtractAll);
-    aBodyText = S60QConversions::s60DescToQString(*buf);
+    aBodyText = XQConversions::s60DescToQString(*buf);
     delete buf;
 }
 
@@ -192,8 +192,8 @@ void UniBioMessageDataPluginPrivate::toRecipientList(
 
         ConvergedMessageAddress
                 * messageAddress =
-                        new ConvergedMessageAddress(S60QConversions::s60DescToQString(address),
-                                                    S60QConversions::s60DescToQString(name));
+                        new ConvergedMessageAddress(XQConversions::s60DescToQString(address),
+                                                    XQConversions::s60DescToQString(name));
         mAddressList.append(messageAddress);
     }
     CleanupStack::PopAndDestroy(3, pText);
@@ -218,7 +218,7 @@ void UniBioMessageDataPluginPrivate::fromAddress(QString& messageAddress)
     smsHeader->RestoreL(*store);
 
     messageAddress
-            = S60QConversions::s60DescToQString(smsHeader->FromAddress());
+            = XQConversions::s60DescToQString(smsHeader->FromAddress());
     CleanupStack::PopAndDestroy(3, pText);
 }
 
@@ -289,8 +289,6 @@ RFile UniBioMessageDataPluginPrivate::attachmentL()
         MMsvAttachmentManager& attachMan = store->AttachmentManagerL();
 
         iAttachmentCount = attachMan.AttachmentCount();
-		
-        RFile file ;
 		
         if(iAttachmentCount) {
          file = attachMan.GetAttachmentFileL(0);

@@ -106,10 +106,10 @@ void MsgUnifiedEditorLineEdit::inputMethodEvent(QInputMethodEvent *event)
         {// all user inputs get appended at the end
             this->setCursorPosition(this->text().length());
         }
-
-        HbAbstractEdit::inputMethodEvent(event);
-        event->accept();
     }
+    
+    HbAbstractEdit::inputMethodEvent(event);
+    event->accept();
 }
 
 void MsgUnifiedEditorLineEdit::keyPressEvent(QKeyEvent *event)

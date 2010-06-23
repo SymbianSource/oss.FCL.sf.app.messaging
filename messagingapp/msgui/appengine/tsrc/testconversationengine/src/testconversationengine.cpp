@@ -23,7 +23,7 @@
 #include "testconversationupdatehandler.h"
 #include <ccsclientconversation.h>
 #include <ccsconversationentry.h>
-#include <s60qconversions.h>
+#include <xqconversions.h>
 #include <conversationsenginedefines.h>
 
 
@@ -195,11 +195,11 @@ void TConversationEngine::GetContactDetailsFromConversationID()
           
         //check the bunch of converation client details 
         QCOMPARE(fname,
-               S60QConversions::s60DescToQString(
+               XQConversions::s60DescToQString(
                        *(clientConv->GetDisplayName())));
           
         QCOMPARE(address,
-                S60QConversions::s60DescToQString(
+                XQConversions::s60DescToQString(
                         *(clientConv->GetConversationEntry()->Contact())));
     }
 }

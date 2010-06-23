@@ -27,6 +27,7 @@ class HbIconItem;
 class HbIcon;
 class HbFrameItem;
 class UniViewerUtils;
+class UniMessageInfo;
 
 /**
  * @class UniViewerAttachmentWidget
@@ -50,10 +51,9 @@ public:
 
     /**
      * Populates the widget contents.
-     * @param mimeType Mime type of media.
-     * @param filePath File path of media.
+     * @param info Object information.
      */
-    void populate(const QString &mimeType, const QString &filePath);
+    void populate(UniMessageInfo *info);
 
 signals:
 

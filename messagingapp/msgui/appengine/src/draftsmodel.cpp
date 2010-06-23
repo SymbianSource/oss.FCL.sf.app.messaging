@@ -18,7 +18,6 @@
 #include "draftsmodel.h"
 #include "conversationsenginedefines.h"
 #include "conversationsengineutility.h"
-#include "s60qconversions.h"
 #include "conversationsengineutility.h"
 
 #include <ccsclientconversation.h>
@@ -26,7 +25,7 @@
 #include <msvstd.h>
 #include <QDateTime>
 #include <hbicon.h>
-
+#include <xqconversions.h>
 //CONSTANTS
 const QString DATE_FORMAT("dd/MM"); //Date format.
 const QString TIME_FORMAT("hh:mm"); //Time format.
@@ -223,7 +222,7 @@ void DraftsModel::populateItem(QStandardItem& item, const TMsvEntry& entry)
     item.setData(ConversationsEngineUtility::messageType(entry.iMtm.iUid), MessageType);
 
     // description
-    QString Description(S60QConversions::s60DescToQString(entry.iDescription));
+    QString Description(XQConversions::s60DescToQString(entry.iDescription));
     item.setData(Description, Subject);
 
     // time stamp
@@ -234,7 +233,7 @@ void DraftsModel::populateItem(QStandardItem& item, const TMsvEntry& entry)
     item.setData(seconds.Int(), TimeStamp);
 
     // contact details
-    QString contact(S60QConversions::s60DescToQString(entry.iDetails));
+    QString contact(XQConversions::s60DescToQString(entry.iDetails));
     item.setData(contact, DisplayName);
     
     // Attachments

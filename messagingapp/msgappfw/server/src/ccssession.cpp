@@ -1043,53 +1043,58 @@ void CCsSession::HandleNewConversationEventL(
     if (!iConversationChangeObserver)
         return;
 
-    if ((aClientConversation->GetContactId()
-            != iMonitoredConversation->GetContactId()) &&
-            (aClientConversation->GetConversationEntryId()
-            != iMonitoredConversation->GetConversationEntryId())
-              )
-        return;
-
-    if (! (iNotifyHandling))
+    //this is check to send notif to clients for a new message
+    //1. if the client is subscribed with contact id ==> then send
+    //2. if the client is subscribed with conv id ---> then send
+    // else dont send
+    
+    if ((aClientConversation->GetContactId() == 
+            iMonitoredConversation->GetContactId() && 
+            aClientConversation->GetContactId() != -1)
+            ||(aClientConversation->GetConversationEntryId() == 
+                    iMonitoredConversation->GetConversationEntryId()))
     {
-        //append in notify list
-        CCsConversationEvent* conversationEvent = CCsConversationEvent::NewL();
-        CleanupStack::PushL(conversationEvent);
-        conversationEvent->SetClientConversationL(*aClientConversation);
-        conversationEvent->SetEvent(KConversationEventNew);
-        iEventList->AppendL(conversationEvent);
-        CleanupStack::Pop(conversationEvent);
+
+        if (! (iNotifyHandling))
+        {
+            //append in notify list
+            CCsConversationEvent* conversationEvent = CCsConversationEvent::NewL();
+            CleanupStack::PushL(conversationEvent);
+            conversationEvent->SetClientConversationL(*aClientConversation);
+            conversationEvent->SetEvent(KConversationEventNew);
+            iEventList->AppendL(conversationEvent);
+            CleanupStack::Pop(conversationEvent);
+        }
+        else
+        {
+            // create a new buffer for writing into stream
+            CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
+            CleanupStack::PushL(buf);
+    
+            RBufWriteStream writeStream(*buf);
+            writeStream.PushL();
+    
+            //externalize ClientConversation
+            aClientConversation->ExternalizeL(writeStream);
+    
+            // Results are already packed in the stream
+            writeStream.CommitL();
+            // --------------------------------------------------------------
+    
+            // Create a heap descriptor from the buffer
+            HBufC8* des = HBufC8::NewLC(buf->Size());
+            CleanupStack::Pop(des);
+            TPtr8 ptr(des->Des());
+            buf->Read(0, ptr, buf->Size());
+    
+            CleanupStack::PopAndDestroy(2, buf); // writestream, buf
+    
+            iAsyncReqRMessage.Write(1, *des);
+            iAsyncReqRMessage.Complete(EAddConversationEvent);
+            delete des;
+            iNotifyHandling = EFalse;
+        }
     }
-    else
-    {
-        // create a new buffer for writing into stream
-        CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
-        CleanupStack::PushL(buf);
-
-        RBufWriteStream writeStream(*buf);
-        writeStream.PushL();
-
-        //externalize ClientConversation
-        aClientConversation->ExternalizeL(writeStream);
-
-        // Results are already packed in the stream
-        writeStream.CommitL();
-        // --------------------------------------------------------------
-
-        // Create a heap descriptor from the buffer
-        HBufC8* des = HBufC8::NewLC(buf->Size());
-        CleanupStack::Pop(des);
-        TPtr8 ptr(des->Des());
-        buf->Read(0, ptr, buf->Size());
-
-        CleanupStack::PopAndDestroy(2, buf); // writestream, buf
-
-        iAsyncReqRMessage.Write(1, *des);
-        iAsyncReqRMessage.Complete(EAddConversationEvent);
-        delete des;
-        iNotifyHandling = EFalse;
-    }
-
     PRINT ( _L("End CCsSession::HandleNewConversationEventL") );
 }
 
@@ -1169,53 +1174,58 @@ void CCsSession::HandleModifyConversationEventL(
     if (!iConversationChangeObserver)
         return;
 
-    if ((aClientConversation->GetContactId()
-                != iMonitoredConversation->GetContactId()) &&
-                (aClientConversation->GetConversationEntryId()
-                != iMonitoredConversation->GetConversationEntryId())
-                  )
-        return;
-
-    if (! (iNotifyHandling))
+    //this is check to send notif to clients for a new message
+    //1. if the client is subscribed with contact id ==> then send
+    //2. if the client is subscribed with conv id ---> then send
+    // else dont send
+    
+    if ((aClientConversation->GetContactId() == 
+                iMonitoredConversation->GetContactId() && 
+                aClientConversation->GetContactId() != -1)
+                ||(aClientConversation->GetConversationEntryId() == 
+                        iMonitoredConversation->GetConversationEntryId()))
     {
-        //append in notify list
-        CCsConversationEvent* conversationEvent = CCsConversationEvent::NewL();
-        CleanupStack::PushL(conversationEvent);
-        conversationEvent->SetClientConversationL(*aClientConversation);
-        conversationEvent->SetEvent(KConversationEventUpdate);
-        iEventList->AppendL(conversationEvent);
-        CleanupStack::Pop(conversationEvent);
+    
+        if (! (iNotifyHandling))
+        {
+            //append in notify list
+            CCsConversationEvent* conversationEvent = CCsConversationEvent::NewL();
+            CleanupStack::PushL(conversationEvent);
+            conversationEvent->SetClientConversationL(*aClientConversation);
+            conversationEvent->SetEvent(KConversationEventUpdate);
+            iEventList->AppendL(conversationEvent);
+            CleanupStack::Pop(conversationEvent);
+        }
+        else
+        {
+            // create a new buffer for writing into stream
+            CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
+            CleanupStack::PushL(buf);
+    
+            RBufWriteStream writeStream(*buf);
+            writeStream.PushL();
+    
+            //externalize ClientConversation
+            aClientConversation->ExternalizeL(writeStream);
+    
+            // Results are already packed in the stream
+            writeStream.CommitL();
+            // --------------------------------------------------------------
+    
+            // Create a heap descriptor from the buffer
+            HBufC8* des = HBufC8::NewLC(buf->Size());
+            CleanupStack::Pop(des);
+            TPtr8 ptr(des->Des());
+            buf->Read(0, ptr, buf->Size());
+    
+            CleanupStack::PopAndDestroy(2, buf); // writestream, buf
+    
+            iAsyncReqRMessage.Write(1, *des);
+            iAsyncReqRMessage.Complete(EModifyConversationEvent);
+            delete des;
+            iNotifyHandling = EFalse;
+        }
     }
-    else
-    {
-        // create a new buffer for writing into stream
-        CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
-        CleanupStack::PushL(buf);
-
-        RBufWriteStream writeStream(*buf);
-        writeStream.PushL();
-
-        //externalize ClientConversation
-        aClientConversation->ExternalizeL(writeStream);
-
-        // Results are already packed in the stream
-        writeStream.CommitL();
-        // --------------------------------------------------------------
-
-        // Create a heap descriptor from the buffer
-        HBufC8* des = HBufC8::NewLC(buf->Size());
-        CleanupStack::Pop(des);
-        TPtr8 ptr(des->Des());
-        buf->Read(0, ptr, buf->Size());
-
-        CleanupStack::PopAndDestroy(2, buf); // writestream, buf
-
-        iAsyncReqRMessage.Write(1, *des);
-        iAsyncReqRMessage.Complete(EModifyConversationEvent);
-        delete des;
-        iNotifyHandling = EFalse;
-    }
-
     PRINT ( _L("End CCsSession::HandleModifyConversationEventL") );
 }
 

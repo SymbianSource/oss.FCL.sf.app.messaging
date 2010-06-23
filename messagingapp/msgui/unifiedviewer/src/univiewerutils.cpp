@@ -32,6 +32,7 @@
 const QString IMAGE_MIMETYPE("image");
 const QString AUDIO_MIMETYPE("audio");
 const QString VCARD_MIMETYPE("text/X-vCard");
+const QString VIDEO_MIMETYPE("video");
 
 //---------------------------------------------------------------
 // UniViewerUtils::UniViewerUtils
@@ -56,7 +57,8 @@ UniViewerUtils::~UniViewerUtils()
 //---------------------------------------------------------------
 void UniViewerUtils::launchContentViewer(const QString &mimeType, const QString &filePath)
 {
-    if (mimeType.contains(IMAGE_MIMETYPE) || mimeType.contains(AUDIO_MIMETYPE)) {
+    if (mimeType.contains(IMAGE_MIMETYPE) || mimeType.contains(AUDIO_MIMETYPE) || 
+        mimeType.contains(VIDEO_MIMETYPE)) {
         launchViaSharableFile(filePath);
     }
     else if (mimeType.contains(VCARD_MIMETYPE, Qt::CaseInsensitive)) {

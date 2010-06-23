@@ -31,6 +31,7 @@
 
 // USER INCLUDES
 #include "univiewerutils.h"
+#include "unidatamodelplugininterface.h"
 
 // LOCAL CONSTANTS
 #define LOC_OPEN hbTrId("txt_common_menu_open")
@@ -40,6 +41,7 @@
 const QString BG_FRAME_NORMAL("qtg_fr_list_normal");
 const QString BG_FRAME_PRESSED("qtg_fr_list_pressed");
 const QString ATTACHMENT_ICON("qtg_small_attachment");
+const QString CORRUPTED_ATTACH_ICON("qtg_small_corrupted");
 const QString VCARD_MIMETYPE("text/X-vCard");
 
 const int KILOBYTE = 1024;
@@ -83,14 +85,24 @@ UniViewerAttachmentWidget::~UniViewerAttachmentWidget()
 // UniViewerAttachmentWidget::populate
 // @see header file
 //----------------------------------------------------------------------------
-void UniViewerAttachmentWidget::populate(const QString &mimeType, const QString &filePath)
+void UniViewerAttachmentWidget::populate(UniMessageInfo *info)
 {
-    mMimeType = mimeType;
-    mMediaPath = filePath;
+    mMimeType = info->mimetype();
+    mMediaPath = info->path();
 
-    mMediaIcon->setIconName(ATTACHMENT_ICON);
+    QString attachIcon;
+    if (info->isProtected()) {
+        attachIcon = ATTACHMENT_ICON;
+    }
+    else if (info->isCorrupted()) {
+        attachIcon = CORRUPTED_ATTACH_ICON;
+    }
+    else {
+        attachIcon = ATTACHMENT_ICON;
+    }
 
-    QFileInfo fileInfo(filePath);
+    mMediaIcon->setIconName(attachIcon);
+    QFileInfo fileInfo(mMediaPath);
     mName->setText(fileInfo.fileName());
 
     QString sizeString('B');

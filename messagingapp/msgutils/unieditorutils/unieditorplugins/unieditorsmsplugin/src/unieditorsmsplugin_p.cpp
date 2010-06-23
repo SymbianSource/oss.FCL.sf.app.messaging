@@ -57,13 +57,13 @@
 #include "convergedmessage.h"
 #include "convergedmessageid.h"
 #include "convergedmessageattachment.h"
-#include "s60qconversions.h"
+
 #include "MuiuOperationWait.h"
 #include "UniEditorGenUtils.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
 #include <hbglobal.h> // for translation support
-
+#include <xqconversions.h>
 // resources
 
 // CONSTANTS
@@ -436,8 +436,8 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
     int addrCount = addrList.count();
     for(int i=0; i<addrCount; i++)
     {
-        HBufC* addr = S60QConversions::qStringToS60Desc( addrList.at(i)->address() );
-        HBufC* alt_alias = S60QConversions::qStringToS60Desc( addrList.at(i)->alias() );
+        HBufC* addr = XQConversions::qStringToS60Desc( addrList.at(i)->address() );
+        HBufC* alt_alias = XQConversions::qStringToS60Desc( addrList.at(i)->alias() );
         if(addr->Length() > 0)
         {
             CleanupStack::PushL(addr);
@@ -512,7 +512,7 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
     // set subject
     if ( !message->subject().isEmpty() )
     {
-        HBufC* subj = S60QConversions::qStringToS60Desc( message->subject() );
+        HBufC* subj = XQConversions::qStringToS60Desc( message->subject() );
         if( subj )
         {
             CleanupStack::PushL( subj );
@@ -531,7 +531,7 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
 // -----------------------------------------------------------------------------
 void UniEditorSmsPluginPrivate::SetSmsBodyL(ConvergedMessage* message)
 {
-    HBufC8* bodytext = S60QConversions::qStringToS60Desc8( message->bodyText() );
+    HBufC8* bodytext = XQConversions::qStringToS60Desc8( message->bodyText() );
     if( bodytext->Length() > 0)
     {
         CleanupStack::PushL( bodytext );
@@ -585,7 +585,7 @@ void UniEditorSmsPluginPrivate::SetSmsAttachmentsL(ConvergedMessage* message)
         {
          // create msv attachment in store
         CreateAttachmentL(store,
-                *S60QConversions::qStringToS60Desc(attachment->filePath()));
+                *XQConversions::qStringToS60Desc(attachment->filePath()));
         
         // check for mimetype of the attachment
         TPtrC8 mimetype;
@@ -594,7 +594,7 @@ void UniEditorSmsPluginPrivate::SetSmsAttachmentsL(ConvergedMessage* message)
         TMsgMediaType attMediaType = EMsgMediaUnknown;
         iGenUtils->getFileInfoL(attachment->filePath(),
                 attSize, attMimeType, attMediaType);
-        mimetype.Set( *S60QConversions::qStringToS60Desc8(attMimeType) );
+        mimetype.Set( *XQConversions::qStringToS60Desc8(attMimeType) );
         
         if ( mimetype.CompareF( KMsgMimeTextPlain ) == 0 )
             {
@@ -634,7 +634,7 @@ void UniEditorSmsPluginPrivate::SetSmsAttachmentsL(ConvergedMessage* message)
     }
     else if(!descr.isNull())
     {
-        buf.Copy( *S60QConversions::qStringToS60Desc(descr) );
+        buf.Copy( *XQConversions::qStringToS60Desc(descr) );
     }
     tEntry.iDescription.Set( buf );
 
@@ -658,11 +658,11 @@ void UniEditorSmsPluginPrivate::CreateAttachmentL(CMsvStore* aStore, const TDesC
     int attSize;
     QString mimeType;
     TMsgMediaType mediaType = EMsgMediaUnknown;
-    QString filepath = S60QConversions::s60DescToQString( aFilePath );
+    QString filepath = XQConversions::s60DescToQString( aFilePath );
     iGenUtils->getFileInfoL(filepath, attSize, mimeType, mediaType);
     
     attachment->SetSize( attSize );
-    attachment->SetMimeTypeL( *S60QConversions::qStringToS60Desc8(mimeType) );
+    attachment->SetMimeTypeL( *XQConversions::qStringToS60Desc8(mimeType) );
     
     CMuiuOperationWait* wait = CMuiuOperationWait::NewLC();
     attachmentManager->AddAttachmentL( aFilePath, attachment, wait->iStatus );
@@ -1765,8 +1765,8 @@ void UniEditorSmsPluginPrivate::populateRecipientsL(
             HBufC* pureAddr = TMmsGenUtils::PureAddress( emailRecipients.MdcaPoint( id ) ).AllocLC();
             HBufC* aliasAddr = TMmsGenUtils::Alias( emailRecipients.MdcaPoint( id ) ).AllocLC();
             ConvergedMessageAddress messageAddress(
-                    S60QConversions::s60DescToQString(*pureAddr), 
-                    S60QConversions::s60DescToQString(*aliasAddr));
+                    XQConversions::s60DescToQString(*pureAddr), 
+                    XQConversions::s60DescToQString(*aliasAddr));
             CleanupStack::PopAndDestroy(2, pureAddr );
             aMessage->addToRecipient(messageAddress);
             }
@@ -1784,8 +1784,8 @@ void UniEditorSmsPluginPrivate::populateRecipientsL(
             HBufC* aliasAddr =
                     TMmsGenUtils::Alias(smsRecipients[i]).AllocLC();
             ConvergedMessageAddress messageAddress(
-                    S60QConversions::s60DescToQString(*pureAddr), 
-                    S60QConversions::s60DescToQString(*aliasAddr));
+                    XQConversions::s60DescToQString(*pureAddr), 
+                    XQConversions::s60DescToQString(*aliasAddr));
             CleanupStack::PopAndDestroy(2, pureAddr );
             aMessage->addToRecipient(messageAddress);
             }
@@ -1793,7 +1793,7 @@ void UniEditorSmsPluginPrivate::populateRecipientsL(
 
     if( emailFields.Subject( ).Length( ) )
         { // If email subject exists -> copy it
-        aMessage->setSubject(S60QConversions::s60DescToQString(
+        aMessage->setSubject(XQConversions::s60DescToQString(
                 emailFields.Subject()));
         }
 
@@ -1820,7 +1820,7 @@ void UniEditorSmsPluginPrivate::populateMessageBodyL(
             CleanupStack::PushL( store );
             MMsvAttachmentManager& manager = store->AttachmentManagerL();
             CMsvAttachment *attachment = manager.GetAttachmentInfoL(0);
-            QString filepath = S60QConversions::s60DescToQString(attachment->FilePath());
+            QString filepath = XQConversions::s60DescToQString(attachment->FilePath());
             ConvergedMessageAttachment* conv_attachment = 
                 new ConvergedMessageAttachment(filepath, ConvergedMessageAttachment::EAttachment);
             ConvergedMessageAttachmentList conv_attList;
@@ -1861,7 +1861,7 @@ void UniEditorSmsPluginPrivate::populateMessageBodyL(
             HBufC* bodyText = HBufC::NewLC ( totalLength ); 
             TPtr bodyTextPtr ( bodyText->Des() ); 
             SmsMtmL()->Body().Extract( bodyTextPtr, 0, totalLength );
-            aMessage->setBodyText(S60QConversions::s60DescToQString(
+            aMessage->setBodyText(XQConversions::s60DescToQString(
                 bodyTextPtr));
             CleanupStack::PopAndDestroy( bodyText );            
         }

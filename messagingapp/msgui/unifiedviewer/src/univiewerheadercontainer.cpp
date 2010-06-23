@@ -180,7 +180,7 @@ void UniViewerHeaderContainer::populateAttachments()
         UniMessageInfo* info = attachList.at(a);
         UniViewerAttachmentWidget *attachmentWidget = new UniViewerAttachmentWidget(this);
         mUniViewerAttachmentstList.append(attachmentWidget);
-        attachmentWidget->populate(info->mimetype(), info->path());
+        attachmentWidget->populate(info);
         delete info;
         mMainLayout->addItem(attachmentWidget);
     }

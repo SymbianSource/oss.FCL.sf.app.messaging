@@ -25,7 +25,6 @@ INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../appengine/inc
 INCLUDEPATH += ../msguiutils/inc
 INCLUDEPATH += . ../../msgutils/unieditorutils/editorgenutils/inc
-INCLUDEPATH += . ../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 #QMAKE_CXXFLAGS.ARMCC -= --no_hide_all
@@ -48,6 +47,15 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 BLD_INF_RULES.prj_exports += \
      "$${LITERAL_HASH}include <platform_paths.hrh>" \
      "rom/unifiedviewer.iby             CORE_APP_LAYER_IBY_EXPORT_PATH(unifiedviewer.iby)"
+
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/unifiedviewer.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/unifiedviewer.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
 
 # Input
 HEADERS += inc/unifiedviewer.h \
@@ -88,8 +96,7 @@ SOURCES += src/unifiedviewer.cpp \
 RESOURCES += unifiedviewer.qrc
 
 # Libs
-LIBS = -ls60qconversions \
-       -letext \
+LIBS = -letext \
        -lmsgs \
        -lconvergedmessageutils \
        -lappengine \
@@ -98,4 +105,5 @@ LIBS = -ls60qconversions \
        -lQtContacts \
        -lmsguiutils \
        -lcentralrepository \
+       -lthumbnailmanagerqt \
        -lxqserviceutil

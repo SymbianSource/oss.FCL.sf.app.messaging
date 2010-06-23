@@ -26,6 +26,7 @@
 #include <xqappmgr.h>
 #include <ccsdefs.h>
 #include <qaction.h>
+#include <xqsystemtoneservice.h>
 
 #define LOC_VIEW hbTrId("txt_messaging_button_view")
 #define LOC_CANCEL hbTrId("txt_common_button_cancel")
@@ -37,6 +38,7 @@
 MsgErrorNotifierSvc::MsgErrorNotifierSvc(QObject* parent) :
     XQServiceProvider(QLatin1String("messaging.com.nokia.symbian.MsgErrorNotifier"), parent)
 {
+    mSts = new XQSystemToneService();
     publishAll();
 
 }
@@ -45,7 +47,11 @@ MsgErrorNotifierSvc::MsgErrorNotifierSvc(QObject* parent) :
 //---------------------------------------------------------
 MsgErrorNotifierSvc::~MsgErrorNotifierSvc()
 {
-
+    if(mSts)
+        {
+        delete mSts;
+        mSts = NULL;
+        }
 }
 
 //---------------------------------------------------------
@@ -88,7 +94,10 @@ void MsgErrorNotifierSvc::displayErrorNote(QVariantList displayParams)
     messageBox.setAction(actionView,HbDeviceMessageBox::RejectButtonRole);
 
     setCurrentRequestAsync();
-
+    
+    //Play audio alert when error notification is shown
+    mSts->playTone(XQSystemToneService::MessageSendFailureTone);
+    
     const QAction* result = messageBox.exec();
 
     // TODO: use XQAiwrequest

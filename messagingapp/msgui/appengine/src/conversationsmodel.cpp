@@ -19,13 +19,15 @@
 #include "conversationsenginedefines.h"
 #include "conversationmsgstorehandler.h"
 #include "convergedmessage.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "conversationsengineutility.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
 #include "ringbc.h"
 #include "msgcontacthandler.h"
+#include "mmsconformancecheck.h"
 #include <ccsconversationentry.h>
+#include <fileprotectionresolver.h>
 
 #include "debugtraces.h"
 
@@ -78,10 +80,10 @@ ConversationsModel::~ConversationsModel()
 {
     //Close SQL-DB
     iSqlDb.Close();
-	
+
 	//clear preview-cache
     previewIconCache.clear();
-	
+
     if (iDataModelPluginLoader) {
         delete iDataModelPluginLoader;
         iDataModelPluginLoader = NULL;
@@ -201,7 +203,7 @@ QVariant ConversationsModel::data(const QModelIndex & index, int role) const
     }
     case DisplayName: // Fall through start
         value = item->data(DisplayName);
-        break;    
+        break;
     case Avatar: // Fall througn end
         value = item->data(Avatar);
         break;
@@ -295,10 +297,10 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
     HBufC* description = entry.Description();
     QString subject("");
     if (description && description->Length()) {
-        subject = (S60QConversions::s60DescToQString(*description));     
+        subject = (XQConversions::s60DescToQString(*description));     
     }
 
-    // time stamp 
+    // time stamp
     TTime unixEpoch(KUnixEpoch);
     TTimeIntervalSeconds seconds;
     TTime timeStamp(entry.TimeStamp());
@@ -308,7 +310,7 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
     //contact details
     HBufC* contact = entry.Contact();
     if (contact && contact->Length()) {
-        item.setData(S60QConversions::s60DescToQString(*contact), ConversationAddress);
+        item.setData(XQConversions::s60DescToQString(*contact), ConversationAddress);
     }
 
     // message type.
@@ -345,7 +347,7 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
         item.setData(ConvergedMessage::Outbox, MessageLocation);
     }
 
-    //message specific handling    
+    //message specific handling
     if (msgType == ConvergedMessage::Mms) {
         QCRITICAL_WRITE("ConversationsModel::populateItem  MMS start.")
         handleMMS(item, entry);
@@ -368,6 +370,22 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
 
     QCRITICAL_WRITE("ConversationsModel::populateItem end.");
 }
+
+//---------------------------------------------------------------
+// ConversationsModel::validateMsgForForward
+// @see header file
+//---------------------------------------------------------------
+bool ConversationsModel::validateMsgForForward(qint32 messageId)
+{
+    bool retValue = true;
+    //Validate if the mms msg can be forwarded or not
+    MmsConformanceCheck* mmsConformanceCheck = new MmsConformanceCheck;
+    retValue = mmsConformanceCheck->validateMsgForForward(messageId);
+
+    delete mmsConformanceCheck;
+    return retValue;
+}
+
 
 //---------------------------------------------------------------
 // ConversationsModel::handleMMS
@@ -418,7 +436,7 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                             subjectIndex));
                     sqlSelectStmt.ColumnText(subjectIndex, subjectBuffer);
 
-                    item.setData(S60QConversions::s60DescToQString(
+                    item.setData(XQConversions::s60DescToQString(
                             subjectBuffer), Subject);
                     subjectBuffer.Close();
 
@@ -427,7 +445,7 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                     sqlSelectStmt.ColumnText(bodyIndex, bodyBuffer);
 
                     item.setData(
-                            S60QConversions::s60DescToQString(bodyBuffer),
+                            XQConversions::s60DescToQString(bodyBuffer),
                             BodyText);
                     bodyBuffer.Close();
 
@@ -438,7 +456,7 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                             previewPathBuffer);
 
                     //Rightnow set inside attachments
-                    QString attachmentPath(S60QConversions::s60DescToQString(
+                    QString attachmentPath(XQConversions::s60DescToQString(
                             previewPathBuffer));
 
                     item.setData(attachmentPath, Attachments);
@@ -502,6 +520,11 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
             msgProperty |= EPreviewAttachment;
         }
 
+        if(validateMsgForForward(entry.EntryId()))
+        {
+            msgProperty |= EPreviewForward;
+        }
+
         //subject
         item.setData(iMmsDataPlugin->subject(), Subject);
 
@@ -534,12 +557,28 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                 {
                     isImageSet = true;
                     msgProperty |= EPreviewImage;
+                    if (objectList[index]->isProtected())
+                    {
+                        msgProperty |= EPreviewProtectedImage;
+                    }
+                    if (objectList[index]->isCorrupted())
+                    {
+                        msgProperty |= EPreviewCorruptedImage;
+                    }
                     imagePath = objectList[index]->path();
                 }
                 if (!isAudioSet && objectList[index]->mimetype().contains(
                     "audio"))
                 {
                     msgProperty |= EPreviewAudio;
+                    if (objectList[index]->isProtected())
+                    {
+                        msgProperty |= EPreviewProtectedAudio;
+                    }
+                    if (objectList[index]->isCorrupted())
+                    {
+                        msgProperty |= EPreviewCorruptedAudio;
+                    }
                     isAudioSet = true;
                 }
                 if (!isVideoSet && objectList[index]->mimetype().contains(
@@ -547,6 +586,14 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                 {
                     isVideoSet = true;
                     msgProperty |= EPreviewVideo;
+                    if (objectList[index]->isProtected())
+                    {
+                        msgProperty |= EPreviewProtectedVideo;
+                    }
+                    if (objectList[index]->isCorrupted())
+                    {
+                        msgProperty |= EPreviewCorruptedVideo;
+                    }
                     videoPath = objectList[index]->path();
                 }
             }
@@ -560,12 +607,22 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
         if (isVideoSet)
         {
             item.setData(videoPath, Attachments);
-            setPreviewIcon(pixmap, videoPath, msgId, false);
+            // Store thumbnail only for non protected, non corrupted content.
+            if (!(EPreviewProtectedVideo & msgProperty) &&
+                !(EPreviewCorruptedVideo & msgProperty))
+            {
+                setPreviewIcon(pixmap, videoPath, msgId, false);
+            }
         }
         else if (isImageSet)
         {
             item.setData(imagePath, Attachments);
-            setPreviewIcon(pixmap, imagePath, msgId, false);
+            // Store thumbnail only for non protected, non corrupted content.
+            if (!(EPreviewProtectedImage & msgProperty) &&
+                !(EPreviewCorruptedImage & msgProperty))
+            {
+                setPreviewIcon(pixmap, imagePath, msgId, false);
+            }
         }
         //populate msgProperty
         item.setData(msgProperty, MessageProperty);
@@ -595,28 +652,28 @@ void ConversationsModel::handleMMSNotification(QStandardItem& item,
     {
         return;
     }
-    
+
     // fetch relevent info to show in CV
     // msg size
     QString estimatedMsgSizeStr = QString("%1").arg(0);
     estimatedMsgSizeStr.append(" Kb");
-    TRAP_IGNORE(estimatedMsgSizeStr = 
+    TRAP_IGNORE(estimatedMsgSizeStr =
             mMsgStoreHandler->NotificationMsgSizeL());
-    
+
     // msg class type
     QString classInfoStr = mMsgStoreHandler->NotificationClass();
-    
+
     // notification expiry date
     //TODO: Need to do localization of digits used to show expiry time
     TTime expiryTime;
     QString expiryTimeStr;
     mMsgStoreHandler->NotificationExpiryDate(expiryTime, expiryTimeStr);
-    
+
     // notification state e.g. waiting, retrieving etc
     QString statusStr;
     int status;
     mMsgStoreHandler->NotificationStatus(status, statusStr);
-    
+
     // create data for bodytext role
     QString dataText;
     dataText.append("Size: "); // TODO: use logical str name
@@ -655,7 +712,7 @@ void ConversationsModel::handleBlueToothMessages(QStandardItem& item,
 {
     //TODO, needs to be revisited again, once BT team provides the solution for
     //BT received as Biomsg issue.
-    QString description = S60QConversions::s60DescToQString(*(entry.Description()));
+    QString description = XQConversions::s60DescToQString(*(entry.Description()));
 
     if (description.contains(".vcf") || description.contains(".ics")) // "vCard"
     {
@@ -666,8 +723,8 @@ void ConversationsModel::handleBlueToothMessages(QStandardItem& item,
         QString displayName = MsgContactHandler::getVCardDisplayName(
                 description);
         item.setData(displayName, BodyText);
-    }    
-    else 
+    }
+    else
     {
         if (description.contains(".vcs")) // "vCalendar"
         {
@@ -701,7 +758,7 @@ void ConversationsModel::handleBioMessages(QStandardItem& item, const CCsConvers
             QString attachmentPath = attList[0]->path();
 
             //get display-name and set as bodytext
-            QString displayName = 
+            QString displayName =
                     MsgContactHandler::getVCardDisplayName(
                             attachmentPath);
             item.setData(displayName, BodyText);
@@ -735,7 +792,7 @@ void ConversationsModel::handleBioMessages(QStandardItem& item, const CCsConvers
         HBufC* description = entry.Description();
         QString subject("");
         if (description && description->Length()) {
-            subject = (S60QConversions::s60DescToQString(*description));
+            subject = (XQConversions::s60DescToQString(*description));
             item.setData(subject, BodyText);
         }
     }
@@ -769,7 +826,7 @@ void ConversationsModel::setPreviewIcon(QPixmap& pixmap, QString& filePath,
     {
         QPixmap pixmap(filePath);
         QPixmap scaledPixmap = pixmap.scaled(63.65, 63.65, Qt::IgnoreAspectRatio);
-        HbIcon *previewIcon = new HbIcon(pixmap);
+        HbIcon *previewIcon = new HbIcon(scaledPixmap);
 
         previewIconCache.insert(msgId, previewIcon);
 
@@ -785,13 +842,13 @@ void ConversationsModel::setPreviewIcon(QPixmap& pixmap, QString& filePath,
 // ConversationsModel::getPreviewIconItem()
 // @see header
 //---------------------------------------------------------------
-HbIcon* ConversationsModel::getPreviewIconItem(int msgId, 
+HbIcon* ConversationsModel::getPreviewIconItem(int msgId,
     QString& filepath) const
 {
     QCRITICAL_WRITE("ConversationsModel::getPreviewIconItem start.")
 
-    //Initialize icon from the Cache will be NULL if Item not present        
-    HbIcon* previewIcon = previewIconCache[msgId]; 
+    //Initialize icon from the Cache will be NULL if Item not present
+    HbIcon* previewIcon = previewIconCache[msgId];
     if (!previewIcon)
     {
         //This is done in this way as non-const function call cant be done here
@@ -902,7 +959,7 @@ void ConversationsModel::updatePreviewIcon(int msgId, QString& filePath)
 //---------------------------------------------------------------
 void ConversationsModel::clearModel()
 {
-    clear(); 
+    clear();
     previewIconCache.clear();
 }
 

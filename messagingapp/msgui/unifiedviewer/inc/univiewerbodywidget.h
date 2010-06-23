@@ -54,21 +54,21 @@ public slots:
 
     /**
      * Called to insert image content in viewer.
-     * @param medialist list of absolute paths of media.
+     * @param info Object information.
      */
-    void setPixmap(const QString &mimeType, const QString &pixmapFile);
+    void setPixmap(UniMessageInfo *info);
 
     /**
      * Called to insert audio content in viewer.
-     * @param medialist list of absolute paths of media.
+     * @param info Object information.
      */
-    void setAudio(const QString &mimeType, const QString &audiofile);
+    void setAudio(UniMessageInfo *info);
 
     /**
      * Called to insert video content in viewer.
-     * @param medialist list of absolute paths of media.
+     * @param info Object information.
      */
-    void setVideo(const QString &mimeType, const QString &videofile);
+    void setVideo(UniMessageInfo *info);
 
     /**
      * Called to insert text content in viewer.

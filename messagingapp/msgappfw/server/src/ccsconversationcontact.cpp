@@ -100,8 +100,6 @@ void
 CCsConversationContact::SetDisplayNameL(
         const TDesC& aDisplayName)
     {
-    if( &aDisplayName )
-        {
         TRAPD(error, iDisplayName = aDisplayName.AllocL());
         if(error != KErrNone)
             {
@@ -110,7 +108,7 @@ CCsConversationContact::SetDisplayNameL(
             PRINT1 ( _L("CCsConversationContact::SetFirstNameL - Error:%d"),
                     error );
             }
-        }
+  
     }
 
 // ----------------------------------------------------------------------------

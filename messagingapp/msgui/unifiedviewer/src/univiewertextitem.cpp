@@ -24,7 +24,8 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QTextBlock>
-
+#include <QUrl>
+#include <QDesktopServices>
 #include <HbTapGesture>
 #include <HbMenu>
 #include <HbAction>
@@ -425,6 +426,8 @@ void UniViewerTextItem::openLink()
         QString url = action->data().toString();
         url.remove(URL_RULE);
         //invoke browser service  & pass url.
+        QUrl uri(url);
+        QDesktopServices::openUrl(uri);
     }
 }
 

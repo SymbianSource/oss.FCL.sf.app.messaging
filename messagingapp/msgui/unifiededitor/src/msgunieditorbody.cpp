@@ -41,13 +41,13 @@
 #include <xqrequestinfo.h>
 #include <xqsharablefile.h>
 #include <xqappmgr.h>
-
+#include <xqconversions.h>
 // USER INCLUDES
 #include "msgunieditorbody.h"
 #include "UniEditorGenUtils.h"
 #include "UniSendingSettings.h"
 #include "msgunieditormonitor.h"
-#include "s60qconversions.h"
+
 #include "mmsconformancecheck.h"
 #include "unieditorpluginloader.h"
 #include "unieditorplugininterface.h"
@@ -209,7 +209,7 @@ void MsgUnifiedEditorBody::setImage(QString& imagefile , bool draftMessage)
         if( error == KErrNone)
         {
             mMediaResolver->SetCharacterSetRecognition(EFalse);
-            HBufC *name = S60QConversions::qStringToS60Desc(imagefile);
+            HBufC *name = XQConversions::qStringToS60Desc(imagefile);
             RFile file;
             TRAP(error, file = mMediaResolver->FileHandleL(*name));
             if(error == KErrNone)
@@ -636,7 +636,7 @@ void MsgUnifiedEditorBody::EditorOperationEvent(
     if (aEvent == EUniEditorProcessImageOperationComplete && 
             aFileName.Length() > 0)
     {
-        mImageFile = S60QConversions::s60DescToQString(aFileName);
+        mImageFile = XQConversions::s60DescToQString(aFileName);
     }
     else
     {

@@ -18,7 +18,7 @@
 //SYSTEM INCLUDES
 #include <mtclreg.h>
 #include <mtclbase.h>
-#include <s60qconversions.h>
+#include <xqconversions.h>
 
 //USER INCLUDES
 #include "unibiomessagedataplugin.h"
@@ -138,7 +138,7 @@ UniMessageInfoList UniBioMessageDataPlugin::attachmentList()
     User::LeaveIfError(file.FullName(fullName));
     User::LeaveIfError(file.Size(size));
 
-    path = S60QConversions::s60DescToQString(*fullName.AllocL());
+    path = XQConversions::s60DescToQString(*fullName.AllocL());
 
     UniMessageInfo *msgobj = new UniMessageInfo(path, size, mimetype);
     attlist << msgobj;

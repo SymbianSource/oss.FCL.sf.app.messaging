@@ -24,8 +24,8 @@ DEPENDPATH += . \
 
 INCLUDEPATH += .
 INCLUDEPATH += ../../../inc
+INCLUDEPATH += ../msgaudiofetcher/inc
 INCLUDEPATH += ../msguiutils/inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../appengine/inc
 INCLUDEPATH += ../../smartmessaging/ringbc/inc
@@ -74,10 +74,17 @@ SOURCES += src/msgconversationview.cpp \
     
 RESOURCES += conversationview.qrc
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/conversationview.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/conversationview.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
 
 # Libs
 LIBS += -lappengine \
-    -ls60qconversions \
     -lconvergedmessageutils \
     -lapgrfx \
     -lefsrv \
@@ -97,5 +104,7 @@ LIBS += -lappengine \
     -lsmcm \
     -leditorgenutils \
     -lthumbnailmanagerqt \    
-    -lxqsettingsmanager
+    -lxqsettingsmanager \
+    -lxqutils \
+    -lmsgaudiofetcher
 

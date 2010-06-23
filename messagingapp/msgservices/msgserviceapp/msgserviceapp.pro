@@ -21,7 +21,6 @@ SERVICE.OPTIONS += hidden
 
 INCLUDEPATH += inc
 INCLUDEPATH += ../../../inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../smartmessaging/ringbc/inc
 INCLUDEPATH += ../../msgutils/unidatamodelloader/inc
 INCLUDEPATH += ../../msgui/inc
@@ -55,7 +54,6 @@ RESOURCES += msgserviceapp.qrc
 
 LIBS += -lxqservice \
         -lxqserviceutil \
-        -ls60qconversions \
         -lconvergedmessageutils \
         -lmsgs \
         -lringbc \

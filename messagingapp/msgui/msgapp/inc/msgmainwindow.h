@@ -40,7 +40,9 @@ public:
     /**
      * Constructor
      */
-    MsgMainWindow(bool serviceRequest, QWidget *parent = 0);
+    MsgMainWindow(bool serviceRequest, 
+                  int activityMsgId = -1,
+                   QWidget *parent = 0);
 
     /**
      * Destructor

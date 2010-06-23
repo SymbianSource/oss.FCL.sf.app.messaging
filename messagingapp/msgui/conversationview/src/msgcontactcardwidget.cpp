@@ -141,7 +141,9 @@ void MsgContactCardWidget::setAddress(const QString &address)
 ConvergedMessageAddressList MsgContactCardWidget::address()
 {
     ConvergedMessageAddressList addresses;
-    QModelIndex index = ConversationsEngine::instance()->getConversationsModel()->index(0, 0);
+    QStandardItemModel* msgModel = ConversationsEngine::instance()->getConversationsModel();
+    const int rowCnt = msgModel->rowCount();
+    QModelIndex index = msgModel->index(rowCnt-1, 0);
     ConvergedMessageAddress* address = new ConvergedMessageAddress(
         index.data(ConversationAddress).toString());
     address->setAlias(mAddress);

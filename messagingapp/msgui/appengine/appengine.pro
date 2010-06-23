@@ -20,8 +20,8 @@ DEPENDPATH += . inc
 DEPENDPATH += . src
 
 INCLUDEPATH += ../../../inc
+INCLUDEPATH += ../msguiutils/inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../smartmessaging/ringbc/inc
 INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
@@ -46,6 +46,15 @@ BLD_INF_RULES.prj_exports += \
      "$${LITERAL_HASH}include <platform_paths.hrh>" \
      "rom/appengine.iby  CORE_APP_LAYER_IBY_EXPORT_PATH(appengine.iby)"
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/appengine.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/appengine.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
 # Input
 HEADERS += inc/conversationsengine.h \
            inc/conversationmsgstorehandler.h \
@@ -69,7 +78,6 @@ SOURCES += src/conversationsengine.cpp \
 
 LIBS += -lcsserverclientapi \
         -lcsutils \
-        -ls60qconversions \
         -lconvergedmessageutils \
         -lmsgs \
         -lInetProtUtil \
@@ -89,6 +97,7 @@ LIBS += -lcsserverclientapi \
         -lestor \
 	-lFeatMgr \
 	-lfbscli \
-        -lringbc 
+        -lringbc \
+        -lmsguiutils
 
 

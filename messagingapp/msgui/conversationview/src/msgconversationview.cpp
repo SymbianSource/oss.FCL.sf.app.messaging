@@ -57,6 +57,7 @@
 #include "ringbc.h"
 #include "mmsconformancecheck.h"
 #include "msgsettingsview.h"
+#include "msgaudiofetcherview.h"
 
 //Item specific menu.
 
@@ -71,6 +72,7 @@
 #define LOC_BUTTON_OK hbTrId("txt_common_button_ok")
 
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
+#define LOC_SAVE_TO_CONTACTS hbTrId("txt_messaging_menu_save_to_contacts")
 
 //main menu
 #define LOC_ATTACH          hbTrId("txt_messaging_opt_attach")
@@ -324,7 +326,13 @@ void MsgConversationView::addOpenItemToContextMenu(MsgConversationViewItem* item
         {
         return;
         }
-    
+    if ((messageSubType == ConvergedMessage::VCard) &&
+        (direction == ConvergedMessage::Incoming))
+        {
+        HbAction *contextItem = contextMenu->addAction(LOC_SAVE_TO_CONTACTS);
+        connect(contextItem, SIGNAL(triggered()),this, SLOT(openItem()));
+        return;
+        }
     if( (sendingState == ConvergedMessage::SentState ) ||
         (sendingState == ConvergedMessage::Resend ) ||
         (sendingState == ConvergedMessage::Failed ) ||
@@ -546,7 +554,7 @@ void MsgConversationView::fetchImages()
 {
     QString service("photos");
     QString interface("com.nokia.symbian.IImageFetch");
-    QString operation("fetch(void)");
+    QString operation("fetch()");
     XQAiwRequest* request = NULL;
     XQApplicationManager appManager;
     request = appManager.create(service,interface, operation, true); // embedded
@@ -576,30 +584,11 @@ void MsgConversationView::fetchImages()
 //---------------------------------------------------------------
 void MsgConversationView::fetchAudio()
 {
-    QString service("musicplayer");
-    QString interface("com.nokia.symbian.IMusicFetch");
-    QString operation("fetch()");
-    XQAiwRequest* request = NULL;
-    XQApplicationManager appManager;
-    request = appManager.create(service, interface, operation, true); //embedded
-    request->setSynchronous(true); // synchronous
-    if(!request)
-    {
-        QDEBUG_WRITE("AIW-ERROR: NULL request");
-        return;
-    }
-
-    connect(request, SIGNAL(requestOk(const QVariant&)),
-        this, SLOT(audiosFetched(const QVariant&)));
-    connect(request, SIGNAL(requestError(int,const QString&)),
-        this, SLOT(serviceRequestError(int,const QString&)));
-
-    // Make the request
-    if (!request->send())
-    {
-        QDEBUG_WRITE_FORMAT("AIW-ERROR: Request Send failed  ",request->lastError());
-    }
-    delete request;
+    // Launch Audio fetcher view
+    QVariantList params;
+    params << MsgBaseView::AUDIOFETCHER; // target view
+    params << MsgBaseView::CV; // source view
+    emit switchView(params);
 }
 
 //---------------------------------------------------------------
@@ -634,26 +623,6 @@ void MsgConversationView::imagesFetched(const QVariant& result )
             QString filepath(QDir::toNativeSeparators(fileList.at(0)));
             QVariantList params;
             params << MsgBaseView::ADD_PHOTO;
-            params << filepath;
-            launchUniEditor(params);
-        }
-    }
-}
-
-//---------------------------------------------------------------
-// MsgConversationView::audiosFetched()
-// @see header file
-//---------------------------------------------------------------
-void MsgConversationView::audiosFetched(const QVariant& result )
-{
-    if(result.canConvert<QStringList>())
-    {
-        QStringList fileList = result.value<QStringList>();
-        if ( fileList.size()>0 && !fileList.at(0).isEmpty())
-        {
-            QString filepath(QDir::toNativeSeparators(fileList.at(0)));
-            QVariantList params;
-            params << MsgBaseView::ADD_AUDIO;
             params << filepath;
             launchUniEditor(params);
         }
@@ -771,7 +740,7 @@ void MsgConversationView::clearEditors()
 // MsgConversationView::saveContentToDrafts()
 // @See header
 //---------------------------------------------------------------
-bool MsgConversationView::saveContentToDrafts()
+int MsgConversationView::saveContentToDrafts()
 {
     int msgId = INVALID_MSGID;
     if(!mEditorWidget->content().isEmpty())
@@ -794,7 +763,7 @@ bool MsgConversationView::saveContentToDrafts()
         }
         deactivateInputBlocker();
     }
-    return ((msgId > INVALID_MSGID)? true : false);
+    return msgId;
 }
 
 //---------------------------------------------------------------

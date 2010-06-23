@@ -25,7 +25,6 @@ TARGET.UID3 = 0x2001FE61
 
 DEPENDPATH += . inc src
 INCLUDEPATH += ./inc
-INCLUDEPATH += ../../../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../../../../inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
@@ -51,7 +50,6 @@ BLD_INF_RULES.prj_exports += \
      
  LIBS += -leuser \
 	-lconvergedmessageutils\
-	-ls60qconversions \
 	-lmsgs \
 	-lSmcm \
 	-lgsmu \
@@ -59,7 +57,8 @@ BLD_INF_RULES.prj_exports += \
 	-lQtCore \
 	-lefsrv \
 	-lbioc \
-	-lbifu
+	-lbifu \
+	-lxqutils
 
 
 # plugin stub deployment

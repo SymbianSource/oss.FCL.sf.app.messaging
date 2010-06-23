@@ -32,7 +32,7 @@
 #include "smilxmlreader.h"
 #include "smilliterals.h"
 #include "msgmimetypes.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 
 // CONSTANTS
 #define KForwardSlash '/'
@@ -78,7 +78,7 @@ void CNativeMmsUtility::ConstructL(const TMsvId& msgId, CMsvSession& session)
     {
         //get smilfile's handle to parse
         RFile smilfile;
-        HBufC* path = S60QConversions::qStringToS60Desc(ismilfilepath);
+        HBufC* path = XQConversions::qStringToS60Desc(ismilfilepath);
 
         RFs fsSession;
         User::LeaveIfError(fsSession.Connect());
@@ -241,7 +241,7 @@ const QString CNativeMmsUtility::getSmilFileL()
             qDebug() << " Exit CNativeMmsUtility::getSmilFileL";
 #endif
 
-            return S60QConversions::s60DescToQString(attachment->FilePath());
+            return XQConversions::s60DescToQString(attachment->FilePath());
         }
     }
 
@@ -285,7 +285,7 @@ void CNativeMmsUtility::getBodyTextFromSmilL(QString& returnbuf)
                     //because media source is relative to it.
                     QString smildirpath = fileDir(ismilfilepath);
                     QString mfilename =
-                            S60QConversions::s60DescToQString(attrvalptr);
+                            XQConversions::s60DescToQString(attrvalptr);
                     filepath = smildirpath.append(mfilename);
                 }
                 readFileIntoBuffer(filepath, returnbuf);
@@ -321,7 +321,7 @@ void CNativeMmsUtility::getBodyTextFromAttManL(QString& returnbuf)
                 == 0)
         {
             QString filepath =
-                    S60QConversions::s60DescToQString(attachment->FilePath());
+                    XQConversions::s60DescToQString(attachment->FilePath());
             readFileIntoBuffer(filepath, returnbuf);
             break;
         }
@@ -371,7 +371,7 @@ void CNativeMmsUtility::getAttachmentListFromSmilL(
                     //because media source is relative to it.
                     QString smildirpath = fileDir(ismilfilepath);
                     QString mfilename =
-                            S60QConversions::s60DescToQString(attrvalptr);
+                            XQConversions::s60DescToQString(attrvalptr);
                     filepath = smildirpath.append(mfilename);
                 }
                 // converting directory separators from native to
@@ -409,7 +409,7 @@ void CNativeMmsUtility::getRemainingAttachmentsFromAttManL(
         CMsvAttachment *attachment = iattachmanager->GetAttachmentInfoL(i);
         TPtrC8 mimetype = attachment->MimeType();
         QString filepath =
-                S60QConversions::s60DescToQString(attachment->FilePath());
+                XQConversions::s60DescToQString(attachment->FilePath());
         // converting directory separators from native to
         // universal (QT) format
         filepath.replace(KBackwardSlash, KForwardSlash);
@@ -476,7 +476,7 @@ void CNativeMmsUtility::getAttachmentListFromAttManL(
         CMsvAttachment *attachment = iattachmanager->GetAttachmentInfoL(i);
         TPtrC8 mimetype = attachment->MimeType();
         QString filepath =
-                S60QConversions::s60DescToQString(attachment->FilePath());
+                XQConversions::s60DescToQString(attachment->FilePath());
         // converting directory separators from native to
         // universal (QT) format
         filepath.replace(KBackwardSlash, KForwardSlash);
@@ -577,7 +577,7 @@ const QString CNativeMmsUtility::getByUrlL(const TDesC& url)
         qDebug() << " Exit CNativeMmsUtility::getByUrlL";
 #endif
 
-        return S60QConversions::s60DescToQString(targetattachment->FilePath());
+        return XQConversions::s60DescToQString(targetattachment->FilePath());
     }
     else
     {

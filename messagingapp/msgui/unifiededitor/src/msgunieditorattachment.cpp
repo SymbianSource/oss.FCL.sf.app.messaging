@@ -36,7 +36,7 @@
 #include "msgcontactsutil.h"
 #include "msgunieditorattachment.h"
 #include "UniEditorGenUtils.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "msgunieditorutils.h"
 
 // Constants
@@ -176,9 +176,9 @@ void MsgUnifiedEditorAttachment::viewDetails()
 bool MsgUnifiedEditorAttachment::isMultimediaContent()
 {
     bool ret = true;
-    QString vcard = S60QConversions::s60Desc8ToQString(KMsgMimeVCard());
-    QString vcal = S60QConversions::s60Desc8ToQString(KMsgMimeVCal());
-    QString ical = S60QConversions::s60Desc8ToQString(KMsgMimeICal());
+    QString vcard = XQConversions::s60Desc8ToQString(KMsgMimeVCard());
+    QString vcal = XQConversions::s60Desc8ToQString(KMsgMimeVCal());
+    QString ical = XQConversions::s60Desc8ToQString(KMsgMimeICal());
     if( !QString::compare(mMimeType, vcard, Qt::CaseInsensitive) ||
         !QString::compare(mMimeType, vcal, Qt::CaseInsensitive) ||
         !QString::compare(mMimeType, ical, Qt::CaseInsensitive) )

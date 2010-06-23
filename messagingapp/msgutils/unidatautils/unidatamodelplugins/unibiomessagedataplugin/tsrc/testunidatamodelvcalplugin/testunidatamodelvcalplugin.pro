@@ -23,7 +23,6 @@ TARGET = test-unidatamodel-vcal-plugin
 
 INCLUDEPATH += .
 INCLUDEPATH += ../../../../../../inc
-INCLUDEPATH += ../../../../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_TEST_DLL
@@ -48,9 +47,17 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
     BLD_INF_RULES.prj_exports += "BioMtm.rsc /epoc32/winscw/c/resource/messaging/mtm/BioMtm.rsc"
 		}
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/test_unidatamodel_vcal_plugin.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/test_unidatamodel_vcal_plugin.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
  LIBS += -leuser \
 	-lconvergedmessageutils\
-	-ls60qconversions \
 	-lmsgs \
 	-lsmcm \
 	-lgsmu \
@@ -61,6 +68,7 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 	-lbioc \
 	-lefsrv \
 	-lbiodb \
-	-lbifu
+	-lbifu \
+	-lxqutils
 	
 

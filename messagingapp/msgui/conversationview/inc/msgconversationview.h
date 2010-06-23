@@ -66,9 +66,10 @@ public:
 
     /**
      * Save the content inside editor to drafts
-     * @return true if save is success else false.
+     * @return valid message id if save is success
+     * else invalid message id ( i.e. -1 )
      */
-    bool saveContentToDrafts();
+    int saveContentToDrafts();
 
 private slots:
 
@@ -264,11 +265,6 @@ private slots:
      */
     void contactsFetched(const QVariant& value);
 
-    /*
-     * Get audio files from audio-fetcher and launch editor
-     */
-    void audiosFetched(const QVariant& result );
-    
     /**
      * slot to receive fetched contacts for vcard addition
      */

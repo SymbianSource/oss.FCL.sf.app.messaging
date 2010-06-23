@@ -24,7 +24,6 @@
 #include "ringbc.h"
 #include "ringbc_p.h"
 #include "ringbctoneconverter.h"
-#include "s60qconversions.h"
 #include "debugtraces.h"
 
 // ================= MEMBER FUNCTIONS =======================

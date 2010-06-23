@@ -30,7 +30,6 @@ INCLUDEPATH += .
 INCLUDEPATH += ../../../../../inc
 INCLUDEPATH += ../../../appengine/inc
 INCLUDEPATH += ../../../../msgappfw/client/inc
-INCLUDEPATH += ../../../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../../../smartmessaging/ringbc/inc
 INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
 INCLUDEPATH += ../../../../msgutils/unieditorutils/editorgenutils/inc
@@ -81,7 +80,7 @@ symbian*:{
 LIBS += -euser \
         -ecom \
         -lcsutils \
-        -ls60qconversions \
+        -lxqutils \
         -lconvergedmessageutils \
         -lmsgs \
         -lInetProtUtil \

@@ -28,10 +28,10 @@
 // MsgMainWindow::MsgMainWindow
 // Constructor
 //---------------------------------------------------------------
-MsgMainWindow::MsgMainWindow(bool serviceRequest, QWidget *parent) :
+MsgMainWindow::MsgMainWindow(bool serviceRequest,int activityMsgId,QWidget *parent) :
 HbMainWindow(parent), mMsgSI(0), mMsgSendSI(0)
 {
-    mViewManager = new MsgViewManager(serviceRequest,this,this);
+    mViewManager = new MsgViewManager(serviceRequest,this,this,activityMsgId);
     mMsgSI = new MsgServiceInterface(NULL,mViewManager);
     mMsgSendSI = new MsgSendServiceInterface(NULL,mViewManager);
         

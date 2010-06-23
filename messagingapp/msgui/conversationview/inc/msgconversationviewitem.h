@@ -108,6 +108,14 @@ private:
      */
     void init();
 
+private slots:    
+
+    /*
+     * Handler for orientation changed
+     * @param orientation Qt::Orientation
+     */
+    void orientationchanged(Qt::Orientation orientation);
+    
 protected:
 
     /**

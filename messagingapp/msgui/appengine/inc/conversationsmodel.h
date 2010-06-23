@@ -161,6 +161,13 @@ private:
      * @param filePath, filepath to be used if icon is not in cache
      */
     HbIcon* getPreviewIconItem(int msgId, QString& filepath) const;
+    
+    /**
+     * Check if a MMS is forwardable or not
+     * @param messageId, message id
+     * @return true/false
+     */
+    bool validateMsgForForward(qint32 messageId);
 
 private:
 

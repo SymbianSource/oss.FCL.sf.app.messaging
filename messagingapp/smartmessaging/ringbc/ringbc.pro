@@ -26,7 +26,7 @@ DEPENDPATH += . \
     
 INCLUDEPATH += .
 INCLUDEPATH += ../../../inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
+
 
 symbian:
 {
@@ -48,6 +48,15 @@ BLD_INF_RULES.prj_exports += \
 
 }
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/ringbc.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/ringbc.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
 HEADERS += inc/ringbc.h \
 		    inc/ringbc_p.h \
 		   inc/ringbctoneconverter.h 
@@ -56,6 +65,7 @@ SOURCES += src/ringbc.cpp \
 		   src/ringbc_p.cpp \
 		   src/ringbctoneconverter.cpp 
 
-LIBS += -ls60qconversions \
-		-lplatformenv
+LIBS += -lplatformenv \
+        -lxqutils \
+        -lefsrv
 		     

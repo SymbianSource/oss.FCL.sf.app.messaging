@@ -24,7 +24,6 @@ DEPENDPATH += . \
 
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 CONFIG += hb
@@ -43,6 +42,16 @@ SYMBIAN_PLATFORMS = WINSCW \
 BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
     "rom/msguiutils.iby CORE_APP_LAYER_IBY_EXPORT_PATH(msguiutils.iby)"
 
+
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/msguiutils.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/msguiutils.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
 # Input
 HEADERS += msgsendutil.h \
            mmsconformancecheck.h \
@@ -60,11 +69,11 @@ LIBS += -lxqservice \
     -leditorgenutils \
     -lconvergedmessageutils \
     -lcentralrepository \
-    -ls60qconversions \
     -lDRMHelper \
     -lmsgmedia \
     -lapmime \
     -lunidatamodelloader \
-    -lxqutils
-
+    -lxqutils \
+    -lefsrv
+    
 

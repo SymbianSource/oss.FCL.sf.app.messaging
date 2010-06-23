@@ -85,14 +85,15 @@ void MsgEditorWidget::init()
     mMsgEditor->setMaxRows(3); // NOTE: Don't remove this line.
     HbStyle::setItemName(mMsgEditor, "msgEditor");
 
-    mSendButton = new HbPushButton(this);
-    HbStyle::setItemName(mSendButton, "sendButton");
+	mSendButton = new HbPushButton(this); 
+    HbStyle::setItemName(mSendButton, "sendButton"); 
+    mSendButton->setEnabled(false); 
+    
+    HbFrameItem* backGround = new HbFrameItem(this); 
+    backGround->frameDrawer().setFrameType(HbFrameDrawer::NinePieces); 
+    mSendButton->setBackgroundItem(backGround); 
+    updateButtonBackground(SEND_BUTTON_DISABLED); 
     mSendButton->setIcon(HbIcon(SEND_ICON));
-    mSendButton->setEnabled(false);
-    HbFrameDrawer* drawer = new HbFrameDrawer(this);
-    drawer->setFrameType(HbFrameDrawer::NinePieces);
-    mSendButton->setFrameBackground(drawer);
-    updateButtonBackground(SEND_BUTTON_DISABLED);
     
     mCharCounter = new HbTextItem(this);
     HbStyle::setItemName(mCharCounter, "charCounter");
@@ -284,14 +285,15 @@ void MsgEditorWidget::onClicked()
 // MsgEditor::updateButtonBackground
 // @see header
 //---------------------------------------------------------------
-void MsgEditorWidget::updateButtonBackground(const QString& bg)
-    {
-    HbFrameDrawer* drawer = mSendButton->frameBackground();
-    if(drawer)
-        {
-        drawer->setFrameGraphicsName(bg);        
-        }
-    }
+void MsgEditorWidget::updateButtonBackground(const QString& bg) 
+    { 
+    HbFrameItem* drawer = static_cast<HbFrameItem*>(mSendButton->backgroundItem()); 
+    if(drawer) 
+        { 
+        drawer->frameDrawer().setFrameGraphicsName(bg);   
+        } 
+    } 
+    
 
 //---------------------------------------------------------------
 // MsgEditor::onPressed

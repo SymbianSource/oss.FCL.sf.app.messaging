@@ -1,11 +1,11 @@
 <hbwidget version="0.1">
 
-  <layout name="layout-mms-portrait" type="mesh">
+  <layout name="layout-msg-portrait" type="mesh">
 
     <meshitem src="subject" srcEdge="TOP" dst="" dstEdge="TOP" />
     <meshitem src="subject" srcEdge="BOTTOM" dst="preview" dstEdge="TOP" />
     <meshitem src="subject" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="subject" srcEdge="RIGHT" dst="priority" dstEdge="LEFT" />
+    <meshitem src="subject" srcEdge="RIGHT" dst="priority" dstEdge="LEFT"  spacer="rightSpacer"  />
 
     <meshitem src="priority" srcEdge="RIGHT" dst="attachment" dstEdge="LEFT" />
     <meshitem src="priority" srcEdge="CENTERV" dst="subject" dstEdge="CENTERV" />
@@ -38,7 +38,7 @@
 
   </layout>
 
-  <layout name="layout-mms-image-landscape" type="mesh">
+  <layout name="layout-msg-landscape" type="mesh">
 
     <meshitem src="preview" srcEdge="TOP" dst="" dstEdge="TOP" />
     <meshitem src="preview" srcEdge="LEFT" dst="" dstEdge="LEFT" />
@@ -76,105 +76,4 @@
 
   </layout>
 
-  <layout name="layout-mms-landscape" type="mesh">
-
-    <meshitem src="subject" srcEdge="TOP" dst="" dstEdge="TOP" />
-    <meshitem src="subject" srcEdge="BOTTOM" dst="bodyText" dstEdge="TOP" />
-    <meshitem src="subject" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="subject" srcEdge="RIGHT" dst="priority" dstEdge="LEFT" />
-
-    <meshitem src="priority" srcEdge="RIGHT" dst="attachment" dstEdge="LEFT" />
-    <meshitem src="priority" srcEdge="CENTERV" dst="subject" dstEdge="CENTERV" />
-
-    <meshitem src="attachment" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="attachment" srcEdge="CENTERV" dst="subject" dstEdge="CENTERV" />
-
-    <meshitem src="bodyText" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="bodyText" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="bodyText" srcEdge="BOTTOM" dst="timeStamp" dstEdge="TOP" />
-
-    <meshitem src="timeStamp" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="timeStamp" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="timeStamp" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
-
-    <meshitem src="newItemIcon" srcEdge="LEFT" dst="" dstEdge="LEFT"/>
-    <meshitem src="newItemIcon" srcEdge="TOP" dst="" dstEdge="TOP"/>
-    <meshitem src="newItemIcon" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM"/>
-
-    <meshitem src="bubble" srcEdge="TOP" dst="" dstEdge="TOP" />
-    <meshitem src="bubble" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="bubble" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
-    <meshitem src="bubble" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-
-  </layout>
-
-  <layout name="layout-mms-audio-text-portrait" type="mesh">
-
-    <meshitem src="subject" srcEdge="TOP" dst="" dstEdge="TOP" />
-    <meshitem src="subject" srcEdge="BOTTOM" dst="audioIcon" dstEdge="TOP" />
-    <meshitem src="subject" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="subject" srcEdge="RIGHT" dst="priority" dstEdge="LEFT" />
-
-    <meshitem src="priority" srcEdge="RIGHT" dst="attachment" dstEdge="LEFT" />
-    <meshitem src="priority" srcEdge="CENTERV" dst="subject" dstEdge="CENTERV" />
-
-    <meshitem src="attachment" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="attachment" srcEdge="CENTERV" dst="subject" dstEdge="CENTERV" />
-
-    <meshitem src="audioIcon" srcEdge="BOTTOM" dst="bodyText" dstEdge="TOP" />
-    <meshitem src="audioIcon" srcEdge="CENTERH" dst="" dstEdge="CENTERH" />
-
-    <meshitem src="bodyText" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="bodyText" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="bodyText" srcEdge="BOTTOM" dst="timeStamp" dstEdge="TOP" />
-
-    <meshitem src="timeStamp" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="timeStamp" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="timeStamp" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
-
-    <meshitem src="newItemIcon" srcEdge="LEFT" dst="" dstEdge="LEFT"/>
-    <meshitem src="newItemIcon" srcEdge="TOP" dst="" dstEdge="TOP"/>
-    <meshitem src="newItemIcon" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM"/>
-
-    <meshitem src="bubble" srcEdge="TOP" dst="" dstEdge="TOP" />
-    <meshitem src="bubble" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="bubble" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
-    <meshitem src="bubble" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-
-  </layout>
-
-  <layout name="layout-mms-audio-text-landscape" type="mesh">
-
-    <meshitem src="audioIcon" srcEdge="TOP" dst="" dstEdge="TOP" />
-    <meshitem src="audioIcon" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-
-    <meshitem src="subject" srcEdge="TOP" dst="" dstEdge="TOP" />
-    <meshitem src="subject" srcEdge="BOTTOM" dst="bodyText" dstEdge="TOP" />
-    <meshitem src="subject" srcEdge="LEFT" dst="audioIcon" dstEdge="RIGHT" />
-    <meshitem src="subject" srcEdge="RIGHT" dst="priority" dstEdge="LEFT" />
-
-    <meshitem src="priority" srcEdge="RIGHT" dst="attachment" dstEdge="LEFT" />
-    <meshitem src="priority" srcEdge="CENTERV" dst="subject" dstEdge="CENTERV" />
-
-    <meshitem src="attachment" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="attachment" srcEdge="CENTERV" dst="subject" dstEdge="CENTERV" />
-
-    <meshitem src="bodyText" srcEdge="LEFT" dst="audioIcon" dstEdge="RIGHT" />
-    <meshitem src="bodyText" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="bodyText" srcEdge="BOTTOM" dst="timeStamp" dstEdge="TOP" />
-
-    <meshitem src="timeStamp" srcEdge="LEFT" dst="audioIcon" dstEdge="RIGHT" />
-    <meshitem src="timeStamp" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="timeStamp" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
-
-    <meshitem src="newItemIcon" srcEdge="LEFT" dst="" dstEdge="LEFT"/>
-    <meshitem src="newItemIcon" srcEdge="TOP" dst="" dstEdge="TOP"/>
-    <meshitem src="newItemIcon" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM"/>
-
-    <meshitem src="bubble" srcEdge="TOP" dst="" dstEdge="TOP" />
-    <meshitem src="bubble" srcEdge="LEFT" dst="" dstEdge="LEFT" />
-    <meshitem src="bubble" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
-    <meshitem src="bubble" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-
-  </layout>
 </hbwidget>

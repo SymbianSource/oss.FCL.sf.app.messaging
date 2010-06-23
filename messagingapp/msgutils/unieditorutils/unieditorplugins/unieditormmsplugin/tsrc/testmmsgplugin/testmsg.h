@@ -47,7 +47,7 @@
 #include <commsdat.h>
 
 #include <Qtdebug>
-#include <s60qconversions.h>
+#include <xqconversions.h>
 #include "testmmsplugin.ini"
 
 using namespace CommsDat;
@@ -163,8 +163,8 @@ void TestMsg::createSCSettings()
 
     QString serviceCenter01(SERVICE_CENTER_01);
     QString serviceCenter02(SERVICE_CENTER_02);
-    HBufC* sC01 = S60QConversions::qStringToS60Desc(serviceCenter01);
-    HBufC* sC02 = S60QConversions::qStringToS60Desc(serviceCenter02);
+    HBufC* sC01 = XQConversions::qStringToS60Desc(serviceCenter01);
+    HBufC* sC02 = XQConversions::qStringToS60Desc(serviceCenter02);
     CleanupStack::PushL(sC01);
     CleanupStack::PushL(sC02);
     settings->AddServiceCenterL(_L("Nokia"), *sC01);
@@ -249,7 +249,7 @@ void TestMsg::createSMSL(TMsvId aFolderId, TBool aUnReadFlag)
     //AddBody
     QString body(TEST_MSG_BODY);
 
-    HBufC* bodyText = S60QConversions::qStringToS60Desc(body);
+    HBufC* bodyText = XQConversions::qStringToS60Desc(body);
     if (bodyText)
     {
         CleanupStack::PushL(bodyText);
@@ -268,7 +268,7 @@ void TestMsg::createSMSL(TMsvId aFolderId, TBool aUnReadFlag)
     //Add Address
     QString recipient(TEST_MSG_FROM1);
     // convert from QString to HBufC 
-    HBufC* addr = S60QConversions::qStringToS60Desc(recipient);
+    HBufC* addr = XQConversions::qStringToS60Desc(recipient);
     if (addr)
     {
         CleanupStack::PushL(addr);
@@ -336,7 +336,7 @@ void TestMsg::createMMSL(TMsvId aFolderId, TBool aUnReadFlag)
     //Subject
     QString subject(TEST_MSG_SUBJECT);
 
-    HBufC* sub = S60QConversions::qStringToS60Desc(subject);
+    HBufC* sub = XQConversions::qStringToS60Desc(subject);
     if (sub)
     {
         CleanupStack::PushL(sub);
@@ -353,7 +353,7 @@ void TestMsg::createMMSL(TMsvId aFolderId, TBool aUnReadFlag)
     //Add Address
     QString recipient(TEST_MSG_FROM1);
     // convert from QString to HBufC 
-    HBufC* addr = S60QConversions::qStringToS60Desc(recipient);
+    HBufC* addr = XQConversions::qStringToS60Desc(recipient);
     if (addr)
     {
         CleanupStack::PushL(addr);
@@ -391,7 +391,7 @@ void TestMsg::createMMSL(TMsvId aFolderId, TBool aUnReadFlag)
 
     //body text
     QString bodyText(TEST_MSG_BODY);
-    HBufC* text = S60QConversions::qStringToS60Desc(bodyText);
+    HBufC* text = XQConversions::qStringToS60Desc(bodyText);
     if (text)
     {
         CleanupStack::PushL(text);

@@ -75,7 +75,7 @@ public:
     /**
      * Saves the content inside editor to save
      */
-    void saveContentToDrafts();
+    int saveContentToDrafts();
     
 protected:
     /**
@@ -221,11 +221,6 @@ private slots:
      */
     void imagesFetched(const QVariant& result );
 
-    /**
-     * slot to fetch audio files
-     */
-    void audiosFetched(const QVariant& result );
-    
     /**
      * slot to receive fetched contacts
      */

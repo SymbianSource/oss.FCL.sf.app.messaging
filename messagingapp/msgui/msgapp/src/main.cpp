@@ -32,6 +32,7 @@
 
 const QString debugFileName("c:/art2_app_log.txt");
 const QString activityParam("-activity");
+const int INVALID_MSGID = -1;
 
 #ifdef _DEBUG_TRACES_
 void debugInit(QtMsgType type, const char *msg)
@@ -123,23 +124,23 @@ int main(int argc, char *argv[])
    
     
      MsgActivityHandler* activityHandler = new MsgActivityHandler(&app);
-     // clear the old activities
-     activityHandler->clearActivities();
-     
      // connect to aboutToQuit signal to save activity
      QObject::connect(&app, SIGNAL(aboutToQuit()), 
                       activityHandler, SLOT(saveActivity()));
-    
+     
+    int activityMsgId = INVALID_MSGID;
     if(app.activateReason() == Hb::ActivationReasonActivity) {
           // restoring an activity, not a fresh startup or a service
           QVariant data = app.activateData();
-          activityHandler->handleActivity(data);
+          activityMsgId = activityHandler->parseActivityData(data);
           // set service request to false , since its a activity launch
           serviceRequest = false; 
         }
-    
+    // clear the old activities
+     activityHandler->clearActivities();
+     
     // Main window
-    QPointer<MsgMainWindow> mainWindow = new MsgMainWindow(serviceRequest);
+    QPointer<MsgMainWindow> mainWindow = new MsgMainWindow(serviceRequest,activityMsgId);
     // Set the main window pointer to activity handler.
     activityHandler->setMainWindow(mainWindow);
     mainWindow->show();

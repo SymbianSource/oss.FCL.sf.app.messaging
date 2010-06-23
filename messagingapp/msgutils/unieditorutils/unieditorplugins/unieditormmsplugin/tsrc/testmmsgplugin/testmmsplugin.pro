@@ -24,7 +24,6 @@ TARGET = test-mms-plugin
 INCLUDEPATH += .
 INCLUDEPATH += ../../../../../../inc
 INCLUDEPATH += ../../../../unieditorutils/inc
-INCLUDEPATH += ../../../../s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_TEST_DLL
@@ -51,9 +50,18 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
     TARGET.EPOCALLOWDLLDATA = 1
 	}
     
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/test_mms_plugin.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/test_mms_plugin.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+    
  LIBS += -leuser \
     -lconvergedmessageutils \
-    -ls60qconversions \
+    -lxqutils \
     -lMsgMedia \
     -leditorgenutils \
     -lcone \

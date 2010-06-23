@@ -9,27 +9,12 @@
 
 MsgConversationWidget:portrait
 {
-  layout:layout-mms-portrait;
+  layout:layout-msg-portrait;
 }
 
-MsgConversationWidget[hasImage="true"]:landscape
+MsgConversationWidget:landscape
 {
-  layout:layout-mms-image-landscape;
-}
-
-MsgConversationWidget[hasImage="false"]:landscape
-{
-  layout:layout-mms-landscape;
-}
-
-MsgConversationWidget[hasImage="false"][hasAudio="true"][hasVideo="false"]:portrait
-{
-  layout:layout-mms-audio-text-portrait;
-}
-
-MsgConversationWidget[hasImage="false"][hasAudio="true"][hasVideo="false"]:landscape
-{
-  layout:layout-mms-audio-text-landscape;
+  layout:layout-msg-landscape;
 }
 
 /********************* UNREAD INDICATOR / NEW ITEM ICON ************************/
@@ -69,16 +54,6 @@ MsgConversationWidget::bodyText
   text-line-count-max:100;
 }
 
-MsgConversationWidget[hasImage="true"]::bodyText:landscape
-{
-  left:-var(hb-param-margin-gene-middle-horizontal);
-}
-
-MsgConversationWidget[hasImage="false"][hasAudio="true"]::bodyText:landscape
-{
-  left:-var(hb-param-margin-gene-middle-horizontal);
-}
-
 /********************************** SUBJECT ***********************************/
 
 MsgConversationWidget::subject
@@ -86,6 +61,7 @@ MsgConversationWidget::subject
   left:-var(hb-param-margin-gene-left);
   top:-var(hb-param-margin-gene-top);
   bottom:var(hb-param-margin-gene-middle-vertical);
+  right:var(hb-param-margin-gene-middle-horizontal);
   text-align:left;
   text-height:var(hb-param-text-height-primary);
   font-variant:primary;
@@ -114,8 +90,7 @@ MsgConversationWidget[hasImage="false"][hasAudio="true"]::subject:landscape
 
 MsgConversationWidget::attachment
 {
-  right:var(hb-param-margin-gene-right);
-  left:-var(hb-param-margin-gene-middle-horizontal);
+  right:1.0un;
   center-vertical:0.0un;
   aspect-ratio:ignore;
   size-policy:fixed fixed;
@@ -127,7 +102,7 @@ MsgConversationWidget::attachment
 
 MsgConversationWidget::priority
 {
-  left:-var(hb-param-margin-gene-middle-horizontal);
+  right:0.5un;
   center-vertical:0.0un;
   aspect-ratio:ignore;
   size-policy:fixed fixed;
@@ -137,7 +112,7 @@ MsgConversationWidget::priority
 
 /******************************** IMAGE / PREVIEW *****************************/
 
-MsgConversationWidget[hasImage="true"]::preview:portrait
+MsgConversationWidget::preview:portrait
 {
   left:-var(hb-param-margin-gene-left);
   right:1.0un;
@@ -150,9 +125,10 @@ MsgConversationWidget[hasImage="true"]::preview:portrait
   /*min-width:16un;
   min-height:12un;*/
   size-policy:fixed fixed;
+  aspect-ratio:ignore;
 }
 
-MsgConversationWidget[hasImage="true"]::preview:landscape
+MsgConversationWidget::preview:landscape
 {
   left:-var(hb-param-margin-gene-left);
   top:-var(hb-param-margin-gene-top);
@@ -163,6 +139,7 @@ MsgConversationWidget[hasImage="true"]::preview:landscape
   min-width:16un;
   min-height:12un;*/
   size-policy:fixed fixed;
+  aspect-ratio:ignore;
 }
 
 /****************************** TIMESTAMP TEXT ********************************/
@@ -177,16 +154,6 @@ MsgConversationWidget::timeStamp
   font-variant:primary;
   text-line-count-max:1;
   text-line-count-min:1;
-}
-
-MsgConversationWidget[hasImage="true"]::timeStamp:landscape
-{
-  left:-var(hb-param-margin-gene-middle-horizontal);
-}
-
-MsgConversationWidget[hasImage="false"][hasAudio="true"]::timeStamp:landscape
-{
-  left:-var(hb-param-margin-gene-middle-horizontal);
 }
 
 /******************************* OVERLAY PLAY ICON ****************************/

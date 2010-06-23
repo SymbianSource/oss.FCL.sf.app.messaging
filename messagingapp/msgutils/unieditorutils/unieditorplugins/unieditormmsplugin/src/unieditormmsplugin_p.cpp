@@ -43,7 +43,7 @@
 #include "UniSendingSettings.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "debugtraces.h"
 #include "UniEditorGenUtils.h"
 
@@ -167,7 +167,7 @@ void CUniEditorMmsPluginPrivate::convertFromDraftsL(
     populateRecipientsL(aMessage);
 
     //populate convergedmessage with the subject
-    aMessage.setSubject(S60QConversions::s60DescToQString(
+    aMessage.setSubject(XQConversions::s60DescToQString(
         MmsMtmL()->SubjectL()));
 
     // Priority
@@ -209,7 +209,7 @@ void CUniEditorMmsPluginPrivate::convertFromForwardHandlerL(
 
     //populate convergedmessage with the subject prepended with FW:
     QString subject =
-            S60QConversions::s60DescToQString(MmsMtmL()->SubjectL());
+            XQConversions::s60DescToQString(MmsMtmL()->SubjectL());
 
     if (!(entry.Forwarded() || subject.startsWith(LOC_FWD,
             Qt::CaseInsensitive)))
@@ -396,7 +396,7 @@ void CUniEditorMmsPluginPrivate::DoConvertToL(ConvergedMessage *aMessage,
         entry.SetForwarded(ETrue);
         iMessageForwarded = EFalse;
         }
-     HBufC* sub = S60QConversions::qStringToS60Desc(aMessage->subject());
+     HBufC* sub = XQConversions::qStringToS60Desc(aMessage->subject());
      if( sub )
      {
          CleanupStack::PushL(sub);
@@ -722,7 +722,7 @@ void CUniEditorMmsPluginPrivate::addRecipientsL(
             continue;
         }
         // convert from QString to HBufC
-        HBufC* addr = S60QConversions::qStringToS60Desc(array[i]->address());
+        HBufC* addr = XQConversions::qStringToS60Desc(array[i]->address());
 
         CleanupStack::PushL(addr);
 
@@ -733,7 +733,7 @@ void CUniEditorMmsPluginPrivate::addRecipientsL(
         }
         else
         {
-            HBufC* displayName = S60QConversions::qStringToS60Desc(array[i]->alias());
+            HBufC* displayName = XQConversions::qStringToS60Desc(array[i]->alias());
             if(displayName)
             {
                 CleanupStack::PushL(displayName);
@@ -771,10 +771,10 @@ void CUniEditorMmsPluginPrivate::populateRecipientsL(
     for (TInt i = 0; i < count; ++i)
         {
         //Address
-        QString address = S60QConversions::s60DescToQString(
+        QString address = XQConversions::s60DescToQString(
             TMmsGenUtils::PureAddress(addresses[i]));
         //Alias
-        QString alias = S60QConversions::s60DescToQString(
+        QString alias = XQConversions::s60DescToQString(
             TMmsGenUtils::Alias(addresses[i]));
 
         //add recipient to convergedMessage
@@ -822,7 +822,7 @@ void CUniEditorMmsPluginPrivate::deleteDraftsEntryL( TMsvId aId )
 void CUniEditorMmsPluginPrivate::addObjectL(int aSlideNum, const QString& aFilePath)
 {
 
-    HBufC* filePath = S60QConversions::qStringToS60Desc(aFilePath);
+    HBufC* filePath = XQConversions::qStringToS60Desc(aFilePath);
 
     if (filePath)
     {
@@ -851,7 +851,7 @@ void CUniEditorMmsPluginPrivate::addObjectL(int aSlideNum, const QString& aFileP
 //
 void CUniEditorMmsPluginPrivate::addAttachmentL(const QString& aFilePath)
 {
-    HBufC * filePath = S60QConversions::qStringToS60Desc(aFilePath);
+    HBufC * filePath = XQConversions::qStringToS60Desc(aFilePath);
     if (filePath)
     {
         CleanupStack::PushL(filePath);
@@ -886,7 +886,7 @@ void CUniEditorMmsPluginPrivate::addTextObjectL(int aSlideNum, const QString& aB
     delete iEditor;
     iEditor = NULL;
 
-    HBufC* textContent = S60QConversions::qStringToS60Desc(aBodyText);
+    HBufC* textContent = XQConversions::qStringToS60Desc(aBodyText);
     if (textContent)
     {
         CleanupStack::PushL(textContent);

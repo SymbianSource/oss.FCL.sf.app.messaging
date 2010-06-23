@@ -25,8 +25,10 @@
 #include <hbactivitymanager.h>
 #include <QVariantHash>
 
+const int INVALID_MSGID = -1;
 // Activity Names 
 const QString ListViewActivityName("MsgConversationsList");
+const QString EditorActivityName("MsgCreate");
 
 //-----------------------------------------------------------------------------
 // MsgActivityHandler::MsgActivityHandler
@@ -55,18 +57,35 @@ void MsgActivityHandler::saveActivity()
 {
     HbActivityManager* activityManager = 
                         qobject_cast<HbApplication*>(qApp)->activityManager();
-    
-    if( mMainWindow->viewManager()->currentView()== MsgBaseView::CLV)
-        {
-        // get a screenshot for saving to the activity manager
-        QVariantHash metadata;
-        metadata.insert("screenshot", 
-                QPixmap::grabWidget(mMainWindow, mMainWindow->rect()));
+                        
+     int currentView = mMainWindow->viewManager()->currentView();
+     int msgId = INVALID_MSGID;
+     if((currentView == MsgBaseView::CV) || (currentView== MsgBaseView::UNIEDITOR))
+         {
+         msgId = mMainWindow->viewManager()->saveContentToDraft();
+         }
+     
+     // get a screenshot for saving to the activity manager
+     QVariantHash metadata;
+     metadata.insert("screenshot", 
+             QPixmap::grabWidget(mMainWindow, mMainWindow->rect()));
 
-        // save any data necessary to save the state
-        QByteArray serializedActivity;
-        QDataStream stream(&serializedActivity, 
-                QIODevice::WriteOnly | QIODevice::Append);
+     // save any data necessary to save the state
+     QByteArray serializedActivity;
+     QDataStream stream(&serializedActivity, 
+             QIODevice::WriteOnly | QIODevice::Append);
+  
+    if( msgId != INVALID_MSGID)
+        {
+        stream << EditorActivityName;
+        stream << msgId;
+
+        // add the activity to the activity manager
+        bool ok = activityManager->addActivity(EditorActivityName, 
+                serializedActivity, metadata);
+        }
+    else
+        {    
         stream << ListViewActivityName;
 
         // add the activity to the activity manager
@@ -76,13 +95,22 @@ void MsgActivityHandler::saveActivity()
 }
 
 //-----------------------------------------------------------------------------
-// MsgActivityHandler::handleActivity
+// MsgActivityHandler::parseActivityData
 // @see header
 //-----------------------------------------------------------------------------
-void MsgActivityHandler::handleActivity(const QVariant &activityData)
+int MsgActivityHandler::parseActivityData(const QVariant &activityData)
 {
-  // To be handled later 
-   Q_UNUSED(activityData)
+    QByteArray serializedModel = activityData.toByteArray();
+    QDataStream stream(&serializedModel, QIODevice::ReadOnly);
+
+    QString activityName;
+    int msgId = INVALID_MSGID;
+    stream >> activityName;
+    if( activityName == EditorActivityName)
+        {
+        stream >> msgId;
+        }
+    return msgId;
 }
 
 //-----------------------------------------------------------------------------
@@ -94,6 +122,7 @@ void MsgActivityHandler::clearActivities()
     HbActivityManager* activityManager = 
                         qobject_cast<HbApplication*>(qApp)->activityManager();
     activityManager->removeActivity(ListViewActivityName);   
+    activityManager->removeActivity(EditorActivityName);   
 }
 
 //-----------------------------------------------------------------------------

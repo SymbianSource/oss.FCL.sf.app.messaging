@@ -47,12 +47,6 @@ public slots:
       */
     void saveActivity();
     
-    /**
-     * Open the activity which is requested.
-     * @param activitry data.
-     */
-    void handleActivity(const QVariant &activityData);
-    
 public:   
    /** 
     * Set the message main window pointer.
@@ -64,6 +58,14 @@ public:
      * Clears all saved messaging activities. 
      */
     void clearActivities();
+    
+    /**
+     * Parses the activity data.
+     * @param activitry data.
+     * @return valid message Id if its editor activity 
+     * else Invalid message id( i.e. -1) for list view activity 
+     */
+    int parseActivityData(const QVariant &activityData);
     
 private:
     /**

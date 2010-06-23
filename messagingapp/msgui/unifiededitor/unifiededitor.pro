@@ -26,7 +26,6 @@ INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../msguiutils/inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../../msgutils/unidatautils/unidatamodelloader/inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../msgsettings/settingsview/inc
 
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
@@ -44,6 +43,15 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 # Build.inf rules
 BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
     "rom/unifiededitor.iby CORE_APP_LAYER_IBY_EXPORT_PATH(unifiededitor.iby)"
+
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/unifiededitor.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/unifiededitor.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
 
 # Input
 HEADERS += msgunieditormonitor.h \
@@ -81,8 +89,7 @@ SOURCES += msgunieditormonitor.inl \
 RESOURCES += unifiededitor.qrc
 
 # Libs
-LIBS += -ls60qconversions \
-        -lconvergedmessageutils \
+LIBS += -lconvergedmessageutils \
         -lmsguiutils \
         -lunieditorpluginloader \
         -leditorgenutils \
@@ -101,7 +108,7 @@ LIBS += -ls60qconversions \
         -lgsmu \
         -lsmcm \
         -lxqserviceutil \
-        -lcommonengine
-
+        -lcommonengine \
+        -lefsrv
 
         

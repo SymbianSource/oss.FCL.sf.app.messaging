@@ -347,6 +347,7 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
                 {
                     CUniObject *obj =
                             iUniDataModel->SmilModel(). GetObjectByIndex(i, j);
+                    CMsgMediaInfo *mediaInfo = obj->MediaInfo();
 
                     TPtrC8 mimetype = obj->MimeType();
                     TMsvAttachmentId attachId = obj->AttachmentId();
@@ -365,10 +366,26 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
                             != KErrNotFound))
                     {
                         //get thumbnail for this image
-                        GetThumbNailL(attachId, mimetype, msgId);
                         isImageSet = ETrue;
-                        imagePath.Set(obj->MediaInfo()->FullFilePath());
+                        imagePath.Set(mediaInfo->FullFilePath());
                         msgProperty |= EPreviewImage;
+
+                        if (EFileProtNoProtection != mediaInfo->Protection())
+                        {
+                            msgProperty |= EPreviewProtectedImage;
+                        }
+                        if (mediaInfo->Corrupt())
+                        {
+                            msgProperty |= EPreviewCorruptedImage;
+                        }
+
+                        if (!(EPreviewProtectedImage & msgProperty) &&
+                            !(EPreviewCorruptedImage & msgProperty))
+                        {
+                            //Generate thumbnail for non protected,
+                            //non corrupted image.
+                            GetThumbNailL(attachId, mimetype, msgId);
+                        }
                     }
 
                     //audio content
@@ -377,15 +394,31 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
                     {
                         isAudioSet = ETrue;
                         msgProperty |= EPreviewAudio;
+                        if (EFileProtNoProtection != mediaInfo->Protection())
+                        {
+                            msgProperty |= EPreviewProtectedAudio;
+                        }
+                        if (mediaInfo->Corrupt())
+                        {
+                            msgProperty |= EPreviewCorruptedAudio;
+                        }
                     }
 
                     //video content
                     if (!isVideoSet && (mimetype.Find(_L8("video"))
                             != KErrNotFound))
                     {
-                        videoPath.Set(obj->MediaInfo()->FullFilePath());
+                        videoPath.Set(mediaInfo->FullFilePath());
                         isVideoSet = ETrue;
                         msgProperty |= EPreviewVideo;
+                        if (EFileProtNoProtection != mediaInfo->Protection())
+                        {
+                            msgProperty |= EPreviewProtectedVideo;
+                        }
+                        if (mediaInfo->Corrupt())
+                        {
+                            msgProperty |= EPreviewCorruptedVideo;
+                        }
                     }
                 }
             }

@@ -18,7 +18,6 @@
 #include "univiewerfeeder_p.h"
 // SYSTEM INCLUDES
 #include <msvstd.h>
-#include <s60qconversions.h>
 #include <msvids.h>
 
 // USER INCLUDES

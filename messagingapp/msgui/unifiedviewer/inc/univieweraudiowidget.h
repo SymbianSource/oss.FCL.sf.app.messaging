@@ -20,6 +20,7 @@
 
 // FORWARD DECLARATIONS
 class UniViewerUtils;
+class UniMessageInfo;
 
 #include <HbPushButton>
 
@@ -45,10 +46,9 @@ public:
 
     /**
      * Populates the widget contents.
-     * @param mimeType Mime type of media.
-     * @param filePath File path of media.
+     * @param info Object information.
      */
-    void populate(const QString &mimeType, const QString &filePath);
+    void populate(UniMessageInfo *info);
 
 signals:
 

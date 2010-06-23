@@ -56,7 +56,7 @@ UniViewerBodyWidget::~UniViewerBodyWidget()
 //UniViewerBodyWidget::setImage
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setPixmap(const QString &mimeType, const QString &pixmapFile)
+void UniViewerBodyWidget::setPixmap(UniMessageInfo *info)
 {
     setHasPixmap(true);
     //create image item instance
@@ -65,7 +65,7 @@ void UniViewerBodyWidget::setPixmap(const QString &mimeType, const QString &pixm
         HbStyle::setItemName(mPixmapItem, "pixmap");
     }
     mPixmapItem->hide();
-    mPixmapItem->populate(mimeType, pixmapFile);
+    mPixmapItem->populate(info);
 
     this->repolish();
 }
@@ -74,14 +74,14 @@ void UniViewerBodyWidget::setPixmap(const QString &mimeType, const QString &pixm
 //UniViewerBodyWidget::setAudio
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setAudio(const QString &mimeType, const QString &audiofile)
+void UniViewerBodyWidget::setAudio(UniMessageInfo *info)
 {
     if (!mAudioItem) {
         mAudioItem = new UniViewerAudioWidget(this);
         HbStyle::setItemName(mAudioItem, "audioItem");
     }
     mAudioItem->hide();
-    mAudioItem->populate(mimeType, audiofile);
+    mAudioItem->populate(info);
 
     this->repolish();
 }
@@ -90,10 +90,18 @@ void UniViewerBodyWidget::setAudio(const QString &mimeType, const QString &audio
 //UniViewerBodyWidget::setVideo
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setVideo(const QString &mimeType, const QString &videofile)
+void UniViewerBodyWidget::setVideo(UniMessageInfo *info)
 {
-    Q_UNUSED(mimeType)
-    Q_UNUSED(videofile)
+    setHasPixmap(true);
+    //create image item instance
+    if (!mPixmapItem) {
+       mPixmapItem = new UniViewerPixmapWidget(this);
+       HbStyle::setItemName(mPixmapItem, "pixmap");
+    }
+    mPixmapItem->hide();
+    mPixmapItem->populate(info);
+    
+    this->repolish();
 }
 
 //---------------------------------------------------------------
@@ -191,14 +199,14 @@ void UniViewerBodyWidget::setSlideContents(UniMessageInfoList objList, QString s
                 setText(textContent);
             }
         }
-        else if (mimeType.contains(VIDEO_MIMETYPE)) {
-            setVideo(mimeType, info->path());
-        }
         else if (mimeType.contains(AUDIO_MIMETYPE)) {
-            setAudio(mimeType, info->path());
+            setAudio(info);
+        }
+        else if (mimeType.contains(VIDEO_MIMETYPE)) {
+            setVideo(info);
         }
         else if (mimeType.contains(IMAGE_MIMETYPE)) {
-            setPixmap(mimeType, info->path());
+            setPixmap(info);
         }
 
         delete info;
