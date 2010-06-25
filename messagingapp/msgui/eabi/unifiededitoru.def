@@ -9,49 +9,60 @@ EXPORTS
 	_ZN20MsgUnifiedEditorView10addSubjectEv @ 8 NONAME
 	_ZN20MsgUnifiedEditorView10addToolBarEv @ 9 NONAME
 	_ZN20MsgUnifiedEditorView10fetchAudioEv @ 10 NONAME
-	_ZN20MsgUnifiedEditorView10pluginPathEv @ 11 NONAME
+	_ZN20MsgUnifiedEditorView10hideChromeEb @ 11 NONAME
 	_ZN20MsgUnifiedEditorView11fetchImagesEv @ 12 NONAME
-	_ZN20MsgUnifiedEditorView11packMessageER16ConvergedMessage @ 13 NONAME
+	_ZN20MsgUnifiedEditorView11packMessageER16ConvergedMessageb @ 13 NONAME
 	_ZN20MsgUnifiedEditorView11qt_metacallEN11QMetaObject4CallEiPPv @ 14 NONAME
 	_ZN20MsgUnifiedEditorView11qt_metacastEPKc @ 15 NONAME
 	_ZN20MsgUnifiedEditorView11resizeEventEP25QGraphicsSceneResizeEvent @ 16 NONAME
 	_ZN20MsgUnifiedEditorView12createVCardsERK8QVariantR11QStringList @ 17 NONAME
 	_ZN20MsgUnifiedEditorView13addAttachmentERK7QString @ 18 NONAME
-	_ZN20MsgUnifiedEditorView13audiosFetchedERK8QVariant @ 19 NONAME
-	_ZN20MsgUnifiedEditorView13deleteMessageEv @ 20 NONAME
-	_ZN20MsgUnifiedEditorView13fetchContactsEv @ 21 NONAME
-	_ZN20MsgUnifiedEditorView13imagesFetchedERK8QVariant @ 22 NONAME
-	_ZN20MsgUnifiedEditorView14addAttachmentsE11QStringList @ 23 NONAME
-	_ZN20MsgUnifiedEditorView14changePriorityEv @ 24 NONAME
-	_ZN20MsgUnifiedEditorView14forwardMessageER18ConvergedMessageIdN16ConvergedMessage11MessageTypeE @ 25 NONAME
-	_ZN20MsgUnifiedEditorView14sendingOptionsEv @ 26 NONAME
-	_ZN20MsgUnifiedEditorView15contactsFetchedERK8QVariant @ 27 NONAME
-	_ZN20MsgUnifiedEditorView15populateContentERK5QListI8QVariantE @ 28 NONAME
+	_ZN20MsgUnifiedEditorView13deleteMessageEv @ 19 NONAME
+	_ZN20MsgUnifiedEditorView13fetchContactsEv @ 20 NONAME
+	_ZN20MsgUnifiedEditorView13imagesFetchedERK8QVariant @ 21 NONAME
+	_ZN20MsgUnifiedEditorView14addAttachmentsE11QStringList @ 22 NONAME
+	_ZN20MsgUnifiedEditorView14changePriorityEv @ 23 NONAME
+	_ZN20MsgUnifiedEditorView14forwardMessageER18ConvergedMessageIdN16ConvergedMessage11MessageTypeE @ 24 NONAME
+	_ZN20MsgUnifiedEditorView15contactsFetchedERK8QVariant @ 25 NONAME
+	_ZN20MsgUnifiedEditorView15populateContentERK5QListI8QVariantE @ 26 NONAME
+	_ZN20MsgUnifiedEditorView16createTempFolderEv @ 27 NONAME
+	_ZN20MsgUnifiedEditorView16enableSendButtonEb @ 28 NONAME
 	_ZN20MsgUnifiedEditorView16generateFileNameER7QString @ 29 NONAME
-	_ZN20MsgUnifiedEditorView16staticMetaObjectE @ 30 NONAME DATA 16
-	_ZN20MsgUnifiedEditorView17openDraftsMessageERK5QListI8QVariantE @ 31 NONAME
-	_ZN20MsgUnifiedEditorView19getStaticMetaObjectEv @ 32 NONAME
-	_ZN20MsgUnifiedEditorView19saveContentToDraftsEv @ 33 NONAME
-	_ZN20MsgUnifiedEditorView19serviceRequestErrorEiRK7QString @ 34 NONAME
-	_ZN20MsgUnifiedEditorView20activateInputBlockerEv @ 35 NONAME
-	_ZN20MsgUnifiedEditorView22deactivateInputBlockerEv @ 36 NONAME
-	_ZN20MsgUnifiedEditorView23handleViewExtnActivatedEP16HbListWidgetItem @ 37 NONAME
-	_ZN20MsgUnifiedEditorView25populateContentIntoEditorERK16ConvergedMessage @ 38 NONAME
-	_ZN20MsgUnifiedEditorView25removeAttachmentContainerEv @ 39 NONAME
-	_ZN20MsgUnifiedEditorView25updateOtherRecipientCountEb @ 40 NONAME
-	_ZN20MsgUnifiedEditorView4sendEv @ 41 NONAME
-	_ZN20MsgUnifiedEditorView7addMenuEv @ 42 NONAME
-	_ZN20MsgUnifiedEditorView8addCcBccEv @ 43 NONAME
-	_ZN20MsgUnifiedEditorViewC1EP13QGraphicsItem @ 44 NONAME
-	_ZN20MsgUnifiedEditorViewC2EP13QGraphicsItem @ 45 NONAME
-	_ZN20MsgUnifiedEditorViewD0Ev @ 46 NONAME
-	_ZN20MsgUnifiedEditorViewD1Ev @ 47 NONAME
-	_ZN20MsgUnifiedEditorViewD2Ev @ 48 NONAME
-	_ZNK20MsgUnifiedEditorView10metaObjectEv @ 49 NONAME
-	_ZTI20MsgUnifiedEditorView @ 50 NONAME
-	_ZTV20MsgUnifiedEditorView @ 51 NONAME
-	_ZThn16_N20MsgUnifiedEditorViewD0Ev @ 52 NONAME
-	_ZThn16_N20MsgUnifiedEditorViewD1Ev @ 53 NONAME
-	_ZThn8_N20MsgUnifiedEditorViewD0Ev @ 54 NONAME
-	_ZThn8_N20MsgUnifiedEditorViewD1Ev @ 55 NONAME
+	_ZN20MsgUnifiedEditorView16onContentChangedEv @ 30 NONAME
+	_ZN20MsgUnifiedEditorView16removeTempFolderEv @ 31 NONAME
+	_ZN20MsgUnifiedEditorView16staticMetaObjectE @ 32 NONAME DATA 16
+	_ZN20MsgUnifiedEditorView17onDialogDeleteMsgEP8HbAction @ 33 NONAME
+	_ZN20MsgUnifiedEditorView17openDraftsMessageERK5QListI8QVariantE @ 34 NONAME
+	_ZN20MsgUnifiedEditorView19getStaticMetaObjectEv @ 35 NONAME
+	_ZN20MsgUnifiedEditorView19onDialogMmsSettingsEP8HbAction @ 36 NONAME
+	_ZN20MsgUnifiedEditorView19onDialogSmsSettingsEP8HbAction @ 37 NONAME
+	_ZN20MsgUnifiedEditorView19saveContentToDraftsEv @ 38 NONAME
+	_ZN20MsgUnifiedEditorView19serviceRequestErrorEiRK7QString @ 39 NONAME
+	_ZN20MsgUnifiedEditorView20activateInputBlockerEv @ 40 NONAME
+	_ZN20MsgUnifiedEditorView21doDelayedConstructionEv @ 41 NONAME
+	_ZN20MsgUnifiedEditorView22deactivateInputBlockerEv @ 42 NONAME
+	_ZN20MsgUnifiedEditorView22setAttachOptionEnabledENS_16TBE_AttachOptionEb @ 43 NONAME
+	_ZN20MsgUnifiedEditorView23handleViewExtnActivatedEP16HbListWidgetItem @ 44 NONAME
+	_ZN20MsgUnifiedEditorView25populateContentIntoEditorERK16ConvergedMessageb @ 45 NONAME
+	_ZN20MsgUnifiedEditorView25removeAttachmentContainerEv @ 46 NONAME
+	_ZN20MsgUnifiedEditorView25updateOtherRecipientCountEb @ 47 NONAME
+	_ZN20MsgUnifiedEditorView4sendEv @ 48 NONAME
+	_ZN20MsgUnifiedEditorView7addMenuEv @ 49 NONAME
+	_ZN20MsgUnifiedEditorView8addCcBccEv @ 50 NONAME
+	_ZN20MsgUnifiedEditorView8initViewEv @ 51 NONAME
+	_ZN20MsgUnifiedEditorView8setFocusEP26MsgUnifiedEditorBaseWidget @ 52 NONAME
+	_ZN20MsgUnifiedEditorView9vkbClosedEv @ 53 NONAME
+	_ZN20MsgUnifiedEditorView9vkbOpenedEv @ 54 NONAME
+	_ZN20MsgUnifiedEditorViewC1EP13QGraphicsItem @ 55 NONAME
+	_ZN20MsgUnifiedEditorViewC2EP13QGraphicsItem @ 56 NONAME
+	_ZN20MsgUnifiedEditorViewD0Ev @ 57 NONAME
+	_ZN20MsgUnifiedEditorViewD1Ev @ 58 NONAME
+	_ZN20MsgUnifiedEditorViewD2Ev @ 59 NONAME
+	_ZNK20MsgUnifiedEditorView10metaObjectEv @ 60 NONAME
+	_ZTI20MsgUnifiedEditorView @ 61 NONAME
+	_ZTV20MsgUnifiedEditorView @ 62 NONAME
+	_ZThn16_N20MsgUnifiedEditorViewD0Ev @ 63 NONAME
+	_ZThn16_N20MsgUnifiedEditorViewD1Ev @ 64 NONAME
+	_ZThn8_N20MsgUnifiedEditorViewD0Ev @ 65 NONAME
+	_ZThn8_N20MsgUnifiedEditorViewD1Ev @ 66 NONAME
 

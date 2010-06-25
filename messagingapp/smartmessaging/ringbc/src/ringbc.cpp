@@ -24,7 +24,6 @@
 #include "ringbc.h"
 #include "ringbc_p.h"
 #include "ringbctoneconverter.h"
-#include "s60qconversions.h"
 #include "debugtraces.h"
 
 // ================= MEMBER FUNCTIONS =======================
@@ -72,19 +71,4 @@ QString RingBc::toneTitle(const QString &path)
     return d_ptr->toneTitle(path);
     }
 
-// ----------------------------------------------------------------------------
-// RingBc::askSaveQuery
-// @see ringbc.h
-// ----------------------------------------------------------------------------
-bool RingBc::askSaveQuery()
-    {
-    QDEBUG_WRITE("RingBc::~RingBc : Enter")
-    bool result =HbMessageBox::question("Save ringing tone ?",
-                                "Save",
-                                "Cancel");
-    
-    QDEBUG_WRITE_FORMAT("RingBc::askSaveQuery  Exit reslut:",result)
-    return result;
-    
-    }
 //  End of File  

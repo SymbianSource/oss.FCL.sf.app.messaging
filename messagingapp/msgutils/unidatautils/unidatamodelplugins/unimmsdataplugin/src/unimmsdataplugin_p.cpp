@@ -30,10 +30,11 @@
 #include <mmsheaders.h>
 #include <MsgMediaInfo.h>
 #include <MsgMediaResolver.h>
+#include <fileprotectionresolver.h>
 #include <QDateTime>
 
 #include "convergedmessage.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "convergedmessageaddress.h"
 #include "unimmsdataplugin_p.h"
 #include "debugtraces.h"
@@ -117,7 +118,7 @@ void UniMMSDataPluginPrivate::body(QString& aBodyText)
     TInt len = textBody.DocumentLength();
     HBufC* buf = HBufC::NewL(len);
     TPtr bufPtr = buf->Des();
-    aBodyText = S60QConversions::s60DescToQString(bufPtr);
+    aBodyText = XQConversions::s60DescToQString(bufPtr);
 }
 
 int UniMMSDataPluginPrivate::messageSize()
@@ -129,7 +130,7 @@ int UniMMSDataPluginPrivate::messageSize()
 QString UniMMSDataPluginPrivate::subject()
 {
    TPtrC sub =  mMmsClient->SubjectL();
-   return S60QConversions::s60DescToQString(sub);
+   return XQConversions::s60DescToQString(sub);
 }
 
 
@@ -163,8 +164,8 @@ void UniMMSDataPluginPrivate::toRecipientList(
         // populate address
         ConvergedMessageAddress
         * messageAddress =
-            new ConvergedMessageAddress(S60QConversions::s60DescToQString(address),
-                S60QConversions::s60DescToQString(name));
+            new ConvergedMessageAddress(XQConversions::s60DescToQString(address),
+                XQConversions::s60DescToQString(name));
         mAddressList.append(messageAddress);
     }
 
@@ -203,8 +204,8 @@ void UniMMSDataPluginPrivate::ccRecipientList(
         // populate address
         ConvergedMessageAddress
         * messageAddress =
-            new ConvergedMessageAddress(S60QConversions::s60DescToQString(address),
-                S60QConversions::s60DescToQString(name));
+            new ConvergedMessageAddress(XQConversions::s60DescToQString(address),
+                XQConversions::s60DescToQString(name));
         mAddressList.append(messageAddress);
     }
 
@@ -243,8 +244,8 @@ void UniMMSDataPluginPrivate::bccRecipientList(
         // populate address
         ConvergedMessageAddress
         * messageAddress =
-            new ConvergedMessageAddress(S60QConversions::s60DescToQString(address),
-                S60QConversions::s60DescToQString(name));
+            new ConvergedMessageAddress(XQConversions::s60DescToQString(address),
+                XQConversions::s60DescToQString(name));
         mAddressList.append(messageAddress);
     }
 
@@ -257,7 +258,7 @@ void UniMMSDataPluginPrivate::fromAddress(QString& messageAddress)
 {
 
     TPtrC sender = mMmsClient->Sender();
-    messageAddress = S60QConversions::s60DescToQString(sender);
+    messageAddress = XQConversions::s60DescToQString(sender);
 }
 
 UniMessageInfoList UniMMSDataPluginPrivate::attachmentList()
@@ -271,15 +272,17 @@ UniMessageInfoList UniMMSDataPluginPrivate::attachmentList()
     for (int i = 0; i < attcount; i++)
     {
         CUniObject *obj = mUniDataModel->AttachmentList().GetByIndex(i);
+        CMsgMediaInfo *mediaInfo = obj->MediaInfo();
 
-        mimetype = S60QConversions::s60Desc8ToQString(obj->MimeType());
-        path
-        = S60QConversions::s60DescToQString(obj->MediaInfo()->FullFilePath());
+        mimetype = XQConversions::s60Desc8ToQString(obj->MimeType());
+        path = XQConversions::s60DescToQString(mediaInfo->FullFilePath());
         size = obj->Size(EFalse);
 
         UniMessageInfo *msgobj = new UniMessageInfo(path, size, mimetype);
+        msgobj->setProtected(EFileProtNoProtection != mediaInfo->Protection());
+        msgobj->setCorrupted(mediaInfo->Corrupt());
         attlist << msgobj;
-    }
+}
 
     return attlist;
 }
@@ -329,13 +332,15 @@ UniMessageInfoList UniMMSDataPluginPrivate::objectList()
     for (int i = 0; i < objcount; i++)
     {
         CUniObject *obj = mUniDataModel->ObjectList().GetByIndex(i);
+        CMsgMediaInfo *mediaInfo = obj->MediaInfo();
 
-        mimetype = S60QConversions::s60Desc8ToQString(obj->MimeType());
-        path
-        = S60QConversions::s60DescToQString(obj->MediaInfo()->FullFilePath());
+        mimetype = XQConversions::s60Desc8ToQString(obj->MimeType());
+        path = XQConversions::s60DescToQString(mediaInfo->FullFilePath());
         size = obj->Size(EFalse);
 
         UniMessageInfo *msgobj = new UniMessageInfo(path, size, mimetype);
+        msgobj->setProtected(EFileProtNoProtection != mediaInfo->Protection());
+        msgobj->setCorrupted(mediaInfo->Corrupt());
         objlist << msgobj;
     }
 
@@ -361,15 +366,16 @@ UniMessageInfoList UniMMSDataPluginPrivate::slideContent(TInt slidenum)
     int size;
     for (int i = 0; i < slideobjcount; i++)
     {
-        CUniObject *obj = mUniDataModel->SmilModel().GetObjectByIndex(slidenum,
-            i);
+        CUniObject *obj = mUniDataModel->SmilModel().GetObjectByIndex(slidenum, i);
+        CMsgMediaInfo *mediaInfo = obj->MediaInfo();
 
-        mimetype = S60QConversions::s60Desc8ToQString(obj->MimeType());
-        path
-        = S60QConversions::s60DescToQString(obj->MediaInfo()->FullFilePath());
+        mimetype = XQConversions::s60Desc8ToQString(obj->MimeType());
+        path = XQConversions::s60DescToQString(mediaInfo->FullFilePath());
         size = obj->Size(EFalse);
 
         UniMessageInfo *msgobj = new UniMessageInfo(path, size, mimetype);
+        msgobj->setProtected(EFileProtNoProtection != mediaInfo->Protection());
+        msgobj->setCorrupted(mediaInfo->Corrupt());
         slidecontent << msgobj;
     }
 

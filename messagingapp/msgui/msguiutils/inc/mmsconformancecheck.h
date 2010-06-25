@@ -18,7 +18,9 @@
 #ifndef MMS_CONFORMANCE_CHECK_OPERATION_H
 #define MMS_CONFORMANCE_CHECK_OPERATION_H
 
-#include <msgmediainfo.h>
+#include <QObject>
+
+#include <MsgMediaInfo.h>
 #include <qstring.h>
 
 #ifdef BUILD_MSGUI_UTILS_DLL
@@ -30,7 +32,7 @@
 class CMmsConformance;
 class CMsgMediaResolver;
 class CDRMHelper;
-
+class HbAction;
 
 enum MmsConformanceCheckErrors
 {
@@ -44,8 +46,10 @@ enum MmsConformanceCheckErrors
  * 
  */
 
-class MSGUI_UTILS_DLL_EXPORT MmsConformanceCheck
+class MSGUI_UTILS_DLL_EXPORT MmsConformanceCheck : public QObject
 {
+    Q_OBJECT
+    
 public:
 
     /**
@@ -79,15 +83,17 @@ public:
 private:
 
     /*
-     * Launch query dialog
-     */
-    bool launchEditorQuery();
-    
-    /*
      * Launch notification dialog
      */
     void showPopup(const QString& text);
     
+private slots:
+    
+	/**
+     * This slot is called when insert media dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogInsertMedia(HbAction* action);
 private:
 
     /*
@@ -99,6 +105,11 @@ private:
      * Max MMS composition size
      */
     int iMaxMmsSize;    
+    
+    /**
+     * Conformance status
+     */
+    TUint32 iConfStatus;
 
 };
 #endif //MMS_CONFORMANCE_CHECK_OPERATION_H

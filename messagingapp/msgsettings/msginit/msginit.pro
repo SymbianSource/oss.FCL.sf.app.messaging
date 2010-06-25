@@ -48,6 +48,15 @@ BLD_INF_RULES.prj_exports += \
 
 }
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/msginit.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/msginit.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
 HEADERS += inc/startupmonitor.h \
 					 inc/simscnumberdetector.h \
 					 inc/msgsimnumberdetector.h

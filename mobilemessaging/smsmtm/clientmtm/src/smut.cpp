@@ -373,7 +373,7 @@ KErrNotFound if a contact could not be found.
 KErrAlreadyExists if more than one contact entry found.
 KErrNone if details is obtained successfully.
 */
-EXPORT_C TInt TSmsUtilities::GetDetails(RFs& aFs, const TDesC& aFromAddress, TDes& aDetails, TInt aMaxLength)
+EXPORT_C TInt TSmsUtilities::GetDetails(RFs& /*aFs*/, const TDesC& aFromAddress, TDes& aDetails, TInt aMaxLength)
 	{
 	__ASSERT_DEBUG( aMaxLength <= aDetails.MaxLength(), User::Invariant() );
 
@@ -382,9 +382,7 @@ EXPORT_C TInt TSmsUtilities::GetDetails(RFs& aFs, const TDesC& aFromAddress, TDe
 		aMaxLength = aDetails.MaxLength();
 		}
 
-	TRAPD(err, DoGetDetailsL(aFs, aFromAddress, aDetails, aMaxLength));
-
-	if ( (err != KErrNone) || (aDetails.Length() == 0) )
+	if ( (aDetails.Length() == 0) )
 		{
 		if (aFromAddress.Length() <= aMaxLength)
 			{
@@ -524,130 +522,6 @@ void TSmsUtilities::CompareEntryL(const TMsvEntry& aEntry, TUid aMtm, TMsvId& aF
 		}
 	}
 
-void TSmsUtilities::DoGetDetailsL(RFs& aFs, const TDesC& aFromAddress, TDes& aDetails, TInt aMaxLength)
-	{
-	__UHEAP_MARK;
-
-	// Check that aFromAddress is a valid GSM telephone number
-	if (!ValidGsmNumber(aFromAddress))
-		User::Leave(KErrArgument);
-
-	aDetails.Zero();
-
-	CContactDatabase* db = CContactDatabase::OpenL();
-	CleanupStack::PushL(db);
-
-	// Lookup the telephone number (aFromAddress) in the contact database
-	CContactIdArray* contactId = db->MatchPhoneNumberL(aFromAddress, KLowerSevenDigits);
-	CleanupStack::PushL(contactId);
-	
-	// Add the name if there is one and only one match in contacts. If there's more than
-	// one then wouldn't know which one to choose	
-	if (contactId->Count() <= 0)
-		{
-		//The telephone number (aFromAddress) was not found in the contact database.
-		User::Leave(KErrNotFound);
-		}
-	else if (contactId->Count() > 1)
-		{
-		//There's more than one telephone number match in contacts.	
-		User::Leave(KErrAlreadyExists);
-		}
-	
-	CContactItem* newContact = db->ReadMinimalContactL((*contactId)[0]);
-	CleanupStack::PushL(newContact);
-
-	CContactItemFieldSet& fieldSet = newContact->CardFields();
-
-	TInt count		= fieldSet.Count();
-
-	HBufC* family	= HBufC::NewLC(aMaxLength);
-	HBufC* given	= HBufC::NewLC(aMaxLength);
-	TPtr familyPtr(family->Des());
-	TPtr givenPtr(given->Des());
-
-	// Find the Given and First Name of the contact
-	// Order important
-	for (TInt curField = 0; curField < count && !(familyPtr.Length() && givenPtr.Length()); curField++)
-		{
-		CContactItemField& field = fieldSet[curField];
-
-		if (!familyPtr.Length())
-			GetName(field, KUidContactFieldFamilyName, familyPtr);
-
-		if (!givenPtr.Length())
-			GetName(field, KUidContactFieldGivenName, givenPtr);
-		}
-
-	familyPtr.Trim();
-	givenPtr.Trim();
-
-	TInt familyLen	= familyPtr.Length();
-	TInt givenLen	= givenPtr.Length();
-
-	if (!familyLen && !givenLen)
-		{
-		//Leave if no family nor given name found
-		User::Leave(KErrNotFound);
-		}
-	else if (givenLen == 0)
-		{
-		// The maximum length of familyPtr may be greater than
-		// aMaxLength, so need to check its length before copying.
-		if (familyPtr.Length() > aMaxLength)
-  			{
-  			familyPtr.Set(familyPtr.LeftTPtr(aMaxLength));
-  			}
-
-		aDetails = familyPtr;
-		}
-	else if (familyLen == 0)
-		{
-		// The maximum length of givenPtr may be greater than
-		// aMaxLength, so need to check its length before copying.
-		if (givenPtr.Length() > aMaxLength)
-  			{
-  			givenPtr.Set(givenPtr.LeftTPtr(aMaxLength));
-  			}
-
-		aDetails = givenPtr;
-		}
-	else
-		{
-		RResourceFile resFile = OpenResourceFileL(aFs);
-		CleanupClosePushL(resFile);
-		ReadResourceStringL(resFile, R_SENDER_NAME_FORMAT, aDetails);
-		CleanupStack::PopAndDestroy(&resFile);
-
-		TBuf<8> givenPlaceHolder = L_SMS_GIVEN_NAME;
-		TBuf<8> familyPlaceHolder = L_SMS_FAMILY_NAME;
-		TInt minLength = aDetails.Length() - givenPlaceHolder.Length() - familyPlaceHolder.Length();
-
-		if ((familyLen + givenLen + minLength) > aMaxLength)
-			{
-			// The maximum length of familyPtr may be greater than
-	   		// aMaxLength, so need to check its length before copying.
-  			if (familyPtr.Length() > aMaxLength)
-   				{
-   				familyPtr.Set(familyPtr.LeftTPtr(aMaxLength));
-   				}
-			aDetails = familyPtr;
-			}
-		else
-			{
-			Replace(givenPlaceHolder, givenPtr, aDetails);
-			Replace(familyPlaceHolder, familyPtr, aDetails);
-			}
-		}
-
-	//Remove leading and trailing spaces
-	aDetails.Trim();
-
-	CleanupStack::PopAndDestroy(5, db);
-
-	__UHEAP_MARKEND;
-	}
-
 TBool TSmsUtilities::ValidGsmNumber(const TDesC& aTelephone)
 	{
 	// Returns ETrue if
@@ -703,17 +577,6 @@ TBool TSmsUtilities::ValidGsmNumber(const TDesC& aTelephone)
 		}
 
 	return validTel && validCharsFound >= KSmsValidGsmNumberMinLength;
-	}
-
-void TSmsUtilities::GetName(CContactItemField& aField, TUid aFieldType, TDes& aName)
-	{
-	__UHEAP_MARK;
-	if (aField.ContentType().ContainsFieldType(aFieldType))
-		{
-		TPtrC name = aField.TextStorage()->Text();
-		aName = name.Left(Min(aName.MaxLength(), name.Length()));
-		}
-	__UHEAP_MARKEND;
 	}
 
 TBool TSmsUtilities::DoGetDescriptionL(const CSmsMessage& aMessage, TDes& aDescription, TInt aMaxLength)

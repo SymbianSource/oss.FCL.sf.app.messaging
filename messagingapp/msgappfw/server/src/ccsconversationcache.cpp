@@ -25,7 +25,7 @@
 #include <ccsdefs.h>
 #include <telconfigcrkeys.h>        // KCRUidTelephonyConfiguration
 #include <centralrepository.h>
-
+#include <xqconversions.h>
 // USER INCLUDE FILES
 #include "ccsconversationcache.h"
 #include "ccsconversationcachehelper.h"
@@ -35,7 +35,6 @@
 #include "ccscontactsresolver.h"
 #include "ccsconversationevent.h"
 #include "ccsserver.h"
-#include "s60qconversions.h"
 #include "ccsdebug.h"
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -406,6 +405,20 @@ void CCsConversationCache::RedoResolvingL(TInt aIndex)
         CleanupStack::PopAndDestroy(clientConv);
     }
 
+    // send all CV entry delete events, required in case CV is open
+    // Notify client of conversation change
+    TInt totalEntryCount = conversation->GetEntryCount();
+    for (TInt entryCounter = totalEntryCount - 1; entryCounter >= 0;
+            entryCounter--)
+    {
+        CCsConversationEntry* entryInConversation =
+                conversation->GetEntryL(entryCounter);
+        CCsClientConversation * clientConv =
+                CreateClientConvLC(conversation, entryInConversation);
+        NotifyL(clientConv, KConversationEventDelete);
+        CleanupStack::PopAndDestroy(clientConv);
+    }
+
     iConversationList->Remove(aIndex);
     entryList.ResetAndDestroy();
 
@@ -437,7 +450,7 @@ CCsClientConversation* CCsConversationCache::CreateClientConvLC(
 // CCsConversationCache::MarkConversationAsDeleted
 // ----------------------------------------------------------------------------
 void CCsConversationCache::MarkConversationAsDeleted(TInt aConversationId,
-                                                     TBool aDeleted)
+                                                     TBool aDeleted, TInt aCount)
 {
     TInt conversationCount = iConversationList->Count();
 
@@ -450,6 +463,14 @@ void CCsConversationCache::MarkConversationAsDeleted(TInt aConversationId,
         if (id == aConversationId)
         {
             conversation->MarkDeleted(aDeleted);
+            if( aCount )
+                {
+                CCsClientConversation* clientConversation =
+                                    CreateClientConvLC(conversation,
+                                                       conversation->GetLatestEntryL());
+                NotifyL(clientConversation, KConversationListEventPartialDelete);
+                CleanupStack::PopAndDestroy();// clientConversation
+                }
             break;
         }
     }
@@ -513,7 +534,7 @@ void CCsConversationCache::HandleAddContact(CCsContactDetail& aDetail)
     {
         QString phoneNumber = phoneNumberList.at(i);
         HBufC* phoneNumber_s60 = 
-            S60QConversions::qStringToS60Desc(phoneNumber);
+            XQConversions::qStringToS60Desc(phoneNumber);
         TInt cIndex = FindConversation(*phoneNumber_s60);
         if (cIndex != KErrNotFound)
         {
@@ -553,7 +574,7 @@ void CCsConversationCache::HandleContactChange(CCsContactDetail& aDetail)
     {
         QString phoneNumber = phoneNumberList.at(i);
         HBufC* phoneNumber_s60 = 
-                    S60QConversions::qStringToS60Desc(phoneNumber);
+                    XQConversions::qStringToS60Desc(phoneNumber);
                 
         TInt cIndex = FindConversation(*phoneNumber_s60);
         if ( cIndex != KErrNotFound )
@@ -637,6 +658,29 @@ TInt CCsConversationCache::GetConversationIdFromAddressL(TDesC& aContactAddress)
             }
     }
     return -1;
+    }
+
+// ----------------------------------------------------------------------------
+// CCsConversationCache::GetConversationFromConversationId
+// ----------------------------------------------------------------------------
+CCsClientConversation* CCsConversationCache::GetConversationFromConversationIdL(TInt aConversationId)
+    {
+
+    CCsClientConversation* clientConv = NULL;
+
+    for ( TInt loop = 0; loop < iConversationList->Count(); ++loop )
+       {
+        CCsConversation* conversation =
+            static_cast<CCsConversation*>((*iConversationList)[loop]);
+
+            if (aConversationId == conversation->GetConversationId())
+              {
+                clientConv = CreateClientConvLC(conversation, conversation->GetLatestEntryL());
+                CleanupStack::Pop();
+                break;
+              }
+       }
+    return clientConv;
     }
 
 // ----------------------------------------------------------------------------

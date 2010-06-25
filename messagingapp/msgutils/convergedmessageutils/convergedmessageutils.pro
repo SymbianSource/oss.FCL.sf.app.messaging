@@ -47,6 +47,15 @@ BLD_INF_RULES.prj_exports += \
      "$${LITERAL_HASH}include <platform_paths.hrh>" \
      "rom/convergedmessageutils.iby  CORE_APP_LAYER_IBY_EXPORT_PATH(convergedmessageutils.iby)"
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/convergedmessageutils.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/convergedmessageutils.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
 symbian {
 	TARGET.UID3 =  0x20024319
 	TARGET.CAPABILITY = CAP_GENERAL_DLL

@@ -28,14 +28,13 @@
 
 #include "convergedmessage.h"
 
-class QGraphicsLinearLayout;
 class UniViewerFeeder;
 class ConvergedMessage;
 class HbScrollArea;
 class UniScrollArea;
 class UniContentsWidget;
 class MessageDeleteAction;
-
+class HbAction;
 /**
  * Main view of unified viewer.
  */
@@ -47,7 +46,9 @@ public:
     /**
      * Constructor
      */
-    UnifiedViewer(const qint32 messageId, QGraphicsItem *parent = 0);
+    UnifiedViewer(const qint32 messageId, 
+                  int canForwardMessage = 0,
+                  QGraphicsItem *parent = 0);
 
     /**
      * Destructor
@@ -74,13 +75,7 @@ private:
      * @see HbView
      */
     void createToolBar();
-
-    /**
-     * Validates if message can be forwarded
-     * @return true if message can be forwarded
-     *         false if message cant be forwarded
-     */
-    bool validateMsgForForward();
+   
 
 public slots:
 
@@ -102,15 +97,15 @@ private slots:
      * This slot is called when sendMessage signal is emitted for a highlighted
      * phone number, from body widget.
      */
-    void sendMessage(const QString& phoneNumber);
-
-private:
+    void sendMessage(const QString& phoneNumber, const QString& alias = QString());
 
     /**
-     * Main grid layout
-     * Owned
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
      */
-    QGraphicsLinearLayout* mMainLayout;
+    void onDialogDeleteMsg(HbAction* action);
+    
+private:
 
     /**
      * Feeder object
@@ -144,6 +139,11 @@ private:
      * Message count
      */
     int mMsgCount;
+    
+	/**
+	 * Forward status of message
+	 */
+    bool mForwardMessage;
 };
 
 #endif

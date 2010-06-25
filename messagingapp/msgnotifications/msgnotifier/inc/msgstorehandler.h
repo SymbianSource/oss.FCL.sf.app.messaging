@@ -140,12 +140,8 @@ private:
     /**
      * List of messages in Fialed states
      */
-    CMsvEntrySelection* iFailedMessages;
-    
-    /**
-     * List of messages for which failed note shown
-     */
-    CMsvEntrySelection* iFailedNotes;
+    CMsvEntrySelection* iFailedMessages;   
+   
 };
 
 #endif // MSG_STORE_HANDLER_H

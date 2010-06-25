@@ -22,13 +22,18 @@
 #include "debugtraces.h"
 #include <QDateTime>
 #include <QPointer>
+#include <HbSplashScreen>
 
 #include "msgmainwindow.h"
+#include "msgactivityhandler.h"
 
 //Localised constants
 #define LOC_TITLE hbTrId("txt_messaging_title_messaging")
 
 const QString debugFileName("c:/art2_app_log.txt");
+const QString activityParam("-activity");
+const int INVALID_MSGID = -1;
+
 #ifdef _DEBUG_TRACES_
 void debugInit(QtMsgType type, const char *msg)
 {
@@ -74,6 +79,22 @@ void debugInit(QtMsgType type, const char *msg)
 #endif
 int main(int argc, char *argv[])
 {
+    
+    QCRITICAL_WRITE("MsgApp start.");
+    
+    QString firstArg(argv[1]);
+    bool serviceRequest = false;
+    // check for argc is greater than 1 and its not from activity
+    if(argc >1 && firstArg != activityParam )
+    {
+        serviceRequest = true;
+        HbSplashScreen::setScreenId("dummy");
+    }
+    else
+    {
+        HbSplashScreen::setScreenId("clv");   
+    }
+    
     // Application
     HbApplication app(argc, argv);
 
@@ -81,12 +102,11 @@ int main(int argc, char *argv[])
     QString locale = QLocale::system().name();
     QString path = "z:/resource/qt/translations/";
     QTranslator translator;
-    //QTranslator translator_comm;
-    //translator.load(path + QString("messaging_") + locale);
-    //translator_comm.load(path + QString("common_") + locale);
-    translator.load( "messaging_en_GB", ":/translations" );
+    QTranslator translator_comm;
+    translator.load(path + QString("messaging_") + locale);
+    translator_comm.load(path + QString("common_") + locale);
     app.installTranslator(&translator);
-    //app.installTranslator(&translator_comm);
+    app.installTranslator(&translator_comm);
 
     app.setApplicationName(LOC_TITLE);
     
@@ -99,20 +119,38 @@ int main(int argc, char *argv[])
     }
     qInstallMsgHandler(debugInit);
 #endif
-    bool serviceRequest = false;
-    if(argc >1)
-        {
-        serviceRequest = true;
+    
+   
+    
+     MsgActivityHandler* activityHandler = new MsgActivityHandler(&app);
+     // connect to aboutToQuit signal to save activity
+     QObject::connect(&app, SIGNAL(aboutToQuit()), 
+                      activityHandler, SLOT(saveActivity()));
+     
+    int activityMsgId = INVALID_MSGID;
+    if(app.activateReason() == Hb::ActivationReasonActivity) {
+          // restoring an activity, not a fresh startup or a service
+          QVariant data = app.activateData();
+          activityMsgId = activityHandler->parseActivityData(data);
+          // set service request to false , since its a activity launch
+          serviceRequest = false; 
         }
+    // clear the old activities
+     activityHandler->clearActivities();
+     
     // Main window
-    QPointer<MsgMainWindow> mainWindow = new MsgMainWindow(serviceRequest);
+    QPointer<MsgMainWindow> mainWindow = new MsgMainWindow(serviceRequest,activityMsgId);
+    // Set the main window pointer to activity handler.
+    activityHandler->setMainWindow(mainWindow);
     mainWindow->show();
 
     // Event loop
     int error = app.exec();
-
+    HbApplication::processEvents();
+    
     // delete main window and return error
     delete mainWindow;
+    
     return error;
 }
 

@@ -19,6 +19,7 @@
 
 // SYSTEM INCLUDES
 #include <QObject>
+#include <qtcontacts.h>
 #include "qtcontactsglobal.h"
 // USER INCLUDES
 #include "mcscontactsmanagerobserver.h"

@@ -99,7 +99,8 @@ void ConversationsListChangeHandler::ConversationListL(RPointerArray<
     for (TInt i = 0; i < aClientConversationList.Count(); ++i)
     {        
         CCsClientConversation *entry = aClientConversationList[i]->CloneL();
-        mClientConversationList.AppendL(entry);
+        mClientConversationList.InsertInOrderAllowRepeats( entry,
+                ConversationsListChangeHandler::CompareByConvTimeStamp );
     }
 
     if (aClientConversationList.Count() > 0)
@@ -134,6 +135,17 @@ void ConversationsListChangeHandler::DeleteConversationList(
     const CCsClientConversation& aClientConversation)
 {
     mConvSummaryModel->deleteRow(aClientConversation.GetConversationEntryId());
+}
+
+//-----------------------------------------------------------------------
+// This is for handling partial delete conversation event asynchronusly from the server
+//-----------------------------------------------------------------------
+//
+
+void ConversationsListChangeHandler::PartialDeleteConversationList(
+            const CCsClientConversation& aClientConversation)
+{
+    ConversationsEngine::instance()->emitConversationListModelEntryDeleted( aClientConversation.GetConversationEntryId() );
 }
 
 //-----------------------------------------------------------------------
@@ -180,7 +192,7 @@ void ConversationsListChangeHandler::HandleConversationListL()
         if (mCurrentIndex < mClientConversationList.Count())
         {
             mConvSummaryModel->addRow(
-                * (mClientConversationList[mCurrentIndex]));
+                * (mClientConversationList[mCurrentIndex]),true);
             mCurrentIndex++;
         }
         else
@@ -212,5 +224,25 @@ void ConversationsListChangeHandler::HandleConversationListL()
     }
 
 }
+
+// ----------------------------------------------------------------------------
+// ConversationsListChangeHandler::CompareByConvTimeStamp
+// ---------------------------------------------------------------------------
+TInt ConversationsListChangeHandler::CompareByConvTimeStamp(const CCsClientConversation& aObj1,
+        const CCsClientConversation& aObj2)
+    {
+    TInt64 timestamp1 = aObj1.GetConversationEntry()->TimeStamp();
+    TInt64 timestamp2 = aObj2.GetConversationEntry()->TimeStamp();
+
+    if (timestamp1 == timestamp2)
+        {
+        return 0;
+        }
+    else if (timestamp1 < timestamp2)
+        {
+        return 1;
+        }
+    return -1;
+    }
 
 // EOF

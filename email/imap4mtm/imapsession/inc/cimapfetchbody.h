@@ -182,6 +182,7 @@ private:
 	TBool iSendFetch;
 	// When server responses with no body length, iUnexpectedFormat is set to ETrue.
 	TBool iUnexpectedFormat;
+	TBool iCancelled;
 	};
 
 #endif // __CIMAPFETCHBODY_H__

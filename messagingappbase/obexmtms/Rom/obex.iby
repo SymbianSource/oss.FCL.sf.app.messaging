@@ -30,7 +30,7 @@ file=ABI_DIR\BUILD_DIR\obexmtmutil.dll                   System\libs\obexmtmutil
 //file=ABI_DIR\BUILD_DIR\msgth.dll                         System\libs\msgth.dll 
 
 
-#ifdef SYMBIAN_EXCLUDE_INFRARED
+#ifndef __IRDA
 REM Messaging infrared MTM is not included in this ROM, because it depends on excluded INFRARED
 #else
 //IR MTM Client
@@ -41,10 +41,10 @@ file=ABI_DIR\BUILD_DIR\irs.dll                        System\libs\irs.dll
 
 //IR MTM Resources
 data=DATAZ_\resource\messaging\mtm\irmtm.rsc             resource\messaging\mtm\irmtm.rsc
-#endif // SYMBIAN_EXCLUDE_INFRARED
+#endif // __IRDA
 
 
-#ifdef SYMBIAN_EXCLUDE_BLUETOOTH
+#ifndef __BT
 REM Messaging Bluetooth MTM is not included in this ROM, because it depends on excluded BLUETOOTH
 #else
 //BT MTM Client
@@ -55,7 +55,7 @@ file=ABI_DIR\BUILD_DIR\btsmtm.dll                        System\libs\btsmtm.dll
 
 //BT MTM Resources
 data=DATAZ_\resource\messaging\mtm\btmtm.rsc             resource\messaging\mtm\btmtm.rsc
-#endif // SYMBIAN_EXCLUDE_BLUETOOTH
+#endif // __BT
 
 
 //Test Harness Executable

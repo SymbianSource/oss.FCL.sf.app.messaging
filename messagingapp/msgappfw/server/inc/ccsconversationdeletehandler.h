@@ -25,7 +25,6 @@ class CMsvSession;
 class MMsvSessionObserver;
 class CConversationCache;
 class CCsConversationEntry;
-class MCsConversationDeleteObserver;
 
 /**
  * Delete handler states
@@ -48,8 +47,7 @@ public:
     /**
      * Two phase construction
      */
-    static CCsConversationDeleteHandler* NewL(CCsConversationCache* aCache,
-            MCsConversationDeleteObserver* aObserver);
+    static CCsConversationDeleteHandler* NewL(CCsConversationCache* aCache);
 
     /**
      * Destructor
@@ -74,8 +72,7 @@ public: // From CActive
 		
 private:    
     CCsConversationDeleteHandler();
-    void ConstructL(CCsConversationCache* aCache,
-            MCsConversationDeleteObserver* aObserver);
+    void ConstructL(CCsConversationCache* aCache);
     void IssueRequest();
     void DeleteOneMessage();
     
@@ -84,13 +81,6 @@ private:
      * Own. Msv Session.
      */
     CMsvSession* iSession;
-    
-    /**
-     * iObserverList
-     * List of observers
-     * Own.
-    */
-    MCsConversationDeleteObserver* iObserver;
     
     /**
      * State
@@ -116,6 +106,13 @@ private:
      * Conversation Id currently being deleted.
      */
     TInt iConversationId;
+    
+    /**
+     *  Number of Messages in Sending state that are not deleted
+     */
+    TInt iSendStateMsgs;
+    
+    
     };
 
 #endif // __C_CS_CONVERSATION_DELETE_HANDLER_H__

@@ -18,7 +18,7 @@
 #include "conversationssummarymodel.h"
 #include "conversationsenginedefines.h"
 #include "conversationsengineutility.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "convergedmessage.h"
 
 #include <ccsclientconversation.h>
@@ -214,7 +214,7 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
     HBufC* body = conEntry->Description();
     if( body && body->Length())
         {     
-        QString bodytext(S60QConversions::s60DescToQString(*body));
+        QString bodytext(XQConversions::s60DescToQString(*body));
         item.setData(bodytext, BodyText); 
         item.setData(bodytext, Subject );
         }
@@ -235,20 +235,20 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
     //first name
     if(firstname && firstname->Length())
         {
-    displayName = S60QConversions::s60DescToQString(*firstname);
+    displayName = XQConversions::s60DescToQString(*firstname);
     item.setData(displayName,FirstName); 
         }
     //last name
     HBufC* lastname = conversation.GetLastName();
     if( lastname &&  lastname->Length())
         {          
-    item.setData(S60QConversions::s60DescToQString(*lastname),LastName);
+    item.setData(XQConversions::s60DescToQString(*lastname),LastName);
         }
     //nick name
     HBufC* nickname = conversation.GetNickName();
     if (nickname && nickname->Length())
     {
-        item.setData(S60QConversions::s60DescToQString(*nickname), NickName);
+        item.setData(XQConversions::s60DescToQString(*nickname), NickName);
     }
 
     //item.setData(displayName, NickName);
@@ -258,7 +258,7 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
     QString contactNumber("");
     if ( contactno && contactno->Length() )
         {
-        contactNumber = S60QConversions::s60DescToQString(*contactno);                  
+        contactNumber = XQConversions::s60DescToQString(*contactno);                  
         }        
     item.setData(contactNumber, ConversationAddress);
 

@@ -29,3 +29,4 @@ SUBDIRS += msgnotifications/msgnotifications.pro
 SUBDIRS += smartmessaging/smartmessaging.pro
 SUBDIRS += shareui/shareui.pro
 SUBDIRS += msgui/msgui.pro
+SUBDIRS += msgservices/msgservices.pro

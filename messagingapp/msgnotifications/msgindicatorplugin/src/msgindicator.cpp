@@ -41,7 +41,8 @@
 #define LOC_FAILED_MULTIPLE_MESSAGES hbTrId("Failed Messages")
 #define LOC_OUTGOING_SINGLE_MESSAGE hbTrId("Outgoing Message")
 #define LOC_OUTGOING_MULTIPLE_MESSAGES hbTrId("Outgoing Messages")
-
+#define STATUS_MONO_NEW_MESSAGE QString("qtg_status_new_message")
+#define LOC_BUSINESSCARD hbTrId("Business card")
 /**
  * The number of indicators.
  */
@@ -116,7 +117,7 @@ void ServiceRequestSenderTask::run()
 // @see msgindicator.h
 // ----------------------------------------------------------------------------
 MsgIndicator::MsgIndicator(const QString &indicatorType) :
-    HbIndicatorInterface(indicatorType, HbIndicatorInterface::GroupPriorityHigh,
+    HbIndicatorInterface(indicatorType, HbIndicatorInterface::NotificationCategory,
         InteractionActivated),
 		mIndicatorType(NULL)
 {
@@ -165,8 +166,18 @@ QVariant MsgIndicator::indicatorData(int role) const
     }
     case DecorationNameRole:
     {
-        return IndicatorInfo[mIndicatorType].icon;
-
+        return IndicatorInfo[mIndicatorType].icon;        
+    }
+    case MonoDecorationNameRole:
+    {
+        if (NewIndicatorPlugin == mIndicatorType) {
+            return STATUS_MONO_NEW_MESSAGE;
+        }
+        else {
+            // Don't show status-bar icons for indications other 
+			// than new-message
+            return QVariant();
+        }
     }
     default:
         return QVariant();
@@ -308,6 +319,9 @@ QString MsgIndicator::getSecondaryText(MsgInfo& info)
             if (ECsBlueTooth == info.mMessageType) {
                 QFileInfo fname(secondaryText);
                 secondaryText = fname.fileName();
+            }
+            else if(ECsBioMsg_VCard == info.mMessageType) {
+            secondaryText = LOC_BUSINESSCARD;
             }
         }
         else {

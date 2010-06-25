@@ -143,13 +143,13 @@ public:
      * Sets content to messageId
      * @param messageId, Message Id content
      */
-    void setNotificationMessageId(int messageId);
+    void setNotificationMessageIdL(int messageId);
 
     /**
      * Seeker method for getting mms notification estimated msg size
      * @return Formatted string of msg size
      */
-    QString NotificationMsgSize();
+    QString NotificationMsgSizeL();
     
     /**
      * Seeker method for getting mms notification class type
@@ -184,6 +184,11 @@ public:
      *         KErrGeneral for other cases
      */
     TInt DownloadMessageL(TMsvId aId);
+    
+    /**
+     * Returns the Bio Type of a message
+     */
+    int getMsgSubType(int msgId);
 
 private:
 
@@ -273,7 +278,7 @@ private:
      */
     CMmsNotificationClientMtm* iNotificationClient;
 	
-	TBool iOfflineSupported;	
+    TBool iOfflineSupported;
     };
 
 #endif // CONVERSATION_MSG_STORE_HANDLER_H

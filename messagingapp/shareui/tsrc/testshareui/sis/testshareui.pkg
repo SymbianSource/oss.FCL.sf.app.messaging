@@ -21,7 +21,7 @@
 &EN
 
 ; SIS header: name, uid, version
-#{"shareui"},(0xE5605609),1,0,0, TYPE = SA,RU
+#{"testshareui"},(0x2002DD18),1,0,0, TYPE = SA,RU
 
 ; Localised Vendor name
 %{"Nokia"}
@@ -33,4 +33,4 @@
 "/epoc32/release/armv5/urel/testshareui.exe"    - "!:\sys\bin\testshareui.exe",FR,RI
 "/epoc32/data/z/resource/apps/testshareui.rsc"    - "!:\resource\apps\testshareui.rsc"
 "/epoc32/data/z/private/10003a3f/import/apps/testshareui_reg.rsc"    - "!:\private\10003a3f\import\apps\testshareui_reg.rsc"
-;"/epoc32/data/z/resource/apps/0xE5605609.mif"    - "!:\resource\apps\0xE5605609.mif"
+;"/epoc32/data/z/resource/apps/0x2002DD18.mif"    - "!:\resource\apps\0x2002DD18.mif"

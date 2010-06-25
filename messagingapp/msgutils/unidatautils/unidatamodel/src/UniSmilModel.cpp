@@ -59,7 +59,7 @@
 
 
 // MsgDataUTILS
-#include <UniDataModel.rsg>         // Viewer/Editor Mimetype strings
+#include <unidatamodel.rsg>         // Viewer/Editor Mimetype strings
 #include "UniModelConst.h"              // Definitions and enums
 #include "UniDataUtils.h"
 #include "UniSmilSlide.h"

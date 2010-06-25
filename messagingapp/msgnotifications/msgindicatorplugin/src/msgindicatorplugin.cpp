@@ -23,7 +23,6 @@
 #include <QtPlugin>
 #include <QVariant>
 
-Q_EXPORT_PLUGIN(MsgIndicatorPlugin)
 
 // ----------------------------------------------------------------------------
 // MsgIndicatorPlugin::MsgIndicatorPlugin
@@ -62,7 +61,7 @@ QStringList MsgIndicatorPlugin::indicatorTypes() const
 // @see msgindicatorplugin.h
 // ----------------------------------------------------------------------------
 bool MsgIndicatorPlugin::accessAllowed(const QString &indicatorType,
-    const HbSecurityInfo *securityInfo) const
+    const QVariantMap& securityInfo) const
 {
     Q_UNUSED(indicatorType)
     Q_UNUSED(securityInfo)
@@ -109,3 +108,5 @@ int MsgIndicatorPlugin::typeIndex(const QString &indicatorType) const
     }
     return -1;
 }
+
+Q_EXPORT_PLUGIN2(msgindicatorplugin,MsgIndicatorPlugin)

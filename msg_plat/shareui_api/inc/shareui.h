@@ -37,6 +37,8 @@ class ShareUiPrivate;
 
 /**
  * This class offers message creation and sending services.
+ * this class inturn launches HbDialog with list of services asynchronously
+ * object should be alive till dialog handled completely.so client should create this class instance as a member variable
  */
 class SHAREUI_EXPORT ShareUi  
     {

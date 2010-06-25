@@ -18,7 +18,7 @@
 #ifndef MSGSETTINGENGINE_H_
 #define MSGSETTINGENGINE_H_
 
-#include <QObject.h>
+#include <qobject.h>
 
 //FORWARD DECLARATION
 class SmsSettingsPrivate;
@@ -46,7 +46,7 @@ public:
      */
     enum MmsRetrieval
     {
-        AlwaysAutomatic, AutomInHomeNetwork, Maual, Off, No
+        AlwaysAutomatic, AutomInHomeNetwork, Manual, Off, No
     };
     
 public:

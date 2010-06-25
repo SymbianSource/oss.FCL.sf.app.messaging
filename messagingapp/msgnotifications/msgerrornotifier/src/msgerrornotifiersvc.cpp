@@ -25,17 +25,20 @@
 #include <xqaiwrequest.h>
 #include <xqappmgr.h>
 #include <ccsdefs.h>
+#include <qaction.h>
+#include <xqsystemtoneservice.h>
 
 #define LOC_VIEW hbTrId("txt_messaging_button_view")
 #define LOC_CANCEL hbTrId("txt_common_button_cancel")
 #define LOC_SEND_FAILURE hbTrId("txt_messaging_list_message_sending_failed")
-
+#define LOC_MMS_RETRIEVAL_FAILED hbTrId("txt_messaging_dialog_mms_retrieval_failed")
 //---------------------------------------------------------
 // Constructor
 //---------------------------------------------------------
 MsgErrorNotifierSvc::MsgErrorNotifierSvc(QObject* parent) :
     XQServiceProvider(QLatin1String("messaging.com.nokia.symbian.MsgErrorNotifier"), parent)
 {
+    mSts = new XQSystemToneService();
     publishAll();
 
 }
@@ -44,7 +47,11 @@ MsgErrorNotifierSvc::MsgErrorNotifierSvc(QObject* parent) :
 //---------------------------------------------------------
 MsgErrorNotifierSvc::~MsgErrorNotifierSvc()
 {
-
+    if(mSts)
+        {
+        delete mSts;
+        mSts = NULL;
+        }
 }
 
 //---------------------------------------------------------
@@ -66,7 +73,7 @@ void MsgErrorNotifierSvc::displayErrorNote(QVariantList displayParams)
     int msgType = third.toInt();
     if (msgType == ECsMmsNotification)
     {
-        errorNote.append("Message Retrieval Failed!");//TODO: use logical str name
+        errorNote.append(LOC_MMS_RETRIEVAL_FAILED);
     }
     else
     {
@@ -79,19 +86,22 @@ void MsgErrorNotifierSvc::displayErrorNote(QVariantList displayParams)
     
     messageBox.setTimeout(HbPopup::NoTimeout);
     messageBox.setText(errorNote);
-    HbAction* actionView = new HbAction(LOC_VIEW);
-    messageBox.setPrimaryAction(actionView);
+    QAction* actionView = new QAction(LOC_VIEW,this);
+    messageBox.setAction(actionView,HbDeviceMessageBox::AcceptButtonRole);
 
-    HbAction* actionQuit = new HbAction(LOC_CANCEL);
-    actionQuit->setCommandRole(HbAction::QuitRole);
-    messageBox.setSecondaryAction(actionQuit);
+    QAction* actionQuit = new QAction(LOC_CANCEL,this);
+    messageBox.setAction(actionQuit,HbDeviceMessageBox::RejectButtonRole);
 
     setCurrentRequestAsync();
 
-    HbAction* result = messageBox.exec();
-
-    // TODO: use XQAiwrequest
-    if (result->commandRole() != HbAction::QuitRole) {
+    //Play audio alert when error notification is shown
+    mSts->playTone(XQSystemToneService::MessageSendFailureTone);
+    
+    // launch Messagebox
+    const QAction* result = messageBox.exec();
+  
+    // if accepted launch view else quit
+    if (messageBox.isAcceptAction(result)) {
         QList<QVariant> args;
         QString serviceName("com.nokia.services.hbserviceprovider");
         QString operation("open(qint64)");

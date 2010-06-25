@@ -19,13 +19,13 @@
 
 // ========== INCLUDE FILES ================================
 
-#include <BASCHED.H>
+#include <basched.h>
 #include <icl/imagedata.h>
 
 #include <centralrepository.h>
 
-#include <messagingvariant.hrh>
-#include <messaginginternalcrkeys.h> // for Central Repository keys
+#include <MessagingVariant.hrh>
+#include <MessagingInternalCRKeys.h> // for Central Repository keys
 
 #include <MsgMediaResolver.h>
 #include <MsgImageInfo.h>
@@ -43,11 +43,12 @@
 
 #include <msvids.h>
 #include <MmsEngineDomainCRKeys.h>
-#include <mmssettingsdefs.h>
+#include <msgunieditormmssettingsdefs.h>
 #include <HbMessageBox>
+#include <HbAction>
 #include <mmsconst.h>
 
-#include "msgmonitor.h"
+#include "msgunieditormonitor.h"
 #include "msgunieditorprocessimageoperation.h"
 
 // ========== CONSTANTS ====================================
@@ -77,15 +78,14 @@ _LIT(KTempFilePath,"c:\\temp\\unieditor\\");
 // ---------------------------------------------------------
 //
 CUniEditorProcessImageOperation* CUniEditorProcessImageOperation::NewL(
-    MUniEditorProcessImageOperationObserver &aObserver,
-    RFs& aFs )
+    MUniEditorProcessImageOperationObserver &aObserver)
     {
     CUniEditorProcessImageOperation* self = new ( ELeave ) 
-    CUniEditorProcessImageOperation(aObserver,aFs );
+                    CUniEditorProcessImageOperation(aObserver);
             
     CleanupStack::PushL( self );
     self->ConstructL();
-    CleanupStack::Pop( self );
+    CleanupStack::Pop();
     
     return self;
     }
@@ -95,10 +95,9 @@ CUniEditorProcessImageOperation* CUniEditorProcessImageOperation::NewL(
 // ---------------------------------------------------------
 //
 CUniEditorProcessImageOperation::CUniEditorProcessImageOperation(
-    MUniEditorProcessImageOperationObserver &aObserver,
-    RFs& aFs ) :    CActive( EPriorityStandard ),
-    iObserver(aObserver),
-    iFs( aFs )
+    MUniEditorProcessImageOperationObserver &aObserver) 
+    :    CActive( EPriorityStandard ),
+         iObserver(aObserver)
     {
             CActiveScheduler::Add( this );
     }
@@ -111,6 +110,8 @@ CUniEditorProcessImageOperation::CUniEditorProcessImageOperation(
 //
 void CUniEditorProcessImageOperation::ConstructL()
     {
+    User::LeaveIfError(iFs.Connect());
+    iFs.ShareProtected();            
 
     TInt featureBitmask( 0 );
     
@@ -148,7 +149,7 @@ void CUniEditorProcessImageOperation::ConstructL()
     
     delete repository;
 
-    iMaxMmsSize = MsgMonitor::maxMmsSize();
+    iMaxMmsSize = MsgUnifiedEditorMonitor::maxMmsSize();
     }
 
 // ---------------------------------------------------------
@@ -164,9 +165,13 @@ CUniEditorProcessImageOperation::~CUniEditorProcessImageOperation()
     delete iImageProcessor;
 
     //Since iFs doesnot have recursive dir deletion use file manager
-    CFileMan *fm = CFileMan::NewL(iFs);
-    fm->RmDir(KTempFilePath);
-    delete fm;
+    TRAP_IGNORE(
+        CFileMan *fm = CFileMan::NewL(iFs);
+        fm->RmDir(KTempFilePath);
+        delete fm;
+        );
+
+    iFs.Close();
     }
 
 // ---------------------------------------------------------
@@ -269,7 +274,7 @@ void CUniEditorProcessImageOperation::DoStartCheck()
         {
         iOperationState = EUniProcessImgProcess;
         }
-    CompleteSelf( KErrNone );
+    checkLargeImage();
     }
   
 // ---------------------------------------------------------
@@ -312,6 +317,7 @@ void CUniEditorProcessImageOperation::DoStartResolveL()
     
     //Delete the previous object if present
     delete iNewImageInfo;
+    iNewImageInfo = NULL;
     iNewImageInfo = static_cast<CMsgImageInfo*>(mediaResolver->CreateMediaInfoL( iNewImageFile ) );
     
     mediaResolver->ParseInfoDetailsL( iNewImageInfo, iNewImageFile );
@@ -408,11 +414,14 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
     {
     iProcessMethod = EUniProcessImgMethodNone;
     
-    CMmsConformance* mmsConformance = CMmsConformance::NewL();
-    mmsConformance->CheckCharacterSet( EFalse );
-
-    TMmsConformance conformance = 
-        mmsConformance->MediaConformance( *iImageInfo );
+    CMmsConformance* mmsConformance = NULL;
+    TRAP_IGNORE(mmsConformance = CMmsConformance::NewL());
+    TMmsConformance conformance;
+    if(mmsConformance)
+    {
+        mmsConformance->CheckCharacterSet( EFalse );
+        conformance = mmsConformance->MediaConformance( *iImageInfo );
+    }
     
     if ( conformance.iCanAdapt == EFalse )
         {
@@ -467,9 +476,9 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
 
     if ( !( iProcessMethod & EUniProcessImgMethodScale ) &&
          ( iImageInfo->FileSize() + 
-           MsgMonitor::messageSize() ) > iMaxMmsSize &&
+           MsgUnifiedEditorMonitor::messageSize() ) > iMaxMmsSize &&
          iImageInfo->MimeType().CompareF( KMsgMimeImageJpeg ) == 0 &&
-         (MsgMonitor::messageSize()) < KUniCompressionMargin )
+         (MsgUnifiedEditorMonitor::messageSize()) < KUniCompressionMargin )
         {
         // Only compression needed as image is JPEG that is larger than can be fitted
         // into the message and scaling is not performed. Also current message size
@@ -477,14 +486,14 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
         iProcessMethod |= EUniProcessImgMethodCompress;
         }
     
-    TBool largeImageQuery = EFalse;
+    largeImageQuery = EFalse;
     
     if ( iProcessMethod == EUniProcessImgMethodNone )
         {
         // Image won't be processed
         if ( ( origSize.iWidth > KImageRichWidth ||
                origSize.iHeight > KImageRichHeight ) &&
-             ( iImageInfo->FileSize() + MsgMonitor::messageSize() ) < iMaxMmsSize )
+             ( iImageInfo->FileSize() + MsgUnifiedEditorMonitor::messageSize() ) < iMaxMmsSize )
             {
             // Original image width or height is "non-conformant" and original image would 
             // fit to into the message without any processing.
@@ -501,20 +510,31 @@ TBool CUniEditorProcessImageOperation::CheckNeedToProcess()
             largeImageQuery = ETrue;
             }
         }
-
-    //Large image query     
-    if( largeImageQuery && iMmsCreationMode == EMmsCreationModeWarning)
-    {
-        if(!HbMessageBox::question(LOC_LARGE_IMAGE_NOTE))
-        {
-            return EFalse; // Abort
-        }
-        
-    }
-        
+ 
     iScaleSize = scaleSize;
     return ETrue;
     }
+
+// ---------------------------------------------------------
+// CUniEditorProcessImageOperation::checkLargeImage
+// ---------------------------------------------------------
+//
+void CUniEditorProcessImageOperation::checkLargeImage()
+{
+    //Large image query     
+    if( largeImageQuery && iMmsCreationMode == EMmsCreationModeWarning)
+    {
+        HbMessageBox::question(LOC_LARGE_IMAGE_NOTE, this,
+                               SLOT(onDialogLargeImage(HbAction*)),
+                               HbMessageBox::Yes | HbMessageBox::No); 
+    }
+    else
+    {
+        CompleteSelf(KErrNone);
+    }
+        
+}
+       
 
 // ---------------------------------------------------------
 // CUniEditorProcessImageOperation::CreateEmptyAttachmentL
@@ -676,5 +696,17 @@ void CUniEditorProcessImageOperation::DoCancel()
         }
     }
 
+// ---------------------------------------------------------
+// CUniEditorProcessImageOperation::onDialogLargeImage
+// ---------------------------------------------------------
+//
+void CUniEditorProcessImageOperation::onDialogLargeImage(HbAction* action)
+    {
+    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
+    if (action == dlg->actions().at(1)) {
+        iOperationState = EUniProcessImgError;
+        }
+    CompleteSelf(KErrNone);
+    }
 
 // End of file

@@ -22,11 +22,13 @@
 
 #include <convergedmessageaddress.h>
 
+class QGraphicsLinearLayout;
 class UniViewerDetailsWidget;
 class HbGroupBox;
+class HbFrameItem;
 class UniViewerAddressContainer;
-class UniViewerAttachmentContainer;
 class UniViewerFeeder;
+class UniViewerAttachmentWidget;
 
 class UniViewerHeaderContainer: public HbWidget
 {
@@ -83,7 +85,25 @@ private:
      */
     QString createAddressList(const ConvergedMessageAddressList &addressList);
 
+private slots:
+
+    /**
+     * Slot to know address box state.
+     */
+    void addressBoxToggled(bool state);
+
+signals:
+    /**
+     * this signal is emitted when send message is triggered form UniViewerAddressWidget
+     */
+    void sendMessage(const QString& phoneNumber,const QString& alias);
+
 private:
+
+    /**
+     * Main layout.
+     */
+    QGraphicsLinearLayout *mMainLayout;
 
     /**
      * UniViewerFeeder object
@@ -104,16 +124,21 @@ private:
     HbGroupBox *mHeaderGroupBox;
 
     /**
+     * Separator line
+     * Owned.
+     */
+    HbFrameItem *mSeparator;
+
+    /**
      * UniViewerAddressContainer object
      * owned.
      */
     UniViewerAddressContainer *mAddressContainer;
 
     /**
-     * UniViewerAttachmentContainer object
-     * owned.
+     * List of attachment widgets.
      */
-    UniViewerAttachmentContainer *mAttachmentContainer;
+    QList<UniViewerAttachmentWidget *> mUniViewerAttachmentstList;
 };
 
 #endif /* UNIVIEWER_HEADER_CONTAINER_H */

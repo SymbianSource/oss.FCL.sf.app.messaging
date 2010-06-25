@@ -138,7 +138,7 @@ EXPORT_C void CMmsSettings::Reset()
     iApplicationFolderId =    KMsvNullIndexEntryId;
     iAccesspointArray.Reset();
     iReceivingModeHome =      EMmsReceivingAutomatic;
-    iReceivingModeForeign =   EMmsReceivingManual;
+    iReceivingModeForeign =   EMmsReceivingAutomatic;
     iAcceptPersonal =         ETrue;
     iAcceptAdvertisement =    ETrue;
     iAcceptInformational =    ETrue;

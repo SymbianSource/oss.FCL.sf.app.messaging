@@ -19,19 +19,18 @@
 #include <ccsconversationentry.h>
 #include "ccsconversationcache.h"
 #include "ccsconversationdeletehandler.h"
-#include "mcsconversationdeleteobserver.h"
 
 // ----------------------------------------------------------------------------
 // CCsConversationDeleteHandler::NewL
 // Two Phase Construction
 // ----------------------------------------------------------------------------
 CCsConversationDeleteHandler* CCsConversationDeleteHandler::
-NewL(CCsConversationCache* aCache, MCsConversationDeleteObserver* aObserver)
+NewL(CCsConversationCache* aCache)
     {
     CCsConversationDeleteHandler* self = 
             new (ELeave) CCsConversationDeleteHandler();
     CleanupStack::PushL(self);
-    self->ConstructL(aCache, aObserver);
+    self->ConstructL(aCache);
     CleanupStack::Pop(self); // self
     return self;
     }
@@ -40,7 +39,9 @@ NewL(CCsConversationCache* aCache, MCsConversationDeleteObserver* aObserver)
 // Constructor
 // ----------------------------------------------------------------------------
 CCsConversationDeleteHandler::CCsConversationDeleteHandler():
-        CActive(CActive::EPriorityLow)
+        CActive(CActive::EPriorityLow),
+        iState(EIdle),
+        iConversationEntryList(NULL)
     {
     CActiveScheduler::Add( this );
     }
@@ -48,14 +49,9 @@ CCsConversationDeleteHandler::CCsConversationDeleteHandler():
 // ----------------------------------------------------------------------------
 // Constructor
 // ----------------------------------------------------------------------------
-void CCsConversationDeleteHandler::ConstructL(CCsConversationCache* aCache,
-        MCsConversationDeleteObserver* aObserver)
+void CCsConversationDeleteHandler::ConstructL(CCsConversationCache* aCache)
     {
     iCache = aCache;
-    iState = EIdle;
-    iObserver = aObserver;
-    
-    iConversationEntryList = new (ELeave)RPointerArray<CCsConversationEntry> ();  
     iSession = CMsvSession::OpenSyncL(*this);
     }
 
@@ -63,13 +59,24 @@ void CCsConversationDeleteHandler::ConstructL(CCsConversationCache* aCache,
 // Destructor
 // ----------------------------------------------------------------------------
 CCsConversationDeleteHandler::~CCsConversationDeleteHandler()
-    {
+{
+    // Make sure Aync request cancel.
+    Cancel();
+    
     if(iSession)
         {
         delete iSession;
         iSession = NULL;
         }
+    
+    if (iConversationEntryList)
+    {
+        iConversationEntryList->ResetAndDestroy();
+        iConversationEntryList->Close();
+        delete iConversationEntryList;
+        iConversationEntryList = NULL;
     }
+}
 
 // ----------------------------------------------------------------------------
 // Delete set of messages
@@ -79,7 +86,8 @@ void CCsConversationDeleteHandler::DeleteL(TInt aConversationId)
     // Check if delete in progress
     if ( iCache->IsDeleted(aConversationId) )
         {
-        iObserver->DeleteInProgress(this);
+        // Deletion is in progress for this conversation, so clean up this AO
+        delete this;
         return;
         }
     
@@ -99,6 +107,7 @@ void CCsConversationDeleteHandler::DeleteL(TInt aConversationId)
     iCache->MarkConversationAsDeleted(iConversationId, ETrue);
     
     iDeletedCount = 0;
+    iSendStateMsgs = 0;
     
     // Cleanup  
     CleanupStack::PopAndDestroy(clientConversation);
@@ -120,6 +129,10 @@ void CCsConversationDeleteHandler::DeleteOneMessage()
     if ( ECsSendStateSending != entry->GetSendState() )
         {
         iSession->RemoveEntry(id);
+        }
+    else
+        {
+        iSendStateMsgs++;
         }
     }
 
@@ -160,17 +173,8 @@ void CCsConversationDeleteHandler::RunL()
             break;
             
         case EDeleteComplete:
-            // Mark delete complete.
-            iCache->MarkConversationAsDeleted(iConversationId, EFalse);
-            // Cleanup
-            iDeletedCount = 0;
-            iConversationEntryList->ResetAndDestroy();
-            iConversationEntryList->Close();
-            delete iConversationEntryList;
-            iConversationEntryList = NULL;  
-            
-            // Notify observers
-            iObserver->DeleteComplete(this);
+            iCache->MarkConversationAsDeleted(iConversationId, EFalse, iSendStateMsgs );
+            delete this;
             break;
         }
     }

@@ -323,7 +323,7 @@ EXPORT_C CUniObject* CUniObjectList::GetByUrlL( const TDesC& aUrl )
     TUriParser8 parser;
 	if( !url8bit )
         {
-		return;
+		return NULL;
 		}
 
     if( aUrl.MatchF( KContentIdString ) == 0 )

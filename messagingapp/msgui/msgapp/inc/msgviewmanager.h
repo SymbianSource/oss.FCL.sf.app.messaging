@@ -20,6 +20,7 @@
 #define MSGVIEWMANAGER_H_
 
 #include <QObject>
+#include <QVariantList>
 #include <QVariant>
 
 class HbMainWindow;
@@ -31,6 +32,8 @@ class MsgBaseView;
 class DraftsListView;
 class MsgSettingsView;
 class HbAction;
+class HbView;
+class MsgAudioFetcherView;
 
 class MsgViewManager: public QObject
 {
@@ -40,7 +43,8 @@ public:
     /**
      * constructor
      */
-    MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QObject* parent = 0);
+    MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, 
+                   QObject* parent = 0,int activityMsgId = -1);
 
     /**
      * Destructor.
@@ -83,6 +87,15 @@ public:
      */
     void view(int msgId);
 
+    /**
+     * Returns the current active view.
+     */
+    int currentView();
+	
+    /**
+	 * Saves the content of editor or Cv to draft.
+	 */
+    int saveContentToDraft();
 private:
     /**
      * swiches back to last view after service request is complete.
@@ -152,7 +165,35 @@ private:
      * @param msgId message id
      */
     void handleProvisoningMsg(int msgId);
+    
+	/**
+	* Appends the views to be deleted into a QList to be deleted when view is ready
+	*/
+    void appendViewToBeDeleted(HbView* view);
 
+	 /**
+	  * Save the editor data to be populated
+	  * @param editorData QVariantList
+	  */    
+    void populateUniEditorAfterViewReady(const QVariantList& editorData);
+    
+    /**
+     * Launch Audio fetcher view
+     */
+    void switchToAudioFetcher(const QVariantList& data);
+	
+	/**
+	 * opens unieditor as activity.
+	 * @param activityMsgId activity msg id.
+	 */
+	void openUniEditorActivity(int activityMsgId);
+
+    /**
+    * find contact id corresponding to given phone no.
+    * @param phoneNum
+    */
+    qint32 findContactId(const QString address);
+    
 private slots:
     /**
      * this slot is called on mainwindows back action.
@@ -164,6 +205,33 @@ private slots:
      */
     void switchView(const QVariantList& data);
 
+    /**
+     * This slot is called when viewReady signal is emitted from main window.
+     */
+    void setViewInteractive();
+
+    /**
+     * Slot to delete previous view instances on view switch
+     */
+    void deletePreviousView();
+	
+	/**
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
+     */	
+    void onDialogDeleteMsg(HbAction* action);
+    
+	/**
+     * This slot is called when save tone dialog is launched.
+     * @param action selected action (yes or no).
+     */	
+    void onDialogSaveTone(HbAction* action);
+    
+    /**
+     * When this slot is called the saved editor data is set to the editor
+     */
+    void populateUniEditorView();
+	
 private:
     /**
      * main window reference not owned.
@@ -179,6 +247,7 @@ private:
     UnifiedViewer* mUniViewer;
     DraftsListView* mDraftsListView;
     MsgSettingsView* mSettingsView;
+    MsgAudioFetcherView* mAudioFetcherView;
     HbAction* mBackAction;
 
     int mPreviousView;
@@ -187,6 +256,11 @@ private:
     bool mServiceRequest;
     qint64 mConversationId;
     bool mViewServiceRequest;
+    QList<HbView*> mViewTobeDeleted;
+    HbView* mDummyview;
+    int mMessageId;
+    
+    QVariantList mEditorData;
 };
 
 #endif /* MSGVIEWMANAGER_H_ */

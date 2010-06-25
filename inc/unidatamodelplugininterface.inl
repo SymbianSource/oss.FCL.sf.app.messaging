@@ -18,9 +18,8 @@
 // UniMessageInfo::UniMessageInfo
 // @see header
 //----------------------------------------------------------------
- UniMessageInfo::UniMessageInfo( const QString& filepath,
-                                const int size,
-                                const QString& mimetype ) : mPath (filepath), mSize(size), mMimeType(mimetype)
+UniMessageInfo::UniMessageInfo(const QString& filepath, const int size, const QString& mimetype) :
+    mPath(filepath), mMimeType(mimetype), mSize(size), mProtected(false), mCorrupt(false)
     {
     
     
@@ -86,6 +85,42 @@ inline const int UniMessageInfo::size()
 inline const QString& UniMessageInfo::mimetype()
     {
     return mMimeType;
+    }
+
+//----------------------------------------------------------------
+// UniMessageInfo::isProtected
+// @see header
+//----------------------------------------------------------------
+inline bool UniMessageInfo::isProtected() const
+    {
+    return mProtected;
+    }
+
+//----------------------------------------------------------------
+// UniMessageInfo::setProtected
+// @see header
+//----------------------------------------------------------------
+inline void UniMessageInfo::setProtected(bool isProtected)
+   {
+   mProtected = isProtected;
+   }
+
+//----------------------------------------------------------------
+// UniMessageInfo::isCorrupted
+// @see header
+//----------------------------------------------------------------
+inline bool UniMessageInfo::isCorrupted() const
+    {
+    return mCorrupt;
+    }
+
+//----------------------------------------------------------------
+// UniMessageInfo::setCorrupted
+// @see header
+//----------------------------------------------------------------
+inline void UniMessageInfo::setCorrupted(bool corrupted)
+    {
+    mCorrupt = corrupted;
     }
 
 //----------------------------------------------------------------

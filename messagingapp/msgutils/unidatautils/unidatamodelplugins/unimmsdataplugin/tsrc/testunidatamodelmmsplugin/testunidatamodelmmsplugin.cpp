@@ -20,7 +20,7 @@
 #include <QTimer>
 #include <QSignalSpy>
 #include "convergedmessage.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "unidatamodelplugininterface.h"
 #include "unidatamodelloader.h"
 #include <mmsclient.h>
@@ -168,13 +168,13 @@ void TestUniDataModelMMSPlugin::createMMS(TMsvId pId, TBool subjectField)
     if(subjectField)
         {
         QString subject(TEST_MSG_SUBJECT);
-        HBufC* subj = S60QConversions::qStringToS60Desc(subject);
+        HBufC* subj = XQConversions::qStringToS60Desc(subject);
         iMmsClientMtm->SetSubjectL(*subj);
         }
 
     //Sender
     QString sender(TEST_MSG_FROM1);
-    HBufC* addr = S60QConversions::qStringToS60Desc(sender);
+    HBufC* addr = XQConversions::qStringToS60Desc(sender);
     
     
     if (addr)
@@ -191,7 +191,7 @@ void TestUniDataModelMMSPlugin::createMMS(TMsvId pId, TBool subjectField)
     
     //Recipient
     QString recipient(TEST_MSG_RECIEPIENT1);
-    HBufC* addr2 = S60QConversions::qStringToS60Desc(recipient);
+    HBufC* addr2 = XQConversions::qStringToS60Desc(recipient);
     if (addr2)
         {
         CleanupStack::PushL(addr2);
@@ -200,7 +200,7 @@ void TestUniDataModelMMSPlugin::createMMS(TMsvId pId, TBool subjectField)
         }
     
     QString recipient2(TEST_MSG_RECIEPIENT2);
-    HBufC* addr3 = S60QConversions::qStringToS60Desc(recipient2);
+    HBufC* addr3 = XQConversions::qStringToS60Desc(recipient2);
     if (addr3)
         {
         CleanupStack::PushL(addr3);
@@ -209,7 +209,7 @@ void TestUniDataModelMMSPlugin::createMMS(TMsvId pId, TBool subjectField)
         }
         
     QString recipient3(TEST_MSG_RECIEPIENT3);
-        HBufC* addr4 = S60QConversions::qStringToS60Desc(recipient3);
+        HBufC* addr4 = XQConversions::qStringToS60Desc(recipient3);
         if (addr4)
             {
             CleanupStack::PushL(addr4);
@@ -377,7 +377,7 @@ void TestUniDataModelMMSPlugin::createInboxImageMMS()
     
     //Sender
     QString sender(TEST_MSG_FROM1);
-    HBufC* addr = S60QConversions::qStringToS60Desc(sender);
+    HBufC* addr = XQConversions::qStringToS60Desc(sender);
     
     if (addr)
         {
@@ -393,7 +393,7 @@ void TestUniDataModelMMSPlugin::createInboxImageMMS()
     
     //Recipient
     QString recipient(TEST_MSG_RECIEPIENT1);
-    HBufC* addr2 = S60QConversions::qStringToS60Desc(recipient);
+    HBufC* addr2 = XQConversions::qStringToS60Desc(recipient);
     if (addr2)
         {
         CleanupStack::PushL(addr2);

@@ -20,6 +20,7 @@
 
 // SYSTEM INCLUDES
 #include <hbwidget.h>
+#include <HbIcon>
 
 // FORWORD DECLARATIONS
 class HbFrameItem;
@@ -30,24 +31,23 @@ class HbTextItem;
  * This class represents the custom layouted widget to show
  * the conversation inside a bubble shape in the conversation view.
  */
-class MsgConversationWidget : public HbWidget
+class MsgConversationWidget: public HbWidget
 {
 Q_OBJECT
 
-    Q_PROPERTY(int priority READ priority WRITE setPriority)
-    Q_PROPERTY(bool hasAttachment READ hasAttachment WRITE setAttachment)
-    Q_PROPERTY(bool hasImage READ hasImage WRITE setImage)
-    Q_PROPERTY(bool hasAudio READ hasAudio WRITE setAudio)
-    Q_PROPERTY(bool hasVideo READ hasVideo WRITE setVideo)
-    Q_PROPERTY(bool isPlayable READ isPlayable WRITE setPlayable)
-    Q_PROPERTY(bool isIncoming READ isIncoming WRITE setIncoming)
-    Q_PROPERTY(bool isMMS READ isMMS WRITE setMMS)
-    Q_PROPERTY(bool isMMSNotification READ isMMSNotification WRITE setMMSNotification)
-    Q_PROPERTY(bool isUnread READ isUnread WRITE setUnread)
-    Q_PROPERTY(int sendingState READ sendingState WRITE setSendingState)
-    Q_PROPERTY(int notificationState READ notificationState WRITE setNotificationState)
-
-    Q_ENUMS(MessageState)
+Q_ENUMS(SendingState)
+Q_PROPERTY(int priority READ priority WRITE setPriority)
+Q_PROPERTY(bool hasAttachment READ hasAttachment WRITE setAttachment)
+Q_PROPERTY(bool hasImage READ hasImage WRITE setImage)
+Q_PROPERTY(bool hasAudio READ hasAudio WRITE setAudio)
+Q_PROPERTY(bool hasVideo READ hasVideo WRITE setVideo)
+Q_PROPERTY(bool isPlayable READ isPlayable WRITE setPlayable)
+Q_PROPERTY(bool isIncoming READ isIncoming WRITE setIncoming)
+Q_PROPERTY(bool isMMS READ isMMS WRITE setMMS)
+Q_PROPERTY(bool isMMSNotification READ isMMSNotification WRITE setMMSNotification)
+Q_PROPERTY(bool isUnread READ isUnread WRITE setUnread)
+Q_PROPERTY(SendingState sendingState READ sendingState WRITE setSendingState)
+Q_PROPERTY(int notificationState READ notificationState WRITE setNotificationState)
 
 public:
 
@@ -66,6 +66,15 @@ public:
 public:
 
     /**
+     * Enum defining Message Sending State
+     * @attention This enum can have values from 0 to 255 only.
+     */
+    enum SendingState
+    {
+        Unknown = 0x00, Sent = 0x01, Sending = 0x02, Pending = 0x03, Failed = 0x04
+    };
+
+    /**
      * Set subject for this widget
      * @param QString
      */
@@ -78,10 +87,10 @@ public:
     void setBodyText(const QString &bodyText);
 
     /**
-     * Set preview icon path for this widget
-     * @param QString
+     * Set preview icon for this widget
+     * @param HbIcon, preview-icon
      */
-    void setPreviewIconPath(const QString &previewPath);
+    void setPreviewIcon(HbIcon& icon);
 
     /**
      * Set priority property
@@ -210,7 +219,7 @@ public:
      * @return bool
      */
     bool isMMSNotification();
-    
+
     /**
      * Set the sending state.
      * Maps ConvergedMessage::SendingState to MessageState.
@@ -222,7 +231,7 @@ public:
      * Returns the sending state.
      * @return Returns one of the states from enum SendingState.
      */
-    int sendingState();
+    SendingState sendingState();
 
     /**
      * Set the notification state.
@@ -236,7 +245,7 @@ public:
      * @return Returns one of the states from enum NotificationState.
      */
     int notificationState();
-    
+
     /**
      * Sets the Timestamp.
      * @param timeStamp Timestamp to be set.
@@ -264,6 +273,31 @@ public:
      */
     void pressStateChanged(bool pressed, bool animate);
 
+	/**
+     * Function to reset widget items.
+     */
+    void resetProperties();
+
+    /**
+     * Function to repolish widget.
+     */
+    void repolishWidget();
+
+protected:
+    
+    /*
+     * @see HbWidget
+     */
+    virtual void polish(HbStyleParameters &params);
+    
+private slots:
+	
+    /*
+     * Handler for orientation changed
+     * @param orientation Qt::Orientation
+     */
+	void orientationchanged(Qt::Orientation orientation);
+		
 private:
 
     /**
@@ -274,19 +308,6 @@ private:
 public:
 
     /**
-     * Enum defining Message Sending State
-     * @attention This enum can have values from 0 to 255 only.
-     */
-    enum MessageState
-    {
-        Unknown = 0x00,
-        Sent = 0x01,
-        Sending = 0x02,
-        Pending = 0x03,
-        Failed = 0x04
-    };
-    
-    /**
      * Enum defining MMS Notification's Msg State
      * These are added here so that notification state 
      * can be used inside css in future
@@ -294,13 +315,13 @@ public:
      * Add any new states only at the bottom of this enum
      */
     enum NotificationState
-        {
+    {
         NotifUnknown = 0x00,
         NotifReadyForFetching = 0x01,
         NotifRetrieving = 0x02,
         NotifExpired = 0x03,
-        NotifFailed = 0x04, 
-        };
+        NotifFailed = 0x04,
+    };
 
 private:
 
@@ -355,7 +376,7 @@ private:
      * Holds info if this widget is MMS Notification
      */
     bool mIsMMSNotification;
-    
+
     /**
      * Info about message priority.
      * @attention Stores high/low/normal priority.
@@ -366,13 +387,13 @@ private:
     /**
      * Holds sending state information.
      */
-    int mSendingState;
+    MsgConversationWidget::SendingState mSendingState;
 
     /**
      * Holds Notification state information.
      */
     int mNotificationState;
-    
+
     /**
      * Graphics Item to hold new message icon.
      * Owned

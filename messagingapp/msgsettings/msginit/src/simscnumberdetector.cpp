@@ -256,6 +256,13 @@ ReadDefaultSettingsFromSharedDataL(CSmsSettings* aServiceSettings)
             }
         aServiceSettings->SetSmsBearer((CSmsSettings::TMobileSmsBearer) readedSetting);
 
+        // Check if we need to store SMSC time stamp OR device Time stamp
+        if (iCenRepSession->Get(KSmumShowSMSCTimeStamp, readedSetting) != KErrNone) 
+					 {
+            readedSetting = 0;
+       		 }
+        aServiceSettings->SetUseServiceCenterTimeStampForDate(readedSetting);
+
         // Reply via same centre 
         if (iCenRepSession->Get(KSmumRemoveReplyViaSameCentre, readedSetting)
                 != KErrNone)
@@ -308,22 +315,15 @@ void CMsgSimOperation::StartL()
         {
         if ( HasSIMChanged() || HasNoSmscSettings() )
             {
-            QDEBUG_WRITE("CMsgSimOperation::StartL Reading sim settings") 
+            QDEBUG_WRITE("CMsgSimOperation::StartL Reading sim settings start") 
 
-            CMsvOperationWait* wait = CMsvOperationWait::NewLC();
+            CMsvOperationActiveSchedulerWait* wait = CMsvOperationActiveSchedulerWait::NewLC();
             iSimOperation = iSmsClientMtm->ReadSimParamsL(wait->iStatus);       
             wait->Start();
-
-            QDEBUG_WRITE("CMsgSimOperation::StartL Before CActiveScheduler::Start") 
-
-            CActiveScheduler::Start();
-
-            QDEBUG_WRITE("CMsgSimOperation::StartL After CActiveScheduler::Start") 
-
-            TInt err = wait->iStatus.Int(); 
+            TInt err = wait->iStatus.Int();
             StartRunL(err);
             CleanupStack::PopAndDestroy();
-
+						QDEBUG_WRITE("CMsgSimOperation::StartL Reading sim settings end") 
             }
         }
     CompleteClientRequest(0);
@@ -510,8 +510,7 @@ TBool CMsgSimOperation::IsSIMPresent()
 
     TInt status = KErrNone;
     TInt value = 0;
-
-    status = RProperty::Get(KPSUidStartup, KPSSimStatus, value);
+		status = RProperty::Get(KPSUidStartup, KPSSimStatus, value);
 
     if (status == KErrNone && value != ESimNotPresent)
         {
@@ -519,14 +518,9 @@ TBool CMsgSimOperation::IsSIMPresent()
 
         return ETrue;      
         }
-    else
-        {
-        QDEBUG_WRITE("CMsgSimOperation::IsSIMPresent returned False")
-
-        return EFalse;    
-        }
-
-
+    
+		QDEBUG_WRITE("CMsgSimOperation::IsSIMPresent returned False")
+		return EFalse;
     }
 
 TBool CMsgSimOperation::HasSIMChanged()

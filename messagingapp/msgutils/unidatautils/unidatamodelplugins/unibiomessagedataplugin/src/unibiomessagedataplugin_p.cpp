@@ -30,9 +30,9 @@
 #include "debugtraces.h"
 
 #include <QDateTime>
-#include <s60qconversions.h>
+#include <xqconversions.h>
 #include <mmsvattachmentmanager.h>
-
+#include <mmsvattachmentmanagersync.h>
 #include "convergedmessage.h"
 #include "convergedmessageaddress.h"
 #include "unibiomessagedataplugin_p.h"
@@ -49,8 +49,17 @@ _LIT(KUnixEpoch, "19700000:000000.000000");
 UniBioMessageDataPluginPrivate::~UniBioMessageDataPluginPrivate()
 {
     q_ptr = NULL;
-    if (iMsvEntry)
+    
+    if(attachmentProcessed == EFalse && iAttachmentCount == 1)
     {
+        CMsvStore* store = iMsvEntry->EditStoreL();
+        CleanupStack::PushL(store);
+        MMsvAttachmentManagerSync& attachMan = store->AttachmentManagerExtensionsL();
+        attachMan.RemoveAttachmentL(0);
+        CleanupStack::PopAndDestroy();
+    }
+    
+    if (iMsvEntry) {
         delete iMsvEntry;
     }
 
@@ -141,7 +150,7 @@ void UniBioMessageDataPluginPrivate::body(QString& aBodyText)
     HBufC* buf = HBufC::NewL(len);
     TPtr bufPtr = buf->Des();
     textBody.ExtractSelectively(bufPtr, 0, len, CPlainText::EExtractAll);
-    aBodyText = S60QConversions::s60DescToQString(*buf);
+    aBodyText = XQConversions::s60DescToQString(*buf);
     delete buf;
 }
 
@@ -183,8 +192,8 @@ void UniBioMessageDataPluginPrivate::toRecipientList(
 
         ConvergedMessageAddress
                 * messageAddress =
-                        new ConvergedMessageAddress(S60QConversions::s60DescToQString(address),
-                                                    S60QConversions::s60DescToQString(name));
+                        new ConvergedMessageAddress(XQConversions::s60DescToQString(address),
+                                                    XQConversions::s60DescToQString(name));
         mAddressList.append(messageAddress);
     }
     CleanupStack::PopAndDestroy(3, pText);
@@ -209,7 +218,7 @@ void UniBioMessageDataPluginPrivate::fromAddress(QString& messageAddress)
     smsHeader->RestoreL(*store);
 
     messageAddress
-            = S60QConversions::s60DescToQString(smsHeader->FromAddress());
+            = XQConversions::s60DescToQString(smsHeader->FromAddress());
     CleanupStack::PopAndDestroy(3, pText);
 }
 
@@ -233,8 +242,7 @@ int UniBioMessageDataPluginPrivate::timeStamp()
 //---------------------------------------------------------------
 RFile UniBioMessageDataPluginPrivate::attachmentL()
 {
-    if (attachmentProcessed)
-    {
+    if (attachmentProcessed) {
 
         CMsvStore* store1 = iMsvEntry->ReadStoreL();
         CleanupStack::PushL(store1);
@@ -244,33 +252,52 @@ RFile UniBioMessageDataPluginPrivate::attachmentL()
         return file;
     }
 
-    CMsvEntrySelection* selection = new (ELeave) CMsvEntrySelection;
-    CleanupStack::PushL(selection);
-
-    selection->AppendL(iMessageId);
-
-    TBuf8<1> aParameter;
-    CMsvOperationActiveSchedulerWait* wait = CMsvOperationActiveSchedulerWait::NewLC();
+    RFile file;
     
-    CMsvOperation* operation =
-            iBioClientMtm->InvokeAsyncFunctionL(KBiosMtmParse,
-                                                *selection,
-                                                aParameter,
-                                                wait->iStatus);
+    if (iMsvEntry->Entry().SendingState() != KMsvSendStateNotApplicable
+        || iMsvEntry->Entry().SendingState() != KMsvSendStateUnknown) {
 
-    wait->Start();
+        CMsvStore* store = iMsvEntry->ReadStoreL();
+        CleanupStack::PushL(store);
+        MMsvAttachmentManager& attachMan = store->AttachmentManagerL();
 
-    CMsvStore* store = iMsvEntry->ReadStoreL();
-    CleanupStack::PushL(store);
-    MMsvAttachmentManager& attachMan = store->AttachmentManagerL();
+        iAttachmentCount = attachMan.AttachmentCount();
 
-    iAttachmentCount = attachMan.AttachmentCount();
+        if (iAttachmentCount > 0) {
+            file = attachMan.GetAttachmentFileL(0);
+        }
+        CleanupStack::PopAndDestroy(store);
 
-    RFile file = attachMan.GetAttachmentFileL(0);
+    }
 
-    delete operation;
-    CleanupStack::PopAndDestroy(3,selection);
-    attachmentProcessed = ETrue;
+    if (iAttachmentCount == 0) {
+        CMsvEntrySelection* selection = new (ELeave) CMsvEntrySelection;
+        CleanupStack::PushL(selection);
+
+        selection->AppendL(iMessageId);
+
+        TBuf8<1> aParameter;
+        CMsvOperationActiveSchedulerWait* wait = CMsvOperationActiveSchedulerWait::NewLC();
+
+        CMsvOperation* operation = iBioClientMtm->InvokeAsyncFunctionL(KBiosMtmParse, *selection,
+            aParameter, wait->iStatus);
+
+        wait->Start();
+
+        CMsvStore* store = iMsvEntry->ReadStoreL();
+        CleanupStack::PushL(store);
+        MMsvAttachmentManager& attachMan = store->AttachmentManagerL();
+
+        iAttachmentCount = attachMan.AttachmentCount();
+		
+        if(iAttachmentCount) {
+         file = attachMan.GetAttachmentFileL(0);
+		}
+
+        delete operation;
+        CleanupStack::PopAndDestroy(3, selection);
+        attachmentProcessed = ETrue;
+    }
     return file;
 
 }
@@ -282,8 +309,7 @@ RFile UniBioMessageDataPluginPrivate::attachmentL()
 
 int UniBioMessageDataPluginPrivate::attachmentCount()
 {
-    if (!attachmentProcessed)
-    {
+    if (!attachmentProcessed) {
         RFile file = attachmentL();
         file.Close();
     }

@@ -58,7 +58,16 @@ CCsSession* CCsSession::NewL(CCsServer* aServer)
 // Construtor
 // ----------------------------------------------------------------------------
 CCsSession::CCsSession(CCsServer* aServer) :
-    iServer(aServer)
+    iServer(aServer),
+	    iDes(NULL),
+	    iMonitoredConversation(NULL),
+	    iBufferOverflow(EFalse),
+	    iGetConversationBufferOverflow( EFalse),
+	    iNotifyHandling(EFalse),
+	    iConversationListChangeObserver(EFalse),
+	    iConversationChangeObserver(EFalse),
+	    iCachingChangeObserver(EFalse),
+	    iReqCnt(1) //Let's start the event ID from 1    
 {
 }
 
@@ -70,20 +79,9 @@ void CCsSession::ConstructL()
 {
     PRINT ( _L("Enter CCsSession::ConstructL") );
 
-    iBufferOverflow = EFalse;
-    iGetConversationBufferOverflow = EFalse;
-    des = NULL;
-
-    iNotifyHandling = EFalse;
-    iConversationListChangeObserver = EFalse;
-    iConversationChangeObserver = EFalse;
-    iCachingChangeObserver = EFalse;
-    iMonitoredConversation = NULL;
 
     // initialize the event List
     iEventList = new (ELeave) RPointerArray<CCsConversationEvent> ();
-
-    iReqCnt = 1; //Let's start the event ID from 1
 
     PRINT ( _L("End CCsSession::ConstructL") );
 }
@@ -96,14 +94,14 @@ CCsSession::~CCsSession()
 {
     PRINT ( _L("Enter CCsSession::~CCsSession") );
 
-    if (des)
-    {
-        delete des;
-        des = NULL;
-    }
-
-    if (iEventList)
-    {
+    if ( iDes )
+        {
+        delete iDes;
+        iDes = NULL;
+        }
+		
+    if ( iEventList )
+        {
         iEventList->ResetAndDestroy();
         iEventList->Close();
         delete iEventList;
@@ -133,6 +131,12 @@ void CCsSession::ServiceL(const RMessage2& aMessage)
     // Check the error status returned
     if (errStatus != KErrNone)
     {
+        // Free memory.
+        if(iDes)
+            {
+            delete iDes;
+            iDes=NULL;
+            }
         aMessage.Complete(errStatus);
     }
 }
@@ -228,6 +232,11 @@ void CCsSession::DoServiceL(const RMessage2& aMessage)
             PRINT ( _L("Received function EGetConversationIdFromAddress") )
             GetConversationIdfromAddressL(aMessage);
             break;
+
+        case EGetConversationFromConversationId:
+            PRINT ( _L("Received function EGetConversationFromConversationId") )
+            GetConversationFromConversationIdL(aMessage);
+            break;
 			
 		case EGetConversationFromMessageId:
             PRINT ( _L("Received function EGetConversationFromMessageId") )
@@ -249,6 +258,11 @@ void CCsSession::DoServiceL(const RMessage2& aMessage)
 // ----------------------------------------------------------------------------
 void CCsSession::ServiceError(const RMessage2& aMessage, TInt aError)
 {
+    if(iDes)
+        {
+        delete iDes;
+        iDes=NULL;
+        }
     aMessage.Complete(aError);
 }
 
@@ -267,14 +281,13 @@ void CCsSession::GetConversationListL(const RMessage2& aMessage)
     {
         RPointerArray<CCsClientConversation>* ClientConversationList =
                 new (ELeave) RPointerArray<CCsClientConversation> ();
-
+        CleanupResetAndDestroyPushL(ClientConversationList);
         // get cache pointer
         CCsConversationCache* cache = iServer->ConversationCacheInterface();
 
         // Call cache function to get recent conversation entry list
         // with dispaly name for all stored conversation entry ID
         cache->GetConversationListL(ClientConversationList);
-        CleanupStack::PushL(ClientConversationList);
 
         //write all list data into stream
         // create a new buffer for writing into stream
@@ -309,24 +322,19 @@ void CCsSession::GetConversationListL(const RMessage2& aMessage)
 
         // --------------------------------------------------------------
         // Create a heap descriptor from the buffer
-        des = HBufC8::NewLC(buf->Size());
-        CleanupStack::Pop(des);
-        TPtr8 ptr(des->Des());
+        iDes = HBufC8::NewL(buf->Size());
+        TPtr8 ptr(iDes->Des());
         buf->Read(0, ptr, buf->Size());
 
-        // cleanup
+        // Cleanup
         CleanupStack::PopAndDestroy(2, buf); // writestream, buf
-        CleanupStack::Pop(ClientConversationList);
-
-        // destroy objects inside list
-        ClientConversationList->ResetAndDestroy();
-        ClientConversationList->Close();
-        delete ClientConversationList;
-        ClientConversationList = NULL;
-    }
+        
+        // Cleanup ClientConversationList
+        CleanupStack::PopAndDestroy(ClientConversationList);
+        }
 
     TInt rcevdBufferSize = aMessage.GetDesMaxLength(1);
-    TInt reqdBufferSize = des->Size();
+    TInt reqdBufferSize  = iDes->Size();
 
     PRINT1 ( _L("Received buffer size = %d"), rcevdBufferSize );
     PRINT1 ( _L("Required buffer size = %d"), reqdBufferSize );
@@ -349,13 +357,13 @@ void CCsSession::GetConversationListL(const RMessage2& aMessage)
         PRINT ( _L("Adequate buffer received") );
         PRINT ( _L("Packing the results in response") )
 
-        aMessage.Write(1, *des);
+        aMessage.Write(1, *iDes);
         aMessage.Complete(EGetConversationListOperationComplete);
         iBufferOverflow = EFalse;
-        delete des;
-        des = NULL;
-    }
-
+        delete iDes;
+        iDes = NULL;
+        }
+    
     PRINT_TIMESTAMP ("End CCsSession::GetConversationListL");
     PRINT ( _L("End CCsSession::GetConversationListL") );
 }
@@ -375,15 +383,13 @@ void CCsSession::GetConversationUnreadListL(const RMessage2& aMessage)
         {
         RPointerArray<CCsClientConversation>* ClientConversationList =
                 new (ELeave) RPointerArray<CCsClientConversation> ();
-
+        CleanupResetAndDestroyPushL(ClientConversationList);
         // get cache pointer
         CCsConversationCache* cache = iServer->ConversationCacheInterface();
 
         // Call cache function to get recent conversation entry list
         // with dispaly name for all stored conversation entry ID
         cache->GetConversationUnreadListL(ClientConversationList);
-
-        CleanupStack::PushL(ClientConversationList);
 
         //write all list data into stream
         // create a new buffer for writing into stream
@@ -417,24 +423,18 @@ void CCsSession::GetConversationUnreadListL(const RMessage2& aMessage)
 
         // --------------------------------------------------------------
         // Create a heap descriptor from the buffer
-        des = HBufC8::NewLC(buf->Size());
-        CleanupStack::Pop(des);
-        TPtr8 ptr(des->Des());
+        iDes = HBufC8::NewL(buf->Size());
+        TPtr8 ptr(iDes->Des());
         buf->Read(0, ptr, buf->Size());
 
         // cleanup
         CleanupStack::PopAndDestroy(2, buf); // writestream, buf
-        CleanupStack::Pop(ClientConversationList);
+        CleanupStack::PopAndDestroy(ClientConversationList);
 
-        // destroy objects inside list
-        ClientConversationList->ResetAndDestroy();
-        ClientConversationList->Close();
-        delete ClientConversationList;
-        ClientConversationList = NULL;
         }
 
     TInt rcevdBufferSize = aMessage.GetDesMaxLength(1);
-    TInt reqdBufferSize  = des->Size();
+    TInt reqdBufferSize  = iDes->Size();
 
     PRINT1 ( _L("Received buffer size = %d"), rcevdBufferSize );
     PRINT1 ( _L("Required buffer size = %d"), reqdBufferSize );
@@ -458,11 +458,11 @@ void CCsSession::GetConversationUnreadListL(const RMessage2& aMessage)
 
         TPckgC<TInt> overflowPackage(EFalse);
         aMessage.WriteL(0, overflowPackage);
-        aMessage.Write(1, *des);
+        aMessage.Write(1, *iDes);
         aMessage.Complete(KErrNone);
         iBufferOverflow = EFalse;
-        delete des;
-        des = NULL;
+        delete iDes;
+        iDes = NULL;
         }
 
     PRINT_TIMESTAMP ("End CCsSession::GetConversationUnreadListL");
@@ -502,9 +502,9 @@ void CCsSession::GetConversationsL(const RMessage2& aMessage)
         CleanupStack::PopAndDestroy(2, buffer);//stream, buffer
 
         CleanupStack::PushL(ClientConversation);
-        RPointerArray<CCsConversationEntry>* conversationEntryList =
-                new (ELeave) RPointerArray<CCsConversationEntry> ();
-        CleanupStack::PushL(conversationEntryList);
+        RPointerArray<CCsConversationEntry>* conversationEntryList=
+                new (ELeave) RPointerArray<CCsConversationEntry>(10);
+        CleanupResetAndDestroyPushL(conversationEntryList);
 
         // get conversationlist for given ClientConversation 
         cache->GetConversationsL(ClientConversation, conversationEntryList);
@@ -535,24 +535,19 @@ void CCsSession::GetConversationsL(const RMessage2& aMessage)
 
         // --------------------------------------------------------------
         // Create a heap descriptor from the buffer
-        des = HBufC8::NewLC(buf->Size());
-        CleanupStack::Pop(des);
-        TPtr8 ptr(des->Des());
+        iDes = HBufC8::NewL(buf->Size());
+        TPtr8 ptr(iDes->Des());
         buf->Read(0, ptr, buf->Size());
 
         CleanupStack::PopAndDestroy(2, buf); // writestream, buf
-        CleanupStack::Pop(conversationEntryList);
-
+     
         // Cleanup
-        conversationEntryList->ResetAndDestroy();
-        conversationEntryList->Close();
-        delete conversationEntryList;
-        conversationEntryList = NULL;
+        CleanupStack::PopAndDestroy(conversationEntryList);
         CleanupStack::PopAndDestroy(ClientConversation);
     }
 
     TInt rcevdBufferSize = aMessage.GetDesMaxLength(1);
-    TInt reqdBufferSize = des->Size();
+    TInt reqdBufferSize  = iDes->Size();
 
     PRINT1 ( _L("Received buffer size = %d"), rcevdBufferSize );
     PRINT1 ( _L("Required buffer size = %d"), reqdBufferSize );
@@ -574,12 +569,12 @@ void CCsSession::GetConversationsL(const RMessage2& aMessage)
         PRINT ( _L("Adequate buffer received") );
         PRINT ( _L("Packing the results in response") )
 
-        aMessage.Write(1, *des);
+        aMessage.Write(1, *iDes);
         aMessage.Complete(EGetConversationOperationComplete);
         iGetConversationBufferOverflow = EFalse;
-        delete des;
-        des = NULL;
-    }
+        delete iDes;
+        iDes = NULL;
+        }
 
     PRINT ( _L("End CCsSession::GetConversationsL") );
 }
@@ -698,6 +693,57 @@ void CCsSession::HandleDeleteConversationListEventL(
     }
 
     PRINT ( _L("End CCsSession::HandleDeleteConversationListEventL") );
+}
+
+// ----------------------------------------------------------------------------
+// CCsSession::HandlePartialDeleteConversationListEventL
+// Notify client about partial delete conversation event
+// ----------------------------------------------------------------------------
+
+void CCsSession::HandlePartialDeleteConversationListEvent(
+                                                    CCsClientConversation* aClientConversation)
+{
+    PRINT ( _L("Enter CCsSession::HandlePartialDeleteConversationListEvent") );
+
+    if (!iConversationListChangeObserver)
+        return;
+    
+    if (! (iNotifyHandling))
+    {
+        //append in notify list
+        CCsConversationEvent* conversationEvent = CCsConversationEvent::NewL();
+        conversationEvent->SetClientConversationL(*aClientConversation);
+        CleanupStack::PushL(conversationEvent);
+        conversationEvent->SetEvent(KConversationListEventPartialDelete);
+        iEventList->AppendL(conversationEvent);
+        CleanupStack::Pop(conversationEvent);
+    }
+    else
+    {
+        // create a new buffer for writing into stream
+        CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
+        CleanupStack::PushL(buf);
+
+        RBufWriteStream writeStream(*buf);
+        writeStream.PushL();
+
+        //externalize ClientConversation
+        aClientConversation->ExternalizeL(writeStream);
+
+        // Results are already packed in the stream
+        writeStream.CommitL();
+
+        // --------------------------------------------------------------
+        // Create a heap descriptor from the buffer
+        HBufC8* notifyDes = HBufC8::NewLC(buf->Size());
+        TPtr8 ptr(notifyDes->Des());
+        buf->Read(0, ptr, buf->Size());
+
+        iAsyncReqRMessage.Write(1, *notifyDes);
+        iAsyncReqRMessage.Complete(EPartialDeleteConversationListEvent);
+        CleanupStack::PopAndDestroy(3, buf); // notifyDes, writestream, buf
+        iNotifyHandling = EFalse;
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -865,8 +911,7 @@ void CCsSession::GetCachingStatusL(const RMessage2& aMessage)
     // --------------------------------------------------------------
 
     // Create a heap descriptor from the buffer
-    HBufC8* des = HBufC8::NewLC(buf->Size());
-    CleanupStack::Pop(des);
+    HBufC8* des = HBufC8::NewL(buf->Size());
     TPtr8 ptr(des->Des());
     buf->Read(0, ptr, buf->Size());
 
@@ -904,8 +949,7 @@ void CCsSession::GetTotalUnreadCountL(const RMessage2& aMessage)
     // --------------------------------------------------------------
 
     // Create a heap descriptor from the buffer
-    HBufC8* des = HBufC8::NewLC(buf->Size());
-    CleanupStack::Pop(des);
+    HBufC8* des = HBufC8::NewL(buf->Size());
     TPtr8 ptr(des->Des());
     buf->Read(0, ptr, buf->Size());
 
@@ -1043,50 +1087,58 @@ void CCsSession::HandleNewConversationEventL(
     if (!iConversationChangeObserver)
         return;
 
-    if (aClientConversation->GetConversationEntryId()
-            != iMonitoredConversation->GetConversationEntryId())
-        return;
-
-    if (! (iNotifyHandling))
+    //this is check to send notif to clients for a new message
+    //1. if the client is subscribed with contact id ==> then send
+    //2. if the client is subscribed with conv id ---> then send
+    // else dont send
+    
+    if ((aClientConversation->GetContactId() == 
+            iMonitoredConversation->GetContactId() && 
+            aClientConversation->GetContactId() != -1)
+            ||(aClientConversation->GetConversationEntryId() == 
+                    iMonitoredConversation->GetConversationEntryId()))
     {
-        //append in notify list
-        CCsConversationEvent* conversationEvent = CCsConversationEvent::NewL();
-        CleanupStack::PushL(conversationEvent);
-        conversationEvent->SetClientConversationL(*aClientConversation);
-        conversationEvent->SetEvent(KConversationEventNew);
-        iEventList->AppendL(conversationEvent);
-        CleanupStack::Pop(conversationEvent);
+
+        if (! (iNotifyHandling))
+        {
+            //append in notify list
+            CCsConversationEvent* conversationEvent = CCsConversationEvent::NewL();
+            CleanupStack::PushL(conversationEvent);
+            conversationEvent->SetClientConversationL(*aClientConversation);
+            conversationEvent->SetEvent(KConversationEventNew);
+            iEventList->AppendL(conversationEvent);
+            CleanupStack::Pop(conversationEvent);
+        }
+        else
+        {
+            // create a new buffer for writing into stream
+            CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
+            CleanupStack::PushL(buf);
+    
+            RBufWriteStream writeStream(*buf);
+            writeStream.PushL();
+    
+            //externalize ClientConversation
+            aClientConversation->ExternalizeL(writeStream);
+    
+            // Results are already packed in the stream
+            writeStream.CommitL();
+            // --------------------------------------------------------------
+    
+            // Create a heap descriptor from the buffer
+            HBufC8* des = HBufC8::NewLC(buf->Size());
+            CleanupStack::Pop(des);
+            TPtr8 ptr(des->Des());
+            buf->Read(0, ptr, buf->Size());
+    
+            CleanupStack::PopAndDestroy(2, buf); // writestream, buf
+    
+            iAsyncReqRMessage.Write(1, *des);
+            iAsyncReqRMessage.Complete(EAddConversationEvent);
+            delete des;
+            iNotifyHandling = EFalse;
+        }
     }
-    else
-    {
-        // create a new buffer for writing into stream
-        CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
-        CleanupStack::PushL(buf);
-
-        RBufWriteStream writeStream(*buf);
-        writeStream.PushL();
-
-        //externalize ClientConversation
-        aClientConversation->ExternalizeL(writeStream);
-
-        // Results are already packed in the stream
-        writeStream.CommitL();
-        // --------------------------------------------------------------
-
-        // Create a heap descriptor from the buffer
-        HBufC8* des = HBufC8::NewLC(buf->Size());
-        CleanupStack::Pop(des);
-        TPtr8 ptr(des->Des());
-        buf->Read(0, ptr, buf->Size());
-
-        CleanupStack::PopAndDestroy(2, buf); // writestream, buf
-
-        iAsyncReqRMessage.Write(1, *des);
-        iAsyncReqRMessage.Complete(EAddConversationEvent);
-        delete des;
-        iNotifyHandling = EFalse;
-    }
-
     PRINT ( _L("End CCsSession::HandleNewConversationEventL") );
 }
 
@@ -1103,8 +1155,11 @@ void CCsSession::HandleDeleteConversationEventL(
     if (!iConversationChangeObserver)
         return;
 
-    if (aClientConversation->GetConversationEntryId()
-            != iMonitoredConversation->GetConversationEntryId())
+    if ((aClientConversation->GetContactId()
+               != iMonitoredConversation->GetContactId()) &&
+               (aClientConversation->GetConversationEntryId()
+               != iMonitoredConversation->GetConversationEntryId())
+                 )
         return;
 
     if (! (iNotifyHandling))
@@ -1134,8 +1189,8 @@ void CCsSession::HandleDeleteConversationEventL(
         // --------------------------------------------------------------
 
         // Create a heap descriptor from the buffer
-        HBufC8* des = HBufC8::NewLC(buf->Size());
-        CleanupStack::Pop(des);
+        HBufC8* des = HBufC8::NewL(buf->Size());
+
         TPtr8 ptr(des->Des());
         buf->Read(0, ptr, buf->Size());
 
@@ -1163,50 +1218,57 @@ void CCsSession::HandleModifyConversationEventL(
     if (!iConversationChangeObserver)
         return;
 
-    if (aClientConversation->GetConversationEntryId()
-            != iMonitoredConversation->GetConversationEntryId())
-        return;
-
-    if (! (iNotifyHandling))
+    //this is check to send notif to clients for a new message
+    //1. if the client is subscribed with contact id ==> then send
+    //2. if the client is subscribed with conv id ---> then send
+    // else dont send
+    
+    if ((aClientConversation->GetContactId() == 
+                iMonitoredConversation->GetContactId() && 
+                aClientConversation->GetContactId() != -1)
+                ||(aClientConversation->GetConversationEntryId() == 
+                        iMonitoredConversation->GetConversationEntryId()))
     {
-        //append in notify list
-        CCsConversationEvent* conversationEvent = CCsConversationEvent::NewL();
-        CleanupStack::PushL(conversationEvent);
-        conversationEvent->SetClientConversationL(*aClientConversation);
-        conversationEvent->SetEvent(KConversationEventUpdate);
-        iEventList->AppendL(conversationEvent);
-        CleanupStack::Pop(conversationEvent);
+    
+        if (! (iNotifyHandling))
+        {
+            //append in notify list
+            CCsConversationEvent* conversationEvent = CCsConversationEvent::NewL();
+            CleanupStack::PushL(conversationEvent);
+            conversationEvent->SetClientConversationL(*aClientConversation);
+            conversationEvent->SetEvent(KConversationEventUpdate);
+            iEventList->AppendL(conversationEvent);
+            CleanupStack::Pop(conversationEvent);
+        }
+        else
+        {
+            // create a new buffer for writing into stream
+            CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
+            CleanupStack::PushL(buf);
+    
+            RBufWriteStream writeStream(*buf);
+            writeStream.PushL();
+    
+            //externalize ClientConversation
+            aClientConversation->ExternalizeL(writeStream);
+    
+            // Results are already packed in the stream
+            writeStream.CommitL();
+            // --------------------------------------------------------------
+    
+            // Create a heap descriptor from the buffer
+            HBufC8* des = HBufC8::NewL(buf->Size());
+            TPtr8 ptr(des->Des());
+            buf->Read(0, ptr, buf->Size());
+    
+            CleanupStack::PopAndDestroy(2, buf); // writestream, buf
+    
+            iAsyncReqRMessage.Write(1, *des);
+            iAsyncReqRMessage.Complete(EModifyConversationEvent);
+            delete des;
+            iNotifyHandling = EFalse;
+        }
     }
-    else
-    {
-        // create a new buffer for writing into stream
-        CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
-        CleanupStack::PushL(buf);
-
-        RBufWriteStream writeStream(*buf);
-        writeStream.PushL();
-
-        //externalize ClientConversation
-        aClientConversation->ExternalizeL(writeStream);
-
-        // Results are already packed in the stream
-        writeStream.CommitL();
-        // --------------------------------------------------------------
-
-        // Create a heap descriptor from the buffer
-        HBufC8* des = HBufC8::NewLC(buf->Size());
-        CleanupStack::Pop(des);
-        TPtr8 ptr(des->Des());
-        buf->Read(0, ptr, buf->Size());
-
-        CleanupStack::PopAndDestroy(2, buf); // writestream, buf
-
-        iAsyncReqRMessage.Write(1, *des);
-        iAsyncReqRMessage.Complete(EModifyConversationEvent);
-        delete des;
-        iNotifyHandling = EFalse;
-    }
-
     PRINT ( _L("End CCsSession::HandleModifyConversationEventL") );
 }
 
@@ -1227,6 +1289,10 @@ void CCsSession::NotifyClient(CCsConversationEvent* aConversationEvent)
     else if (aConversationEvent->IsUpdateConversationListEventSet())
     {
         iAsyncReqRMessage.Complete(EModifyConversationListEvent);
+    }
+    else if(aConversationEvent->IsPartialDeleteConversationListEventSet())
+    {
+        iAsyncReqRMessage.Complete(EPartialDeleteConversationListEvent);
     }
     else if (aConversationEvent->IsNewConversationEventSet())
     {
@@ -1269,6 +1335,10 @@ void CCsSession::HandleChangeEventL(CCsClientConversation* aConversation,
     {
         HandleDeleteConversationListEventL(aConversation);
     }
+    else if(aEvent & KConversationListEventPartialDelete)
+    {
+        HandlePartialDeleteConversationListEvent(aConversation);
+    }
     else if (aEvent & KConversationEventNew)
     {
         HandleNewConversationEventL(aConversation);
@@ -1303,28 +1373,12 @@ void CCsSession::DeleteConversationL(const RMessage2& aMessage)
     // Delete handler
     CCsConversationCache* cache = iServer->ConversationCacheInterface();
     CCsConversationDeleteHandler* deleteHandler =
-            CCsConversationDeleteHandler::NewL(cache, this);
+            CCsConversationDeleteHandler::NewL(cache);
 
     deleteHandler->DeleteL(conversationId);
     aMessage.Complete(EUserDeleteConversationComplete);
 
     PRINT ( _L("End CCsSession::DeleteConversationL") );
-}
-
-// ----------------------------------------------------------------------------
-// CCsSession::DeleteComplete
-// ----------------------------------------------------------------------------
-void CCsSession::DeleteComplete(CCsConversationDeleteHandler* aHandler)
-{
-    delete aHandler;
-}
-
-// ----------------------------------------------------------------------------
-// CCsSession::DeleteInProgress
-// ----------------------------------------------------------------------------
-void CCsSession::DeleteInProgress(CCsConversationDeleteHandler* aHandler)
-{
-    delete aHandler;
 }
 
 // ----------------------------------------------------------------------------
@@ -1399,8 +1453,7 @@ void CCsSession::GetConversationIdL(const RMessage2& aMessage)
     writeStream.CommitL();
 
     // Create a heap descriptor from the buffer
-    HBufC8* des = HBufC8::NewLC(buf->Size());
-    CleanupStack::Pop(des);
+    HBufC8* des = HBufC8::NewL(buf->Size());
     TPtr8 ptr(des->Des());
     buf->Read(0, ptr, buf->Size());
 
@@ -1408,6 +1461,57 @@ void CCsSession::GetConversationIdL(const RMessage2& aMessage)
 
     aMessage.Write(1, *des);
     aMessage.Complete(EGetConversationIdComplete);
+    delete des;
+}
+
+void CCsSession::GetConversationFromConversationIdL(const RMessage2& aMessage)
+{
+    // create a new buffer for writing into stream
+    CBufFlat* buf = CBufFlat::NewL(KBigBuffer);
+    CleanupStack::PushL(buf);
+
+    RBufWriteStream writeStream(*buf);
+    writeStream.PushL();
+
+    // Get the conversation id
+    TInt conversationId = aMessage.Int0();
+    CCsConversationCache* cache = iServer->ConversationCacheInterface();
+    CCsClientConversation* clientConv = cache->GetConversationFromConversationIdL(conversationId);
+
+    // if no conversation exists for given message-id,
+    // create a dummy conversation and complete response
+    if(clientConv == NULL)
+    {
+        //create dummy conversation
+        clientConv = CCsClientConversation::NewL();
+        CleanupStack::PushL(clientConv);
+        clientConv->SetConversationEntryId(-1);
+        CCsConversationEntry* entry = CCsConversationEntry::NewL();
+        CleanupStack::PushL(entry);
+        entry->SetEntryId(-1);
+        clientConv->SetConversationEntryL(entry); // clone
+        CleanupStack::PopAndDestroy(entry);
+    }
+    else
+    {
+        CleanupStack::PushL(clientConv);
+    }
+
+    // Externalize
+    clientConv->ExternalizeL(writeStream);
+
+    // Results are already packed in the stream
+    writeStream.CommitL();
+
+    // Create a heap descriptor from the buffer
+    HBufC8* des = HBufC8::NewL(buf->Size());
+    TPtr8 ptr(des->Des());
+    buf->Read(0, ptr, buf->Size());
+
+    CleanupStack::PopAndDestroy(3, buf); // clientConv, writestream, buf
+
+    aMessage.Write(1, *des);
+    aMessage.Complete(EGetConversationFromConversationIdComplete);
     delete des;
 }
 
@@ -1454,8 +1558,7 @@ void CCsSession::GetConversationFromMessageIdL(const RMessage2& aMessage)
     writeStream.CommitL();
     
     // Create a heap descriptor from the buffer
-    HBufC8* des = HBufC8::NewLC(buf->Size());
-    CleanupStack::Pop(des);
+    HBufC8* des = HBufC8::NewL(buf->Size());
     TPtr8 ptr(des->Des());
     buf->Read(0, ptr, buf->Size());
     
@@ -1497,8 +1600,7 @@ void CCsSession::GetConversationIdfromAddressL(const RMessage2& aMessage)
     writeStream.CommitL();
 
     // Create a heap descriptor from the buffer
-    HBufC8* des = HBufC8::NewLC(buf->Size());
-    CleanupStack::Pop(des);
+    HBufC8* des = HBufC8::NewL(buf->Size());
     TPtr8 ptr(des->Des());
     buf->Read(0, ptr, buf->Size());
  
@@ -1521,8 +1623,7 @@ void CCsSession::MarkConversationReadL(const RMessage2& aMessage)
 
     // Mark read handler
     CCsConversationCache* cache = iServer->ConversationCacheInterface();
-    CCsConversationMarkReadHandler* markHandler = 
-        CCsConversationMarkReadHandler::NewL(cache, this);
+    CCsConversationMarkReadHandler* markHandler = CCsConversationMarkReadHandler::NewL(cache);
 
     markHandler->MarkReadL(conversationId);
     
@@ -1530,13 +1631,4 @@ void CCsSession::MarkConversationReadL(const RMessage2& aMessage)
 
     PRINT ( _L("End CCsSession::MarkConversationReadL") );
 }
-
-// ----------------------------------------------------------------------------
-// CCsSession::MarkReadComplete
-// ----------------------------------------------------------------------------
-void CCsSession::MarkReadComplete(CCsConversationMarkReadHandler* aHandler)
-{
-    delete aHandler;
-}
-
 //EOF

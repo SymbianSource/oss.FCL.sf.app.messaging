@@ -17,7 +17,7 @@
 #include <QtDebug>
 #include <QTimer>
 #include <QSignalSpy>
-#include <s60qconversions.h>
+#include <xqconversions.h>
 #include <bsp.h>
 #include <biodb.h> 
 #include <biouids.h>
@@ -128,10 +128,10 @@ void TestUniDataModelVCalPlugin::testInBoxVCalMessage()
     origFile.Read(readBuf);
     readBuf16->Des().Copy(readBuf);
 
-    QString orig = S60QConversions::s60DescToQString(*readBuf16);
+    QString orig = XQConversions::s60DescToQString(*readBuf16);
     origFile.Close();
 
-    HBufC* filepath = S60QConversions::qStringToS60Desc(path);
+    HBufC* filepath = XQConversions::qStringToS60Desc(path);
 
     RFile file;
     op = file.Open(iFs, *filepath, EFileRead);
@@ -139,7 +139,7 @@ void TestUniDataModelVCalPlugin::testInBoxVCalMessage()
    
     file.Read(readBuf);
     readBuf16->Des().Copy(readBuf);
-    QString bod = S60QConversions::s60DescToQString(*readBuf16);
+    QString bod = XQConversions::s60DescToQString(*readBuf16);
 
     delete readBuf16;
     file.Close();
@@ -197,10 +197,10 @@ void TestUniDataModelVCalPlugin::testDraftsVCalMessage()
     origFile.Read(readBuf);
     readBuf16->Des().Copy(readBuf);
 
-    QString orig = S60QConversions::s60DescToQString(*readBuf16);
+    QString orig = XQConversions::s60DescToQString(*readBuf16);
     origFile.Close();
 
-    HBufC* filepath = S60QConversions::qStringToS60Desc(path);
+    HBufC* filepath = XQConversions::qStringToS60Desc(path);
 
     RFile file;
     op = file.Open(iFs, *filepath, EFileRead);
@@ -210,7 +210,7 @@ void TestUniDataModelVCalPlugin::testDraftsVCalMessage()
 
     readBuf16->Des().Copy(readBuf);
 
-    QString bod = S60QConversions::s60DescToQString(*readBuf16);
+    QString bod = XQConversions::s60DescToQString(*readBuf16);
 
     delete readBuf16;
     file.Close();
@@ -476,7 +476,7 @@ TMsvId TestUniDataModelVCalPlugin::CreateBIOEntryL(TDesC& aText,
     TBufC<KTelephoneNumberMaxLength> telNumber;
 
     QString recepient(TEST_MSG_FROM1);
-    tempNumber = S60QConversions::qStringToS60Desc(recepient);
+    tempNumber = XQConversions::qStringToS60Desc(recepient);
 
     telNumber = tempNumber->Des();
     newBioEntry.iDetails.Set(telNumber);
@@ -533,9 +533,9 @@ void TestUniDataModelVCalPlugin::CreateBioEntryClientSideL(TMsvEntry& aEntry,
         QString recepient2(TEST_MSG_FROM2);
         QString alias(TEST_MSG_ALIAS1);
 
-        HBufC* addr = S60QConversions::qStringToS60Desc(recepient);
-        HBufC* addr2 = S60QConversions::qStringToS60Desc(recepient2);
-        HBufC* alias1 = S60QConversions::qStringToS60Desc(alias);
+        HBufC* addr = XQConversions::qStringToS60Desc(recepient);
+        HBufC* addr2 = XQConversions::qStringToS60Desc(recepient2);
+        HBufC* alias1 = XQConversions::qStringToS60Desc(alias);
 
         CSmsHeader* smsHeader = CSmsHeader::NewL(CSmsPDU::ESmsSubmit, *pText);
         CleanupStack::PushL(smsHeader);

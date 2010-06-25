@@ -39,7 +39,7 @@ const int ParameterError = 10000;
 const QString BT_ICON("qtg_large_bluetooth");
 const QString SMS_ICON("qtg_large_new_message");
 const QString MMS_ICON("qtg_large_new_message");
-const QString RINGTONE_ICON("qtg_large_tone");
+const QString RINGTONE_ICON("qtg_large_new_message");
 const QString VCARD_ICON("qtg_large_new_message");
 // ----------------------------------------------------------------------------
 // ServiceRequestSenderTask::ServiceRequestSenderTask
@@ -247,7 +247,8 @@ void MsgNotificationDialogWidget::showEvent(QShowEvent *event)
 void MsgNotificationDialogWidget::widgetActivated()
 {
 QThreadPool::globalInstance()->start(
-        	new ServiceRequestSenderTask(mConversationId));  
+        	new ServiceRequestSenderTask(mConversationId));
+    enableTouchActivation(false);  
 }
 
 // ----------------------------------------------------------------------------

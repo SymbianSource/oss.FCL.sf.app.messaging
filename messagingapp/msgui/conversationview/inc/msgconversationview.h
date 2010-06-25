@@ -32,7 +32,7 @@ class MsgContactCardWidget;
 class MsgConversationViewItem;
 class HbStaticVkbHost;
 class QGraphicsLinearLayout;
-
+class HbAction;
 //Defines
 #define INVALID_MSG_ID -1
 
@@ -66,9 +66,10 @@ public:
 
     /**
      * Save the content inside editor to drafts
-     * @return true if save is success else false.
+     * @return valid message id if save is success
+     * else invalid message id ( i.e. -1 )
      */
-    bool saveContentToDrafts();
+    int saveContentToDrafts();
 
 private slots:
 
@@ -77,7 +78,47 @@ private slots:
      * Populates the menu with relevant actions.
      */
     void menuAboutToShow();
+    
+	/**
+     * This slot is called when settings dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogSettingsLaunch(HbAction* action);
+    
+	/**
+     * This slot is called when delete message centre dialog is launched.
+     * @param action selected action (yes or no).
+     */	
+    void onDialogdeleteMsg(HbAction* action);
+	
+	/**
+     * This slot is called when download message centre dialog is launched.
+     * @param action selected action (yes or no).
+     */	    
+    void onDialogDownLoadMsg(HbAction* action);
+	
+	/**
+     * This slot is called when save tone dialog is launched.
+     * @param action selected action (yes or no).
+     */	
+    void onDialogSaveTone(HbAction* action);
 
+    /**
+     * This slot is called when the orientation is changed
+     * @param newOrientation orientation
+     */
+    void onOrientationChanged(Qt::Orientation newOrientation);
+
+    /**
+     * This slot is called when the orientation is about to bechanged
+     */
+    void onOrientationAboutToBeChanged();
+    
+    /**
+     * This slot is called when the view is successfully added to main window
+     */
+    void onViewReady();
+    
 private:
 
     /**
@@ -105,6 +146,15 @@ private:
      */
     void setContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState);
 	
+    /**
+     * Adds context menu entry to context menu for saving items
+     * @param MsgConversationViewItem* item whose information is needed.
+     * @param HbMenu context menu
+     * @param int sendingstate.
+     * @see ConvergedMessage::MessageType
+     */    
+    void addSaveItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState);
+    
     /**
      * Adds context menu entry to context menu for Opening items
 	 * @param MsgConversationViewItem* item whose information is needed.
@@ -148,15 +198,6 @@ private:
      * @see ConvergedMessage::MessageType
      */
     void addDownloadItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu);
-    
-    /**
-     * Validates if message can be forwarded
-     * @param messageType
-     * @param messageId
-     * @return true if message can be forwarded
-     *         false if message cant be forwarded
-     */
-    bool validateMsgForForward(int &messageType,qint32 &messageId);
 
     /**
      * Launches the BT message display service.
@@ -177,6 +218,8 @@ private slots:
      * Utility method to scroll the list to show the bottom most item
      */
     void scrollToBottom();
+    
+    void onConversationViewEmpty();
 
     /**
      * Handler for long tap of a list item.
@@ -224,11 +267,6 @@ private slots:
      */
     void contactsFetched(const QVariant& value);
 
-    /*
-     * Get audio files from audio-fetcher and launch editor
-     */
-    void audiosFetched(const QVariant& result );
-    
     /**
      * slot to receive fetched contacts for vcard addition
      */
@@ -295,10 +333,11 @@ signals:
      */
     void replyStarted();
     
-	/**
-	* This signal is emitted when vkb is open.
-	*/
-    void hideChrome(bool);
+   /**
+    * This signal is emitted when vkb is open/closed.
+    * @param state True if keypad is opened else false.
+    */
+    void vkbOpened(bool state);
 
 private slots:
     /**
@@ -336,6 +375,12 @@ private:
      * Deactivate Input Blocker
      */
     void deactivateInputBlocker();
+    
+    /**
+     * Handle provisioning message
+     * @param msgId message id
+     */
+    void handleProvisoningMsg(int msgId);
 
 private:
 
@@ -371,10 +416,6 @@ private:
      */
     QGraphicsLinearLayout *mMainLayout;
 
-	/**
-	 * Flag to track if item has been long pressed.
-	 */
-    bool mItemLongPressed;
     /*
      * Instance of VKB 
      */
@@ -384,6 +425,11 @@ private:
      * Flag to check it vkb is open.
      */
     bool mVkbopened;
+
+    /**
+     * variable holding the visible model index
+     */
+    QModelIndex mVisibleIndex;
 
 };
 

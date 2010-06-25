@@ -35,19 +35,31 @@ class MSG_SETTING_VIEW_EXPORT MsgSettingsView: public MsgBaseView
 {
     Q_OBJECT
 public:
-    MsgSettingsView(QGraphicsItem *parent = 0);
+    enum SettingsView
+    {
+    DefaultView = 0,
+    SMSView,
+    MMSView
+    };
+    
+public:
+    MsgSettingsView(
+            SettingsView settingsView = MsgSettingsView::DefaultView,
+            QGraphicsItem *parent = 0);
+    
     ~MsgSettingsView();
 
 public slots:
     void onNewSMSCCenterClicked(int index);
     void onSmsCenterEditViewClosed();
         
-private:
+private:    
+    //Sms Center View
+    MsgSMSCenterView* mSMSCenterView;  
+    
     //Settings Form
     MsgSettingsForm* mSettingsForm;
     
-    //Sms Center View
-    MsgSMSCenterView* mSMSCenterView;  
     HbMainWindow* mMainWindow;
 };
 #endif // MSGSETTINGSVIEW_H

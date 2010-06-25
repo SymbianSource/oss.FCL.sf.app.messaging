@@ -26,7 +26,7 @@
 #include "conversationmsgstorehandler.h"
 #include "draftsmodel.h"
 #include "MuiuOperationWait.h"
-#include "MsgBioUids.h"
+#include "msgbiouids.h"
 #include "UniEditorGenUtils.h"
 
 // SYSTEM INCLUDES
@@ -407,8 +407,11 @@ void ConversationMsgStoreHandler::FetchDraftMessages(DraftsModel* draftsModel)
     mDraftsModel = draftsModel;
     iState = EReadDrafts;
     TCallBack callback = TCallBack(ProcessDraftMessages, (TAny*) this);
-    iIdle = CIdle::NewL(CActive::EPriorityStandard);
-    iIdle->Start(callback);
+    TRAPD(err, iIdle = CIdle::NewL(CActive::EPriorityStandard));
+    if(err == KErrNone)
+        {
+        iIdle->Start(callback);    
+        }
     }
 
 // -----------------------------------------------------------------------------
@@ -648,10 +651,10 @@ bool ConversationMsgStoreHandler::DownloadOperationSupported(
 }
 
 //---------------------------------------------------------------
-// ConversationMsgStoreHandler::setNotificationMessageId
+// ConversationMsgStoreHandler::setNotificationMessageIdL
 // @see header
 //---------------------------------------------------------------
-void ConversationMsgStoreHandler::setNotificationMessageId(int messageId)
+void ConversationMsgStoreHandler::setNotificationMessageIdL(int messageId)
 {
     // get MMS Notification client mtm & set the content to current entry
     if(iNotificationClient)
@@ -668,10 +671,10 @@ void ConversationMsgStoreHandler::setNotificationMessageId(int messageId)
 }
 
 //---------------------------------------------------------------
-// ConversationMsgStoreHandler::NotificationMsgSize
+// ConversationMsgStoreHandler::NotificationMsgSizeL
 // @see header
 //---------------------------------------------------------------
-QString ConversationMsgStoreHandler::NotificationMsgSize()
+QString ConversationMsgStoreHandler::NotificationMsgSizeL()
 {
     // Size of message.
     TInt size = iNotificationClient->MessageTransferSize( );
@@ -841,7 +844,7 @@ TInt ConversationMsgStoreHandler::DownloadMessageL(TMsvId aId)
     iNotificationClient->SwitchCurrentEntryL(aId);    */ 
     
     // set context to current entry
-    setNotificationMessageId(aId);
+    setNotificationMessageIdL(aId);
 
     TTime currentTime;
     currentTime.HomeTime( );
@@ -925,7 +928,7 @@ void ConversationMsgStoreHandler::markAsReadAndGetType(int msgId,
             {
             // Mark the entry as read
             entry.SetUnread( EFalse );
-            cEntry->ChangeL( entry );
+            TRAP_IGNORE(cEntry->ChangeL( entry ));
             }
         // extract message type
         extractMsgType(entry,msgType,msgSubType);
@@ -949,6 +952,9 @@ void ConversationMsgStoreHandler::extractMsgType(const TMsvEntry& entry,
         {
         case KSenduiMtmSmsUidValue:            
             msgType = ConvergedMessage::Sms;
+            if (entry.iBioType == KMsgBioNokiaServiceSentMessage.iUid) {
+                msgSubType = ConvergedMessage::NokiaService;
+            }
             break;
         case KSenduiMtmBtUidValue:
             msgType = ConvergedMessage::BT;
@@ -979,12 +985,29 @@ void ConversationMsgStoreHandler::extractMsgType(const TMsvEntry& entry,
             else if (entry.iBioType == KMsgBioUidVCalendar.iUid)
                 {
                 msgSubType = ConvergedMessage::VCal;
-                }        
+                }
+            else if (entry.iBioType == KMsgBioNokiaServiceSentMessage.iUid) {
+                msgSubType = ConvergedMessage::NokiaService;
+                }
             }
-            break;
-        default:
-            msgType = ConvergedMessage::None;       
-            break;
-        }
+        break;
+    default:
+        msgType = ConvergedMessage::None;
+        break;
     }
+}
+
+int ConversationMsgStoreHandler::getMsgSubType(int msgId)
+{
+    int msgType = ConvergedMessage::None;
+    int msgSubType = ConvergedMessage::None;
+    CMsvEntry* cEntry = NULL;
+    TRAPD(err, cEntry = iMsvSession->GetEntryL(msgId));
+    if (err == KErrNone) {
+        TMsvEntry entry = cEntry->Entry();
+        extractMsgType(entry, msgType, msgSubType);
+    }
+    return msgSubType;
+}
+
 // End of file

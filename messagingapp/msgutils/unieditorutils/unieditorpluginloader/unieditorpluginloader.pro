@@ -50,3 +50,11 @@ BLD_INF_RULES.prj_exports += \
 
 SOURCES += src/unieditorpluginloader.cpp
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/unieditorpluginloader.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/unieditorpluginloader.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock

@@ -26,6 +26,8 @@ class HbListView;
 class HbAbstractViewItem;
 class HbListWidget;
 class HbListWidgetItem;
+class HbAction;
+class QGraphicsLinearLayout;
 
 /**
  * This class provides the message list view for the messaging application.
@@ -109,6 +111,19 @@ private slots:
      */
     void contactInfo();
 
+	/**
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogDeleteMsg(HbAction* action);
+    
+	/**
+	 * This slot is called when appengine emits the partialdeleteconversationlist event.
+	 * This performs grab of the HbAbstractviewitem on which delete was called.
+	 * @param conversation id of the item.
+	 */
+    void enableListitem( int conversationId );
+	    
 private:
 
     /**
@@ -147,6 +162,11 @@ private:
         DRAFTS_EXTN = 0x00, CONVERSATIONS_EXTN = 0x01
     };
 
+    /**
+     * Main layout
+     * Own
+     */    
+    QGraphicsLinearLayout *mMainLayout;
 };
 
 #endif // MSG_LIST_VIEW_H

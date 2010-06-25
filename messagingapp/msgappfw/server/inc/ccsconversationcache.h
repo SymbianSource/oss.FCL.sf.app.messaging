@@ -148,8 +148,9 @@ public:
      * 
      * @param aConversationId Conversation Id.
      * @param aDeleted ETrue if conversation is being deleted else EFalse
+	 * @param aCount = 0, count of messages in sending-state/not-deleted
      */
-    void MarkConversationAsDeleted(TInt aConversationId, TBool aDeleted);
+    void MarkConversationAsDeleted(TInt aConversationId, TBool aDeleted, TInt aCount = 0);
 
     /**
      * IsDeleted
@@ -188,6 +189,8 @@ public:
      */
     TInt GetConversationIdFromAddressL(TDesC& aContactAddress);
     
+    CCsClientConversation* GetConversationFromConversationIdL(TInt aConversationId);
+
     /**
      * Get conversation from message-id
      * @param aMessageId Message id

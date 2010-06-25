@@ -25,19 +25,12 @@
 
 #include "convergedmessage.h"
 #include "unidatamodelplugininterface.h"
-#include <qmobilityglobal.h>
 
 class QDateTime;
 class UniViewerFeeder;
 class CMsvSession;
 class UniDataModelPluginInterface;
 class UniDataModelLoader;
-
-QTM_BEGIN_NAMESPACE
-class QContactManager;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
 
 /**
  * UniViewerFeederPrivate
@@ -138,11 +131,23 @@ public:
      * @return list of cc address list
      */
     ConvergedMessageAddressList ccAddressList();
+
+    /**
+     * bccAddressList
+     * @return list of Bcc address list
+     */
+    ConvergedMessageAddressList bccAddressList();
+
+    /**
+     * Finds total recipient count
+     * @return total recipient count
+     */
+    int recipientCount();
+
     /**
      * messageSize
      * @return int
      */
-
     int messageSize();
 
     /**
@@ -180,13 +185,6 @@ public:
      * Returns the sending state of the message.
      */
     int sendingState();
-    
-    /**
-     * Gets the name(alias) for a address from the Contact database
-     * @int returns number of phone addresses for the specified address.
-     */
-    static int GetNameFromContacts(const QString& address, QString& alias);
-
 
 private:
     /**
@@ -246,8 +244,13 @@ private:
      * owned.
      */
     ConvergedMessageAddressList mCcAddressList;
-	
-	
+
+    /**
+     * CC address list
+     * owned.
+     */
+    ConvergedMessageAddressList mBccAddressList;
+
     /**
      * Msv Session.
      * not Owned.

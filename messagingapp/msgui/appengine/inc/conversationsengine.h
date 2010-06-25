@@ -21,6 +21,7 @@
 // INCLUDES
 #include <QObject>
 #include <QStandardItemModel>
+#include <sqldb.h>
 
 #ifdef BUILD_DLL
 #define CONVERSATIONS_ENGINE_API_EXPORT Q_DECL_EXPORT
@@ -160,10 +161,22 @@ public:
     void emitConversationModelUpdated();
     
     /**
+     * Updates the new conversation id for list view
+     */
+    void emitOpenConversationViewIdUpdate(int newConversationId);
+    
+    void disableRegisterationForCVEvents();
+    
+    /**
      * Emits conversationListModelPopulated signal
      */ 
     void emitConversationListModelPopulated();
 
+    /**
+     * Emits conversationListModelEntryDeleted
+     */
+    void emitConversationListModelEntryDeleted( int conversationId );
+    
     /**
      *  Starts fetching remaing conversations
      */
@@ -202,6 +215,19 @@ public:
     void markAsReadAndGetType( qint32 messageId,
                                int& msgType,
                                int& msgSubType);
+    
+    /*
+     * Get SQL DB handle
+     * @param isOpen, set to true if open, check this before using the handle
+     */
+    RSqlDatabase& getDBHandle(TBool& isOpen);
+    
+    /**
+     * Get the biotype of a message
+     * @param messageId
+     */
+    int getMsgSubType(int messageId);
+    
 private:
 
     /**
@@ -228,6 +254,17 @@ signals:
      * that the model is ready to be displayed
      */
     void conversationListModelPopulated();
+    
+	/** 
+	 * Signal to indicate the completion of conversation delete
+	 * operation.
+	 */
+     void conversationListEntryDeleted( int conversationId );
+	 
+    /**
+     * Signal to specify the CV model empty now
+     */
+    void conversationViewEmpty();
     
 private:
 

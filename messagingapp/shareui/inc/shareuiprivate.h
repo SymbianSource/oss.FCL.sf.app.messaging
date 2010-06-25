@@ -36,7 +36,7 @@ class HbListViewItem;
 class HbTextItem;
 class HbIconItem;
 
-#define SERVICE_INTERFACE "imessage.send"
+#define SERVICE_INTERFACE "com.nokia.symbian.IFileShare"
 #define SHARE_OP "send(QVariant)"
 
 /**
@@ -125,6 +125,11 @@ private slots:
      */
     void itemActivated(QModelIndex index);
     
+    /**
+     * Reset internal data structures
+     */
+    void reset();
+    
 private:
     /**
      * Fetch the action associated with a specified interface descriptor.
@@ -185,12 +190,7 @@ private:
      * Show notes
      */
     void showNote(QString text);
-    
-    /**
-     * Reset internal data structures
-     */
-    void reset();
-    
+
 private:
     /**
      * List of files to be sent.

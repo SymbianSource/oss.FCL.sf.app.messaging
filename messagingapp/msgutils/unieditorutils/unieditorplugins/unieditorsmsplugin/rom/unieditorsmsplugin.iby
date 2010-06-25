@@ -17,7 +17,7 @@
 #ifndef __UNI_EDITOR_SMS_PLUGIN_IBY__
 #define __UNI_EDITOR_SMS_PLUGIN_IBY__
 
-# this is the plugin stub for QT plugin
+
 file=ABI_DIR\UREL\unieditorsmsplugin.dll               SHARED_LIB_DIR\unieditorsmsplugin.dll
 data=\epoc32\data\z\resource\qt\plugins\messaging\editorplugins\unieditorsmsplugin.qtplugin              \resource\qt\plugins\messaging\editorplugins\unieditorsmsplugin.qtplugin
 

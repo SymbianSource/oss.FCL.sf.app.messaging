@@ -18,30 +18,32 @@
  */
 
 #include "univiewertextitem.h"
+#include "msgcontacthandler.h"
 
 #include <QRegExp>
-#include <QGraphicsSceneMouseEvent>
 #include <QApplication>
 #include <QClipboard>
 #include <QTextBlock>
-
+#include <QUrl>
+#include <QDesktopServices>
+#include <HbTapGesture>
 #include <HbMenu>
 #include <HbAction>
 #include <cntservicescontact.h>
-#include <qtcontacts.h>
-#include <XQServiceRequest.h>
+#include <xqservicerequest.h>
 #include <xqaiwrequest.h>
+#include <xqappmgr.h>
 
-QTM_USE_NAMESPACE
 
 //consts
 
 //regexp
-const QString NUMBER_PATTERN("(\\(|\\+|\\d)((?:\\d{2,})((?:[\\s-/.\\)\\()])*(?:(\\d+|\\))))*)|((\\*#)(?:\\d+(\\*|#)(?:\\d+#)?))");
+const QString NUMBER_PATTERN("(\\(?(\\+|\\d))((?:\\d)((?:[\\s-/.\\)\\(])*(?:(\\d+|\\))))*(?:\\d|\\)))|((\\*#)(?:\\d+(\\*|#)(?:\\d+#)?))");
 
 const QString EMAIL_PATTERN("[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?");
 
-const QString URL_PATTERN("(((ht|f|rt)(tp|sp)(s?)\\:\\/\\/)|(www|wap)(?:\\.))(([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*)(\\.)([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*))+");
+const QString URL_PATTERN("(((ht|f|rt)(tp|sp)(s?)\\:\\/\\/)|(www|wap)(?:\\.))(([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*)(\\.)([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\'\\/\\\\+&amp;%\\$#_=~]*))+");
+
 
 //rules
 const QString NUMBER_RULE("NUMBER_RULE");
@@ -65,7 +67,11 @@ mFindOn(true),
 mCursorPos(-1)
 {
     this->setReadOnly(true);
+    this->setScrollable(false);
     this->setCursorVisibility(Hb::TextCursorHidden);
+    this->setFlag(QGraphicsItem::ItemIsFocusable,false);
+    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    this->setBackgroundItem(0);   
 
     //inserting rules and patterns to map.
     mRules.insert(NUMBER_RULE,NUMBER_PATTERN);
@@ -112,6 +118,7 @@ void UniViewerTextItem::applyRule()
         QString ruleName = i.key();
         QString rule = i.value();
         QRegExp ruleExp(rule);
+        ruleExp.setCaseSensitivity(Qt::CaseInsensitive);
 
         QTextCursor cursor = this->document()->find(ruleExp);
 
@@ -172,30 +179,65 @@ void UniViewerTextItem::aboutToShowContextMenu(HbMenu *contextMenu, const QPoint
     
 }
 
-
-void UniViewerTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void UniViewerTextItem::gestureEvent(QGestureEvent* event)
 {
-    HbTextEdit::mouseReleaseEvent(event);
-
-    highlightText(false);
-
-    QString anchor = this->anchorAt(event->pos());
-
-    if(!anchor.isEmpty() && !this->textCursor().hasSelection())
+    //handle gesture to highlight and dehighlight find item.
+    
+    if(HbTapGesture *tap = qobject_cast<HbTapGesture*>(event->gesture(Qt::TapGesture)))
     {
-        shortTapAction(anchor);
+        //capturing gesture position, and map to local co-ordinates.
+        QPointF pos = mapFromScene(tap->scenePosition());
+        
+        switch (tap->state()) 
+        {
+            case Qt::GestureStarted:
+            {
+                //highlight find item.
+                QTextDocument* doc = this->document();
+                mCursorPos = doc->documentLayout()->hitTest(pos, Qt::ExactHit);
+                highlightText(true);
+                break;
+            }  
+            
+            case Qt::GestureFinished:
+            {
+                if (HbTapGesture::Tap == tap->tapStyleHint()) 
+                {
+                    //gesture is finshed dehighlight text.
+                    highlightText(false);
+                    
+                    QString anchor = this->anchorAt(pos);
+                    
+                    //do short tap action.
+                    if (!anchor.isEmpty() && !this->textCursor().hasSelection())
+                    {
+                        shortTapAction(anchor);
+                    }
+                }
+                break;
+            }
+            
+            case Qt::GestureCanceled:
+            {
+                //gesture is canceled due to pan or swipe, dehighlight text.
+                if (HbTapGesture::Tap == tap->tapStyleHint()) 
+                {
+                highlightText(false);
+                break;
+                }
+            }
+            default:
+                break;
+        }
+        event->accept();
     }
-}
-
-void UniViewerTextItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    HbTextEdit::mousePressEvent(event);
-
-    QTextDocument* doc = this->document();
-
-    mCursorPos = doc->documentLayout()->hitTest(event->pos(), Qt::ExactHit);
-
-    highlightText(true);
+    else
+    {
+        event->ignore();
+    }
+    
+    //passing gesture event to base class.
+    HbTextEdit::gestureEvent(event);
 }
 
 void UniViewerTextItem::addNumberMenu(HbMenu* contextMenu,const QString& data)
@@ -303,7 +345,7 @@ void UniViewerTextItem::call()
         phoneNumber.remove(NUMBER_RULE);
         
         //invoke dialer service and pass phoneNumber.        
-        QString serviceName("com.nokia.services.telephony");
+        QString serviceName("com.nokia.symbian.ICallDial");
         QString operation("dial(QString)");
         
         XQServiceRequest* serviceRequest = new XQServiceRequest(serviceName,operation,false);
@@ -343,10 +385,10 @@ void UniViewerTextItem::createEmail()
         emailId.remove(EMAIL_RULE);
 
         // Launch email editor
-        QString serviceName("com.nokia.services.commonemail");
-        QString interfaceName("imessage.send");
+        QString interfaceName("com.nokia.symbian.IEmailMessageSend");
         QString operation("send(QVariant)");
-        XQAiwRequest* request = mAppManager.create(serviceName, interfaceName, 
+        XQApplicationManager appManager;
+        XQAiwRequest* request = appManager.create(interfaceName, 
 			operation, true); 
         if ( request == NULL )
             {
@@ -384,6 +426,8 @@ void UniViewerTextItem::openLink()
         QString url = action->data().toString();
         url.remove(URL_RULE);
         //invoke browser service  & pass url.
+        QUrl uri(url);
+        QDesktopServices::openUrl(uri);
     }
 }
 
@@ -414,9 +458,10 @@ void UniViewerTextItem::openContactInfo()
         {
             data.remove(NUMBER_RULE);
     
-            int contactId = resolveContactId(data, 
-                                             QContactPhoneNumber::DefinitionName,
-                                             QContactPhoneNumber::FieldNumber);
+            int contactId = MsgContactHandler::resolveContactDisplayName(
+                                         data, 
+                                         QContactPhoneNumber::DefinitionName,
+                                         QContactPhoneNumber::FieldNumber);
     
             if(contactId > 0)
                 {
@@ -439,9 +484,10 @@ void UniViewerTextItem::openContactInfo()
         {
             data.remove(EMAIL_RULE);
     
-            int contactId = resolveContactId(data,
-                                             QContactEmailAddress::DefinitionName,
-                                             QContactEmailAddress::FieldEmailAddress);
+            int contactId = MsgContactHandler::resolveContactDisplayName(
+                    data,
+                    QContactEmailAddress::DefinitionName,
+                    QContactEmailAddress::FieldEmailAddress);
             
             if(contactId > 0)
                 {
@@ -466,7 +512,8 @@ void UniViewerTextItem::openContactInfo()
         QString serviceName("com.nokia.services.phonebookservices");
      
         XQAiwRequest* request;
-        request = mAppManager.create(serviceName, "Fetch", operation, true); // embedded
+        XQApplicationManager appManager;
+        request = appManager.create(serviceName, "Fetch", operation, true); // embedded
         if ( request == NULL )
             {
             return;       
@@ -500,33 +547,6 @@ void UniViewerTextItem::onServiceRequestCompleted()
         {
         delete request;
         }
-    }
-
-int UniViewerTextItem::resolveContactId(const QString& value,
-                                        const QString& fieldName,
-                                        const QString& fieldType)
-    {
-    int contactId = -1;
-    
-    QContactManager phonebookManager("symbian");
-    
-    QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName(fieldName, fieldType);
-    phoneFilter.setValue(value);
-    phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
-
-    QList<QContactSortOrder> sortOrder;
-    QList<QContact> matchingContacts = phonebookManager.contacts(
-            phoneFilter,
-            sortOrder,
-            QStringList());
-
-    if ( matchingContacts.count() > 0 ) 
-        {       
-        contactId = matchingContacts.at(0).localId();;   
-        }
-    
-    return contactId;
     }
 
 void UniViewerTextItem::menuClosed()
@@ -565,6 +585,7 @@ void UniViewerTextItem::highlightText(bool highlight)
             }
 
             cursor.clearSelection();
+            break;
         }
     }
 }

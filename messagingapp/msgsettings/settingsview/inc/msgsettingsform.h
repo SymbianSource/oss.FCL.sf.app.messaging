@@ -20,17 +20,18 @@
 
 #include <hbdataform.h>
 #include "msgsettingengine.h"
+#include "msgsettingsview.h"
 
 class HbDataFormModelItem;
 class HbDataFormModel;
-class QStandardItemModel;
-class QStandardItemModel;
 
 class MsgSettingsForm : public HbDataForm
 {
 Q_OBJECT
 public:
-    explicit MsgSettingsForm(QGraphicsItem *parent = 0);
+    explicit MsgSettingsForm(
+            MsgSettingsView::SettingsView settingsView = MsgSettingsView::DefaultView,
+            QGraphicsItem *parent = 0);
     ~MsgSettingsForm();
     void refreshViewForm();
     void expandSMSSettings();
@@ -39,7 +40,7 @@ signals:
     void newSMSCCenterClicked(int);
         
 private:
-    void initSettingModel();
+    void initSettingModel(MsgSettingsView::SettingsView settingsView);
     void addMMSGroupItem(HbDataFormModelItem* parent);
     void addSmsMCGroupItem(HbDataFormModelItem* parent);
     void updateSmsMCGroupItem(HbDataFormModelItem* parent);
@@ -76,7 +77,6 @@ private:
     //msg engine reference
     MsgSettingEngine* mSettingEngine;
     
-    QStandardItemModel* mSmsServiceCenterModel;
     HbDataFormModelItem *smsMessageCenter;
 
 };

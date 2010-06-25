@@ -81,7 +81,7 @@ signals:
         /**
          * this signal is emitted when sendMessage is emitted. from UniViewerTextItem.
          */
-        void sendMessage(const QString& phoneNumber);
+    void sendMessage(const QString& phoneNumber,const QString& alias = QString());
 
 private:
 

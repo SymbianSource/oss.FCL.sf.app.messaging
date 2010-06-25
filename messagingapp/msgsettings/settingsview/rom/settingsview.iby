@@ -21,5 +21,6 @@
 REM DLL
 file=ABI_DIR\UREL\settingsview.dll                   SHARED_LIB_DIR\settingsview.dll
 
+data=ZSYSTEM\install\settingsview_stub.sis    System\Install\settingsview_stub.sis
 
 #endif

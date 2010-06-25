@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef UNIFIED_EDITOR_ATTACHMENT_H
-#define UNIFIED_EDITOR_ATTACHMENT_H
+#ifndef MSG_UNIFIED_EDITOR_ATTACHMENT_H
+#define MSG_UNIFIED_EDITOR_ATTACHMENT_H
 
 #include <HbWidget>
 #include <QList>
@@ -24,6 +24,8 @@
 class HbTextItem;
 class HbIconItem;
 class HbGestureSceneFilter;
+class HbFrameItem;
+class MsgUnifiedEditorUtils;
 
 class MsgUnifiedEditorAttachment : public HbWidget
     {
@@ -34,8 +36,7 @@ public:
     /**
      * Constructor
      */
-    MsgUnifiedEditorAttachment( const QString& pluginPath,
-                                const QString& attachmentpath,
+    MsgUnifiedEditorAttachment( const QString& attachmentpath,
                                 const int filesize,
                                 QGraphicsItem *parent = 0 );
 
@@ -68,21 +69,16 @@ public:
      */
     bool isMultimediaContent();
     
-    HbFeedback::InstantEffect overrideFeedback(Hb::InstantInteraction interaction) const;
-
 protected:
     /**
      * reimplemented from base class.
      */
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual void gestureEvent(QGestureEvent *event);
     
     
 private:
-    /**
-     * Helper method to initialize gesture.
-     */
-    void initGesture();
+   
+    void setPressed(bool pressed);
 
 
 signals:
@@ -100,29 +96,35 @@ private slots:
     /**
 	 * show longpress menu for attachment object
 	 */
-    void longPressed(QPointF position);
+    void handleLongTap(QPointF position);
+    
+    /**
+     * Handles short tap event.
+     */
+    void handleShortTap();
 
 	/**
 	 * slot to remove attachment from msg editor
 	 */
-    void removeAttachment();
+    void handleRemove();
 
 	/**
 	 * slot to open attachment
 	 */
-    void openAttachment();
+    void handleOpen();
 
 	/**
 	 * slot to view details of the attachment file
 	 */
     void viewDetails();
+    
+    /**
+     * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture
+     * events back to back.  
+     */
+    void regrabGesture();
 
 private:
-    /**
-	 * style plugin path
-	 */
-    QString mPluginPath;
-
     /**
 	 * attachment file's path
 	 */
@@ -162,9 +164,21 @@ private:
      * Max limit on sms size. Store at class level for optimization
      */
     int mMaxSmsSize;
+    
+	/**
+     * Background item
+     * Own
+     */
+    HbFrameItem* mBackGround;
+    
+    /**
+     * MsgUnifiedEditorUtils object.
+     * Own
+     */
+    MsgUnifiedEditorUtils *mEditorUtils;
 
     };
 
 typedef QList<MsgUnifiedEditorAttachment*> MsgUnifiedEditorAttachmentList;
 
-#endif //UNIFIED_EDITOR_ATTACHMENT_H
+#endif //MSG_UNIFIED_EDITOR_ATTACHMENT_H

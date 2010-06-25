@@ -19,7 +19,7 @@
 #include <qversitreader.h>
 #include <qtcontacts.h>
 #include <qmobilityglobal.h>
-#include <senduiconsts.h>
+#include <SendUiConsts.h>
 
 #include "conversationsengineutility.h"
 #include "convergedmessage.h"
@@ -47,6 +47,7 @@ int ConversationsEngineUtility::messageType(TCsType value)
     case ECsProvisioning:
     case ECsBioMsg_VCard:
     case ECsBioMsg_VCal:
+    case ECsBioMgs_NokiaService:
         mMessageType = ConvergedMessage::BioMsg;
         break;
     case ECsBlueTooth:
@@ -112,47 +113,14 @@ int ConversationsEngineUtility::messageSubType(TCsType value)
     case ECsAudio:
         messageSubType = ConvergedMessage::Audio;
         break;
+    case ECsBioMgs_NokiaService:
+        messageSubType = ConvergedMessage::NokiaService;
+        break;
     default:
         messageSubType = ConvergedMessage::None;
         break;
     }
     return messageSubType;
-}
-
-//---------------------------------------------------------------
-// ConversationsEngineUtility::getVcardDisplayName
-// @see header
-//---------------------------------------------------------------
-QString ConversationsEngineUtility::getVcardDisplayName(QString filePath)
-{
-    QString displayName;
-    //open file for parsing
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return displayName;
-    }
-    // parse contents
-    QVersitReader reader;
-    reader.setDevice(&file);
-    if (reader.startReading()) {
-        if (reader.waitForFinished()) {
-            QList<QVersitDocument> versitDocuments = reader.results();
-            // Use the resulting document
-            if (versitDocuments.count() > 0) {
-                QVersitContactImporter importer;
-                QList<QContact> contacts = importer.importContacts(versitDocuments);
-                // get display-name
-                if (contacts.count() > 0) {
-                    QContactManager* contactManager = new QContactManager("symbian");
-                    displayName = contactManager->synthesizedDisplayLabel(contacts[0]);
-                    delete contactManager;
-                }
-            }
-        }
-    }
-    file.close();
-
-    return displayName;
 }
 
 // End of file

@@ -59,6 +59,13 @@ public:
     virtual void DeleteConversationList(
             const CCsClientConversation& aClientConversation) = 0;
 
+	/**
+	 * PartialDeleteConversationList
+	 * This is for handling of partial delete of conversation event
+	 * generated from the server
+	 */
+    virtual void PartialDeleteConversationList(
+            const CCsClientConversation& aClientConversation) = 0;
     /**  
      * ModifyConversationList
      * This is for handling modify conversation asynchronusly

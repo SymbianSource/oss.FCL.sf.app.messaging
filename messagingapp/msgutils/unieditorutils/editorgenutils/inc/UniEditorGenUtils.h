@@ -121,13 +121,6 @@ class MUIU_UTILS_EXPORT UniEditorGenUtils
         TInt MaxMmsRecipientsL();
         
         /**
-         * Checks if a given address string is a valid email address
-         * @param addr address string
-         * @return ETrue if addr is valid email address
-         */
-        TBool IsValidEmailAddress( QString addr );
-        
-        /**
          * Calculates the size of the given message
          * @param msg ConvergedMessage
          * @return size of the converged message
@@ -187,6 +180,13 @@ class MUIU_UTILS_EXPORT UniEditorGenUtils
          */
         void ReplaceCharacters(TDes &aDes, const TDesC &aChars, TChar aReplacement);
 
+        /**
+         * Checks if a given address string is a valid email address
+         * @param addr address string
+         * @return ETrue if addr is valid email address
+         */
+        TBool IsValidEmailAddress( const TDesC& aAddress );
+        
       private:
           /**
            * get sms character limits from feature manager
@@ -212,6 +212,11 @@ class MUIU_UTILS_EXPORT UniEditorGenUtils
            * @return sms character limit 
            */
           int absoluteMaxSmsCharactersL();
+          
+          /**
+           * validate the domain portion of an email address
+           */
+          TBool IsValidDomain ( const TDesC& aDomain );
           
       private: //data
           /**

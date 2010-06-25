@@ -218,6 +218,9 @@ private:
     CMmsClientMtm* iMmsMtm;
     CMmsHeaders* iMmsHeader;
 
+    // Flag for forwarded messages
+    TBool iMessageForwarded;
+    
     // owned
     UniDataModelLoader* iDataModelPluginLoader;        
     //Not owned

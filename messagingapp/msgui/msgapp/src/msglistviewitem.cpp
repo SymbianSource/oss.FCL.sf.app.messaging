@@ -43,7 +43,6 @@
 #define LOC_RECEIVED_FILES hbTrId("txt_messaging_list_received_files")
 
 const QString NEW_ITEM_FRAME("qtg_fr_list_new_item");
-const QString LIST_ITEM_BG_FRAME("qtg_fr_list_normal");
 const QString BT_ICON("qtg_large_bluetooth");
 const QString MSG_OUTGOING_ICON("qtg_mono_outbox");
 const QString MSG_FAILED_ICON("qtg_mono_failed");
@@ -56,7 +55,6 @@ MsgListViewItem::MsgListViewItem(QGraphicsItem* parent) :
     HbListViewItem(parent),
     mUnReadMsg(false),
     mNewMsgIndicatorItem(NULL),
-    mBgFrameItem(NULL),
     mAddressLabelItem(NULL),
     mTimestampItem(NULL),
     mPreviewLabelItem(NULL),
@@ -80,58 +78,13 @@ HbAbstractViewItem* MsgListViewItem::createItem()
 //---------------------------------------------------------------
 void MsgListViewItem::updateChildItems()
 {
-    if (!mAddressLabelItem)
-    {
-        mAddressLabelItem = new HbTextItem(this);
-        HbStyle::setItemName(mAddressLabelItem, "addressLabel");
-    }
-    if (!mTimestampItem)
-    {
-        mTimestampItem = new HbTextItem(this);
-        HbStyle::setItemName(mTimestampItem, "timeLabel");
-    }
-    if (!mPreviewLabelItem)
-    {
-        mPreviewLabelItem = new HbTextItem(this);
-        mPreviewLabelItem->setTextWrapping(Hb::TextWordWrap);
-        HbStyle::setItemName(mPreviewLabelItem, "previewLabel");
-    }
-    if (!mUnreadCountItem)
-    {
-        mUnreadCountItem = new HbTextItem(this);
-        HbStyle::setItemName(mUnreadCountItem, "unreadCount");
-    }
-    if (!mNewMsgIndicatorItem)
-    {
-        mNewMsgIndicatorItem = new HbFrameItem(this);
-        HbStyle::setItemName(mNewMsgIndicatorItem, "newMsgIndicator");
+    initItems();
 
-        mNewMsgIndicatorItem->frameDrawer().setFrameType(
-            HbFrameDrawer::ThreePiecesVertical);
-    }
-    if (!mBgFrameItem)
-    {
-        mBgFrameItem = new HbFrameItem(this);
-        mBgFrameItem->setZValue(-1.0);
-        HbStyle::setItemName(mBgFrameItem, "bgFrame");
-        
-        mBgFrameItem->frameDrawer().setFrameGraphicsName(LIST_ITEM_BG_FRAME);
-        mBgFrameItem->frameDrawer().setFrameType(HbFrameDrawer::NinePieces);
-    }
-
-    // Set the message text depending upon the message type
-    int messageType = modelIndex().data(MessageType).toInt();
-    int messageSubType = modelIndex().data(MessageSubType).toInt();
-    int messageState = modelIndex().data(SendingState).toInt();
-    int messageDirection = modelIndex().data(Direction).toInt();
-    QString prevText;
-    prevText = previewText(messageType, messageSubType, messageState,messageDirection);
-    prevText.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
-    prevText.replace('\r', QChar::LineSeparator);
-    mPreviewLabelItem->setText(prevText);
+    setTimestampAndPreviewText();
 
     // Address label
     QString contactName;
+    int messageType = modelIndex().data(MessageType).toInt();
     if(messageType == ConvergedMessage::BT)
     {
         contactName = LOC_RECEIVED_FILES;
@@ -140,15 +93,7 @@ void MsgListViewItem::updateChildItems()
     {
         QString displayName = modelIndex().data(DisplayName).toString();
         QString contactAddress = modelIndex().data(ConversationAddress).toString();
-
-        if (displayName.isEmpty())
-        {
-            contactName.append(contactAddress);
-        }
-        else
-        {
-            contactName.append(displayName);
-        }        
+        contactName.append(displayName);
     }
     mAddressLabelItem->setText(contactName);
 
@@ -159,33 +104,72 @@ void MsgListViewItem::updateChildItems()
     {
         QString unRead(tr("(%n)", "", unreadCount));
         mUnreadCountItem->setText(unRead);
-        mUnReadMsg = true;
-        mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(NEW_ITEM_FRAME);
+        if(!mUnReadMsg)
+        {
+            mUnReadMsg = true;
+            mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(NEW_ITEM_FRAME);
+            repolish();
+        }       
     }
     else
     {
-        mUnreadCountItem->setText(QString());
-        mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(QString());
-        mUnReadMsg = false;
-        repolish();
+        mUnreadCountItem->setText(QString());        
+        if(mUnReadMsg)
+        {
+            mUnReadMsg = false;  
+            mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(QString());
+            repolish();
+        }
     }
 
     HbListViewItem::updateChildItems();
 }
 
 //---------------------------------------------------------------
-// MsgListViewItem::previewText
+// MsgListViewItem::initItems
 // @see header
 //---------------------------------------------------------------
-QString MsgListViewItem::previewText(int msgType, 
-    int msgSubType, 
-    int msgState,
-    int msgDirection)
+void MsgListViewItem::initItems()
+{
+    if (!mAddressLabelItem) {
+        mAddressLabelItem = new HbTextItem(this);
+        HbStyle::setItemName(mAddressLabelItem, "addressLabel");
+    }
+    if (!mTimestampItem) {
+        mTimestampItem = new HbTextItem(this);
+        HbStyle::setItemName(mTimestampItem, "timeLabel");
+    }
+    if (!mPreviewLabelItem) {
+        mPreviewLabelItem = new HbTextItem(this);
+        mPreviewLabelItem->setTextWrapping(Hb::TextWordWrap);
+        HbStyle::setItemName(mPreviewLabelItem, "previewLabel");
+    }
+    if (!mUnreadCountItem) {
+        mUnreadCountItem = new HbTextItem(this);
+        HbStyle::setItemName(mUnreadCountItem, "unreadCount");
+    }
+    if (!mNewMsgIndicatorItem) {
+        mNewMsgIndicatorItem = new HbFrameItem(this);
+        HbStyle::setItemName(mNewMsgIndicatorItem, "newMsgIndicator");
+
+        mNewMsgIndicatorItem->frameDrawer().setFrameType(HbFrameDrawer::ThreePiecesVertical);
+    }
+    if (!mPresenceIndicatorItem) {
+        mPresenceIndicatorItem = new HbIconItem(this);
+        HbStyle::setItemName(mPresenceIndicatorItem, "presenceIndicator");
+    }
+}
+//---------------------------------------------------------------
+// MsgListViewItem::defaultPreviewText
+// @see header
+//---------------------------------------------------------------
+QString MsgListViewItem::defaultPreviewText(int msgType, int msgSubType)
 {
     QString bodyText(modelIndex().data(BodyText).toString());
     QString previewText;
     // Set the message text & icons, depending upon the message type
     if (msgType == ConvergedMessage::BioMsg) {
+
         if (msgSubType == ConvergedMessage::RingingTone) {
             previewText = LOC_RINGING_TONE;
         }
@@ -194,12 +178,20 @@ QString MsgListViewItem::previewText(int msgType,
             previewText.append(QChar::LineSeparator);
             previewText.append(bodyText);
         }
+        else if (msgSubType == ConvergedMessage::Provisioning) {
+            previewText = bodyText;
+        }
+        else if (msgSubType == ConvergedMessage::NokiaService) {
+            previewText = bodyText;
+        }
         else {
             previewText = LOC_UNSUPPORTED_MSG_TYPE;
         }
+
+        mPresenceIndicatorItem->setVisible(false);
     }
     else if (msgType == ConvergedMessage::BT) {
-        
+
         if (msgSubType == ConvergedMessage::VCard) {
             previewText = LOC_BUSINESS_CARD;
             previewText.append(QChar::LineSeparator);
@@ -208,26 +200,26 @@ QString MsgListViewItem::previewText(int msgType,
         else {
             previewText = bodyText;
         }
-        if (!mPresenceIndicatorItem) {
-            mPresenceIndicatorItem = new HbIconItem(this);
-            HbStyle::setItemName(mPresenceIndicatorItem, "presenceIndicator");
-            mPresenceIndicatorItem->setIconName(BT_ICON);
-        }
+
+        mPresenceIndicatorItem->setIconName(BT_ICON);
+        mPresenceIndicatorItem->setVisible(true);
     }
     else {
-        previewText = textBySendState(msgState,msgDirection);
+        // All message types except BIO & BT.
+        previewText = modelIndex().data(BodyText).toString();
+        mPresenceIndicatorItem->setVisible(false);
     }
     return previewText;
 }
 
 
 //---------------------------------------------------------------
-// MsgListViewItem::textBySendState
+// MsgListViewItem::setTimestampAndPreviewText
 // @see header
 //---------------------------------------------------------------
-QString MsgListViewItem::textBySendState(int sendState,int msgDirection)
+void MsgListViewItem::setTimestampAndPreviewText()
 {
-    QString previewText;
+    // Get timestamp
     QDateTime dateTime;
     dateTime.setTime_t(modelIndex().data(TimeStamp).toUInt());
     QString dateString;
@@ -238,80 +230,55 @@ QString MsgListViewItem::textBySendState(int sendState,int msgDirection)
         dateString = MsgUtils::dateTimeToString(dateTime, DATE_FORMAT);
     }
 
-    if (msgDirection == ConvergedMessage::Outgoing)
-    {
-        switch (sendState)
+    // Set preview text & time based on direction
+    int msgType = modelIndex().data(MessageType).toInt();
+    int msgSubType = modelIndex().data(MessageSubType).toInt();
+    int sendState = modelIndex().data(SendingState).toInt();
+    int msgDirection = modelIndex().data(Direction).toInt();
+    QString previewText;
+    if (ConvergedMessage::Incoming == msgDirection) {
+        previewText = defaultPreviewText(msgType, msgSubType);
+    }
+    else if (msgDirection == ConvergedMessage::Outgoing) {
+
+        switch (sendState) {
+        case ConvergedMessage::Resend:
         {
-            case ConvergedMessage::Resend:
-            {
-
-                QString resendString = LOC_MSG_RESEND_AT + dateString;
-                previewText = resendString;
-                dateString = QString("");
-                if (!mPresenceIndicatorItem)
-                {
-                    mPresenceIndicatorItem = new HbIconItem(this);
-                }
-                HbStyle::setItemName(mPresenceIndicatorItem,
-                    "presenceIndicator");
-                mPresenceIndicatorItem->setIconName(MSG_OUTGOING_ICON);
-                mPresenceIndicatorItem->setVisible(true);
-                break;
-            }
-
-            case ConvergedMessage::Sending:
-            case ConvergedMessage::Suspended:
-            case ConvergedMessage::Scheduled:
-            case ConvergedMessage::Waiting:
-            {
-                previewText = QString(LOC_MSG_OUTGOING);
-                if (!mPresenceIndicatorItem)
-                {
-                    mPresenceIndicatorItem = new HbIconItem(this);
-                }
-                HbStyle::setItemName(mPresenceIndicatorItem,
-                    "presenceIndicator");
-                mPresenceIndicatorItem->setIconName(MSG_OUTGOING_ICON);
-                mPresenceIndicatorItem->setVisible(true);
-                break;
-            }
-            case ConvergedMessage::Failed:
-            {
-                previewText = QString(LOC_MSG_SEND_FAILED);
-                if (!mPresenceIndicatorItem)
-                {
-                    mPresenceIndicatorItem = new HbIconItem(this);
-                }
-                HbStyle::setItemName(mPresenceIndicatorItem,
-                    "presenceIndicator");
-                mPresenceIndicatorItem->setIconName(MSG_FAILED_ICON);
-                mPresenceIndicatorItem->setVisible(true);
-                break;
-            }
-            default:
-                QString postFix = QString("");
-                previewText = modelIndex().data(BodyText).toString();
-                previewText += (QChar(QChar::LineSeparator) + postFix);
-
-                if (!mPresenceIndicatorItem)
-                {
-                    mPresenceIndicatorItem = new HbIconItem(this);
-                }
-
-                HbStyle::setItemName(mPresenceIndicatorItem,
-                    "presenceIndicator");
-                mPresenceIndicatorItem->setIconName(MSG_FAILED_ICON);
-                mPresenceIndicatorItem->setVisible(false);
-
-                break;
+            previewText = LOC_MSG_RESEND_AT + dateString;
+            dateString = QString();
+            mPresenceIndicatorItem->setIconName(MSG_OUTGOING_ICON);
+            mPresenceIndicatorItem->setVisible(true);
+            break;
+        }
+        case ConvergedMessage::Sending:
+        case ConvergedMessage::Suspended:
+        case ConvergedMessage::Scheduled:
+        case ConvergedMessage::Waiting:
+        {
+            previewText = QString(LOC_MSG_OUTGOING);
+            mPresenceIndicatorItem->setIconName(MSG_OUTGOING_ICON);
+            mPresenceIndicatorItem->setVisible(true);
+            break;
+        }
+        case ConvergedMessage::Failed:
+        {
+            previewText = QString(LOC_MSG_SEND_FAILED);
+            mPresenceIndicatorItem->setIconName(MSG_FAILED_ICON);
+            mPresenceIndicatorItem->setVisible(true);
+            break;
+        }
+        default:
+        {
+            // Successful case
+            previewText = defaultPreviewText(msgType, msgSubType);
+            break;
+        }
         }
     }
-    else
-    {
-        previewText = modelIndex().data(BodyText).toString();
-    }
+    previewText.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
+    previewText.replace('\r', QChar::LineSeparator);
+    mPreviewLabelItem->setText(previewText);
     mTimestampItem->setText(dateString);
-    return previewText;
 }
 
 //---------------------------------------------------------------

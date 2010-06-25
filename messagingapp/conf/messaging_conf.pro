@@ -35,6 +35,7 @@ symbian{
 		"messaging_102072E5.crml APP_LAYER_CRML(messaging_102072E5.crml)" \
 		"messaging_102824A0.crml APP_LAYER_CRML(messaging_102824A0.crml)" \
 		"messaging_1028281E.crml APP_LAYER_CRML(messaging_1028281E.crml)" \
-		"messaging_101F8F28.crml APP_LAYER_CRML(messaging_101F8F28.crml)"
+		"messaging_101F8F28.crml APP_LAYER_CRML(messaging_101F8F28.crml)" \
+		"backup_registration.xml z:/private/2001FE79/backup_registration.xml"
 		}
 

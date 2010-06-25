@@ -22,4 +22,4 @@ CONFIG += ordered
 # Platforms
 SYMBIAN_PLATFORMS = WINSCW ARMV5
 
-SUBDIRS += utils server client plugin msghistory
+SUBDIRS += utils server client plugins msghistory

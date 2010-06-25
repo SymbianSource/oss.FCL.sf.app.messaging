@@ -18,8 +18,8 @@
 
 
 
-#ifndef C_UNIIMAGEPROCESSOR_H
-#define C_UNIIMAGEPROCESSOR_H
+#ifndef MSG_UNIFIED_EDITOR_IMAGE_PROCESSOR_H
+#define MSG_UNIFIED_EDITOR_IMAGE_PROCESSOR_H
 
 // INCLUDES
 #include <e32base.h>
@@ -412,4 +412,4 @@ NONSHARABLE_CLASS( CUniImageProcessor ) : public CActive
 
 #include <msgunieditorimageprocessor.inl>
 
-#endif // C_UNIIMAGEPROCESSOR_H
+#endif // MSG_UNIFIED_EDITOR_IMAGE_PROCESSOR_H

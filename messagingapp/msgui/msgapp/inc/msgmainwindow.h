@@ -40,18 +40,23 @@ public:
     /**
      * Constructor
      */
-    MsgMainWindow(bool serviceRequest, QWidget *parent = 0);
+    MsgMainWindow(bool serviceRequest, 
+                  int activityMsgId = -1,
+                   QWidget *parent = 0);
 
     /**
      * Destructor
      */
     virtual ~MsgMainWindow();
     
-    
+    /**
+     * Returns view manager.
+     */
+    MsgViewManager* viewManager();
 private:
     MsgServiceInterface* mMsgSI;
     MsgSendServiceInterface* mMsgSendSI;
-
+    MsgViewManager* mViewManager;
 };
 
 #endif // MSG_MAIN_WINDOW_H

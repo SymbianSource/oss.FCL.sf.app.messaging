@@ -31,7 +31,7 @@
 
 #include <csmsemailfields.h>
 //USER INCLUDES
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "convergedmessageaddress.h"
 #include "convergedmessage.h"
 
@@ -149,7 +149,7 @@ void UniSMSDataPluginPrivate::body(QString& aBodyText)
     HBufC* buf = HBufC::NewL(len);
     TPtr bufPtr = buf->Des();
     textBody.ExtractSelectively(bufPtr, 0, len, CPlainText::EExtractAll);
-    aBodyText = S60QConversions::s60DescToQString(*buf);
+    aBodyText = XQConversions::s60DescToQString(*buf);
     delete buf;
 }
 
@@ -180,8 +180,8 @@ void UniSMSDataPluginPrivate::toRecipientList(
         // populate address
         ConvergedMessageAddress
                 * messageAddress =
-                        new ConvergedMessageAddress(S60QConversions::s60DescToQString(address),
-                                                    S60QConversions::s60DescToQString(name));
+                        new ConvergedMessageAddress(XQConversions::s60DescToQString(address),
+                                                    XQConversions::s60DescToQString(name));
         mAddressList.append(messageAddress);
     }
 
@@ -195,8 +195,8 @@ void UniSMSDataPluginPrivate::toRecipientList(
             extractNameAndAddress(emailRecipients.MdcaPoint(id), name, address);
             ConvergedMessageAddress
                     * messageAddress =
-                            new ConvergedMessageAddress(S60QConversions::s60DescToQString(address),
-                                                        S60QConversions::s60DescToQString(name));
+                            new ConvergedMessageAddress(XQConversions::s60DescToQString(address),
+                                                        XQConversions::s60DescToQString(name));
             mAddressList.append(messageAddress);
         }
     }
@@ -226,7 +226,7 @@ void UniSMSDataPluginPrivate::fromAddress(QString& messageAddress)
     smsHeader->RestoreL(*store);
 
     messageAddress
-            = S60QConversions::s60DescToQString(smsHeader->FromAddress());
+            = XQConversions::s60DescToQString(smsHeader->FromAddress());
     CleanupStack::PopAndDestroy(4, pText);
 }
 

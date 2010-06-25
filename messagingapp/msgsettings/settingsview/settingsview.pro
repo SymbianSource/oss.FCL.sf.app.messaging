@@ -10,7 +10,6 @@ DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../../msgui/inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 CONFIG += hb
@@ -51,10 +50,19 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
      
 TARGET.CAPABILITY = All -TCB
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/settingsview.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/settingsview.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
 LIBS += -lSmcm \
     -lmsgs \	
-    -ls60qconversions \
     -lcommdb \
     -lmmsserversettings \
-    -lmmsgenericsettings
+    -lmmsgenericsettings \
+    -lxqutils
     

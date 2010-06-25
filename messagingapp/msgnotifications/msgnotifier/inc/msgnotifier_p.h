@@ -25,6 +25,9 @@
 class MsgNotifier;
 class CCSRequestHandler;
 class MsgStoreHandler;
+class XQSettingsManager;
+class XQPublishAndSubscribeUtils;
+class XQSystemToneService;
 
 /**
  * @class MsgNotifierPrivate
@@ -63,6 +66,16 @@ public:
      */
     void DeleteConversationList(
             const CCsClientConversation& aClientConversation);
+    
+	/**
+	 * PartialDeleteConversationList
+	 * This is for handling partial delete of conversation event
+	 * Asynchronous
+	 * @param aClientConversation CCsClientConversation - The conversation object
+	 */
+    void PartialDeleteConversationList(
+            const CCsClientConversation& aClientConversation);
+
 
     /**  
      * ModifyConversationList
@@ -124,7 +137,14 @@ private:
      * @param bootup, true, if called on bootup else false
      */
     void updateUnreadIndications(bool bootup = false);
-
+   
+    /**
+     * Show notification or not
+     * @param receivedMsgConvId received message conversation id.
+     * @return true if the received conversation id is not same as 
+     * published conversation id ( opened conversation id) else false
+     */
+    bool showNotification(int receivedMsgConvId);
 private:
 
     /**
@@ -141,6 +161,23 @@ private:
      * Pointer to Conversation Msg Store Handler.
      */
     MsgStoreHandler* iMsgStoreHandler;
+    
+    /**
+     * Settings manager 
+     * Owned.
+     */
+    XQSettingsManager* mSettingsManager;
+
+    /**
+     * Publish and subscribe utils.
+     * Owned.
+     */
+    XQPublishAndSubscribeUtils* mPSUtils;
+    
+    /**
+     * Object to handle audio alert when new message is received
+     */
+    XQSystemToneService* mSts;
     };
 
 #endif // MSGNOTIFIER_PRIVATE_H

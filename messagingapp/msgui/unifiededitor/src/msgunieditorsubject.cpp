@@ -18,14 +18,17 @@
 // INCLUDES
 #include "debugtraces.h"
 #include <HbIconItem>
+#include <HbNotificationDialog>
 
 // USER INCLUDES
 #include "msgunieditorsubject.h"
 #include "UniEditorGenUtils.h"
-#include "msgunifiededitorlineedit.h"
+#include "msgunieditorlineedit.h"
+#include "msgunieditormonitor.h"
 
 // Localized Constants
 #define LOC_SUBJECT hbTrId("txt_messaging_formlabel_subject")
+#define LOC_UNABLE_TO_ADD_CONTENT hbTrId("txt_messaging_dpopinfo_unable_to_add_more_content")
 
 //priority icon
 const QString HIGH_PRIORITY("qtg_small_priority_high");
@@ -35,19 +38,12 @@ const QString LOW_PRIORITY("qtg_small_priority_low");
 // MsgUnifiedEditorSubject::MsgUnifiedEditorSubject
 // @see header file
 //---------------------------------------------------------------
-MsgUnifiedEditorSubject::MsgUnifiedEditorSubject( const QString& pluginPath, QGraphicsItem *parent ) :
-HbWidget(parent),
-mPluginPath(pluginPath),
+MsgUnifiedEditorSubject::MsgUnifiedEditorSubject( QGraphicsItem *parent ) :
+MsgUnifiedEditorBaseWidget(parent),
 mPriorityIcon(NULL),
 mPriority(ConvergedMessage::Normal),
 mGenUtils(0)
 {
-#ifdef _DEBUG_TRACES_
-				qDebug() << "MsgUnifiedEditorSubject calling HbStyle::registerPlugin";
-#endif
-
-        setPluginBaseId(style()->registerPlugin(mPluginPath));
-
         mSubjectEdit = new MsgUnifiedEditorLineEdit(LOC_SUBJECT,this);
         mSubjectEdit->setDefaultBehaviour(true);        
         HbStyle::setItemName(mSubjectEdit,"subjectEdit");
@@ -57,7 +53,7 @@ mGenUtils(0)
         mGenUtils = new UniEditorGenUtils();
         
         connect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
-                this, SLOT(onContentsAdded(const QString&)));
+                this, SLOT(onContentsChanged(const QString&)));
 }
 
 //---------------------------------------------------------------
@@ -66,8 +62,6 @@ mGenUtils(0)
 //---------------------------------------------------------------
 MsgUnifiedEditorSubject::~MsgUnifiedEditorSubject()
 {
-    style()->unregisterPlugin(mPluginPath);
-   
     if(mGenUtils)
     {
         delete mGenUtils;
@@ -117,33 +111,28 @@ ConvergedMessage::Priority MsgUnifiedEditorSubject::priority()
 	return mPriority;
 }
 
-void MsgUnifiedEditorSubject::onContentsAdded(const QString& text)
+void MsgUnifiedEditorSubject::onContentsChanged(const QString& text)
 {
-    if(!text.isEmpty())
+    // reject any text input if mms size limit is reached
+    int futureSize = subjectSize() +
+            MsgUnifiedEditorMonitor::containerSize() + MsgUnifiedEditorMonitor::bodySize();
+    if(futureSize > MsgUnifiedEditorMonitor::maxMmsSize())
     {
+        // atomic operation
         disconnect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
-                this, SLOT(onContentsAdded(const QString&)));
-        if(!subjectOkInSms())
-        {
-            emit contentChanged();
-        }
+                    this, SLOT(onContentsChanged(const QString&)));
+        mSubjectEdit->clearContent();
+        mSubjectEdit->setText(mPrevBuffer);
         connect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
-                this, SLOT(onContentsRemoved(const QString&)));
+                        this, SLOT(onContentsChanged(const QString&)));
+        HbNotificationDialog::launchDialog(LOC_UNABLE_TO_ADD_CONTENT);
+        return;
     }
-}
 
-void MsgUnifiedEditorSubject::onContentsRemoved(const QString& text)
-{
-    if(text.isEmpty())
+    mPrevBuffer = text;
+    if(!subjectOkInSms())
     {
-        disconnect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
-            this, SLOT(onContentsRemoved(const QString&)));
-        if(!subjectOkInSms())
-        {
-            emit contentChanged();
-        }
-        connect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
-                this, SLOT(onContentsAdded(const QString&)));
+        emit contentChanged();
     }
 }
 
@@ -162,7 +151,15 @@ int MsgUnifiedEditorSubject::subjectSize()
 
 void MsgUnifiedEditorSubject::setText(const QString& text)
 {
-    mSubjectEdit->setText(text);
+    if(!text.isEmpty())
+    {
+        mSubjectEdit->setText(text);
+    }
+}
+
+void MsgUnifiedEditorSubject::setFocus()
+{
+    mSubjectEdit->setFocus(Qt::MouseFocusReason);
 }
 
 //EOF

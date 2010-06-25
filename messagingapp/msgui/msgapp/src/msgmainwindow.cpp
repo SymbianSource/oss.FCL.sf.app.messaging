@@ -28,13 +28,12 @@
 // MsgMainWindow::MsgMainWindow
 // Constructor
 //---------------------------------------------------------------
-MsgMainWindow::MsgMainWindow(bool serviceRequest, QWidget *parent) :
+MsgMainWindow::MsgMainWindow(bool serviceRequest,int activityMsgId,QWidget *parent) :
 HbMainWindow(parent), mMsgSI(0), mMsgSendSI(0)
 {
-    hideItems(Hb::NaviPaneItem);
-    MsgViewManager* viewManager = new MsgViewManager(serviceRequest,this,this);
-    mMsgSI = new MsgServiceInterface(NULL,viewManager);
-    mMsgSendSI = new MsgSendServiceInterface(NULL,viewManager);
+    mViewManager = new MsgViewManager(serviceRequest,this,this,activityMsgId);
+    mMsgSI = new MsgServiceInterface(NULL,mViewManager);
+    mMsgSendSI = new MsgSendServiceInterface(NULL,mViewManager);
         
     //Model creation
     ConversationsEngine::instance();
@@ -61,4 +60,12 @@ MsgMainWindow::~MsgMainWindow()
     delete ConversationsEngine::instance();
 }
 
+//---------------------------------------------------------------
+// MsgMainWindow::viewManager
+// Constructor
+//---------------------------------------------------------------
+MsgViewManager* MsgMainWindow::viewManager()
+{   
+     return mViewManager; 
+}
 // End of file

@@ -126,15 +126,25 @@ public:
      * toAddressList
      * @return list of to address list
      */
-
     ConvergedMessageAddressList toAddressList();
 
     /**
      * ccAddressList
      * @return list of cc address list
      */
-
     ConvergedMessageAddressList ccAddressList();
+
+    /**
+     * bccAddressList
+     * @return list of Bcc address list
+     */
+    ConvergedMessageAddressList bccAddressList();
+
+    /**
+     * recipientCount
+     * @return Total recipient count
+     */
+    int recipientCount();
 
     /**
      * messageSize

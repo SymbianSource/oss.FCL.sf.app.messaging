@@ -25,7 +25,7 @@
 #include <bautils.h>
 #include <data_caging_path_literals.hrh>
 
-#include <UniDataModel.rsg>
+#include <unidatamodel.rsg>
 
 #include "UniSmil.hrh"
 #include "UniSmilParams.h"

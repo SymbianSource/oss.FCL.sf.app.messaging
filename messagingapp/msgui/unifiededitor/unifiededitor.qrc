@@ -1,14 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="animation.axml">resources/animation.axml</file>
-       <file alias="qtg_anim_longtap_1.svg">resources/qtg_anim_longtap_1.svg</file>
-       <file alias="qtg_anim_longtap_2.svg">resources/qtg_anim_longtap_2.svg</file>
-       <file alias="qtg_anim_longtap_3.svg">resources/qtg_anim_longtap_3.svg</file>
-       <file alias="qtg_anim_longtap_4.svg">resources/qtg_anim_longtap_4.svg</file>
-       <file alias="qtg_anim_longtap_5.svg">resources/qtg_anim_longtap_5.svg</file>
-       <file alias="qtg_anim_longtap_6.svg">resources/qtg_anim_longtap_6.svg</file>
-       <file alias="qtg_anim_longtap_7.svg">resources/qtg_anim_longtap_7.svg</file>
-       <file alias="qtg_anim_longtap_8.svg">resources/qtg_anim_longtap_8.svg</file>
-       <file alias="qtg_anim_longtap_9.svg">resources/qtg_anim_longtap_9.svg</file>       
+        <file alias="qtg_anim_loading.axml">resources/qtg_anim_loading.axml</file>
+    </qresource>
+    <qresource prefix="/layouts">
+        <file alias="msgunifiededitoraddress.css">resources/layouts/msgunifiededitoraddress.css</file>
+        <file alias="msgunifiededitoraddress.widgetml">resources/layouts/msgunifiededitoraddress.widgetml</file>
+        <file alias="msgunifiededitorattachment.css">resources/layouts/msgunifiededitorattachment.css</file>
+        <file alias="msgunifiededitorattachment.widgetml">resources/layouts/msgunifiededitorattachment.widgetml</file>
+        <file alias="msgunifiededitorbody.css">resources/layouts/msgunifiededitorbody.css</file>
+        <file alias="msgunifiededitorbody.widgetml">resources/layouts/msgunifiededitorbody.widgetml</file>
+        <file alias="msgunifiededitorsubject.css">resources/layouts/msgunifiededitorsubject.css</file>
+        <file alias="msgunifiededitorsubject.widgetml">resources/layouts/msgunifiededitorsubject.widgetml</file>
+        <file alias="msgunifiededitorattachment_color.css">resources/layouts/msgunifiededitorattachment_color.css</file>
     </qresource>
 </RCC>

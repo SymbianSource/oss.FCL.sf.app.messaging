@@ -23,14 +23,13 @@
 #include "unidatamodelplugininterface.h"
 
 class UniViewerTextItem;
-class HbIconItem;
+class UniViewerPixmapWidget;
+class UniViewerAudioWidget;
 class HbTextItem;
-class HbPushButton;
-class HbGestureSceneFilter;
-class QSignalMapper;
 
 /**
- * This widget displays the body of the viewer
+ * @class UniViewerBodyWidget
+ * @brief This widget displays the body of the viewer.
  */
 class UniViewerBodyWidget: public HbWidget
 {
@@ -55,27 +54,27 @@ public slots:
 
     /**
      * Called to insert image content in viewer.
-     * @param medialist list of absolute paths of media.
+     * @param info Object information.
      */
-    void setImage(QString imagefile);
+    void setPixmap(UniMessageInfo *info);
 
     /**
      * Called to insert audio content in viewer.
-     * @param medialist list of absolute paths of media.
+     * @param info Object information.
      */
-    void setAudio(QString audiofile);
+    void setAudio(UniMessageInfo *info);
 
     /**
      * Called to insert video content in viewer.
-     * @param medialist list of absolute paths of media.
+     * @param info Object information.
      */
-    void setVideo(QString videofile);
+    void setVideo(UniMessageInfo *info);
 
     /**
      * Called to insert text content in viewer.
      * @param text Body text to be set.
      */
-    void setTextContent(QString text);
+    void setText(QString text);
 
     /**
      * Sets the slide counter.
@@ -120,45 +119,12 @@ public slots:
     void clearContent();
 
 protected:
-    // from HbWidget
 
     /**
-     * reimplemented from base class to provide proper geometry for scrolling.
+     * Reimplemented from base class to provide proper geometry for scrolling.
      * @see HbWidget
      */
-    void resizeEvent(QGraphicsSceneResizeEvent* event);
-
-private slots:
-
-    /**
-     * called on long press on the media objects
-     */
-    void longPressed(QPointF position);
-
-    /**
-     * called from the media object's item specific menu
-     */
-    void openMedia();
-
-    /**
-     * Open a specified media file
-     */
-    void openMedia(const QString& fileName);
-
-    /**
-     * called from the media object's item specific menu
-     */
-    void viewDetails();
-
-    /**
-     * Service launch complete.
-     */
-    void handleOk(const QVariant& result);
-
-    /**
-     * Service launch errors.
-     */
-    void handleError(int errorCode, const QString& errorMessage);
+    QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
 
 signals:
     /**
@@ -192,22 +158,12 @@ private:
     /**
      * Icon item to preview images.
      */
-    HbIconItem* mIconItem;
+    UniViewerPixmapWidget *mPixmapItem;
 
     /**
      * Media widget for embedded audio content.
      */
-    HbPushButton *mAudioItem;
-
-    /**
-     * To setup longpress gesture on media objects
-     */
-    HbGestureSceneFilter* gestureFilter;
-
-    /**
-     * File mapper for opening media
-     */
-    QSignalMapper* mSignalMapper;
+    UniViewerAudioWidget *mAudioItem;
 };
 
 #endif //UNIVIEWER_BODY_WIDGET_H

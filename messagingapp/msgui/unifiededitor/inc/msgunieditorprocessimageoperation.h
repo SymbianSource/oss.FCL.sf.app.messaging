@@ -17,18 +17,19 @@
 
 
 
-#ifndef __UNIEDITORPROCESSIMAGEOPERATION_H
-#define __UNIEDITORPROCESSIMAGEOPERATION_H
+#ifndef MSG_UNIFIED_EDITOR_PROCESS_IMAGEOPERATION_H
+#define MSG_UNIFIED_EDITOR_PROCESS_IMAGEOPERATION_H
 
 // INCLUDES
 
 #include <e32base.h>
+#include <f32file.h>
 #include <msvapi.h>
 #include <apmstd.h>
 
 #include <msgunieditorimageprocessor.h>
 #include <cmsvattachment.h>
-
+#include <QObject>
 
 // FORWARD DECLARATIONS
 
@@ -37,7 +38,7 @@ class CMsgImageControl;
 class CUniEditorDocument;
 class MMsvAttachmentManager;
 class CMsvStore;
-
+class HbAction;
 // DATA TYPES
 
 // CLASS DECLARATION
@@ -68,17 +69,18 @@ class MUniEditorProcessImageOperationObserver
 *
 * @since 3.2
 */
-class CUniEditorProcessImageOperation : public CActive,
+class CUniEditorProcessImageOperation : public QObject,public CActive,
                                         public MUniImageProcessorCallback
     {
+    Q_OBJECT
+    
     public: // new operations
 
         /**
         * Factory method
         */
         static CUniEditorProcessImageOperation* NewL( 
-            MUniEditorProcessImageOperationObserver &aObserver,
-            RFs& aFs );
+            MUniEditorProcessImageOperationObserver &aObserver);
 
         /**
         * Start image process operation
@@ -133,8 +135,7 @@ class CUniEditorProcessImageOperation : public CActive,
         * C++ constructor
         */
         CUniEditorProcessImageOperation( 
-            MUniEditorProcessImageOperationObserver &aObserver,
-            RFs& aFs );
+            MUniEditorProcessImageOperationObserver &aObserver);
 
         /**
         * 2nd phase constructor.
@@ -206,6 +207,19 @@ class CUniEditorProcessImageOperation : public CActive,
         */
         void CompleteOperation( TInt aError );
         
+		/**
+		* Check image size
+		*/
+        void checkLargeImage();
+        
+    private slots:
+    
+		/**
+     	* This slot is called when large image insertion query dialog is launched.
+     	* @param action selected action (yes or no).
+     	*/
+    	void onDialogLargeImage(HbAction* action);
+    
     private: // data
 
         enum TUniProcessStates
@@ -244,7 +258,8 @@ class CUniEditorProcessImageOperation : public CActive,
         TInt                        iMaxImageWidth;
         TInt                        iMaxImageHeight;
         TInt                        iMmsCreationMode;
-        RFs&                        iFs;
+        RFs                         iFs;
+        TBool largeImageQuery;
     };
 
-#endif //__UNIEDITORPROCESSIMAGEOPERATION_H
+#endif //MSG_UNIFIED_EDITOR_PROCESS_IMAGEOPERATION_H

@@ -59,13 +59,13 @@ EXPORT_C CCSRequestHandler* CCSRequestHandler::NewL()
 // CCSRequestHandler::NewLC()
 // Two-phased constructor.
 // -----------------------------------------------------------------------------
-EXPORT_C CCSRequestHandler* CCSRequestHandler::NewLC(/*CVPbkContactManager* aVPbkContactManager*/)
+EXPORT_C CCSRequestHandler* CCSRequestHandler::NewLC()
     {
     PRINT ( _L("Enter CCSRequestHandler::NewLC") );
 
     CCSRequestHandler* self = new ( ELeave ) CCSRequestHandler();
     CleanupStack::PushL( self );
-    self->ConstructL(/*aVPbkContactManager*/);
+    self->ConstructL();
 
     PRINT ( _L("End CCSRequestHandler::NewLC") );
 
@@ -178,6 +178,12 @@ void CCSRequestHandler::HandleGetConversationListResults()
         //call panic
         }
     
+    // Speed up the allocation
+    if( listCount > 0 )
+        {
+        clientConversationList.Reserve(listCount);
+        }
+
     for (TInt iloop = 0 ; iloop < listCount; iloop++)
         {
         TRAP(error,
@@ -240,7 +246,12 @@ void CCSRequestHandler::HandleGetConversationResults()
         {
         //call panic
         }
-
+    // Speed up the allocation
+    if( conversationEntryCount > 0 )
+        {
+        ConversationEntryList.Reserve(conversationEntryCount);
+        }
+    
     PRINT1 ( _L("Number of conversation entries = %d"), conversationEntryCount );
 
     // conversation entries
@@ -319,8 +330,11 @@ void CCSRequestHandler::HandleGetConversationListOverflow()
     stream.Close();
 
     // Delete and recreate the results buffer
-    delete iListResultsBuffer;
-    iListResultsBuffer = NULL;
+    if ( iListResultsBuffer)
+        {
+        delete iListResultsBuffer;
+        iListResultsBuffer = NULL;
+        }
 
     // Buffer created for the new size
     TRAP(error, 
@@ -370,8 +384,11 @@ void CCSRequestHandler::HandleGetConversationOverflow()
     stream.Close();
 
     // Delete and recreate the results buffer
-    delete iConvResultsBuffer;
-    iConvResultsBuffer = NULL;
+    if ( iConvResultsBuffer )
+        {
+        delete iConvResultsBuffer;
+        iConvResultsBuffer = NULL;
+        }
 
     // Buffer created for the new size
     TRAP(error, 
@@ -429,10 +446,14 @@ EXPORT_C void CCSRequestHandler::RequestConversationListChangeEventL(
 EXPORT_C void CCSRequestHandler::RemoveConversationListChangeEventL(
         MCsConversationListChangeObserver* /*aObserver*/)
     {
-    iConversationListChangeObserver = NULL;
-
-    // De-register from the server           
-    iNotificationHandler->RemoveConversationListChangeEventL();   
+    // Before removing observer, make sure it was added earlier.
+    if( iConversationListChangeObserver )
+        {
+        iConversationListChangeObserver = NULL;
+    
+        // De-register from the server           
+        iNotificationHandler->RemoveConversationListChangeEventL();  
+        }
     }
 
 // -----------------------------------------------------------------------------
@@ -466,11 +487,12 @@ EXPORT_C void CCSRequestHandler::RemoveConversationChangeEventL(
         {
         delete iConversationChangeObserver;
         iConversationChangeObserver = NULL;
-        }
-
-    iNotificationHandler->RemoveConversationChangeEventL(aClientConversation);
+        if(aClientConversation)
+            {
+            iNotificationHandler->RemoveConversationChangeEventL(aClientConversation);
+            }
+         }
     }
-
 // -----------------------------------------------------------------------------
 // CCSRequestHandler::RequestCachingStatusEventL()
 // Add caching status Observer
@@ -895,6 +917,50 @@ void CCSRequestHandler::HandleDeleteConversationList(HBufC8* aResultsBuffer)
     }
 
 // -----------------------------------------------------------------------------
+// CCSRequestHandler::HandlePartialDeleteConversationList()
+// Process partial delete conversation lsit event received from server
+// -----------------------------------------------------------------------------
+
+void CCSRequestHandler::HandlePartialDeleteConversationList(HBufC8* aResultsBuffer)
+{
+    PRINT( _L("Enter CCSRequestHandler::HandlePartialDeleteConversationList") );
+
+    TInt error = KErrNone;
+
+    // perpare client conversation
+    CCsClientConversation* clientConversation = NULL;
+    RDesReadStream resultStream(aResultsBuffer->Des());
+
+    TRAP(error,
+        resultStream.PushL();
+        clientConversation = CCsClientConversation::NewL();
+        CleanupStack::PushL(clientConversation);
+        clientConversation->InternalizeL(resultStream);
+        CleanupStack::Pop(clientConversation);
+        resultStream.Pop());
+
+    if ( error != KErrNone )
+        {
+        // Ignore this conversation
+        }
+
+    // Cleanup
+    resultStream.Close();
+    
+    // Pass the results to the observer
+    if ( iConversationListChangeObserver )
+        {
+        CleanupStack::PushL( clientConversation );
+        iConversationListChangeObserver->
+        PartialDeleteConversationList(*clientConversation);
+        }
+    
+    CleanupStack::PopAndDestroy();// clientConversation*/
+
+    PRINT( _L("End CCSRequestHandler::HandlePartialDeleteConversationList") );
+}
+
+// -----------------------------------------------------------------------------
 // CCSRequestHandler::HandleModifyConversationList
 // Process modify conversation lsit event received from server
 // -----------------------------------------------------------------------------
@@ -1197,6 +1263,39 @@ EXPORT_C TInt CCSRequestHandler::GetConversationIdFromAddressL(TDesC& aContactAd
     return conversationId;
     }
 	
+// -----------------------------------------------------------------------------
+// CCSRequestHandler::GetConversationFromConversationIdL()
+// -----------------------------------------------------------------------------
+EXPORT_C CCsClientConversation* CCSRequestHandler::GetConversationFromConversationIdL(TInt aConversationId)
+{
+    // Create a buffer to store the results.
+    if(iResultsBuffer)
+    {
+        delete iResultsBuffer;
+        iResultsBuffer = NULL;
+    }
+    iResultsBuffer = HBufC8::NewL(KBigIpcBuffer);
+
+    // Send the request
+    iSession.GetConversationFromConversationIdL(aConversationId, iResultsBuffer->Des());
+
+    // Parse the results
+    RDesReadStream resultStream(iResultsBuffer->Des());
+    resultStream.PushL();
+    CCsClientConversation* clientConversation = CCsClientConversation::NewL();
+    CleanupStack::PushL(clientConversation);
+    clientConversation->InternalizeL(resultStream);
+    CleanupStack::Pop(clientConversation);
+
+    // Cleanup
+    delete iResultsBuffer;
+    iResultsBuffer = NULL;
+    resultStream.Pop();
+    resultStream.Close();
+
+    return clientConversation;
+}
+
 // -----------------------------------------------------------------------------
 // CCSRequestHandler::GetConversationFromMessageIdL()
 // -----------------------------------------------------------------------------

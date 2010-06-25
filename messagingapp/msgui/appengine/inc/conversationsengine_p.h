@@ -119,6 +119,18 @@ public:
     void registerForConversationUpdatesL();
     
     /**
+     *  Remove the CV notifs temporary for some time
+     *  does not destroy the model as such
+     */
+    void deRegisterCVUpdatesTemporary();
+    
+    /**
+     *  Register again after temporary de-register
+     * just need to set the new conversation id
+     */
+    void registerAgainForConversationUpdatesL(int newConversationId);
+    
+    /**
      *  Fetch ConversationId from contactId
      *  @param contactId , contactId
      *  @return conversationId
@@ -131,6 +143,12 @@ public:
      *  @return conversationId
      */
     TInt getConversationIdFromAddressL(TDesC& contactAddress);
+
+    /**
+     *  Get the latest conversation from the conversation cache by Id
+     *  @param aConversationId for conversation is required
+     */
+    CCsClientConversation* getConversationFromConversationIdL(TInt aConversationId);
 
     /**
      *  Starts fetching remaing conversations

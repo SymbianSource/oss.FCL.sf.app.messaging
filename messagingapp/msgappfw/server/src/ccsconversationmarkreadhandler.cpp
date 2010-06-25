@@ -19,7 +19,6 @@
 #include <ccsconversationentry.h>
 #include "ccsconversationcache.h"
 #include "ccsconversationmarkreadhandler.h"
-#include "mcsconversationmarkreadobserver.h"
 #include <mmsconst.h>
 
 // ----------------------------------------------------------------------------
@@ -27,12 +26,12 @@
 // Two Phase Construction
 // ----------------------------------------------------------------------------
 CCsConversationMarkReadHandler* CCsConversationMarkReadHandler::
-NewL(CCsConversationCache* aCache, MCsConversationMarkReadObserver* aObserver)
+NewL(CCsConversationCache* aCache)
     {
     CCsConversationMarkReadHandler* self = 
             new (ELeave) CCsConversationMarkReadHandler();
     CleanupStack::PushL(self);
-    self->ConstructL(aCache, aObserver);
+    self->ConstructL(aCache);
     CleanupStack::Pop(self); // self
     return self;
     }
@@ -49,13 +48,11 @@ CCsConversationMarkReadHandler::CCsConversationMarkReadHandler():
 // ----------------------------------------------------------------------------
 // Constructor
 // ----------------------------------------------------------------------------
-void CCsConversationMarkReadHandler::ConstructL(CCsConversationCache* aCache,
-        MCsConversationMarkReadObserver* aObserver)
+void CCsConversationMarkReadHandler::ConstructL(CCsConversationCache* aCache)
     {
     iCache = aCache;
     iState = EMarkReadIdle;
-    iObserver = aObserver;
-    
+       
     iConversationEntryList = new (ELeave)RPointerArray<CCsConversationEntry> ();  
     iSession = CMsvSession::OpenSyncL(*this);
     }
@@ -64,9 +61,19 @@ void CCsConversationMarkReadHandler::ConstructL(CCsConversationCache* aCache,
 // Destructor
 // ----------------------------------------------------------------------------
 CCsConversationMarkReadHandler::~CCsConversationMarkReadHandler()
+{
+    Cancel();
+    if (iConversationEntryList)
     {
-    if(iSession)
-        {
+		iConversationEntryList->ResetAndDestroy();
+        iConversationEntryList->Close();
+        delete iConversationEntryList;
+        iConversationEntryList = NULL;
+        
+    }
+
+    if (iSession)
+    {
         delete iSession;
         iSession = NULL;
         }
@@ -81,10 +88,7 @@ void CCsConversationMarkReadHandler::MarkReadL(TInt aConversationId)
     CCsClientConversation* clientConversation = CCsClientConversation::NewL();
     clientConversation->SetConversationEntryId(aConversationId);
     CleanupStack::PushL(clientConversation);
-    
-    // Create entry list
-    iConversationEntryList = new (ELeave)RPointerArray<CCsConversationEntry> ();  
-    
+
     // Get conversationlist for given client conversation
     iCache->GetConversationsL (clientConversation, iConversationEntryList);
     
@@ -123,8 +127,8 @@ void CCsConversationMarkReadHandler::MarkReadOneMessageL()
             if(entry.iMtm != KUidMsgTypeMultimedia)
             {
                 entry.SetUnread( EFalse );
+                cEntry->ChangeL( entry );
             }
-           cEntry->ChangeL( entry );
            }
         CleanupStack::PopAndDestroy(cEntry);
         }
@@ -167,30 +171,17 @@ void CCsConversationMarkReadHandler::RunL()
             break;
             
         case EMarkReadComplete:
-            // Cleanup
-            iMarkReadCount = 0;
-            iConversationEntryList->ResetAndDestroy();
-            iConversationEntryList->Close();
-            delete iConversationEntryList;
-            iConversationEntryList = NULL;  
-            
-            // Notify observers
-            iObserver->MarkReadComplete(this);
+            // Cleanup, this is the last call RunL is not activated again.
+            delete this;
             break;
     }
 }
 
-TInt CCsConversationMarkReadHandler::RunError(TInt aError)
+TInt CCsConversationMarkReadHandler::RunError(TInt /*aError*/)
 {
-  iMarkReadCount = 0;
-  iConversationEntryList->ResetAndDestroy();
-  iConversationEntryList->Close();
-  delete iConversationEntryList;
-  iConversationEntryList = NULL;  
-            
-  // Notify observer
-  iObserver->MarkReadComplete(this);
-  return KErrNone;
+    // RunL left so stop processing the AO and clean it.
+    delete this;                     
+    return KErrNone;
 }
 
 // ----------------------------------------------------------------------------

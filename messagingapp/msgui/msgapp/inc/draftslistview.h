@@ -26,7 +26,7 @@ class HbListView;
 class HbListWidget;
 class HbListWidgetItem;
 class HbAbstractViewItem;
-
+class HbAction;
 /**
  * List view implementation for showing Draft messages.
  */
@@ -113,6 +113,18 @@ private slots:
      */
     void handleModelChanged();
 
+	/**
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogDeleteMsg(HbAction* action);
+    
+    /**
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogDeleteAllMessages(HbAction* action);
+    
 private:
 
     /**
@@ -140,6 +152,7 @@ private:
     {
         DRAFTS_EXTN = 0x00, CONVERSATIONS_EXTN = 0x01
     };
+    
 };
 
 #endif /* DRAFTS_LISTVIEW_H */

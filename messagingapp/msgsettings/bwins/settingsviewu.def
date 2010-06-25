@@ -4,13 +4,13 @@ EXPORTS
 	??_EMsgSettingsView@@UAE@I@Z @ 3 NONAME ; MsgSettingsView::~MsgSettingsView(unsigned int)
 	?trUtf8@MsgSettingsView@@SA?AVQString@@PBD0H@Z @ 4 NONAME ; class QString MsgSettingsView::trUtf8(char const *, char const *, int)
 	?staticMetaObject@MsgSettingsView@@2UQMetaObject@@B @ 5 NONAME ; struct QMetaObject const MsgSettingsView::staticMetaObject
-	??0MsgSettingsView@@QAE@PAVQGraphicsItem@@@Z @ 6 NONAME ; MsgSettingsView::MsgSettingsView(class QGraphicsItem *)
-	?tr@MsgSettingsView@@SA?AVQString@@PBD0@Z @ 7 NONAME ; class QString MsgSettingsView::tr(char const *, char const *)
-	??1MsgSettingsView@@UAE@XZ @ 8 NONAME ; MsgSettingsView::~MsgSettingsView(void)
-	?metaObject@MsgSettingsView@@UBEPBUQMetaObject@@XZ @ 9 NONAME ; struct QMetaObject const * MsgSettingsView::metaObject(void) const
-	?getStaticMetaObject@MsgSettingsView@@SAABUQMetaObject@@XZ @ 10 NONAME ; struct QMetaObject const & MsgSettingsView::getStaticMetaObject(void)
-	?tr@MsgSettingsView@@SA?AVQString@@PBD0H@Z @ 11 NONAME ; class QString MsgSettingsView::tr(char const *, char const *, int)
-	?qt_metacast@MsgSettingsView@@UAEPAXPBD@Z @ 12 NONAME ; void * MsgSettingsView::qt_metacast(char const *)
+	?tr@MsgSettingsView@@SA?AVQString@@PBD0@Z @ 6 NONAME ; class QString MsgSettingsView::tr(char const *, char const *)
+	?metaObject@MsgSettingsView@@UBEPBUQMetaObject@@XZ @ 7 NONAME ; struct QMetaObject const * MsgSettingsView::metaObject(void) const
+	?getStaticMetaObject@MsgSettingsView@@SAABUQMetaObject@@XZ @ 8 NONAME ; struct QMetaObject const & MsgSettingsView::getStaticMetaObject(void)
+	?qt_metacast@MsgSettingsView@@UAEPAXPBD@Z @ 9 NONAME ; void * MsgSettingsView::qt_metacast(char const *)
+	??0MsgSettingsView@@QAE@W4SettingsView@0@PAVQGraphicsItem@@@Z @ 10 NONAME ; MsgSettingsView::MsgSettingsView(enum MsgSettingsView::SettingsView, class QGraphicsItem *)
+	??1MsgSettingsView@@UAE@XZ @ 11 NONAME ; MsgSettingsView::~MsgSettingsView(void)
+	?tr@MsgSettingsView@@SA?AVQString@@PBD0H@Z @ 12 NONAME ; class QString MsgSettingsView::tr(char const *, char const *, int)
 	?onSmsCenterEditViewClosed@MsgSettingsView@@QAEXXZ @ 13 NONAME ; void MsgSettingsView::onSmsCenterEditViewClosed(void)
 	?onNewSMSCCenterClicked@MsgSettingsView@@QAEXH@Z @ 14 NONAME ; void MsgSettingsView::onNewSMSCCenterClicked(int)
 

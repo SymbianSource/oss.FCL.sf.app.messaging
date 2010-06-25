@@ -25,7 +25,7 @@
 
 #include <e32std.h>
 
-#include <MdaAudioSamplePlayer.h> // MMdaAudioPlayerCallback & CMdaAudioPlayerUtility
+#include <mdaaudiosampleplayer.h> // MMdaAudioPlayerCallback & CMdaAudioPlayerUtility
 #include <MsgMediaInfo.h>
 
 // CONSTANTS

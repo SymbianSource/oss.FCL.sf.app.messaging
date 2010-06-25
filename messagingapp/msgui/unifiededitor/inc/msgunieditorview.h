@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef UNIFIED_EDITOR_VIEW_H
-#define UNIFIED_EDITOR_VIEW_H
+#ifndef MSG_UNIFIED_EDITOR_VIEW_H
+#define MSG_UNIFIED_EDITOR_VIEW_H
 
 #ifdef UNIFIEDEDITOR_DLL
 #define UNIFIEDEDITOR_EXPORT Q_DECL_EXPORT
@@ -24,14 +24,9 @@
 #define UNIFIEDEDITOR_EXPORT Q_DECL_IMPORT
 #endif
 
-#include <qmobilityglobal.h>
 #include "msgbaseview.h"
 #include "convergedmessage.h"
 #include "convergedmessageid.h"
-
-QTM_BEGIN_NAMESPACE
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
 
 class HbWidget;
 class HbAction;
@@ -40,10 +35,13 @@ class QGraphicsLinearLayout;
 class MsgUnifiedEditorSubject;
 class MsgUnifiedEditorAddress;
 class MsgUnifiedEditorBody;
-class MsgMonitor;
+class MsgUnifiedEditorMonitor;
 class MsgAttachmentContainer;
 class UniEditorPluginLoader;
 class HbListWidgetItem;
+class HbAbstractVkbHost;
+class MsgUnifiedEditorBaseWidget;
+class HbListWidget;
 
 class UNIFIEDEDITOR_EXPORT MsgUnifiedEditorView : public MsgBaseView
     {
@@ -77,7 +75,7 @@ public:
     /**
      * Saves the content inside editor to save
      */
-    void saveContentToDrafts();
+    int saveContentToDrafts();
     
 protected:
     /**
@@ -98,20 +96,20 @@ private:
     void addToolBar();
 
     /**
-     * helper method to get style plugin path.
-     */
-    QString pluginPath();
-
-    /**
      * Packs the content inside editor into converged message
+     * @param [OUT]msg, converged message to hold editor data
+     * @param isSave, flag to indicate that msg needs to be packed
+     * for saving to draft or not
      */
-    void packMessage(ConvergedMessage &msg);
+    void packMessage(ConvergedMessage &msg, bool isSave=false);
 
     /**
      * Populate editor with prepopulated msg content
+     * @param messageDetails message details
+     * @param draftMessage boolean for specifying draft message
      */
     void populateContentIntoEditor(
-        const ConvergedMessage& messageDetails);
+        const ConvergedMessage& messageDetails, bool draftMessage = false);
     
     /**
      * Populate the editor with the forwarded message's content
@@ -140,14 +138,51 @@ private:
     void fetchImages();
 
     /**
-     * Fectch conatcts
+     * Fetch contacts
      */
     void fetchContacts();
 
     /**
-     * Fectch audio
+     * Fetch audio
      */
     void fetchAudio();
+
+    /**
+     * To hide/show chrome.
+     */
+    void hideChrome(bool hide);
+    
+    /**
+     * To initialize view.
+     */
+    void initView();
+    
+    /**
+     * Creates temp folder for editor.
+     */
+    bool createTempFolder();
+    
+    /**
+     * Removes editors temp folder.
+     */
+    void removeTempFolder();
+
+    /**
+     * Attachment options in TBE
+     * Row number of the TBE actions
+     */
+    enum TBE_AttachOption
+    {
+        TBE_PHOTO = 0x00, TBE_SOUND = 0x01, TBE_VCARD = 0x02
+    };
+
+    /**
+     * Enable/Disable attachment options for slide-conformance
+     * @param opt, row number of action in TBE
+     * @param isEnabled, true/false
+     */
+    void setAttachOptionEnabled(MsgUnifiedEditorView::TBE_AttachOption opt,
+            bool enable);
 
 private slots:
 
@@ -172,11 +207,6 @@ private slots:
     void changePriority();
 
     /**
-     * slot for different sending options.
-     */
-    void sendingOptions();
-
-    /**
      * slot to current delete message.
      */
     void deleteMessage();
@@ -186,11 +216,6 @@ private slots:
      */
     void imagesFetched(const QVariant& result );
 
-    /**
-     * slot to fetch audio files
-     */
-    void audiosFetched(const QVariant& result );
-    
     /**
      * slot to receive fetched contacts
      */
@@ -239,10 +264,62 @@ private slots:
      * Deactivate Input Blocker
      */
     void deactivateInputBlocker();
+    
+    /**
+     * Resizes the view when VKB is opened.
+     * This slot is triggered when vkb is opened.
+     */
+    void vkbOpened();
 
+    /**
+     * Resizes the view when VKB is closed.
+     * This slot is triggered when VKB focus is lost.
+     */
+    void vkbClosed();
+    
+    /**
+     * Slot to do delayed construction.
+     */
+    void doDelayedConstruction();
+    
+    /**
+     * Sets focus to item.
+     */
+    void setFocus(MsgUnifiedEditorBaseWidget* item);
+    
+    /**
+     * Listens to contentChanged signal of various fields.
+     */
+    void onContentChanged();
+
+	/**
+     * This slot is called when delete message dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogDeleteMsg(HbAction* action);
+
+	/**
+     * This slot is called when define sms settings dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogSmsSettings(HbAction* action);
+    
+    /**
+     * This slot is called when define mms settings dialog is launched.
+     * @param action selected action (yes or no).
+     */
+    void onDialogMmsSettings(HbAction* action);    
+	
+	/**
+     * Enable/Disable send tool button.
+     * @param true/false to enable/disable.
+     */
+     void enableSendButton(bool enable);
+    
 private:
     HbAction* mSubjectAction;
     HbAction* mCcBccAction;
+    HbAction* mSendAction;
     QGraphicsLinearLayout* mMainLayout;
     MsgUnifiedEditorSubject* mSubjectField;
     MsgUnifiedEditorAddress* mToField;
@@ -251,15 +328,25 @@ private:
     MsgUnifiedEditorBody*   mBody;
 
     HbWidget* mContentWidget;
-    QString mPluginPath;
 
-    MsgMonitor* mMsgMonitor;
+    MsgUnifiedEditorMonitor* mMsgMonitor;
     MsgAttachmentContainer* mAttachmentContainer;
     UniEditorPluginLoader* mPluginLoader;
     ConvergedMessageId mOpenedMessageId;
     ConvergedMessage::MessageType mmOpenedMessageType;
 	bool mCanSaveToDrafts;
-	friend class MsgMonitor;
+
+	/**
+	 * TBE's content widget
+	 */
+	HbListWidget* mTBExtnContentWidget;
+	
+    /**
+     * Instance of VKB host
+     */
+	HbAbstractVkbHost* mVkbHost;
+	
+	friend class MsgUnifiedEditorMonitor;
     };
 
-#endif //UNIFIED_EDITOR_VIEW_H
+#endif //MSG_UNIFIED_EDITOR_VIEW_H

@@ -22,6 +22,7 @@
 
 // INCLUDE FILES
 #include    <e32std.h>
+#include    <e32hal.h>
 #include    <apparc.h>
 #include    <s32mem.h>
 #include    <msventry.h>

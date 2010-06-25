@@ -29,7 +29,7 @@
 #include "ccsconversationevent.h"
 #include "ccscontactsmanager.h"
 #include "ccscontactsresolver.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "ccsdebug.h"
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -331,7 +331,7 @@ void CCsConversationCacheHelper::ResolveContact(
         if (Contact)
         {
             QString contactAddress =
-                    S60QConversions::s60DescToQString(Contact->Des());
+                    XQConversions::s60DescToQString(Contact->Des());
 
             iConversationCache->ContactsManager()->resolver()->resolveContact(contactAddress,
                                                                               contactDetail);
@@ -345,7 +345,7 @@ void CCsConversationCacheHelper::ResolveContact(
                 HBufC* displayName = NULL;
                 if(!contactDetail.displayName.isEmpty())
                 {
-                    displayName=S60QConversions::qStringToS60Desc(contactDetail.displayName);
+                    displayName=XQConversions::qStringToS60Desc(contactDetail.displayName);
                 }
                 TRAPD(error, AddNewConversationL( aConverastionEvent->
                                 ClientConversation()->GetConversationEntry(),
@@ -539,10 +539,11 @@ void CCsConversationCacheHelper::DeleteConversationEntryL(
             if (conversation->GetEntryCount() == 0
                     && !conversation->IsSpecialConversation())
             {
-                conversationList->Remove(loop);
-                delete conversation;
-                //reset the counters
-                loop -= 1;
+            
+            conversationList->Remove(loop);
+            delete conversation;
+            //reset the counters
+            loop -= 1;
             }
 
             // Stop searching    
@@ -572,8 +573,9 @@ void CCsConversationCacheHelper::AddNewConversationL(
     conversation->AddEntryL(aConversationEntry);
 
     // fill firstname and lastname and contact Id
-    conversation->AddContactDetailsL(aContactId,
-                                     *aDisplayName);
+    if(aDisplayName)
+   		conversation->AddContactDetailsL(aContactId,
+                                     aDisplayName);
 
     // fill the phone number
     if (aConversationEntry->Contact())
@@ -598,6 +600,9 @@ void CCsConversationCacheHelper::AddNewConversationL(
         }
 
     iConversationCache->NotifyL(clientConv, KConversationListEventNew);
+    // send the new conversation event as well, so that if there are nay listeners for the cv
+    // then they will get the notification.
+    iConversationCache->NotifyL(clientConv, KConversationEventNew);
     CleanupStack::PopAndDestroy(clientConv);
 
     CleanupStack::Pop(conversation);

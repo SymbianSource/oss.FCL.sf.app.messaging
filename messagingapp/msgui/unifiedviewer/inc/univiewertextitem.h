@@ -21,11 +21,6 @@
 #define UNIVIEWERTEXTITEM_H
 
 #include <HbTextEdit>
-#include <xqappmgr.h>
-
-//forward declarations
-class QRegExp;
-class XQAiwRequest;
 
 class UniViewerTextItem : public HbTextEdit
 {
@@ -37,8 +32,10 @@ public:
     void setText(const QString& text);
 
 protected:
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    /**
+     * Gesture event, overridden from base class.
+     */
+    void gestureEvent(QGestureEvent* event);
 
 private:
 
@@ -68,15 +65,6 @@ private:
      */
     void highlightText(bool highlight);
 	
-    /** Helper method to get contact id against phone number or e-mail id.
-     * @param value phone number or email id.
-     * @param fieldName name of field to be matched.
-     * @param fieldType type of field to be matched.
-     */
-    int resolveContactId(const QString& value,
-                         const QString& fieldName, 
-                         const QString& fieldType);
-
 private slots:
     /**
       * called when aboutToShowContextMenu signal is emitted.
@@ -89,18 +77,26 @@ private slots:
     void menuClosed();
 
 
-    //handlers for phone number specific menu items.
+    /**
+     * handlers for phone number specific menu items.
+     */
     void call();
     void sendMessage();    
 
-    //handlers for e-mail specific menu items.
+    /**
+     * handlers for e-mail specific menu items.
+     */
     void createEmail();
 
-    //handlers for url specific menu items.
+    /**
+     * handlers for url specific menu items.
+     */
     void openLink();
     void addToBookmarks();
 
-    //common handlers.
+    /**
+     * common handlers.
+     */
     void openContactInfo();
     void saveToContacts();
     void copyToClipboard();
@@ -119,7 +115,9 @@ private slots:
      */
     void handleError(int errorCode, const QString& errorMessage);
 
-    //called after service request is completed.
+    /**
+     * called after service request is completed.
+     */
     void onServiceRequestCompleted();
     
 signals:
@@ -142,8 +140,6 @@ private:
 
     //Current cursor position.
     int mCursorPos;
-
-    XQApplicationManager mAppManager;
 };
 
 #endif // UNIVIEWERTEXTITEM_H

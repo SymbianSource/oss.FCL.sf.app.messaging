@@ -38,7 +38,7 @@ UniContentsWidget::UniContentsWidget(UniViewerFeeder* feeder,QGraphicsItem * par
 {
     QDEBUG_WRITE("UniContentsWidget: Constructor start");
 
-    mMainLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    mMainLayout = new QGraphicsLinearLayout(Qt::Vertical,this);
     mMainLayout->setSpacing(0);
     mMainLayout->setContentsMargins(0, 0, 0, 0);
     
@@ -58,13 +58,13 @@ UniContentsWidget::UniContentsWidget(UniViewerFeeder* feeder,QGraphicsItem * par
     // create the mInitailLoadCount number of slides
     for (int i = 0; i < mInitialLoadCount; i++)
     {
-        UniViewSlideWidget* slide = new UniViewSlideWidget(feeder, i);
+        UniViewSlideWidget* slide = new UniViewSlideWidget(feeder, i, this);
         addItemToLayout(slide);
         slide->setInsideLayout(true);
         mSlides.append(slide);
         
-        connect(slide,SIGNAL(sendMessage(const QString&)),
-                this, SIGNAL(sendMessage(const QString&)));
+        connect(slide,SIGNAL(sendMessage(const QString&,const QString&)),
+                this, SIGNAL(sendMessage(const QString&,const QString&)));
     }
 
     setLayout(mMainLayout);
@@ -161,7 +161,7 @@ void UniContentsWidget::clearContent()
 void UniContentsWidget::populateContent()
 {
     QDEBUG_WRITE("UniContentsWidget::populateContent() start");
-    
+
     if ( (mViewFeeder->msgType() == KSenduiMtmMmsUidValue) &&
          (mViewFeeder->slideCount() > 0) )
     {
@@ -228,8 +228,8 @@ void UniContentsWidget::populateNextSlide()
 
     slide->populateContent();
     
-    connect(slide,SIGNAL(sendMessage(const QString&)),
-            this, SIGNAL(sendMessage(const QString&)));
+    connect(slide,SIGNAL(sendMessage(const QString&,const QString&)),
+            this, SIGNAL(sendMessage(const QString&,const QString&)));
 
     mTotalSlidesLoaded++;
     //TODO to remove the previous slide if the mTotalSlidesLoaded

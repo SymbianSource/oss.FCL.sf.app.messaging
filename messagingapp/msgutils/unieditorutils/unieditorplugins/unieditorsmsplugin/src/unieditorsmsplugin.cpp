@@ -20,7 +20,7 @@
 // USER INCLUDES
 #include "unieditorsmsplugin.h"
 #include "unieditorsmsplugin_p.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 
 // DEBUG
 #include "debugtraces.h"
@@ -140,8 +140,10 @@ TBool UniEditorSmsPlugin::validateService( TBool aEmailOverSms/* = EFalse */)
 void UniEditorSmsPlugin::setEncodingSettings(TBool aUnicodeMode,
     TSmsEncoding aAlternativeEncodingType, TInt charSupportType)
 {
-    d_ptr->SetEncodingSettings(aUnicodeMode, aAlternativeEncodingType,
-        charSupportType);
+    TRAPD(error, d_ptr->SetEncodingSettingsL(aUnicodeMode,
+            aAlternativeEncodingType,
+            charSupportType));
+    QDEBUG_WRITE_FORMAT("UniEditorSmsPlugin::setEncodingSettings error = ",error);
 }
 
 //---------------------------------------------------------------
@@ -153,7 +155,7 @@ bool UniEditorSmsPlugin::getNumPDUs(QString& aBuf, TInt& aNumOfRemainingChars,
     TSmsEncoding& aAlternativeEncodingType)
 {
     TBool ret = ETrue;
-    HBufC* buffer = S60QConversions::qStringToS60Desc(aBuf);
+    HBufC* buffer = XQConversions::qStringToS60Desc(aBuf);
     TRAPD(error,d_ptr->GetNumPDUsL(*buffer,aNumOfRemainingChars,
                     aNumOfPDUs,aUnicodeMode,aAlternativeEncodingType));
     delete buffer;

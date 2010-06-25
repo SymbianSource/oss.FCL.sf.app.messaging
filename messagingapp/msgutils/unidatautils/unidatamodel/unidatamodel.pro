@@ -32,7 +32,6 @@ INCLUDEPATH += .
 INCLUDEPATH += inc
 INCLUDEPATH += ../../../../inc
 INCLUDEPATH += /s60/app/messaging/inc
-INCLUDEPATH += ../s60qconversions/inc
 INCLUDEPATH += ../../unieditorutils/editorgenutils/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
@@ -52,6 +51,15 @@ BLD_INF_RULES.prj_exports += \
 MMP_RULES += "SOURCEPATH ."
 MMP_RULES += "TARGETPATH resource"
 MMP_RULES += "RESOURCE UniDataModel.rss"
+
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/unidatamodel.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/unidatamodel.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
 
 SOURCES += inc/UniDataUtils.inl \
     src/UniDataUtils.cpp \
@@ -116,7 +124,6 @@ LIBS += -lcone \
     -lcaf \
     -lDrmServerInterfaces \
     -lmsgcommonutils \
-    -ls60qconversions \
     -lQtCore \
     -leditorgenutils
 

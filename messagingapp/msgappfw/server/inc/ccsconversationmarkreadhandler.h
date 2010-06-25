@@ -22,11 +22,9 @@
 
 // FORWARD DECLARATIONS
 class CMsvSession;
-class MMsvSessionObserver;
 class CConversationCache;
 class CCsConversationEntry;
-class MCsConversationMarkReadObserver;
-
+class MMsvSessionObserver;
 /**
  * Mark read handler states
  */
@@ -41,15 +39,13 @@ enum TMarkReadHandlerState
 /**
  * This class handles mark read of messages from messaging store.
  */
-class CCsConversationMarkReadHandler : public CActive, 
-public MMsvSessionObserver 
-    {
+class CCsConversationMarkReadHandler : public CActive, public MMsvSessionObserver
+{
 public:
     /**
      * Two phase construction
      */
-    static CCsConversationMarkReadHandler* NewL(CCsConversationCache* aCache,
-            MCsConversationMarkReadObserver* aObserver);
+    static CCsConversationMarkReadHandler* NewL(CCsConversationCache* aCache);
 
     /**
      * Destructor
@@ -75,8 +71,7 @@ public: // From CActive
 
 private:    
     CCsConversationMarkReadHandler();
-    void ConstructL(CCsConversationCache* aCache,
-            MCsConversationMarkReadObserver* aObserver);
+    void ConstructL(CCsConversationCache* aCache);
     void IssueRequest();
     void MarkReadOneMessageL();
     
@@ -85,12 +80,6 @@ private:
      * Own. Msv Session.
      */
     CMsvSession* iSession;
-    
-    /**
-     * iObserver
-     * Own.
-    */
-    MCsConversationMarkReadObserver* iObserver;
     
     /**
      * State

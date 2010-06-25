@@ -44,12 +44,12 @@ symbian {
 #### xml files containing backup_registration ####
     "./group/backup_registration.xml              /epoc32/data/z/private/100058DB/backup_registration.xml" \
 #### loc file needed for rsc generation
-    "./loc/mmsui.loc                              APP_LAYER_LOC_EXPORT_PATH(mmsui.loc)" \
+    "./loc/MmsUi.loc                              APP_LAYER_LOC_EXPORT_PATH(mmsui.loc)" \
 #### Export confml and crml files ####
     "./conf/mmsengine.confml                      APP_LAYER_CONFML(mmsengine.confml)" \
-    "./conf/mmsengine_100058db.crml               APP_LAYER_CRML(mmsengine_100058db.crml)" \
-    "./conf/mmsengine_101fb0d5.crml               APP_LAYER_CRML(mmsengine_101fb0d5.crml)" \
-    "./conf/mmsengine_101fb0d9.crml               APP_LAYER_CRML(mmsengine_101fb0d9.crml)"    
+    "./conf/mmsengine_100058DB.crml               APP_LAYER_CRML(mmsengine_100058db.crml)" \
+    "./conf/mmsengine_101FB0D5.crml               APP_LAYER_CRML(mmsengine_101fb0d5.crml)" \
+    "./conf/mmsengine_101FB0D5.crml               APP_LAYER_CRML(mmsengine_101fb0d9.crml)"    
 }
 
 symbian {

@@ -17,7 +17,7 @@
 &EN
 
 ; Header
-#{"shareui"}, (0xEEB59ABB), 1, 0, 0, TYPE = SA
+#{"shareui"}, (0x2002DD00), 1, 0, 0, TYPE = SA
 
 ; Localised Vendor name
 %{"Nokia"}

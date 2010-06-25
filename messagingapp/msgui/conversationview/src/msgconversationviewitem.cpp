@@ -26,6 +26,8 @@
 #include <HbIconItem>
 #include <HbIconAnimationManager>
 #include <HbIconAnimator>
+#include <ccsdefs.h>
+#include <HbInstance>
 
 // USER INCLUDES
 #include "msgconversationwidget.h"
@@ -40,6 +42,9 @@ const QString MSG_FAIL_ICON("qtg_small_fail");
 const QString ANIMATION_FILE(":/qtg_anim_loading.axml");
 const QString ANIMATION_ICON_NAME("qtg_anim_loading");
 const QString VCARD_ICON("qtg_large_mycard");
+const QString IMAGE_ICON("qtg_small_image");
+const QString CORRUPTED_ICON("qtg_small_corrupted");
+const QString MSG_VIDEO_ICON("qtg_small_video");
 
 // LOCALIZATION
 #define LOC_RINGING_TONE hbTrId("txt_messaging_dpopinfo_ringing_tone")
@@ -54,13 +59,8 @@ const QString VCARD_ICON("qtg_large_mycard");
 //---------------------------------------------------------------
 MsgConversationViewItem::MsgConversationViewItem(QGraphicsItem* parent) :
     HbListViewItem(parent), mIncoming(false), mConversation(0),
-            mMessageStateIconItem(0)
+            mIncomingMsgStateIconItem(0), mOutgoingMsgStateIconItem(0)
 {
-    mConversation = new MsgConversationWidget(this);
-    HbStyle::setItemName(mConversation, "msgconvwidget");
-
-    mMessageStateIconItem = new HbIconItem(this);
-    HbStyle::setItemName(mMessageStateIconItem, "msgStateIcon");
 }
 
 //---------------------------------------------------------------
@@ -69,7 +69,6 @@ MsgConversationViewItem::MsgConversationViewItem(QGraphicsItem* parent) :
 //---------------------------------------------------------------
 MsgConversationViewItem::~MsgConversationViewItem()
 {
-
 }
 
 //---------------------------------------------------------------
@@ -78,7 +77,9 @@ MsgConversationViewItem::~MsgConversationViewItem()
 //---------------------------------------------------------------
 MsgConversationViewItem* MsgConversationViewItem::createItem()
 {
-    return new MsgConversationViewItem();
+    MsgConversationViewItem *item = new MsgConversationViewItem(*this);
+    item->init();
+    return item;
 }
 
 //---------------------------------------------------------------
@@ -94,191 +95,315 @@ void MsgConversationViewItem::updateChildItems()
             << index.data(ConvergedMsgId).toInt();
 #endif
 
-    // Create items common to each type of message
-
-    QString bodyText = index.data(BodyText).toString();
     int messageType = index.data(MessageType).toInt();
     int messageSubType = index.data(MessageSubType).toInt();
 
-    // Set message properties common to SMS/MMS/IM etc..
-
-    int direction = index.data(Direction).toInt();
-
-    if ( direction == ConvergedMessage::Incoming)
-    {
-        setIncoming(true);
-        mConversation->setIncoming(true);
-        
-        if(messageType == ConvergedMessage::MmsNotification)
-        {
-            mConversation->setMMSNotification(true);
-            int notificationState = index.data(NotificationStatus).toInt();
-            mConversation->setNotificationState(notificationState);
-            setNotificationStateIcon(notificationState);
-        }
-        else
-        {
-            mMessageStateIconItem->setVisible(false);
-        }
-    }
-    else if (direction == ConvergedMessage::Outgoing)
-    {
-        setIncoming(false);
-        mConversation->setIncoming(false);
-
-        int sendingState = index.data(SendingState).toInt();
-        mConversation->setSendingState(sendingState);
-        setMessageStateIcon(sendingState);
-    }
-
-    bool unreadStatus = index.data(UnReadStatus).toBool();
-    mConversation->setUnread(unreadStatus);
-    // Create items common to SMS/MMS/IM etc...
-    mConversation->drawBubbleFrame();
-    mConversation->drawNewItemFrame();
-
-    QDateTime dateTime;
-    dateTime.setTime_t(index.data(TimeStamp).toUInt());
-    QString resendStateNote((index.data(SendingState).toInt() == ConvergedMessage::Resend)? LOC_RESEND_AT : "");
-    if (dateTime.date() == QDateTime::currentDateTime().date())
-    {
-
-        mConversation->setTimeStamp(resendStateNote + dateTime.toString(TIME_FORMAT));
-    }
-    else
-    {
-        mConversation->setTimeStamp(resendStateNote + dateTime.toString(DATE_FORMAT));
-    }
-
-    QDEBUG_WRITE_FORMAT("MsgConversationViewItem::updateChildItems msg type value",messageType)
     
-    if (messageType == ConvergedMessage::Sms ||
-            messageType == ConvergedMessage::IM)
-    {
-        mConversation->setMMS(false);
-        bodyText.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
-        bodyText.replace('\r', QChar::LineSeparator);
-        mConversation->setBodyText(bodyText);
-    }
-    else if (messageType == ConvergedMessage::Mms)
-    {
-        mConversation->setMMS(true);
-        QString attachments = index.data(Attachments).toString();
-        QString subject = index.data(Subject).toString();
-
-        bool hasAttachments = (index.data(MessageProperty).toInt()
-            & ConvergedMessage::Attachment) ? true : false;
-
-        if (hasAttachments)
+    if (messageType == ConvergedMessage::Sms)
         {
-            mConversation->setAttachment();
+        	updateSmsTypeItem(index);
         }
-        else
+    else if (messageType == ConvergedMessage::Mms || messageType
+            == ConvergedMessage::MmsNotification || messageType
+            == ConvergedMessage::BT)
         {
-            mConversation->setAttachment(false);
+        updateMmsTypeItem(index, messageType, messageSubType);
         }
-        QStringList mediaFiles = attachments.split('|',
-            QString::SkipEmptyParts);
-        //Can be used for preview icon
-        QStringList imageFiles;
-
-        MsgViewUtils viewUtils;
-
-        for (int i = 0; i < mediaFiles.size(); ++i)
-        {
-            QString type = viewUtils.mimeTypeL(QDir::toNativeSeparators(
-                mediaFiles.at(i)));
-
-            if (type.contains("image"))
-            {
-                imageFiles << mediaFiles.at(i);
-                mConversation->setImage(true);
-            }
-            else if (type.contains("video"))
-            {
-                mConversation->setVideo(false);
-            }
-            else if (type.contains("audio"))
-            {
-                mConversation->setAudio(true);
-            }
-        }
-        // Now set the media contents
-        if (!imageFiles.isEmpty())
-        {
-            mConversation->setPreviewIconPath(imageFiles.at(0));
-        }
-        mConversation->displayAudioIcon();
-
-        int priority = index.data(MessagePriority).toInt();
-        mConversation->setPriority(priority);
-        mConversation->setSubject(subject);
-        mConversation->setBodyText(bodyText);        
-    } // END of ConvergedMessage::Mms
     else if (messageType == ConvergedMessage::BioMsg)
-    {
-        if (messageSubType == ConvergedMessage::RingingTone)
         {
-            mConversation->setMMS(true);
-            mConversation->setImage(false);
-            mConversation->setAudio(true);
-            mConversation->displayAudioIcon();
-            mConversation->setSubject(LOC_RINGING_TONE);
-        }
-        else if (messageSubType == ConvergedMessage::VCard)
-        {
-            mConversation->setMMS(true);
-            mConversation->setImage(false);
-            mConversation->setAudio(true);
-            mConversation->displayAudioIcon(VCARD_ICON);
-            mConversation->setSubject(LOC_BUSINESS_CARD);
-            mConversation->setBodyText(bodyText);
-        }
+        if (messageSubType == ConvergedMessage::VCard || messageSubType
+                == ConvergedMessage::RingingTone)
+            {
+            updateMmsTypeItem(index, messageType, messageSubType);
+            }
         else
-        {
-            mConversation->setMMS(false);
-            mConversation->setBodyText(LOC_UNSUPPORTED_MSG_TYPE);
+            {
+            updateSmsTypeItem(index, messageSubType);
+            }
         }
-    }
-    else if (messageType == ConvergedMessage::BT)
-    {
-        mConversation->setMMS(true);
-        QString deviceName = index.data(ConversationAddress).toString();
-        mConversation->setSubject(deviceName);
-        QString blueToothBody;
-        if (messageSubType == ConvergedMessage::VCard)
-        {
-            mConversation->setImage(false);
-            mConversation->setAudio(true);
-            mConversation->displayAudioIcon(VCARD_ICON);
-            blueToothBody.append(LOC_BUSINESS_CARD);
-            blueToothBody.append(QChar::LineSeparator);
-            blueToothBody.append(bodyText);
-        }        
-        else
-        {
-            blueToothBody.append(bodyText);
-        }
-        mConversation->setBodyText(blueToothBody);
-    }
-    else if(messageType == ConvergedMessage::MmsNotification)
-    {
-        mConversation->setMMS(true);
-        
-        QString subject = index.data(Subject).toString();
-        int priority = index.data(MessagePriority).toInt();
-        mConversation->setPriority(priority);
-        mConversation->setSubject(subject);
-        mConversation->setBodyText(bodyText);
-    }
 
 #ifdef _DEBUG_TRACES_
     qCritical() << "END MsgConversationViewItem::updateChildItems: "
             << index.data(ConvergedMsgId).toInt();
 #endif
 
+    repolish();
     HbListViewItem::updateChildItems();
-}
+    }
+
+//---------------------------------------------------------------
+// MsgConversationViewItem::updateSmsTypeItem
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationViewItem::updateSmsTypeItem(const QModelIndex& index,
+    int messageSubType)
+{
+
+    mIncoming = false;
+    mConversation->resetProperties();
+    
+    int direction = index.data(Direction).toInt();
+    
+    if (direction == ConvergedMessage::Incoming)
+        {
+        setIncoming(true);
+        mConversation->setIncoming(true);
+
+        mIncomingMsgStateIconItem->setVisible(false);
+    }
+    else if (direction == ConvergedMessage::Outgoing)
+        {
+        setIncoming(false);
+        mConversation->setIncoming(false);
+
+        int sendingState = index.data(SendingState).toInt();
+        mConversation->setSendingState(sendingState);
+        setMessageStateIcon(sendingState);
+        }
+
+    bool unreadStatus = index.data(UnReadStatus).toBool();
+    mConversation->setUnread(unreadStatus);
+
+    mConversation->drawBubbleFrame();
+    mConversation->drawNewItemFrame();
+
+    QDateTime dateTime;
+    dateTime.setTime_t(index.data(TimeStamp).toUInt());
+    QString resendStateNote((index.data(SendingState).toInt()
+                    == ConvergedMessage::Resend) ? LOC_RESEND_AT : "");
+    if (dateTime.date() == QDateTime::currentDateTime().date())
+        {
+
+        mConversation->setTimeStamp(resendStateNote + dateTime.toString(
+                        TIME_FORMAT));
+        }
+    else
+        {
+        mConversation->setTimeStamp(resendStateNote + dateTime.toString(
+                        DATE_FORMAT));
+        }
+
+    if (messageSubType == ConvergedMessage::VCal)
+        {
+         mConversation->setSubject(LOC_UNSUPPORTED_MSG_TYPE);
+        }
+    else
+        {
+        QString bodyText = index.data(BodyText).toString();
+        bodyText.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
+        bodyText.replace('\r', QChar::LineSeparator);
+        mConversation->setSubject(bodyText);
+        }
+    
+    //repolish
+    mConversation->repolishWidget();
+    }
+
+//---------------------------------------------------------------
+// MsgConversationViewItem::updateMmsTypeItem
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationViewItem::updateMmsTypeItem(const QModelIndex& index,
+        int messageType, int messageSubType)
+    {
+    // create widget
+    if (!mConversation)
+        {
+        mConversation = new MsgConversationWidget(this);
+        HbStyle::setItemName(mConversation, "msgconvwidget");
+        }
+    mIncoming = false;
+    mConversation->resetProperties();
+    
+    mConversation->setMMS(true);
+    int direction = index.data(Direction).toInt();
+    QString bodyText = index.data(BodyText).toString();
+
+    if (direction == ConvergedMessage::Incoming)
+        {
+        setIncoming(true);
+        mConversation->setIncoming(true);
+
+        if (messageType == ConvergedMessage::MmsNotification)
+            {
+            mConversation->setMMSNotification(true);
+            int notificationState = index.data(NotificationStatus).toInt();
+            mConversation->setNotificationState(notificationState);
+            setNotificationStateIcon(notificationState);
+            }
+        else
+            {
+            mIncomingMsgStateIconItem->setVisible(false);
+            }
+        }
+    else if (direction == ConvergedMessage::Outgoing)
+        {
+        setIncoming(false);
+        mConversation->setIncoming(false);
+
+        int sendingState = index.data(SendingState).toInt();
+        mConversation->setSendingState(sendingState);
+        setMessageStateIcon(sendingState);
+        }
+
+    bool unreadStatus = index.data(UnReadStatus).toBool();
+    mConversation->setUnread(unreadStatus);
+
+    mConversation->drawBubbleFrame();
+    mConversation->drawNewItemFrame();
+
+    QDateTime dateTime;
+    dateTime.setTime_t(index.data(TimeStamp).toUInt());
+    QString resendStateNote((index.data(SendingState).toInt()
+            == ConvergedMessage::Resend) ? LOC_RESEND_AT : "");
+    if (dateTime.date() == QDateTime::currentDateTime().date())
+        {
+
+        mConversation->setTimeStamp(resendStateNote + dateTime.toString(
+                TIME_FORMAT));
+        }
+    else
+        {
+        mConversation->setTimeStamp(resendStateNote + dateTime.toString(
+                DATE_FORMAT));
+        }
+
+    if (messageType == ConvergedMessage::Mms)
+        {
+        //preview path
+        QString previewPath = index.data(Attachments).toString();
+        QString subject = index.data(Subject).toString();
+
+        int msgProperty = index.data(MessageProperty).toInt();
+        bool hasAttachments = (msgProperty & EPreviewAttachment) ? true : false;
+
+        if (hasAttachments)
+            {
+            mConversation->setAttachment();
+            }
+        else
+            {
+            mConversation->setAttachment(false);
+            }
+        
+        // Now set the media contents
+        
+        //preview image
+        bool hasImage = (msgProperty & EPreviewImage) ? true : false;
+        if (hasImage)
+          {
+            mConversation->setImage(true);
+            HbIcon previewIcon;
+            if (msgProperty & EPreviewProtectedImage)
+              {
+                previewIcon = HbIcon(IMAGE_ICON);
+              }
+            else if (msgProperty & EPreviewCorruptedImage)
+              {
+                // TODO: Change to official icon.
+                previewIcon = HbIcon(CORRUPTED_ICON);
+              }
+            else
+              {
+                QVariant previewData = index.data(PreviewIcon);
+                previewIcon = qvariant_cast<HbIcon> (previewData);
+              }
+            mConversation->setPreviewIcon(previewIcon);
+          }
+
+        bool hasVideo = (msgProperty & EPreviewVideo) ? true : false;
+        if (hasVideo)
+          {
+            mConversation->setVideo(true);
+            HbIcon videoPreviewIcon;
+            if (msgProperty & EPreviewProtectedVideo)
+              {
+                videoPreviewIcon = HbIcon(MSG_VIDEO_ICON);
+              }
+            else if (msgProperty & EPreviewCorruptedVideo)
+              {
+                videoPreviewIcon = HbIcon(CORRUPTED_ICON);
+              }
+            else
+              {
+                videoPreviewIcon = HbIcon(MSG_VIDEO_ICON);
+              }
+            mConversation->setPreviewIcon(videoPreviewIcon);
+          }
+        bool hasAudio = (msgProperty & EPreviewAudio) ? true : false;              
+        if (hasAudio)
+          {
+            mConversation->setAudio(true);
+            if (msgProperty & EPreviewProtectedAudio)
+              {
+                mConversation->displayAudioIcon();
+              }
+            else if (msgProperty & EPreviewCorruptedAudio)
+              {
+				mConversation->displayAudioIcon(CORRUPTED_ICON);
+              }
+            else
+              {
+                mConversation->displayAudioIcon();
+              }
+          }
+
+        int priority = index.data(MessagePriority).toInt();
+        mConversation->setPriority(priority);
+        mConversation->setSubject(subject);
+        mConversation->setBodyText(bodyText);
+        }
+    else if (messageType == ConvergedMessage::BioMsg)
+        {
+        if (messageSubType == ConvergedMessage::RingingTone)
+            {
+            mConversation->setImage(false);
+            mConversation->setAudio(true);
+            mConversation->displayAudioIcon();
+            mConversation->setSubject(LOC_RINGING_TONE);
+            mConversation->setBodyText(bodyText);
+            }
+        else if (messageSubType == ConvergedMessage::VCard)
+            {
+            mConversation->setImage(false);
+            mConversation->setAudio(true);
+            mConversation->displayAudioIcon(VCARD_ICON);
+            mConversation->setSubject(LOC_BUSINESS_CARD);
+            mConversation->setBodyText(bodyText);
+            }
+        }
+    else if (messageType == ConvergedMessage::BT)
+        {
+        QString deviceName = index.data(ConversationAddress).toString();
+        mConversation->setSubject(deviceName);
+        QString blueToothBody;
+        if (messageSubType == ConvergedMessage::VCard)
+            {
+            mConversation->setImage(false);
+            mConversation->setAudio(true);
+            mConversation->displayAudioIcon(VCARD_ICON);
+            blueToothBody.append(LOC_BUSINESS_CARD);
+            blueToothBody.append(QChar::LineSeparator);
+            blueToothBody.append(bodyText);
+            }
+        else
+            {
+            blueToothBody.append(bodyText);
+            }
+        mConversation->setBodyText(blueToothBody);
+        }
+    else if (messageType == ConvergedMessage::MmsNotification)
+        {
+        QString subject = index.data(Subject).toString();
+        int priority = index.data(MessagePriority).toInt();
+        mConversation->setPriority(priority);
+        mConversation->setSubject(subject);
+        mConversation->setBodyText(bodyText);
+        }
+    
+    //repolish widget
+    mConversation->repolishWidget();
+    }
 
 //---------------------------------------------------------------
 // MsgConversationViewItem::containsPoint
@@ -286,8 +411,8 @@ void MsgConversationViewItem::updateChildItems()
 //---------------------------------------------------------------
 bool MsgConversationViewItem::containsPoint(const QPointF& point)
 {
-    return mConversation->boundingRect().
-    contains(mConversation->mapFromScene(point));
+    return mConversation->boundingRect(). contains(mConversation->mapFromScene(
+        point));
 }
 
 //---------------------------------------------------------------
@@ -297,6 +422,23 @@ bool MsgConversationViewItem::containsPoint(const QPointF& point)
 void MsgConversationViewItem::setIncoming(bool incoming)
 {
     mIncoming = incoming;
+
+    if (mIncoming)
+    {
+        HbStyle::setItemName(mOutgoingMsgStateIconItem, "");
+        mOutgoingMsgStateIconItem->setVisible(false);
+        HbStyle::setItemName(mIncomingMsgStateIconItem, "msgStateIconIncoming");
+        mIncomingMsgStateIconItem->setIcon(HbIcon());
+        mIncomingMsgStateIconItem->setVisible(false);
+    }
+    else
+    {
+        HbStyle::setItemName(mIncomingMsgStateIconItem, "");
+        mIncomingMsgStateIconItem->setVisible(false);
+        HbStyle::setItemName(mOutgoingMsgStateIconItem, "msgStateIconOutgoing");
+        mOutgoingMsgStateIconItem->setIcon(HbIcon());
+        mOutgoingMsgStateIconItem->setVisible(false);
+    }
 }
 
 //---------------------------------------------------------------
@@ -314,52 +456,52 @@ bool MsgConversationViewItem::isIncoming()
 //---------------------------------------------------------------
 void MsgConversationViewItem::setMessageStateIcon(int messageState)
 {
-    HbIconAnimator& iconAnimator = mMessageStateIconItem->animator();
-    HbIconAnimationManager* iconAnimationManager = HbIconAnimationManager::global();
+    HbIconAnimator& iconAnimator = mOutgoingMsgStateIconItem->animator();
+    HbIconAnimationManager* iconAnimationManager =
+            HbIconAnimationManager::global();
     switch (messageState)
     {
-
         case ConvergedMessage::Waiting:
         case ConvergedMessage::Scheduled:
         case ConvergedMessage::Sending:
-        { 
- 	        bool defined = iconAnimationManager->addDefinitionFile(ANIMATION_FILE);
-     	    HbIcon animIcon;
+        {
+            bool defined = iconAnimationManager->addDefinitionFile(
+                ANIMATION_FILE);
+            HbIcon animIcon;
             animIcon.setIconName(ANIMATION_ICON_NAME);
-            QSizeF size = mMessageStateIconItem->size();
-            mMessageStateIconItem->setIcon(animIcon);
-            mMessageStateIconItem->setVisible(true);
+            QSizeF size = mOutgoingMsgStateIconItem->size();
+            mOutgoingMsgStateIconItem->setIcon(animIcon);
+            mOutgoingMsgStateIconItem->setVisible(true);
             iconAnimator.startAnimation();
-            repolish();
             break;
         }     
         case ConvergedMessage::Suspended:
         {
-           iconAnimator.stopAnimation();
-           mMessageStateIconItem->setIcon(MSG_OUTBOX_ICON);
-           mMessageStateIconItem->setVisible(true);
-           break;
-        
+            iconAnimator.stopAnimation();
+            mOutgoingMsgStateIconItem->setIcon(MSG_OUTBOX_ICON);
+            mOutgoingMsgStateIconItem->setVisible(true);
+            break;
+
         }
         case ConvergedMessage::Resend:
         {
             iconAnimator.stopAnimation();
-            mMessageStateIconItem->setIcon(MSG_OUTBOX_ICON);
-            mMessageStateIconItem->setVisible(true);
+            mOutgoingMsgStateIconItem->setIcon(MSG_OUTBOX_ICON);
+            mOutgoingMsgStateIconItem->setVisible(true);
             break;
         }
         case ConvergedMessage::Failed:
         {
             iconAnimator.stopAnimation();
-            mMessageStateIconItem->setIcon(MSG_FAIL_ICON);
-            mMessageStateIconItem->setVisible(true);
+            mOutgoingMsgStateIconItem->setIcon(MSG_FAIL_ICON);
+            mOutgoingMsgStateIconItem->setVisible(true);
             break;
         }   
         case ConvergedMessage::Unknown:
         default:
         {
             iconAnimator.stopAnimation();
-            mMessageStateIconItem->setVisible(false);
+            mOutgoingMsgStateIconItem->setVisible(false);
             break;
         }
     }
@@ -372,29 +514,29 @@ void MsgConversationViewItem::setMessageStateIcon(int messageState)
 
 void MsgConversationViewItem::setNotificationStateIcon(int notificationState)
 {
-    HbIconAnimator& iconAnimator = mMessageStateIconItem->animator();
-    HbIconAnimationManager* iconAnimationManager = HbIconAnimationManager::global();
+    HbIconAnimator& iconAnimator = mIncomingMsgStateIconItem->animator();
+    HbIconAnimationManager* iconAnimationManager =
+            HbIconAnimationManager::global();
     switch (notificationState)
     {
-
         case ConvergedMessage::NotifRetrieving:
         case ConvergedMessage::NotifWaiting:
         { 
             //TODO: Temp icon until official icons are received
-            bool defined = iconAnimationManager->addDefinitionFile(ANIMATION_FILE);
+            bool defined = iconAnimationManager->addDefinitionFile(
+                ANIMATION_FILE);
             HbIcon animIcon;
             animIcon.setIconName(ANIMATION_ICON_NAME);
-            QSizeF size = mMessageStateIconItem->size();
-            mMessageStateIconItem->setIcon(animIcon);
-            mMessageStateIconItem->setVisible(true);
+            QSizeF size = mIncomingMsgStateIconItem->size();
+            mIncomingMsgStateIconItem->setIcon(animIcon);
+            mIncomingMsgStateIconItem->setVisible(true);
             iconAnimator.startAnimation();
-            repolish();
             break;
         }     
         default:
         {
             iconAnimator.stopAnimation();
-            mMessageStateIconItem->setVisible(false);
+            mIncomingMsgStateIconItem->setVisible(false);
             break;
         }
     }
@@ -407,6 +549,43 @@ void MsgConversationViewItem::setNotificationStateIcon(int notificationState)
 void MsgConversationViewItem::pressStateChanged (bool pressed, bool animate)
 {
     mConversation->pressStateChanged(pressed, animate);
+}
+
+//---------------------------------------------------------------
+// MsgConversationViewItem::init
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationViewItem::init()
+{
+    mConversation = new MsgConversationWidget(this);
+    HbStyle::setItemName(mConversation, "msgconvwidget");
+
+    mIncomingMsgStateIconItem = new HbIconItem(this);
+    HbStyle::setItemName(mIncomingMsgStateIconItem, "msgStateIconIncoming");
+
+    mOutgoingMsgStateIconItem = new HbIconItem(this);
+    HbStyle::setItemName(mOutgoingMsgStateIconItem, "msgStateIconOutgoing");
+
+    HbMainWindow *mainWindow = hbInstance->allMainWindows()[0];
+
+    connect(mainWindow, SIGNAL(orientationChanged(Qt::Orientation)), this,
+        SLOT(orientationchanged(Qt::Orientation)), Qt::UniqueConnection);
+
+    // Force polish to get all the sub-item properties right.
+    polishEvent();
+}
+
+//---------------------------------------------------------------
+// MsgConversationViewItem::orientationchanged
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationViewItem::orientationchanged(Qt::Orientation orientation)
+{
+    QDEBUG_WRITE("MsgConversationViewItem:orientationchanged start.")
+
+    repolish();
+
+    QDEBUG_WRITE("MsgConversationViewItem:orientationchanged end.")
 }
 
 // EOF

@@ -50,6 +50,15 @@ BLD_INF_RULES.prj_exports += \
 
 MMP_RULES += "SOURCEPATH ."
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/unidatamodelloader.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/unidatamodelloader.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
 SOURCES += src/unidatamodelloader.cpp
     
 LIBS += -lQtCore

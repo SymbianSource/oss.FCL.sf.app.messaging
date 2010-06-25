@@ -17,33 +17,21 @@
 
 #include "univiewerbodywidget.h"
 
+// SYSTEM INCLUDES
 #include <QFile>
-#include <QFileInfo>
-#include <QPixmap>
-#include <QGraphicsLayout>
-#include <QSignalMapper>
-
 #include <HbTextItem>
-#include <HbIconItem>
-#include <HbPushButton>
-#include <HbAction>
-#include <HbMenu>
 #include <HbMainWindow>
-#include <HbInstance>
-#include <HbGesture>
-#include <HbGestureSceneFilter>
 
-#include <xqaiwrequest.h>
-#include <xqrequestinfo.h>
-#include <xqappmgr.h>
-
+// USER INCLUDES
 #include "univiewertextitem.h"
-#include "msgmediautil.h"
-// LOCAL CONSTANTS
-const QString AUDIO_ICON("qtg_mono_audio");
+#include "univiewerpixmapwidget.h"
+#include "univieweraudiowidget.h"
 
-// Localization
-#define LOC_TITLE   hbTrId("txt_messaging_title_messaging")
+// LOCAL CONSTANTS
+const QString IMAGE_MIMETYPE("image");
+const QString AUDIO_MIMETYPE("audio");
+const QString VIDEO_MIMETYPE("video");
+const QString TEXT_MIMETYPE("text");
 
 //---------------------------------------------------------------
 //UniViewerBodyWidget::UniViewerBodyWidget
@@ -51,17 +39,9 @@ const QString AUDIO_ICON("qtg_mono_audio");
 //---------------------------------------------------------------
 UniViewerBodyWidget::UniViewerBodyWidget(QGraphicsItem *parent) :
     HbWidget(parent), mHasText(false), mHasPixmap(false), mTextItem(0), mSlideCounter(0),
-        mIconItem(0), mAudioItem(0)
+        mPixmapItem(0), mAudioItem(0)
 {
-    //Gesture filter for the image
-    gestureFilter = new HbGestureSceneFilter(Qt::LeftButton, this);
-    gestureFilter->setLongpressAnimation(true);
-    HbGesture *gesture = new HbGesture(HbGesture::longpress, 20);
-    gestureFilter->addGesture(gesture);
-    connect(gesture, SIGNAL(longPress(QPointF)), this, SLOT(longPressed(QPointF)));
-    // Signal mapper for opening media files
-    mSignalMapper = new QSignalMapper(this);
-    connect(mSignalMapper, SIGNAL(mapped(const QString &)), this, SLOT(openMedia(const QString &)));
+    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
 //---------------------------------------------------------------
@@ -76,21 +56,16 @@ UniViewerBodyWidget::~UniViewerBodyWidget()
 //UniViewerBodyWidget::setImage
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setImage(QString imagefile)
+void UniViewerBodyWidget::setPixmap(UniMessageInfo *info)
 {
     setHasPixmap(true);
     //create image item instance
-    if (!mIconItem) {
-        mIconItem = new HbIconItem(this);
-        HbStyle::setItemName(mIconItem, "pixmap");
+    if (!mPixmapItem) {
+        mPixmapItem = new UniViewerPixmapWidget(this);
+        HbStyle::setItemName(mPixmapItem, "pixmap");
     }
-
-    QPixmap pixmap(imagefile);
-    mIconItem->setIcon(HbIcon(pixmap));
-
-    // TODO
-    // Implementation for short tap action is unclear
-    // Connect to signal mapper
+    mPixmapItem->hide();
+    mPixmapItem->populate(info);
 
     this->repolish();
 }
@@ -99,22 +74,14 @@ void UniViewerBodyWidget::setImage(QString imagefile)
 //UniViewerBodyWidget::setAudio
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setAudio(QString audiofile)
+void UniViewerBodyWidget::setAudio(UniMessageInfo *info)
 {
     if (!mAudioItem) {
-        mAudioItem = new HbPushButton(this);
+        mAudioItem = new UniViewerAudioWidget(this);
         HbStyle::setItemName(mAudioItem, "audioItem");
     }
-    QFileInfo fileInfo(audiofile);
-    mAudioItem->setIcon(HbIcon(AUDIO_ICON));
-    mAudioItem->setText(fileInfo.baseName());
-    MsgMediaUtil mediaUtil;
-    mAudioItem->setAdditionalText(mediaUtil.mediaDuration(audiofile));
-    mAudioItem->setTextAlignment(Qt::AlignLeft);
-
-    // Connect to signal mapper with file name
-    mSignalMapper->setMapping(mAudioItem, audiofile);
-    connect(mAudioItem, SIGNAL(clicked()), mSignalMapper, SLOT(map()));
+    mAudioItem->hide();
+    mAudioItem->populate(info);
 
     this->repolish();
 }
@@ -123,16 +90,25 @@ void UniViewerBodyWidget::setAudio(QString audiofile)
 //UniViewerBodyWidget::setVideo
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setVideo(QString videofile)
+void UniViewerBodyWidget::setVideo(UniMessageInfo *info)
 {
-    Q_UNUSED(videofile)
+    setHasPixmap(true);
+    //create image item instance
+    if (!mPixmapItem) {
+       mPixmapItem = new UniViewerPixmapWidget(this);
+       HbStyle::setItemName(mPixmapItem, "pixmap");
+    }
+    mPixmapItem->hide();
+    mPixmapItem->populate(info);
+    
+    this->repolish();
 }
 
 //---------------------------------------------------------------
-//UniViewerBodyWidget::setTextContent
+//UniViewerBodyWidget::setText
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setTextContent(QString text)
+void UniViewerBodyWidget::setText(QString text)
 {
     setHasText(true);
 
@@ -142,6 +118,7 @@ void UniViewerBodyWidget::setTextContent(QString text)
         connect(mTextItem, SIGNAL(sendMessage(const QString&)), this,
             SIGNAL(sendMessage(const QString&)));
     }
+    mTextItem->hide();
     text.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
     text.replace('\r', QChar::LineSeparator);
     mTextItem->setText(text);
@@ -149,7 +126,7 @@ void UniViewerBodyWidget::setTextContent(QString text)
 }
 
 //---------------------------------------------------------------
-//UniViewerBodyWidget::setTextContent
+// UniViewerBodyWidget::setSlideCounter
 // @see header file
 //---------------------------------------------------------------
 void UniViewerBodyWidget::setSlideCounter(QString &slideCounter)
@@ -159,6 +136,7 @@ void UniViewerBodyWidget::setSlideCounter(QString &slideCounter)
         HbStyle::setItemName(mSlideCounter, "slideCounter");
     }
 
+    mSlideCounter->hide();
     mSlideCounter->setText(slideCounter);
     this->repolish();
 }
@@ -212,25 +190,23 @@ void UniViewerBodyWidget::setSlideContents(UniMessageInfoList objList, QString s
     int count = objList.count();
     for (int a = 0; a < count; ++a) {
         UniMessageInfo* info = objList.at(a);
-        QString type = info->mimetype();
+        QString mimeType = info->mimetype();
 
-        if (type.contains("text")) {
+        if (mimeType.contains(TEXT_MIMETYPE)) {
             QFile file(info->path());
-            if (file.open(QIODevice::ReadOnly))
-			{
-			QString textContent(file.readAll());
-            setTextContent(textContent);
-			}
-            
+            if (file.open(QIODevice::ReadOnly)) {
+                QString textContent(file.readAll());
+                setText(textContent);
+            }
         }
-        else if (type.contains("video")) {
-            setVideo(info->path());
+        else if (mimeType.contains(AUDIO_MIMETYPE)) {
+            setAudio(info);
         }
-        else if (type.contains("audio")) {
-            setAudio(info->path());
+        else if (mimeType.contains(VIDEO_MIMETYPE)) {
+            setVideo(info);
         }
-        else if (type.contains("image")) {
-            setImage(info->path());
+        else if (mimeType.contains(IMAGE_MIMETYPE)) {
+            setPixmap(info);
         }
 
         delete info;
@@ -244,10 +220,10 @@ void UniViewerBodyWidget::setSlideContents(UniMessageInfoList objList, QString s
 void UniViewerBodyWidget::clearContent()
 {
     // delete the temp items(pixmap) & clear permanent items(text)
-    if (mIconItem) {
-        mIconItem->setParent(NULL);
-        delete mIconItem;
-        mIconItem = NULL;
+    if (mPixmapItem) {
+        mPixmapItem->setParent(NULL);
+        delete mPixmapItem;
+        mPixmapItem = NULL;
     }
 
     if (mAudioItem) {
@@ -268,199 +244,149 @@ void UniViewerBodyWidget::clearContent()
 }
 
 //---------------------------------------------------------------
-//UniViewerBodyWidget::resizeEvent
+//UniViewerBodyWidget::sizeHint
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::resizeEvent(QGraphicsSceneResizeEvent* event)
+QSizeF UniViewerBodyWidget::sizeHint(Qt::SizeHint which, const QSizeF & constraint) const
 {
-    Q_UNUSED(event)
+    QSizeF szHint = HbWidget::sizeHint(which, constraint);
 
     HbMainWindow *mainWindow = this->mainWindow();
-    if (mainWindow) {
-        qreal screenWidth = 0.0;
-        qreal screenHeight = 0.0;
-        qreal leftMargin = 0.0;
-        qreal rightMargin = 0.0;
-        qreal chromeHeight = 0.0;
-        qreal toolbarHeight = 0.0;
-        qreal iconSize = 0.0;
-        qreal unitSize = HbDeviceProfile::profile(mIconItem).unitValue();
-        style()->parameter("hb-param-screen-width", screenWidth);
-        style()->parameter("hb-param-screen-height", screenHeight);
-        style()->parameter("hb-param-margin-gene-left", leftMargin);
-        style()->parameter("hb-param-margin-gene-right", rightMargin);
-        style()->parameter("hb-param-widget-chrome-height", chromeHeight);
-        style()->parameter("hb-param-widget-toolbar-height", toolbarHeight);
-        style()->parameter("hb-param-graphic-size-primary-large", iconSize);
-
-        qreal maxWidth = 0.0;
-        qreal maxHeight = 0.0;
-
-        if (mainWindow->orientation() == Qt::Horizontal) {
-            qreal temp;
-            temp = screenWidth;
-            screenWidth = screenHeight;
-            screenHeight = temp;
-            if (mIconItem) {
-                if (mHasText) {
-                    maxWidth = (screenWidth / 2) - leftMargin - unitSize;
-                }
-                else {
-                    maxWidth = screenWidth - leftMargin - rightMargin;
-                }
-                maxHeight = screenHeight - chromeHeight - toolbarHeight;
-            }
-            if (mAudioItem) {
-                mAudioItem->setStretched(true);
-            }
-        }
-        else if (mainWindow->orientation() == Qt::Vertical) {
-            if (mIconItem) {
-                maxWidth = screenWidth - leftMargin - rightMargin;
-                maxHeight = screenHeight - chromeHeight - toolbarHeight;
-            }
-            if (mAudioItem) {
-                mAudioItem->setStretched(false);
-            }
-        }
-
-        if (mIconItem) {
-            qreal imageWidth = mIconItem->icon().defaultSize().width();
-            qreal imageHeight = mIconItem->icon().defaultSize().height();
-
-            qreal widthToSet = 0.0;
-            qreal heightToSet = 0.0;
-
-            if (imageWidth < iconSize) {
-                widthToSet = iconSize;
-                heightToSet = iconSize;
-            }
-            else if (imageWidth <= maxWidth) {
-                // resize not needed
-                widthToSet = imageWidth;
-                heightToSet = qMin(imageHeight, maxHeight);
-            }
-            else {
-                // resize needed, keep aspect-ratio and resize
-                widthToSet = maxWidth;
-                heightToSet = maxWidth * (imageHeight / imageWidth);
-                heightToSet = qMin(heightToSet, maxHeight);
-
-            }
-            if (heightToSet == maxHeight) {
-                widthToSet = heightToSet * (imageWidth / imageHeight);
-            }
-
-            mIconItem->setPreferredWidth(widthToSet);
-            mIconItem->setPreferredHeight(heightToSet);
-        }
-    }
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::longPressed
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::longPressed(QPointF position)
-{
-
-    HbMenu* menu = new HbMenu;
-    menu->addAction(tr("Open"), this, SLOT(openMedia()));
-    menu->addAction(tr("View details"), this, SLOT(viewDetails()));
-    menu->exec(position);
-    delete menu;
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::openMedia
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::openMedia()
-{
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::openMedia
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::openMedia(const QString& fileName)
-{
-    XQSharableFile sf;
-    XQAiwRequest* request = 0;
-
-    if (!sf.open(fileName)) {
-        return;
+    if (!mainWindow) {
+        return szHint;
     }
 
-    // Get handlers
-    XQApplicationManager appManager;
-    QList<XQAiwInterfaceDescriptor> fileHandlers = appManager.list(sf);
-    if (fileHandlers.count() > 0) {
-        XQAiwInterfaceDescriptor d = fileHandlers.first();
-        request = appManager.create(sf, d);
+    qreal screenWidth = 0.0;
+    qreal screenHeight = 0.0;
+    qreal leftMargin = 0.0;
+    qreal rightMargin = 0.0;
+    qreal chromeHeight = 0.0;
+    qreal toolbarHeight = 0.0;
+    qreal iconSize = 0.0;
+    qreal spacing = 0.0;
+    qreal unitSize = HbDeviceProfile::profile(mPixmapItem).unitValue();
+    style()->parameter("hb-param-screen-width", screenWidth);
+    style()->parameter("hb-param-screen-height", screenHeight);
+    style()->parameter("hb-param-margin-gene-left", leftMargin);
+    style()->parameter("hb-param-margin-gene-right", rightMargin);
+    style()->parameter("hb-param-widget-chrome-height", chromeHeight);
+    style()->parameter("hb-param-widget-toolbar-height", toolbarHeight);
+    style()->parameter("hb-param-graphic-size-primary-large", iconSize);
+    style()->parameter("hb-param-margin-gene-middle-vertical", spacing);
 
-        if (!request) {
-            sf.close();
-            return;
+    qreal maxWidth = 0.0;
+    qreal maxHeight = 0.0;
+
+    // Calculate max height & max width.
+    if (mainWindow->orientation() == Qt::Horizontal) {
+        qreal temp;
+        temp = screenWidth;
+        screenWidth = screenHeight;
+        screenHeight = temp;
+
+        if (mPixmapItem && mHasText) {
+            maxWidth = (screenWidth / 2) - leftMargin - unitSize;
+        }
+        else {
+            maxWidth = screenWidth - leftMargin - rightMargin;
+        }
+        maxHeight = screenHeight - chromeHeight - toolbarHeight;
+
+        if (mAudioItem) {
+            mAudioItem->setStretched(true);
         }
     }
-    else {
-        sf.close();
-        return;
+    else if (mainWindow->orientation() == Qt::Vertical) {
+        maxWidth = screenWidth - leftMargin - rightMargin;
+        maxHeight = screenHeight - chromeHeight - toolbarHeight;
+
+        if (mAudioItem) {
+            mAudioItem->setStretched(false);
+        }
     }
 
-    // Result handlers
-    connect(request, SIGNAL(requestOk(const QVariant&)), this, SLOT(handleOk(const QVariant&)));
-    connect(request, SIGNAL(requestError(const QVariant&)), this,
-        SLOT(handleError(const QVariant&)));
+    // Slide Counter
+    QSizeF slideCounterSize(0, 0);
+    if (mSlideCounter) {
+        slideCounterSize = mSlideCounter->effectiveSizeHint(which, constraint);
+        mSlideCounter->show();
+    }
+    // Audio Item
+    QSizeF audioSize(0, 0);
+    if (mAudioItem) {
+        audioSize = mAudioItem->effectiveSizeHint(which, constraint);
+        mAudioItem->show();
+    }
 
-    request->setEmbedded(true);
-    request->setSynchronous(true);
+    // Text Item
+    QSizeF textSize(0, 0);
+    if (mTextItem) {
+        textSize = mTextItem->effectiveSizeHint(which, constraint);
+        mTextItem->show();
+    }
 
-    // Fill args
-    QList<QVariant> args;
-    args << qVariantFromValue(sf);
-    request->setArguments(args);
+    // Pixmap Item
+    QSizeF pixmapSize(0, 0);
+    if (mPixmapItem) {
+        qreal imageWidth = mPixmapItem->icon().defaultSize().width();
+        qreal imageHeight = mPixmapItem->icon().defaultSize().height();
 
-    // Fill headers
-    QString key("WindowTitle");
-    QVariant value(QString(LOC_TITLE));
-    XQRequestInfo info;
-    info.setInfo(key, value);
-    request->setInfo(info);
+        qreal widthToSet = 0.0;
+        qreal heightToSet = 0.0;
 
-    request->send();
+        if (imageWidth < iconSize) {
+            widthToSet = iconSize;
+            heightToSet = iconSize;
+        }
+        else if (imageWidth <= maxWidth) {
+            // resize not needed
+            widthToSet = imageWidth;
+            heightToSet = qMin(imageHeight, maxHeight);
+        }
+        else {
+            // resize needed, keep aspect-ratio and resize
+            widthToSet = maxWidth;
+            heightToSet = maxWidth * (imageHeight / imageWidth);
+            heightToSet = qMin(heightToSet, maxHeight);
 
-    // Cleanup
-    sf.close();
-    delete request;
+        }
+        if (heightToSet == maxHeight) {
+            widthToSet = heightToSet * (imageWidth / imageHeight);
+        }
+
+        pixmapSize.setHeight(heightToSet);
+        pixmapSize.setWidth(widthToSet);
+        mPixmapItem->setPreferredSize(pixmapSize);
+        mPixmapItem->show();
+    }
+
+    // Calculate the size hint to be returned.
+    szHint.setHeight(0);
+
+    if (!slideCounterSize.isNull()) {
+        szHint.rheight() += (slideCounterSize.height() + spacing);
+    }
+    if (!audioSize.isNull()) {
+        szHint.rheight() += (audioSize.height() + spacing);
+    }
+
+    if (mainWindow->orientation() == Qt::Horizontal) {
+        qreal remainingHeight = qMax(pixmapSize.height(), textSize.height());
+        if (remainingHeight > 0.0) {
+            szHint.rheight() += (remainingHeight + spacing);
+        }
+    }
+    else if (mainWindow->orientation() == Qt::Vertical) {
+        if (!pixmapSize.isNull()) {
+            szHint.rheight() += (pixmapSize.height() + spacing);
+        }
+        if (!textSize.isNull()) {
+            szHint.rheight() += (textSize.height() + spacing);
+        }
+    }
+    szHint.rheight() = qMax(maxHeight, szHint.height());
+
+    return szHint;
 }
 
-//---------------------------------------------------------------
-//UniViewerBodyWidget::viewDetails
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::viewDetails()
-{
-    //open details view.
-}
-
-//---------------------------------------------------------------
-// UniViewerBodyWidget :: handleOk
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::handleOk(const QVariant& result)
-{
-    Q_UNUSED(result)
-}
-
-//---------------------------------------------------------------
-// UniViewerBodyWidget :: handleError
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::handleError(int errorCode, const QString& errorMessage)
-{
-    Q_UNUSED(errorMessage)
-    Q_UNUSED(errorCode)
-}
 // EOF

@@ -18,7 +18,6 @@
 #define __UNI_BIO_MESSAGE_DATA_PLUGIN_IBY__
 
 
-# this is the plugin stub for QT plugin
 file=ABI_DIR\UREL\unibiomessagedataplugin.dll               SHARED_LIB_DIR\unibiomessagedataplugin.dll
 data=\epoc32\data\z\resource\qt\plugins\messaging\datamodel\unibiomessagedataplugin.qtplugin     \resource\qt\plugins\messaging\datamodel\unibiomessagedataplugin.qtplugin
 

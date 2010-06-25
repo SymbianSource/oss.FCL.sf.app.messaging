@@ -18,17 +18,15 @@
 #include "univiewerfeeder_p.h"
 // SYSTEM INCLUDES
 #include <msvstd.h>
-#include <s60qconversions.h>
 #include <msvids.h>
-#include <qtcontactsglobal.h>
-#include "qtcontacts.h"
-#include "qcontactdetailfilter.h"
 
 // USER INCLUDES
 #include "nativemessageconsts.h"
 #include "univiewerfeeder.h"
 #include "unidatamodelloader.h"
+#include "msgcontacthandler.h"
 #include "debugtraces.h"
+#include "msgbiouids.h"
 
 // ---------------------------------------------------------------------------
 // UniViewerFeederPrivate::UniViewerFeederPrivate
@@ -158,8 +156,8 @@ QDateTime UniViewerFeederPrivate::timeStamp()
 void UniViewerFeederPrivate::fetchDetailsL()
 {
     QDEBUG_WRITE("UniViewerFeederPrivate fetchDetailsL : SMS start");
-    if (msgType() == KSenduiMtmSmsUidValue)
-    {
+    if (msgType() == KSenduiMtmSmsUidValue || (msgType() == KSenduiMtmBioUidValue
+        && mEntry.iBioType == KMsgBioNokiaServiceMessage.iUid)) {
         QString body;
         mPluginInterface->body(body);
         q_ptr->emitMsgBody(body);
@@ -250,14 +248,21 @@ void UniViewerFeederPrivate::updateContent(qint32 msgId)
         mPluginInterface->setMessageId(msgId);
     }
 
-    if (msgType() == KSenduiMtmMmsUidValue)
-    {
+    else if (msgType() == KSenduiMtmMmsUidValue) {
         mPluginInterface = mPluginLoader->getDataModelPlugin(ConvergedMessage::Mms);
         mPluginInterface->setMessageId(msgId);
         mSlideCount = mPluginInterface->slideCount();
+
     }
+    else if (msgType() == KSenduiMtmBioUidValue && mEntry.iBioType
+        == KMsgBioNokiaServiceMessage.iUid) {
+        mPluginInterface = mPluginLoader->getDataModelPlugin(ConvergedMessage::BioMsg);
+        mPluginInterface->setMessageId(msgId);
+    }
+
     mPluginInterface->toRecipientList(mToAddressList);
     mPluginInterface->ccRecipientList(mCcAddressList);
+    mPluginInterface->bccRecipientList(mBccAddressList);
 }
 
 // ---------------------------------------------------------------------------
@@ -267,9 +272,10 @@ void UniViewerFeederPrivate::updateContent(qint32 msgId)
 ConvergedMessageAddressList UniViewerFeederPrivate::toAddressList()
 {
     QString alias = QString();
-    for (int i = 0; i < mToAddressList.count(); ++i)
-    {
-        GetNameFromContacts(mToAddressList.at(i)->address(), alias);
+    int count;
+    for (int i = 0; i < mToAddressList.count(); ++i) {
+        MsgContactHandler::resolveContactDisplayName(
+		mToAddressList.at(i)->address(), alias, count);
         mToAddressList.at(i)->setAlias(alias);
         alias.clear();
     }
@@ -283,14 +289,44 @@ ConvergedMessageAddressList UniViewerFeederPrivate::toAddressList()
 ConvergedMessageAddressList UniViewerFeederPrivate::ccAddressList()
 {
     QString alias = QString();
-    for (int i = 0; i < mCcAddressList.count(); ++i)
-    {
-        GetNameFromContacts(mCcAddressList.at(i)->address(), alias);
+    int count;
+    for (int i = 0; i < mCcAddressList.count(); ++i) {
+        MsgContactHandler::resolveContactDisplayName(
+		mToAddressList.at(i)->address(), alias, count);
         mCcAddressList.at(i)->setAlias(alias);
         alias.clear();
 
     }
     return mCcAddressList;
+}
+
+// ---------------------------------------------------------------------------
+// UniViewerFeederPrivate::bccAddressList
+// @see header file
+// ---------------------------------------------------------------------------
+ConvergedMessageAddressList UniViewerFeederPrivate::bccAddressList()
+{
+    QString alias = QString();
+    int count;
+    for (int i = 0; i < mBccAddressList.count(); ++i)
+    {
+        MsgContactHandler::resolveContactDisplayName(
+            mBccAddressList.at(i)->address(),
+            alias,
+            count);
+        mBccAddressList.at(i)->setAlias(alias);
+        alias.clear();
+    }
+    return mBccAddressList;
+}
+
+// ---------------------------------------------------------------------------
+// UniViewerFeederPrivate::recipientCount
+// @see header file
+// ---------------------------------------------------------------------------
+int UniViewerFeederPrivate::recipientCount()
+{
+    return mToAddressList.count() + mCcAddressList.count() + mBccAddressList.count();
 }
 
 // ---------------------------------------------------------------------------
@@ -309,7 +345,8 @@ int UniViewerFeederPrivate::messageSize()
 void UniViewerFeederPrivate::fromAddressAndAlias(QString& from, QString& alias)
 {
     mPluginInterface->fromAddress(from);
-    GetNameFromContacts(from, alias);
+    int count;
+    MsgContactHandler::resolveContactDisplayName(from, alias, count);
 }
 
 // ---------------------------------------------------------------------------
@@ -328,51 +365,13 @@ void UniViewerFeederPrivate::clearContent()
     {
         delete mCcAddressList.at(i);
     }
-
     mCcAddressList.clear();
-}
 
-// ---------------------------------------------------------------------------
-// UniViewerFeederPrivate::GetNameFromContacts
-// @see header file
-//----------------------------------------------------------------------------
-int UniViewerFeederPrivate::GetNameFromContacts(const QString& address,
-                                                QString& alias)
-{
-    QContactManager contactManager("symbian");
-    //set filter
-    QContactDetailFilter phoneFilter;
-    phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName,
-                                        QContactPhoneNumber::FieldNumber);
-    phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
-
-    phoneFilter.setValue(address); // this is the phone number to be resolved
-
-    QList<QContactSortOrder> sortOrder;
-    QList<QContact> matchingContacts =
-            contactManager.contacts(phoneFilter,
-                                    sortOrder,
-                                    QStringList());
-                                    
-    int count = 0;
-    if (matchingContacts.count() > 0)
+    for (int i = 0; i < mBccAddressList.count(); ++i)
     {
-        QContact match = matchingContacts.at(0);       
-        
-        QString displayLabel = match.displayLabel();
-
-        if (displayLabel != "Unnamed")
-        {
-            alias.append(displayLabel);
-        }
-        
-        QList<QContactPhoneNumber> numbers =
-                match.details<QContactPhoneNumber> ();
-        count = numbers.count();
-     
+        delete mBccAddressList.at(i);
     }
-    
-    return count;
+    mBccAddressList.clear();
 }
 
 // EOF

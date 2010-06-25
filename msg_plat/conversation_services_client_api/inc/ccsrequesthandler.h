@@ -309,6 +309,8 @@ public: // New functions
      */
     IMPORT_C CCsClientConversation* GetConversationFromMessageIdL ( TInt aMessageId );
     
+    IMPORT_C CCsClientConversation* GetConversationFromConversationIdL( TInt aConversationId );
+
 protected: // Functions from base classes
 
     /**
@@ -388,6 +390,12 @@ private: // Constructors and destructors
      * Handles delete conversation list event.
      */
     void HandleDeleteConversationList (HBufC8* aResultsBuffer); 
+    
+	/**
+	 * HandlePartialDeleteConversationList
+	 * Handles partial delete of conversation event.
+	 */
+    void HandlePartialDeleteConversationList(HBufC8* aResultsBuffer);
 
     /**
      * HandleModifyConversationList.

@@ -16,7 +16,7 @@
  */
 
 #include "msgstorehandler.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "msgnotifier_p.h"
 #include <ccsrequesthandler.h>
 #include <ccsconversationentry.h>
@@ -63,10 +63,6 @@ MsgStoreHandler::~MsgStoreHandler()
         iFailedMessages = NULL;
     }
 
-    if (iFailedNotes) {
-        delete iFailedNotes;
-        iFailedNotes = NULL;
-    }
 }
 
 // ---------------------------------------------------------
@@ -80,7 +76,6 @@ void MsgStoreHandler::InitL()
     iMsvEntry->AddObserverL(*this);
 
     iFailedMessages = new (ELeave) CMsvEntrySelection;
-    iFailedNotes = new (ELeave) CMsvEntrySelection;
 }
 
 // ---------------------------------------------------------
@@ -108,8 +103,7 @@ void MsgStoreHandler::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1, 
     }
 
     //Handling for outbox entries
-    if( parent == KMsvGlobalOutBoxIndexEntryIdValue )
-    {
+    if (parent == KMsvGlobalOutBoxIndexEntryIdValue) {
         CMsvEntry* rootEntry = iMsvSession->GetEntryL(KMsvGlobalOutBoxIndexEntryId);
 
         for (TInt i = 0; i < selection->Count(); ++i) {
@@ -120,45 +114,55 @@ void MsgStoreHandler::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1, 
                 TInt index = iFailedMessages->Find(entry.Id());
 
                 if (sendingState == KMsvSendStateFailed && KErrNotFound == index) {
+
                     iFailedMessages->AppendL(entry.Id());
-                    iFailedNotes->AppendL(entry.Id());
+                    MsgInfo aInfo;
+                    ProcessIndicatorDataL(entry.Id(), aInfo);
+                    iNotifier->displayFailedNote(aInfo);
                 }
                 else if (sendingState != KMsvSendStateFailed && KErrNotFound != index) {
                     iFailedMessages->Delete(index);
                     iFailedMessages->Compress();
                 }
-                if (iFailedNotes->Count()) {
-                    MsgInfo aInfo;
-                    ProcessIndicatorDataL(iFailedNotes->At(0), aInfo);
-                    iNotifier->displayFailedNote(aInfo);
-                    iFailedNotes->Delete(0);
-                    iFailedNotes->Compress();
-                }
+
             }
         }//end for
     }
-    else
-    {
+    else {
         TMsvEntry entry;
         TMsvId service;
-        TInt error= KErrNone;
-        for (TInt i = 0; i < selection->Count(); ++i)
-        {
+        TInt error = KErrNone;
+        for (TInt i = 0; i < selection->Count(); ++i) {
             error = iMsvSession->GetEntry(selection->At(i), service, entry);
 
-            if (error == KErrNone && entry.iMtm == KUidMsgMMSNotification && MmsNotificationStatus(
-                entry) == EMsgStatusFailed)
-            {
-                MsgInfo aInfo;
-                                
-                //Fill aInfo with appropriate data
-                aInfo.mMessageType = ECsMmsNotification;
+            if (error == KErrNone && entry.iMtm == KUidMsgMMSNotification && 
+                MmsNotificationStatus(entry) == EMsgStatusFailed) {
 
-                ProcessIndicatorDataL(entry.Id(),aInfo);
-                iNotifier->displayFailedNote(aInfo);
+                TInt index = iFailedMessages->Find(entry.Id());
+
+                if (KErrNotFound == index) {
+                    iFailedMessages->AppendL(entry.Id());
+                    MsgInfo aInfo;
+                    //Fill aInfo with appropriate data
+                    aInfo.mMessageType = ECsMmsNotification;
+                    ProcessIndicatorDataL(entry.Id(), aInfo);
+                    iNotifier->displayFailedNote(aInfo);
+
+                }// end of if
             }
-        }
+            else if (error == KErrNone && entry.iMtm == KUidMsgMMSNotification
+                && MmsNotificationStatus(entry) == EMsgStatusRetrieving) {
+                
+                TInt index = iFailedMessages->Find(entry.Id());
+                if (KErrNotFound != index) {
+                    iFailedMessages->Delete(index);
+                    iFailedMessages->Compress();
+                }// end of KErrNotFound != index if block
+
+            } // end of 2nd if  
+        } // for loop
     }
+
 }
 
 // ---------------------------------------------------------
@@ -269,12 +273,12 @@ void MsgStoreHandler::ProcessIndicatorDataL(TMsvId msgId, MsgInfo& indicatorData
     HBufC* displayName = conversation->GetDisplayName();
 
     if (displayName) {
-        indicatorData.mDisplayName.append(S60QConversions::s60DescToQString(*displayName));
+        indicatorData.mDisplayName.append(XQConversions::s60DescToQString(*displayName));
     }
     else {
         HBufC* number = convEntry->Contact();
         if (number)
-            indicatorData.mDisplayName.append(S60QConversions::s60DescToQString(*number));
+            indicatorData.mDisplayName.append(XQConversions::s60DescToQString(*number));
     }
     delete conversation;
 }

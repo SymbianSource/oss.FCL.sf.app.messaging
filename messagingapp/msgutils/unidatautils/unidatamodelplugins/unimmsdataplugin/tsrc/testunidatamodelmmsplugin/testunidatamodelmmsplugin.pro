@@ -9,7 +9,6 @@ TARGET = test-unidatamodel-mms-plugin
 
 
 INCLUDEPATH += .
-INCLUDEPATH += ../../../../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../../../../internal/sf/app/messaging/mmsengine/mmsmessage/inc 
 INCLUDEPATH += ../../../../../internal/sf/app/messaging/mmsengine/inc
 INCLUDEPATH += ../../../../../../inc
@@ -38,9 +37,18 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
     BLD_INF_RULES.prj_exports += "photo.jpg C:/pictures/photo.jpg"
 		}
 		
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/test_unidatamodel_mms_plugin.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/test_unidatamodel_mms_plugin.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+		
  LIBS += -leuser \
 	-lconvergedmessageutils\
-	-ls60qconversions \
+	-lxqutils \
 	-lmsgs \
 	-lsmcm \
 	-lgsmu \

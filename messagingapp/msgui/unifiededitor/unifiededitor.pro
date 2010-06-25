@@ -26,10 +26,12 @@ INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../msguiutils/inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../../msgutils/unidatautils/unidatamodelloader/inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
+INCLUDEPATH += ../../msgsettings/settingsview/inc
+
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 CONFIG += hb
+HB += hbfeedback
 
 TARGET.EPOCALLOWDLLDATA = 1
 TARGET.CAPABILITY = All -TCB
@@ -42,37 +44,52 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
     "rom/unifiededitor.iby CORE_APP_LAYER_IBY_EXPORT_PATH(unifiededitor.iby)"
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/unifiededitor.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/unifiededitor.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
+
 # Input
-HEADERS += msgmonitor.h \
+HEADERS += msgunieditormonitor.h \
     msgunieditoraddress.h \
     msgunieditorattachment.h \
     msgunieditorbody.h \
     msgunieditorsubject.h \
     msgunieditorview.h \
-    msgunifiededitorlineedit.h \
-    msgattachmentcontainer.h \
+    msgunieditorlineedit.h \
+    msgunieditorattachmentcontainer.h \
     msgbaseview.h \
     msgunieditorimageprocessor.h \
-    msgunieditorprocessimageoperation.h
+    msgunieditorprocessimageoperation.h \
+    msgunieditorbasewidget.h \
+    msgunieditorpixmapwidget.h \
+    msgunieditorutils.h \
+    msgunieditoraudiowidget.h
 
-SOURCES += msgmonitor.inl \
-    msgmonitor.cpp \
+SOURCES += msgunieditormonitor.inl \
+    msgunieditormonitor.cpp \
     msgunieditoraddress.cpp \
     msgunieditorattachment.cpp \
     msgunieditorbody.cpp \
     msgunieditorsubject.cpp \
     msgunieditorview.cpp \
-    msgunifiededitorlineedit.cpp \
-    msgattachmentcontainer.cpp \
+    msgunieditorlineedit.cpp \
+    msgunieditorattachmentcontainer.cpp \
     msgunieditorimageprocessor.inl \
     msgunieditorimageprocessor.cpp \
-    msgunieditorprocessimageoperation.cpp
+    msgunieditorprocessimageoperation.cpp \
+    msgunieditorpixmapwidget.cpp \
+    msgunieditorutils.cpp \
+    msgunieditoraudiowidget.cpp
 
 RESOURCES += unifiededitor.qrc
 
 # Libs
-LIBS += -ls60qconversions \
-        -lconvergedmessageutils \
+LIBS += -lconvergedmessageutils \
         -lmsguiutils \
         -lunieditorpluginloader \
         -leditorgenutils \
@@ -90,7 +107,8 @@ LIBS += -ls60qconversions \
         -lxqservice \
         -lgsmu \
         -lsmcm \
-        -lxqserviceutil
-
+        -lxqserviceutil \
+        -lcommonengine \
+        -lefsrv
 
         

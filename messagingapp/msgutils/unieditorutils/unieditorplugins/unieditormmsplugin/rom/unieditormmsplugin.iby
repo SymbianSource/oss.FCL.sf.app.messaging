@@ -19,7 +19,6 @@
 #define __UNI_EDITOR_MMS_PLUGIN_IBY__
 
 
-# this is the plugin stub for QT plugin
 file=ABI_DIR\UREL\unieditormmsplugin.dll               SHARED_LIB_DIR\unieditormmsplugin.dll
 data=\epoc32\data\z\resource\qt\plugins\messaging\editorplugins\unieditormmsplugin.qtplugin              \resource\qt\plugins\messaging\editorplugins\unieditormmsplugin.qtplugin
 

@@ -66,9 +66,10 @@ public:
      * Add a new row to the conversation summary model.
      * Overwrite the row if the message already exists.
      * @param conversation, CCsClientConversation
+     * @param caching, initial caching flag
      * 
      */    
-    void addRow(const CCsClientConversation& conversation);
+    void addRow(const CCsClientConversation& conversation, bool caching = false);
 
     /**
      * Delete a row from conversation summary model.

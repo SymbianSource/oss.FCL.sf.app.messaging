@@ -22,17 +22,10 @@
 // INCLUDES
 #include <xqserviceprovider.h>
 #include <qvariant.h>
-#include <qmobilityglobal.h>
 
 //TODO: to be deprecated
 #include <QStringList>
 class ConvergedMessageAddress;
-
-QTM_BEGIN_NAMESPACE
-class QContactManager;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
 
 struct ContactDetail
 {

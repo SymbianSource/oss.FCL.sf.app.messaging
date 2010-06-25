@@ -19,7 +19,7 @@
 #include "conversationsenginedefines.h"
 #include "conversationmsgstorehandler.h"
 #include "convergedmessage.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "conversationsengineutility.h"
 #include <ccsconversationentry.h>
 
@@ -251,7 +251,7 @@ void ConversationsModel::populateItem(QStandardItem& item,
     QString subject("");
     if( description && description->Length())
         {
-        subject = (S60QConversions::s60DescToQString(*description));
+        subject = (XQConversions::s60DescToQString(*description));
         item.setData(subject, Subject); 
         }
     
@@ -266,7 +266,7 @@ void ConversationsModel::populateItem(QStandardItem& item,
     HBufC* contact = entry.Contact();
     if( contact && contact->Length())
         {
-        item.setData(S60QConversions::s60DescToQString(*contact), ConversationAddress);      
+        item.setData(XQConversions::s60DescToQString(*contact), ConversationAddress);      
         }
 
     // message type.        
