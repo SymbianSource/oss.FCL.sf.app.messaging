@@ -515,8 +515,8 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
     //populate from data plugins
     if (!isEntryInDb || err != KErrNone)
     {
-        int id = iMmsDataPlugin->setMessageId(entry.EntryId());
-        if(id <= 0)
+        int error = iMmsDataPlugin->setMessageId(entry.EntryId());
+        if(error != KErrNone)
         {
             // skip all
             return;

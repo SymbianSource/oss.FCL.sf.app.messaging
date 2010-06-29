@@ -57,7 +57,8 @@ EXPORTS
 	?onDialogDeleteMsg@MsgUnifiedEditorView@@AAEXPAVHbAction@@@Z @ 56 NONAME ; void MsgUnifiedEditorView::onDialogDeleteMsg(class HbAction *)
 	??0MsgUnifiedEditorView@@QAE@PAVQGraphicsItem@@@Z @ 57 NONAME ; MsgUnifiedEditorView::MsgUnifiedEditorView(class QGraphicsItem *)
 	?fetchContacts@MsgUnifiedEditorView@@AAEXXZ @ 58 NONAME ; void MsgUnifiedEditorView::fetchContacts(void)
-	?deleteMessage@MsgUnifiedEditorView@@AAEXXZ @ 59 NONAME ; void MsgUnifiedEditorView::deleteMessage(void)
-	?addAttachments@MsgUnifiedEditorView@@AAEXVQStringList@@@Z @ 60 NONAME ; void MsgUnifiedEditorView::addAttachments(class QStringList)
-	?deactivateInputBlocker@MsgUnifiedEditorView@@AAEXXZ @ 61 NONAME ; void MsgUnifiedEditorView::deactivateInputBlocker(void)
+	?formatAddresses@MsgUnifiedEditorView@@AAEXAAV?$QList@PAVConvergedMessageAddress@@@@@Z @ 59 NONAME ; void MsgUnifiedEditorView::formatAddresses(class QList<class ConvergedMessageAddress *> &)
+	?deleteMessage@MsgUnifiedEditorView@@AAEXXZ @ 60 NONAME ; void MsgUnifiedEditorView::deleteMessage(void)
+	?addAttachments@MsgUnifiedEditorView@@AAEXVQStringList@@@Z @ 61 NONAME ; void MsgUnifiedEditorView::addAttachments(class QStringList)
+	?deactivateInputBlocker@MsgUnifiedEditorView@@AAEXXZ @ 62 NONAME ; void MsgUnifiedEditorView::deactivateInputBlocker(void)
 

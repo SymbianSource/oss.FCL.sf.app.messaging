@@ -184,6 +184,13 @@ private:
     void setAttachOptionEnabled(MsgUnifiedEditorView::TBE_AttachOption opt,
             bool enable);
 
+    /**
+     * Addresses are all ok. Now parse not allowed chars away 
+	 * before giving it to MTM
+	 * @param addresses, list of ConvergedMessageAddress
+     */
+    void formatAddresses(ConvergedMessageAddressList& addresses);
+    
 private slots:
 
     /**

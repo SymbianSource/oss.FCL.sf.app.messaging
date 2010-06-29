@@ -557,9 +557,12 @@ bool MsgUnifiedEditorAddress::validateContacts()
 bool MsgUnifiedEditorAddress::checkValidAddress(const QString& addr)
     {
     bool isValid = false;
+    
+    HBufC *tempAddr = XQConversions::qStringToS60Desc(addr);
+    	
     // 1. perform number validation
     isValid = CommonPhoneParser::IsValidPhoneNumber(
-            *XQConversions::qStringToS60Desc(addr),
+            *tempAddr,
             CommonPhoneParser::ESMSNumber );
 
     // 2. if number validity fails, then perform email addr validation
@@ -567,9 +570,10 @@ bool MsgUnifiedEditorAddress::checkValidAddress(const QString& addr)
     if(!isValid)
         { // additional check for MMS only
         isValid = genUtils->IsValidEmailAddress(
-                    *XQConversions::qStringToS60Desc(addr) );
-        }
+                    *tempAddr );
+        } 
     delete genUtils;
+    delete tempAddr;
     return isValid;
     }
 

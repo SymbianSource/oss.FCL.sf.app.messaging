@@ -103,7 +103,7 @@ private:
      * Handle sms and mms messge
      * @param msgId message id
      */
-    void handleSmsMmsMsg(int msgId);
+    void handleSmsMmsMsg(int msgId,int msgType);
 
     /**
      * Handle ringtone message

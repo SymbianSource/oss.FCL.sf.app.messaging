@@ -114,11 +114,6 @@ private slots:
      */
     void onOrientationAboutToBeChanged();
     
-    /**
-     * This slot is called when the view is successfully added to main window
-     */
-    void onViewReady();
-    
 private:
 
     /**
@@ -130,6 +125,11 @@ private:
      * Setup view menu items.
      */
     void setupMenu();
+
+    /**
+     * Triggers model to fetch more conversations.
+     */
+    void fetchMoreConversations();
 
     /**
      * Populates ConvergedMessage for sending.
@@ -211,6 +211,11 @@ public slots:
      * data
      */
     void refreshView();
+
+    /**
+     * This slot is called when the view is successfully added to main window
+     */
+    void onViewReady();
     
 private slots:
 
@@ -422,15 +427,25 @@ private:
     HbStaticVkbHost* mVkbHost;
     
     /**
-     * Flag to check it vkb is open.
-     */
-    bool mVkbopened;
-
-    /**
      * variable holding the visible model index
      */
     QModelIndex mVisibleIndex;
-
+    
+    /**
+     * Flag to check it vkb is open.
+     */
+    bool mVkbopened;
+    
+    /**
+     * Flag is set when model is populated.
+     * @see signal conversationModelPopulated()
+     */
+    bool mModelPopulated;
+    
+    /**
+     * Flag is set when 
+     */
+    bool mViewReady;
 };
 
 #endif // MSG_CONVERSATION_VIEW_H

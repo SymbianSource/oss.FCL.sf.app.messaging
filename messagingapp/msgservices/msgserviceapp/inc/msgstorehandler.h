@@ -58,6 +58,13 @@ public:
      */
     void deleteMessage(int msgId);
     
+    /**
+     * is draft message.
+     * @param msgId id of the message to be checked.
+     * @return true if it is a draft message,else false
+     */
+    bool isDraftMessage(int msgId);
+    
 private:
     /**
      * Does all initilaizations

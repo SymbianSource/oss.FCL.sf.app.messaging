@@ -155,4 +155,27 @@ void MsgStoreHandler::deleteMessage(int msgId)
     {
     iMsvSession->RemoveEntry(msgId);
     }
+
+//----------------------------------------------------------------------------
+// MsgStoreHandler::isDraftMessage
+// @see header
+//----------------------------------------------------------------------------
+bool MsgStoreHandler::isDraftMessage(int msgId)
+{       
+    bool draftmsg = false;
+    CMsvEntry* cEntry = NULL;
+    TRAPD(err, cEntry = iMsvSession->GetEntryL(msgId));
+    if ( err == KErrNone)
+    {
+        TMsvEntry msvEntry = cEntry->Entry();
+        TMsvId parent = msvEntry.Parent();
+        if(parent == KMsvDraftEntryIdValue)
+        {
+            draftmsg = true;  
+        }
+    }
+
+    delete cEntry;
+    return draftmsg;
+}
 // End of file

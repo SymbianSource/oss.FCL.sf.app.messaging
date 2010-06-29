@@ -227,7 +227,7 @@ void MsgConversationBaseView::doDelayedConstruction()
 //---------------------------------------------------------------	
 void MsgConversationBaseView::handleViewReady()
 {
-    ConversationsEngine::instance()->fetchMoreConversations();
+    mConversationView->onViewReady();
 }
 
 //---------------------------------------------------------------

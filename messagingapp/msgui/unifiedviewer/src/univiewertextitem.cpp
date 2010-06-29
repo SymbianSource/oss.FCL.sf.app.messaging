@@ -38,12 +38,11 @@
 //consts
 
 //regexp
-const QString NUMBER_PATTERN("(\\(?(\\+|\\d))((?:\\d)((?:[\\s-/.\\)\\(])*(?:(\\d+|\\))))*(?:\\d|\\)))|((\\*#)(?:\\d+(\\*|#)(?:\\d+#)?))");
+const QString NUMBER_PATTERN("(\\(?(\\+|\\d))((?:\\d)((?:[\\s-/.\\)\\(])*(?:(\\d+|\\))))*(?:\\d?|\\)))|((\\*#)(?:\\d+(\\*|#)(?:\\d+#)?))");
 
 const QString EMAIL_PATTERN("[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?");
 
-const QString URL_PATTERN("(((ht|f|rt)(tp|sp)(s?)\\:\\/\\/)|(www|wap)(?:\\.))(([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*)(\\.)([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\'\\/\\\\+&amp;%\\$#_=~]*))+");
-
+const QString URL_PATTERN("(((ht|f|rt)(tp|sp)(s?)\\:\\/\\/)|(www|wap)(?:\\.))(([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*)(\\.)([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*))+[a-zA-Z0-9/]");
 
 //rules
 const QString NUMBER_RULE("NUMBER_RULE");
@@ -51,7 +50,7 @@ const QString EMAIL_RULE("EMAIL_RULE");
 const QString URL_RULE("URL_RULE");
 
 //localization
-#define LOC_OPEN_CONTACT_INFO hbTrId("txt_messaging_menu_open_contact_info")
+#define LOC_CONTACT_INFO hbTrId("txt_messaging_menu_contact_info")
 #define LOC_CALL              hbTrId("txt_common_menu_call_verb")
 #define LOC_SEND_MESSAGE      hbTrId("txt_common_menu_send_message")
 #define LOC_SAVE_TO_CONTACTS  hbTrId("txt_common_menu_save_to_contacts")
@@ -211,7 +210,7 @@ void UniViewerTextItem::gestureEvent(QGestureEvent* event)
                     //do short tap action.
                     if (!anchor.isEmpty() && !this->textCursor().hasSelection())
                     {
-                        shortTapAction(anchor);
+                        handleShortTap(anchor,tap->scenePosition());
                     }
                 }
                 break;
@@ -244,16 +243,28 @@ void UniViewerTextItem::addNumberMenu(HbMenu* contextMenu,const QString& data)
 {
     HbAction* action = NULL;
 
-    action = contextMenu->addAction(LOC_OPEN_CONTACT_INFO, this, SLOT(openContactInfo()));
-    action->setData(data);
+    QString number = data;
+    number.remove(NUMBER_RULE);
+    int contactId = MsgContactHandler::resolveContactDisplayName(
+                                 number, 
+                                 QContactPhoneNumber::DefinitionName,
+                                 QContactPhoneNumber::FieldNumber); 
+    
+    if(contactId > 0)
+    {
+        action = contextMenu->addAction(LOC_CONTACT_INFO, this, SLOT(openContactInfo()));
+        action->setData(data);
+    }
+    else
+    {
+        action = contextMenu->addAction(LOC_SAVE_TO_CONTACTS, this, SLOT(saveToContacts()));
+        action->setData(data);  
+    }
 
     action = contextMenu->addAction(LOC_CALL, this, SLOT(call()));
     action->setData(data);
 
     action = contextMenu->addAction(LOC_SEND_MESSAGE, this, SLOT(sendMessage()));
-    action->setData(data);
-
-    action = contextMenu->addAction(LOC_SAVE_TO_CONTACTS, this, SLOT(saveToContacts()));
     action->setData(data);
 
     action = contextMenu->addAction(LOC_COPY, this, SLOT(copyToClipboard()));
@@ -267,7 +278,7 @@ void UniViewerTextItem::addEmailMenu(HbMenu* contextMenu,const QString& data)
     action = contextMenu->addAction(LOC_CREATE_EMAIL, this, SLOT(createEmail()));
     action->setData(data);
     
-    action = contextMenu->addAction(LOC_OPEN_CONTACT_INFO, this, SLOT(openContactInfo()));
+    action = contextMenu->addAction(LOC_CONTACT_INFO, this, SLOT(openContactInfo()));
     action->setData(data);
 
     action = contextMenu->addAction(LOC_SAVE_TO_CONTACTS, this, SLOT(saveToContacts()));
@@ -291,15 +302,40 @@ void UniViewerTextItem::addUrlMenu(HbMenu* contextMenu,const QString& data)
     action->setData(data);
 }
 
-void UniViewerTextItem::shortTapAction(QString anchor)
+void UniViewerTextItem::handleShortTap(QString anchor,const QPointF& pos)
 {
     HbAction action;
     action.setData(anchor);
 
     if(anchor.contains(NUMBER_RULE))
     {
-        //open vcard template.
-        connect(&action,SIGNAL(triggered()),this,SLOT(openContactInfo()));
+        QString data = anchor;
+        data.remove(NUMBER_RULE);
+        int contactId = MsgContactHandler::resolveContactDisplayName(
+                                     data, 
+                                     QContactPhoneNumber::DefinitionName,
+                                     QContactPhoneNumber::FieldNumber);        
+       
+        if(contactId > 0 )
+        {
+            //if resolved conatct open contact card 
+            connect(&action,SIGNAL(triggered()),this,SLOT(openContactInfo()));
+        }
+        else
+        {
+            //unresolved contact show popup.  
+            highlightText(true);
+
+            HbMenu* contextMenu = new HbMenu();
+            contextMenu->setDismissPolicy(HbPopup::TapAnywhere);
+            contextMenu->setAttribute(Qt::WA_DeleteOnClose, true);
+            contextMenu->setPreferredPos(pos); 
+            connect(contextMenu,SIGNAL(aboutToClose()),this,SLOT(menuClosed()));
+            
+            addNumberMenu(contextMenu,anchor);
+            
+            contextMenu->show();
+        }
     }
     else if(anchor.contains(EMAIL_RULE))
     {
@@ -534,7 +570,7 @@ void UniViewerTextItem::openContactInfo()
 
 void UniViewerTextItem::saveToContacts()
 {
-    //handler for save to contacts.
+     openContactInfo();
 }
 
 void UniViewerTextItem::onServiceRequestCompleted()

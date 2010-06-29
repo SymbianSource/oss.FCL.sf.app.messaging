@@ -102,10 +102,11 @@ MsgConversationView::MsgConversationView(MsgContactCardWidget *contactCardWidget
     mContactCardWidget(contactCardWidget),
     mSendUtil(NULL),
     mVkbHost(NULL),
+    mVisibleIndex(),
     mVkbopened(false),
-    mVisibleIndex()
+    mModelPopulated(false),
+    mViewReady(false)
 {
-    connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(onViewReady()));
     //create send utils
     mSendUtil = new MsgSendUtil(this);
     //initialize view
@@ -213,6 +214,18 @@ void MsgConversationView::setupMenu()
     HbMenu *mainMenu = this->menu();
     HbAction* clearConversation = mainMenu->addAction(QString());
     connect(mainMenu, SIGNAL(aboutToShow()), this, SLOT(menuAboutToShow()));
+}
+
+//---------------------------------------------------------------
+// MsgConversationView::fetchMoreConversations
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationView::fetchMoreConversations()
+{
+    if (mViewReady && mModelPopulated) {
+        ConversationsEngine::instance()->fetchMoreConversations();
+        mViewReady = mModelPopulated = false;
+    }
 }
 
 //---------------------------------------------------------------
@@ -820,7 +833,7 @@ void MsgConversationView::launchBtDisplayService(const QModelIndex & index)
     QString operation("displaymsg(int)");
     XQAiwRequest* request;
     XQApplicationManager appManager;
-    request = appManager.create(serviceName, "displaymsg", operation, true); // embedded
+    request = appManager.create(serviceName, "displaymsg", operation, false); // embedded
     
     if ( request == NULL )
         {
@@ -828,6 +841,7 @@ void MsgConversationView::launchBtDisplayService(const QModelIndex & index)
         }
 
     args << QVariant(messageId);
+    request->setSynchronous(true);
     
     request->setArguments(args);
     request->send();
@@ -1121,10 +1135,12 @@ void MsgConversationView::launchUniEditor(const QVariantList& data)
 //---------------------------------------------------------------
 void MsgConversationView::populateConversationsView()
 {    
+    mModelPopulated = true;
     mConversationList->setModel(mMessageModel);
     
     refreshView();
     scrollToBottom();
+    fetchMoreConversations();
 }
 
 //---------------------------------------------------------------
@@ -1379,8 +1395,11 @@ void MsgConversationView::onOrientationAboutToBeChanged()
 //---------------------------------------------------------------
 void MsgConversationView::onViewReady()
 {
+    mViewReady = true;
     //Disconnect list View's signals, for avoiding execution of the default implementaion
     disconnect(mainWindow(), SIGNAL(aboutToChangeOrientation()), mConversationList, 0);
     disconnect(mainWindow(), SIGNAL(orientationChanged(Qt: rientation)), mConversationList, 0);
+    
+   fetchMoreConversations();
 }
 // EOF

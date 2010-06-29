@@ -183,11 +183,10 @@ bool MmsConformanceCheck::validateMsgForForward(int messageId)
     UniDataModelLoader* pluginLoader = new UniDataModelLoader();
     UniDataModelPluginInterface* pluginInterface =
             pluginLoader->getDataModelPlugin(ConvergedMessage::Mms);
-    int id = pluginInterface->setMessageId(messageId);
+    int error = pluginInterface->setMessageId(messageId);
 
     //Check if invalid id and slide count is greater than 1
-    if ( ( id <= 0 ) ||
-         (pluginInterface->slideCount() > 1) )
+    if ( (error != KErrNone) || pluginInterface->slideCount() > 1)
     {
         delete pluginLoader;
         return false;

@@ -49,7 +49,7 @@
 #include <qcontactmanager.h>
 #include <qversitcontactexporter.h>
 #include <cntservicescontact.h>
-
+#include <commonphoneparser.h>      // Common phone number validity checker
 
 // USER INCLUDES
 #include "debugtraces.h"
@@ -943,7 +943,13 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg, bool isSave)
             mToField->addresses(removeDuplicates);
     ConvergedMessageAddressList ccAddresses;
     ConvergedMessageAddressList bccAddresses;
-
+    
+	//Don't format the addresses for save to drfats case
+	if(!isSave)
+	{
+       formatAddresses(addresses);
+    }
+	
     msg.addToRecipients(addresses);
     msg.setBodyText(mBody->text());
     msg.setDirection(ConvergedMessage::Outgoing);
@@ -1002,10 +1008,20 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg, bool isSave)
 
         if(ccAddresses.count()>0)
         {
+		//Don't format the addresses for save to drfats case
+	    if(!isSave)
+	    {
+           formatAddresses(ccAddresses);
+        }        
         msg.addCcRecipients(ccAddresses);
         }
         if(bccAddresses.count()>0)
         {
+		//Don't format the addresses for save to drfats case
+	    if(!isSave)
+	    {
+           formatAddresses(bccAddresses);        
+		}
         msg.addBccRecipients(bccAddresses);
         }
         if(mSubjectField)
@@ -1661,4 +1677,32 @@ void MsgUnifiedEditorView::enableSendButton(bool enable)
         }
     }
 
+// ----------------------------------------------------------------------------
+// MsgUnifiedEditorView::formatAddresses
+// @see header
+// ----------------------------------------------------------------------------
+void MsgUnifiedEditorView::formatAddresses(
+        ConvergedMessageAddressList& addresses)
+{       
+
+    for(int i=0; i < addresses.count() ;i++ )
+    {
+        QString addr = addresses[i]->address();
+        
+        HBufC *tempAddr = XQConversions::qStringToS60Desc(addr);     
+            
+        TPtr ptr = tempAddr->Des();
+                    
+         // Note: This is just to parse spaces etc away from phonenumbers.
+         //       Ignore EFalse returned for email addresses.   
+        CommonPhoneParser::ParsePhoneNumber(ptr , 
+                                            CommonPhoneParser::ESMSNumber );        
+       
+        addr = XQConversions::s60DescToQString(tempAddr->Des()); 
+        
+        addresses[i]->setAddress(addr);
+        
+        delete tempAddr;                                                       
+    }       
+}
 //EOF

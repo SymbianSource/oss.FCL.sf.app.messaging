@@ -344,7 +344,7 @@ void MsgServiceViewManager::view(int msgId)
         case ConvergedMessage::Mms:
         case ConvergedMessage::MmsNotification:
             {
-            handleSmsMmsMsg(msgId);
+            handleSmsMmsMsg(msgId,msgType);
             break;
             }
         case ConvergedMessage::BioMsg:
@@ -377,22 +377,64 @@ void MsgServiceViewManager::view(int msgId)
 // MsgServiceViewManager::handleSmsMmsMsg
 // @see header
 // ----------------------------------------------------------------------------
-void MsgServiceViewManager::handleSmsMmsMsg(int msgId)
+void MsgServiceViewManager::handleSmsMmsMsg(int msgId,int msgType)
+{
+    if(mStoreHandler->isDraftMessage(msgId))
     {
-    if (!mUniViewer) {
-    mUniViewer = new UnifiedViewer(msgId);
-    mUniViewer->setNavigationAction(mBackAction);
-    mMainWindow->addView(mUniViewer);
-    connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,
-            SLOT(switchView(const QVariantList&)));
-    }
-    mUniViewer->populateContent(msgId, true, 1);
+        ConvergedMessageId convergedMsgId = ConvergedMessageId(msgId);
+        ConvergedMessage message;
+        message.setMessageType((ConvergedMessage::MessageType) msgType);
+        message.setMessageId(convergedMsgId);
 
-    mMainWindow->setCurrentView(mUniViewer);
-    
-    // set current view as viewer
-    mCurrentView = MsgBaseView::UNIVIEWER;
+        // Launch uni-editor view
+        QByteArray dataArray;
+        QDataStream messageStream(&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+        message.serialize(messageStream);
+
+        QVariantList params;
+        params << MsgBaseView::UNIEDITOR; // target view
+        params << MsgBaseView::SERVICE; // source view
+
+        params << dataArray;
+        
+        // except first 2 parameters pass other parameters
+        QVariantList editorData;
+        for(int a = 2; a < params.length(); ++a)
+        {
+            editorData << params.at(a);
+        }
+        // construct
+          if (!mUniEditor) {
+          mUniEditor = new MsgUnifiedEditorView();
+          mMainWindow->addView(mUniEditor);
+          mUniEditor->setNavigationAction(mBackAction);
+          connect(mUniEditor, SIGNAL(switchView(const QVariantList&)), this,
+                  SLOT(switchView(const QVariantList&)));
+          }
+          
+          // check if additional data for unieditor's consumption is available
+          mUniEditor->openDraftsMessage(editorData);
+
+          mMainWindow->setCurrentView(mUniEditor);
+          mCurrentView = MsgBaseView::UNIEDITOR;
     }
+    else
+    {
+        if (!mUniViewer) {
+            mUniViewer = new UnifiedViewer(msgId);
+            mUniViewer->setNavigationAction(mBackAction);
+            mMainWindow->addView(mUniViewer);
+            connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,
+                SLOT(switchView(const QVariantList&)));
+        }
+        mUniViewer->populateContent(msgId, true, 1);
+
+        mMainWindow->setCurrentView(mUniViewer);
+
+        // set current view as viewer
+        mCurrentView = MsgBaseView::UNIVIEWER;
+    }
+}
 
 // ----------------------------------------------------------------------------
 // MsgServiceViewManager::handleRingtoneMsg
