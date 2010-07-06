@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2007-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -96,6 +96,12 @@ CImapFolder::~CImapFolder()
 	iMatchingMessageIds.Reset();
 	iDeletedMessageIds.Reset();
 	iMissingMessageIds.Reset();
+	
+	if(iCachedEntryData)
+		{
+	    iCachedEntryData->Close();
+		}
+		
 	delete iSelection;
 	iFolderIndex->Reset();
 	iMessageFlagInfoArray.Reset();
@@ -1121,9 +1127,12 @@ void CImapFolder::GetMessageChildrenL(const TMsvId aFolder, CMsvEntrySelection* 
 	SetEntryL(aFolder);
 	GetChildrenL(*aChildren);
 
+	if(iCachedEntryData)
+	    {
+        iCachedEntryData->Close();
+	    }
 	delete iCachedEntryData;
 	iCachedEntryData = NULL;
-
 	iCachedEntryData = new(ELeave) RArray<TMsvCacheData>(5);
 
 	// Go through them, checking to see if they're messages and removing ones that aren't

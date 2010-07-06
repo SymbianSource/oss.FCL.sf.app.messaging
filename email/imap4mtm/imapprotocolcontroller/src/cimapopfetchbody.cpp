@@ -1574,6 +1574,11 @@ void CImapOpFetchBody::BuildEmbeddedMessageL(CImapBodyStructure* aBodyStructure,
 	CImHeader *messageheader=CImHeader::NewLC();
 	ProcessEnvelopeL(messageheader, aMessage, aBodyStructure->GetRfc822EnvelopeStructureL());
 
+	if(aBodyStructure->EmbeddedBodyStructureList().Count() == 0)
+	    {
+        aMessage.iType=KUidMsvAttachmentEntry;
+	    }
+	
 	// Create message
 	User::LeaveIfError(iServerEntry.CreateEntryBulk(aMessage)); // bulk op completed at the end of ProcessBodyStructureL()
 	SetEntryL(aMessage.Id());
@@ -1592,9 +1597,17 @@ void CImapOpFetchBody::BuildEmbeddedMessageL(CImapBodyStructure* aBodyStructure,
 	TInt attachments=0;
 	TInt relatedAttachments;
 	TBool isMHTML=EFalse;
+	CImapBodyStructure* bodystructure = NULL;
 	
-	CImapBodyStructure* bodystructure = aBodyStructure->EmbeddedBodyStructureList()[0];
-	BuildTreeL(aMessage.Id(), bodystructure, aPath, aMessage.Id(), attachments, isMHTML, relatedAttachments);
+	if(aBodyStructure->EmbeddedBodyStructureList().Count() > 0)
+	    {
+	    bodystructure = aBodyStructure->EmbeddedBodyStructureList()[0];
+        }	
+	if (bodystructure)
+	    {
+        BuildTreeL(aMessage.Id(), bodystructure, aPath, aMessage.Id(), attachments, isMHTML, relatedAttachments);
+	    }
+	
 	__LOG_FORMAT((iSession->LogId(), "  Built embedded message id %x attachments %d MHTML %d", aMessage.Id(), attachments, isMHTML));
 
 	// Save attachment and MHTML flags
@@ -1879,10 +1892,15 @@ void CImapOpFetchBody::ProcessEnvelopeL(CImHeader* aHeader, TMsvEntry& aEntry, C
 	iHeaderConverter->DecodeAllHeaderFieldsL(*aHeader);
 
 	// Set from line in TMsvEntry
-	aEntry.iDetails.Set(aHeader->From());
-
+	if(aHeader->From().Length() > 0)
+	    {
+        aEntry.iDetails.Set(aHeader->From());
+	    }
+	if(aHeader->Subject().Length() > 0)
+	    {
 	// Set subject in TMsvEntry
-	aEntry.iDescription.Set(aHeader->Subject());
+	    aEntry.iDescription.Set(aHeader->Subject());
+	    }
 
 	__LOG_TEXT(iSession->LogId(), "   Finished processing envelope information");
 	}

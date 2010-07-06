@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -249,6 +249,7 @@ A list if MMS account Ids
 */                   
 EXPORT_C void CMmsAccounts::GetMMSAccountsL(RArray<TMmsAccountId>& aAccountIds) const
 	{
+    CleanupClosePushL( aAccountIds );
 	aAccountIds.Reset();
 	RArray<TUint32> accountIds;	
 	CleanupClosePushL(accountIds);	
@@ -268,7 +269,8 @@ EXPORT_C void CMmsAccounts::GetMMSAccountsL(RArray<TMmsAccountId>& aAccountIds) 
 		aAccountIds.AppendL(accountId);		
 		}
 		
-	CleanupStack::PopAndDestroy(&accountIds);				
+	CleanupStack::PopAndDestroy(&accountIds);
+	CleanupStack::Pop(&aAccountIds);  // aAccountIds
 	}
 
 /**

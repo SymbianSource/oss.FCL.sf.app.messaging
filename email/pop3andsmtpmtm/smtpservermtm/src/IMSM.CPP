@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -791,24 +791,10 @@ Tidy up and complete the caller.
 */
 void CMsgImOutboxSend::Complete(TInt status)
 	{
-	if (iState != EStateMobilityError)
-		{
-		// Respond to any outstanding bearer mobility requests as we are about
-		// to exit and we don't need to hold up the migration.
-		if (PreparingForMigration())
-			{
-			SignalMigrate();
-			}
-		else if (iMobilityOperation == EMobilityOperationMigrating &&
-		         iState == EStateConnectingSession)
-			{
-			if (iMobilityManager)
-				{
-				iMobilityManager->NewCarrierAccepted();
-				}
-			}
-		}
-
+    // sending of all the emails has completed, no need listen for Mobility Manager
+	delete iMobilityManager;
+	iMobilityManager=NULL;
+	
 	delete iSession;
 	iSession = NULL;
 	delete iSessionManager;
@@ -1224,8 +1210,8 @@ CMsgImOutboxSend::~CMsgImOutboxSend( )
 	delete iWaiter;	
 #endif
 
-	delete iSessionManager;
 	delete iMobilityManager;
+	delete iSessionManager;
 	}
 
 CDesCArray& CMsgImOutboxSend::BccRcptArray()

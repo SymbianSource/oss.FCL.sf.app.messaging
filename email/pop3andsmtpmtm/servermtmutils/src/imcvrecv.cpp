@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 1998-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -415,11 +415,9 @@ void CImRecvConvert::ConstructL(RFs& anFs)
 	iStore8BitData = reader.ReadInt8();
 	CleanupStack::PopAndDestroy(buf);
 	
-	//read iStorePlainBodyText flag for writing bodytext chunk bu chunk.
-	buf = resFile.AllocReadLC( STORE_PLAIN_BODY_TEXT );
-	reader.SetBuffer(buf);
-	iStorePlainBodyText = reader.ReadInt8();
-	CleanupStack::PopAndDestroy(buf);
+	//read iStorePlainBodyText flag for writing bodytext chunk by chunk.
+	//For Pop case, it always writes bodytext chunk by chunk
+	iStorePlainBodyText = 1;
 
 
 	buf = resFile.AllocReadLC( REMOVED_ATTACHMENT_TAG );
@@ -3976,7 +3974,11 @@ void CMimeParser::ExtractParameterInfoL(const TDesC8& aTag, TDes16& rBuffer, HBu
 			iLex.UnGetToMark(initMark);
 			ParseRfc2231ParameterInfoL(aTag, rBuffer, offset );
 			}
-			CleanupStack::Pop(rBuffer8);
+		if( param.Length() > 0 )
+		    {
+            CleanupStack::Pop(rBuffer8);
+		    }
+			
 		}
 	}
 

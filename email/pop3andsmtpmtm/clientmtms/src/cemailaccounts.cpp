@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2004-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -809,6 +809,7 @@ On return, an array of POP account IDs
 */ 
 EXPORT_C void CEmailAccounts::GetPopAccountsL(RArray<TPopAccount>& aAccounts)
 	{
+    CleanupClosePushL( aAccounts );
 	aAccounts.Reset();
 	CRepository& popRepository = PopRepositoryL();
 	
@@ -855,7 +856,8 @@ EXPORT_C void CEmailAccounts::GetPopAccountsL(RArray<TPopAccount>& aAccounts)
 			}		
 		}
 		
-	CleanupStack::PopAndDestroy(3, &popAccountIds);				
+	CleanupStack::PopAndDestroy(3, &popAccountIds);
+	CleanupStack::Pop(&aAccounts); // aAccounts
 	}
 
 /**
@@ -921,6 +923,7 @@ On return, an array of IMAP account IDs
 */    			
 EXPORT_C void CEmailAccounts::GetImapAccountsL(RArray<TImapAccount>& aAccounts)
 	{
+    CleanupClosePushL( aAccounts );
 	aAccounts.Reset();
 	CRepository& imapRepository = ImapRepositoryL();
 
@@ -967,7 +970,8 @@ EXPORT_C void CEmailAccounts::GetImapAccountsL(RArray<TImapAccount>& aAccounts)
 			}		
 		}
 
-	CleanupStack::PopAndDestroy(3, &imapAccountIds);			
+	CleanupStack::PopAndDestroy(3, &imapAccountIds);	
+	CleanupStack::Pop(&aAccounts);  // aAccounts
 	}
 
 void CEmailAccounts::GetEmailServicesL(CMsvEntrySelection& aServices, TUid aMTMType, CMsvEntry& aMsvEntry)
@@ -1057,6 +1061,7 @@ On return, an array of SMTP account IDs
 */    			
 EXPORT_C void CEmailAccounts::GetSmtpAccountsL(RArray<TSmtpAccount>& aAccounts)
 	{
+    CleanupClosePushL( aAccounts );
 	aAccounts.Reset();
 	CRepository& smtpRepository = SmtpRepositoryL();
 	
@@ -1103,7 +1108,8 @@ EXPORT_C void CEmailAccounts::GetSmtpAccountsL(RArray<TSmtpAccount>& aAccounts)
 			}		
 		}
 
-	CleanupStack::PopAndDestroy(3, &smtpAccountIds);				
+	CleanupStack::PopAndDestroy(3, &smtpAccountIds);		
+	CleanupStack::Pop(&aAccounts);  // aAccounts
 	}
 
 /**
@@ -1116,6 +1122,7 @@ Get a list of SMTP mobility accounts for a given SMTP account
 */
 EXPORT_C void CEmailAccounts::GetSmtpMobilityAccountsL(const TSmtpAccount& aSmtpAccount, RArray<TSmtpMobilityAccount>& aAccounts)
 	{
+    CleanupClosePushL( aAccounts );
 	aAccounts.Reset();
 
 	CRepository& repository = SmtpRepositoryL();
@@ -1150,6 +1157,8 @@ EXPORT_C void CEmailAccounts::GetSmtpMobilityAccountsL(const TSmtpAccount& aSmtp
 		{
 		User::Leave(err);
 		}
+	
+	CleanupStack::Pop(&aAccounts);  // aAccounts
 	}
 
 /**
@@ -1161,6 +1170,7 @@ Get a list of all SMTP mobility accounts in the repository
 */
 EXPORT_C void CEmailAccounts::GetSmtpMobilityAccountsL(RArray<TSmtpMobilityAccount>& aAccounts)
 	{
+    CleanupClosePushL( aAccounts );
 	aAccounts.Reset();
 
 	CRepository& repository = SmtpRepositoryL();
@@ -1190,6 +1200,7 @@ EXPORT_C void CEmailAccounts::GetSmtpMobilityAccountsL(RArray<TSmtpMobilityAccou
 		}
 
 	CleanupStack::PopAndDestroy(&smtpAccountIds);
+	CleanupStack::Pop(&aAccounts);  // aAccounts
 	}
 
 /**
