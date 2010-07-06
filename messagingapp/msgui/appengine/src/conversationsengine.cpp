@@ -16,6 +16,9 @@
  */
 #include "conversationsengine.h"
 
+#include <ccsconversationentry.h>
+#include <ccsclientconversation.h>
+
 #include "conversationsenginedefines.h"
 #include "convergedmessage.h"
 #include "conversationmsgstorehandler.h"
@@ -52,6 +55,12 @@ ConversationsEngine::ConversationsEngine(QObject* parent):
     d_ptr = new ConversationsEnginePrivate(mConversationMsgStoreHandler,
         mConversationsSummaryModel,
         mConversationsModel);
+    
+    connect (mConversationsModel,
+            SIGNAL(conversationViewEmpty()),
+            this,
+            SIGNAL(conversationViewEmpty())); 
+   
 }
 
 //---------------------------------------------------------------
@@ -212,7 +221,27 @@ void ConversationsEngine::getContactDetails(qint64 conversationId,
     {
         displayName = indexList[0].data(DisplayName).toString();
         address = indexList[0].data(ConversationAddress).toString();
-    }         
+    }
+    else
+    {
+        int error;
+        CCsClientConversation* clientConv = NULL;
+        TRAP(error, clientConv = d_ptr->getConversationFromConversationIdL(conversationId));
+
+        HBufC *name = clientConv->GetDisplayName();
+        if (name && name->Length())
+        {
+            displayName = XQConversions::s60DescToQString(*name);
+        }
+
+        HBufC *addr = clientConv->GetConversationEntry()->Contact();
+        if (addr && addr->Length())
+        {
+            address = XQConversions::s60DescToQString(*addr);
+        }
+
+        delete clientConv;
+    }
 }
 
 //---------------------------------------------------------------
@@ -281,6 +310,35 @@ void ConversationsEngine::emitConversationModelUpdated()
 void ConversationsEngine::emitConversationListModelPopulated()
 {
     emit conversationListModelPopulated();
+}
+
+//---------------------------------------------------------------
+// ConversationsEngine::emitConversationListModelEntryDeleted
+// @see header
+//---------------------------------------------------------------
+void ConversationsEngine::emitConversationListModelEntryDeleted( int conversationId )
+{
+    emit conversationListEntryDeleted( conversationId );
+}
+
+//---------------------------------------------------------------
+// ConversationsEngine::emitOpenConversationViewIdUpdate
+// @see header
+//---------------------------------------------------------------
+void ConversationsEngine::emitOpenConversationViewIdUpdate(
+        int newConversationId)
+{
+    //also register for subscription now
+    d_ptr->registerAgainForConversationUpdatesL(newConversationId);   
+}
+
+//---------------------------------------------------------------
+// ConversationsEngine::disableRegisterationForCVEvents
+// @see header
+//---------------------------------------------------------------
+void ConversationsEngine::disableRegisterationForCVEvents()
+{
+    d_ptr->deRegisterCVUpdatesTemporary();
 }
 
 //---------------------------------------------------------------

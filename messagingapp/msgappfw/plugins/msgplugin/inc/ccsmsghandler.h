@@ -114,7 +114,13 @@ private:
      * Checks if the MTM type supported
      */
     TBool IsMtmSupported(long uid);
-
+    
+    /**
+     * Read all message Id in iMessageArray
+     * @aFolderId - Folder Id whose message need to be sync.
+     */
+    void UpdateMessageArrayL(const TMsvId& aFolderId);
+    
 private:
 
     /**
@@ -175,11 +181,6 @@ private:
             RPointerArray<HBufC>& addressList);
 
     /**
-     * Cleanup
-     */
-    void CleanupL();
-
-    /**
      * Extracts the Message type based on the MTM value 
      * @param aEntry, TMsvEntry
      */
@@ -230,21 +231,6 @@ private: //Data
      * Previous entry, used for comparing with new entry received    
      */
     TMsvEntry iPrevEntry;
-
-    /**
-     * Root entry
-     */
-    CMsvEntry* iRootEntry;
-
-    /**
-     * Mesage count
-     */
-    TInt iMessageCount;
-
-    /**
-     * Messages under root entry
-     */
-    CMsvEntrySelection* iMessages;
 
     /**
      * Master array for holding all the messages 

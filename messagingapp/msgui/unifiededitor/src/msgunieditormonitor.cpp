@@ -117,6 +117,7 @@ void MsgUnifiedEditorMonitor::handleContentChange()
 
     HbWidget* senderWidget = qobject_cast<HbWidget*>(sender());
     updateMsgInfo(senderWidget);
+    updateSend();
 }
 
 //---------------------------------------------------------------
@@ -328,5 +329,22 @@ bool MsgUnifiedEditorMonitor::otherMMSCriteriaMet()
     }
     return false;
 }
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorMonitor::updateSend
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorMonitor::updateSend()
+{
+    if (mMsgCurrAddressCount > 0 && (mSubjectSize + mBodySize + mContainerSize) > 0 && !view()->mBody->isImageResizing())
+    {
+        emit enableSend(true);
+    }
+    else
+    {
+        emit enableSend(false);
+    }
+}
+
 
 //EOF

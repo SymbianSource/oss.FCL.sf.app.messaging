@@ -33,7 +33,7 @@
 #include <QCoreApplication>
 #include <HbEvent>
 #include <HbMainWindow>
-#include <hbinstance>
+#include <HbInstance>
 
 #include "debugtraces.h"
 
@@ -44,8 +44,7 @@
 const QString MSG_HIGH_PRIORITY_ICON("qtg_small_priority_high");
 const QString MSG_LOW_PRIORITY_ICON("qtg_small_priority_low");
 const QString MSG_ATTACH_ICON("qtg_small_attachment");
-const QString MSG_AUDIO_ICON("qtg_large_music_player");
-const QString MSG_AUDIO_PLAY_ICON("qtg_large_music_player");
+const QString MSG_AUDIO_PLAY_ICON("qtg_small_sound");
 
 
 // Frames
@@ -123,7 +122,6 @@ void MsgConversationWidget::init()
     mBodyTextItem->setTextWrapping(Hb::TextWordWrap);
     HbStyle::setItemName(mBodyTextItem, "bodyText");
     mPreviewIconItem = new HbIconItem(this);
-    mPreviewIconItem->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     HbStyle::setItemName(mPreviewIconItem, "preview");
     mPriorityIconItem = new HbIconItem(this);            
     HbStyle::setItemName(mPriorityIconItem, "priority");
@@ -289,7 +287,7 @@ void MsgConversationWidget::displayAudioIcon(const QString &iconPath)
             if(iconPath.isEmpty())
             {
                qreal iconSize = 0;
-               style()->parameter("hb-param-graphic-size-primary-large",iconSize);
+               style()->parameter("hb-param-graphic-size-primary-small",iconSize);
                HbIcon icon(MSG_AUDIO_PLAY_ICON);
                icon.setHeight(iconSize);
                icon.setWidth(iconSize);
@@ -565,15 +563,7 @@ void MsgConversationWidget::drawBubbleFrame()
     }
     else
     {
-        if(mSendingState == Sending || mSendingState == Pending || 
-           mSendingState == Unknown || mSendingState == Failed)
-        {
-            mBubbleFrameItem->frameDrawer().setFrameGraphicsName(CV_SENT_HIGHLIGHT_FR);
-        }
-        else
-        {
             mBubbleFrameItem->frameDrawer().setFrameGraphicsName(CV_SENT_NORMAL_FR);
-        }
     }
 }
 

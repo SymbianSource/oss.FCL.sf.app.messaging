@@ -29,7 +29,7 @@
 #include "ccsconversationevent.h"
 #include "ccsconversationcache.h"
 #include "ccscontactsmanager.h"
-
+#include "ccsbackuphandler.h"
 //Costant Declaration
 
 // ============================== MEMBER FUNCTIONS ============================
@@ -66,6 +66,33 @@ CCsServer::CCsServer() :
 }
 
 // ----------------------------------------------------------------------------
+// CCsServer::DeletePlugins
+// Unload the plugins for backup/restore
+// ----------------------------------------------------------------------------
+void CCsServer::DeletePlugins()
+{
+    if (iConversationPlugin) {
+        delete iConversationPlugin;
+        iConversationPlugin = NULL;
+    }
+}
+
+// ----------------------------------------------------------------------------
+// CCsServer::LoadPlugins
+// Load the plugins after a backup/restore
+// ----------------------------------------------------------------------------
+
+void CCsServer::LoadPlugins()
+{
+    iConversationPlugin = CCsPluginInterface::NewL();
+    // Create the plugin for the required entries
+    iConversationPlugin->InstantiatePluginL(this);
+    //fetch all initial set of messages
+    iConversationPlugin->GetConversationsL();
+    RefreshConversations();
+}
+
+// ----------------------------------------------------------------------------
 // CCsServer::ConstructL
 // Second phase constructor
 // ----------------------------------------------------------------------------
@@ -88,7 +115,9 @@ void CCsServer::ConstructL()
     iConversationCache = CCsConversationCache::NewL(iContactsManager, this);
 
     iCsCachingStatus = KCachingStatusUnknown;
-
+	
+    iBackUpHandler = CCsBackUpHandler::NewL(*this);
+    
     PRINT ( _L("End CCsServer::ConstructL") );
 }
 
@@ -121,6 +150,11 @@ CCsServer::~CCsServer()
         iContactsManager = NULL;
     }
 
+	if(iBackUpHandler)
+	{
+		delete iBackUpHandler;
+		iBackUpHandler = NULL;
+	}
     REComSession::FinalClose();
 
     PRINT ( _L("End CCsServer::~CCsServer") );

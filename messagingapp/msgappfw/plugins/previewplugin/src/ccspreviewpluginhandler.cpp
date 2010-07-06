@@ -55,6 +55,9 @@ _LIT(KSelectProcessingStateStmt, " SELECT message_id, msg_processingstate FROM c
 _LIT(KRemoveMsgStmnt,"DELETE FROM conversation_messages WHERE message_id=:message_id");
 
 const TInt KDefaultMaxSize = 300 * 1024;
+//Preview thumbnail size
+const TInt KWidth = 9.5 * 6.7;
+const TInt KHeight = 9.5 * 6.7;
 
 // NOTE:- DRAFTS ENTRIES ARE NOT HANDLED IN THE PLUGIN
 
@@ -362,7 +365,7 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
                     }
 
                     //image parsing
-                    if (!isImageSet && (mimetype.Find(_L8("image"))
+                    if (!isVideoSet && !isImageSet && (mimetype.Find(_L8("image"))
                             != KErrNotFound))
                     {
                         //get thumbnail for this image
@@ -389,7 +392,7 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
                     }
 
                     //audio content
-                    if (!isAudioSet && (mimetype.Find(_L8("audio"))
+                    if (!isVideoSet && !isAudioSet && (mimetype.Find(_L8("audio"))
                             != KErrNotFound))
                     {
                         isAudioSet = ETrue;
@@ -405,7 +408,7 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
                     }
 
                     //video content
-                    if (!isVideoSet && (mimetype.Find(_L8("video"))
+                    if (!( isImageSet || isAudioSet) && !isVideoSet && (mimetype.Find(_L8("video"))
                             != KErrNotFound))
                     {
                         videoPath.Set(mediaInfo->FullFilePath());
@@ -796,7 +799,7 @@ void CCsPreviewPluginHandler::GetThumbNailL(TMsvAttachmentId attachmentId,
     iThumbnailManager->SetFlagsL(CThumbnailManager::ECropToAspectRatio);
 
     //TODO replace with hb-param-graphic-size-image-portrait * value of un in pixcels
-    iThumbnailManager->SetThumbnailSizeL(TSize(63.65, 63.65)); 
+    iThumbnailManager->SetThumbnailSizeL(TSize(KWidth, KHeight)); 
     
     //optimize for performace
     iThumbnailManager->SetQualityPreferenceL(

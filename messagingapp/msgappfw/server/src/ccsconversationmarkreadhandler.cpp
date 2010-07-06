@@ -177,7 +177,7 @@ void CCsConversationMarkReadHandler::RunL()
     }
 }
 
-TInt CCsConversationMarkReadHandler::RunError(TInt aError)
+TInt CCsConversationMarkReadHandler::RunError(TInt /*aError*/)
 {
     // RunL left so stop processing the AO and clean it.
     delete this;                     

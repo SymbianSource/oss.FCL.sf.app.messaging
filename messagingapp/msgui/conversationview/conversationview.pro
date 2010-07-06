@@ -30,11 +30,9 @@ INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../appengine/inc
 INCLUDEPATH += ../../smartmessaging/ringbc/inc
 INCLUDEPATH += ../../msgsettings/settingsview/inc
+INCLUDEPATH += ../../msgutils/unidatamodel/univcaldataplugin/inc
 
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-INCLUDEPATH += /ext/mw/qthighway/inc
-INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
-INCLUDEPATH += ../../msgutils/unidatamodel/univcaldataplugin/inc
 
 CONFIG += hb
 HB += hbfeedback

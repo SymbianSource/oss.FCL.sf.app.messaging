@@ -89,6 +89,8 @@ public:
      * Clears the pixmap cache & model
      */
     void clearModel();
+    
+    void emitConversationViewEmpty();
 
 signals:
 
@@ -96,6 +98,8 @@ signals:
      * Signal emitted to retrieve the pixmap icon
      */
     void retrievePreviewIcon(int msgId, QString& filepath) const;
+    
+    void conversationViewEmpty();
 
 private slots:
 

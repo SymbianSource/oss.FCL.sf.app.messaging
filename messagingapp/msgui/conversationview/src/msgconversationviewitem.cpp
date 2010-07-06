@@ -27,7 +27,7 @@
 #include <HbIconAnimationManager>
 #include <HbIconAnimator>
 #include <ccsdefs.h>
-#include <hbinstance>
+#include <HbInstance>
 
 // USER INCLUDES
 #include "msgconversationwidget.h"
@@ -43,8 +43,8 @@ const QString ANIMATION_FILE(":/qtg_anim_loading.axml");
 const QString ANIMATION_ICON_NAME("qtg_anim_loading");
 const QString VCARD_ICON("qtg_large_mycard");
 const QString IMAGE_ICON("qtg_small_image");
-const QString CORRUPTED_ICON("qtg_large_corrupted");
-const QString MSG_VIDEO_ICON("qtg_large_video_player");
+const QString CORRUPTED_ICON("qtg_small_corrupted");
+const QString MSG_VIDEO_ICON("qtg_small_video");
 
 // LOCALIZATION
 #define LOC_RINGING_TONE hbTrId("txt_messaging_dpopinfo_ringing_tone")
@@ -296,7 +296,6 @@ void MsgConversationViewItem::updateMmsTypeItem(const QModelIndex& index,
             HbIcon previewIcon;
             if (msgProperty & EPreviewProtectedImage)
               {
-                // TODO: Change to official icon.
                 previewIcon = HbIcon(IMAGE_ICON);
               }
             else if (msgProperty & EPreviewCorruptedImage)
@@ -316,21 +315,32 @@ void MsgConversationViewItem::updateMmsTypeItem(const QModelIndex& index,
         if (hasVideo)
           {
             mConversation->setVideo(true);
+            HbIcon videoPreviewIcon;
+            if (msgProperty & EPreviewProtectedVideo)
+              {
+                videoPreviewIcon = HbIcon(MSG_VIDEO_ICON);
+              }
+            else if (msgProperty & EPreviewCorruptedVideo)
+              {
+                videoPreviewIcon = HbIcon(CORRUPTED_ICON);
+              }
+            else
+              {
+                videoPreviewIcon = HbIcon(MSG_VIDEO_ICON);
+              }
+            mConversation->setPreviewIcon(videoPreviewIcon);
           }
-
-        bool hasAudio = (msgProperty & EPreviewAudio) ? true : false;
+        bool hasAudio = (msgProperty & EPreviewAudio) ? true : false;              
         if (hasAudio)
           {
             mConversation->setAudio(true);
-            // Protected content is also set as corrupted hence first check protected.
             if (msgProperty & EPreviewProtectedAudio)
               {
                 mConversation->displayAudioIcon();
               }
             else if (msgProperty & EPreviewCorruptedAudio)
               {
-                // TODO: Change to official icon.
-                mConversation->displayAudioIcon(CORRUPTED_ICON);
+				mConversation->displayAudioIcon(CORRUPTED_ICON);
               }
             else
               {

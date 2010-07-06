@@ -23,7 +23,7 @@ INCLUDEPATH += ../../../inc
 INCLUDEPATH += ../msguiutils/inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../../smartmessaging/ringbc/inc
-INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
+
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_DLL

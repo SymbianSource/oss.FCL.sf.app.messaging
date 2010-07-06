@@ -84,6 +84,13 @@ public:
      */
     void clearContent();
 
+signals:
+
+    /**
+     *
+     */
+    void conversationIdChanged(qint64 convId);
+
 protected:
 
     /**
@@ -113,9 +120,14 @@ private:
 private slots:
 
     /**
-     * show longpress menu for attachment object
+     * show longp tap.
      */
-    void handleLongPress(const QPointF &position);
+    void handleLongTap(const QPointF &position);
+    
+    /**
+     * handles short tap.
+     */
+    void handleShortTap(const QPointF &position);
 
     /**
      * Slot for handling valid returns from the framework.

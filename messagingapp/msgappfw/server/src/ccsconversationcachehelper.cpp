@@ -523,13 +523,17 @@ void CCsConversationCacheHelper::DeleteConversationEntryL(
             }
 
             // Notify client of conversation change
-            CCsClientConversation
-                    * clientConv =
-                            iConversationCache->CreateClientConvLC(conversation,
-                                                                   aConversationEntry);
-            iConversationCache->NotifyL(clientConv,
-                                        KConversationEventDelete);
-            CleanupStack::PopAndDestroy(clientConv);
+            if (!conversation->IsDeleted())
+            {
+                CCsClientConversation
+                        * clientConv =
+                                iConversationCache->CreateClientConvLC(conversation,
+                                                                       aConversationEntry);
+                iConversationCache->NotifyL(clientConv,
+                                            KConversationEventDelete);
+                CleanupStack::PopAndDestroy(clientConv);
+            }
+
             // check if all entries are deleted then 
             // delete the conversation from cache
             if (conversation->GetEntryCount() == 0

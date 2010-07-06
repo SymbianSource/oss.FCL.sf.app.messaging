@@ -34,8 +34,6 @@
 #define LOC_SMS_CENTRE_NUMBER hbTrId("txt_messaging_setlabel_message_centre_number")
 #define LOC_SMS_CENTRE_DELETE hbTrId("txt_messaging_button_delete_message_centre")
 #define LOC_MESSAGE_CENTER_SAVED hbTrId("txt_messaging_setlabel_message_centre_saved")
-#define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
-#define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
 
 MsgSMSCenterSettingsForm::MsgSMSCenterSettingsForm(int view,
                                                    QGraphicsItem *parent) :
@@ -191,7 +189,9 @@ void MsgSMSCenterSettingsForm::onItemShown(const QModelIndex& topLeft)
 
 void MsgSMSCenterSettingsForm::onPressedCustomButton()
 {
-   HbMessageBox::question(LOC_SMS_CENTRE_DELETE, this, SLOT(onDialogDeleteMsgCentre(HbAction*)), LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
+   HbMessageBox::question(LOC_SMS_CENTRE_DELETE, this,
+                          SLOT(onDialogDeleteMsgCentre(HbAction*)),
+                          HbMessageBox::Delete | HbMessageBox::Cancel);
 }
 
 void MsgSMSCenterSettingsForm::onDialogDeleteMsgCentre(HbAction* action)

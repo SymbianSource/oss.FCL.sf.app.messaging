@@ -135,7 +135,9 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
                 }
                 else if (showNote)
                 {
-                    HbMessageBox::question(INSERT_QUERY_CONFRM, this, SLOT(onDialogInsertMedia(HbAction*)));
+                    HbMessageBox::question(INSERT_QUERY_CONFRM, this,
+                                           SLOT(onDialogInsertMedia(HbAction*)),
+                                           HbMessageBox::Yes | HbMessageBox::No);
                 }
                 else
                 {
@@ -181,10 +183,10 @@ bool MmsConformanceCheck::validateMsgForForward(int messageId)
     UniDataModelLoader* pluginLoader = new UniDataModelLoader();
     UniDataModelPluginInterface* pluginInterface =
             pluginLoader->getDataModelPlugin(ConvergedMessage::Mms);
-    pluginInterface->setMessageId(messageId);
+    int error = pluginInterface->setMessageId(messageId);
 
-    //Check if slide count is greater than 1
-    if (pluginInterface->slideCount() > 1)
+    //Check if invalid id and slide count is greater than 1
+    if ( (error != KErrNone) || pluginInterface->slideCount() > 1)
     {
         delete pluginLoader;
         return false;
@@ -193,6 +195,7 @@ bool MmsConformanceCheck::validateMsgForForward(int messageId)
     //Check if message size is inside max mms composition limits
     if (pluginInterface->messageSize() > iMaxMmsSize)
     {
+        delete pluginLoader;
         return false;
     }
 
@@ -218,7 +221,6 @@ bool MmsConformanceCheck::validateMsgForForward(int messageId)
     if (!retValue)
     {
         delete pluginLoader;
-
         return false;
     }
 
@@ -240,7 +242,6 @@ bool MmsConformanceCheck::validateMsgForForward(int messageId)
         }
 
     delete pluginLoader;
-
     return retValue;
 }
 

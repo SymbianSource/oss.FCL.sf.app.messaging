@@ -39,4 +39,9 @@ EXPORTS
 	_ZNK19ConversationsEngine10metaObjectEv @ 38 NONAME
 	_ZTI19ConversationsEngine @ 39 NONAME
 	_ZTV19ConversationsEngine @ 40 NONAME
+	_ZN19ConversationsEngine28conversationListEntryDeletedEi @ 41 NONAME
+	_ZN19ConversationsEngine37emitConversationListModelEntryDeletedEi @ 42 NONAME
+	_ZN19ConversationsEngine21conversationViewEmptyEv @ 43 NONAME
+	_ZN19ConversationsEngine31disableRegisterationForCVEventsEv @ 44 NONAME
+	_ZN19ConversationsEngine32emitOpenConversationViewIdUpdateEi @ 45 NONAME
 

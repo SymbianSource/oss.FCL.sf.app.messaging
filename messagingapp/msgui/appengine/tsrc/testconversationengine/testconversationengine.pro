@@ -31,8 +31,8 @@ INCLUDEPATH += ../../../../../inc
 INCLUDEPATH += ../../../appengine/inc
 INCLUDEPATH += ../../../../msgappfw/client/inc
 INCLUDEPATH += ../../../../smartmessaging/ringbc/inc
-INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
 INCLUDEPATH += ../../../../msgutils/unieditorutils/editorgenutils/inc
+
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_DLL

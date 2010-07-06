@@ -21,5 +21,6 @@
 data=DATAZ_\system\install\csserver_stub.sis			system\install\csserver_stub.sis
 
 file=ABI_DIR\BUILD_DIR\csserver.exe            				PROGRAMS_DIR\csserver.exe
+data=EPOCROOT##epoc32\data\Z\private\2002A542\backup_registration.xml		private\2002A542\backup_registration.xml
 
 #endif // __CSSERVER_IBY__

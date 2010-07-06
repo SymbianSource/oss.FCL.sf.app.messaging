@@ -102,12 +102,11 @@ int main(int argc, char *argv[])
     QString locale = QLocale::system().name();
     QString path = "z:/resource/qt/translations/";
     QTranslator translator;
-    //QTranslator translator_comm;
-    //translator.load(path + QString("messaging_") + locale);
-    //translator_comm.load(path + QString("common_") + locale);
-    translator.load( "messaging_en_GB", ":/translations" );
+    QTranslator translator_comm;
+    translator.load(path + QString("messaging_") + locale);
+    translator_comm.load(path + QString("common_") + locale);
     app.installTranslator(&translator);
-    //app.installTranslator(&translator_comm);
+    app.installTranslator(&translator_comm);
 
     app.setApplicationName(LOC_TITLE);
     

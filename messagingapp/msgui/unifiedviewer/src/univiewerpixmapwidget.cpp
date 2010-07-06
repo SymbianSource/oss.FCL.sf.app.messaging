@@ -37,7 +37,7 @@
 const QString PIXMAP_ICON("qtg_small_image");
 const QString CORRUPTED_PIXMAP_ICON("qtg_large_corrupted");
 const QString VIDEO_MIMETYPE("video");
-const QString MSG_VIDEO_ICON("qtg_large_video_player");
+const QString MSG_VIDEO_ICON("qtg_small_video");
 
 //---------------------------------------------------------------
 // UniViewerPixmapWidget::UniViewerPixmapWidget
@@ -217,9 +217,7 @@ void UniViewerPixmapWidget::thumbnailReady(const QPixmap& pixmap, void *data, in
     if (!error) {
         this->setIcon(HbIcon(pixmap));
         this->hide();
-        // calling the sizeint forcefully as thumbnailReady is a async call
-        // by the time this call has come sizeint would have already been calculated.
-        this->parentWidget()->resize(-1, -1);
+        this->updateGeometry();
     }
 }
 // EOF

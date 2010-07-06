@@ -48,9 +48,6 @@ UniViewerHeaderContainer::UniViewerHeaderContainer(UniViewerFeeder* feeder, QGra
 {
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    HbFrameItem *bgItem = new HbFrameItem(BG_FRAME_GRAPHICS, HbFrameDrawer::NinePieces, this);
-    this->setBackgroundItem(bgItem, -2.0);
-
     mMainLayout = new QGraphicsLinearLayout(Qt::Vertical, this);
     mMainLayout->setSpacing(0);
     mMainLayout->setContentsMargins(0, 0, 0, 0);
@@ -68,16 +65,31 @@ UniViewerHeaderContainer::UniViewerHeaderContainer(UniViewerFeeder* feeder, QGra
 
     // Separator
     mSeparator = new HbFrameItem(DIVIDER_FRAME, HbFrameDrawer::OnePiece, this);
-    mSeparator->setMaximumHeight(1);
+    mSeparator->setMinimumHeight(2.0);
+    mSeparator->frameDrawer().fillWholeRect();
     mSeparator->hide();
 
     // Viewer Details widget
     mViewerDetails = new UniViewerDetailsWidget(this);
 
+    // This widget is created to apply background for header & details.
+    HbWidget *headerContainer = new HbWidget(this);
+
+    QGraphicsLinearLayout *headerLayout = new QGraphicsLinearLayout(Qt::Vertical, headerContainer);
+    headerLayout->setSpacing(0);
+    headerLayout->setContentsMargins(0, 0, 0, 0);
+
+    HbFrameItem *bgItem = new HbFrameItem(BG_FRAME_GRAPHICS, HbFrameDrawer::NinePieces, this);
+    headerContainer->setBackgroundItem(bgItem, -2.0);
+
     //Add address group box and insert into layout
-    mMainLayout->addItem(mHeaderGroupBox);
-    mMainLayout->addItem(mSeparator);
-    mMainLayout->addItem(mViewerDetails);
+    headerLayout->addItem(mHeaderGroupBox);
+    headerLayout->addItem(mSeparator);
+    headerLayout->addItem(mViewerDetails);
+
+    headerContainer->setLayout(headerLayout);
+
+    mMainLayout->addItem(headerContainer);
 
     this->setLayout(mMainLayout);
 }
@@ -117,9 +129,11 @@ void UniViewerHeaderContainer::populateContent()
     // Expand address group box for outgoing messages.
     if (mViewFeeder->isIncoming()) {
         mHeaderGroupBox->setCollapsed(true);
+        addressBoxToggled(true);
     }
     else {
         mHeaderGroupBox->setCollapsed(false);
+        addressBoxToggled(false);
     }
 }
 
@@ -268,3 +282,5 @@ void UniViewerHeaderContainer::addressBoxToggled(bool state)
 {
     (state) ? mSeparator->hide() : mSeparator->show();
 }
+
+// EOF

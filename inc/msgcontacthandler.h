@@ -53,36 +53,56 @@ public:
                                          int& countPhoneNumber)
     {
         QContactManager phonebookManager;
-        QContactDetailFilter phoneFilter;
-        
-        phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName,
-                                            QContactPhoneNumber::FieldNumber);
-
         QVariant address(contactNumber);
+
+        // apply filter on phone number field
+        QContactDetailFilter phoneFilter;
+        phoneFilter.setDetailDefinitionName(
+                QContactPhoneNumber::DefinitionName,
+                QContactPhoneNumber::FieldNumber);
+
         phoneFilter.setValue(address);
         phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
-
         QList<QContact> matchingContacts =
                 phonebookManager.contacts(phoneFilter);
-
         if (matchingContacts.count() > 0)
         {
             // Fill the contact details
             QContact match = matchingContacts.at(0);
 
             displayName = match.displayLabel();
-            QList<QContactPhoneNumber> numbers = 
+            QList<QContactPhoneNumber> numbers =
                     match.details<QContactPhoneNumber> ();
             countPhoneNumber = numbers.count();
             return match.localId();
         }
-        else // no matching contacts
+
+        // apply filter on email address field
+        QContactDetailFilter emailFilter;
+        emailFilter.setDetailDefinitionName(
+                QContactEmailAddress::DefinitionName,
+                QContactEmailAddress::FieldEmailAddress);
+
+        emailFilter.setValue(address);
+        emailFilter.setMatchFlags(QContactFilter::MatchExactly);
+        matchingContacts = phonebookManager.contacts(emailFilter);
+        if ( matchingContacts.count() > 0 )
         {
-            displayName = contactNumber;
-            return -1;
+            // Fill the contact details
+            QContact match = matchingContacts.at(0);
+
+            displayName = match.displayLabel();
+            QList<QContactEmailAddress> numbers =
+                    match.details<QContactEmailAddress> ();
+            countPhoneNumber = numbers.count();
+            return match.localId();
         }
+
+        // no matching contact
+        displayName = contactNumber;
+        return -1;
     }
-    
+
     /**
      * This shall resolve contact number with display name
      * @param contactNumber number to resolve

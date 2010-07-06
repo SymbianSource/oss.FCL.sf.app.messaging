@@ -66,6 +66,16 @@ public:
      */
     void DeleteConversationList(
             const CCsClientConversation& aClientConversation);
+    
+	/**
+	 * PartialDeleteConversationList
+	 * This is for handling partial delete of conversation event
+	 * Asynchronous
+	 * @param aClientConversation CCsClientConversation - The conversation object
+	 */
+    void PartialDeleteConversationList(
+            const CCsClientConversation& aClientConversation);
+
 
     /**  
      * ModifyConversationList

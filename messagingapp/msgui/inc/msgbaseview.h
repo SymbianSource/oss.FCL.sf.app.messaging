@@ -70,6 +70,10 @@ class MsgBaseView : public HbView
      */
     void switchView(const QVariantList& data);
     
+    /**
+     * Forceful close of conversation view
+     */
+    void closeOpenConversationView();
 
 };
 

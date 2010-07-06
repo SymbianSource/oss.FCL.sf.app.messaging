@@ -30,4 +30,5 @@ EXPORTS
 	_ZTV17CCSRequestHandler @ 29 NONAME
 	_ZTV22CCsNotificationHandler @ 30 NONAME
 	_ZTV29CCsConversationChangeObserver @ 31 NONAME
+	_ZN17CCSRequestHandler34GetConversationFromConversationIdLEi @ 32 NONAME
 

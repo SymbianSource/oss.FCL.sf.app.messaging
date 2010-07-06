@@ -48,8 +48,6 @@ const QString DELETE_ICON("qtg_mono_delete");
 
 //LOCALIZED CONSTANTS
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
-#define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
-#define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
 
 //----------------------------------------------------------------------------
 // UnifiedViewer::UnifiedViewer
@@ -238,9 +236,9 @@ void UnifiedViewer::resizeEvent(QGraphicsSceneResizeEvent * event)
 //---------------------------------------------------------------
 void UnifiedViewer::handleDeleteAction()
 {
-    HbMessageBox::question(LOC_DELETE_MESSAGE,this,SLOT(onDialogDeleteMsg(HbAction*)),
-                                         LOC_BUTTON_DELETE, 
-                                         LOC_BUTTON_CANCEL);
+    HbMessageBox::question(LOC_DELETE_MESSAGE,this,
+                           SLOT(onDialogDeleteMsg(HbAction*)),
+                           HbMessageBox::Delete | HbMessageBox::Cancel);
 }
 
 //---------------------------------------------------------------

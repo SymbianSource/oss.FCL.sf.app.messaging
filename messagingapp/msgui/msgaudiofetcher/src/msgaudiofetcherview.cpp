@@ -25,8 +25,16 @@
 #include "msgaudiofetcherwidget.h"
 #include "convergedmessage.h"
 
-MsgAudioFetcherView::MsgAudioFetcherView()
+MsgAudioFetcherView::MsgAudioFetcherView(const QVariantList& data) :
+message(NULL)
 {
+    message = new ConvergedMessage;
+    if(data.length() > 0)
+    {
+        QByteArray dataArray = data.at(0).toByteArray();
+        QDataStream stream(&dataArray, QIODevice::ReadOnly);
+        message->deserialize(stream);
+    }
     initToolBar();
     initMainWidget();
     QMetaObject::connectSlotsByName(this);
@@ -34,6 +42,11 @@ MsgAudioFetcherView::MsgAudioFetcherView()
 
 MsgAudioFetcherView::~MsgAudioFetcherView()
 {
+    if(message != NULL)
+    {
+        delete message;
+        message = NULL;
+    }
     removeToolBarAction();
 }
 
@@ -84,15 +97,14 @@ void MsgAudioFetcherView::on_rightAction_triggered()
     QDataStream messageStream
     (&dataArray, QIODevice::WriteOnly | QIODevice::Append);
 
-    ConvergedMessage message;
     QString filepath(mWidget->getCurrentItemPath());
     ConvergedMessageAttachment* attachment =
             new ConvergedMessageAttachment(filepath);
     ConvergedMessageAttachmentList attachmentList;
     attachmentList.append(attachment);
-    message.addAttachments(attachmentList);
+    message->addAttachments(attachmentList);
     
-    message.serialize(messageStream);
+    message->serialize(messageStream);
     params << MsgBaseView::UNIEDITOR;
     params << MsgBaseView::AUDIOFETCHER;
     params << dataArray;

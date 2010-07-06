@@ -69,7 +69,6 @@ ShareUiPrivate::ShareUiPrivate()
  */
 ShareUiPrivate::~ShareUiPrivate()
     {
-    reset();
     }
 
 /**
@@ -80,6 +79,10 @@ void ShareUiPrivate::reset()
     mFileList.clear();
 
     mIndexActionMap.clear();
+    foreach(XQAiwRequest* request,mAiwRequestList)
+    {
+        delete request;
+    }
     mAiwRequestList.clear();
 
     }
@@ -125,6 +128,7 @@ bool ShareUiPrivate::init(QStringList& fileList, bool embedded)
     if ( fileList.count() != filteredFileList.count() )
         {
         showNote(LOC_PROTECTED_CONTENT);      
+        return true;
         }
     
     // Only protected content
@@ -205,9 +209,10 @@ void ShareUiPrivate::initializeUi()
     mSharePopup->setAttribute( Qt::WA_DeleteOnClose, true );
     HbTextItem* heading = new HbTextItem(LOC_SEND_SELECTED_ITEM, mSharePopup);
     heading->setAlignment(Qt::AlignCenter);
-    mSharePopup->setDismissPolicy(HbDialog::NoDismiss);
+    mSharePopup->setDismissPolicy(HbDialog::TapAnywhere);
     mSharePopup->setHeadingWidget(heading);
     mSharePopup->setFrameType(HbDialog::Strong);
+    connect(mSharePopup, SIGNAL(aboutToClose()), this, SLOT(reset()));
         
     // Content widget
     mContentListView = new HbListView(mSharePopup);
@@ -268,6 +273,7 @@ void ShareUiPrivate::updateShareUiDialogList(HbAction* action, QString iconName)
  */
 void ShareUiPrivate::onTriggered(void)
     {
+    
     XQAiwRequest* request = 0;
     request = qobject_cast<XQAiwRequest*>(sender());
     if(request)
@@ -284,9 +290,19 @@ void ShareUiPrivate::onTriggered(void)
  * Slot for handling valid returns from the framework.
  */
 void ShareUiPrivate::handleOk(const QVariant& result)
-    {
+{
     Q_UNUSED(result)
+         
+    XQAiwRequest* request = 0;
+    request = qobject_cast<XQAiwRequest*>(sender());
+    if(request)
+    {
+       disconnect(request, 
+               SIGNAL(requestError(int,const QString&)), 
+               this, 
+               SLOT(handleError(int,const QString&)));
     }
+}
 
 /**
  * Slot for handling errors from the framework.
@@ -315,7 +331,8 @@ void ShareUiPrivate::itemActivated(QModelIndex index)
         {
         action->setEnabled(true);
         action->activate(HbAction::Trigger);
-        }    
+        } 
+    
     mSharePopup->close();
     }
 

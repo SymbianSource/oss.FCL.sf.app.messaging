@@ -61,5 +61,14 @@ void MsgSendInterface::send(const QString phoneNumber,
     mViewManager->send(phoneNumber, alias, bodyText);    
     }
 
+//----------------------------------------------------------------------------
+// MsgSendInterface::send
+// @see header
+//----------------------------------------------------------------------------
+void MsgSendInterface::send(const QVariantMap addressList, 
+              const QString bodyText)
+      {
+      mViewManager->send(addressList,bodyText);    
+      }
 //EOF
 

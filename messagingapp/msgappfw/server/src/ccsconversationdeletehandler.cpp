@@ -39,7 +39,9 @@ NewL(CCsConversationCache* aCache)
 // Constructor
 // ----------------------------------------------------------------------------
 CCsConversationDeleteHandler::CCsConversationDeleteHandler():
-        CActive(CActive::EPriorityLow)
+        CActive(CActive::EPriorityLow),
+        iState(EIdle),
+        iConversationEntryList(NULL)
     {
     CActiveScheduler::Add( this );
     }
@@ -50,9 +52,6 @@ CCsConversationDeleteHandler::CCsConversationDeleteHandler():
 void CCsConversationDeleteHandler::ConstructL(CCsConversationCache* aCache)
     {
     iCache = aCache;
-    iState = EIdle;
-     
-    iConversationEntryList = new (ELeave)RPointerArray<CCsConversationEntry> ();  
     iSession = CMsvSession::OpenSyncL(*this);
     }
 
@@ -61,6 +60,15 @@ void CCsConversationDeleteHandler::ConstructL(CCsConversationCache* aCache)
 // ----------------------------------------------------------------------------
 CCsConversationDeleteHandler::~CCsConversationDeleteHandler()
 {
+    // Make sure Aync request cancel.
+    Cancel();
+    
+    if(iSession)
+        {
+        delete iSession;
+        iSession = NULL;
+        }
+    
     if (iConversationEntryList)
     {
         iConversationEntryList->ResetAndDestroy();
@@ -68,13 +76,7 @@ CCsConversationDeleteHandler::~CCsConversationDeleteHandler()
         delete iConversationEntryList;
         iConversationEntryList = NULL;
     }
-
-    if (iSession)
-    {
-        delete iSession;
-        iSession = NULL;
-        }
-    }
+}
 
 // ----------------------------------------------------------------------------
 // Delete set of messages
@@ -96,12 +98,16 @@ void CCsConversationDeleteHandler::DeleteL(TInt aConversationId)
     CCsClientConversation* clientConversation = CCsClientConversation::NewL();
     clientConversation->SetConversationEntryId(iConversationId);
     CleanupStack::PushL(clientConversation);
-
+    
+    // Create entry list
+    iConversationEntryList = new (ELeave)RPointerArray<CCsConversationEntry> ();  
+    
     // Get conversationlist for given client conversation
     iCache->GetConversationsL (clientConversation, iConversationEntryList);
     iCache->MarkConversationAsDeleted(iConversationId, ETrue);
     
     iDeletedCount = 0;
+    iSendStateMsgs = 0;
     
     // Cleanup  
     CleanupStack::PopAndDestroy(clientConversation);
@@ -123,6 +129,10 @@ void CCsConversationDeleteHandler::DeleteOneMessage()
     if ( ECsSendStateSending != entry->GetSendState() )
         {
         iSession->RemoveEntry(id);
+        }
+    else
+        {
+        iSendStateMsgs++;
         }
     }
 
@@ -163,10 +173,7 @@ void CCsConversationDeleteHandler::RunL()
             break;
             
         case EDeleteComplete:
-            // Mark delete complete.
-            iCache->MarkConversationAsDeleted(iConversationId, EFalse);
-            // Done with the processing , cleanup the AO since this is the last 
-            //call to the delete handler.
+            iCache->MarkConversationAsDeleted(iConversationId, EFalse, iSendStateMsgs );
             delete this;
             break;
         }

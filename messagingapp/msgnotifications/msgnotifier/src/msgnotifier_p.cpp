@@ -28,16 +28,15 @@
 #include <XQSettingsManager>
 #include <xqpublishandsubscribeutils.h>
 #include <xqsystemtoneservice.h>
+#include <xqconversions.h>
 
 //USER INCLUDES
 #include "msgnotifier.h"
 #include "msgnotifier_p.h"
-#include <xqconversions.h>
 #include "msgstorehandler.h"
 #include "msginfodefs.h"
 #include "conversationidpsconsts.h"
 #include "debugtraces.h"
-
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::MsgNotifierPrivate
@@ -301,39 +300,44 @@ void MsgNotifierPrivate::displayOutboxIndications(MsgInfo data)
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
 void MsgNotifierPrivate::displayFailedNote(MsgInfo info)
-{
-    // TODO: use XQAiwRequest
-    QDEBUG_WRITE("[MsgNotifierPrivate::handleFailedState] : entered")
-    // change to com.nokia.symbian.messaging (servicename), IMsgErrorNotifier
-    // as the service name.
-    XQServiceRequest snd("messaging.com.nokia.symbian.MsgErrorNotifier",
-        "displayErrorNote(QVariantList)", false);
+    {
+    QDEBUG_WRITE("MsgNotifierPrivate::displayFailedNote start.")
+            
+    // check whether opened cv id and received 
+    // cv id are same then dont show failed note
+    if (!showNotification(info.mConversationId))
+        {
+        return;
+        }
 
-    QVariantList args;
+    //Even if name string is empty we shall add name into args
+    QString nameString;
+
     info.mDisplayName.removeDuplicates();
     info.mDisplayName.sort();
-    
-    QString nameString;
-    
+
     nameString.append(info.mDisplayName.at(0));
-    for(int i = 1; i < info.mDisplayName.count(); ++i){
+    for (int i = 1; i < info.mDisplayName.count(); ++i)
+        {
         nameString.append(", ");
         nameString.append(info.mDisplayName.at(i));
-    }
-      
-    //Even if name string is empty we shall add name into args
-    QVariant nameV(nameString);
-    args << nameV;
+        }
 
-    QDEBUG_WRITE("[MsgNotifierPrivate::handleFailedState] : name and contactnumber")
-
+    // create request arguments
+    QVariantList args;
+    args << QVariant(nameString);
     args << info.mConversationId;
     args << info.mMessageType;
+
+    // TODO: use XQAiwRequest
+    XQServiceRequest snd("messaging.com.nokia.symbian.MsgErrorNotifier",
+            "displayErrorNote(QVariantList)", false);
+
     snd << args;
     snd.send();
-    QDEBUG_WRITE("[MsgNotifierPrivate::handleFailedState] : left")
-
-}
+    
+    QDEBUG_WRITE("MsgNotifierPrivate::displayFailedNote end.")
+    }
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::showNotification
@@ -375,4 +379,11 @@ bool MsgNotifierPrivate::showNotification(int receivedMsgConvId)
     wsSession.Close();
     return showNotification;
 }
+// ----------------------------------------------------------------------------
+// MsgNotifierPrivate::PartialDeleteConversationList
+// @see mcsconversationclientchangeobserver.h
+// ----------------------------------------------------------------------------
+void MsgNotifierPrivate::PartialDeleteConversationList(
+        const CCsClientConversation& aClientConversation){/*empty implementation*/}
+
 //EOF

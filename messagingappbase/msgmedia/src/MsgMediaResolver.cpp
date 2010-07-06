@@ -43,7 +43,7 @@
 #include <MessagingVariant.hrh>
 
 // Resources
-#include <MsgMimeToMediaMapping.rsg>
+#include <msgmimetomediamapping.rsg>
 
 #include "MsgMedia.hrh"
 #include "MsgMediaResolver.h"

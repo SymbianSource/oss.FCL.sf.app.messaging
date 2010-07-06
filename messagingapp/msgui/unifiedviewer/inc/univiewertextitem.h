@@ -56,8 +56,9 @@ private:
     /**
      * short tap handler.
      * @param anchor anchor at cursor position.
+     * @param pos tapping position
      */
-    void shortTapAction(QString anchor);    
+    void handleShortTap(QString anchor,const QPointF& pos);    
     
     /**
      * Helper method to highlight find item on tap.

@@ -276,10 +276,14 @@ void CUniEditorMmsPluginPrivate::populateMessageBodyL(
             {
                 QString textContent;
                 QFile file(slideContentList.at(i)->path());
-                file.open(QIODevice::ReadOnly);
-                textContent = file.readAll();
-                aMessage.setBodyText(textContent);
-                file.close();
+                if (file.open(QIODevice::ReadOnly)) {
+                    textContent = file.readAll();
+                    aMessage.setBodyText(textContent);
+                    file.close();
+                }
+                else {
+                    return;
+                }
             }
             else
             {

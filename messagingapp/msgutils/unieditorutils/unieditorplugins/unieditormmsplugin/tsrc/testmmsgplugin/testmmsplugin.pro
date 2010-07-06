@@ -20,24 +20,31 @@ QT -= gui
 TEMPLATE = lib
 TARGET = test-mms-plugin
 
-
-INCLUDEPATH += .
-INCLUDEPATH += ../../../../../../inc
-INCLUDEPATH += ../../../../unieditorutils/inc
+INCLUDEPATH += ./inc
+INCLUDEPATH += ../../../../../../../inc
+INCLUDEPATH += ../../../../../unidatautils/unidatamodels/inc
+INCLUDEPATH += ../../../../../s60qconversions/inc
+INCLUDEPATH += ../../../../editorgenutils/inc
+INCLUDEPATH += ../../../../../../../inc
+INCLUDEPATH += ../../../../../../../mmsengine/mmsmessage/inc 
+INCLUDEPATH += ../../../../../../../mmsengine/inc
+INCLUDEPATH += ../../../../../unidatautils/unidatamodel/inc
+INCLUDEPATH += ../mmstestbed/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_TEST_DLL
 
+CONFIG += hb plugin
+
 SOURCES += \
-  testmmsplugin.cpp \
+  ./src/testmmsplugin.cpp \
   ../../src/unieditormmsplugin.cpp \
   ../../src/unieditormmsplugin_p.cpp  
          
 
 # Input
 HEADERS += \
-  testmmsplugin.h \
-  testmsg.h \
+  ./inc/testmmsplugin.h \
   ../../inc/unieditormmsplugin.h \
   ../../inc/unieditormmsplugin_p.h 
                
@@ -50,18 +57,9 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
     TARGET.EPOCALLOWDLLDATA = 1
 	}
     
-defBlock = \      
-	  "$${LITERAL_HASH}if defined(EABI)" \
-	  "DEFFILE  ../eabi/test_mms_plugin.def" \
-             "$${LITERAL_HASH}else" \
-             "DEFFILE  ../bwins/test_mms_plugin.def" \
-             "$${LITERAL_HASH}endif"
-	
-MMP_RULES += defBlock
-    
  LIBS += -leuser \
     -lconvergedmessageutils \
-    -lxqutils \
+    -ls60qconversions \
     -lMsgMedia \
     -leditorgenutils \
     -lcone \
@@ -92,6 +90,14 @@ MMP_RULES += defBlock
   	-lcommdb \
   	-lcommsdat \
   	-letelmm \
-  	-lgenericclient \
-  	-lunidatamodelloader
-  	
+  	-lunidatamodelloader \
+  	-lunidatamodel \
+  	-lavkon \
+  	-leikcoctl \
+  	-leikctl \
+  	-lform \
+  	-luiklaf\ 
+  	-lmmstestbed \
+	-lmmsmessage \ 
+	-lmmsserversettings \
+	-lxqutils 

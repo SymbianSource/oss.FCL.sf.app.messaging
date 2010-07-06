@@ -22,7 +22,6 @@
 #include <HbFrameDrawer>
 #include <HbIconItem>
 #include <HbAction>
-#include <hbinputeditorinterface.h>
 #include <HbMainWindow>
 #include <HbDeviceProfile>
 #include <QImageReader>
@@ -58,7 +57,6 @@
 
 // Constants
 const QString BACKGROUND_FRAME("qtg_fr_btn_normal");
-const QString SEND_ICON("qtg_mono_send");
 
 const int KShowCounterLimit = 10;
 const int BYTES_TO_KBYTES_FACTOR = 1024; 
@@ -108,19 +106,13 @@ mProcessImageOperation(0),
 mMediaResolver(0),
 mImageInfo(0),
 mProcessingWidget(0),
-mDraftMessage(false)
+mDraftMessage(false),
+mIsImageResizing(false)
 {
     mTextEdit = new HbTextEdit(this);
-    mTextEdit->setSmileysEnabled(true);
     mTextEdit->setPlaceholderText(LOC_HINT_TEXT);
     HbStyle::setItemName(mTextEdit,"textEdit");
     connect(mTextEdit, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
-
-    // add "Send" action in VKB
-    HbEditorInterface editorInterface(mTextEdit);
-    HbAction *sendAction = new HbAction(HbIcon(SEND_ICON), QString(),this);
-    connect(sendAction, SIGNAL(triggered()),this, SIGNAL(sendMessage()));
-    editorInterface.addAction(sendAction);
 
     mMmsConformanceCheck = new MmsConformanceCheck;
     
@@ -178,69 +170,82 @@ QString MsgUnifiedEditorBody::text()
     return mTextEdit->toPlainText();
 }
 
-void MsgUnifiedEditorBody::setImage(QString& imagefile , bool draftMessage)
-{
+void MsgUnifiedEditorBody::setImage(QString& imagefile, bool draftMessage)
+    {
+    // do nothing if filepath is empty
+    if (imagefile.isEmpty())
+        {
+        return;
+        }
+
     mDraftMessage = draftMessage;
     if (!mImageInfo)
-     {
+        {
         setImage(true);
-        
+
         mImageFile = imagefile;
         if (mPixmapItem)
-        {
+            {
             mPixmapItem->setParent(NULL);
             delete mPixmapItem;
             mPixmapItem = NULL;
             mImageSize = 0;
-        }
+            }
 
         int error = KErrNone;
-        
-        if( !mProcessImageOperation )
-        {
-        TRAP(error,mProcessImageOperation = 
-            CUniEditorProcessImageOperation::NewL(*this));
-        }
-        if( !mMediaResolver && error == KErrNone )
-        {
-        TRAP(error,mMediaResolver = CMsgMediaResolver::NewL());
-        }
-
-        if( error == KErrNone)
-        {
-            mMediaResolver->SetCharacterSetRecognition(EFalse);
-            HBufC *name = XQConversions::qStringToS60Desc(imagefile);
-            RFile file;
-            TRAP(error, file = mMediaResolver->FileHandleL(*name));
-            if(error == KErrNone)
+        if (!mDraftMessage)
             {
-                TRAP(error,mImageInfo = static_cast<CMsgImageInfo*>
-                (mMediaResolver->CreateMediaInfoL(file)));
-                if (error == KErrNone)
+        // if image is in draft, no need to resize it because it is resized already
+            if (!mProcessImageOperation)
                 {
-                    TRAP(error, mMediaResolver->ParseInfoDetailsL(
-                            mImageInfo, file));
+                TRAP(error,mProcessImageOperation =
+                        CUniEditorProcessImageOperation::NewL(*this));
                 }
-                file.Close();
-            }
-            delete name;
-        }
+            if (!mMediaResolver && error == KErrNone)
+                {
+                TRAP(error,mMediaResolver = CMsgMediaResolver::NewL());
+                }
 
-        if (error == KErrNone)
-        {
+            if (error == KErrNone)
+                {
+                mMediaResolver->SetCharacterSetRecognition(EFalse);
+                HBufC *name = XQConversions::qStringToS60Desc(imagefile);
+                RFile file;
+                TRAP(error, file = mMediaResolver->FileHandleL(*name));
+                if (error == KErrNone)
+                    {
+                    TRAP(error,mImageInfo = static_cast<CMsgImageInfo*>
+                            (mMediaResolver->CreateMediaInfoL(file)));
+                    if (error == KErrNone)
+                        {
+                        TRAP(error, mMediaResolver->ParseInfoDetailsL(
+                                        mImageInfo, file));
+                        }
+                    file.Close();
+                    }
+                delete name;
+                }
+            }
+        if (error == KErrNone && !mDraftMessage)
+            {
             mSavedImageFile = imagefile;
             startResizeAnimation();
+            mIsImageResizing = true;
             mProcessImageOperation->Process(mImageInfo);
-        }
+            }
         else
-        {
-            delete mImageInfo;
-            mImageInfo = NULL;
+            {
+            if (mImageInfo)
+                {
+                delete mImageInfo;
+                mImageInfo = NULL;
+                }
             mSavedImageFile.clear();
             handleSetImage();
+            }
+
         }
     }
-}
 
 void MsgUnifiedEditorBody::handleSetImage()
 {   
@@ -275,14 +280,17 @@ void MsgUnifiedEditorBody::handleSetImage()
     this->repolish();
 
     // emit signal to indicate addition of image
-    if(!mDraftMessage)
-    {
-        emit contentChanged();
-    }
+    emit contentChanged();
 }
 
 void MsgUnifiedEditorBody::setAudio(QString& audiofile)
 {
+    // do nothing if filepath is empty
+    if(audiofile.isEmpty())
+    {
+        return;
+    }
+
     //check for insert conformance
     if(EInsertSuccess != mMmsConformanceCheck->checkModeForInsert(audiofile))
         return;
@@ -328,7 +336,10 @@ void MsgUnifiedEditorBody::setAudio(QString& audiofile)
 
 void MsgUnifiedEditorBody::setText(QString& text)
 {
-	mTextEdit->setPlainText(text);
+    if(!text.isEmpty())
+    {    
+        mTextEdit->setPlainText(text);
+    }
 }
 
 const QStringList MsgUnifiedEditorBody::mediaContent()
@@ -448,7 +459,6 @@ QSizeF MsgUnifiedEditorBody::sizeHint(Qt::SizeHint which, const QSizeF &constrai
                 mPixmapItem->setPos(currPos);
             }
             mPixmapItem->show();
-            emit enableSendButton(true);
             }
             
             if(mProcessingWidget)
@@ -628,8 +638,6 @@ void MsgUnifiedEditorBody::onTextChanged()
 void MsgUnifiedEditorBody::EditorOperationEvent(
     TUniEditorProcessImageOperationEvent aEvent, TFileName aFileName)
 {
-    stopResizeAnimation();
-    
     delete mImageInfo;
     mImageInfo = NULL;
 
@@ -643,8 +651,13 @@ void MsgUnifiedEditorBody::EditorOperationEvent(
         mImageFile = mSavedImageFile;
     }
     mSavedImageFile.clear();
+
+   // image resize is complete. reset the image resize flag
+    mIsImageResizing = false;
     //handle the processed image from ProcessImage Operation
     handleSetImage();
+    
+    stopResizeAnimation();
 }
 
 void MsgUnifiedEditorBody::startResizeAnimation()
@@ -665,6 +678,7 @@ void MsgUnifiedEditorBody::startResizeAnimation()
     processingLayout->addItem(processingText);
     
     HbIconItem* animationItem = new HbIconItem(ANIMATION_ICON,mProcessingWidget);
+    animationItem->setAlignment(Qt::AlignHCenter);
     processingLayout->addItem(animationItem);
     
     HbIconAnimator& iconAnimator = animationItem->animator();

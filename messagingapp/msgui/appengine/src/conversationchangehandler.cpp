@@ -114,6 +114,13 @@ void ConversationsChangeHandler::DeleteConversation(
     const CCsConversationEntry& aConvEntry)
 {
     mConversationsModel->deleteRow(aConvEntry.EntryId());
+    
+    //check if the CV model row count has become zero
+    // then needs to emit signal
+    if (mConversationsModel->rowCount() == 0)
+    {
+        mConversationsModel->emitConversationViewEmpty();
+    }
 }
 
 //-----------------------------------------------------------------------

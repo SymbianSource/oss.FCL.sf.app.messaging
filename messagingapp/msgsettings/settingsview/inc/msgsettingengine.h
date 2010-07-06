@@ -46,7 +46,7 @@ public:
      */
     enum MmsRetrieval
     {
-        AlwaysAutomatic, AutomInHomeNetwork, Maual, Off, No
+        AlwaysAutomatic, AutomInHomeNetwork, Manual, Off, No
     };
     
 public:

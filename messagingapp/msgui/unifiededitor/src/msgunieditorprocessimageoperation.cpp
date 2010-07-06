@@ -525,7 +525,8 @@ void CUniEditorProcessImageOperation::checkLargeImage()
     if( largeImageQuery && iMmsCreationMode == EMmsCreationModeWarning)
     {
         HbMessageBox::question(LOC_LARGE_IMAGE_NOTE, this,
-            SLOT(onDialogLargeImage(HbAction*))); 
+                               SLOT(onDialogLargeImage(HbAction*)),
+                               HbMessageBox::Yes | HbMessageBox::No); 
     }
     else
     {

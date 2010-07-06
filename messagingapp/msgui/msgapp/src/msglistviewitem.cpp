@@ -25,6 +25,8 @@
 #include <HbTextItem>
 #include <HbFrameItem>
 #include <HbIconItem>
+#include <QCoreApplication>
+#include <HbEvent>
 
 #include "msgcommondefines.h"
 #include "conversationsengine.h"
@@ -93,15 +95,7 @@ void MsgListViewItem::updateChildItems()
     {
         QString displayName = modelIndex().data(DisplayName).toString();
         QString contactAddress = modelIndex().data(ConversationAddress).toString();
-
-        if (displayName.isEmpty())
-        {
-            contactName.append(contactAddress);
-        }
-        else
-        {
-            contactName.append(displayName);
-        }        
+        contactName.append(displayName);
     }
     mAddressLabelItem->setText(contactName);
 
@@ -117,6 +111,8 @@ void MsgListViewItem::updateChildItems()
             mUnReadMsg = true;
             mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(NEW_ITEM_FRAME);
             repolish();
+            // Needed for colour group changes to be visible
+            QCoreApplication::postEvent(this, new HbEvent(HbEvent::ThemeChanged));  
         }       
     }
     else
@@ -127,6 +123,8 @@ void MsgListViewItem::updateChildItems()
             mUnReadMsg = false;  
             mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(QString());
             repolish();
+            // Needed for colour group changes to be visible
+            QCoreApplication::postEvent(this, new HbEvent(HbEvent::ThemeChanged));  
         }
     }
 

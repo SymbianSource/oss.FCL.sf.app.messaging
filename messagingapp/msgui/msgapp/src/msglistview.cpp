@@ -60,10 +60,7 @@ const QString SORT_ICON("qtg_mono_sort");
 #define LOC_OPEN hbTrId("txt_common_menu_open")
 #define LOC_SAVETO_CONTACTS hbTrId("txt_messaging_menu_save_to_contacts")
 #define LOC_DELETE_CONVERSATION hbTrId("txt_messaging_menu_delete_conversation")
-#define LOC_OPEN_CONTACT_INFO hbTrId("txt_messaging_menu_open_contact_info")
-
-#define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
-#define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
+#define LOC_OPEN_CONTACT_INFO hbTrId("txt_messaging_menu_contact_info")
 
 //main menu
 #define LOC_SETTINGS    hbTrId("txt_messaging_opt_settings")
@@ -81,27 +78,28 @@ const QString SORT_ICON("qtg_mono_sort");
 //---------------------------------------------------------------
 MsgListView::MsgListView(QGraphicsItem *parent) :
     MsgBaseView(parent)
-{
+    {
     //These changes are needed for splash implementation to avoid flicker
-    setupToolBar();    
+    setupToolBar();
     setupMenu();
 
     // Create parent layout.
     mMainLayout = new QGraphicsLinearLayout(Qt::Vertical);
     mMainLayout->setContentsMargins(0, 0, 0, 0);
     mMainLayout->setSpacing(0);
-    
+
     // Create view heading.
     HbGroupBox *viewHeading = new HbGroupBox();
     viewHeading->setHeading(LOC_VIEW_HEADING);
-    
+
     // Add view heading widget to main layout.
     mMainLayout->addItem(viewHeading);
 
     this->setLayout(mMainLayout);
 
-    connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
-}
+    connect(this->mainWindow(), SIGNAL(viewReady()), this,
+            SLOT(doDelayedConstruction()));
+    }
 
 //---------------------------------------------------------------
 // MsgListView::~MsgListView
@@ -230,8 +228,8 @@ void MsgListView::deleteItem()
 #endif
     //confirmation dialog.
     HbMessageBox::question(LOC_DIALOG_DELETE_CONVERSATION,
-                                this,SLOT(onDialogDeleteMsg(HbAction*)),
-                                LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);    
+                           this,SLOT(onDialogDeleteMsg(HbAction*)),
+                           HbMessageBox::Delete | HbMessageBox::Cancel);    
 #ifdef _DEBUG_TRACES_	
     qDebug() << " Leaving MsgConversationView::deleteItem";
 #endif
@@ -242,7 +240,7 @@ void MsgListView::deleteItem()
 // @see header
 //---------------------------------------------------------------
 void MsgListView::setupListView()
-{
+    {
     // Register the custorm css path.
     HbStyleLoader::registerFilePath(":/clv");
 
@@ -252,34 +250,29 @@ void MsgListView::setupListView()
 
     mMsgList->setLayoutName("custom");
     mMsgList->setItemRecycling(true);
-    mMsgList->setUniformItemSizes(true);   
+    mMsgList->setUniformItemSizes(true);
 
     MsgListViewItem *prototype = new MsgListViewItem(this);
     mMsgList->setItemPrototype(prototype);
-
-    // Set proxy model
-    QSortFilterProxyModel* proxyModel = new QSortFilterProxyModel(this);
-    proxyModel->setDynamicSortFilter(true);
-    proxyModel->setSourceModel(ConversationsEngine::instance()->getConversationsSummaryModel());
-    proxyModel->setSortRole(TimeStamp);
-    proxyModel->sort(0, Qt::DescendingOrder);
-
-    mMsgList->setModel(proxyModel);
-
-    connect(ConversationsEngine::instance(), SIGNAL(conversationListModelPopulated()),
-            this, SLOT(populateListView()));
-
+    mMsgList->setModel(ConversationsEngine::instance()->getConversationsSummaryModel());
+    
     // Single tap list item
-    connect(mMsgList, SIGNAL(activated(const QModelIndex&)),
-            this, SLOT(openConversation(const QModelIndex&)));
+    connect(mMsgList, SIGNAL(activated(const QModelIndex&)), this,
+            SLOT(openConversation(const QModelIndex&)));
 
     // Long tap list item
-    connect(mMsgList, SIGNAL(longPressed(HbAbstractViewItem*, const QPointF&)),
-            this, SLOT(longPressed(HbAbstractViewItem*, const QPointF&)));
+    connect(mMsgList,
+            SIGNAL(longPressed(HbAbstractViewItem*, const QPointF&)), this,
+            SLOT(longPressed(HbAbstractViewItem*, const QPointF&)));
+
+    // enable tap after delete is completed
+    connect(ConversationsEngine::instance(),
+            SIGNAL(conversationListEntryDeleted( int )), this,
+            SLOT(enableListitem( int )));
 
     // Add list view to main layout.
     mMainLayout->addItem(mMsgList);
-}
+    }
 
 //---------------------------------------------------------------
 // MsgListView::addMenu
@@ -308,6 +301,7 @@ void MsgListView::setupToolBar()
     viewAction->setIcon(HbIcon(SORT_ICON));
 
     mViewExtnList = new HbListWidget();
+    mViewExtnList->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
     mViewExtnList->addItem(LOC_TB_EXTN_DRAFTS);
     mViewExtnList->addItem(LOC_TB_EXTN_CONVERSATIONS);
 
@@ -422,17 +416,46 @@ void MsgListView::contactInfo()
 // @see header
 //---------------------------------------------------------------
 void MsgListView::onDialogDeleteMsg(HbAction* action)
-{
+    {
     HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
-    if (action == dlg->actions().at(0)) {
-        QModelIndex index = mMsgList->currentIndex();
-        if(index.isValid())
+    if (action == dlg->actions().at(0))
         {
+        QModelIndex index = mMsgList->currentIndex();
+        if (index.isValid())
+            {
+            HbAbstractViewItem *item = mMsgList->currentViewItem();
+            item->ungrabGesture(Qt::TapGesture);
             qint64 conversationId = index.data(ConversationId).toLongLong();
-                    ConversationsEngine::instance()->deleteConversations(conversationId);    
+
+            ConversationsEngine::instance()->deleteConversations(
+                    conversationId);
+
+            }
+
         }
-        
     }
-}
+
+//---------------------------------------------------------------
+// MsgListView::enableListitem
+// @see header
+//---------------------------------------------------------------
+void MsgListView::enableListitem(int conversationId)
+    {
+    QAbstractItemModel* proxyModel = mMsgList->model();
+    QModelIndexList indexList = proxyModel->match(proxyModel->index(0, 0),
+            ConversationId, conversationId, 1, Qt::MatchExactly);
+    HbAbstractViewItem* item = NULL;
+    int count = indexList.count();
+	// only item is expected to be the result of the above match function
+    if (1 == count)
+        {
+        item = mMsgList->itemByIndex(indexList[0]);
+        if (item)
+            {
+            item->grabGesture(Qt::TapGesture);
+            }
+        }
+
+    }
 
 //EOF

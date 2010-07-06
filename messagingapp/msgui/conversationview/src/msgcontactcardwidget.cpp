@@ -51,7 +51,7 @@ const QString BG_FRAME_PRESSED("qtg_fr_groupbox_pressed");
 
 // LOCALIZATION CONSTANTS
 #define LOC_RECEIVED_FILES hbTrId("txt_messaging_title_received_files")
-#define LOC_MENU_CONTACT_INFO hbTrId("txt_messaging_menu_open_contact_info")
+#define LOC_MENU_CONTACT_INFO hbTrId("txt_messaging_menu_contact_info")
 #define LOC_COMMON_MENU_CALL hbTrId("txt_common_menu_call_verb")
 #define LOC_SAVETO_CONTACTS hbTrId("txt_messaging_menu_save_to_contacts")
 
@@ -146,7 +146,13 @@ ConvergedMessageAddressList MsgContactCardWidget::address()
     QModelIndex index = msgModel->index(rowCnt-1, 0);
     ConvergedMessageAddress* address = new ConvergedMessageAddress(
         index.data(ConversationAddress).toString());
-    address->setAlias(mAddress);
+    QString displayname;
+    QString addr;
+    ConversationsEngine::instance()->getContactDetails(
+            ConversationsEngine::instance()->getCurrentConversationId(),
+            displayname,
+            addr);
+    address->setAlias(displayname);
     addresses.append(address);
     return addresses;
 }
@@ -237,7 +243,7 @@ void MsgContactCardWidget::gestureEvent(QGestureEvent *event)
             if (HbTapGesture::TapAndHold == tapGesture->tapStyleHint()) {
                 // Handle longtap.
                 setPressed(false);
-                handleLongPress(tapGesture->scenePosition());
+                handleLongTap(tapGesture->scenePosition());
             }
             break;
         }
@@ -247,7 +253,7 @@ void MsgContactCardWidget::gestureEvent(QGestureEvent *event)
             if (HbTapGesture::Tap == tapGesture->tapStyleHint()) {
                 // Handle short tap.
                 setPressed(false);
-                openContactInfo();
+                handleShortTap(tapGesture->scenePosition());
             }
             break;
         }
@@ -282,10 +288,10 @@ void MsgContactCardWidget::setPressed(bool pressed)
 }
 
 //---------------------------------------------------------------
-// MsgContactCardWidget::handleLongPress
+// MsgContactCardWidget::handleLongTap
 // @see header file
 //---------------------------------------------------------------
-void MsgContactCardWidget::handleLongPress(const QPointF &position)
+void MsgContactCardWidget::handleLongTap(const QPointF &position)
 {
     // Check if events need to be ignored/accepted
     if (mIgnoreEvents) {
@@ -296,19 +302,49 @@ void MsgContactCardWidget::handleLongPress(const QPointF &position)
         HbMenu* contextMenu = new HbMenu();
         contextMenu->setDismissPolicy(HbPopup::TapAnywhere);
         contextMenu->setAttribute(Qt::WA_DeleteOnClose, true);
-        contextMenu->setPreferredPos(position);
-
-        contextMenu->addAction(LOC_MENU_CONTACT_INFO, this, SLOT(openContactInfo()));
-        contextMenu->addAction(LOC_COMMON_MENU_CALL, this, SLOT(call()));
+        contextMenu->setPreferredPos(position);   
 
         //If contact doesn't exist in phonebook then add another menu item "Save to Contacts"
         int contactId = resolveContactId(mContactNumber);
         if (contactId < 0) {
             contextMenu->addAction(LOC_SAVETO_CONTACTS, this, SLOT(addToContacts()));
         }
+        else{
+            contextMenu->addAction(LOC_MENU_CONTACT_INFO, this, SLOT(openContactInfo()));
+        }
+        contextMenu->addAction(LOC_COMMON_MENU_CALL, this, SLOT(call()));
 
         contextMenu->show();
     }
+}
+
+//---------------------------------------------------------------
+// MsgContactCardWidget::handleShortTap
+// @see header
+//---------------------------------------------------------------
+void MsgContactCardWidget::handleShortTap(const QPointF &position)
+{
+    this->ungrabGesture(Qt::TapGesture);
+    
+    // Check if events need to be ignored/accepted
+    if (mIgnoreEvents) {
+        return;
+    }
+    
+    int contactId = resolveContactId(mContactNumber);
+    if(contactId > 0)
+    {
+        //resolved contact open contact card.
+        openContactInfo();
+    }
+    else
+    {
+        //unresolved contact show longpress options menu.
+        handleLongTap(position);
+    }
+    
+    //fire timer to regrab gesture after some delay.
+    QTimer::singleShot(300,this,SLOT(regrabGesture()));    
 }
 
 //---------------------------------------------------------------
@@ -317,13 +353,6 @@ void MsgContactCardWidget::handleLongPress(const QPointF &position)
 //---------------------------------------------------------------
 void MsgContactCardWidget::openContactInfo()
 {
-    this->ungrabGesture(Qt::TapGesture);
-    
-    // Check if events need to be ignored/accepted
-    if (mIgnoreEvents) {
-        return;
-    }
-
     QString operation;
     QList<QVariant> args;
     if (KBluetoothMsgsConversationId != ConversationsEngine::instance()->getCurrentConversationId()) {
@@ -356,13 +385,13 @@ void MsgContactCardWidget::openContactInfo()
         connect(request, SIGNAL(requestError(const QVariant&)), this,
             SLOT(handleError(const QVariant&)));
 
+        //disbale subscritption for the CV events
+        ConversationsEngine::instance()->disableRegisterationForCVEvents();
+                
         request->setArguments(args);
         request->send();
         delete request;
     }
-    
-    //fire timer to regrab gesture after some delay.
-    QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
 
 //---------------------------------------------------------------
@@ -404,6 +433,7 @@ void MsgContactCardWidget::call()
 //---------------------------------------------------------------
 void MsgContactCardWidget::addToContacts()
 {
+    openContactInfo();
 }
 
 //---------------------------------------------------------------
@@ -424,7 +454,16 @@ void MsgContactCardWidget::handleOk(const QVariant& result)
         if (!avatarDetails.isEmpty()) {
             mThumbnailManager->getThumbnail(avatarDetails.at(0).imageUrl().toString());
         }
-    }
+	}
+	
+	// Get the new conversation id.
+    qint64 convId = ConversationsEngine::instance()->getConversationIdFromAddress(
+                mContactNumber);
+    emit conversationIdChanged(convId);
+            
+    ConversationsEngine::instance(
+                    )->emitOpenConversationViewIdUpdate(convId);
+    
 }
 
 //---------------------------------------------------------------
@@ -434,7 +473,14 @@ void MsgContactCardWidget::handleOk(const QVariant& result)
 void MsgContactCardWidget::handleError(int errorCode, const QString& errorMessage)
 {
     Q_UNUSED(errorMessage)
-    Q_UNUSED(errorCode)
+    Q_UNUSED(errorCode)    
+    
+    //unblock the cv events in case of contacts save error
+    ConversationsEngine::instance(
+                        )->emitOpenConversationViewIdUpdate(
+                                ConversationsEngine::instance(
+                                        )->getCurrentConversationId(
+                                                ));
 }
 
 //---------------------------------------------------------------

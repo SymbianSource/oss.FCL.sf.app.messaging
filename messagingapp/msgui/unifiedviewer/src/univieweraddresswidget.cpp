@@ -446,6 +446,16 @@ void UniViewerAddressWidget::openContactInfo()
                 QContactPhoneNumber::DefinitionName,
                 QContactPhoneNumber::FieldNumber);
 
+        // if contact is unresolved on phone number field
+        // then, try resolving it on email address field
+        if(contactId <= 0)
+        {
+            contactId = MsgContactHandler::resolveContactDisplayName(
+                data,
+                QContactEmailAddress::DefinitionName,
+                QContactEmailAddress::FieldEmailAddress);
+        }
+
         if(contactId > 0)
         {
             //open contact card

@@ -67,9 +67,6 @@
 #define LOC_COMMON_DOWNLOAD hbTrId("txt_messaging_menu_download")
 #define LOC_COMMON_SEND  hbTrId("txt_common_button_send") 
 #define LOC_COMMON_SAVE  hbTrId("txt_common_menu_save")
-#define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
-#define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
-#define LOC_BUTTON_OK hbTrId("txt_common_button_ok")
 
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
 #define LOC_SAVE_TO_CONTACTS hbTrId("txt_messaging_menu_save_to_contacts")
@@ -85,7 +82,7 @@
 #define LOC_MSG_SEND_FAILED hbTrId("txt_messaging_dialog_message_sending_failed")
 #define LOC_DIALOG_SMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_sms_settings_incomplete")
 #define LOC_DIALOG_SAVE_RINGTONE hbTrId("txt_conversations_dialog_save_ringing_tone")
-#define LOC_CONTACT_SAVED hbTrId("txt_messaging_dpopinfo_contact_saved")
+
 
 const int INVALID_MSGID = -1;
 const int INVALID_CONVID = -1;
@@ -105,15 +102,26 @@ MsgConversationView::MsgConversationView(MsgContactCardWidget *contactCardWidget
     mContactCardWidget(contactCardWidget),
     mSendUtil(NULL),
     mVkbHost(NULL),
+    mVisibleIndex(),
     mVkbopened(false),
-    mVisibleIndex()
+    mModelPopulated(false),
+    mViewReady(false)
 {
-    connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(onViewReady()));
     //create send utils
     mSendUtil = new MsgSendUtil(this);
     //initialize view
     setupView();
     setupMenu();
+    
+    connect(ConversationsEngine::instance(), 
+                     SIGNAL(conversationModelUpdated()),
+                     this, 
+                     SLOT(scrollToBottom()));
+
+    connect(ConversationsEngine::instance(), 
+                         SIGNAL(conversationViewEmpty()),
+                         this, 
+                         SLOT(onConversationViewEmpty()));
 }
 
 //---------------------------------------------------------------
@@ -209,6 +217,18 @@ void MsgConversationView::setupMenu()
 }
 
 //---------------------------------------------------------------
+// MsgConversationView::fetchMoreConversations
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationView::fetchMoreConversations()
+{
+    if (mViewReady && mModelPopulated) {
+        ConversationsEngine::instance()->fetchMoreConversations();
+        mViewReady = mModelPopulated = false;
+    }
+}
+
+//---------------------------------------------------------------
 // MsgConversationView::refreshView()
 // @see header file
 //---------------------------------------------------------------
@@ -240,6 +260,14 @@ void MsgConversationView::scrollToBottom()
     const int rowCnt = mMessageModel->rowCount();
     mConversationList->scrollTo(
             mMessageModel->index(rowCnt - 1, 0));
+}
+
+void MsgConversationView::onConversationViewEmpty()
+{
+    QVariantList param;
+    param << MsgBaseView::CLV; // target view
+    param << MsgBaseView::CV; // source view
+    emit switchView(param);
 }
 
 //---------------------------------------------------------------
@@ -334,8 +362,6 @@ void MsgConversationView::addOpenItemToContextMenu(MsgConversationViewItem* item
         return;
         }
     if( (sendingState == ConvergedMessage::SentState ) ||
-        (sendingState == ConvergedMessage::Resend ) ||
-        (sendingState == ConvergedMessage::Failed ) ||
         (direction == ConvergedMessage::Incoming))
     {
         HbAction *contextItem = contextMenu->addAction(LOC_COMMON_OPEN);
@@ -478,7 +504,9 @@ void MsgConversationView::send()
     deactivateInputBlocker();
     if( sendResult == KErrNotFound)
     {
-    HbMessageBox::question(LOC_DIALOG_SMS_SETTINGS_INCOMPLETE, this, SLOT(onDialogSettingsLaunch(HbAction*)), LOC_BUTTON_OK, LOC_BUTTON_CANCEL);
+    HbMessageBox::question(LOC_DIALOG_SMS_SETTINGS_INCOMPLETE, this,
+                           SLOT(onDialogSettingsLaunch(HbAction*)), 
+                           HbMessageBox::Ok | HbMessageBox::Cancel);
     }
 }
 
@@ -586,8 +614,22 @@ void MsgConversationView::fetchAudio()
 {
     // Launch Audio fetcher view
     QVariantList params;
+    QByteArray dataArray;
+    QDataStream messageStream
+    (&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+
+    ConvergedMessage message;
+    message.setBodyText(mEditorWidget->content());
+    // add address from contact-card to to-field
+    ConvergedMessageAddress address;
+    address.setAlias(mContactCardWidget->address().at(0)->alias());
+    address.setAddress(mContactCardWidget->address().at(0)->address());
+    message.addToRecipient(address);
+    message.serialize(messageStream);
+
     params << MsgBaseView::AUDIOFETCHER; // target view
     params << MsgBaseView::CV; // source view
+    params << dataArray;
     emit switchView(params);
 }
 
@@ -711,8 +753,7 @@ void MsgConversationView::downloadMessage()
 void MsgConversationView::deleteItem()
     {
     HbMessageBox::question(LOC_DELETE_MESSAGE,this,SLOT(onDialogdeleteMsg(HbAction*)),
-                             LOC_BUTTON_DELETE,
-                             LOC_BUTTON_CANCEL);
+                           HbMessageBox::Delete | HbMessageBox::Cancel);
 }
 
 //---------------------------------------------------------------
@@ -788,11 +829,11 @@ void MsgConversationView::launchBtDisplayService(const QModelIndex & index)
     qint32 messageId = index.data(ConvergedMsgId).toLongLong();
 
     QList<QVariant> args;
-    QString serviceName("com.nokia.services.btmsgdispservices.displaymsg");
+    QString serviceName("com.nokia.services.btmsgdispservices");
     QString operation("displaymsg(int)");
     XQAiwRequest* request;
     XQApplicationManager appManager;
-    request = appManager.create(serviceName, "displaymsg", operation, true); // embedded
+    request = appManager.create(serviceName, "displaymsg", operation, false); // embedded
     
     if ( request == NULL )
         {
@@ -800,6 +841,7 @@ void MsgConversationView::launchBtDisplayService(const QModelIndex & index)
         }
 
     args << QVariant(messageId);
+    request->setSynchronous(true);
     
     request->setArguments(args);
     request->send();
@@ -859,7 +901,8 @@ void MsgConversationView::openItem(const QModelIndex & index)
         if (ConvergedMessage::RingingTone == messageSubType)
         {
             HbMessageBox::question(LOC_DIALOG_SAVE_RINGTONE, this,
-                    SLOT(onDialogSaveTone(HbAction*)), LOC_COMMON_SAVE, LOC_BUTTON_CANCEL);
+                                   SLOT(onDialogSaveTone(HbAction*)), 
+                                   HbMessageBox::Save | HbMessageBox::Cancel);
             return;
         }
         else if(ConvergedMessage::Provisioning == messageSubType)
@@ -881,7 +924,7 @@ void MsgConversationView::openItem(const QModelIndex & index)
             bool result = MsgContactsUtil::launchVCardViewer(filepath);
             if(result)
             {
-                HbNotificationDialog::launchDialog(LOC_CONTACT_SAVED);
+                
                 int messageId = index.data(ConvergedMsgId).toInt();
                 QList<int> msgIdList;
                 if(index.data(UnReadStatus).toInt())
@@ -901,6 +944,13 @@ void MsgConversationView::openItem(const QModelIndex & index)
     else if (ConvergedMessage::BT == messageType)
     {
         launchBtDisplayService(index);
+        QList<int> msgIdList;
+        if(index.data(UnReadStatus).toInt())
+            {
+            msgIdList.clear();
+            msgIdList << messageId;
+            ConversationsEngine::instance()->markMessagesRead(msgIdList);
+            }
         return;
     }
     else if(ConvergedMessage::MmsNotification == messageType)
@@ -918,9 +968,9 @@ void MsgConversationView::openItem(const QModelIndex & index)
         else
         {
             //TODO: use logical str name
-            HbMessageBox::question("Download Message?",this,SLOT(onDialogDownLoadMsg(HbAction*)),
-                LOC_COMMON_DOWNLOAD,
-                LOC_BUTTON_CANCEL);
+            HbMessageBox::question("Download Message?",this,
+                                   SLOT(onDialogDownLoadMsg(HbAction*)),
+                                   HbMessageBox::Yes | HbMessageBox::Cancel);
             return;
         }
     }
@@ -937,33 +987,15 @@ void MsgConversationView::openItem(const QModelIndex & index)
     int location = index.data(MessageLocation).toInt();
     int sendingState = index.data(SendingState).toInt();
     
-    //If message is in Sending state or is Scheduled to be sent later,
+    //If message is in any other state other than 'Sent'
     //do not open the message
-    if(sendingState == ConvergedMessage::Suspended ||
-            sendingState == ConvergedMessage::Scheduled ||
-            sendingState == ConvergedMessage::Sending ||
-            sendingState == ConvergedMessage::Waiting)
+    if(direction == ConvergedMessage::Outgoing 
+            && sendingState != ConvergedMessage::SentState )
+           
     {
         return;
     }
 
-    //TODO: sendingState check should be removed once msg
-    // movement lock issue is resolved from mw
-    if( !((location == ConvergedMessage::Inbox) ||
-        (location == ConvergedMessage::Sent) ||
-        (sendingState == ConvergedMessage::SentState)||
-        (sendingState == ConvergedMessage::Failed) ||
-        (sendingState == ConvergedMessage::Resend)))
-    {// do not launch viewer, show a note
-        HbNotificationDialog* dlg = new HbNotificationDialog();
-        dlg->setFocusPolicy(Qt::NoFocus);
-        QString text(tr("Message Locked"));
-        dlg->setText(text);
-        dlg->setDismissPolicy(HbPopup::TapAnywhere);
-        dlg->setAttribute(Qt::WA_DeleteOnClose, true);
-        dlg->show();
-        return;
-	}
    
     
     // contact Id
@@ -1063,7 +1095,14 @@ void MsgConversationView::launchUniEditor(const QVariantList& data)
             {
                 ConvergedMessageAddress* address = new ConvergedMessageAddress;
                 address->setAlias(contactList[i].mDisplayName);
-                address->setAddress(contactList[i].mPhoneNumber);
+                if(!contactList[i].mPhoneNumber.isEmpty())
+                {
+                    address->setAddress(contactList[i].mPhoneNumber);
+                }
+                else
+                {
+                    address->setAddress(contactList[i].mEmailAddress);
+                }
                 addresses.append(address);
             }
             message.addToRecipients(addresses);
@@ -1095,16 +1134,13 @@ void MsgConversationView::launchUniEditor(const QVariantList& data)
 // @see header file
 //---------------------------------------------------------------
 void MsgConversationView::populateConversationsView()
-{
-    bool b = connect(ConversationsEngine::instance(), 
-                     SIGNAL(conversationModelUpdated()),
-                     this, 
-                     SLOT(scrollToBottom()));
-
+{    
+    mModelPopulated = true;
     mConversationList->setModel(mMessageModel);
     
     refreshView();
     scrollToBottom();
+    fetchMoreConversations();
 }
 
 //---------------------------------------------------------------
@@ -1359,8 +1395,11 @@ void MsgConversationView::onOrientationAboutToBeChanged()
 //---------------------------------------------------------------
 void MsgConversationView::onViewReady()
 {
+    mViewReady = true;
     //Disconnect list View's signals, for avoiding execution of the default implementaion
     disconnect(mainWindow(), SIGNAL(aboutToChangeOrientation()), mConversationList, 0);
     disconnect(mainWindow(), SIGNAL(orientationChanged(Qt: rientation)), mConversationList, 0);
+    
+   fetchMoreConversations();
 }
 // EOF

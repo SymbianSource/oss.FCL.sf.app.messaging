@@ -130,6 +130,11 @@ private slots:
      */
     void handleViewReady();
 
+    /**
+     *
+     */
+    void handleConversationIdChange(qint64 convId);
+
 signals:
     /**
      * Signal emitted when the conversation view is closed.

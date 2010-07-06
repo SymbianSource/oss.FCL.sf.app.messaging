@@ -125,6 +125,11 @@ private slots:
      */
     void itemActivated(QModelIndex index);
     
+    /**
+     * Reset internal data structures
+     */
+    void reset();
+    
 private:
     /**
      * Fetch the action associated with a specified interface descriptor.
@@ -185,12 +190,7 @@ private:
      * Show notes
      */
     void showNote(QString text);
-    
-    /**
-     * Reset internal data structures
-     */
-    void reset();
-    
+
 private:
     /**
      * List of files to be sent.

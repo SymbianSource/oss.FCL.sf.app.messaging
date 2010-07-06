@@ -17,8 +17,6 @@
 TEMPLATE = app
 TARGET = messaging101
 
-ICON = resources/icons/qtg_large_message.svg
-
 DEPENDPATH += . inc src ../inc
 INCLUDEPATH += .
 INCLUDEPATH += ../inc
@@ -29,17 +27,21 @@ INCLUDEPATH += ../appengine/inc
 INCLUDEPATH += ../conversationview/inc
 INCLUDEPATH += ../unifiedviewer/inc
 INCLUDEPATH += ../../msgsettings/settingsview/inc
-INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
 INCLUDEPATH += ../../smartmessaging/ringbc/inc
+
+INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 CONFIG += hb service
 
 QT += sql
 
-TARGET.UID3 = 0x2001FE79
-TARGET.CAPABILITY = All -TCB
-TARGET.EPOCHEAPSIZE = 0x20000 0x1000000
+symbian {
+   TARGET.UID3 = 0x2001FE79
+   TARGET.CAPABILITY = All -TCB
+   TARGET.EPOCSTACKSIZE = 0x14000
+   TARGET.EPOCHEAPSIZE = 0x20000 0x1000000
+   SKINICON = qtg_large_message
+}
   
 # Platforms
 SYMBIAN_PLATFORMS = WINSCW ARMV5

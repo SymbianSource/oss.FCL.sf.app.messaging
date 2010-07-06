@@ -23,9 +23,16 @@
 //
 inline TPtrC CMsgMediaInfo::FullFilePath() const
     {
-    return iFullFilePath
-        ? iFullFilePath->Des()
-        : KNullDesC();
+    
+    if(iFullFilePath)
+        {
+        return iFullFilePath->Des();
+        }
+    else
+        {
+        return KNullDesC();
+        }
+    
     }
 
 // -----------------------------------------------------------------------------

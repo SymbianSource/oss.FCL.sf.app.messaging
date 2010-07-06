@@ -24,4 +24,5 @@ EXPORTS
 	?GetConversationIdL@CCSRequestHandler@@QAEHH@Z @ 23 NONAME ; int CCSRequestHandler::GetConversationIdL(int)
 	?NewL@CCSRequestHandler@@SAPAV1@XZ @ 24 NONAME ; class CCSRequestHandler * CCSRequestHandler::NewL(void)
 	?GetConversationFromMessageIdL@CCSRequestHandler@@QAEPAVCCsClientConversation@@H@Z @ 25 NONAME ; class CCsClientConversation * CCSRequestHandler::GetConversationFromMessageIdL(int)
+	?GetConversationFromConversationIdL@CCSRequestHandler@@QAEPAVCCsClientConversation@@H@Z @ 26 NONAME ; class CCsClientConversation * CCSRequestHandler::GetConversationFromConversationIdL(int)
 

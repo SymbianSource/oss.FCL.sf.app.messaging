@@ -44,11 +44,8 @@
 #include "msgaudiofetcherview.h"
 
 // LOCALIZATION
-#define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
-#define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
 #define LOC_DIALOG_SAVE_RINGTONE hbTrId("txt_conversations_dialog_save_ringing_tone")
-#define LOC_COMMON_SAVE  hbTrId("txt_common_menu_save")
 
 const qint64 NULL_CONVERSATIONID = -1;
 
@@ -114,6 +111,8 @@ void MsgViewManager::onBackAction()
 
     case MsgBaseView::CV:
     {
+	    mConversationId = -1; //reset the conversation view id since its closed
+		
         //Save content to drafts before switching to clv
         mConversationView->saveContentToDrafts();
 
@@ -198,9 +197,18 @@ void MsgViewManager::onBackAction()
         }
         else {
             QVariantList param;
-            param << MsgBaseView::CV;
-            param << MsgBaseView::UNIVIEWER;
-            param << mConversationId;
+            if (mConversationId != -1)
+                {
+                    //this means CV is till open then just open the fresh CV
+                    param << MsgBaseView::CV;
+                    param << MsgBaseView::UNIVIEWER;
+                    param << mConversationView->conversationId();
+                }
+                else
+                {
+                    param << MsgBaseView::CLV;
+                    param << MsgBaseView::UNIVIEWER;
+                }
             switchView(param);
 
         }
@@ -216,7 +224,7 @@ void MsgViewManager::onBackAction()
     }
     case MsgBaseView::AUDIOFETCHER:
     {
-        // switch to CV.
+        // switch back to previous view
         QVariantList param;
         param << mPreviousView;
         param << MsgBaseView::AUDIOFETCHER;
@@ -225,6 +233,7 @@ void MsgViewManager::onBackAction()
             param << mConversationId;
         }
         switchView(param);
+        break;
     }
     default:
     {
@@ -476,8 +485,6 @@ void MsgViewManager::completeServiceRequest()
 
 void MsgViewManager::switchToClv(const QVariantList& data)
 {
-    //switch to CLV.
-    mCurrentView = MsgBaseView::CLV;
     mPreviousView = data.at(1).toInt();
 
     // delete case from viewer service
@@ -486,6 +493,21 @@ void MsgViewManager::switchToClv(const QVariantList& data)
         HbApplication::quit();
     }
 
+    // this is the case when viewer/editor is opened and contacts update takes
+    // place resulting in CV close, the view should directly come to CLV 
+    // bypassing the CV
+    if ((mCurrentView == MsgBaseView::UNIVIEWER 
+            && mPreviousView != MsgBaseView::UNIVIEWER)
+            || (mCurrentView == MsgBaseView::UNIEDITOR
+                    && mPreviousView != MsgBaseView::UNIEDITOR))
+    {
+        //dont do anything
+        //wait for the back from viewer/editor
+        //and reset the open CV id
+        mConversationId = -1;
+        return;
+    }
+    
     //delete UniEditor
     if (mUniEditor)
     {
@@ -504,8 +526,12 @@ void MsgViewManager::switchToClv(const QVariantList& data)
         mConversationView->saveContentToDrafts();
         //clearing content of cv.
         mConversationView->clearContent();
+        //reset the open CV id
+        mConversationId = -1;
     }
-
+    
+    //switch to CLV.
+    mCurrentView = MsgBaseView::CLV;
     if (!mListView) {
         mListView = new MsgListView();
         mListView->setNavigationAction(mBackAction);
@@ -639,7 +665,10 @@ void MsgViewManager::switchToUniEditor(const QVariantList& data)
     }
 
     mCurrentView = MsgBaseView::UNIEDITOR;
-    mPreviousView = data.at(1).toInt();
+    if(MsgBaseView::AUDIOFETCHER != data.at(1).toInt())
+    {
+        mPreviousView = data.at(1).toInt();
+    }
 
     // delete Audio Fetcher view
     if(mAudioFetcherView)
@@ -838,9 +867,9 @@ void MsgViewManager::view(int msgId)
     default:
     {
         // for un supported message show delete option
-        HbMessageBox::question(LOC_DELETE_MESSAGE,this,SLOT(onDialogDeleteMsg(HbAction*)),
-            LOC_BUTTON_DELETE,
-            LOC_BUTTON_CANCEL);
+        HbMessageBox::question(LOC_DELETE_MESSAGE,this,
+                               SLOT(onDialogDeleteMsg(HbAction*)),
+                               HbMessageBox::Delete | HbMessageBox::Cancel);
         break;
     }
     }
@@ -876,7 +905,8 @@ void MsgViewManager::handleRingtoneMsg(int msgId)
 {
     mMessageId = msgId;
     HbMessageBox::question(LOC_DIALOG_SAVE_RINGTONE, this,
-        SLOT(onDialogSaveTone(HbAction*)), LOC_COMMON_SAVE, LOC_BUTTON_CANCEL);
+                           SLOT(onDialogSaveTone(HbAction*)), 
+                           HbMessageBox::Save | HbMessageBox::Cancel);
 }
 
 // ----------------------------------------------------------------------------
@@ -1020,8 +1050,7 @@ int MsgViewManager::currentView()
 void MsgViewManager::switchToAudioFetcher(const QVariantList& data)
     {
     /**
-     * Audio Fetcher is tried to open again before exiting
-     * opened editor.
+     * Audio Fetcher is tried to open again
      */
     if(mAudioFetcherView)
         {
@@ -1031,8 +1060,12 @@ void MsgViewManager::switchToAudioFetcher(const QVariantList& data)
     //switch to Audio Fetcher view
     mCurrentView = MsgBaseView::AUDIOFETCHER;
     mPreviousView = data.at(1).toInt();
-
-    mAudioFetcherView = new MsgAudioFetcherView();
+    QVariantList editorData;
+    // i=2 because view manager consumed first two args
+    for (int i = 2; i < data.length(); i++) {
+        editorData << data.at(i);
+    }
+    mAudioFetcherView = new MsgAudioFetcherView(editorData);
     mAudioFetcherView->setNavigationAction(mBackAction);
     connect(mAudioFetcherView, SIGNAL(switchView(const QVariantList&)), this,
             SLOT(switchView(const QVariantList&)));
@@ -1120,3 +1153,5 @@ qint32 MsgViewManager::findContactId(QString address)
 
         return localId;
     }
+
+//EOF

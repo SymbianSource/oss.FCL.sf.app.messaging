@@ -49,6 +49,9 @@ _LIT(KSelectPreviewIconStmt,"SELECT  message_id, preview_icon FROM conversation_
 
 // preview-cache max cost (items)
 const int CACHE_COST =  50;
+//Preview thumbnail size
+const int KWidth = 9.5 * 6.7;
+const int KHeight = 9.5 * 6.7;
 //---------------------------------------------------------------
 // ConversationsModel::ConversationsModel
 // Constructor
@@ -512,7 +515,12 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
     //populate from data plugins
     if (!isEntryInDb || err != KErrNone)
     {
-        iMmsDataPlugin->setMessageId(entry.EntryId());
+        int error = iMmsDataPlugin->setMessageId(entry.EntryId());
+        if(error != KErrNone)
+        {
+            // skip all
+            return;
+        }
         int msgProperty = 0;
 
         if (iMmsDataPlugin->attachmentCount() > 0)
@@ -552,7 +560,7 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                     isBodyTextSet = true;
                     file.close();
                 }
-                if (!isImageSet && objectList[index]->mimetype().contains(
+                if (!isVideoSet && !isImageSet && objectList[index]->mimetype().contains(
                     "image"))
                 {
                     isImageSet = true;
@@ -567,7 +575,7 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                     }
                     imagePath = objectList[index]->path();
                 }
-                if (!isAudioSet && objectList[index]->mimetype().contains(
+                if (!isVideoSet && !isAudioSet && objectList[index]->mimetype().contains(
                     "audio"))
                 {
                     msgProperty |= EPreviewAudio;
@@ -581,7 +589,7 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                     }
                     isAudioSet = true;
                 }
-                if (!isVideoSet && objectList[index]->mimetype().contains(
+                if (!( isImageSet || isAudioSet) && !isVideoSet && objectList[index]->mimetype().contains(
                     "video"))
                 {
                     isVideoSet = true;
@@ -604,6 +612,7 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
         }
         QPixmap pixmap;
         //populate item  with the attachment list
+        //TODO: This code is not required bcoz video icon is show and not preview  
         if (isVideoSet)
         {
             item.setData(videoPath, Attachments);
@@ -825,7 +834,7 @@ void ConversationsModel::setPreviewIcon(QPixmap& pixmap, QString& filePath,
     if (!inDb)
     {
         QPixmap pixmap(filePath);
-        QPixmap scaledPixmap = pixmap.scaled(63.65, 63.65, Qt::IgnoreAspectRatio);
+        QPixmap scaledPixmap = pixmap.scaled(KWidth, KHeight, Qt::IgnoreAspectRatio);
         HbIcon *previewIcon = new HbIcon(scaledPixmap);
 
         previewIconCache.insert(msgId, previewIcon);
@@ -963,4 +972,8 @@ void ConversationsModel::clearModel()
     previewIconCache.clear();
 }
 
+void ConversationsModel:: emitConversationViewEmpty()
+{
+    emit conversationViewEmpty();
+}
 //EOF

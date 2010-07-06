@@ -43,6 +43,7 @@
 QTM_USE_NAMESPACE
 
 const int INVALID_MSGID = -1;
+const int INVALID_CONVID = -1;
 
 // LOCALIZATION
 #define LOC_SAVED_TO_DRAFTS    hbTrId("txt_messaging_dpopinfo_saved_to_drafts")
@@ -102,6 +103,8 @@ void MsgConversationBaseView::initView()
     mMainLayout->setContentsMargins(CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN);
 
     mMainLayout->addItem(mContactCard);
+    connect(mContactCard, SIGNAL(conversationIdChanged(qint64)), this,
+        SLOT(handleConversationIdChange(qint64)));
 
     /**
      * Create conversation view and connect to proper signals.
@@ -224,7 +227,21 @@ void MsgConversationBaseView::doDelayedConstruction()
 //---------------------------------------------------------------	
 void MsgConversationBaseView::handleViewReady()
 {
-    ConversationsEngine::instance()->fetchMoreConversations();
+    mConversationView->onViewReady();
+}
+
+//---------------------------------------------------------------
+// MsgConversationBaseView::handleConversationIdChange
+//
+//---------------------------------------------------------------
+void MsgConversationBaseView::handleConversationIdChange(qint64 convId)
+{
+    if (INVALID_CONVID != convId && mConversationId != convId) {
+	
+        mConversationId = convId;        
+        // publsih conversation id
+        mSettingsManager->writeItemValue(mCVIdkey, (int) mConversationId);       
+    }
 }
 
 //---------------------------------------------------------------

@@ -66,8 +66,6 @@ const QString SORT_ICON("qtg_mono_sort");
 // Confirmation note
 #define LOC_DELETE_MESSAGE        hbTrId("txt_messaging_dialog_delete_message")
 #define LOC_DELETE_ALL_DRAFTS     hbTrId("txt_messaging_dialog_delate_all_drafts")
-#define LOC_BUTTON_DELETE         hbTrId("txt_common_button_delete")
-#define LOC_BUTTON_CANCEL         hbTrId("txt_common_button_cancel")
 
 //---------------------------------------------------------------
 // DraftsListView::DraftsListView
@@ -122,6 +120,7 @@ void DraftsListView::setupToolbar()
         viewAction->setIcon(HbIcon(SORT_ICON));
 
         mViewExtnList = new HbListWidget();
+        mViewExtnList->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
         mViewExtnList->addItem(LOC_TB_EXTN_DRAFTS);
         mViewExtnList->addItem(LOC_TB_EXTN_CONVERSATIONS);
 
@@ -230,8 +229,8 @@ void DraftsListView::deleteDraftMessage()
     }
 
     HbMessageBox::question(LOC_DELETE_MESSAGE,
-        this,SLOT(onDialogDeleteMsg(HbAction*)),
-        LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
+                           this,SLOT(onDialogDeleteMsg(HbAction*)),
+                           HbMessageBox::Delete | HbMessageBox::Cancel);
 
 }
 
@@ -242,9 +241,8 @@ void DraftsListView::deleteDraftMessage()
 void DraftsListView::deleteAllDraftMessage()
 {
     HbMessageBox::question(LOC_DELETE_ALL_DRAFTS,
-        this,SLOT(onDialogDeleteAllMessages(HbAction*)),
-        LOC_BUTTON_DELETE,
-        LOC_BUTTON_CANCEL);
+                           this,SLOT(onDialogDeleteAllMessages(HbAction*)),
+                           HbMessageBox::Delete | HbMessageBox::Cancel);
 }
 
 //------------------------------------------------------------------------------

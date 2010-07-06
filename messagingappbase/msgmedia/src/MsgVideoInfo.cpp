@@ -122,11 +122,6 @@ void CMsgVideoInfo::RunL()
 // -----------------------------------------------------------------------------
 void CMsgVideoInfo::ResolveVideoInfoL( RFile& aFile )
     {
-    CCoeEnv* env = CCoeEnv::Static();
-    if ( !env )
-        {
-        User::Leave( KErrNotSupported );
-        }
 
     CHXMetaDataUtility* dataUtil = CHXMetaDataUtility::NewL();
     

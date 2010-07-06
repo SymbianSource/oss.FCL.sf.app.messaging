@@ -103,6 +103,13 @@ public:
      */
     void EditorOperationEvent( TUniEditorProcessImageOperationEvent aEvent,
                                TFileName aFileName );
+    /**
+	 * Function which tells whether the image resize process is in progress
+	 */
+    bool isImageResizing()
+        {
+        return mIsImageResizing;
+        }
 
 public slots:
     /**
@@ -331,6 +338,12 @@ private:
      * boolean specifying a draft message
      */
     bool mDraftMessage ;
+    
+    /*
+     * Flag to indicate the state of image resizing process. 
+	 * true - resize in progress. false - resize is not underway.
+     */
+    bool mIsImageResizing;
 };
 
 #endif //MSG_UNIFIED_EDITOR_BODY_H

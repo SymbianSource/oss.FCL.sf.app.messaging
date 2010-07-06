@@ -38,6 +38,8 @@
 ConversationsSummaryModel::ConversationsSummaryModel(QObject* parent)
 :QStandardItemModel(parent)
     {
+    QStandardItemModel::setSortRole(TimeStamp);
+    QStandardItemModel::sort(0, Qt::DescendingOrder);
     }
 
 //---------------------------------------------------------------
@@ -156,7 +158,7 @@ QVariant ConversationsSummaryModel::data(const QModelIndex & index ,
 // @see header
 //---------------------------------------------------------------
 void ConversationsSummaryModel::addRow(
-        const CCsClientConversation& conversation)
+        const CCsClientConversation& conversation, bool caching)
     {  
     int convId = conversation.GetConversationEntryId();
     
@@ -178,7 +180,12 @@ void ConversationsSummaryModel::addRow(
         QModelIndex index = indexList[0];
         QStandardItem* item = this->item(index.row(), 0);
         populateItem(*item,conversation);
-    }        
+    }  
+    // no need to sort if it is initial caching, as sorting is already done
+    if (!caching)
+        {
+        QStandardItemModel::sort(0, Qt::DescendingOrder);
+        }
     }
 
 //---------------------------------------------------------------

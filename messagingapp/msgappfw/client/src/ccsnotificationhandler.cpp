@@ -126,7 +126,11 @@ void CCsNotificationHandler::RunL()
         case EModifyConversationListEvent:
             iRequestHandler->HandleModifyConversationList(iNotificationBuffer);
             break;
-
+            
+        case EPartialDeleteConversationListEvent:
+            iRequestHandler->HandlePartialDeleteConversationList(iNotificationBuffer);
+            break;
+            
         case EAddConversationEvent:
             iRequestHandler->HandleAddConversation(iNotificationBuffer);
             break;

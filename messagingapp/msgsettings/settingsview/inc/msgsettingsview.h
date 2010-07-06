@@ -53,12 +53,13 @@ public slots:
     void onNewSMSCCenterClicked(int index);
     void onSmsCenterEditViewClosed();
         
-private:
+private:    
+    //Sms Center View
+    MsgSMSCenterView* mSMSCenterView;  
+    
     //Settings Form
     MsgSettingsForm* mSettingsForm;
     
-    //Sms Center View
-    MsgSMSCenterView* mSMSCenterView;  
     HbMainWindow* mMainWindow;
 };
 #endif // MSGSETTINGSVIEW_H

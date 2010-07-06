@@ -117,6 +117,13 @@ private slots:
      */
     void onDialogDeleteMsg(HbAction* action);
     
+	/**
+	 * This slot is called when appengine emits the partialdeleteconversationlist event.
+	 * This performs grab of the HbAbstractviewitem on which delete was called.
+	 * @param conversation id of the item.
+	 */
+    void enableListitem( int conversationId );
+	    
 private:
 
     /**

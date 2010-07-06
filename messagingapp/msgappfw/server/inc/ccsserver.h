@@ -30,6 +30,7 @@ class CCsConversationEntry;
 class CCsSession;
 class CCsContactsManager;
 class CCsClientConversation;
+class CCsBackUpHandler;
 
 // CLASS DECLARATION
 /** 
@@ -131,7 +132,18 @@ public:
     {
     }
     ;
-
+    
+	/**
+	 * Reload the plugins, once they are unloaded after a 
+	 * backup/ restore
+	 */
+    void LoadPlugins();
+	
+	/**
+	 * Unload the plugins, for backup/ restore
+	 */
+    void DeletePlugins();
+    
 public:
 
     /**
@@ -183,6 +195,11 @@ private:
      * Caching status
      */
     TUint8 iCsCachingStatus;
+    
+    /**
+     * The backup handler class
+     */
+    CCsBackUpHandler* iBackUpHandler;
 };
 
 #endif // __C_CS_SERVER_H

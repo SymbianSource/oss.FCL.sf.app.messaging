@@ -149,26 +149,42 @@ void MmsSettingsPrivate::setMMSRetrieval(MsgSettingEngine::MmsRetrieval aRetriev
     mMmsClient->RestoreSettingsL();
     mMmsSetting->CopyL( mMmsClient->MmsSettings() );
 
-    //do your operation
-    TMmsReceivingMode receveMode = EMmsReceivingAutomatic;
-
-    if (aRetrieval == MsgSettingEngine::Maual)
-        receveMode = EMmsReceivingManual;
-    else if (aRetrieval == MsgSettingEngine::Off)
-        receveMode = EMmsReceivingPostpone;
-    else if (aRetrieval == MsgSettingEngine::No)
-        receveMode = EMmsReceivingReject;
-
-    if (aRetrieval == MsgSettingEngine::AlwaysAutomatic)
-        {
-        mMmsSetting->SetReceivingModeForeign(receveMode);
-        }
-    else
-        {
-        mMmsSetting->SetReceivingModeForeign(EMmsReceivingManual);
-        }
-
-    mMmsSetting->SetReceivingModeHome(receveMode);
+    switch ( aRetrieval )
+                {
+                case MsgSettingEngine::AutomInHomeNetwork:
+                    {
+                    mMmsSetting->SetReceivingModeHome( EMmsReceivingAutomatic );
+                    mMmsSetting->SetReceivingModeForeign( EMmsReceivingManual );
+                    break;
+                    }
+                case MsgSettingEngine::AlwaysAutomatic:
+                    { 
+                    mMmsSetting->SetReceivingModeHome( EMmsReceivingAutomatic );
+                    mMmsSetting->SetReceivingModeForeign( EMmsReceivingAutomatic );
+                    break;
+                    }
+                case  MsgSettingEngine::Manual:
+                    {
+                    mMmsSetting->SetReceivingModeHome( EMmsReceivingManual );
+                    mMmsSetting->SetReceivingModeForeign( EMmsReceivingManual );
+                    break;
+                    }
+                case MsgSettingEngine::Off:
+                    {   
+                    mMmsSetting->SetReceivingModeHome( EMmsReceivingPostpone );
+                    mMmsSetting->SetReceivingModeForeign( EMmsReceivingPostpone );
+                    break;
+                    }
+                case MsgSettingEngine::No:
+                   {   
+                   mMmsSetting->SetReceivingModeHome( EMmsReceivingReject );
+                   mMmsSetting->SetReceivingModeForeign( EMmsReceivingReject );
+                   break;
+                   }
+                default:
+                    break;
+                }
+    
     
     //save the settings
     mMmsClient->SetSettingsL( *mMmsSetting );
@@ -229,21 +245,36 @@ void MmsSettingsPrivate::advanceMmsSettings(
 
     mMmsAccount->LoadSettingsL(*mMmsSetting);
 
-    TMmsReceivingMode receveMode = mMmsSetting->ReceivingModeHome();
+    TMmsReceivingMode receveModeHome = mMmsSetting->ReceivingModeHome();
+    TMmsReceivingMode receveModeForeign = mMmsSetting->ReceivingModeForeign();
+   
     
-    if (receveMode == EMmsReceivingManual)
-        aRetrieval = MsgSettingEngine::Maual;
-    else if (receveMode == EMmsReceivingPostpone)
-        aRetrieval = MsgSettingEngine::Off;
-    else if (receveMode == EMmsReceivingReject)
-        aRetrieval = MsgSettingEngine::No;
-
-    receveMode = mMmsSetting->ReceivingModeForeign();
-    if (receveMode == EMmsReceivingAutomatic)
-        {
-        aRetrieval = MsgSettingEngine::AlwaysAutomatic;
-        }
-
+    // if default value is not acceptable, choose next by keeping costs low
+       if ( receveModeHome == EMmsReceivingAutomatic &&
+           receveModeForeign == EMmsReceivingAutomatic )
+       {
+       aRetrieval = MsgSettingEngine::AlwaysAutomatic;
+       }
+       else if ( receveModeHome == EMmsReceivingManual &&
+           receveModeForeign == EMmsReceivingManual )
+       {
+       aRetrieval = MsgSettingEngine::Manual;   
+       }
+       else if ( receveModeHome == EMmsReceivingReject &&
+           receveModeForeign == EMmsReceivingReject )
+       {
+       aRetrieval = MsgSettingEngine::No; 
+       }
+       else if ( receveModeHome == EMmsReceivingPostpone &&
+           receveModeForeign == EMmsReceivingPostpone )
+       {
+       aRetrieval = MsgSettingEngine::Off;   
+       }
+       // Should always be automatic@home & manaul@roam
+       else
+       {
+       aRetrieval = MsgSettingEngine::AutomInHomeNetwork;   
+       }
     aAnonymousStatus = mMmsSetting->AcceptAnonymousMessages();
 
     aMmsAdvertsStatus = mMmsSetting->AcceptAdvertisementMessages();

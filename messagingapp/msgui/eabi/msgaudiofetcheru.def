@@ -9,8 +9,8 @@ EXPORTS
 	_ZN19MsgAudioFetcherView19removeToolBarActionEv @ 8 NONAME
 	_ZN19MsgAudioFetcherView23on_leftAction_triggeredEv @ 9 NONAME
 	_ZN19MsgAudioFetcherView24on_rightAction_triggeredEv @ 10 NONAME
-	_ZN19MsgAudioFetcherViewC1Ev @ 11 NONAME
-	_ZN19MsgAudioFetcherViewC2Ev @ 12 NONAME
+	_ZN19MsgAudioFetcherViewC1ERK5QListI8QVariantE @ 11 NONAME
+	_ZN19MsgAudioFetcherViewC2ERK5QListI8QVariantE @ 12 NONAME
 	_ZN19MsgAudioFetcherViewD0Ev @ 13 NONAME
 	_ZN19MsgAudioFetcherViewD1Ev @ 14 NONAME
 	_ZN19MsgAudioFetcherViewD2Ev @ 15 NONAME

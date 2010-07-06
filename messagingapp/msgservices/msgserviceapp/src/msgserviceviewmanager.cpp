@@ -36,11 +36,8 @@
 #include "unidatamodelplugininterface.h"
 
 // LOCALIZATION
-#define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
-#define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
 #define LOC_DLG_SAVE_RINGTONE hbTrId("txt_conversations_dialog_save_ringing_tone")
-#define LOC_BUTTON_SAVE hbTrId("txt_common_menu_save")
 
 //----------------------------------------------------------------------------
 // MsgViewInterface::MsgViewInterface
@@ -215,6 +212,43 @@ void MsgServiceViewManager::send(const QString phoneNumber,
 // MsgServiceViewManager::send
 // @see header
 //----------------------------------------------------------------------------
+void MsgServiceViewManager::send(const QVariantMap addressList, 
+              const QString bodyText)
+    {
+    QStringList phoneNumList = addressList.keys();
+ 
+    ConvergedMessageAddressList addrList; 
+	
+    int count = phoneNumList.count();
+    for( int i = 0; i < count; ++ i )
+        {
+        QString phNum = phoneNumList[i];
+        ConvergedMessageAddress* address = new ConvergedMessageAddress(phNum,
+                addressList.value(phNum).toString());	
+        addrList.append(address);
+        }
+    
+    ConvergedMessage message;
+    message.addToRecipients(addrList);
+    message.setBodyText(bodyText);
+    
+    QVariantList param;
+    QByteArray dataArray;
+    QDataStream messageStream(&dataArray, 
+            QIODevice::WriteOnly | QIODevice::Append);
+    message.serialize(messageStream);
+    param << dataArray;
+
+    // switch to editor
+    switchToUniEditor(param);
+
+    XQServiceUtil::toBackground(false);
+    }
+
+//----------------------------------------------------------------------------
+// MsgServiceViewManager::send
+// @see header
+//----------------------------------------------------------------------------
 void MsgServiceViewManager::send(QVariant data)
     {
     ConvergedMessage message;
@@ -310,7 +344,7 @@ void MsgServiceViewManager::view(int msgId)
         case ConvergedMessage::Mms:
         case ConvergedMessage::MmsNotification:
             {
-            handleSmsMmsMsg(msgId);
+            handleSmsMmsMsg(msgId,msgType);
             break;
             }
         case ConvergedMessage::BioMsg:
@@ -332,9 +366,8 @@ void MsgServiceViewManager::view(int msgId)
             {
             // for un supported message show delete option
             HbMessageBox::question(LOC_DELETE_MESSAGE, 
-                this,SLOT(onDialogDeleteMsg(HbAction*)),    
-                LOC_BUTTON_DELETE,
-                LOC_BUTTON_CANCEL);
+                                   this,SLOT(onDialogDeleteMsg(HbAction*)),    
+                                   HbMessageBox::Delete | HbMessageBox::Cancel);
             break;
             }
     }
@@ -344,22 +377,64 @@ void MsgServiceViewManager::view(int msgId)
 // MsgServiceViewManager::handleSmsMmsMsg
 // @see header
 // ----------------------------------------------------------------------------
-void MsgServiceViewManager::handleSmsMmsMsg(int msgId)
+void MsgServiceViewManager::handleSmsMmsMsg(int msgId,int msgType)
+{
+    if(mStoreHandler->isDraftMessage(msgId))
     {
-    if (!mUniViewer) {
-    mUniViewer = new UnifiedViewer(msgId);
-    mUniViewer->setNavigationAction(mBackAction);
-    mMainWindow->addView(mUniViewer);
-    connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,
-            SLOT(switchView(const QVariantList&)));
-    }
-    mUniViewer->populateContent(msgId, true, 1);
+        ConvergedMessageId convergedMsgId = ConvergedMessageId(msgId);
+        ConvergedMessage message;
+        message.setMessageType((ConvergedMessage::MessageType) msgType);
+        message.setMessageId(convergedMsgId);
 
-    mMainWindow->setCurrentView(mUniViewer);
-    
-    // set current view as viewer
-    mCurrentView = MsgBaseView::UNIVIEWER;
+        // Launch uni-editor view
+        QByteArray dataArray;
+        QDataStream messageStream(&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+        message.serialize(messageStream);
+
+        QVariantList params;
+        params << MsgBaseView::UNIEDITOR; // target view
+        params << MsgBaseView::SERVICE; // source view
+
+        params << dataArray;
+        
+        // except first 2 parameters pass other parameters
+        QVariantList editorData;
+        for(int a = 2; a < params.length(); ++a)
+        {
+            editorData << params.at(a);
+        }
+        // construct
+          if (!mUniEditor) {
+          mUniEditor = new MsgUnifiedEditorView();
+          mMainWindow->addView(mUniEditor);
+          mUniEditor->setNavigationAction(mBackAction);
+          connect(mUniEditor, SIGNAL(switchView(const QVariantList&)), this,
+                  SLOT(switchView(const QVariantList&)));
+          }
+          
+          // check if additional data for unieditor's consumption is available
+          mUniEditor->openDraftsMessage(editorData);
+
+          mMainWindow->setCurrentView(mUniEditor);
+          mCurrentView = MsgBaseView::UNIEDITOR;
     }
+    else
+    {
+        if (!mUniViewer) {
+            mUniViewer = new UnifiedViewer(msgId);
+            mUniViewer->setNavigationAction(mBackAction);
+            mMainWindow->addView(mUniViewer);
+            connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,
+                SLOT(switchView(const QVariantList&)));
+        }
+        mUniViewer->populateContent(msgId, true, 1);
+
+        mMainWindow->setCurrentView(mUniViewer);
+
+        // set current view as viewer
+        mCurrentView = MsgBaseView::UNIVIEWER;
+    }
+}
 
 // ----------------------------------------------------------------------------
 // MsgServiceViewManager::handleRingtoneMsg
@@ -369,7 +444,8 @@ void MsgServiceViewManager::handleRingtoneMsg(int msgId)
     {
     mMessageId = msgId;
     HbMessageBox::question(LOC_DLG_SAVE_RINGTONE, this,
-        SLOT(onDialogSaveTone(HbAction*)), LOC_BUTTON_SAVE, LOC_BUTTON_CANCEL);
+                           SLOT(onDialogSaveTone(HbAction*)),
+                           HbMessageBox::Save | HbMessageBox::Cancel);
     }
 
 // ----------------------------------------------------------------------------

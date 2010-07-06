@@ -31,6 +31,7 @@
 
 // USER INCLUDES
 #include "msgbaseview.h"
+#include "convergedmessage.h"
 
 // FORWARD DECLARATIONS
 class MsgAudioFetcherWidget;
@@ -48,7 +49,7 @@ public:
     /**
      * Constructor
      */
-    explicit MsgAudioFetcherView();
+    explicit MsgAudioFetcherView(const QVariantList& data);
 
     /**
      * Destructor
@@ -101,6 +102,12 @@ private:
      * Toolbar's right action
      */
     HbAction *mToolBarRightAction;
+    
+    /**
+     * Converged Message object
+     * owned
+     */
+    ConvergedMessage* message;
 };
 
 #endif /* MSGAUDIOFETCHERVIEW_H */

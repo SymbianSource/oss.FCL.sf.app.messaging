@@ -23,8 +23,8 @@ EXPORTS
 	_ZN20MsgUnifiedEditorView14addAttachmentsE11QStringList @ 22 NONAME
 	_ZN20MsgUnifiedEditorView14changePriorityEv @ 23 NONAME
 	_ZN20MsgUnifiedEditorView14forwardMessageER18ConvergedMessageIdN16ConvergedMessage11MessageTypeE @ 24 NONAME
-	_ZN20MsgUnifiedEditorView14sendingOptionsEv @ 25 NONAME
-	_ZN20MsgUnifiedEditorView15contactsFetchedERK8QVariant @ 26 NONAME
+	_ZN20MsgUnifiedEditorView15contactsFetchedERK8QVariant @ 25 NONAME
+	_ZN20MsgUnifiedEditorView15formatAddressesER5QListIP23ConvergedMessageAddressE @ 26 NONAME
 	_ZN20MsgUnifiedEditorView15populateContentERK5QListI8QVariantE @ 27 NONAME
 	_ZN20MsgUnifiedEditorView16createTempFolderEv @ 28 NONAME
 	_ZN20MsgUnifiedEditorView16enableSendButtonEb @ 29 NONAME

@@ -151,7 +151,10 @@ int MsgUnifiedEditorSubject::subjectSize()
 
 void MsgUnifiedEditorSubject::setText(const QString& text)
 {
-    mSubjectEdit->setText(text);
+    if(!text.isEmpty())
+    {
+        mSubjectEdit->setText(text);
+    }
 }
 
 void MsgUnifiedEditorSubject::setFocus()

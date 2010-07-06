@@ -105,6 +105,13 @@ public slots:
      */
     void handleContentChange();
 
+signals:
+    /**
+     * Emitted when composed message can be sent.
+     * @param enable true if send is possible else false.
+     */
+    void enableSend(bool enable);
+
 private:
     /**
      * setter method to initialize content
@@ -156,6 +163,11 @@ private:
      * @return true if MMS criteria is met
      */
     bool otherMMSCriteriaMet();
+
+    /**
+     * Checks if composed message can be sent and emits a signal.
+     */
+    void updateSend();
 
 private:
 
