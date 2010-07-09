@@ -28,6 +28,8 @@
 #include <csmsaccount.h>
 #include <smutset.h>
 #include <hbmessagebox.h>
+#include <hbcolorscheme.h>
+#include <QColor>
 #include <QTimer>
 #include "unieditorpluginloader.h"
 #include "unieditorplugininterface.h"
@@ -39,11 +41,16 @@
 
 const QString SEND_ICON("qtg_mono_send");
 const QString BACKGROUND("qtg_fr_input_v_bg");
-const QString BACKGROUND_FRAME("qtg_fr_btn_normal");
+const QString BACKGROUND_FRAME("qtg_fr_messaging_char_count");
+const QString CHAR_COUNTER_COLOR("qtc_messaging_char_count");
 
-const QString SEND_BUTTON_NORMAL("qtg_fr_input_btn_function_normal");
-const QString SEND_BUTTON_PRESSED("qtg_fr_input_btn_function_pressed");
-const QString SEND_BUTTON_DISABLED("qtg_fr_input_btn_function_disabled");
+const QString SEND_BUTTON_NORMAL("qtg_fr_btn_green_normal");
+const QString SEND_BUTTON_PRESSED("qtg_fr_btn_green_pressed");
+const QString SEND_BUTTON_DISABLED("qtg_fr_btn_disabled");
+
+const QString SEND_BUTTON_NORMAL_COLOR("qtc_callhandling_answer_normal");
+const QString SEND_BUTTON_PRESSED_COLOR("qtc_callhandling_answer_pressed");
+const QString SEND_BUTTON_DISABLED_COLOR("qtc_button_disabled");
 
 #define LOC_SMS_CHAR_LIMIT_REACHED hbTrId("txt_messaging_dialog_sms_character_count_exceeded")
 #define LOC_HINT_TEXT hbTrId("txt_messaging_formlabel_enter_message_here")
@@ -90,17 +97,20 @@ void MsgEditorWidget::init()
     HbFrameItem* backGround = new HbFrameItem(this); 
     backGround->frameDrawer().setFrameType(HbFrameDrawer::NinePieces); 
     mSendButton->setBackgroundItem(backGround); 
-    updateButtonBackground(SEND_BUTTON_DISABLED); 
+    updateButtonBackgroundAndColor(SEND_BUTTON_DISABLED,SEND_BUTTON_DISABLED_COLOR); 
     mSendButton->setIcon(HbIcon(SEND_ICON));
     
     mCharCounter = new HbTextItem(this);
     HbStyle::setItemName(mCharCounter, "charCounter");
     mCharCounter->setZValue(1.5);
     
+    QColor color = HbColorScheme::color(CHAR_COUNTER_COLOR);
+    mCharCounter->setTextColor(color);
+    
     mBackgroundItem = new HbFrameItem(this);
     HbStyle::setItemName(mBackgroundItem, "charCounterFrame");
 
-    mBackgroundItem->frameDrawer().setFrameType(HbFrameDrawer::NinePieces);
+    mBackgroundItem->frameDrawer().setFrameType(HbFrameDrawer::ThreePiecesHorizontal);
     mBackgroundItem->frameDrawer().setFillWholeRect(true);
     
     mBackgroundItem->frameDrawer().setFrameGraphicsName(
@@ -175,7 +185,7 @@ void MsgEditorWidget::onTextChanged(const QString& str)
             {
             mSendButton->setFocusProxy(mMsgEditor);
             mSendButton->setEnabled(true);
-            updateButtonBackground(SEND_BUTTON_NORMAL);
+            updateButtonBackgroundAndColor(SEND_BUTTON_NORMAL,SEND_BUTTON_NORMAL_COLOR);
             }
         }
     else
@@ -184,7 +194,7 @@ void MsgEditorWidget::onTextChanged(const QString& str)
             {
             mSendButton->setFocusProxy(0);
             mSendButton->setEnabled(false);
-            updateButtonBackground(SEND_BUTTON_DISABLED);
+            updateButtonBackgroundAndColor(SEND_BUTTON_DISABLED,SEND_BUTTON_DISABLED_COLOR);
             }
         }
     
@@ -279,16 +289,22 @@ void MsgEditorWidget::onClicked()
     }
 
 //---------------------------------------------------------------
-// MsgEditor::updateButtonBackground
+// MsgEditor::updateButtonBackgroundAndColor
 // @see header
 //---------------------------------------------------------------
-void MsgEditorWidget::updateButtonBackground(const QString& bg) 
+void MsgEditorWidget::updateButtonBackgroundAndColor(const QString& bg,const QString& iconColor) 
     { 
     HbFrameItem* drawer = static_cast<HbFrameItem*>(mSendButton->backgroundItem()); 
     if(drawer) 
         { 
         drawer->frameDrawer().setFrameGraphicsName(bg);   
         } 
+    QColor color = HbColorScheme::color(iconColor);
+    
+    if(color.isValid())
+    	 {
+    	 mSendButton->icon().setColor(color);
+    	 }	    
     } 
     
 
@@ -298,7 +314,7 @@ void MsgEditorWidget::updateButtonBackground(const QString& bg)
 //---------------------------------------------------------------
 void MsgEditorWidget::onPressed()
     {
-    updateButtonBackground(SEND_BUTTON_PRESSED);
+    updateButtonBackgroundAndColor(SEND_BUTTON_PRESSED,SEND_BUTTON_PRESSED_COLOR);
     }
 
 //---------------------------------------------------------------
@@ -307,7 +323,7 @@ void MsgEditorWidget::onPressed()
 //---------------------------------------------------------------
 void MsgEditorWidget::onReleased()
     {
-    updateButtonBackground(SEND_BUTTON_NORMAL);
+    updateButtonBackgroundAndColor(SEND_BUTTON_NORMAL,SEND_BUTTON_NORMAL_COLOR);
     }
 	
 //---------------------------------------------------------------

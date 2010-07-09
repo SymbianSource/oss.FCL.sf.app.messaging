@@ -302,13 +302,14 @@ void MsgUnifiedEditorView::openDraftsMessage(const QVariantList& editorData)
     mCanSaveToDrafts = false;  
 }
 
-void MsgUnifiedEditorView::forwardMessage(ConvergedMessageId& messageId,
-    ConvergedMessage::MessageType messageType )
+void MsgUnifiedEditorView::fetchMessageFromStore(
+        ConvergedMessageId& messageId,
+        ConvergedMessage::MessageType messageType,
+        int editorOperation)
 {
     if(!mPluginLoader)
     {
         mPluginLoader = new UniEditorPluginLoader(this);
-  
     }
     UniEditorPluginInterface* pluginInterface = NULL;
     if( messageType == ConvergedMessage::Mms )
@@ -325,8 +326,7 @@ void MsgUnifiedEditorView::forwardMessage(ConvergedMessageId& messageId,
     //Fetch the converged message from the msgId
     ConvergedMessage* msg;
     msg = pluginInterface->convertFrom(messageId.getId(),
-        UniEditorPluginInterface::Forward);
-
+                    (UniEditorPluginInterface::EditorOperation)editorOperation);
     if( msg != NULL )
     {
         //Populate the content inside editor
@@ -367,7 +367,23 @@ void MsgUnifiedEditorView::populateContent(const QVariantList& editorData)
         break;
         case MsgBaseView::FORWARD_MSG:
         {
-            forwardMessage(*messageDetails->id(), messageDetails->messageType());
+            fetchMessageFromStore(*messageDetails->id(),
+                                   messageDetails->messageType(),
+                                   UniEditorPluginInterface::Forward);
+        }
+        break;
+        case MsgBaseView::REPLY_MSG:
+        {
+            fetchMessageFromStore(*messageDetails->id(),
+                                   messageDetails->messageType(),
+                                   UniEditorPluginInterface::Reply);
+        }
+        break;
+        case MsgBaseView::REPLY_ALL_MSG:
+        {
+            fetchMessageFromStore(*messageDetails->id(),
+                                   messageDetails->messageType(),
+                                   UniEditorPluginInterface::ReplyAll);
         }
         break;
         default:

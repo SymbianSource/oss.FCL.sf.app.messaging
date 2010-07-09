@@ -144,15 +144,17 @@ ConvergedMessageAddressList MsgContactCardWidget::address()
     QStandardItemModel* msgModel = ConversationsEngine::instance()->getConversationsModel();
     const int rowCnt = msgModel->rowCount();
     QModelIndex index = msgModel->index(rowCnt-1, 0);
-    ConvergedMessageAddress* address = new ConvergedMessageAddress(
-        index.data(ConversationAddress).toString());
+    QString addr = index.data(ConversationAddress).toString();
+    ConvergedMessageAddress* address = new ConvergedMessageAddress(addr);
+    // resolve contact
     QString displayname;
-    QString addr;
-    ConversationsEngine::instance()->getContactDetails(
-            ConversationsEngine::instance()->getCurrentConversationId(),
-            displayname,
-            addr);
-    address->setAlias(displayname);
+    int count;
+    int retval = MsgContactHandler::resolveContactDisplayName(
+            addr, displayname, count);
+    if(retval != -1)
+    {
+        address->setAlias(displayname);
+    }
     addresses.append(address);
     return addresses;
 }

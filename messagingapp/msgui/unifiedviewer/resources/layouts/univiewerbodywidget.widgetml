@@ -12,6 +12,9 @@
      <meshitem src="pixmap" srcEdge="LEFT" dst="" dstEdge="LEFT" spacer="leftSpacer"  />
      <meshitem src="pixmap" srcEdge="RIGHT" dst="" dstEdge="RIGHT"  spacer="rightSpacer"  />
 
+     <meshitem src="overlayItem" srcEdge="CENTERH" dst="pixmap" dstEdge="CENTERH" />
+     <meshitem src="overlayItem" srcEdge="CENTERV" dst="pixmap" dstEdge="CENTERV" />
+
      <meshitem src="textItem" srcEdge="TOP" dst="pixmap" dstEdge="BOTTOM" />
      <meshitem src="textItem" srcEdge="LEFT" dst="" dstEdge="LEFT" />
      <meshitem src="textItem" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
@@ -31,6 +34,9 @@
      <meshitem src="pixmap" srcEdge="LEFT" dst="" dstEdge="LEFT" spacer="leftSpacer"  />
      <meshitem src="pixmap" srcEdge="RIGHT" dst="" dstEdge="RIGHT"  spacer="rightSpacer"  />
      <meshitem src="pixmap" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" spacer="bottomSpacer" />
+
+     <meshitem src="overlayItem" srcEdge="CENTERH" dst="pixmap" dstEdge="CENTERH" />
+     <meshitem src="overlayItem" srcEdge="CENTERV" dst="pixmap" dstEdge="CENTERV" />
   </layout>
 
   <layout name="layout-landscape" type="mesh">
@@ -46,6 +52,8 @@
      <meshitem src="pixmap" srcEdge="LEFT" dst="" dstEdge="LEFT"  spacer="leftSpacer"   />
      <meshitem src="pixmap" srcEdge="RIGHT" dst="" dstEdge="CENTERH"  spacer="rightSpacer"  />
 
+     <meshitem src="overlayItem" srcEdge="CENTERH" dst="pixmap" dstEdge="CENTERH" />
+     <meshitem src="overlayItem" srcEdge="CENTERV" dst="pixmap" dstEdge="CENTERV" />
 
      <meshitem src="textItem" srcEdge="LEFT" dst="" dstEdge="CENTERH"  />
      <meshitem src="textItem" srcEdge="TOP" dst="audioItem" dstEdge="BOTTOM"  />
@@ -81,5 +89,8 @@
      <meshitem src="pixmap" srcEdge="LEFT" dst="" dstEdge="LEFT" spacer="leftSpacer"  />
      <meshitem src="pixmap" srcEdge="RIGHT" dst="" dstEdge="RIGHT" spacer="rightSpacer"  />
      <meshitem src="pixmap" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" spacer="bottomSpacer"  />
+
+     <meshitem src="overlayItem" srcEdge="CENTERH" dst="pixmap" dstEdge="CENTERH" />
+     <meshitem src="overlayItem" srcEdge="CENTERV" dst="pixmap" dstEdge="CENTERV" />
   </layout>
 </hbwidget>

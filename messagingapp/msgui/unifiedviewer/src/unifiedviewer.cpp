@@ -114,11 +114,15 @@ void UnifiedViewer::createToolBar()
     }
     else
     {
-        toolbar->addAction(HbIcon(REPLY_ICON), "");
+        // do not show reply option for multi recipient outgoing message
+        if(!(!mViewFeeder->isIncoming() && mViewFeeder->recipientCount()>1))
+        {
+            toolbar->addAction(HbIcon(REPLY_ICON), "", this, SLOT(handleReplyAction()));
+        }
 
         if (mViewFeeder->recipientCount() > 1)
         {
-            toolbar->addAction(HbIcon(REPLY_ALL_ICON), "");
+            toolbar->addAction(HbIcon(REPLY_ALL_ICON), "", this, SLOT(handleReplyAllAction()));
         }
     }
 
@@ -192,32 +196,26 @@ void UnifiedViewer::populateContent(const qint32 messageId, bool update, int msg
 // @see header file
 //---------------------------------------------------------------
 void UnifiedViewer::handleFwdAction()
+{    
+    launchEditor(MsgBaseView::FORWARD_MSG);
+}
+
+//---------------------------------------------------------------
+// UnifiedViewer::handleReplyAction
+// @see header file
+//---------------------------------------------------------------
+void UnifiedViewer::handleReplyAction()
 {
-    ConvergedMessage message;
-    ConvergedMessageId id(mMessageId);
-    message.setMessageId(id);
-    if(mViewFeeder->msgType() == KSenduiMtmMmsUidValue)
-    {
-        message.setMessageType(ConvergedMessage::Mms);
-    }
-    else
-    {
-        message.setMessageType(ConvergedMessage::Sms);    
-    }
+    launchEditor(MsgBaseView::REPLY_MSG); 
+}
 
-    QByteArray dataArray;
-    QDataStream messageStream
-    (&dataArray, QIODevice::WriteOnly | QIODevice::Append);
-    message.serialize(messageStream);
-
-    QVariantList params;
-    params << MsgBaseView::UNIEDITOR; // target view
-    params << MsgBaseView::UNIVIEWER; // source view
-
-    params << dataArray;
-    params << MsgBaseView::FORWARD_MSG;
-        
-    emit switchView(params);
+//---------------------------------------------------------------
+// UnifiedViewer::handleReplyAllAction
+// @see header file
+//---------------------------------------------------------------
+void UnifiedViewer::handleReplyAllAction()
+{
+    launchEditor(MsgBaseView::REPLY_ALL_MSG);
 }
 
 //---------------------------------------------------------------
@@ -295,6 +293,40 @@ void UnifiedViewer::onDialogDeleteMsg(HbAction* action)
         param << dummy;
         emit switchView(param);
     }
+}
+
+//---------------------------------------------------------------
+// UnifiedViewer::launchEditor
+// @see header file
+//---------------------------------------------------------------
+void UnifiedViewer::launchEditor(
+        MsgBaseView::UniEditorOperation operation)
+{
+    ConvergedMessage message;
+    ConvergedMessageId id(mMessageId);
+    message.setMessageId(id);
+    if(mViewFeeder->msgType() == KSenduiMtmMmsUidValue)
+    {
+        message.setMessageType(ConvergedMessage::Mms);
+    }
+    else
+    {
+        message.setMessageType(ConvergedMessage::Sms);    
+    }
+
+    QByteArray dataArray;
+    QDataStream messageStream
+    (&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+    message.serialize(messageStream);
+
+    QVariantList params;
+    params << MsgBaseView::UNIEDITOR; // target view
+    params << MsgBaseView::UNIVIEWER; // source view
+
+    params << dataArray;
+    params << operation;
+        
+    emit switchView(params);
 }
 
 // EOF

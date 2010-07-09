@@ -25,7 +25,6 @@ class UniViewerUtils;
 class UniMessageInfo;
 class ThumbnailManager;
 
-
 /**
  * This widget displays the pixmap content in viewer.
  */
@@ -65,6 +64,13 @@ signals:
      */
     void longTap(const QPointF &position);
 
+    /**
+     * Signal emitted when the thumbnail returned by Thumbnail manager is set
+     * to pixmap widget.
+     * @param iconName Overlay icon name to be set.
+     */
+    void setOverlayIcon(const QString& iconName);
+
 protected:
 
     /**
@@ -77,12 +83,12 @@ protected:
 private slots:
 
     /**
-     *
+     * Handles opening of media.
      */
     void handleOpen();
 
     /**
-     *
+     * Handles saving of media.
      */
     void handleSave();
 
@@ -95,7 +101,7 @@ private slots:
     /**
      * Slot hit when the thumbnail is ready.
      */
-   void thumbnailReady(const QPixmap& pixmap, void *data, int id, int error);
+    void thumbnailReady(const QPixmap& pixmap, void *data, int id, int error);
 
 private:
 
@@ -115,6 +121,12 @@ private:
      */
     void handleLongTap(const QPointF &position);
 
+    /**
+     * Calculates the thumbnail size.
+     * @return Thumbnail size
+     */
+    QSize getThumbnailSize();
+
 private:
 
     /**
@@ -127,7 +139,7 @@ private:
      * ThumbnailManager
      * Own.
      */
-   ThumbnailManager *mThumbnailManager;
+    ThumbnailManager *mThumbnailManager;
 
     /**
      * Mime Type of pixmap.

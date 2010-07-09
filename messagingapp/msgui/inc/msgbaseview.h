@@ -54,14 +54,16 @@ class MsgBaseView : public HbView
      */
     enum UniEditorOperation
         {
-        ADD_PHOTO = 0x01,
-        ADD_AUDIO = 0x02,
-        ADD_VIDEO = 0x04,
-        ADD_VCARD = 0x08,
-        ADD_OTHERS = 0x10,
-        ADD_RECIPIENTS = 0x20,
-        ADD_SUBJECT = 0x40,
-        FORWARD_MSG = 0x80
+        ADD_PHOTO = 0x001,
+        ADD_AUDIO = 0x002,
+        ADD_VIDEO = 0x004,
+        ADD_VCARD = 0x008,
+        ADD_OTHERS = 0x010,
+        ADD_RECIPIENTS = 0x020,
+        ADD_SUBJECT = 0x040,
+        FORWARD_MSG = 0x080,
+        REPLY_MSG = 0x100,
+        REPLY_ALL_MSG = 0x200
         };
     
     signals:

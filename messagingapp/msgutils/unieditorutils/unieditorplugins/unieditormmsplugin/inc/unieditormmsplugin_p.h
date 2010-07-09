@@ -210,6 +210,21 @@ private: // Constructors
      */
     void HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1, TAny* aArg2,
                              TAny* aArg3);
+    
+    /**
+     * Populate sender address (for reply/replyAll case)
+     */
+    void populateSenderL(ConvergedMessage& aMessage);
+    
+    /**
+     * Populates converged message for reply case
+     */
+    void convertFromReplyHandlerL(ConvergedMessage* aMessage);
+    
+    /**
+     * Populates converged message for replyAll case
+     */
+    void convertFromReplyAllHandlerL(ConvergedMessage* aMessage);
 
 private:
     // Data

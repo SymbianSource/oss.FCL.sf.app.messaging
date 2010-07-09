@@ -249,7 +249,7 @@ void CCsConversationCacheHelper::HandleSpecialConversationL()
     CCsConversationEntry* conEntry =
         iConversationEvent->ClientConversation()->GetConversationEntry();
 
-    if (ECsBlueTooth == conEntry->GetType())
+    if (ECsBlueTooth == conEntry->GetType()|| ECsBlueTooth_VCard == conEntry->GetType()|| ECsBlueTooth_VCal == conEntry->GetType())
     {
         AddConversationEntryL(conEntry, KBluetoothMsgsConversationId);
     }
@@ -290,7 +290,7 @@ void CCsConversationCacheHelper::HandleConversationInCacheL()
 TUint8 CCsConversationCacheHelper::NeedsSpecialProcessing(
                                                           CCsConversationEntry* aConversationEntry)
 {
-    if (ECsBlueTooth == aConversationEntry->GetType())
+    if (ECsBlueTooth == aConversationEntry->GetType() || ECsBlueTooth_VCard == aConversationEntry->GetType() || ECsBlueTooth_VCal == aConversationEntry->GetType())
     {
         return 1;
     }

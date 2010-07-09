@@ -32,6 +32,7 @@ INCLUDEPATH += ../../../appengine/inc
 INCLUDEPATH += ../../../../msgappfw/client/inc
 INCLUDEPATH += ../../../../smartmessaging/ringbc/inc
 INCLUDEPATH += ../../../../msgutils/unieditorutils/editorgenutils/inc
+INCLUDEPATH += ../../../msguiutils/inc
 
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
@@ -100,4 +101,6 @@ LIBS += -euser \
         -lestor \
 	-lFeatMgr \
 	-lfbscli \
-	-lringbc 
+	-lringbc \
+	-lmsguiutils \
+	-lcsserverclientapi

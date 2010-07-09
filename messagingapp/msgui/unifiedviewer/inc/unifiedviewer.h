@@ -75,7 +75,12 @@ private:
      * @see HbView
      */
     void createToolBar();
-   
+    
+    /**
+     * Launch Editor for forward, reply, replyall actions
+     * @param operation, Editor operation e.g. forward, reply etc
+     */
+    void launchEditor(MsgBaseView::UniEditorOperation operation);
 
 public slots:
 
@@ -91,7 +96,7 @@ public slots:
      * Handle delete 
      */     
     void handleDeleteAction();
-    
+
 private slots:
     /**
      * This slot is called when sendMessage signal is emitted for a highlighted
@@ -105,6 +110,16 @@ private slots:
      */
     void onDialogDeleteMsg(HbAction* action);
     
+    /**
+     * Handle reply
+     */
+    void handleReplyAction();
+    
+    /**
+     * Handle reply-all
+     */
+    void handleReplyAllAction();
+
 private:
 
     /**

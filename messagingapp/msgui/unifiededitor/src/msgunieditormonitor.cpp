@@ -151,6 +151,11 @@ void MsgUnifiedEditorMonitor::updateMsgInfo(HbWidget* senderWidget)
         view()->mBody->disableCharCounter();
         view()->addSubject();
     }
+    else
+    {
+        //Enable char counter
+        view()->mBody->enableCharCounter();    
+    }
 
     // check if sent by body widget
     MsgUnifiedEditorBody* body = NULL;

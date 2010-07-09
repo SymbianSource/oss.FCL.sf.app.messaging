@@ -22,25 +22,25 @@ EXPORTS
 	_ZN20MsgUnifiedEditorView13imagesFetchedERK8QVariant @ 21 NONAME
 	_ZN20MsgUnifiedEditorView14addAttachmentsE11QStringList @ 22 NONAME
 	_ZN20MsgUnifiedEditorView14changePriorityEv @ 23 NONAME
-	_ZN20MsgUnifiedEditorView14forwardMessageER18ConvergedMessageIdN16ConvergedMessage11MessageTypeE @ 24 NONAME
-	_ZN20MsgUnifiedEditorView15contactsFetchedERK8QVariant @ 25 NONAME
-	_ZN20MsgUnifiedEditorView15formatAddressesER5QListIP23ConvergedMessageAddressE @ 26 NONAME
-	_ZN20MsgUnifiedEditorView15populateContentERK5QListI8QVariantE @ 27 NONAME
-	_ZN20MsgUnifiedEditorView16createTempFolderEv @ 28 NONAME
-	_ZN20MsgUnifiedEditorView16enableSendButtonEb @ 29 NONAME
-	_ZN20MsgUnifiedEditorView16generateFileNameER7QString @ 30 NONAME
-	_ZN20MsgUnifiedEditorView16onContentChangedEv @ 31 NONAME
-	_ZN20MsgUnifiedEditorView16removeTempFolderEv @ 32 NONAME
-	_ZN20MsgUnifiedEditorView16staticMetaObjectE @ 33 NONAME DATA 16
-	_ZN20MsgUnifiedEditorView17onDialogDeleteMsgEP8HbAction @ 34 NONAME
-	_ZN20MsgUnifiedEditorView17openDraftsMessageERK5QListI8QVariantE @ 35 NONAME
-	_ZN20MsgUnifiedEditorView19getStaticMetaObjectEv @ 36 NONAME
-	_ZN20MsgUnifiedEditorView19onDialogMmsSettingsEP8HbAction @ 37 NONAME
-	_ZN20MsgUnifiedEditorView19onDialogSmsSettingsEP8HbAction @ 38 NONAME
-	_ZN20MsgUnifiedEditorView19saveContentToDraftsEv @ 39 NONAME
-	_ZN20MsgUnifiedEditorView19serviceRequestErrorEiRK7QString @ 40 NONAME
-	_ZN20MsgUnifiedEditorView20activateInputBlockerEv @ 41 NONAME
-	_ZN20MsgUnifiedEditorView21doDelayedConstructionEv @ 42 NONAME
+	_ZN20MsgUnifiedEditorView15contactsFetchedERK8QVariant @ 24 NONAME
+	_ZN20MsgUnifiedEditorView15formatAddressesER5QListIP23ConvergedMessageAddressE @ 25 NONAME
+	_ZN20MsgUnifiedEditorView15populateContentERK5QListI8QVariantE @ 26 NONAME
+	_ZN20MsgUnifiedEditorView16createTempFolderEv @ 27 NONAME
+	_ZN20MsgUnifiedEditorView16enableSendButtonEb @ 28 NONAME
+	_ZN20MsgUnifiedEditorView16generateFileNameER7QString @ 29 NONAME
+	_ZN20MsgUnifiedEditorView16onContentChangedEv @ 30 NONAME
+	_ZN20MsgUnifiedEditorView16removeTempFolderEv @ 31 NONAME
+	_ZN20MsgUnifiedEditorView16staticMetaObjectE @ 32 NONAME DATA 16
+	_ZN20MsgUnifiedEditorView17onDialogDeleteMsgEP8HbAction @ 33 NONAME
+	_ZN20MsgUnifiedEditorView17openDraftsMessageERK5QListI8QVariantE @ 34 NONAME
+	_ZN20MsgUnifiedEditorView19getStaticMetaObjectEv @ 35 NONAME
+	_ZN20MsgUnifiedEditorView19onDialogMmsSettingsEP8HbAction @ 36 NONAME
+	_ZN20MsgUnifiedEditorView19onDialogSmsSettingsEP8HbAction @ 37 NONAME
+	_ZN20MsgUnifiedEditorView19saveContentToDraftsEv @ 38 NONAME
+	_ZN20MsgUnifiedEditorView19serviceRequestErrorEiRK7QString @ 39 NONAME
+	_ZN20MsgUnifiedEditorView20activateInputBlockerEv @ 40 NONAME
+	_ZN20MsgUnifiedEditorView21doDelayedConstructionEv @ 41 NONAME
+	_ZN20MsgUnifiedEditorView21fetchMessageFromStoreER18ConvergedMessageIdN16ConvergedMessage11MessageTypeEi @ 42 NONAME
 	_ZN20MsgUnifiedEditorView22deactivateInputBlockerEv @ 43 NONAME
 	_ZN20MsgUnifiedEditorView22setAttachOptionEnabledENS_16TBE_AttachOptionEb @ 44 NONAME
 	_ZN20MsgUnifiedEditorView23handleViewExtnActivatedEP16HbListWidgetItem @ 45 NONAME

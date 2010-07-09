@@ -79,6 +79,11 @@ public:
       * Disables char counter
       */
      void disableCharCounter();
+
+     /*
+      * Enables char counter
+      */
+     void enableCharCounter();
      
      /**
       * To set focus on editable field.

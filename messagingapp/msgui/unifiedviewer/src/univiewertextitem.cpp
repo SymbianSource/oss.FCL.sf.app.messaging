@@ -38,16 +38,17 @@
 //consts
 
 //regexp
-const QString NUMBER_PATTERN("(\\(?(\\+|\\d))((?:\\d)((?:[\\s-/.\\)\\(])*(?:(\\d+|\\))))*(?:\\d?|\\)))|((\\*#)(?:\\d+(\\*|#)(?:\\d+#)?))");
+const QString NUMBER_PATTERN("(\\(?(\\+|\\d))((?:\\d)((?:[\\s-/.\\)\\(])*(?:(\\d+|\\))))*(?:\\d?[^\\D]|\\)))|((\\*#)(?:\\d+(\\*|#)(?:\\d+#)?))");
 
 const QString EMAIL_PATTERN("[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?");
 
 const QString URL_PATTERN("(((ht|f|rt)(tp|sp)(s?)\\:\\/\\/)|(www|wap)(?:\\.))(([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*)(\\.)([-\\w]*[0-9a-zA-Z])+(:(0-9)*)*(\\/?)([a-zA-Z0-9\\-\\?\\,\'\\/\\\\+&amp;%\\$#_=~]*))+[a-zA-Z0-9/]");
 
 //rules
-const QString NUMBER_RULE("NUMBER_RULE");
-const QString EMAIL_RULE("EMAIL_RULE");
-const QString URL_RULE("URL_RULE");
+const QString URL_RULE("0_URL_RULE");
+const QString EMAIL_RULE("1_EMAIL_RULE");
+const QString NUMBER_RULE("2_NUMBER_RULE");
+
 
 //localization
 #define LOC_CONTACT_INFO hbTrId("txt_messaging_menu_contact_info")
@@ -123,25 +124,32 @@ void UniViewerTextItem::applyRule()
 
         while(cursor.hasSelection())
         {
-            // Insert anchor in the document
-            QTextCharFormat f;
-            f.setFontUnderline(true);
-            f.setForeground(palette().link());
-
-            //prepending rule name to identiy different fragment to which
-            //catagory it belongs to.
-            QString txt = cursor.selectedText().prepend(ruleName);
-
-            if(ruleName == NUMBER_RULE)
+            int p = cursor.position();
+            QString  anchor = this->anchorAt(p-1);
+            
+            //not identified yet.
+            if(anchor.isEmpty())
             {
-                //removing special char(s) from phone numbers.
-                QRegExp numberCharExp("[\\s-/.\\(\\)]");
-                txt = txt.remove(numberCharExp);
-            }
+                // Insert anchor in the document
+                QTextCharFormat f;
+                f.setFontUnderline(true);
+                f.setForeground(palette().link());
 
-            f.setAnchorHref(txt);
-            f.setAnchor(true);
-            cursor.mergeCharFormat(f);
+                //prepending rule name to identiy different fragment to which
+                //catagory it belongs to.
+                QString txt = cursor.selectedText().prepend(ruleName);
+
+                if(ruleName == NUMBER_RULE)
+                {
+                    //removing special char(s) from phone numbers.
+                    QRegExp numberCharExp("[\\s-/.\\(\\)]");
+                    txt = txt.remove(numberCharExp);
+                }
+
+                f.setAnchorHref(txt);
+                f.setAnchor(true);
+                cursor.mergeCharFormat(f);
+            }
 
             // Find next
             cursor = this->document()->find(ruleExp, cursor);

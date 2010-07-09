@@ -41,6 +41,9 @@
 #include <xqsharablefile.h>
 #include <xqappmgr.h>
 #include <xqconversions.h>
+#include <hbmessagebox.h>
+#include <hbcolorscheme.h>
+#include <QColor>
 // USER INCLUDES
 #include "msgunieditorbody.h"
 #include "UniEditorGenUtils.h"
@@ -56,7 +59,8 @@
 #include "msgunieditoraudiowidget.h"
 
 // Constants
-const QString BACKGROUND_FRAME("qtg_fr_btn_normal");
+const QString BACKGROUND_FRAME("qtg_fr_messaging_char_count");
+const QString CHAR_COUNTER_COLOR("qtc_messaging_char_count");
 
 const int KShowCounterLimit = 10;
 const int BYTES_TO_KBYTES_FACTOR = 1024; 
@@ -83,12 +87,8 @@ void showInsertFailureNote()
             /BYTES_TO_KBYTES_FACTOR;
     QString displayStr = QString(LOC_UNABLE_TO_ATTACH_ITEM)
             .arg(availableSize);
-    HbNotificationDialog* dlg = new HbNotificationDialog();
-    dlg->setFocusPolicy(Qt::NoFocus);
-    dlg->setDismissPolicy(HbPopup::TapAnywhere);
-    dlg->setAttribute(Qt::WA_DeleteOnClose, true);
-    dlg->setText(displayStr);
-    dlg->show();
+
+    HbMessageBox::information(displayStr, 0, 0, HbMessageBox::Ok);
 }
 
 
@@ -119,16 +119,17 @@ mIsImageResizing(false)
     mCharCounter = new HbTextItem(this);
     HbStyle::setItemName(mCharCounter, "charCounter");
     mCharCounter->setZValue(1.5);
-    mCharCounter->setText("160(1)");
-    
+
+    QColor color = HbColorScheme::color(CHAR_COUNTER_COLOR);
+    mCharCounter->setTextColor(color);
+
     mBackgroundItem = new HbFrameItem(this);
     HbStyle::setItemName(mBackgroundItem, "charCounterFrame");
 
-    mBackgroundItem->frameDrawer().setFrameType(HbFrameDrawer::NinePieces);
+    mBackgroundItem->frameDrawer().setFrameType(HbFrameDrawer::ThreePiecesHorizontal);
     mBackgroundItem->frameDrawer().setFillWholeRect(true);
     
-    mBackgroundItem->frameDrawer().setFrameGraphicsName(
-        BACKGROUND_FRAME);    
+    mBackgroundItem->frameDrawer().setFrameGraphicsName(BACKGROUND_FRAME);
     
     mPluginLoader = new UniEditorPluginLoader(this);
 
@@ -578,7 +579,7 @@ void MsgUnifiedEditorBody::onTextChanged()
         if(futureSize > MsgUnifiedEditorMonitor::maxMmsSize())
         {
             mTextEdit->setPlainText(mPrevBuffer);
-            HbNotificationDialog::launchDialog(LOC_UNABLE_TO_ADD_CONTENT);
+            HbMessageBox::information(LOC_UNABLE_TO_ADD_CONTENT, 0, 0, HbMessageBox::Ok);
             mTextEdit->setCursorPosition(mPrevBuffer.length());
             return;
         }
@@ -718,6 +719,45 @@ void MsgUnifiedEditorBody::disableCharCounter()
     mCharCounter->setVisible(false);
     mBackgroundItem->setVisible(false);
 }
+
+// ---------------------------------------------------------
+// MsgUnifiedEditorBody::enableCharCounter
+// ---------------------------------------------------------
+//
+void MsgUnifiedEditorBody::enableCharCounter()
+    {
+    mPluginInterface->setEncodingSettings(EFalse, ESmsEncodingNone,
+            mCharSupportType);
+
+    TInt numOfRemainingChars;
+    TInt numOfPDUs;
+    TBool unicodeMode;
+    TSmsEncoding alternativeEncodingType;
+    QString string = mTextEdit->toPlainText();
+    mPluginInterface->getNumPDUs(string,
+            numOfRemainingChars, numOfPDUs, unicodeMode,
+            alternativeEncodingType);
+
+    //Save the unicode value returned
+    mUnicode = unicodeMode;
+
+    //Set char counter value
+    QString display = QString("%1(%2)").arg(numOfRemainingChars).arg(
+            numOfPDUs);
+    mCharCounter->setText(display);
+
+    if (numOfPDUs > 1 || numOfRemainingChars <= KShowCounterLimit)
+        {
+        mCharCounter->setVisible(true);
+        mBackgroundItem->setVisible(true);
+        }
+    else
+        {
+        mCharCounter->setVisible(false);
+        mBackgroundItem->setVisible(false);
+        }
+
+    }
 
 //---------------------------------------------------------------
 // MsgUnifiedEditorBody :: setFocus

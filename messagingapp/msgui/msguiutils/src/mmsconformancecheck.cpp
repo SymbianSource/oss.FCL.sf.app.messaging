@@ -113,6 +113,11 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
 
         CleanupStack::PopAndDestroy(4);
 
+        // TODO: Remove this check once Video support is provided in UniEditor.
+        if (info->MediaType() == EMsgMediaVideo)
+        {
+            return EInsertNotSupported;
+        }
 
         // In "free" mode user can insert images that are larger by dimensions than allowed by conformance
         if (iCreationMode != EMmsCreationModeRestricted)
@@ -267,10 +272,6 @@ void MmsConformanceCheck::onDialogInsertMedia(HbAction* action)
 //
 void MmsConformanceCheck::showPopup(const QString& text)
 {
-    HbNotificationDialog* dlg = new HbNotificationDialog();
-    dlg->setFocusPolicy(Qt::NoFocus);
-    dlg->setAttribute(Qt::WA_DeleteOnClose, true);
-    dlg->setText(text);
-    dlg->show();
+    HbMessageBox::information(text, 0, 0, HbMessageBox::Ok);
 }
 

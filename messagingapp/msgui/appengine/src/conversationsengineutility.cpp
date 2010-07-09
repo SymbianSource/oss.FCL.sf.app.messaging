@@ -51,6 +51,8 @@ int ConversationsEngineUtility::messageType(TCsType value)
         mMessageType = ConvergedMessage::BioMsg;
         break;
     case ECsBlueTooth:
+    case ECsBlueTooth_VCard:
+    case ECsBlueTooth_VCal:
         mMessageType = ConvergedMessage::BT;
         break;
     case ECsMmsNotification:
@@ -108,6 +110,12 @@ int ConversationsEngineUtility::messageSubType(TCsType value)
         messageSubType = ConvergedMessage::VCard;
         break;
     case ECsBioMsg_VCal:
+        messageSubType = ConvergedMessage::VCal;
+        break;
+    case ECsBlueTooth_VCard:
+        messageSubType = ConvergedMessage::VCard;
+        break;
+    case ECsBlueTooth_VCal:
         messageSubType = ConvergedMessage::VCal;
         break;
     case ECsAudio:

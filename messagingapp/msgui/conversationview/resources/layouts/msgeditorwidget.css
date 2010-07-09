@@ -23,8 +23,15 @@ MsgEditorWidget::sendButton
 
 MsgEditorWidget::charCounter
 {
-	  size-policy:fixed fixed;
-	  pref-height:-1;
-	  pref-width:-1;
-	  text-height:var(hb-param-text-height-tiny);
+    text-height:var(hb-param-text-height-tiny);
+    text-align:centre;
+    text-line-count-min: 1;
+    text-line-count-max: 1;
+}
+
+MsgEditorWidget::charCounterFrame
+{
+    size-policy: fixed, fixed ;
+    pref-height: expr(var(hb-param-text-height-tiny)+2*var(hb-param-margin-gene-middle-vertical));
+    pref-width: expr(var(hb-param-text-height-tiny)*3 + 2*var(hb-param-margin-gene-middle-horizontal));
 }

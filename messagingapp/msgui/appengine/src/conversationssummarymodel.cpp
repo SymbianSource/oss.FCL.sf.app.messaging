@@ -305,29 +305,44 @@ void ConversationsSummaryModel::populateItem(QStandardItem& item,
 void ConversationsSummaryModel::handleBlueToothMessages(QStandardItem& item,
     const CCsConversationEntry& entry)
 {
-    //TODO, needs to be revisited again, once BT team provides the solution for
-    //BT received as Biomsg issue.
-    QString description = XQConversions::s60DescToQString(*(entry.Description()));
-
-    if (description.contains(".vcf") || description.contains(".ics")) // "vCard"
+    int msgSubType = ConversationsEngineUtility::messageSubType(entry.GetType());
+    if (msgSubType == ConvergedMessage::VCard) 
     {
-        //message sub-type
-        item.setData(ConvergedMessage::VCard, MessageSubType);
+        UniDataModelLoader* pluginLoader = new UniDataModelLoader;
+        UniDataModelPluginInterface* bioMsgPlugin = pluginLoader->getDataModelPlugin(
+            ConvergedMessage::BioMsg);
+        bioMsgPlugin->setMessageId(entry.EntryId());
 
-        //parse vcf file to get the details
-        QString displayName = MsgContactHandler::getVCardDisplayName(
-                description);
-        item.setData(displayName, BodyText);
+        if (bioMsgPlugin->attachmentCount() > 0) 
+        	{
+            UniMessageInfoList attList = bioMsgPlugin->attachmentList();
+            QString attachmentPath = attList[0]->path();
+
+            //get display-name and set as bodytext
+            QString displayName = MsgContactHandler::getVCardDisplayName(attachmentPath);
+            item.setData(displayName, BodyText);
+		
+						// clear attachement list : its allocated at data model
+            while (!attList.isEmpty()) 
+						{
+                delete attList.takeFirst();
+            }
+
+        }
+        delete pluginLoader;
     }
+
     else 
     {
-        if (description.contains(".vcs")) // "vCalendar"
+        QString description = XQConversions::s60DescToQString(*(entry.Description()));
+
+        if (msgSubType == ConvergedMessage::VCal) // "vCalendar"
         {
             //message sub-type
             item.setData(ConvergedMessage::VCal, MessageSubType);
         }
-        else
-        {
+        else 
+				{
             //message sub-type
             item.setData(ConvergedMessage::None, MessageSubType);
         }

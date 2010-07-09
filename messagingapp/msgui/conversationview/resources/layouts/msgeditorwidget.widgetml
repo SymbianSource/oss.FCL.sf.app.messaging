@@ -9,13 +9,11 @@
     <meshitem src="sendButton" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" />
     <meshitem src="sendButton" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
     
-    <meshitem src="charCounter" srcEdge="TOP" dst="msgEditor" dstEdge="TOP" />
-    <meshitem src="charCounter" srcEdge="RIGHT" dst="msgEditor" dstEdge="RIGHT" />
+    <meshitem src="charCounter" srcEdge="CENTERH" dst="charCounterFrame" dstEdge="CENTERH" />
+    <meshitem src="charCounter" srcEdge="CENTERV" dst="charCounterFrame" dstEdge="CENTERV" />
 
-    <meshitem src="charCounterFrame" srcEdge="LEFT" dst="charCounter" dstEdge="LEFT" />
-    <meshitem src="charCounterFrame" srcEdge="TOP" dst="charCounter" dstEdge="TOP" />
-    <meshitem src="charCounterFrame" srcEdge="RIGHT" dst="charCounter" dstEdge="RIGHT" />
-    <meshitem src="charCounterFrame" srcEdge="BOTTOM" dst="charCounter" dstEdge="BOTTOM" /> 
+    <meshitem src="charCounterFrame" srcEdge="TOP" dst="msgEditor" dstEdge="TOP" />
+    <meshitem src="charCounterFrame" srcEdge="RIGHT" dst="msgEditor" dstEdge="RIGHT" />
     
   </layout>
 </hbwidget>

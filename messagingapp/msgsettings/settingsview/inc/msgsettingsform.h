@@ -34,7 +34,6 @@ public:
             QGraphicsItem *parent = 0);
     ~MsgSettingsForm();
     void refreshViewForm();
-    void expandSMSSettings();
     
 signals:
     void newSMSCCenterClicked(int);
@@ -44,6 +43,7 @@ private:
     void addMMSGroupItem(HbDataFormModelItem* parent);
     void addSmsMCGroupItem(HbDataFormModelItem* parent);
     void updateSmsMCGroupItem(HbDataFormModelItem* parent);
+    void expandGroup(HbDataFormModelItem* group,bool expand);
     
 private slots:
     void onPressedServiceMessages();

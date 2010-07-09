@@ -270,7 +270,7 @@ void MsgUnifiedEditorAddress::setAddresses(ConvergedMessageAddressList addrlist)
         // append line seperator
          invalidStr.append("<br>");
          invalidStr.append(invalidContacts);
-         HbMessageBox::information(invalidStr);
+         HbMessageBox::information(invalidStr, 0, 0, HbMessageBox::Ok);
         }
 
     // addition operation complete, reset flags
@@ -307,8 +307,7 @@ void MsgUnifiedEditorAddress::onContentsChanged(const QString& text)
             --mExceedsMaxMmsRecipientsBy;
             if(!mExceedsMaxMmsRecipientsBy)
             {
-                HbNotificationDialog::launchDialog(
-                        LOC_MMS_RECIPIENT_LIMIT_REACHED);
+                HbMessageBox::information(LOC_MMS_RECIPIENT_LIMIT_REACHED, 0, 0, HbMessageBox::Ok);
             }
             resetToPrevious();
         }
@@ -318,8 +317,7 @@ void MsgUnifiedEditorAddress::onContentsChanged(const QString& text)
             emit contentChanged();
             if(MsgUnifiedEditorMonitor::msgAddressCount() > MsgUnifiedEditorMonitor::maxMmsRecipients())
             {
-                HbNotificationDialog::launchDialog(
-                        LOC_MMS_RECIPIENT_LIMIT_REACHED);
+                HbMessageBox::information(LOC_MMS_RECIPIENT_LIMIT_REACHED, 0, 0, HbMessageBox::Ok);
                 resetToPrevious();
                 // reset monitor data
                 emit contentChanged();

@@ -663,21 +663,6 @@ void ConversationsModel::handleMMSNotification(QStandardItem& item,
     }
 
     // fetch relevent info to show in CV
-    // msg size
-    QString estimatedMsgSizeStr = QString("%1").arg(0);
-    estimatedMsgSizeStr.append(" Kb");
-    TRAP_IGNORE(estimatedMsgSizeStr =
-            mMsgStoreHandler->NotificationMsgSizeL());
-
-    // msg class type
-    QString classInfoStr = mMsgStoreHandler->NotificationClass();
-
-    // notification expiry date
-    //TODO: Need to do localization of digits used to show expiry time
-    TTime expiryTime;
-    QString expiryTimeStr;
-    mMsgStoreHandler->NotificationExpiryDate(expiryTime, expiryTimeStr);
-
     // notification state e.g. waiting, retrieving etc
     QString statusStr;
     int status;
@@ -685,19 +670,15 @@ void ConversationsModel::handleMMSNotification(QStandardItem& item,
 
     // create data for bodytext role
     QString dataText;
-    dataText.append("Size: "); // TODO: use logical str name
-    dataText.append(estimatedMsgSizeStr);
+    dataText.append(mMsgStoreHandler->NotificationMsgSize());
     dataText.append(QChar::LineSeparator);
-    dataText.append("Class: "); // TODO: use logical str name
-    dataText.append(classInfoStr);
+    dataText.append(mMsgStoreHandler->NotificationClass());
     dataText.append(QChar::LineSeparator);
-    dataText.append("Expiry date: "); //TODO: use logical str name
-    dataText.append(expiryTimeStr);
+    dataText.append(mMsgStoreHandler->NotificationExpiryDate());
     if(!statusStr.isEmpty())
     {
         dataText.append(QChar::LineSeparator);
         dataText.append(statusStr);
-        dataText.append(QChar::LineSeparator); //Temp fix to be removed
     }
 
     // set fetched data to roles
@@ -719,38 +700,49 @@ void ConversationsModel::handleMMSNotification(QStandardItem& item,
 void ConversationsModel::handleBlueToothMessages(QStandardItem& item,
     const CCsConversationEntry& entry)
 {
-    //TODO, needs to be revisited again, once BT team provides the solution for
-    //BT received as Biomsg issue.
-    QString description = XQConversions::s60DescToQString(*(entry.Description()));
+     int msgSubType = ConversationsEngineUtility::messageSubType(entry.GetType());
+      if (msgSubType == ConvergedMessage::VCard) 
+			{
+           iBioMsgPlugin->setMessageId(entry.EntryId());          
 
-    if (description.contains(".vcf") || description.contains(".ics")) // "vCard"
-    {
-        //message sub-type
-        item.setData(ConvergedMessage::VCard, MessageSubType);
+           if (iBioMsgPlugin->attachmentCount() > 0) 
+		   			{
+               UniMessageInfoList attList = iBioMsgPlugin->attachmentList();
+               QString attachmentPath = attList[0]->path();
 
-        //parse vcf file to get the details
-        QString displayName = MsgContactHandler::getVCardDisplayName(
-                description);
-        item.setData(displayName, BodyText);
-    }
-    else
-    {
-        if (description.contains(".vcs")) // "vCalendar"
-        {
-            //message sub-type
-            item.setData(ConvergedMessage::VCal, MessageSubType);
-        }
-        else
-        {
-            //message sub-type
-            item.setData(ConvergedMessage::None, MessageSubType);
-        }
-        //for BT messages we show filenames for all other (except vcard) messages
-        //get filename and set as body
-        QFileInfo fileinfo(description);
-        QString filename = fileinfo.fileName();
-        item.setData(filename, BodyText);
-    }
+               //get display-name and set as bodytext
+               QString displayName = MsgContactHandler::getVCardDisplayName(attachmentPath);
+               item.setData(displayName, BodyText);
+			   	 // clear attachement list : its allocated at data model
+            	while (!attList.isEmpty()) 
+							{
+                delete attList.takeFirst();
+            	}
+
+           }
+       }
+
+       else 
+	   	 {
+           QString description = XQConversions::s60DescToQString(*(entry.Description()));
+
+           if (msgSubType == ConvergedMessage::VCal) // "vCalendar"
+           {
+               //message sub-type
+               item.setData(ConvergedMessage::VCal, MessageSubType);
+           }
+           else 
+		       {
+               //message sub-type
+               item.setData(ConvergedMessage::None, MessageSubType);
+           }
+           //for BT messages we show filenames for all other (except vcard) messages
+           //get filename and set as body
+           QFileInfo fileinfo(description);
+           QString filename = fileinfo.fileName();
+           item.setData(filename, BodyText);
+       }
+    
 }
 
 //---------------------------------------------------------------

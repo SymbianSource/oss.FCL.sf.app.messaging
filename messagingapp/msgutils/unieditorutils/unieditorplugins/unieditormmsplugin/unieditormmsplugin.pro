@@ -44,21 +44,22 @@ SOURCES += src/unieditormmsplugin.cpp \
 	src/unieditormmsplugin_p.cpp 
     
  LIBS += -leuser \
-				 -lcone \
-			   -lmsgs \ 
-				 -lmmsmessage \ 
-				 -lmmsserversettings \
-			   -lmmsgenutils \
-				 -lcommdb \
-				 -lefsrv \
-				 -lbafl \
-				 -leditorgenutils \
-				 -lunidatamodelloader \
-				 -lconvergedmessageutils \
-				 -lunidatamodel \
-				 -lmsgmedia \
-				 -leikctl \
-				 -lxqutils 
+         -lcone \
+         -lmsgs \ 
+         -lmmsmessage \ 
+         -lmmsserversettings \
+         -lmmsgenutils \
+         -lcommdb \
+         -lefsrv \
+         -lbafl \
+         -leditorgenutils \
+         -lunidatamodelloader \
+         -lconvergedmessageutils \
+         -lunidatamodel \
+         -lmsgmedia \
+         -leikctl \
+         -lxqutils \
+         -lQtContacts
 
 	
 # Build.inf rules

@@ -21,6 +21,7 @@
 #include <QFile>
 #include <HbTextItem>
 #include <HbMainWindow>
+#include <HbIconItem>
 
 // USER INCLUDES
 #include "univiewertextitem.h"
@@ -39,7 +40,7 @@ const QString TEXT_MIMETYPE("text");
 //---------------------------------------------------------------
 UniViewerBodyWidget::UniViewerBodyWidget(QGraphicsItem *parent) :
     HbWidget(parent), mHasText(false), mHasPixmap(false), mTextItem(0), mSlideCounter(0),
-        mPixmapItem(0), mAudioItem(0)
+        mPixmapItem(0), mAudioItem(0), mOverlayItem(0)
 {
     this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
@@ -97,6 +98,7 @@ void UniViewerBodyWidget::setVideo(UniMessageInfo *info)
     if (!mPixmapItem) {
        mPixmapItem = new UniViewerPixmapWidget(this);
        HbStyle::setItemName(mPixmapItem, "pixmap");
+       connect(mPixmapItem, SIGNAL(setOverlayIcon(QString)), this, SLOT(setOverlayIcon(QString)));
     }
     mPixmapItem->hide();
     mPixmapItem->populate(info);
@@ -122,6 +124,7 @@ void UniViewerBodyWidget::setText(QString text)
     text.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
     text.replace('\r', QChar::LineSeparator);
     mTextItem->setText(text);
+
     this->repolish();
 }
 
@@ -138,6 +141,7 @@ void UniViewerBodyWidget::setSlideCounter(QString &slideCounter)
 
     mSlideCounter->hide();
     mSlideCounter->setText(slideCounter);
+
     this->repolish();
 }
 
@@ -214,7 +218,7 @@ void UniViewerBodyWidget::setSlideContents(UniMessageInfoList objList, QString s
 }
 
 //---------------------------------------------------------------
-//UniViewerBodyWidget :: clearContent
+// UniViewerBodyWidget :: clearContent
 // @see header file
 //---------------------------------------------------------------
 void UniViewerBodyWidget::clearContent()
@@ -238,9 +242,32 @@ void UniViewerBodyWidget::clearContent()
         mTextItem = NULL;
     }
 
+    if (mOverlayItem) {
+        mOverlayItem->setParent(NULL);
+        delete mOverlayItem;
+        mOverlayItem = NULL;
+    }
+
     setHasText(false);
     setHasPixmap(false);
     repolish();
+}
+
+//---------------------------------------------------------------
+// UniViewerBodyWidget::setOverlayIcon
+// @see header file
+//---------------------------------------------------------------
+void UniViewerBodyWidget::setOverlayIcon(const QString &iconName)
+{
+    if (!mOverlayItem) {
+        mOverlayItem = new HbIconItem(this);
+        HbStyle::setItemName(mOverlayItem, "overlayItem");
+    }
+
+    mOverlayItem->hide();
+    mOverlayItem->setIconName(iconName);
+
+    this->repolish();
 }
 
 //---------------------------------------------------------------
@@ -358,6 +385,10 @@ QSizeF UniViewerBodyWidget::sizeHint(Qt::SizeHint which, const QSizeF & constrai
         pixmapSize.setWidth(widthToSet);
         mPixmapItem->setPreferredSize(pixmapSize);
         mPixmapItem->show();
+    }
+
+    if (mOverlayItem) {
+        mOverlayItem->show();
     }
 
     // Calculate the size hint to be returned.

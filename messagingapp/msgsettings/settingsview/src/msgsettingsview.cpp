@@ -17,6 +17,7 @@
 #include <hbmainwindow.h>
 #include <hbgroupbox.h>
 #include <QGraphicsLinearLayout>
+#include <HbAction>
 
 #include "msgsettingsview.h"
 #include "msgsettingsform.h"
@@ -26,9 +27,11 @@
 //LOCALAIZED CONSTANTS 
 #define LOC_MESSAGE_SETTINGS_HEADING hbTrId("txt_messaging_title_messaging_settings")
 
-MsgSettingsView::MsgSettingsView(SettingsView settingsView,
-                                 QGraphicsItem *parent) :
-    MsgBaseView(parent), mSMSCenterView(0), mSettingsForm(0)
+MsgSettingsView::MsgSettingsView(SettingsView settingsView,QGraphicsItem *parent):
+MsgBaseView(parent),
+mSMSCenterView(0),
+mSettingsForm(0),
+mCurrentView(settingsView)
 {
     mMainWindow = this->mainWindow();
 
@@ -47,11 +50,18 @@ MsgSettingsView::MsgSettingsView(SettingsView settingsView,
             SIGNAL(newSMSCCenterClicked(int)),
             this,
             SLOT(onNewSMSCCenterClicked(int)));
+    
 
     mainLayout->addItem(viewHeading);
     mainLayout->addItem(mSettingsForm);
 
     this->setLayout(mainLayout);
+    
+    //sms settings need to be created so launch MsgSMSCenterView in edit mode.
+    if(settingsView == SMSView)
+    {
+        onNewSMSCCenterClicked(-1);
+    }
 }
 
 MsgSettingsView::~MsgSettingsView()
@@ -81,9 +91,16 @@ void MsgSettingsView::onNewSMSCCenterClicked(int index)
 
 void MsgSettingsView::onSmsCenterEditViewClosed()
 {
+
+    //sms center view was directly launched, no need to go back to settings view.
+    if(mCurrentView == SMSView)
+    {
+        this->navigationAction()->trigger();
+        return;
+    }
     //remove the view 
     mMainWindow->removeView(mSMSCenterView);
-
+    
     //refresh the form
     mSettingsForm->refreshViewForm();
 

@@ -120,6 +120,21 @@ void MsgStoreHandler::extractMsgType(const TMsvEntry& entry,
             break;
         case KSenduiMtmBioUidValue:
             { 
+        if (entry.iMtmData1 == KSenduiMtmBtUidValue) 
+		{
+            msgType = ConvergedMessage::BT;
+
+            if (entry.iBioType == KMsgBioUidVCard.iUid) 
+			{
+                msgSubType = ConvergedMessage::VCard;
+            }
+            else if (entry.iBioType == KMsgBioUidVCalendar.iUid) 
+			{
+                msgSubType = ConvergedMessage::VCal;
+            }
+
+            break;
+        }
             msgType = ConvergedMessage::BioMsg; 
 
             // based on the biotype uid set message type

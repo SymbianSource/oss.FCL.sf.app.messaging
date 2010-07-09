@@ -306,7 +306,17 @@ class UniEditorSmsPluginPrivate :public MMsvSessionObserver
 	     * @see MMsvSessionObserver
     	 */
 	    void HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1, TAny* aArg2,
-                             TAny* aArg3);	
+                             TAny* aArg3);
+	    
+	    /**
+	     * Populate recipients for reply case
+	     */
+	    void populateMessageForReplyL(ConvergedMessage* aMessage);
+	    
+	    /**
+	     * Extract from address from Deliver PDU
+	     */
+	    void fromAddress(QString& messageAddress);
 
     private:  // Data    
 

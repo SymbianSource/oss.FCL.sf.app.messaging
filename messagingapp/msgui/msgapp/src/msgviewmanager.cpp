@@ -779,7 +779,11 @@ void MsgViewManager::switchToMsgSettings(const QVariantList& data)
         mSettingsView = new MsgSettingsView(view);
         mSettingsView->setNavigationAction(mBackAction);
         mMainWindow->addView(mSettingsView);
-        mMainWindow->setCurrentView(mSettingsView);
+        
+        if(view != MsgSettingsView::SMSView)
+        {
+            mMainWindow->setCurrentView(mSettingsView);
+        }
     }
     if(mPreviousView==MsgBaseView::CV && mConversationView){
         mConversationView->setPSCVId(false);

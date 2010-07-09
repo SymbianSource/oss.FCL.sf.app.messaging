@@ -112,10 +112,15 @@ private:
         const ConvergedMessage& messageDetails, bool draftMessage = false);
     
     /**
-     * Populate the editor with the forwarded message's content
+     * Populate the editor with the message's content
+     * for various cases like forward, reply, replyAll
+     * @param messageId, unique id of message in store
+     * @param messageType, sms or mms
+     * @param editorOperation, forward or reply or replyAll etc
      */
-    void forwardMessage(ConvergedMessageId& messageId,
-        ConvergedMessage::MessageType messageType );
+    void fetchMessageFromStore(ConvergedMessageId& messageId,
+        ConvergedMessage::MessageType messageType,
+        int editorOperation);
     
     /**
      * Create VCards for all the contacts available in the list

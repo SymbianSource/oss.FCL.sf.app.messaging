@@ -42,10 +42,10 @@ const TInt32	KUidBIOVCalenderMsg			=  {0x10005533};    // VCalender diary
 class UniDataModelPluginInterface;
 class UniDataModelLoader;
 class MsgObserver;
-
+class S60QConversions;
 class ConvergedMessage;
 class CBIODatabase;
-
+class ConvergedMessgageAddress;
 
 typedef enum
 	{							//	GENERATE A MESSAGE USING....
@@ -69,16 +69,18 @@ Q_OBJECT
 
 private slots:
     //called by frame work.
-    void initTestCase();//called before the first testfunction is executed.
-    void cleanupTestCase();//called after the last testfunction was executed.
+    void initTestCase();//called before the first testfunction is executed.    
     void init();//called before each testfunction is executed.
-    void cleanup();//called after every testfunction.
+    
     //test cases.
     void testInBoxVCalMessage();
     void testDraftsVCalMessage();
     void testUnusedAPIs();
-
+    void cleanup();//called after every testfunction.
+    void cleanupTestCase();//called after the last testfunction was executed.
+    
 private:
+    
     TMsvId CreateBIOEntryL(TDesC& aText, TBIOMessageType aMessageType);
     void CreateBioEntryClientSideL(TMsvEntry& aEntry, CRichText& aBody);
     HBufC* ReadFromFileL(const TDesC& aFile);
@@ -91,6 +93,7 @@ private:
     void SetForMtmTypeL(TMsvEntry& aEntry, TBIOMessageType aType);
 
 private:
+    
     UniDataModelPluginInterface* pluginInterface;
     MsgObserver* iObserver;
     CMsvSession* iMSession;

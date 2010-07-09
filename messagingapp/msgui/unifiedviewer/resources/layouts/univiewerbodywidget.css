@@ -63,6 +63,15 @@ UniViewerBodyWidget[hasText="true"]::pixmap:landscape
   right:1un;
 }
 
+UniViewerBodyWidget::overlayItem
+{
+  zvalue:1;
+  size-policy-vertical:fixed;
+  size-policy-horizontal:fixed;
+  pref-width:var(hb-param-graphic-size-primary-large);
+  pref-height:var(hb-param-graphic-size-primary-large);
+}
+
 UniViewerBodyWidget[hasText="false"]::pixmap:landscape
 {
   top:-var(hb-param-margin-gene-middle-vertical);

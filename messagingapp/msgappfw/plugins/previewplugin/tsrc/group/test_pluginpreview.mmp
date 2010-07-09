@@ -65,6 +65,7 @@ USERINCLUDE     ..\inc
 USERINCLUDE     ..\..\inc
 USERINCLUDE     ..\..\..\..\..\msgutils\unidatautils\unidatamodel\inc
 USERINCLUDE     ..\..\..\..\..\..\messagingappbase\obexmtms\TObexMTM\INC
+USERINCLUDE     ..\..\..\..\utils\inc
 
 APP_LAYER_SYSTEMINCLUDE
 MW_LAYER_SYSTEMINCLUDE

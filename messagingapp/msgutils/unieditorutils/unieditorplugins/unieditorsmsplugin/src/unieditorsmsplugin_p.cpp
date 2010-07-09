@@ -62,6 +62,7 @@
 #include "UniEditorGenUtils.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
+#include "msgcontacthandler.h"
 #include <hbglobal.h> // for translation support
 #include <xqconversions.h>
 // resources
@@ -334,6 +335,15 @@ void UniEditorSmsPluginPrivate::DoConvertFromL( TMsvId aId,
         //Populate message body
         populateMessageBodyL(aMessage,msvEntry);            
     }
+    else if(aOperation == UniEditorPluginInterface::Reply)
+    {
+        populateMessageForReplyL(aMessage);
+    }
+    else if(aOperation == UniEditorPluginInterface::ReplyAll)
+    {
+        // control should never reach here for sms
+        User::Leave(KErrArgument);
+    }
     
     //This is required as the switch entry doesnot reset sms headers
     //so if we fwd an inbox msg and then try to save that content to drafts
@@ -451,6 +461,7 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
             {
                 emailFields->AddAddressL( *pureAddr );
                 appendbuf.Set(pureAddr->Des().Left(appendLen));
+                iRecipients->AppendL( *addr );
             }
             else
             {
@@ -458,6 +469,8 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
                 {
                     SmsMtmL()->AddAddresseeL( *pureAddr, *aliasAddr );
                     appendbuf.Set(aliasAddr->Des().Left(appendLen));
+                    iRecipients->AppendL(
+                            *TMmsGenUtils::GenerateAddressL(*pureAddr, *aliasAddr));
                 }
                 else
                 {
@@ -465,11 +478,14 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
                     {
                         SmsMtmL()->AddAddresseeL( *pureAddr, *alt_alias );
                         appendbuf.Set(alt_alias->Des().Left(appendLen));
+                        iRecipients->AppendL(
+                                *TMmsGenUtils::GenerateAddressL(*pureAddr, *alt_alias));
                     }
                     else
                     {
                         SmsMtmL()->AddAddresseeL( *pureAddr );
                         appendbuf.Set(pureAddr->Des().Left(appendLen));
+                        iRecipients->AppendL( *addr );
                     }
                 }
             }
@@ -478,7 +494,6 @@ void UniEditorSmsPluginPrivate::SetSmsHeaderL(ConvergedMessage* message)
             {
                 idetailsBuf.Append( appendbuf );
             }
-            iRecipients->AppendL( *addr );
 
             // cleanup
             CleanupStack::PopAndDestroy(2, pureAddr );            
@@ -1796,7 +1811,6 @@ void UniEditorSmsPluginPrivate::populateRecipientsL(
         aMessage->setSubject(XQConversions::s60DescToQString(
                 emailFields.Subject()));
         }
-
 }
 
 // ----------------------------------------------------
@@ -1877,6 +1891,78 @@ void UniEditorSmsPluginPrivate::HandleSessionEventL(TMsvSessionEvent /*aEvent*/,
                                                   TAny* /*aArg2*/, TAny* /*aArg3*/)
 {
 // do nothing
+}
+
+// -----------------------------------------------------------------------------
+// UniEditorSmsPluginPrivate::populateMessageForReplyL
+// @see Header
+// -----------------------------------------------------------------------------
+//
+void UniEditorSmsPluginPrivate::populateMessageForReplyL(
+        ConvergedMessage* aMessage)
+    {
+    // find out if the message is incoming or outgoing
+    CSmsPDU::TSmsPDUType smsPduType = SmsMtmL()->SmsHeader().Type();
+
+    // for incoming message, populate sender address in To-field
+    if(smsPduType == CSmsPDU::ESmsDeliver)
+        {
+        QString addr;
+        fromAddress(addr);    
+        if(!addr.isEmpty())
+            {
+            ConvergedMessageAddress messageAddress(addr);
+            aMessage->addToRecipient(messageAddress);
+            }
+        }
+    // else, for outgoing message, populate receiver address in To-field
+    else if(smsPduType == CSmsPDU::ESmsSubmit)
+        {
+        populateRecipientsL(aMessage);
+        }
+
+    // resolve to-field contacts
+    ConvergedMessageAddressList addrList = aMessage->toAddressList();
+    int addrCount = addrList.count();
+    for(int i=0; i<addrCount; i++)
+        {
+        ConvergedMessageAddress* addr = addrList.at(i);
+        // resolve contact if alias is empty
+        if(addr->alias().isEmpty())
+            {
+            QString alias;
+            int count;
+            int localId =
+                    MsgContactHandler::resolveContactDisplayName(
+                            addr->address(), alias, count);
+            addr->setAlias(alias);
+            }
+        }
+    }
+
+//---------------------------------------------------------------
+// UniEditorSmsPluginPrivate::fromAddress
+// @see header
+//---------------------------------------------------------------
+void UniEditorSmsPluginPrivate::fromAddress(
+        QString& messageAddress)
+{
+    CPlainText* pText = CPlainText::NewL();
+    CleanupStack::PushL(pText);
+
+    CSmsHeader* smsHeader = CSmsHeader::NewL(CSmsPDU::ESmsDeliver, *pText);
+    CleanupStack::PushL(smsHeader);
+
+    CMsvEntry &cEntry = SmsMtmL()->Entry();
+
+    CMsvStore* store = cEntry.ReadStoreL();
+    CleanupStack::PushL(store);
+
+    smsHeader->RestoreL(*store);
+
+    messageAddress
+            = XQConversions::s60DescToQString(smsHeader->FromAddress());
+    CleanupStack::PopAndDestroy(3, pText);
 }
 
 //  End of File

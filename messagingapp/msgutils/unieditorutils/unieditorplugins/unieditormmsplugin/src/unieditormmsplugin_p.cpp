@@ -43,6 +43,7 @@
 #include "UniSendingSettings.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
+#include "msgcontacthandler.h"
 #include <xqconversions.h>
 #include "debugtraces.h"
 #include "UniEditorGenUtils.h"
@@ -62,6 +63,7 @@ _LIT( KAddressSeparator, ";" );
 const TUid KSenduiMtmMmsUid = {KSenduiMtmMmsUidValue};
 
 #define LOC_FWD hbTrId("txt_messaging_formlabel_fwd")
+#define LOC_RE hbTrId("txt_messaging_formlabel_re")
 
 // -----------------------------------------------------------------------------
 // Two-phased constructor.
@@ -138,6 +140,14 @@ ConvergedMessage* CUniEditorMmsPluginPrivate::convertFromL( TMsvId aId,
     else if( aOperation == UniEditorPluginInterface::Forward)
     {
         convertFromForwardHandlerL(*msg);          
+    }
+    else if(aOperation == UniEditorPluginInterface::Reply)
+    {
+        convertFromReplyHandlerL(msg);
+    }
+    else if(aOperation == UniEditorPluginInterface::ReplyAll)
+    {
+        convertFromReplyAllHandlerL(msg);
     }
     CleanupStack::Pop(msg);
     QDEBUG_WRITE("Exit convertFromL");
@@ -945,7 +955,7 @@ void CUniEditorMmsPluginPrivate::RestoreReady(TInt /*aParseResult*/, TInt /*aErr
 {
 }
 
-
+// -----------------------------------------------------------------------------
 // HandleSessionEventL
 // @see Header
 // -----------------------------------------------------------------------------
@@ -956,5 +966,147 @@ void CUniEditorMmsPluginPrivate::HandleSessionEventL(TMsvSessionEvent /*aEvent*/
 {
 // do nothing
 }
+
+// -----------------------------------------------------------------------------
+// populateSenderL
+// @see Header
+// -----------------------------------------------------------------------------
+//
+void CUniEditorMmsPluginPrivate::populateSenderL(
+        ConvergedMessage& aMessage)
+    {
+    // get sender address    
+    HBufC* fromAddress = (MmsMtmL()->Sender()).AllocLC();
+    HBufC* pureAddr = TMmsGenUtils::PureAddress(*fromAddress).AllocLC();
+    HBufC* aliasAddr = TMmsGenUtils::Alias(*fromAddress).AllocLC();
+
+    if(pureAddr->Length() > 0)
+        {
+        ConvergedMessageAddress messageAddress(
+                XQConversions::s60DescToQString(*pureAddr),
+                XQConversions::s60DescToQString(*aliasAddr));
+        aMessage.addToRecipient(messageAddress);
+        }
+    CleanupStack::PopAndDestroy(3, fromAddress );
+    }
+
+// -----------------------------------------------------------------------------
+// convertFromReplyHandlerL
+// @see Header
+// -----------------------------------------------------------------------------
+//
+void CUniEditorMmsPluginPrivate::convertFromReplyHandlerL(
+        ConvergedMessage* aMessage)
+    {
+    // for received mms, populate sender address into To-field
+    // for sent mms, populate recipients into To-field
+    TMsvEntry entry = MmsMtmL()->Entry().Entry();
+    if( entry.Parent() == KMsvGlobalInBoxIndexEntryIdValue )
+        {
+        populateSenderL(*aMessage);
+        }
+    else
+        {
+        populateRecipientsL(*aMessage);
+        }
+    
+    // resolve contacts
+    ConvergedMessageAddressList addrList = aMessage->toAddressList();
+    int addrCount = addrList.count();
+    for(int i=0; i<addrCount; i++)
+        {
+        ConvergedMessageAddress* addr = addrList.at(i);
+        // resolve contact if alias is empty
+        if(addr->alias().isEmpty())
+            {
+            QString alias;
+            int count;
+            int localId =
+                    MsgContactHandler::resolveContactDisplayName(
+                            addr->address(), alias, count);
+            addr->setAlias(alias);
+            }
+        }
+    }
+
+// -----------------------------------------------------------------------------
+// convertFromReplyAllHandlerL
+// @see Header
+// -----------------------------------------------------------------------------
+//
+void CUniEditorMmsPluginPrivate::convertFromReplyAllHandlerL(
+        ConvergedMessage* aMessage)
+    {
+    // populate all recipients (and sender for received mms)
+    TMsvEntry entry = MmsMtmL()->Entry().Entry();
+    if( entry.Parent() == KMsvGlobalInBoxIndexEntryIdValue )
+        {
+        populateSenderL(*aMessage);
+        }
+    populateRecipientsL(*aMessage);
+    
+    // resolve to-field contacts
+    ConvergedMessageAddressList addrList = aMessage->toAddressList();
+    int addrCount = addrList.count();
+    for(int i=0; i<addrCount; i++)
+        {
+        ConvergedMessageAddress* addr = addrList.at(i);
+        // resolve contact if alias is empty
+        if(addr->alias().isEmpty())
+            {
+            QString alias;
+            int count;
+            int localId =
+                    MsgContactHandler::resolveContactDisplayName(
+                            addr->address(), alias, count);
+            addr->setAlias(alias);
+            }
+        }
+
+    // resolve cc-field contacts
+    addrList = aMessage->ccAddressList();
+    addrCount = addrList.count();
+    for(int i=0; i<addrCount; i++)
+        {
+        ConvergedMessageAddress* addr = addrList.at(i);
+        // resolve contact if alias is empty
+        if(addr->alias().isEmpty())
+            {
+            QString alias;
+            int count;
+            int localId =
+                    MsgContactHandler::resolveContactDisplayName(
+                            addr->address(), alias, count);
+            addr->setAlias(alias);
+            }
+        }
+
+    // resolve bcc-field contacts
+    addrList = aMessage->bccAddressList();
+    addrCount = addrList.count();
+    for(int i=0; i<addrCount; i++)
+        {
+        ConvergedMessageAddress* addr = addrList.at(i);
+        // resolve contact if alias is empty
+        if(addr->alias().isEmpty())
+            {
+            QString alias;
+            int count;
+            int localId =
+                    MsgContactHandler::resolveContactDisplayName(
+                            addr->address(), alias, count);
+            addr->setAlias(alias);
+            }
+        }
+
+    // populate the subject field
+    QString subject = XQConversions::s60DescToQString(
+            MmsMtmL()->SubjectL());
+    if(!subject.startsWith(LOC_RE, Qt::CaseInsensitive))
+        {
+        subject.insert(0, LOC_RE);
+        }
+    aMessage->setSubject(subject);
+    }
 
 //  End of File

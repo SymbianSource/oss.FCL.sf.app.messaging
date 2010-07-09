@@ -165,10 +165,10 @@ private:
      */
     void init();
     
-	/**
-	* To update back ground.
-	*/
-    void updateButtonBackground(const QString& bg);
+	 /**
+	  * To update back ground.
+	  */
+    void updateButtonBackgroundAndColor(const QString& bg,const QString& iconColor);
 
 private:
 

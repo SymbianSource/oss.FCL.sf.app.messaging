@@ -157,15 +157,10 @@ void MsgSettingsForm::initSettingModel(
     if (settingsView == MsgSettingsView::MMSView)
     {
         //set MMS Settings as expanded
-        QModelIndex index_mms = settingsModel->indexFromItem(mmsGroup);
         //TODO: dataform issue on expanding one group item
-        //this->setExpanded(index_mms, true);
+//        expandGroup(mmsGroup,true);
     }
-    else if(settingsView == MsgSettingsView::SMSView)
-    {
-        //expandSMSSettings();
-    }
-        
+    
 }
 
 void MsgSettingsForm::refreshViewForm()
@@ -227,6 +222,7 @@ void MsgSettingsForm::updateSmsMCGroupItem(HbDataFormModelItem* parent)
                             this,
                             SLOT(onPressedCustomButton()));
     }    
+    
 }
 
 void MsgSettingsForm::addMMSGroupItem(HbDataFormModelItem* parent)
@@ -489,10 +485,13 @@ void MsgSettingsForm::onSMSCurrentIndexChanged(int index)
     mSettingEngine->setSMSMessageCenter(index);
 }
 
-void MsgSettingsForm::expandSMSSettings()
+void MsgSettingsForm::expandGroup(HbDataFormModelItem* group,bool expand)
 {
-    QModelIndex index_sms = settingsModel->indexFromItem(mSmsMCGroup);
+    QModelIndex index = settingsModel->indexFromItem(group);
 
-    this->setExpanded(index_sms, true);
+    if(index.isValid())
+    {
+        this->setExpanded(index, expand);
+    }
 }
 //EOF

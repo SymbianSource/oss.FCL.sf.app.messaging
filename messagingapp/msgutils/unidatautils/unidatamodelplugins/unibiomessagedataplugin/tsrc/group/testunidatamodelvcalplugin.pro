@@ -17,23 +17,26 @@
 QT += testlib
 QT -= gui
 
-TEMPLATE = lib
+TEMPLATE = app
 TARGET = test-unidatamodel-vcal-plugin
 
 
 INCLUDEPATH += .
 INCLUDEPATH += ../../../../../../inc
+INCLUDEPATH += ../../../../../../../inc
+#INCLUDEPATH += ../../../../../s60qconversions/inc
+INCLUDEPATH += ../../../../../../../../../../epoc32/include/platform/mw
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_TEST_DLL
 
 SOURCES += \
-	testunidatamodelvcalplugin.cpp
+	../src/testunidatamodelvcalplugin.cpp
 
 				
 # Input
 HEADERS += \
-	testunidatamodelvcalplugin.h
+	../inc/testunidatamodelvcalplugin.h
 	
 	   	   			 
    
@@ -45,16 +48,10 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
     TARGET.EPOCALLOWDLLDATA = 1
     BLD_INF_RULES.prj_exports += "vcal1.txt /epoc32/winscw/c/test/vcal1.txt"
     BLD_INF_RULES.prj_exports += "BioMtm.rsc /epoc32/winscw/c/resource/messaging/mtm/BioMtm.rsc"
-		}
+    BLD_INF_RULES.prj_exports += "TestUniDataModelVCalPlugin.cfg c:/TestUniDataModelVCalPlugin.cfg"
+    BLD_INF_RULES.prj_exports += "TestUniDataModelVCalPlugin.pl c:/TestUniDataModelVCalPlugin.pl"
 
-defBlock = \      
-	  "$${LITERAL_HASH}if defined(EABI)" \
-	  "DEFFILE  ../eabi/test_unidatamodel_vcal_plugin.def" \
-             "$${LITERAL_HASH}else" \
-             "DEFFILE  ../bwins/test_unidatamodel_vcal_plugin.def" \
-             "$${LITERAL_HASH}endif"
-	
-MMP_RULES += defBlock
+		}
 
  LIBS += -leuser \
 	-lconvergedmessageutils\
@@ -68,7 +65,7 @@ MMP_RULES += defBlock
 	-lbioc \
 	-lefsrv \
 	-lbiodb \
-	-lbifu \
-	-lxqutils
+     -lxqutils \
+	-lbifu
 	
 

@@ -80,8 +80,9 @@
 #define LOC_ADD_SUBJECT     hbTrId("txt_messaging_opt_add_subject")
 
 #define LOC_MSG_SEND_FAILED hbTrId("txt_messaging_dialog_message_sending_failed")
-#define LOC_DIALOG_SMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_sms_settings_incomplete")
+#define LOC_DIALOG_SMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_sms_message_centre_does_not_e")
 #define LOC_DIALOG_SAVE_RINGTONE hbTrId("txt_conversations_dialog_save_ringing_tone")
+#define LOC_MMS_RETRIEVAL_FAILED hbTrId("txt_messaging_dialog_mms_retrieval_failed")
 
 
 const int INVALID_MSGID = -1;
@@ -274,40 +275,15 @@ void MsgConversationView::onConversationViewEmpty()
 // MsgConversationView::longPressed
 // @see header file
 //---------------------------------------------------------------
-void MsgConversationView::longPressed(HbAbstractViewItem* viewItem,
-    const QPointF& point)
-{    
-    MsgConversationViewItem* item = qgraphicsitem_cast<
-            MsgConversationViewItem *> (viewItem);
-
-    // Show the item-specific menu
-    if (this->isVisible())
-    {
-        //If message is in Sending state or is Scheduled to be sent later,
-        //do not allow any operations on the message
-        int sendingState = item->modelIndex().data(SendingState).toInt();
-        if(sendingState == ConvergedMessage::Scheduled ||
-                   sendingState == ConvergedMessage::Sending ||
-                   sendingState == ConvergedMessage::Waiting)
-           {
-               return;
-           }
-        // Create new menu
-        HbMenu* contextMenu = new HbMenu();
-        contextMenu->setAttribute(Qt::WA_DeleteOnClose);
-        contextMenu->setPreferredPos(point);
-        setContextMenu(item, contextMenu, sendingState);
-        contextMenu->show();
-
-    }
-    
+void MsgConversationView::longPressed(HbAbstractViewItem* viewItem, const QPointF& point)
+{ 
+    showContextMenu(viewItem,point,HbPopup::TopLeftCorner);
 }
 
 //---------------------------------------------------------------
 // MsgConversationView::setContextMenu
 // @see header
 //---------------------------------------------------------------
-
 void MsgConversationView::setContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu, int sendingState)
 {
     addOpenItemToContextMenu(item , contextMenu,sendingState);
@@ -358,10 +334,11 @@ void MsgConversationView::addOpenItemToContextMenu(MsgConversationViewItem* item
         (direction == ConvergedMessage::Incoming))
         {
         HbAction *contextItem = contextMenu->addAction(LOC_SAVE_TO_CONTACTS);
-        connect(contextItem, SIGNAL(triggered()),this, SLOT(openItem()));
+        connect(contextItem, SIGNAL(triggered()),this, SLOT(saveVCard()));
         return;
         }
-    if( (sendingState == ConvergedMessage::SentState ) ||
+    if( (sendingState == ConvergedMessage::SentState &&
+         messageSubType != ConvergedMessage::VCard) ||
         (direction == ConvergedMessage::Incoming))
     {
         HbAction *contextItem = contextMenu->addAction(LOC_COMMON_OPEN);
@@ -379,8 +356,11 @@ void MsgConversationView::addResendItemToContextMenu(MsgConversationViewItem* it
 {
     Q_UNUSED(item)
     int direction = item->modelIndex().data(Direction).toInt();
+    int messageSubType = item->modelIndex().data(MessageSubType).toInt();
     
-    if( (direction == ConvergedMessage::Outgoing)&&
+    
+    if( ((direction == ConvergedMessage::Outgoing) &&
+        (messageSubType != ConvergedMessage::VCard))&&
         ((sendingState == ConvergedMessage::Resend ) ||
         (sendingState == ConvergedMessage::Suspended )||
         (sendingState == ConvergedMessage::Failed )))
@@ -722,7 +702,7 @@ void MsgConversationView::resendMessage()
         qint32 messageId = index.data(ConvergedMsgId).toLongLong();    
         if(!(ConversationsEngine::instance()->resendMessage(messageId)))
         {
-            HbMessageBox::warning(LOC_MSG_SEND_FAILED);
+            HbMessageBox::warning(LOC_MSG_SEND_FAILED, 0, 0, HbMessageBox::Ok);
         }
     }
     
@@ -737,10 +717,10 @@ void MsgConversationView::downloadMessage()
     QModelIndex index = mConversationList->currentIndex();
     if(index.isValid())
     {
-        qint32 messageId = index.data(ConvergedMsgId).toLongLong();    
+        qint32 messageId = index.data(ConvergedMsgId).toLongLong();
         if(ConversationsEngine::instance()->downloadMessage(messageId)!=KErrNone)
         {
-            HbMessageBox::warning("Message Retrieval Failed!"); //TODO: use logical str name
+            HbMessageBox::warning(LOC_MMS_RETRIEVAL_FAILED, 0, 0, HbMessageBox::Ok);
         }
     }
     
@@ -920,20 +900,7 @@ void MsgConversationView::openItem(const QModelIndex & index)
         }
         else if(ConvergedMessage::VCard == messageSubType)
         {
-            QString filepath = index.data(Attachments).toStringList().at(0);
-            bool result = MsgContactsUtil::launchVCardViewer(filepath);
-            if(result)
-            {
-                
-                int messageId = index.data(ConvergedMsgId).toInt();
-                QList<int> msgIdList;
-                if(index.data(UnReadStatus).toInt())
-                {
-                    msgIdList.clear();
-                    msgIdList << messageId;
-                    ConversationsEngine::instance()->markMessagesRead(msgIdList);
-                }
-            }
+            handleShortTap();
             return;
         }
         else if(ConvergedMessage::VCal == messageSubType)
@@ -955,7 +922,7 @@ void MsgConversationView::openItem(const QModelIndex & index)
     }
     else if(ConvergedMessage::MmsNotification == messageType)
     {
-        qint32 messageId = index.data(ConvergedMsgId).toLongLong();    
+        qint32 messageId = index.data(ConvergedMsgId).toLongLong();
         if(!ConversationsEngine::instance()->downloadOperationSupported(messageId))           
         {
            int notificationState = index.data(NotificationStatus).toInt();
@@ -1346,6 +1313,17 @@ void MsgConversationView::onDialogDownLoadMsg(HbAction* action)
     if (action == dlg->actions().at(0)) {
         downloadMessage();
     }
+    
+    //if message unread, mark as read now
+    QModelIndex index = mConversationList->currentIndex();
+    qint32 messageId = index.data(ConvergedMsgId).toLongLong();
+    QList<int> msgIdList;
+    if(index.data(UnReadStatus).toInt())
+    {
+        msgIdList.clear();
+        msgIdList << messageId;
+        ConversationsEngine::instance()->markMessagesRead(msgIdList);
+    }
 }
 
 //---------------------------------------------------------------
@@ -1401,5 +1379,71 @@ void MsgConversationView::onViewReady()
     disconnect(mainWindow(), SIGNAL(orientationChanged(Qt: rientation)), mConversationList, 0);
     
    fetchMoreConversations();
+}
+
+//---------------------------------------------------------------
+// MsgConversationView::handleShortTap
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationView::handleShortTap()
+{
+    HbAbstractViewItem* item = mConversationList->currentViewItem();
+    QRectF rc = item->rect();
+    QPointF p = item->mapToScene(rc.center());
+    
+    showContextMenu(item,p,HbPopup::TopEdgeCenter);
+}
+
+//---------------------------------------------------------------
+// MsgConversationView::handleShortTap
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationView::showContextMenu(HbAbstractViewItem* viewItem,const QPointF& point, int placement)
+{    
+    MsgConversationViewItem* item = qgraphicsitem_cast<MsgConversationViewItem *>(viewItem);
+
+    // Show the item-specific menu
+    if (this->isVisible())
+    {
+        //If message is in Sending state or is Scheduled to be sent later,
+        //do not allow any operations on the message
+        int sendingState = item->modelIndex().data(SendingState).toInt();
+        
+        if(sendingState == ConvergedMessage::Scheduled ||
+            sendingState == ConvergedMessage::Sending ||
+            sendingState == ConvergedMessage::Waiting)
+            {
+                return;
+            }
+        // Create new menu
+        HbMenu* contextMenu = new HbMenu();
+        contextMenu->setAttribute(Qt::WA_DeleteOnClose);
+        contextMenu->setPreferredPos(point,HbPopup::Placement(placement));
+        setContextMenu(item, contextMenu, sendingState);
+        contextMenu->show();
+    }
+}
+
+//---------------------------------------------------------------
+// MsgConversationView::saveVCard
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationView::saveVCard()
+{
+    QModelIndex index = mConversationList->currentIndex();
+    
+    QString filepath = index.data(Attachments).toStringList().at(0);
+    bool result = MsgContactsUtil::launchVCardViewer(filepath);
+    if(result)
+    {
+        int messageId = index.data(ConvergedMsgId).toInt();
+        QList<int> msgIdList;
+        if(index.data(UnReadStatus).toInt())
+        {
+            msgIdList.clear();
+            msgIdList << messageId;
+            ConversationsEngine::instance()->markMessagesRead(msgIdList);
+        }
+    } 
 }
 // EOF

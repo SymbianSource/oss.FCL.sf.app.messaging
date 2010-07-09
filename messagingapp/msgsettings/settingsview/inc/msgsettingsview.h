@@ -60,6 +60,10 @@ private:
     //Settings Form
     MsgSettingsForm* mSettingsForm;
     
+    //main window.
     HbMainWindow* mMainWindow;
+    
+    //current settings view.
+    SettingsView mCurrentView;
 };
 #endif // MSGSETTINGSVIEW_H

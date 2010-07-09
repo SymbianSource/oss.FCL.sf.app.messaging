@@ -90,23 +90,23 @@ void RingBcPrivate::saveTone(const QString &path)
         
         if(error == KErrCorrupt)
             {
-            HbMessageBox::information("Ringing Tone Corrupted");
+            HbMessageBox::information("Ringing Tone Corrupted", 0, 0, HbMessageBox::Ok);
             QDEBUG_WRITE("RingBcPrivate::saveTone : Ringing tone corrupted")
             }
         else if(error == KErrNoMemory || error == KErrDiskFull)
             {
-            HbMessageBox::information("No memory to save");
+            HbMessageBox::information("No memory to save", 0, 0, HbMessageBox::Ok);
             QDEBUG_WRITE("RingBcPrivate::saveTone : Low memory")
             }
         else
             {
-            HbMessageBox::information("Error in Saving");
+            HbMessageBox::information("Error in Saving", 0, 0, HbMessageBox::Ok);
             QDEBUG_WRITE("RingBcPrivate::saveTone : Error in Saving")
             }
         }
     else
         {
-        HbMessageBox::information("Saved succesfully");
+        HbMessageBox::information("Saved succesfully", 0, 0, HbMessageBox::Ok);
         QDEBUG_WRITE("RingBcPrivate::saveTone : Ringing tone saved successfully")
         }
 

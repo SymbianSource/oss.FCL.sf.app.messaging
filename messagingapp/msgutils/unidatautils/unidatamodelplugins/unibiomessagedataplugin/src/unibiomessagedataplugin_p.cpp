@@ -75,7 +75,7 @@ UniBioMessageDataPluginPrivate::~UniBioMessageDataPluginPrivate()
 //---------------------------------------------------------------
 UniBioMessageDataPluginPrivate::UniBioMessageDataPluginPrivate(UniBioMessageDataPlugin* plugin) :
     q_ptr(plugin), iMSession(NULL), iMtmReg(NULL), iBioClientMtm(NULL),
-            iMsvEntry(NULL)
+            iMsvEntry(NULL),iAttachmentCount(0)
 {
     iMSession = CMsvSession::OpenSyncL(*this);
     done = EFalse;
@@ -247,7 +247,13 @@ RFile UniBioMessageDataPluginPrivate::attachmentL()
         CMsvStore* store1 = iMsvEntry->ReadStoreL();
         CleanupStack::PushL(store1);
         MMsvAttachmentManager& attachMan = store1->AttachmentManagerL();
-        RFile file = attachMan.GetAttachmentFileL(0);
+        RFile file;
+		
+        if (iAttachmentCount > 0)
+        {
+            file = attachMan.GetAttachmentFileL(0);
+        }
+            
         CleanupStack::PopAndDestroy(store1);
         return file;
     }

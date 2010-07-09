@@ -199,7 +199,9 @@ ECsProvisioning,
 ECsBioMsg_VCard,
 ECsBioMsg_VCal,
 ECsBioMgs_NokiaService,
-ECsUnknown
+ECsUnknown,
+ECsBlueTooth_VCard,
+ECsBlueTooth_VCal
 };
 
 /**

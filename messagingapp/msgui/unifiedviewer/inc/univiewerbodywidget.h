@@ -26,6 +26,7 @@ class UniViewerTextItem;
 class UniViewerPixmapWidget;
 class UniViewerAudioWidget;
 class HbTextItem;
+class HbIconItem;
 
 /**
  * @class UniViewerBodyWidget
@@ -118,6 +119,14 @@ public slots:
      */
     void clearContent();
 
+private slots:
+
+    /**
+     * Sets overlay icon on top of pixmap widget.
+     * @param iconName Overlay icon name to be set.
+     */
+    void setOverlayIcon(const QString &iconName);
+
 protected:
 
     /**
@@ -164,6 +173,11 @@ private:
      * Media widget for embedded audio content.
      */
     UniViewerAudioWidget *mAudioItem;
+
+    /**
+     * Overlay icon on top of pixmap widget.
+     */
+    HbIconItem *mOverlayItem;
 };
 
 #endif //UNIVIEWER_BODY_WIDGET_H

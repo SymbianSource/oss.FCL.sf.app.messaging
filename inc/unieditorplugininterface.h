@@ -34,7 +34,8 @@ public:
      */
     enum EditorOperation
     {
-        Forward = 0, 
+        Forward = 0,
+        Reply,
         ReplyAll, 
         Default 
     };

@@ -737,6 +737,18 @@ TCsType CCsMsgHandler::ExtractCsType( const TMsvEntry& aEntry)
             break;
         case KSenduiMtmBioUidValue:
             { 
+			if (aEntry.iMtmData1 == KSenduiMtmBtUidValue) 
+			{
+           	 	if (aEntry.iBioType == KMsgBioUidVCard.iUid) 
+				{
+                	type = ECsBlueTooth_VCard;
+            	}
+            	else if (aEntry.iBioType == KMsgBioUidVCalendar.iUid)
+				{
+               		type = ECsBlueTooth_VCal;
+            	}
+           		 break;
+        	}
             type = ECsBioMsg; 
             
             // based on the biotype uid set message type

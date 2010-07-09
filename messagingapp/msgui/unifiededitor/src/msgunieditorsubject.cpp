@@ -19,6 +19,7 @@
 #include "debugtraces.h"
 #include <HbIconItem>
 #include <HbNotificationDialog>
+#include <hbmessagebox.h>
 
 // USER INCLUDES
 #include "msgunieditorsubject.h"
@@ -125,7 +126,7 @@ void MsgUnifiedEditorSubject::onContentsChanged(const QString& text)
         mSubjectEdit->setText(mPrevBuffer);
         connect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
                         this, SLOT(onContentsChanged(const QString&)));
-        HbNotificationDialog::launchDialog(LOC_UNABLE_TO_ADD_CONTENT);
+        HbMessageBox::information(LOC_UNABLE_TO_ADD_CONTENT, 0, 0, HbMessageBox::Ok);
         return;
     }
 

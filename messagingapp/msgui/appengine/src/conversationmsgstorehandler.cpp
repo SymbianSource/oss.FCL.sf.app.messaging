@@ -15,6 +15,7 @@
 *
 */
 
+#include <hbglobal.h>
 #include <textresolver.h> // from CommonEngine
 #include <mtclreg.h>
 #include <mmsnotificationclient.h>
@@ -45,6 +46,17 @@ const TUid KSmsMtmUid ={KSenduiMtmSmsUidValue};
 const TUid KMmsMtmUid ={KSenduiMtmMmsUidValue};
 _LIT(KUnixEpoch, "19700000:000000.000000");
 #define BYTES_TO_KBYTES_FACTOR 1024
+
+// LOCALIZATION
+#define LOC_MESSAGE_SIZE hbTrId("txt_messaging_list_size")
+#define LOC_CLASS_ADVERTISEMENT hbTrId("txt_messaging_list_advertisement")
+#define LOC_CLASS_INFORMATIONAL hbTrId("txt_messaging_list_informational")
+#define LOC_CLASS_PERSONAL hbTrId("txt_messaging_list_personal")
+#define LOC_MMS_RETRIEVAL_FAILED hbTrId("txt_messaging_dialog_mms_retrieval_failed")
+#define LOC_MMS_NOTIF_EXPIRED hbTrId("Message Expired !")   //TODO: localization
+#define LOC_MMS_WAITING hbTrId("txt_wireframe_list_multimedia_message_waiting")
+#define LOC_MMS_RETRIEVING hbTrId("Retrieving message...")   //TODO: localization
+#define LOC_MMS_EXPIRY_DATE hbTrId("txt_messaging_list_expiry_date")
 
 // TODO: read global setting of formats on the phone
 const QString DATE_FORMAT("dd/MM");
@@ -674,18 +686,14 @@ void ConversationMsgStoreHandler::setNotificationMessageIdL(int messageId)
 // ConversationMsgStoreHandler::NotificationMsgSizeL
 // @see header
 //---------------------------------------------------------------
-QString ConversationMsgStoreHandler::NotificationMsgSizeL()
+QString ConversationMsgStoreHandler::NotificationMsgSize()
 {
     // Size of message.
     TInt size = iNotificationClient->MessageTransferSize( );
-    
+
     // read max receive size limit from settings
-    CMmsSettings* settings = CMmsSettings::NewL();
-    CleanupStack::PushL( settings );
-    iNotificationClient->RestoreSettingsL();
-    settings->CopyL( iNotificationClient->MmsSettings() );
-    TInt maxSize = static_cast<TInt>(settings->MaximumReceiveSize() );
-    CleanupStack::PopAndDestroy( settings );
+    TInt maxSize = 0;
+    TRAP_IGNORE(maxSize = MaxReceiveSizeLimitL());
 
     // apply max size limit rule
     if( maxSize > 0 )
@@ -696,16 +704,13 @@ QString ConversationMsgStoreHandler::NotificationMsgSizeL()
         }
     }
 
-    // Finally make the UI string
-    int fileSize = size / BYTES_TO_KBYTES_FACTOR;
+    TInt fileSize = size / BYTES_TO_KBYTES_FACTOR;
     if ( size % BYTES_TO_KBYTES_FACTOR )
     {
         fileSize++;
     }
-    // TODO: use localized string constants here
-    QString sizeString = QString("%1").arg(fileSize);
-    sizeString.append(" Kb");
-    return sizeString;
+
+    return LOC_MESSAGE_SIZE.arg(fileSize);
 }
 
 //---------------------------------------------------------------
@@ -714,24 +719,23 @@ QString ConversationMsgStoreHandler::NotificationMsgSizeL()
 //---------------------------------------------------------------
 QString ConversationMsgStoreHandler::NotificationClass()
 {
-    //TODO: use localized string
     QString notificationClass;
     TInt msgClass = iNotificationClient->MessageClass( );
     switch( msgClass )
     {
         case EMmsClassPersonal:
         {
-            notificationClass = "Personal";
+            notificationClass = LOC_CLASS_PERSONAL;
             break;
         }
         case EMmsClassAdvertisement:
         {
-            notificationClass = "Advertisement";
+            notificationClass = LOC_CLASS_ADVERTISEMENT;
             break;
         }
         case EMmsClassInformational:
         {
-            notificationClass = "Informative";
+            notificationClass = LOC_CLASS_INFORMATIONAL;
             break;
         }
         default:
@@ -750,7 +754,6 @@ void ConversationMsgStoreHandler::NotificationStatus(
         int& status,
         QString& statusStr)
 {
-    // TODO : use standard strings provided by Arul
     // fetch mms notification status from store handler
     // and map as per our UI requirements
     TMsvEntry entry = iNotificationClient->Entry().Entry();
@@ -759,23 +762,23 @@ void ConversationMsgStoreHandler::NotificationStatus(
     {
         case ConvergedMessage::NotifFailed:
         {
-            statusStr = "Message retrieval failed !";
+            statusStr = LOC_MMS_RETRIEVAL_FAILED;
             break;
         }
         case ConvergedMessage::NotifExpired:
         {
-            statusStr = "Message Expired !";
+            statusStr = LOC_MMS_NOTIF_EXPIRED;
             break;
         }
         case ConvergedMessage::NotifReadyForFetching:
         {
-            statusStr = "Multimedia Message waiting...";
+            statusStr = LOC_MMS_WAITING;
             break;
         }
         case ConvergedMessage::NotifWaiting:
         case ConvergedMessage::NotifRetrieving:
         {
-            statusStr = "Retrieving message...";
+            statusStr = LOC_MMS_RETRIEVING;
             break;
         }
         default:
@@ -790,10 +793,11 @@ void ConversationMsgStoreHandler::NotificationStatus(
 // ConversationMsgStoreHandler::NotificationExpiryDate
 // @see header
 //---------------------------------------------------------------
-void ConversationMsgStoreHandler::NotificationExpiryDate(
-        TTime& expiryTime,
-        QString& expiryTimeStr)
+QString ConversationMsgStoreHandler::NotificationExpiryDate()
 {
+    TTime expiryTime = 0;
+    QString expiryTimeStr;
+
     // get expiry time from entry
     expiryTime = iNotificationClient->ExpiryDate( );
     TLocale locale;
@@ -808,14 +812,7 @@ void ConversationMsgStoreHandler::NotificationExpiryDate(
     TTime unixEpoch(KUnixEpoch);
     TTimeIntervalSeconds seconds;
     expiryTime.SecondsFrom(unixEpoch, seconds);
-    QDateTime dateTime;
-    dateTime.setTime_t(seconds.Int());
-    if (dateTime.date() == QDateTime::currentDateTime().date()) {
-        expiryTimeStr = dateTime.toString(TIME_FORMAT);
-    }
-    else {
-        expiryTimeStr = dateTime.toString(DATE_FORMAT);
-    }
+    return LOC_MMS_EXPIRY_DATE.arg(seconds.Int());
 }
 
 //-----------------------------------------------------------------------------
@@ -967,6 +964,22 @@ void ConversationMsgStoreHandler::extractMsgType(const TMsvEntry& entry,
             break;
         case KSenduiMtmBioUidValue:
             { 
+ 			if (entry.iMtmData1 == KSenduiMtmBtUidValue) 
+				{
+            	msgType = ConvergedMessage::BT;
+
+            	if (entry.iBioType == KMsgBioUidVCard.iUid) 
+					{	
+               		 msgSubType = ConvergedMessage::VCard;
+            		}
+            	else if (entry.iBioType == KMsgBioUidVCalendar.iUid) 
+					{
+			
+               		 msgSubType = ConvergedMessage::VCal;
+            		}
+
+           	 break;
+       		 }
             msgType = ConvergedMessage::BioMsg; 
 
             // based on the biotype uid set message type
@@ -997,6 +1010,10 @@ void ConversationMsgStoreHandler::extractMsgType(const TMsvEntry& entry,
     }
 }
 
+//----------------------------------------------------------------------------
+// ConversationMsgStoreHandler::getMsgSubType
+// @see header
+//----------------------------------------------------------------------------
 int ConversationMsgStoreHandler::getMsgSubType(int msgId)
 {
     int msgType = ConvergedMessage::None;
@@ -1008,6 +1025,21 @@ int ConversationMsgStoreHandler::getMsgSubType(int msgId)
         extractMsgType(entry, msgType, msgSubType);
     }
     return msgSubType;
+}
+
+//----------------------------------------------------------------------------
+// ConversationMsgStoreHandler::MaxReceiveSizeLimitL
+// @see header
+//----------------------------------------------------------------------------
+TInt ConversationMsgStoreHandler::MaxReceiveSizeLimitL()
+{
+    CMmsSettings* settings = CMmsSettings::NewL();
+    CleanupStack::PushL( settings );
+    iNotificationClient->RestoreSettingsL();
+    settings->CopyL( iNotificationClient->MmsSettings() );
+    TInt maxSize = static_cast<TInt>(settings->MaximumReceiveSize() );
+    CleanupStack::PopAndDestroy( settings );
+    return maxSize;
 }
 
 // End of file

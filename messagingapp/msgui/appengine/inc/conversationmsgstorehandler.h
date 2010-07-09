@@ -147,9 +147,9 @@ public:
 
     /**
      * Seeker method for getting mms notification estimated msg size
-     * @return Formatted string of msg size
+     * @return formatted string for msg size in KB
      */
-    QString NotificationMsgSizeL();
+    QString NotificationMsgSize();
     
     /**
      * Seeker method for getting mms notification class type
@@ -168,13 +168,9 @@ public:
     
     /**
      * Seeker method getting expiry info of a notification msg
-     * @param [OUT] expiryTime, notification's expiry time
-     * @param [OUT] expiryTimeQString, formatted string of
-     * notification's expiry time
+     * @return formatted string of notification's expiry time
      */
-    void NotificationExpiryDate(
-            TTime& expiryTime,
-            QString& expiryTimeStr);
+    QString NotificationExpiryDate();
 					 
     /**
      * Download a specified message
@@ -223,6 +219,11 @@ private:
      * Checks if the MTM type supported
      */
     TBool IsMtmSupported(long uid);
+    
+    /**
+     * Get max receive size limit (for MMS) from settings
+     */
+    TInt MaxReceiveSizeLimitL();
 
 private: 
     /**

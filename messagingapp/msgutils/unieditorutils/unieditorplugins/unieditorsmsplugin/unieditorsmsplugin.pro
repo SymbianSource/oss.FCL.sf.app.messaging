@@ -66,7 +66,8 @@ LIBS += -leuser \
     -lFeatMgr \
     -lapmime \
     -lunidatamodelloader \
-    -lxqutils
+    -lxqutils \
+    -lQtContacts
 
 # plugin stub deployment
 plugin.sources = unieditorsmsplugin.dll

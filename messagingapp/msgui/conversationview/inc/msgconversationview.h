@@ -325,6 +325,11 @@ private slots:
      */
     void handleSmsCharLimitReached();   
     
+    /**
+     * Hanldes saving of vcard.
+     */
+    void saveVCard();
+    
 signals:
     /**
      * Signal emitted to inform close the conversation view.
@@ -386,6 +391,16 @@ private:
      * @param msgId message id
      */
     void handleProvisoningMsg(int msgId);
+    
+    /**
+     * Handles short tap for vcard.
+     */
+    void handleShortTap();
+    
+    /**
+     * helper method to show long/short tap context menu.
+     */
+    void showContextMenu(HbAbstractViewItem* viewItem,const QPointF& point, int placement);
 
 private:
 
