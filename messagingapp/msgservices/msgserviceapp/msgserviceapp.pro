@@ -50,8 +50,6 @@ SOURCES += src/main.cpp \
 TARGET.CAPABILITY = ALL -TCB
 TARGET.UID3 = 0x2002E6DA
 
-RESOURCES += msgserviceapp.qrc
-
 LIBS += -lxqservice \
         -lxqserviceutil \
         -lconvergedmessageutils \

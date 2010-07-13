@@ -199,7 +199,16 @@ void UniViewerBodyWidget::setSlideContents(UniMessageInfoList objList, QString s
         if (mimeType.contains(TEXT_MIMETYPE)) {
             QFile file(info->path());
             if (file.open(QIODevice::ReadOnly)) {
-                QString textContent(file.readAll());
+                QString textContent;
+                QByteArray textArray;
+                textArray = file.readAll();
+                char *data = new char[textArray.size()+1];
+                strcpy(data,textArray.data());
+                //This is needed since MMS text content 
+                //is stored in UTF8 format
+                textContent = textContent.fromUtf8(data,strlen(data));
+                file.close();
+                delete []data;
                 setText(textContent);
             }
         }

@@ -58,6 +58,8 @@
 #include "mmsconformancecheck.h"
 #include "msgsettingsview.h"
 #include "msgaudiofetcherview.h"
+#include "unieditorpluginloader.h"
+#include "unieditorplugininterface.h"
 
 //Item specific menu.
 
@@ -69,6 +71,7 @@
 #define LOC_COMMON_SAVE  hbTrId("txt_common_menu_save")
 
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
+#define LOC_DELETE_SHARED_MESSAGE hbTrId("txt_messaging_dialog_same_message_exists_in_multip")
 #define LOC_SAVE_TO_CONTACTS hbTrId("txt_messaging_menu_save_to_contacts")
 
 //main menu
@@ -362,7 +365,7 @@ void MsgConversationView::addResendItemToContextMenu(MsgConversationViewItem* it
     if( ((direction == ConvergedMessage::Outgoing) &&
         (messageSubType != ConvergedMessage::VCard))&&
         ((sendingState == ConvergedMessage::Resend ) ||
-        (sendingState == ConvergedMessage::Suspended )||
+        
         (sendingState == ConvergedMessage::Failed )))
     {
         HbAction *contextItem = contextMenu->addAction(LOC_COMMON_SEND);
@@ -400,6 +403,7 @@ void MsgConversationView::addForwardItemToContextMenu(MsgConversationViewItem* i
     if( ((sendingState == ConvergedMessage::SentState) ||
         (sendingState == ConvergedMessage::Resend) ||
         (sendingState == ConvergedMessage::Failed) ||
+        (sendingState == ConvergedMessage::Suspended )||
         (direction == ConvergedMessage::Incoming) ) &&
         canForwardMessage)
     {
@@ -731,8 +735,29 @@ void MsgConversationView::downloadMessage()
 // Deletes the message
 //---------------------------------------------------------------
 void MsgConversationView::deleteItem()
+{
+    QString str = LOC_DELETE_MESSAGE;
+
+    QModelIndex index = mConversationList->currentIndex();
+    if(index.isValid())
     {
-    HbMessageBox::question(LOC_DELETE_MESSAGE,this,SLOT(onDialogdeleteMsg(HbAction*)),
+        int messageType = index.data(MessageType).toInt();        
+        int direction = index.data(Direction).toInt();
+
+        if ( direction == ConvergedMessage::Outgoing &&
+            messageType == ConvergedMessage::Mms )
+        {
+            qint32 messageId = index.data(ConvergedMsgId).toLongLong();
+
+            if(isSharedMessage(messageId))
+            {
+                str = LOC_DELETE_SHARED_MESSAGE;  
+            }
+        }
+    }
+
+
+    HbMessageBox::question(str,this,SLOT(onDialogdeleteMsg(HbAction*)),
                            HbMessageBox::Delete | HbMessageBox::Cancel);
 }
 
@@ -953,6 +978,15 @@ void MsgConversationView::openItem(const QModelIndex & index)
     // check whether message is in sending progress, then donot launch viewer.
     int location = index.data(MessageLocation).toInt();
     int sendingState = index.data(SendingState).toInt();
+    
+    // For suspended message both short tap and long tap needs to show the same
+    // context menu.....
+    if(direction == ConvergedMessage::Outgoing 
+        	&&sendingState == ConvergedMessage::Suspended )
+    {
+        handleShortTap();
+        return;
+    }
     
     //If message is in any other state other than 'Sent'
     //do not open the message
@@ -1446,4 +1480,39 @@ void MsgConversationView::saveVCard()
         }
     } 
 }
+
+//---------------------------------------------------------------
+// MsgConversationView::isSharedMessage
+// @see header file
+//---------------------------------------------------------------
+bool MsgConversationView::isSharedMessage(qint32 messageId)
+{
+    bool shared = false;
+
+    UniEditorPluginLoader* pluginLoader = new UniEditorPluginLoader();
+    
+    UniEditorPluginInterface* pluginInterface =
+        pluginLoader->getUniEditorPlugin(ConvergedMessage::Mms);
+
+    ConvergedMessage* msg = pluginInterface->convertFrom(messageId);    
+    if(msg)
+    {
+        int count = 0;
+        count += msg->toAddressList().count();
+        count += msg->ccAddressList().count();
+        count += msg->bccAddressList().count();
+
+        if(count > 1)
+        {
+            shared = true;
+        }
+        
+        delete msg;
+    }
+
+    delete pluginLoader;    
+
+    return shared;
+}
+
 // EOF

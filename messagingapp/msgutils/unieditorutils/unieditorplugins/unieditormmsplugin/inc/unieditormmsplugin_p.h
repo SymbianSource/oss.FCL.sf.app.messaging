@@ -225,6 +225,11 @@ private: // Constructors
      * Populates converged message for replyAll case
      */
     void convertFromReplyAllHandlerL(ConvergedMessage* aMessage);
+    
+    /**
+     * Populates converged message for default case
+     */
+    void convertFromDefaultHandlerL(ConvergedMessage* aMessage);
 
 private:
     // Data

@@ -149,6 +149,10 @@ ConvergedMessage* CUniEditorMmsPluginPrivate::convertFromL( TMsvId aId,
     {
         convertFromReplyAllHandlerL(msg);
     }
+    else if(aOperation == UniEditorPluginInterface::Default)
+    {
+        convertFromDefaultHandlerL(msg);
+    }
     CleanupStack::Pop(msg);
     QDEBUG_WRITE("Exit convertFromL");
     return msg;
@@ -285,11 +289,18 @@ void CUniEditorMmsPluginPrivate::populateMessageBodyL(
             if( slideContentList.at(i)->mimetype().contains("text") )
             {
                 QString textContent;
+                QByteArray textArray;
                 QFile file(slideContentList.at(i)->path());
                 if (file.open(QIODevice::ReadOnly)) {
-                    textContent = file.readAll();
+                    textArray = file.readAll();
+                    char *data = new char[textArray.size()+1];
+                    strcpy(data,textArray.data());
+                    //This is needed since MMS text content 
+                    //is stored in UTF8 format
+                    textContent = textContent.fromUtf8(data,strlen(data));
                     aMessage.setBodyText(textContent);
                     file.close();
+                    delete []data;
                 }
                 else {
                     return;
@@ -1109,4 +1120,60 @@ void CUniEditorMmsPluginPrivate::convertFromReplyAllHandlerL(
     aMessage->setSubject(subject);
     }
 
+// -----------------------------------------------------------------------------
+// convertFromDefaultHandlerL
+// @see Header
+// -----------------------------------------------------------------------------
+void CUniEditorMmsPluginPrivate::convertFromDefaultHandlerL(ConvergedMessage* aMessage)
+{
+    QDEBUG_WRITE("Enter convertFromDefaultHandlerL");
+
+    TMsvEntry entry = MmsMtmL()->Entry().Entry();
+    
+    if( entry.Parent() == KMsvGlobalInBoxIndexEntryIdValue )
+        {
+        // get sender address    
+        HBufC* fromAddress = (MmsMtmL()->Sender()).AllocLC();
+        HBufC* pureAddr = TMmsGenUtils::PureAddress(*fromAddress).AllocLC();
+        HBufC* aliasAddr = TMmsGenUtils::Alias(*fromAddress).AllocLC();
+
+        if(pureAddr->Length() > 0)
+            {
+            ConvergedMessageAddress messageAddress(
+                    XQConversions::s60DescToQString(*pureAddr),
+                    XQConversions::s60DescToQString(*aliasAddr));
+            aMessage->addFromRecipient(messageAddress);
+            }
+        CleanupStack::PopAndDestroy(3, fromAddress );
+        }
+    else
+        {
+        populateRecipientsL(*aMessage);
+        }
+
+    //populate convergedmessage with the subject prepended with FW:
+    QString subject = XQConversions::s60DescToQString(MmsMtmL()->SubjectL());
+    aMessage->setSubject(subject);
+
+    // Priority
+    TMsvPriority priority = entry.Priority();
+    if( EMsvHighPriority == priority )
+    {
+        aMessage->setPriority(ConvergedMessage::High);
+    }
+    else if( EMsvLowPriority == priority )
+    {
+        aMessage->setPriority(ConvergedMessage::Low);
+    }
+    else if( EMsvMediumPriority == priority )
+    {
+        aMessage->setPriority(ConvergedMessage::Normal);
+    }
+
+    //Populate body and attachments
+    //The region info inside slides is not maintained
+    populateMessageBodyL(*aMessage);
+    
+    QDEBUG_WRITE("Exit convertFromDefaultHandlerL");
+}
 //  End of File

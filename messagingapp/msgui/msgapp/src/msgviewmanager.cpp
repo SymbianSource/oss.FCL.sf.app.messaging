@@ -179,10 +179,31 @@ void MsgViewManager::onBackAction()
             completeServiceRequest();
         }
         else {
-            //switch to clv.
+            //switch to previous view.
             QVariantList param;
-            param << MsgBaseView::CLV;
+            param << mPreviousView;
             param << MsgBaseView::UNIEDITOR;
+            
+            if(mPreviousView == MsgBaseView::CV) {
+                param << mConversationId;
+                }
+            else if(mPreviousView == MsgBaseView::UNIVIEWER){
+                qint32 contactId = mViewerData.at(0).toLongLong();
+                qint32 messageId = mViewerData.at(1).toInt();
+                int msgCount = mViewerData.at(2).toInt();
+                int canForwardMessage = mViewerData.at(3).toInt();
+                
+                param << contactId;
+                param << messageId;
+                param << msgCount;
+                param << canForwardMessage;
+            }
+            else if(mPreviousView == MsgBaseView::UNIEDITOR){
+                //TODO: Remove error handling once Audio fetcher 
+                //becomes dialog
+                param[0] = MsgBaseView::CLV;
+                }
+            
             switchView(param);
         }
 
@@ -256,16 +277,15 @@ void MsgViewManager::switchView(const QVariantList& data)
     }
     case MsgBaseView::CLV:
     {
-            switchToClv(data);
-            break;
-        }
+         switchToClv(data);
+         break;
+    }
 
-        case MsgBaseView::CV:
-        {
-
-            switchToCv(data);
-            break;
-        }
+    case MsgBaseView::CV:
+    {
+         switchToCv(data);
+         break;
+    }
 
     case MsgBaseView::DLV:
     {
@@ -545,6 +565,8 @@ void MsgViewManager::switchToClv(const QVariantList& data)
 
 void MsgViewManager::switchToCv(const QVariantList& data)
 {
+    QCRITICAL_WRITE("MsgViewManager::switchToCv start.");
+    
     //switch to CV.
     mCurrentView = MsgBaseView::CV;
     mPreviousView = data.at(1).toInt();
@@ -634,10 +656,19 @@ void MsgViewManager::switchToCv(const QVariantList& data)
 
     mConversationView->openConversation(conversationId);
     mMainWindow->setCurrentView(mConversationView);
+    
+    QCRITICAL_WRITE("MsgViewManager::switchToCv end.");
 }
 
 void MsgViewManager::switchToDlv(const QVariantList& data)
 {
+    //delete UniEditor
+    if (mUniEditor)
+    {
+        appendViewToBeDeleted(mUniEditor);
+        mUniEditor = NULL;
+    }
+    
     //switch to DLV.
     mCurrentView = MsgBaseView::DLV;
     mPreviousView = data.at(1).toInt();
@@ -655,6 +686,8 @@ void MsgViewManager::switchToDlv(const QVariantList& data)
 
 void MsgViewManager::switchToUniEditor(const QVariantList& data)
 {
+    QCRITICAL_WRITE("MsgViewManager::switchToUniEditor start.");
+    
     /**
      * Editor is tried to open again before exiting the previously
      * opened editor. Multi taping in DLV or Forward.
@@ -723,6 +756,8 @@ void MsgViewManager::switchToUniEditor(const QVariantList& data)
     }
 
     mMainWindow->setCurrentView(mUniEditor);
+    
+    QCRITICAL_WRITE("MsgViewManager::switchToUniEditor end.");
 }
 
 void MsgViewManager::switchToUniViewer(const QVariantList& data)
@@ -735,6 +770,9 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
         return;
     }
 
+    //Clear the old viewer data
+    mViewerData.clear();
+    
     mCurrentView = MsgBaseView::UNIVIEWER;
     mPreviousView = data.at(1).toInt();
 
@@ -745,6 +783,12 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
         int msgCount = data.at(4).toInt();
         int canForwardMessage = data.at(5).toInt();
 
+        //Save the viewer data to be used when u come back from Editor
+        mViewerData << contactId;
+        mViewerData << messageId;
+        mViewerData << msgCount;
+        mViewerData << canForwardMessage;
+        
         if (!mUniViewer) {
             mUniViewer = new UnifiedViewer(messageId, canForwardMessage);
             mUniViewer->setNavigationAction(mBackAction);
@@ -764,29 +808,45 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
 }
 void MsgViewManager::switchToMsgSettings(const QVariantList& data)
 {
-    mCurrentView = MsgBaseView::MSGSETTINGS;
-    mPreviousView = data.at(1).toInt();
-
-    if (!mSettingsView) {
-
-        MsgSettingsView::SettingsView view = MsgSettingsView::DefaultView;
-        if (mPreviousView == MsgBaseView::UNIEDITOR || mPreviousView
-                        == MsgBaseView::CV)
-                {
-                    view = (MsgSettingsView::SettingsView)data.at(2).toInt();
-                }
-
-        mSettingsView = new MsgSettingsView(view);
-        mSettingsView->setNavigationAction(mBackAction);
-        mMainWindow->addView(mSettingsView);
-        
-        if(view != MsgSettingsView::SMSView)
+    int previousView = data.at(1).toInt();
+    
+    MsgSettingsView::SettingsView view = MsgSettingsView::DefaultView;
+    if (previousView == MsgBaseView::UNIEDITOR || previousView
+            == MsgBaseView::CV)
         {
-            mMainWindow->setCurrentView(mSettingsView);
+        view = (MsgSettingsView::SettingsView)data.at(2).toInt();
         }
-    }
-    if(mPreviousView==MsgBaseView::CV && mConversationView){
+
+    //launch settings service
+    QList<QVariant> args;
+    QString serviceName("messagesettings");
+    QString interfaceName("com.nokia.symbian.IMessageSettings");
+    QString operation("launchSettings(int)");
+    XQAiwRequest* request;
+    XQApplicationManager appManager;
+    request = appManager.create(serviceName, interfaceName, operation, true); //embedded
+    if ( request == NULL )
+        {
+        return;       
+        }
+ 
+    args <<  view;
+
+    request->setArguments(args);
+
+    if(previousView==MsgBaseView::CV && mConversationView){
         mConversationView->setPSCVId(false);
+        }
+
+    if(!request->send())
+        {
+        QDEBUG_WRITE("launchSettings failed")
+        }
+    delete request;
+
+    
+    if(previousView==MsgBaseView::CV && mConversationView){
+        mConversationView->setPSCVId(true);
         }
 }
 
@@ -970,9 +1030,11 @@ void  MsgViewManager::appendViewToBeDeleted(HbView* view)
 // ----------------------------------------------------------------------------
 void MsgViewManager::populateUniEditorAfterViewReady(const QVariantList& editorData)
 	{
+    QCRITICAL_WRITE("MsgViewManager::populateUniEditorAfterViewReady start.");
 	 //Save the editor data and use it in ViewReady handler
 	 mEditorData = editorData;	 
 	 connect(mMainWindow, SIGNAL(viewReady()), this, SLOT(populateUniEditorView()));
+	QCRITICAL_WRITE("MsgViewManager::populateUniEditorAfterViewReady end.");
 	}
 
 // ----------------------------------------------------------------------------
@@ -981,6 +1043,7 @@ void MsgViewManager::populateUniEditorAfterViewReady(const QVariantList& editorD
 // ----------------------------------------------------------------------------
 void MsgViewManager::populateUniEditorView()
     {
+    QCRITICAL_WRITE("MsgViewManager::populateUniEditorView start.");
     if (mUniEditor)
         {
         mUniEditor->openDraftsMessage(mEditorData);
@@ -989,6 +1052,7 @@ void MsgViewManager::populateUniEditorView()
     
     disconnect(mMainWindow, SIGNAL(viewReady()), this,
             SLOT(populateUniEditorView()));
+    QCRITICAL_WRITE("MsgViewManager::populateUniEditorView end.");
 }
 
 // ----------------------------------------------------------------------------

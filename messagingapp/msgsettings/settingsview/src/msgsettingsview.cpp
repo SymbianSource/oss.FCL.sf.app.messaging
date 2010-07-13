@@ -101,11 +101,18 @@ void MsgSettingsView::onSmsCenterEditViewClosed()
     //remove the view 
     mMainWindow->removeView(mSMSCenterView);
     
-    //refresh the form
-    mSettingsForm->refreshViewForm();
-
-    //add the current view on top
-    mMainWindow->setCurrentView(this);
+    // This check is needed in case when smsc center view is 
+    // launched directly 
+    if(mMainWindow->views().count() > 0)
+    {
+        QCRITICAL_WRITE("MsgViewManager::onSmsCenterEditViewClosed count>0");
+        
+        //refresh the form
+        mSettingsForm->refreshViewForm();
+        
+        //add the current view on top
+        mMainWindow->setCurrentView(this);
+    }
 }
 
 //eof

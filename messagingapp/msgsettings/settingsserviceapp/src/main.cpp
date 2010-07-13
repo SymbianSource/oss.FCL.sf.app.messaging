@@ -16,19 +16,20 @@
 */
 
 #include <hbapplication.h>
+#include <hbmainwindow.h>
 #include <QTranslator>
 #include <QLocale>
 #include <QFile>
 #include <QPointer>
 #include <QDateTime>
 
-#include "msgservicewindow.h"
+#include "settingsserviceinterface.h"
 #include "debugtraces.h"
 
 //Localised constants
 #define LOC_TITLE hbTrId("txt_messaging_title_messaging")
 
-const QString debugFileName("c:/msgservice_app.txt");
+const QString debugFileName("c:/settingsservice_app.txt");
 
 #ifdef _DEBUG_TRACES_
 void debugInit(QtMsgType type, const char *msg)
@@ -77,23 +78,37 @@ int main(int argc, char **argv)
 {
     HbApplication app( argc, argv );
     
-   //installing translator.
+    //TODO: Uncomment the lines when actual translation files are available in sdk and remove loading locally.
     QString locale = QLocale::system().name();
     QString path = "z:/resource/qt/translations/";
     QTranslator translator;
     QTranslator translator_comm;
-    translator.load(path + "messaging_" + locale);
-    translator_comm.load(path + "common_" + locale);
+    translator.load(path + QString("messaging_") + locale);
+    translator_comm.load(path + QString("common_") + locale);
     app.installTranslator(&translator);
     app.installTranslator(&translator_comm);
 
     app.setApplicationName(LOC_TITLE);
+
+#ifdef _DEBUG_TRACES_
+    //Debug Logs
+    QFile ofile;
+    if (ofile.exists(debugFileName))
+    {
+        ofile.remove(debugFileName);
+    }
+    qInstallMsgHandler(debugInit);
+#endif
     
-    QPointer<MsgServiceWindow> window = new MsgServiceWindow();
+   
+    HbMainWindow *window = new HbMainWindow();
+    
+    SettingsViewInterface *settingsViewInterface = new SettingsViewInterface(window);
     window->show();
     
     int rv = app.exec();
     delete window;
+    delete settingsViewInterface;
     return rv;
 }
 

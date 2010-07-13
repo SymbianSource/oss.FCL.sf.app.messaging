@@ -33,7 +33,7 @@
 
 
 MsgAudioFetcherWidget::MsgAudioFetcherWidget()
-    : HbWidget(this),
+    : HbWidget(NULL),
       mLabel(0),
       mListView(0),
       mLayout(0),

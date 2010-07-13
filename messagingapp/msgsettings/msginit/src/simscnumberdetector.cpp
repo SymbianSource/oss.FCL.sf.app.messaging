@@ -28,6 +28,7 @@
 #include <startupdomainpskeys.h>
 #include <rcustomerserviceprofilecache.h>
 
+#include "coutboxobserver.h"
 #include "simscnumberdetector.h"
 #include "startupmonitor.h"
 
@@ -67,6 +68,8 @@ void CMsgSimOperation::ConstructL()
 
     // initialise
     iMsvSession = CMsvSession::OpenSyncL(*this);
+   
+    iOutBoxObserver = COutboxObserver::NewL();
 
     // Create the SMS Service	
     TMsvId serviceId = CreateSmsServiceL();
@@ -80,6 +83,9 @@ void CMsgSimOperation::ConstructL()
 
     // Start the System state monitor
     iStartupMonitor = CStartUpMonitor::NewL(this);
+    
+    // Start the Auto-send AO, to handle offline SMS messages
+    iOutBoxObserver->HandleMsvSessionReadyL(*iMsvSession);
 
     QDEBUG_WRITE("CMsgSimOperation::ConstructL exit")
     }
@@ -297,6 +303,10 @@ CMsgSimOperation::~CMsgSimOperation()
     delete iSimOperation;
     delete iSmsClientMtm;
     delete iClientRegistry;
+    
+    delete iOutBoxObserver;
+    iOutBoxObserver = NULL;
+    
     delete iMsvSession;
     delete iStartupMonitor;
     iStartupMonitor = NULL;
@@ -487,7 +497,11 @@ void CMsgSimOperation::HandleSessionEventL(TMsvSessionEvent aEvent,
 
         delete iClientRegistry;
         iClientRegistry = NULL;
-
+        
+        iOutBoxObserver->HandleMsvSessionClosedL();
+        delete iOutBoxObserver;
+        iOutBoxObserver = NULL;
+        
         delete iMsvSession;
         iMsvSession = NULL;
 

@@ -49,6 +49,7 @@ _LIT( KFmtSpec,            "%S(%02d)");
 class CClientMtmRegistry;
 class CStartUpMonitor;
 class CRepository;
+class COutboxObserver;
 
 /**
  * Observer to indicate when SIM operation has been completed.
@@ -200,7 +201,7 @@ private:
     CStartUpMonitor* iStartupMonitor;
     MSimOperationObserver& iObserver;
     CRepository* iCenRepSession;
-
+    COutboxObserver* iOutBoxObserver;
 
 };
 

@@ -330,6 +330,13 @@ private slots:
      */
     void saveVCard();
     
+    /**
+     * Tells is mms is shared among conversations.
+     * @param messageId, message id.
+     * @return true is shared among conversations.
+     */
+    bool isSharedMessage(qint32 messageId);
+    
 signals:
     /**
      * Signal emitted to inform close the conversation view.

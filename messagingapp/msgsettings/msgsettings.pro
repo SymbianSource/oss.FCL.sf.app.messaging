@@ -21,3 +21,4 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 
 SUBDIRS += settingsview/settingsview.pro
 SUBDIRS += msginit/msginit.pro
+SUBDIRS += settingsserviceapp/settingsserviceapp.pro

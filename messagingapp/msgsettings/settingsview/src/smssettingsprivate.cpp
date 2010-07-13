@@ -170,9 +170,7 @@ void SmsSettingsPrivate::editSMSServiceCentre(HBufC* address, HBufC* name,
     {
         flag = true;
     }
-
-    //remove the service center
-    //smsSettings->RemoveServiceCenter(index);
+       
     //add a new service center
     smsSettings->AddServiceCenterL(name->Des(), address->Des());
     
@@ -182,15 +180,10 @@ void SmsSettingsPrivate::editSMSServiceCentre(HBufC* address, HBufC* name,
                smsSettings->ServiceCenterCount()- 1);
     }
     
-    smsAccount->SaveSettingsL(*smsSettings);
-
-    smsAccount->LoadSettingsL(*smsSettings);
-    if (flag == true)
-    {
-        smsSettings->RemoveServiceCenter(index);
-    }
+    //remove the service center
+    smsSettings->RemoveServiceCenter(index);
     
-    smsAccount->SaveSettingsL(*smsSettings);
+    smsAccount->SaveSettingsL(*smsSettings);  
     
     CleanupStack::PopAndDestroy(2);
 }

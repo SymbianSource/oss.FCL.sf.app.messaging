@@ -59,14 +59,27 @@ MMP_RULES += defBlock
 
 HEADERS += inc/startupmonitor.h \
 					 inc/simscnumberdetector.h \
-					 inc/msgsimnumberdetector.h
+					 inc/msgsimnumberdetector.h \
+					 inc/cmobilesignalstrengthhandler.h \
+					 inc/coutboxobserver.h \
+					 inc/coutboxsender.h \
+					 inc/coutboxsendoperation.h \
+					 inc/msignalstrengthhandler.h \
+					 inc/msignalstrengthobserver.h
 					
 SOURCES += src/startupmonitor.cpp \
 					 src/simscnumberdetector.cpp \
-					 src/msgsimnumberdetector.cpp
-
+					 src/msgsimnumberdetector.cpp \
+					 src/cmobilesignalstrengthhandler.cpp \
+					 src/coutboxobserver.cpp \
+					 src/coutboxsendoperation.cpp \
+					 src/coutboxsender.cpp
+					 
 LIBS += -lsmcm \
 		    -lmsgs \	
         -lcentralrepository \
         -lcenrepnotifhandler \
-        -letelmm
+        -letelmm \
+        -letel \
+        -lmuiuutils
+

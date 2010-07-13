@@ -555,7 +555,14 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                 {
                     QFile file(objectList[index]->path());
                     file.open(QIODevice::ReadOnly);
-                    textContent = file.readAll();
+                    QByteArray textArray;
+                    textArray = file.readAll();
+                    char *data = new char[textArray.size()+1];
+                    strcpy(data,textArray.data());
+                    //This is needed since MMS text content 
+                    //is stored in UTF8 format
+                    textContent = textContent.fromUtf8(data,strlen(data));
+                    delete []data;
                     item.setData(textContent, BodyText);
                     isBodyTextSet = true;
                     file.close();

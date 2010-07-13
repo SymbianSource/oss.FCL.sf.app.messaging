@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
 
     app.setApplicationName(LOC_TITLE);
     
-    #ifdef _DEBUG_TRACES_
+#ifdef _DEBUG_TRACES_
     //Debug Logs
     QFile ofile;
     if (ofile.exists(debugFileName))

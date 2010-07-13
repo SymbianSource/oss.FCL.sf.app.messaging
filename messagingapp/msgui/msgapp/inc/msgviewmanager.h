@@ -261,6 +261,7 @@ private:
     int mMessageId;
     
     QVariantList mEditorData;
+    QVariantList mViewerData;
 };
 
 #endif /* MSGVIEWMANAGER_H_ */

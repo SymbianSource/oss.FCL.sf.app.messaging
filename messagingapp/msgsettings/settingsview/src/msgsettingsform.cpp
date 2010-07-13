@@ -157,8 +157,7 @@ void MsgSettingsForm::initSettingModel(
     if (settingsView == MsgSettingsView::MMSView)
     {
         //set MMS Settings as expanded
-        //TODO: dataform issue on expanding one group item
-//        expandGroup(mmsGroup,true);
+        expandGroup(mmsGroup,true);
     }
     
 }
