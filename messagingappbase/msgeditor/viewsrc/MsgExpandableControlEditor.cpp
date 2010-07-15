@@ -101,7 +101,8 @@ EXPORT_C CMsgExpandableControlEditor::CMsgExpandableControlEditor(
     CEikRichTextEditor( TGulBorder::ENone ),
     iParentControl( aParent ),
     iFlags( aFlags ),
-    iBaseControlObserver( aBaseControlObserver )
+    iBaseControlObserver( aBaseControlObserver ),
+    iFindItemEventReceived( EFalse )    
     {
     }
 

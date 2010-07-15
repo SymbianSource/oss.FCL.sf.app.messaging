@@ -599,9 +599,18 @@ void CSmilPlayerIndicatorController::HandlePointerEventL( const TPointerEvent& a
         {
         if ( iVolumeController &&
              iVolumeController->Rect().Contains( aPointerEvent.iPosition ) )
-            {
-            iVolumeController->HandlePointerEventL( aPointerEvent );                    
-            }
+                {
+                if (iPlayIndicator && !(iPlayIndicator->Rect().Contains( aPointerEvent.iPosition) ) ||
+                        (iPauseIndicator && !iPauseIndicator->Rect().Contains( aPointerEvent.iPosition )))
+                    {
+                    iVolumeController->HandlePointerEventL( aPointerEvent );
+                    }
+                else if ( aPointerEvent.iType == TPointerEvent::EButton1Up )
+                    {
+                    iPresController->PlayPauseTappedL();
+                    }
+                
+                }
         else if ( aPointerEvent.iType == TPointerEvent::EButton1Up )
             {
             iPresController->PlayPauseTappedL();    

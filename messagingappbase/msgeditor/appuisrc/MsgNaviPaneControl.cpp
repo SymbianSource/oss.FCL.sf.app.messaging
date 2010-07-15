@@ -91,6 +91,7 @@ void CMsgNaviPaneControl::ConstructL( const CCoeControl* aParent )
     iControlArray = CCoeControlArray::NewL( *this );
     iControlArray->SetControlsOwnedExternally( EFalse );
     iPriorityIndicator = EFalse;
+    iMessageIterator = NULL;
     UpdateVarientId();
     SetComponentsToInheritVisibility( ETrue );
     ActivateL();
@@ -165,12 +166,14 @@ EXPORT_C void CMsgNaviPaneControl::SetPriorityIndicatorL( TMsgEditorMsgPriority 
 EXPORT_C void CMsgNaviPaneControl::SetNavigationIndicatorL( CMsvSession& aSession,
                                                    const TMsvEntry& aCurrentMessage )
     {
-    delete iMessageIterator;
-    iMessageIterator = NULL;
-    
-    iMessageIterator = CMessageIterator::NewL( aSession, aCurrentMessage );
-    iMessageIterator->SetMessageIteratorObserver( this );
-    
+    if(!iMessageIterator)
+        {
+        // Iterator will be deleted once in the destructer only.
+        //deleting and creating it again is degrading the performance
+ 
+        iMessageIterator = CMessageIterator::NewL( aSession, aCurrentMessage );
+        iMessageIterator->SetMessageIteratorObserver( this );
+        }
     UpdateNavigationIndicatorsL();
     }
 
@@ -766,5 +769,14 @@ void CMsgNaviPaneControl::UpdateVarientId()
                 iVarientId = 1;    
                 }                  
             }    
+    }
+
+// ----------------------------------------------------------------------------
+// CMsgNaviPaneControl::GetNavigationIndicator
+// ----------------------------------------------------------------------------
+//
+EXPORT_C CMessageIterator* CMsgNaviPaneControl::GetMessageIterator()
+    {
+     return iMessageIterator;
     }
 //  End of File

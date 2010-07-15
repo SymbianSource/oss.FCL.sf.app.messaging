@@ -614,8 +614,24 @@ void CNotViewerAppUi::DynInitOptionsMenuL( CEikMenuPane* aMenuPane )
     if (    iFlags & ENotViewerIsNotification )
         {   // Notification mode        
         if ( iView  )
-            {
-            if( (FocusedControlId( ) == EMsgComponentIdFrom) && ( ( iMtm->Sender( ) ).Length() ) )
+            {      
+            TInt focusedControl = FocusedControlId();                     
+            TBool senderHighlighted = EFalse;
+            
+            if ( focusedControl == EMsgComponentIdFrom )
+                {
+                CMsgAddressControl* address = static_cast<CMsgAddressControl*>(
+                    iView->ControlById( EMsgComponentIdFrom ) );
+                
+                if ( address && address->Editor().SelectionLength() 
+                        == address->Editor().TextLength() )
+                    {
+                    senderHighlighted = ETrue;
+                    }
+                }
+        
+            if( ( focusedControl == EMsgComponentIdFrom ) && ( ( iMtm->Sender( ) ).Length() )
+                  && senderHighlighted )
                 {
                 iFindItemMenu->SetSenderHighlightStatus( ETrue );
                 iFindItemMenu->SetSenderDisplayText( TMmsGenUtils::PureAddress( iMtm->Sender( ) ) );
@@ -625,10 +641,13 @@ void CNotViewerAppUi::DynInitOptionsMenuL( CEikMenuPane* aMenuPane )
                 iFindItemMenu->SetSenderHighlightStatus( EFalse );
 		        }
 		    iFindItemMenu->AddItemFindMenuL( 
-                ( FocusedControlId() == EMsgComponentIdBody ) ? iView->ItemFinder() : 0,
+		        ( iView->ItemFinder() && 
+		          iView->ItemFinder()->CurrentSelection().Length() ) 
+		        ? iView->ItemFinder() : 0,
     			aMenuPane, 
                 EFindItemMenuPlaceHolder,
-                iMtm->Sender(),
+                senderHighlighted ? 
+                iMtm->Sender( ) : KNullDesC(),
                 iAlias && !iRemoteAlias ? ETrue : EFalse, //"Is sender known"
     			EFalse );
             }
@@ -867,6 +886,42 @@ TKeyResponse CNotViewerAppUi::HandleKeyEventL(const TKeyEvent& aKeyEvent, TEvent
         case EKeyDevice3:       //Selection key
         case EKeyEnter:         //Enter Key
             {
+            CMsgExpandableControl* ctrl = NULL;
+            TBool checkHighlight = EFalse;
+            
+            if( iView->FocusedControl() )
+                {
+                ctrl = static_cast<CMsgExpandableControl*>( iView->FocusedControl() );
+                if ( ctrl )
+                	{
+                	if ( ctrl->ControlType() == EMsgAddressControl
+                        && !ctrl->Editor().SelectionLength()  ) 
+                    {
+                    checkHighlight = ETrue;
+                    }
+                	else if ( ctrl->ControlType() == EMsgBodyControl )
+                    {       
+                    CItemFinder* itemFinder = iView->ItemFinder();
+                    if ( FocusedControlId() == EMsgComponentIdBody && itemFinder
+                            && !itemFinder->CurrentSelection().Length() )
+                        {                                                              
+                        checkHighlight = ETrue;
+                        }
+                    }
+                  }
+                }
+            if ( ctrl && checkHighlight )
+                {
+                // Check if highlight needs to be restored to editor,
+                // address/body editor offerkeyevent will handle it
+                if ( ctrl->Editor().OfferKeyEventL( aKeyEvent, aType ) 
+                        == EKeyWasConsumed )
+                    {
+                    // Highlight was restored, just return, no cs menu needed
+                    return EKeyWasConsumed;
+                    }
+                } 
+  
             if ( DoSelectionKeyL( ) )
                 {
                 return EKeyWasConsumed;

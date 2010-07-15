@@ -256,7 +256,17 @@ TKeyResponse CMsgBodyControlEditor::OfferKeyEventL(
         {
         switch ( aKeyEvent.iCode )
             {
-            case EKeyDevice3:   
+            case EKeyDevice3:  
+                {
+                if ( iFindItemEventReceived )
+                    {
+                    // Find item was activated by touch, 
+                    // no need to restore highlight
+                    iFindItemEventReceived = EFalse;
+                    return EKeyWasNotConsumed;
+                    }
+                // fall through
+                } 
             case EKeyEnter:
                 {
                 // Restore highlight
@@ -308,20 +318,17 @@ void CMsgBodyControlEditor::HandleFindItemEventL(
                         MAknItemFinderObserver::TEventFlag aEvent,
                         TUint aFlags)
     {     
-    // We will send new EMsgFindItemEvent so that we can separate 
-    // single click item activation and old key based activation.
-    // This is just quick fix for doing it, other implementations should
-    // be considered(e.g. storing state in editor or using some flags).
-    // This is done because in AppUI::HandleKeyEvent we must separate
-    // activation methods for enabling highlight when using keys.    
+    // Body text find item was clicked, we will send simulated key event for
+    // opening context sensitive menu in AppUI::HandleKeyEvent    
     if ( MAknItemFinderObserver::EPointerEvent == aEvent )
         {
         TKeyEvent event;
-        event.iCode = EMsgFindItemKeyEvent;
-        event.iScanCode = EMsgFindItemKeyEvent;
+        event.iCode = EKeyDevice3;
+        event.iScanCode = EKeyDevice3;
         event.iModifiers = 0;
         event.iRepeats = 0;
 
+        iFindItemEventReceived = ETrue;
         iCoeEnv->WsSession().SimulateKeyEvent( event );
         }
     }

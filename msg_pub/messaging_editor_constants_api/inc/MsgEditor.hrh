@@ -174,12 +174,6 @@ enum TMsgCommonCommands
     EMsgFirstFreeComponentSpecificCommand = 2000
     };
     
-    
-//Internal Enumeration for find item functionality
-enum TMsgFindItemKeyCommands
-    {
-    EMsgFindItemKeyEvent = 0x55555555 
-    };
 
 #endif
 

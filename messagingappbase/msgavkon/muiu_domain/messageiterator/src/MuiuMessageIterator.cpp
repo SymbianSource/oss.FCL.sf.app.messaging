@@ -422,17 +422,25 @@ void CMessageIterator::UpdateChildrenOfParentL( TMsvId aCurrentMessageId )
     CMsvEntrySelection* tempSel = iParentOfCurrent->ChildrenL();
     CleanupStack::PushL( tempSel );
     
-    // remove all except messages from the list.
-    for ( TInt loop = tempSel->Count() - 1; loop >= 0; loop-- )
+    TMsvId parentId = iParentOfCurrent->EntryId();
+    // there is no need to check sub folder entry , if
+    // parent ID is Inbox/Draft/sent/outbox
+    if(parentId  != KMsvGlobalOutBoxIndexEntryId &&
+            parentId  != KMsvGlobalInBoxIndexEntryId &&
+            parentId  != KMsvDraftEntryId &&
+            parentId  != KMsvSentEntryId )
         {
-        const TMsvEntry& childEntry = iParentOfCurrent->ChildDataL( ( *tempSel )[loop] );
-        
-        if ( childEntry.iType.iUid != KUidMsvMessageEntryValue )
+        // remove all except messages from the list.
+        for ( TInt loop = tempSel->Count() - 1; loop >= 0; loop-- )
             {
-            tempSel->Delete( loop );
+            const TMsvEntry& childEntry = iParentOfCurrent->ChildDataL( ( *tempSel )[loop] );
+    
+            if ( childEntry.iType.iUid != KUidMsvMessageEntryValue )
+                {
+                tempSel->Delete( loop );
+                }
             }
         }
-    
     // Use the new child list
     delete iChildrenOfParent;
     CleanupStack::Pop( tempSel );

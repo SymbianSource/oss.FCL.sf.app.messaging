@@ -115,7 +115,8 @@ CUniEditorLaunchOperation::CUniEditorLaunchOperation(
     CUniEditorOperation( aOperationObserver, aDocument, aFs, EUniEditorOperationLaunch ),
     iControlObserver( aControlObserver ),
     iView( aView ),
-    iAppUi( aAppUi )
+    iAppUi( aAppUi ),
+    iOptimizedFlow(EFalse)
     {
     }
 
@@ -401,9 +402,13 @@ void CUniEditorLaunchOperation::DoHandleMessageL()
 //
 void CUniEditorLaunchOperation::DoPrepareHeaderL()
     {
-    // Header is always drawn and populated
-    iHeader = CUniEditorHeader::NewL( iDocument.Mtm(), iDocument, iView, iFs );
-    CompleteSelf( KErrNone );
+    if(!iHeader)
+        {
+	    // Header is always drawn and populated
+	    iHeader = CUniEditorHeader::NewL( iDocument.Mtm(), iDocument, iView, iFs );
+        }
+    if(!iOptimizedFlow)
+        CompleteSelf( KErrNone );
     }
 
 // ---------------------------------------------------------
@@ -412,21 +417,28 @@ void CUniEditorLaunchOperation::DoPrepareHeaderL()
 //
 void CUniEditorLaunchOperation::DoPrepareBodyL()
     {
-    iSlideLoader = CUniSlideLoader::NewL(
-        iControlObserver,
-        *iDocument.DataModel(),
-        iView,
-        EUniControlEditorMode );
-        
+    if(!iSlideLoader)
+        {
+     	iSlideLoader = CUniSlideLoader::NewL(
+	        iControlObserver,
+	        *iDocument.DataModel(),
+	        iView,
+	        EUniControlEditorMode );
+        }
+    
     if ( iDocument.DataModel()->SmilType() == EMmsSmil )
         {
-        if ( !iDocument.DataModel()->SmilModel().SlideCount() )
+        if(!iOptimizedFlow)
             {
-            iDocument.DataModel()->SmilModel().AddSlideL();
-            }
+	        if ( !iDocument.DataModel()->SmilModel().SlideCount() )
+	            {
+	            iDocument.DataModel()->SmilModel().AddSlideL();
+	            }
             
-        iSlideLoader->LoadSlideL( *this, 0 );
-        SetPending();
+	        iSlideLoader->LoadSlideL( *this, 0 );       
+        
+	        SetPending();
+            }
         }
     else
         {
@@ -608,10 +620,25 @@ void CUniEditorLaunchOperation::SlideLoadReady( TInt aError )
 // ---------------------------------------------------------
 //
 void CUniEditorLaunchOperation::HandleOperationEvent( TUniEditorOperationType aOperation,
-                                                      TUniEditorOperationEvent /*aEvent*/ )
+                                                      TUniEditorOperationEvent aEvent )
     {
     if ( aOperation == EUniEditorOperationSendUi )
         {
+        iOptimizedFlow = EFalse;
+        if(aEvent == EUniEditorOperationPartialComplete)
+            {
+            iOptimizedFlow = iSendUiOperation->IsOptimizedFlagSet();
+            if(iOptimizedFlow)
+                {
+                DoPrepareHeaderL();
+                DoPrepareBodyL();
+                iObserver.EditorOperationEvent(
+                            EUniEditorOperationLaunch,
+                            EUniEditorOperationComplete ); 
+                iOptimizedFlow = EFalse;
+                }
+            return;
+            }
         CArrayFixFlat<TInt>* errors = iSendUiOperation->GetErrors();
         for ( TInt i = 0; i < errors->Count(); i++ )
             {
@@ -654,6 +681,14 @@ TInt CUniEditorLaunchOperation::ParseResult()
     
     return parseResult;
     }
-
+	
+// ---------------------------------------------------------
+// CUniEditorLaunchOperation::IsOptimizedFlagSet
+// ---------------------------------------------------------
+//
+TBool CUniEditorLaunchOperation::IsOptimizedFlagSet()
+    {
+    return iOptimizedFlow; 
+    }
 
 // EOF

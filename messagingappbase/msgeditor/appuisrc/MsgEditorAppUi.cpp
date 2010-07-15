@@ -205,6 +205,8 @@ EXPORT_C void CMsgEditorAppUi::ConstructL()
     cache.RegisterPluginL( &( iMsgEditorAppUiExtension->iSettingCachePlugin ) );    
     
     iStatusPaneRes = StatusPane()->CurrentLayoutResId();
+    
+    iIterator = NULL;
     }
 
 // ---------------------------------------------------------
@@ -236,7 +238,9 @@ EXPORT_C CMsgEditorAppUi::~CMsgEditorAppUi()
     delete iLock;
     delete iNaviDecorator;
 
-    delete iIterator;
+    // we are referring instance of nvaidecoratoir only
+    // no need to delete, alreday deleted in  delete iNaviDecorator;
+    //delete iIterator;
 
     // delete files from our temp directory.
     if ( iFileMan )
@@ -334,18 +338,25 @@ EXPORT_C void CMsgEditorAppUi::NextMessageL( TBool aForward )
         }
 
     iMsgNaviDirection = aForward;
+    
+    // Check if next/previous message 
+    __ASSERT_DEBUG( iIterator != NULL, Panic( ENullPointer1 ) );
+     if ( aForward )
+         {
+         iIterator->SetNextMessage();
+         
+         }
+     else
+         {
+         iIterator->SetPreviousMessage();
+         }
+
+     RProperty::Set( KPSUidMuiu, KMuiuKeyNextMsg,
+              iIterator->CurrentMessage().Id() );
+         
 #ifdef RD_MSG_FAST_PREV_NEXT
     // Check if next/previous message can be fast opened by viewer
-    __ASSERT_DEBUG( iIterator != NULL, Panic( ENullPointer1 ) );
-    if ( aForward )
-        {
-        iIterator->SetNextMessage();
-        }
-    else
-        {
-        iIterator->SetPreviousMessage();
-        }
-
+    
     if ( CanFastOpenL( *iIterator) )
         {
         // Load next/previous message
@@ -376,6 +387,8 @@ EXPORT_C void CMsgEditorAppUi::NextMessageL( TBool aForward )
             }
         else if ( err != KErrNone )
             {
+            // Reset the KMuiuKeyNextMsg to 0 
+            RProperty::Set( KPSUidMuiu, KMuiuKeyNextMsg,0 );
             // Unknown error during quick launch.
             iCoeEnv->HandleError( err );
             iExitMode = MApaEmbeddedDocObserver::ENoChanges;
@@ -409,12 +422,10 @@ EXPORT_C TBool CMsgEditorAppUi::IsNextMessageAvailableL( TBool aForward )
         {
         CMsgEditorDocument* doc = Document();
 
-        if ( iIterator == NULL )
-            {
-            iIterator = CMessageIterator::NewL( doc->Session(), doc->Entry() );
-            iIterator->SetMessageIteratorObserver( this );
-            }
-
+        //We should not create iterator here  navi pane iterator
+        //will be refered  in  CMsgEditorAppUi
+         
+        __ASSERT_DEBUG( iIterator != NULL, Panic( ENullPointer1 ) );
         // Next is ETrue if layout is EAknLayoutIdABRW,
         // EFalse if EAknLayoutIdELAF or EAknLayoutIdAPAC
         if ( AknLayoutUtils::LayoutMirrored() )
@@ -453,12 +464,9 @@ EXPORT_C void CMsgEditorAppUi::MessageIndexInFolderL( TInt& aCurrentIndex,
     if ( iEikonEnv->StartedAsServerApp() )
         {
         CMsgEditorDocument* doc = Document();
-
-        if ( iIterator == NULL )
-            {
-            iIterator = CMessageIterator::NewL( doc->Session(), doc->Entry() );
-            iIterator->SetMessageIteratorObserver( this );
-            }
+        //We should not create iterator here, navi pane iterator
+        //will be refered  in  CMsgEditorAppUi
+        __ASSERT_DEBUG( iIterator != NULL, Panic( ENullPointer1 ) );
 
         aCurrentIndex = iIterator->CurrentMessageIndex();
         aMsgsInFolder = iIterator->MessagesInFolder();
@@ -1648,6 +1656,12 @@ EXPORT_C void CMsgEditorAppUi::CreateViewerNaviPaneL( TTime aTime,
         
         CMsgEditorDocument* doc = Document();
         naviPaneControl->SetNavigationIndicatorL( doc->Session(), doc->Entry() );
+        
+        // this function will always be called when viwer is launched
+        // always navi decorater will be created.
+        // refer navi decorator iterator instance here
+        iIterator =  naviPaneControl->GetMessageIterator();
+        iIterator->SetMessageIteratorObserver( this );
         
         iNaviDecorator->SetContainerWindowL( *naviContainer );
         iNaviDecorator->MakeScrollButtonVisible( EFalse );

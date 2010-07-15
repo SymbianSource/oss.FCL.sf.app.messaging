@@ -667,7 +667,7 @@ TKeyResponse CMceMessageListContainer::OfferKeyEventL(
                 return EKeyWasNotConsumed;
                 }
 
-            if ( aKeyEvent.iCode == EKeyBackspace )
+            if ( iOwningView.MenuBar()->ItemSpecificCommandsEnabled() && aKeyEvent.iCode == EKeyBackspace )
                 {
                 MarkItemSelectionL();
                 SetAnchorItemIdL( 

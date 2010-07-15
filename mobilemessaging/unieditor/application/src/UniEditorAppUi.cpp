@@ -266,7 +266,9 @@ CUniEditorAppUi::CUniEditorAppUi() :
     iOriginalSlide( -1 ),
     iNextFocus( EMsgComponentIdNull ),
     iEditorFlags( EShowInfoPopups ),
-    iMskResId( R_UNIEDITOR_OPTIONS_CLOSE )
+    iMskResId( R_UNIEDITOR_OPTIONS_CLOSE ),
+    iOptimizedFlow(EFalse),
+    iSingleJpegImageProcessing(EFalse)
     {
     }
     
@@ -461,6 +463,22 @@ CUniEditorAppUi::~CUniEditorAppUi()
     {
     iEditorFlags |= EEditorExiting;
     
+	//sendui+jepg optimization changes
+    if(iLaunchOperation)
+        {
+        // check Is iLaunchOperation still attached to 
+        // iSlideLoader / iHeader
+        // Set the CUniEditorAppUi
+        // instance to NULL, to avoid crash.
+        if(iLaunchOperation->GetHeader())
+            {
+            iHeader = NULL;            
+            }
+        if(iLaunchOperation->GetSlideLoader())
+            {
+            iSlideLoader = NULL;            
+            }
+        }
     if ( iView )
         {
         // To prevent focus changes caused by input blocker deletion & toolbar extension
@@ -665,10 +683,31 @@ void CUniEditorAppUi::LaunchViewL()
 //
 void CUniEditorAppUi::FinalizeLaunchL()
     {
+	// In all normal cases other then Sendui+Jepeg
+	// iOptimizedFlow will be false and flow should be 
+	// same as the normal launch
+    if(iOptimizedFlow)
+        {
+		//if iOptimizedFlow is True, it means
+		//sendui+Jepg and this is partial complete call
+        iSingleJpegImageProcessing = ETrue;
+        }
+		
     iFinalizeLaunchL = ETrue;
     iSmilModel = &Document()->DataModel()->SmilModel();
-    iHeader = iLaunchOperation->DetachHeader();
-    iSlideLoader = iLaunchOperation->DetachSlideLoader();
+	
+    if(!iOptimizedFlow)
+        {
+		//detach the iHeader and iSlideLoader
+        iHeader = iLaunchOperation->DetachHeader();
+        iSlideLoader = iLaunchOperation->DetachSlideLoader();
+        }
+    else
+        {
+		// get reference to complete partial lauch operation
+        iHeader = iLaunchOperation->GetHeader();
+        iSlideLoader = iLaunchOperation->GetSlideLoader();
+        }
     
     SetMessageTypeLockingL();
     
@@ -774,12 +813,41 @@ void CUniEditorAppUi::FinalizeLaunchL()
     MenuBar()->SetMenuType( CEikMenuBar::EMenuOptions );
     
     UpdateToolbarL();
+
+	// partial launch need to call execute to make
+	//the editor visible
+    if(iOptimizedFlow)
+        {
+        iView->ExecuteL( ClientRect(), focusedControlId );
+        }
+    else// not optmized Flow, common flow
+        {
+        // partial launch, dont set the flag
+        iEditorFlags |= ELaunchSuccessful;
+        
+		// in case of sendui+jepg , again finalize launch will be called 
+		//after image processing, no need to call iView->ExecuteL
+		// slide will be loaded already by slide loader.
+        if(!iSingleJpegImageProcessing)
+            {
+			//normal flow
+            iView->ExecuteL( ClientRect(), focusedControlId );
+            }
+        
+        //after the lauch complete for sendui+jepg
+        //rest it.
+        iSingleJpegImageProcessing = EFalse;        
+        }
     
-    iEditorFlags |= ELaunchSuccessful;
-	
-    iView->ExecuteL( ClientRect(), focusedControlId );
     delete iScreenClearer;
     iScreenClearer = NULL;
+   
+    // show note inserting 
+    if(iOptimizedFlow)
+        {
+        ShowWaitNoteL( R_QTN_UNI_WAIT_INSERTING );
+        }
+ 
 	
     }
     
@@ -6419,6 +6487,9 @@ void CUniEditorAppUi::EditorOperationEvent( TUniEditorOperationType aOperation,
     if ( iEditorFlags & EEditorExiting )
         {
         // Do not handle any event if we are exiting from editor.
+		// rest values.
+        iOptimizedFlow = EFalse;
+        iSingleJpegImageProcessing = EFalse;
         return;
         }
     
@@ -6426,9 +6497,20 @@ void CUniEditorAppUi::EditorOperationEvent( TUniEditorOperationType aOperation,
          aEvent == EUniEditorOperationError ||
          aEvent == EUniEditorOperationCancel )
         {
-        DeactivateInputBlocker();
-        iEditorFlags &= ~EMsgEditInProgress;   
-        
+		// set iOptimizedFlow
+        if( aOperation == EUniEditorOperationLaunch)
+            {
+            if(iLaunchOperation)
+                {
+                iOptimizedFlow = iLaunchOperation->IsOptimizedFlagSet();
+                }
+            }
+		// sendui+jepg-> this required after image processing 
+        if(!iOptimizedFlow)
+            {
+            DeactivateInputBlocker();
+            iEditorFlags &= ~EMsgEditInProgress;   
+            }
         if ( aEvent == EUniEditorOperationCancel &&
              aOperation != EUniEditorOperationSend )
             {
@@ -6447,6 +6529,15 @@ void CUniEditorAppUi::EditorOperationEvent( TUniEditorOperationType aOperation,
     TRAPD( error, DoEditorOperationEventL( aOperation, aEvent ) );
     if ( error != KErrNone )
         {
+		// error handling
+        if(iOptimizedFlow)
+            {
+            DeactivateInputBlocker();
+            iEditorFlags &= ~EMsgEditInProgress;   
+            }
+        iOptimizedFlow = EFalse;
+        iSingleJpegImageProcessing = EFalse;
+        
         // Handle operation handling error.
         if ( error == KLeaveExit )
             {
@@ -6463,6 +6554,10 @@ void CUniEditorAppUi::EditorOperationEvent( TUniEditorOperationType aOperation,
                 }
             }
         }
+    //sendui+jepg-> after first call to finallizelauch,rest
+	// it, so that next call will cover the code finallizelaunch
+	//as happened for other launch cases.
+    iOptimizedFlow = EFalse;
     }
 
 // ---------------------------------------------------------
@@ -6615,11 +6710,19 @@ void CUniEditorAppUi::DoChangeSlideCompleteL()
 //
 void CUniEditorAppUi::DoLaunchCompleteL()
     {
-    // Does no harm to call this even if no wait note is set.
-    RemoveWaitNote();        
-
+	//sendui+jepg -> this required after image processing 
+    if(!iOptimizedFlow)
+        {
+        // Does no harm to call this even if no wait note is set.
+        RemoveWaitNote();        
+        }
+		
     TBool shutDown( EFalse );
-    ShowLaunchNotesL( shutDown );
+	// sendui+jepg-> this required after image processing 
+    if(!iOptimizedFlow)
+		{
+        ShowLaunchNotesL( shutDown );
+		}
     
     if ( shutDown )
         {

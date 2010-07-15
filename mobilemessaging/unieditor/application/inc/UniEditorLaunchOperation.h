@@ -94,6 +94,17 @@ class CUniEditorLaunchOperation : public CUniEditorOperation,
         * Detach slide loader object
         */
         inline CUniSlideLoader* DetachSlideLoader();
+        
+        /**
+        * get header object
+        */
+        inline CUniEditorHeader* GetHeader();
+
+        /**
+        * get slide loader object
+        */
+        inline CUniSlideLoader* GetSlideLoader();
+
 
         /**
         * Return parse result
@@ -104,6 +115,11 @@ class CUniEditorLaunchOperation : public CUniEditorOperation,
         * From MUniDataModelObserver
         */
         void RestoreReady( TInt aParseResult, TInt aError );
+            
+		/**
+        * check Is optimized flow
+        */  
+        TBool IsOptimizedFlagSet();
 
     protected: 
 
@@ -219,6 +235,8 @@ class CUniEditorLaunchOperation : public CUniEditorOperation,
         TBool                           iSmilEditorSupported;
         // count of failed image operations
         TInt                            iParseResultTemp;
+		// sendui+jepg optimization changes
+        TBool 							iOptimizedFlow;
 
     };
 

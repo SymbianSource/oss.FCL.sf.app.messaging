@@ -867,6 +867,16 @@ class CAudioMessageAppUi :
         
 #endif
        
+        /**
+         * Check if find item highlight needs to be enabled on key event.
+         * 
+         * @param aKeyEvent key event
+         * @param aType     event type
+         * @return ETrue if highlight was enabled,
+         *         EFalse otherwise
+         */  
+        TBool CheckFindItemHighlightL( const TKeyEvent& aKeyEvent,
+                                       TEventCode aType );
 
     private:     // Data
    		/**

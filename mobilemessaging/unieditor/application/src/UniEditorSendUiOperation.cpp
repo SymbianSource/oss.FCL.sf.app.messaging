@@ -134,6 +134,7 @@ void CUniEditorSendUiOperation::ConstructL()
     BaseConstructL();
     
     iDeleteAllLimit = ( iDocument.MaxMessageSize() * KSendAsDeleteAllPercentage ) / 100;
+    iOptimizedFlow = EFalse;
     }
 
 // ---------------------------------------------------------
@@ -222,6 +223,21 @@ void CUniEditorSendUiOperation::DoSendUiStepL()
 //
 void CUniEditorSendUiOperation::DoSendUiCheckL()
     {
+    // check is it, one embedded object with jpeg image
+    // captured from camera\ seleted from photo\ filemanager
+    TInt objectCount =iDocument.DataModel()->ObjectList().Count() ;
+    TInt slideCount =iDocument.DataModel()->SmilModel().SlideCount() ;
+    if ( (objectCount == 1)&&(slideCount == 1)&&
+         (iDocument.DataModel()->AttachmentList().Count()== 0))
+        {
+        CUniObject* obj = 
+        iDocument.DataModel()->SmilModel().GetObjectByIndex( slideCount-1, objectCount-1 );
+        if(obj->MediaInfo()->MimeType().CompareF( KMsgMimeImageJpeg )== 0)
+            {
+            iOptimizedFlow = ETrue;
+            }
+        }
+        
     if ( iDocument.DataModel()->ObjectList().Count() ||
          iDocument.DataModel()->AttachmentList().Count() )
         {
@@ -461,6 +477,7 @@ void CUniEditorSendUiOperation::DoPrepareObjectL( CUniObject* aObject )
                 iImageOperation = CUniEditorProcessImageOperation::NewL( *this, iDocument, iFs );
                 }
                 
+            iImageOperation->SetOptimizedFlow(iOptimizedFlow);
             // Processes if needed:
             iImageOperation->Process( static_cast<CMsgImageInfo*>( aObject->MediaInfo() ),
                                       aObject->AttachmentId(),
@@ -564,7 +581,7 @@ void CUniEditorSendUiOperation::DoSendUiPrepareAttachmentsL()
 // ---------------------------------------------------------
 //
 void CUniEditorSendUiOperation::HandleOperationEvent( TUniEditorOperationType aOperation,
-                                                      TUniEditorOperationEvent /*aEvent*/ )
+                                                      TUniEditorOperationEvent aEvent )
     {
     TBool remove( EFalse );
     
@@ -573,6 +590,17 @@ void CUniEditorSendUiOperation::HandleOperationEvent( TUniEditorOperationType aO
     
     if ( aOperation == EUniEditorOperationProcessImage )
         {
+        if( aEvent == EUniEditorOperationPartialComplete)
+            {
+            if(iOptimizedFlow)
+                {           
+                iObserver.EditorOperationEvent( EUniEditorOperationSendUi,
+                                                EUniEditorOperationPartialComplete );
+                iOptimizedFlow = EFalse;                        
+                }
+            return;
+            }
+        iOptimizedFlow = EFalse;
         // Process image error handling
         CArrayFixFlat<TInt>* errors = iImageOperation->GetErrors();
         for ( TInt i = 0; i < errors->Count(); i++ )
@@ -660,5 +688,12 @@ void CUniEditorSendUiOperation::HandleOperationEvent( TUniEditorOperationType aO
     //else --> original object remains...
     CompleteOperation( KErrNone );
     }
-
+// ---------------------------------------------------------
+// CUniEditorSendUiOperation::IsOptimizedFlagSet
+// ---------------------------------------------------------
+//
+TBool CUniEditorSendUiOperation::IsOptimizedFlagSet()
+    {
+    return iOptimizedFlow; 
+    }
 // EOF

@@ -165,4 +165,5 @@ EXPORTS
 	_ZN25CMsgViewAttachmentsDialog19HandleServerAppExitEi @ 164 NONAME
 	_ZThn180_N25CMsgViewAttachmentsDialog19HandleServerAppExitEi @ 165 NONAME ; #<thunk>#
 	_ZN14CMsgCheckNames9GetAliasLERK7TDesC16R6TDes16i @ 166 NONAME
+	_ZN19CMsgNaviPaneControl18GetMessageIteratorEv @ 167 NONAME
 

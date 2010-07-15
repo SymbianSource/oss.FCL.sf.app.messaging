@@ -1081,8 +1081,7 @@ class CMceUi :
         CMceBitmapResolver*             iBitmapResolver;
 
         CMceConnectMailboxTimer*        iConnectMailboxTimer;
-        CMessageIterator*               iMessageIterator;
-
+   
         CMceLogEngine*                  iMceLogEngine;
         CAknNavigationControlContainer* iNaviPane;
         CAknNavigationDecorator*        iDecoratedTabGroup;

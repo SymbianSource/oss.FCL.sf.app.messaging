@@ -127,6 +127,15 @@ NONSHARABLE_CLASS( CMsgNaviPaneControl ) : public CCoeControl,
         */
         IMPORT_C void SetNavigationControlObserver( MMsgNaviPaneControlObserver* aObserver );
         
+        /**
+         * Get Message Iterator Instance  
+         *
+         * @since 9.2
+         *
+         * @return aMessageIterator Message iterator 
+         */
+        IMPORT_C CMessageIterator* GetMessageIterator();
+
     public: // Functions from base classes
 
         /**

@@ -1672,6 +1672,15 @@ TKeyResponse CMsgAddressControlEditor::OfferKeyEventL(
           aKeyEvent.iCode == EKeyDevice3 ) &&
         iValidHighlightable )
         {
+        if ( aKeyEvent.iCode == EKeyDevice3
+                && iFindItemEventReceived )
+            {
+            // Find item was activated by touch, 
+            // no need to restore highlight
+            iFindItemEventReceived = EFalse;
+            return EKeyWasNotConsumed;
+            }
+    
         if ( !SelectionLength() )
             {
             // Enable highlight if hw keys used
@@ -1743,21 +1752,17 @@ void CMsgAddressControlEditor::HandlePointerEventL( const TPointerEvent& aPointe
                 if ( currentField &&
                      iPreviousField == currentField )
                     {
-                    // We will send new EMsgFindItemEvent so that we can separate 
-                    // single click item activation and old key based activation.
-                    // This is just quick fix for doing it, other implementations should
-                    // be considered(e.g. storing state in editor or using some flags).
-                    // This is done because in AppUI::HandleKeyEvent we must separate
-                    // activation methods for enabling highlight when using keys. 
+                    // Addressfield text was clicked, we will send simulated key event for
+                    // opening context sensitive menu in AppUI::HandleKeyEvent               
                     TKeyEvent event;
-                    event.iCode = EMsgFindItemKeyEvent;
-                    event.iScanCode = EMsgFindItemKeyEvent;
+                    event.iCode = EKeyDevice3;
+                    event.iScanCode = EKeyDevice3;
                     event.iModifiers = 0;
                     event.iRepeats = 0;
                     
-                    iCoeEnv->WsSession().SimulateKeyEvent( event );
-                    
                     forwardRequest = EFalse;
+                    iFindItemEventReceived = ETrue;
+                    iCoeEnv->WsSession().SimulateKeyEvent( event );  
                     }
                 
                 if ( SelectionLength() )

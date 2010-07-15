@@ -998,7 +998,13 @@ TKeyResponse CAudioMessageAppUi::HandleKeyEventL(
 #endif                	
                 break;
            	case EKeyOK: // Selection key: Show context menus OR play/record clip
-                {
+                {    
+                // Check if find item highlight needs to be enabled
+                if ( CheckFindItemHighlightL( aKeyEvent, aType ) )
+                    {
+                    return EKeyWasConsumed;
+                    }
+                
                 if ( Document()->GetAppMode() == EAmsEditor )
                   	{
                   	HandleCommandL( EAmsSoftkeyAdd );
@@ -1082,6 +1088,11 @@ TKeyResponse CAudioMessageAppUi::HandleKeyEventL(
             	break;
             case EKeyEnter:
             	{
+            	// Check if find item highlight needs to be enabled
+                if ( CheckFindItemHighlightL( aKeyEvent, aType ) )
+                    {
+                    return EKeyWasConsumed;
+                    }
               	if (DoEnterKeyL() )
                 	{
                   	return EKeyWasConsumed;
@@ -1258,7 +1269,23 @@ void CAudioMessageAppUi::DynInitMenuPaneL( TInt aResourceId, CEikMenuPane* aMenu
               	{
             	const TPtrC details = iMtm->Entry().Entry().iDetails;
 
-                if( (FocusedControlId( ) == EMsgComponentIdFrom) && ( ( iMtm->Sender( ) ).Length() ) )
+                TInt focusedControl = FocusedControlId();                         
+                TBool senderHighlighted = EFalse;
+                
+                if ( focusedControl == EMsgComponentIdFrom )
+                    {
+                    CMsgAddressControl* address = static_cast<CMsgAddressControl*>(
+                        iView->ControlById( EMsgComponentIdFrom ) );
+                    
+                    if ( address && address->Editor().SelectionLength() 
+                            == address->Editor().TextLength() )
+                        {
+                        senderHighlighted = ETrue;
+                        }
+                    }
+            	   	
+                if( ( focusedControl == EMsgComponentIdFrom ) && ( ( iMtm->Sender( ) ).Length() )
+                      && senderHighlighted )
                     {
                     iFindItemMenu->SetSenderHighlightStatus( ETrue );
                     iFindItemMenu->SetSenderDisplayText( TMmsGenUtils::PureAddress( iMtm->Sender( ) ) );
@@ -1271,7 +1298,8 @@ void CAudioMessageAppUi::DynInitMenuPaneL( TInt aResourceId, CEikMenuPane* aMenu
                   	0,
                   	aMenuPane,
                   	EFindItemMenuPlaceHolder,
-                  	TMmsGenUtils::PureAddress( iMtm->Sender() ),
+                  	senderHighlighted ? 
+                  	TMmsGenUtils::PureAddress( iMtm->Sender( ) ) : KNullDesC(),
           			( details.Length() == 0 ),
                   	EFalse );
           		//in sent folder reply is dimmed
@@ -1320,7 +1348,7 @@ void CAudioMessageAppUi::DynInitMenuPaneL( TInt aResourceId, CEikMenuPane* aMenu
         		aMenuPane,
               	EFindItemContextMenuPlaceHolder,
               	TMmsGenUtils::PureAddress( iMtm->Sender() ),
-        		( details.Length() != 0 ), //"Is sender known"
+        		( details.Length() == 0 ), //"Is sender known"
             	ETrue );
             // no items dimmed for now
           	if ( iMtm->Sender().Length() <= 0 )
@@ -4689,4 +4717,47 @@ TBool CAudioMessageAppUi::DoEnterKeyL()
         }
     
     return result;
+    }
+
+// ---------------------------------------------------------
+// CAudioMessageAppUi::CheckFindItemHighlightL
+// ---------------------------------------------------------
+//
+TBool CAudioMessageAppUi::CheckFindItemHighlightL( 
+    const TKeyEvent& aKeyEvent, TEventCode aType )
+    {   
+    TKeyResponse keyResp = EKeyWasNotConsumed;
+    CMsgExpandableControl* ctrl = NULL;
+    TBool checkHighlight = EFalse;
+    
+    if( iView->FocusedControl() )
+        {
+        ctrl = static_cast<CMsgExpandableControl*>( iView->FocusedControl() );
+        if ( ctrl )
+        	{	
+        	if ( ctrl->ControlType() == EMsgAddressControl
+                && !ctrl->Editor().SelectionLength()  ) 
+            {
+            checkHighlight = ETrue;
+            }
+        	else if ( ctrl->ControlType() == EMsgBodyControl )
+            {       
+            CItemFinder* itemFinder = iView->ItemFinder();
+            if ( FocusedControlId() == EMsgComponentIdBody && itemFinder
+                    && !itemFinder->CurrentSelection().Length() )
+                {                                                              
+                checkHighlight = ETrue;
+                }
+            }
+          }
+        }
+    
+    if ( ctrl && checkHighlight )
+        {
+        // Check if highlight needs to be restored to editor,
+        // address/body editor offerkeyevent will handle it
+        keyResp = ctrl->Editor().OfferKeyEventL( aKeyEvent, aType );
+        }    
+
+    return ( keyResp == EKeyWasConsumed ? ETrue : EFalse );  
     }

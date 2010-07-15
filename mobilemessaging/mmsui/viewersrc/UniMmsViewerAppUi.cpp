@@ -1177,7 +1177,7 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
             
             if ( !IsOwnMessage( ) )
                 {    
-                if( ( FocusedControlId( ) == EMsgComponentIdFrom) && ( ( iMtm->Sender( ) ).Length() ) 
+                if( ( focusedControl == EMsgComponentIdFrom ) && ( ( iMtm->Sender( ) ).Length() ) 
                       && senderHighlighted )
                     {
                     iFindItemMenu->SetSenderHighlightStatus( ETrue );
@@ -1190,8 +1190,9 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
                 }
             
             iFindItemMenu->AddItemFindMenuL( 
-                ( iView->ItemFinder() && iView->ItemFinder()->CurrentSelection().Length() ) 
-                ? iView->ItemFinder( ) : 0,
+                ( iView->ItemFinder() && 
+                  iView->ItemFinder()->CurrentSelection().Length() ) 
+                ? iView->ItemFinder() : 0,
                 aMenuPane, 
                 EFindItemMenuPlaceHolder,
                 senderHighlighted ? 
@@ -1625,38 +1626,39 @@ TKeyResponse CMmsViewerAppUi::HandleKeyEventL(
         case EKeyDevice3:       //Selection key
         case EKeyEnter:         //Enter Key
             {                    
-            if( iView->FocusedControl()->ControlType() == EMsgAddressControl )
+            CMsgExpandableControl* ctrl = NULL;
+            TBool checkHighlight = EFalse;
+            
+            if( iView->FocusedControl() )
                 {
-                CMsgAddressControl* address = static_cast<CMsgAddressControl*>(
-                    iView->FocusedControl() );
-                if ( address && !address->Editor().SelectionLength() )
+                ctrl = static_cast<CMsgExpandableControl*>( iView->FocusedControl() );
+                if ( ctrl->ControlType() == EMsgAddressControl
+                        && !ctrl->Editor().SelectionLength()  ) 
                     {
-                    // restore highlight to address field
-                    return address->Editor().OfferKeyEventL( aKeyEvent, aType );
-                    }               
-                }
-            else if ( iView->FocusedControl()->ControlType() == EMsgBodyControl )
-                {       
-                CItemFinder* itemFinder = iView->ItemFinder();
-                if ( FocusedControlId() == EMsgComponentIdBody 
-                     && itemFinder )
-                    {                                                                          
-                    if ( !itemFinder->CurrentSelection().Length() )
-                        {
-                        CMsgBodyControl* body = static_cast<CMsgBodyControl*>(
-                            iView->FocusedControl() );
-                        if ( body )
-                            {                     
-                             // restore highlight to current itemfinder item
-                            return body->Editor().OfferKeyEventL( aKeyEvent, aType );
-                            }
+                    checkHighlight = ETrue;
+                    }
+                else if ( ctrl->ControlType() == EMsgBodyControl )
+                    {       
+                    CItemFinder* itemFinder = iView->ItemFinder();
+                    if ( FocusedControlId() == EMsgComponentIdBody && itemFinder
+                            && !itemFinder->CurrentSelection().Length() )
+                        {                                                              
+                        checkHighlight = ETrue;
                         }
                     }
                 }
-            // fall through
-            } 
-        case EMsgFindItemKeyEvent:
-            {
+            if ( ctrl && checkHighlight )
+                {
+                // Check if highlight needs to be restored to editor,
+                // address/body editor offerkeyevent will handle it
+                if ( ctrl->Editor().OfferKeyEventL( aKeyEvent, aType ) 
+                        == EKeyWasConsumed )
+                    {
+                    // Highlight was restored, just return, no cs menu needed
+                    return EKeyWasConsumed;
+                    }
+                }
+
             TInt focusedControl = FocusedControlId( );
             CMsgMediaControl* control = MediaControlById(focusedControl);
             if (control)

@@ -627,6 +627,12 @@ public:
         * Since 3.2
         */
         void SetMarkReadUnread( TBool aValue );
+		
+        /**
+         *  This function sets aClearer to iLocalScreenClearer which contains Inbox view
+         *  screen. aClearer is used in CMceUi::HandleGainingForeground() when returning from viewers.
+         */
+        void  GetLocalScreenClearer( CAknLocalScreenClearer** &aClearer );
             
     private:    // Data
 

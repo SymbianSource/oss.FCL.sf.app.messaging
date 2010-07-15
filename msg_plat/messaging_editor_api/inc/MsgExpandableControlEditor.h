@@ -350,6 +350,7 @@ class CMsgExpandableControlEditor : public CEikRichTextEditor
        CMsgEditorCustomDraw*    iCustomDraw;
        TInt                     iControlType;
        TInt                     iEditortop;
+       TBool                    iFindItemEventReceived;
     };
 
 #endif // CMSGEXPANDABLECONTROLEDITOR_H

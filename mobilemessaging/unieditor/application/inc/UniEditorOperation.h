@@ -54,6 +54,7 @@ enum TUniEditorOperationType
 enum TUniEditorOperationEvent
     {
     EUniEditorOperationProcessing,
+    EUniEditorOperationPartialComplete,
     EUniEditorOperationComplete,
     EUniEditorOperationError,
     // Cancel is called for active operation

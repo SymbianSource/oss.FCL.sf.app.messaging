@@ -73,6 +73,11 @@ class CUniEditorSendUiOperation : public CUniEditorOperation
         * Starts send ui operation
         */
         void Start();
+		
+        /**
+        * check Is optimized flow
+        */  
+        TBool IsOptimizedFlagSet();
 
     protected:
 
@@ -165,6 +170,8 @@ class CUniEditorSendUiOperation : public CUniEditorOperation
         CUniObject* iPreparedObject;
         TBool iDeleteAll;
         CUniEditorProcessTextOperation* iTextOperation;
+		// sendui+jepg optimization changes
+        TBool iOptimizedFlow; 
 
     };
 

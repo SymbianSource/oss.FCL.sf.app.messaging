@@ -57,9 +57,7 @@ TListItemProperties CMceMessageListBoxItemDrawer::Properties(TInt aItemIndex) co
     {
     TListItemProperties properties;
     properties.SetColor( iTextColor );
-    properties.SetHiddenSelection( iMessageListContainer.IsOutboxOpened() ||
-        iMessageListContainer.IsItemFolder( aItemIndex )  ||
-        iMessageListContainer.SyncMlOutboxOpened() );
+
     return properties;
     }
 

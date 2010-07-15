@@ -85,6 +85,11 @@ class CUniEditorProcessImageOperation : public CUniEditorOperation,
         * Detaches attachment id.
         */
         void DetachAttachmentId( TMsvAttachmentId& aAttachmentId );
+        
+	    /**
+        * Set Optimized Flow flag
+        */  
+        void SetOptimizedFlow(TBool aOptimizedFlow);
 
     protected:
 
@@ -205,9 +210,10 @@ class CUniEditorProcessImageOperation : public CUniEditorOperation,
         TInt                        iProcessMethod;
 
         TSize                       iScaleSize;
-        TSize                       iScaleSizeResult;
+  //      TSize                       iScaleSizeResult;
         TDataType                   iTargetType;
         TBool                       iExactImageScaling;
+        TBool                       iOptimizedFlow;
     };
 
 #endif //__UNIEDITORPROCESSIMAGEOPERATION_H

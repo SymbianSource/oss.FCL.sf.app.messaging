@@ -39,7 +39,7 @@
 #include <msvids.h>
 #include <msvuids.h>
 #include <mtud.hrh>         // EMtudCommandTransferSend, EMtudCommandTransferSend, EMtudCommandTransferReceive
-#include <MuiuMessageIterator.h>// cmessageiterator
+
 #include <MuiuMsgEmbeddedEditorWatchingOperation.h> // tmsgexitmode
 #include <MuiuOperationWait.h>  // cmuiuoperationwait
 #include <muiumsvuiserviceutilitiesinternal.h> // msvuiserviceutilitiesinternal
@@ -271,7 +271,7 @@ CMceUi::~CMceUi()
         // must not delete iSession, session holder takes care of that
         }
     delete iMceLogEngine;
-    delete iMessageIterator;
+
     delete iFolderIndicator;
     delete iTabsArray;
     delete iMMSNotifications;
@@ -305,6 +305,7 @@ CMceUi::~CMceUi()
 
     // delete KPSUidMuiu property
     RProperty::Delete( KPSUidMuiu, KMuiuKeyCurrentMsg );
+    RProperty::Delete( KPSUidMuiu, KMuiuKeyNextMsg );
     if ( iFeatureMgrEnabled ) // CR : 401-1806
         {
     FeatureManager::UnInitializeLib();
@@ -1177,57 +1178,56 @@ void CMceUi::LaunchHelpL()
 // ----------------------------------------------------
 // CMceUi::HandleOpenNextPreviousL
 // ----------------------------------------------------
-void CMceUi::HandleOpenNextPreviousL( TBool aOpenNext )
+void CMceUi::HandleOpenNextPreviousL( TBool /*aOpenNext*/ )
     {
     MCELOGGER_ENTERFN("HandleOpenNextPreviousL()");
-    __ASSERT_DEBUG( iMessageIterator, Panic(EMceUiMessageIteratorNotCreated));
-
-    if ( iMessageIterator )
+     
+    // Read the next message TMsvId using PS key 
+    TInt nextEntryId = 0;
+    TInt r = RProperty::Get( KPSUidMuiu, KMuiuKeyNextMsg, nextEntryId );
+    if ( r != KErrNone )
         {
-        TInt error = (aOpenNext ?
-            iMessageIterator->SetNextMessage() : iMessageIterator->SetPreviousMessage() );
-        if ( error == KErrNone )
+        nextEntryId = 0;
+        }
+    
+    if ( nextEntryId > 0 )
+        {
+        // no need of following check because TMsvID is set properly
+        //set from MsgEditorAppUI.
+  
+    
+        TBool local = iMceListView->ListContainer()->FolderEntry().iServiceId == KMsvLocalServiceIndexEntryId;
+        if ( local && !iLocalScreenClearer ) 
             {
-            TBool local = iMceListView->ListContainer()->FolderEntry().iServiceId == KMsvLocalServiceIndexEntryId;
-            if ( local && !iLocalScreenClearer ) 
-                {
-                iLocalScreenClearer = CAknLocalScreenClearer::NewL( ETrue );
-                }
+            iLocalScreenClearer = CAknLocalScreenClearer::NewL( ETrue );
+            }
 
-    // TODO
-            CMceMessageListContainerBase* container = iMceListView->ListContainer();
-            TMsvId currentItemId = iMessageIterator->CurrentMessage().Id();
-            if ( container )
-                {
-                container->SetCurrentItemIdL( currentItemId );
-                container->DrawNow();
-/*                
-                TInt currentItemIndex = container->ItemIndex( currentItemId );
-                if ( currentItemIndex != KErrNotFound )
-                    {
-                    container->ListBox()->SetCurrentItemIndex( currentItemIndex );
-                    container->ListBox()->DrawDeferred();
-                    }*/
-                }
+        CMceMessageListContainerBase* container = iMceListView->ListContainer();
+        
+        TMsvId currentItemId = nextEntryId;
+        if ( container )
+            {
+            container->SetCurrentItemIdL( currentItemId );
+            container->DrawNow();
+            }
 
-            TMsvEntry currentEntry;
-            TMsvId serviceId; // not used here but needed by GetEntry function
-            if ( iSession->GetEntry( currentItemId, serviceId, currentEntry ) == KErrNone &&
-                 currentEntry.iType == KUidMsvMessageEntry )
+        TMsvEntry currentEntry;
+        TMsvId serviceId; // not used here but needed by GetEntry function
+        if ( iSession->GetEntry( currentItemId, serviceId, currentEntry ) == KErrNone &&
+             currentEntry.iType == KUidMsvMessageEntry )
+            {
+            TRAPD( err, EditMTMEntryL( currentEntry ) );
+            if ( err )
                 {
-                TRAPD( err, EditMTMEntryL( currentEntry ) );
-                if ( err )
+                if ( iLocalScreenClearer )
                     {
-                    if ( iLocalScreenClearer )
-                        {
-                        delete iLocalScreenClearer;
-                        iLocalScreenClearer = NULL;
-                        }
-                    User::Leave( err );
+                    delete iLocalScreenClearer;
+                    iLocalScreenClearer = NULL;
                     }
+                User::Leave( err );
                 }
-            } // end if ( container )
-        } // end if ( error == KErrNone )
+            }
+        } // end  
     MCELOGGER_LEAVEFN("HandleOpenNextPreviousL()");
     }
 
@@ -2236,16 +2236,6 @@ void CMceUi::DoOperationCompletedL(
         aCompletionCode == CMsgEmbeddedEditorWatchingOperation::EMsgExitPrevious )
         {
         MCELOGGER_WRITE("CMceUi::DoOperationCompletedL: Opening next/previous");
-        if ( iMessageIterator && closedEntryId > 0 )
-            {
-            TMsvEntry currentEntry;
-            TMsvId serviceId; // not used here but needed by GetEntry function
-            // Get current entry
-            if ( iSession->GetEntry( closedEntryId, serviceId, currentEntry ) == KErrNone )
-                {
-                iMessageIterator->SetCurrentMessageL( currentEntry );
-                }
-            }
         HandleOpenNextPreviousL( aCompletionCode ==
             CMsgEmbeddedEditorWatchingOperation::EMsgExitNext );
         if ( !IsForeground() )
@@ -2257,9 +2247,8 @@ void CMceUi::DoOperationCompletedL(
         }
     else
         {
-        MCELOGGER_WRITE("CMceUi::DoOperationCompletedL: deleting iMessageIterator");
         // Viewer closed
-        if ( closedEntryId > 0 && iMessageIterator )
+        if ( closedEntryId > 0 )
             {
             CMceMessageListContainerBase* container = iMceListView->ListContainer();
             if ( container )
@@ -2267,9 +2256,7 @@ void CMceUi::DoOperationCompletedL(
                 container->SetCurrentItemIdL( closedEntryId );
                 }
             }
-        delete iMessageIterator;
-        iMessageIterator = NULL;
-        }
+         }
 
     if ( !iMceErrorUi )
         {
@@ -2643,19 +2630,21 @@ void CMceUi::EditMTMEntryL( const TMsvEntry& aEntry /*, TBool aOpen*/)
         {
         User::LeaveIfError( r );
         }
+    
+     r = RProperty::Define( KPSUidMuiu, KMuiuKeyNextMsg, RProperty::EInt );
+     if ( r != KErrAlreadyExists )
+         {
+         User::LeaveIfError( r );
+         }
+
     // Set entry Id value to property
     if ( aEntry.iType == KUidMsvMessageEntry )
         {
         r = RProperty::Set( KPSUidMuiu, KMuiuKeyCurrentMsg, aEntry.Id() );
+        r = RProperty::Set( KPSUidMuiu, KMuiuKeyNextMsg, 0 );
         }
 
     TBool tabsToCleanupStack = EFalse;
-    delete iMessageIterator;
-    iMessageIterator = NULL;
-    if ( aEntry.iType == KUidMsvMessageEntry )
-        {
-        iMessageIterator = CMessageIterator::NewL( *iSession, aEntry );
-        }
 
     CBaseMtmUi& mtmUi=iMtmStore->GetMtmUiAndSetContextLC( aEntry );
     mtmUi.SetPreferences( mtmUi.Preferences() | EMtmUiFlagEditorPreferEmbedded );
@@ -5562,6 +5551,15 @@ void CMceUi::EventL( const CConnMonEventBase &aConnMonEvent )
 // ----------------------------------------------------
 void CMceUi::HandleGainingForeground() // CR : 401-1806
     {
+   
+    // This code is added to remove screen clearer when returning from viewer.
+    if ( iMceListView )
+        {
+        CAknLocalScreenClearer** localScreenClearer = NULL; 
+        iMceListView->GetLocalScreenClearer( localScreenClearer );
+        delete *localScreenClearer;
+        *localScreenClearer = NULL;// this will assign null to iLocalScreenClearer in messagelistview.
+        }
     if ( !iFeatureMgrEnabled )
         {
   	    TRAP_IGNORE( FeatureManager::InitializeLibL() );
@@ -6651,13 +6649,24 @@ void CMceUi::HideOrExit()
 // ----------------------------------------------------
 void CMceUi::ResetAndHide()
     {
-    SetCustomControl(1);    // Disable bring-to-foreground on view activation
-    TRAP_IGNORE( CAknViewAppUi::CreateActivateViewEventL( \
-        KMessagingCentreMainViewUid, \
-        TUid::Uid(KMceHideInBackground), \
-        KNullDesC8 ) ) ;
+	if (!MceViewActive( EMceMainViewActive ))
+        {
+        SetCustomControl(1);    // Disable bring-to-foreground on view activation
+        TRAP_IGNORE( CAknViewAppUi::CreateActivateViewEventL( \
+            KMessagingCentreMainViewUid, \
+            TUid::Uid(KMceHideInBackground), \
+            KNullDesC8 ) ) ;
+        }
+    else
+        {
+        SetCustomControl(0); // Enable bring-to-foreground on view activation
+        }
     HideInBackground();
     }
+
+// ----------------------------------------------------
+// CMceUi::OpenMtmMailboxViewL
+// ----------------------------------------------------
 void CMceUi::OpenMtmMailboxViewL( const TMsvEntry& aEntry )
 	{
     CBaseMtmUi& mtmUi=iMtmStore->GetMtmUiAndSetContextLC( aEntry );

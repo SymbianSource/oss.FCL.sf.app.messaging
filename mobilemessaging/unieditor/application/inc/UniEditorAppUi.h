@@ -1382,6 +1382,9 @@ class CUniEditorAppUi :
       * Own. 
       */  
     	CAknStylusPopUpMenu* iEmbeddedObjectStylusPopup;
+		// sendui+jepg optimization changes
+    	TBool  iOptimizedFlow;
+    	TBool iSingleJpegImageProcessing;
     };
 
 #include "UniEditorAppUi.inl"

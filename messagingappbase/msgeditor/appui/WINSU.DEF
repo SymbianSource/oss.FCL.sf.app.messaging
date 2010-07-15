@@ -102,4 +102,5 @@ EXPORTS
 	?HandleStatusPaneSizeChange@CMsgEditorAppUi@@UAEXXZ @ 101 NONAME ; void CMsgEditorAppUi::HandleStatusPaneSizeChange(void)
 	?HandleServerAppExit@CMsgViewAttachmentsDialog@@UAEXH@Z @ 102 NONAME ; void CMsgViewAttachmentsDialog::HandleServerAppExit(int)
 	?GetAliasL@CMsgCheckNames@@QAEXABVTDesC16@@AAVTDes16@@H@Z @ 103 NONAME ; void CMsgCheckNames::GetAliasL(class TDesC16 const &, class TDes16 &, int)
+	?GetMessageIterator@CMsgNaviPaneControl@@QAEPAVCMessageIterator@@XZ @ 104 NONAME ; class CMessageIterator * CMsgNaviPaneControl::GetMessageIterator(void)
 

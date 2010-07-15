@@ -434,7 +434,20 @@ void CMceMessageListView::DoActivateL(
 
 
     iMceUi->SetMceViewActive( EMceMessageViewActive );
-
+    if ( editorLaunched &&
+         ( msgMtmUid!=KSenduiMtmIrUidValue ) &&
+         ( msgMtmUid!=KSenduiMtmBtUidValue ) &&
+         ( msgMtmUid!=KSenduiMtmSmtpUidValue ) &&
+         ( msgMtmUid!=KSenduiMtmImap4UidValue ) &&
+         ( msgMtmUid!=KSenduiMtmPop3UidValue ))
+        {
+        // This is added to remove Inbox view flicker when new message is opened from home screen and 
+        // forwarded
+        delete iLocalScreenClearer;
+        iLocalScreenClearer = NULL;
+        iLocalScreenClearer = CAknLocalScreenClearer::NewL( EFalse ); 
+        }
+    
     if ( activateConnQueryTimer )
         {
         if ( entry.iMtm == KSenduiMtmImap4Uid || 
@@ -4226,5 +4239,13 @@ void CMceMessageListView::SetContextCommandFlag(TBool aContextCommandFlag)
     {
     iContextCommand = aContextCommandFlag;
     }
-	  
+
+// ----------------------------------------------------
+// CMceMessageListView::GetLocalScreenClearer( CAknLocalScreenClearer** &aClearer )
+// ---------------------------------------------------- 
+void CMceMessageListView::GetLocalScreenClearer( CAknLocalScreenClearer** &aClearer )        
+    {
+    aClearer = &iLocalScreenClearer;
+    }
+
 //  End of File
