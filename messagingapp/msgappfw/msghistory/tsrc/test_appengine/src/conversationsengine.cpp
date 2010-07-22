@@ -26,7 +26,7 @@
 #include "debugtraces.h"
 #include <msghistory.h>
 #include <msgitem.h>
-#include "s60qconversions.h"
+#include <xqconversions.h>
 
 const int ViewableLimit = 160;
 //---------------------------------------------------------------
@@ -137,7 +137,7 @@ void ConversationsEngine::populateEntry(MsgItem& item,
 
     // description
     QString descr = item.body();
-    HBufC* description = S60QConversions::qStringToS60Desc(descr);
+    HBufC* description = XQConversions::qStringToS60Desc(descr);
     entry->SetDescriptionL(description->Des());
     delete description;
 
@@ -147,7 +147,7 @@ void ConversationsEngine::populateEntry(MsgItem& item,
 
     //contact details
     QString details = item.phoneNumber();
-    HBufC* d_details = S60QConversions::qStringToS60Desc(details);
+    HBufC* d_details = XQConversions::qStringToS60Desc(details);
     entry->SetContactL(d_details->Des());
     delete d_details;
 

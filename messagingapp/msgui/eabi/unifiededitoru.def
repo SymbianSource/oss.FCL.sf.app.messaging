@@ -17,17 +17,17 @@ EXPORTS
 	_ZN20MsgUnifiedEditorView11resizeEventEP25QGraphicsSceneResizeEvent @ 16 NONAME
 	_ZN20MsgUnifiedEditorView12createVCardsERK8QVariantR11QStringList @ 17 NONAME
 	_ZN20MsgUnifiedEditorView13addAttachmentERK7QString @ 18 NONAME
-	_ZN20MsgUnifiedEditorView13audiosFetchedERK8QVariant @ 19 NONAME
-	_ZN20MsgUnifiedEditorView13deleteMessageEv @ 20 NONAME
-	_ZN20MsgUnifiedEditorView13fetchContactsEv @ 21 NONAME
-	_ZN20MsgUnifiedEditorView13imagesFetchedERK8QVariant @ 22 NONAME
-	_ZN20MsgUnifiedEditorView14addAttachmentsE11QStringList @ 23 NONAME
-	_ZN20MsgUnifiedEditorView14changePriorityEv @ 24 NONAME
-	_ZN20MsgUnifiedEditorView14forwardMessageER18ConvergedMessageIdN16ConvergedMessage11MessageTypeE @ 25 NONAME
-	_ZN20MsgUnifiedEditorView14sendingOptionsEv @ 26 NONAME
-	_ZN20MsgUnifiedEditorView15contactsFetchedERK8QVariant @ 27 NONAME
-	_ZN20MsgUnifiedEditorView15populateContentERK5QListI8QVariantE @ 28 NONAME
-	_ZN20MsgUnifiedEditorView16createTempFolderEv @ 29 NONAME
+	_ZN20MsgUnifiedEditorView13deleteMessageEv @ 19 NONAME
+	_ZN20MsgUnifiedEditorView13fetchContactsEv @ 20 NONAME
+	_ZN20MsgUnifiedEditorView13imagesFetchedERK8QVariant @ 21 NONAME
+	_ZN20MsgUnifiedEditorView14addAttachmentsE11QStringList @ 22 NONAME
+	_ZN20MsgUnifiedEditorView14changePriorityEv @ 23 NONAME
+	_ZN20MsgUnifiedEditorView14forwardMessageER18ConvergedMessageIdN16ConvergedMessage11MessageTypeE @ 24 NONAME
+	_ZN20MsgUnifiedEditorView15contactsFetchedERK8QVariant @ 25 NONAME
+	_ZN20MsgUnifiedEditorView15formatAddressesER5QListIP23ConvergedMessageAddressE @ 26 NONAME
+	_ZN20MsgUnifiedEditorView15populateContentERK5QListI8QVariantE @ 27 NONAME
+	_ZN20MsgUnifiedEditorView16createTempFolderEv @ 28 NONAME
+	_ZN20MsgUnifiedEditorView16enableSendButtonEb @ 29 NONAME
 	_ZN20MsgUnifiedEditorView16generateFileNameER7QString @ 30 NONAME
 	_ZN20MsgUnifiedEditorView16onContentChangedEv @ 31 NONAME
 	_ZN20MsgUnifiedEditorView16removeTempFolderEv @ 32 NONAME
@@ -44,7 +44,7 @@ EXPORTS
 	_ZN20MsgUnifiedEditorView22deactivateInputBlockerEv @ 43 NONAME
 	_ZN20MsgUnifiedEditorView22setAttachOptionEnabledENS_16TBE_AttachOptionEb @ 44 NONAME
 	_ZN20MsgUnifiedEditorView23handleViewExtnActivatedEP16HbListWidgetItem @ 45 NONAME
-	_ZN20MsgUnifiedEditorView25populateContentIntoEditorERK16ConvergedMessage @ 46 NONAME
+	_ZN20MsgUnifiedEditorView25populateContentIntoEditorERK16ConvergedMessageb @ 46 NONAME
 	_ZN20MsgUnifiedEditorView25removeAttachmentContainerEv @ 47 NONAME
 	_ZN20MsgUnifiedEditorView25updateOtherRecipientCountEb @ 48 NONAME
 	_ZN20MsgUnifiedEditorView4sendEv @ 49 NONAME

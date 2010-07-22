@@ -20,7 +20,6 @@ DEPENDPATH += . inc
 DEPENDPATH += . src
 
 INCLUDEPATH += ../../../inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_DLL
@@ -64,7 +63,7 @@ SOURCES += src/conversationsengine.cpp \
 
 LIBS += -lcsserverclientapi \
         -lcsutils \
-        -ls60qconversions \
+        -lxqutils \
         -lconvergedmessageutils \
         -lmsgs \
   	    -lInetProtUtil \

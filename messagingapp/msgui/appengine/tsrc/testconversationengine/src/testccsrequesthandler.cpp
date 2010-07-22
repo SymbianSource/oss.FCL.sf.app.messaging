@@ -53,12 +53,12 @@ EXPORT_C CCSRequestHandler* CCSRequestHandler::NewL()
 // CCSRequestHandler::NewLC()
 // Two-phased constructor.
 // -----------------------------------------------------------------------------
-EXPORT_C CCSRequestHandler* CCSRequestHandler::NewLC(/*CVPbkContactManager* aVPbkContactManager*/)
+EXPORT_C CCSRequestHandler* CCSRequestHandler::NewLC()
     {
 
     CCSRequestHandler* self = new ( ELeave ) CCSRequestHandler();
     CleanupStack::PushL( self );
-    self->ConstructL(/*aVPbkContactManager*/);
+    self->ConstructL();
 
     return self;
     }

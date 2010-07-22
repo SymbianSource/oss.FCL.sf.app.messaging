@@ -45,7 +45,7 @@
 #define LOC_ADD_NEW hbTrId("txt_messaging_button_add_new")
 #define LOC_ALWAYS_AUTOMATIC hbTrId("txt_messaging_setlabel_val_always_automatic")
 #define LOC_AUTO_HOME_NETWORK hbTrId("txt_messaging_setlabel_val_auto_home_network")
-#define LOC_MANUAL hbTrId("txt_messaging_setlabel_val_mannual")
+#define LOC_MANUAL hbTrId("txt_messaging_setlabel_val_manual")
 #define LOC_MMS_YES hbTrId("txt_messaging_setlabel_allow_anonymous_mms_val_yes")
 #define LOC_MMS_NO hbTrId("txt_messaging_setlabel_allow_anonymous_mms_val_no")
 

@@ -184,6 +184,11 @@ public:
      *         KErrGeneral for other cases
      */
     TInt DownloadMessageL(TMsvId aId);
+    
+    /**
+     * Returns the Bio Type of a message
+     */
+    int getMsgSubType(int msgId);
 
 private:
 

@@ -131,11 +131,23 @@ public:
      * @return list of cc address list
      */
     ConvergedMessageAddressList ccAddressList();
+
+    /**
+     * bccAddressList
+     * @return list of Bcc address list
+     */
+    ConvergedMessageAddressList bccAddressList();
+
+    /**
+     * Finds total recipient count
+     * @return total recipient count
+     */
+    int recipientCount();
+
     /**
      * messageSize
      * @return int
      */
-
     int messageSize();
 
     /**
@@ -232,8 +244,13 @@ private:
      * owned.
      */
     ConvergedMessageAddressList mCcAddressList;
-	
-	
+
+    /**
+     * CC address list
+     * owned.
+     */
+    ConvergedMessageAddressList mBccAddressList;
+
     /**
      * Msv Session.
      * not Owned.

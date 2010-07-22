@@ -99,4 +99,20 @@ void UniViewerAddressContainer::setCcField(ConvergedMessageAddressList ccRecipie
     ccWidget->populate(LOC_CC, ccRecipients);
 }
 
+//---------------------------------------------------------------
+// UniViewerAddressContainer :: setBccField
+// @see header file
+//---------------------------------------------------------------
+void UniViewerAddressContainer::setBccField(ConvergedMessageAddressList bccRecipients)
+{
+    UniViewerAddressWidget* bccWidget = new UniViewerAddressWidget();
+
+    connect(bccWidget, SIGNAL(sendMessage(const QString&,const QString&)), this,
+        SIGNAL(sendMessage(const QString&,const QString&)));
+
+    mMainLayout->addItem(bccWidget);
+
+    bccWidget->populate(LOC_BCC, bccRecipients);
+}
+
 // EOF

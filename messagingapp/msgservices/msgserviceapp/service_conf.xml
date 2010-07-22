@@ -10,6 +10,7 @@
      <customproperty key="aiw_action_text_file">messaging</customproperty>
      <customproperty key="aiw_action_text">txt_messaging_list_attach_to_new_message</customproperty>
      <customproperty key="aiw_action_icon">qtg_large_message</customproperty>
+     <customproperty key="blocked_mime_types">video/*</customproperty>
   </interface>
   <interface>
       <name>com.nokia.symbian.IMessageSend</name>

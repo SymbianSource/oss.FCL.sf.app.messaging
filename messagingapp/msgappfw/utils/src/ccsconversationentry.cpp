@@ -135,12 +135,9 @@ EXPORT_C HBufC* CCsConversationEntry::Contact() const
 // Sets the Conversation contact of this object
 // ----------------------------------------------------------------------------
 EXPORT_C void CCsConversationEntry::SetContactL(const TDesC& aContact)
-    {
-    if((&aContact))
-        {
-        iContact = aContact.AllocL();
-        }
-    }
+{
+    iContact = aContact.AllocL();
+}
 
 // ----------------------------------------------------------------------------
 // CCsConversationEntry::ConversationDir
@@ -211,17 +208,15 @@ EXPORT_C HBufC* CCsConversationEntry::Description() const
 // Sets the Conversation description of this object
 // ----------------------------------------------------------------------------
 EXPORT_C void CCsConversationEntry::SetDescriptionL(const TDesC& aDescription)
-    {
-    if((&aDescription))
-        {
-        TInt descrLength = aDescription.Length();
-        if ( descrLength > KMaxDescrSize )
-            descrLength = KMaxDescrSize;
-        
-        iDescription = HBufC::NewL(descrLength);
-        iDescription->Des().Copy(aDescription.Left(descrLength));
-        }
-    }
+{
+
+    TInt descrLength = aDescription.Length();
+    if (descrLength > KMaxDescrSize)
+        descrLength = KMaxDescrSize;
+    iDescription = HBufC::NewL(descrLength);
+    iDescription->Des().Copy(aDescription.Left(descrLength));
+
+}
 
 // ----------------------------------------------------------------------------
 // CCsConversationEntry::ChangeAttributes
@@ -255,13 +250,16 @@ EXPORT_C CCsConversationEntry* CCsConversationEntry::CloneL() const
     CCsConversationEntry* cloneObject = CCsConversationEntry::NewL();
     CleanupStack::PushL(cloneObject);
 
-    cloneObject->SetContactL(*iContact);
+    if (iContact)
+        cloneObject->SetContactL(*iContact);
+
     cloneObject->SetConversationDir(iConversationDir);
     cloneObject->SetType(iConversationType);
     cloneObject->SetEntryId(iEntryID);
     cloneObject->SetSendState(iConversationStatus);
     cloneObject->ChangeAttributes(iConversationAttrib, ECsAttributeNone);
-    cloneObject->SetDescriptionL(*iDescription);
+    if(iDescription)
+        cloneObject->SetDescriptionL(*iDescription);
     cloneObject->SetTimeStampL(iTimeStamp);
 
     CleanupStack::Pop(cloneObject);

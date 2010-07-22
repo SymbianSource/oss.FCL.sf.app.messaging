@@ -20,7 +20,7 @@
 #include "conversationsengine.h"
 #include <conversationsenginedefines.h>
 #include <QStandardItemModel>
-#include <s60qconversions.h>
+#include <xqconversions.h>
 #include <ccsdefs.h>
 #include <ccsclientconversation.h>
 
@@ -66,7 +66,7 @@ void TConversationUpdateHandler::ConversationsViewUpdated()
     //as this is common for all the conversation entries 
     QModelIndexList indexList = convModel->match(convModel->index(0, 0), 
                                                 ConversationAddress, 
-                                                S60QConversions::s60DescToQString(TestConversationEngineStub::Instance()->GetContactID()), 
+                                                XQConversions::s60DescToQString(TestConversationEngineStub::Instance()->GetContactID()), 
                                                 -1, // One match 
                                                 Qt::MatchExactly);
     entryCount = indexList.count();
@@ -86,7 +86,7 @@ void TConversationUpdateHandler::ConversationsViewUpdated()
 
         //compare the message description
         QCOMPARE(convModel->data(indexList[loop], BodyText).toString(),
-                S60QConversions::s60DescToQString(
+                XQConversions::s60DescToQString(
                         TestConversationEngineStub::Instance()->
                          GetDescription()));
         
@@ -144,7 +144,7 @@ void TConversationUpdateHandler::ConversationsSummaryViewUpdated()
          
          TDesC* dispName = clientConv->GetDisplayName();
          QCOMPARE(convModel->data(indexList[0], DisplayName).toString(),
-                 S60QConversions::s60DescToQString(*dispName));
+                 XQConversions::s60DescToQString(*dispName));
          
          int contactId = clientConv->GetContactId();
          QCOMPARE(convModel->data(indexList[0], ContactId).toInt(), contactId);

@@ -10,6 +10,5 @@
     <meshitem src="addressText" srcEdge="LEFT" dst="avatar" dstEdge="RIGHT"/>
     <meshitem src="addressText" srcEdge="RIGHT" dst="presence" dstEdge="LEFT"/>
     <meshitem src="addressText" srcEdge="CENTERV" dst="" dstEdge="CENTERV"/>
-
   </layout>
 </hbwidget>

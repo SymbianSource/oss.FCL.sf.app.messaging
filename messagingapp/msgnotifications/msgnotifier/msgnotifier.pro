@@ -21,7 +21,6 @@ TARGET = msgnotifier
 DEPENDPATH += . src
 HEADERS += $$PUBLIC_HEADERS
 INCLUDEPATH += . inc ../../../inc 
-INCLUDEPATH +=../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../msgsettings/msginit/inc
 INCLUDEPATH += ../inc
 INCLUDEPATH += $$APP_LAYER_INCLUDEPATH
@@ -42,6 +41,7 @@ symbian {
 QT -= gui
 CONFIG += NO_ICON hb
 
+TRANSLATIONS = messaging.ts
 # Input
 SOURCES += 	src/main.cpp \
 			src/msgnotifier.cpp \
@@ -53,13 +53,11 @@ HEADERS +=  inc/msgnotifier.h  \
   		    inc/msgstorehandler.h 
 
 LIBS += -lcsserverclientapi \
-        -ls60qconversions \
         -lcsutils \
         -lmsginit \
         -lmsgs \
         -letext \
         -lsmcm \
-        -ls60qconversions \
         -lmmsmessage \
         -lmmsserversettings \
         -lmmscli \
@@ -68,5 +66,9 @@ LIBS += -lcsserverclientapi \
         -lQtVersit \
         -lunidatamodelloader \
 	-lxqsettingsmanager \
-        -apgrfx.lib
+        -apgrfx.lib \
+        -lxqutils \
+        -lws32 \
+        -lapgrfx \
+	-lxqsystemtoneservice
         

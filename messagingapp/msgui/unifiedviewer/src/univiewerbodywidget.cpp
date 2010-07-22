@@ -17,30 +17,21 @@
 
 #include "univiewerbodywidget.h"
 
+// SYSTEM INCLUDES
 #include <QFile>
-#include <QFileInfo>
-#include <QPixmap>
-#include <QSignalMapper>
-
 #include <HbTextItem>
-#include <HbPushButton>
-#include <HbMenu>
 #include <HbMainWindow>
 
-#include <xqaiwrequest.h>
-#include <xqrequestinfo.h>
-#include <xqappmgr.h>
-
+// USER INCLUDES
 #include "univiewertextitem.h"
 #include "univiewerpixmapwidget.h"
-#include "msgmediautil.h"
-// LOCAL CONSTANTS
-const QString AUDIO_ICON("qtg_mono_audio");
+#include "univieweraudiowidget.h"
 
-// Localization
-#define LOC_TITLE   hbTrId("txt_messaging_title_messaging")
-#define LOC_OPEN    hbTrId("txt_common_menu_open")
-#define LOC_SAVE    hbTrId("txt_common_menu_save")
+// LOCAL CONSTANTS
+const QString IMAGE_MIMETYPE("image");
+const QString AUDIO_MIMETYPE("audio");
+const QString VIDEO_MIMETYPE("video");
+const QString TEXT_MIMETYPE("text");
 
 //---------------------------------------------------------------
 //UniViewerBodyWidget::UniViewerBodyWidget
@@ -50,10 +41,7 @@ UniViewerBodyWidget::UniViewerBodyWidget(QGraphicsItem *parent) :
     HbWidget(parent), mHasText(false), mHasPixmap(false), mTextItem(0), mSlideCounter(0),
         mPixmapItem(0), mAudioItem(0)
 {
-    this->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-    // Signal mapper for opening media files
-    mSignalMapper = new QSignalMapper(this);
-    connect(mSignalMapper, SIGNAL(mapped(const QString &)), this, SLOT(openMedia(const QString &)));
+    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
 //---------------------------------------------------------------
@@ -68,18 +56,16 @@ UniViewerBodyWidget::~UniViewerBodyWidget()
 //UniViewerBodyWidget::setImage
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setPixmap(QString pixmapFile)
+void UniViewerBodyWidget::setPixmap(UniMessageInfo *info)
 {
     setHasPixmap(true);
     //create image item instance
     if (!mPixmapItem) {
         mPixmapItem = new UniViewerPixmapWidget(this);
         HbStyle::setItemName(mPixmapItem, "pixmap");
-        connect(mPixmapItem, SIGNAL(shortTap(QString)), this, SLOT(openMedia(QString)));
     }
-
     mPixmapItem->hide();
-    mPixmapItem->setPixmap(pixmapFile);
+    mPixmapItem->populate(info);
 
     this->repolish();
 }
@@ -88,23 +74,14 @@ void UniViewerBodyWidget::setPixmap(QString pixmapFile)
 //UniViewerBodyWidget::setAudio
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setAudio(QString audiofile)
+void UniViewerBodyWidget::setAudio(UniMessageInfo *info)
 {
     if (!mAudioItem) {
-        mAudioItem = new HbPushButton(this);
+        mAudioItem = new UniViewerAudioWidget(this);
         HbStyle::setItemName(mAudioItem, "audioItem");
     }
     mAudioItem->hide();
-    QFileInfo fileInfo(audiofile);
-    mAudioItem->setIcon(HbIcon(AUDIO_ICON));
-    mAudioItem->setText(fileInfo.baseName());
-    MsgMediaUtil mediaUtil;
-    mAudioItem->setAdditionalText(mediaUtil.mediaDuration(audiofile));
-    mAudioItem->setTextAlignment(Qt::AlignLeft);
-
-    // Connect to signal mapper with file name
-    mSignalMapper->setMapping(mAudioItem, audiofile);
-    connect(mAudioItem, SIGNAL(clicked()), mSignalMapper, SLOT(map()));
+    mAudioItem->populate(info);
 
     this->repolish();
 }
@@ -113,16 +90,25 @@ void UniViewerBodyWidget::setAudio(QString audiofile)
 //UniViewerBodyWidget::setVideo
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setVideo(QString videofile)
+void UniViewerBodyWidget::setVideo(UniMessageInfo *info)
 {
-    Q_UNUSED(videofile)
+    setHasPixmap(true);
+    //create image item instance
+    if (!mPixmapItem) {
+       mPixmapItem = new UniViewerPixmapWidget(this);
+       HbStyle::setItemName(mPixmapItem, "pixmap");
+    }
+    mPixmapItem->hide();
+    mPixmapItem->populate(info);
+    
+    this->repolish();
 }
 
 //---------------------------------------------------------------
-//UniViewerBodyWidget::setTextContent
+//UniViewerBodyWidget::setText
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setTextContent(QString text)
+void UniViewerBodyWidget::setText(QString text)
 {
     setHasText(true);
 
@@ -140,7 +126,7 @@ void UniViewerBodyWidget::setTextContent(QString text)
 }
 
 //---------------------------------------------------------------
-//UniViewerBodyWidget::setTextContent
+// UniViewerBodyWidget::setSlideCounter
 // @see header file
 //---------------------------------------------------------------
 void UniViewerBodyWidget::setSlideCounter(QString &slideCounter)
@@ -204,23 +190,23 @@ void UniViewerBodyWidget::setSlideContents(UniMessageInfoList objList, QString s
     int count = objList.count();
     for (int a = 0; a < count; ++a) {
         UniMessageInfo* info = objList.at(a);
-        QString type = info->mimetype();
+        QString mimeType = info->mimetype();
 
-        if (type.contains("text")) {
+        if (mimeType.contains(TEXT_MIMETYPE)) {
             QFile file(info->path());
             if (file.open(QIODevice::ReadOnly)) {
                 QString textContent(file.readAll());
-                setTextContent(textContent);
+                setText(textContent);
             }
         }
-        else if (type.contains("video")) {
-            setVideo(info->path());
+        else if (mimeType.contains(AUDIO_MIMETYPE)) {
+            setAudio(info);
         }
-        else if (type.contains("audio")) {
-            setAudio(info->path());
+        else if (mimeType.contains(VIDEO_MIMETYPE)) {
+            setVideo(info);
         }
-        else if (type.contains("image")) {
-            setPixmap(info->path());
+        else if (mimeType.contains(IMAGE_MIMETYPE)) {
+            setPixmap(info);
         }
 
         delete info;
@@ -403,110 +389,4 @@ QSizeF UniViewerBodyWidget::sizeHint(Qt::SizeHint which, const QSizeF & constrai
     return szHint;
 }
 
-//---------------------------------------------------------------
-//UniViewerBodyWidget::longPressed
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::longPressed(QPointF position)
-{
-
-    HbMenu* menu = new HbMenu;
-    menu->setAttribute(Qt::WA_DeleteOnClose);
-    menu->addAction(LOC_OPEN, this, SLOT(openMedia()));
-    menu->addAction(LOC_SAVE, this, SLOT(saveMedia()));
-    menu->setPreferredPos(position);
-    menu->show();
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::openMedia
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::openMedia()
-{
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::openMedia
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::openMedia(const QString& fileName)
-{
-    XQSharableFile sf;
-    XQAiwRequest* request = 0;
-
-    if (!sf.open(fileName)) {
-        return;
-    }
-
-    // Get handlers
-    XQApplicationManager appManager;
-    QList<XQAiwInterfaceDescriptor> fileHandlers = appManager.list(sf);
-    if (fileHandlers.count() > 0) {
-        XQAiwInterfaceDescriptor d = fileHandlers.first();
-        request = appManager.create(sf, d);
-
-        if (!request) {
-            sf.close();
-            return;
-        }
-    }
-    else {
-        sf.close();
-        return;
-    }
-
-    // Result handlers
-    connect(request, SIGNAL(requestOk(const QVariant&)), this, SLOT(handleOk(const QVariant&)));
-    connect(request, SIGNAL(requestError(const QVariant&)), this,
-        SLOT(handleError(const QVariant&)));
-
-    request->setEmbedded(true);
-    request->setSynchronous(true);
-
-    // Fill args
-    QList<QVariant> args;
-    args << qVariantFromValue(sf);
-    request->setArguments(args);
-
-    // Fill headers
-    QString key("WindowTitle");
-    QVariant value(QString(LOC_TITLE));
-    XQRequestInfo info;
-    info.setInfo(key, value);
-    request->setInfo(info);
-
-    request->send();
-
-    // Cleanup
-    sf.close();
-    delete request;
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::saveMedia
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::saveMedia()
-{
-}
-
-//---------------------------------------------------------------
-// UniViewerBodyWidget :: handleOk
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::handleOk(const QVariant& result)
-{
-    Q_UNUSED(result)
-}
-
-//---------------------------------------------------------------
-// UniViewerBodyWidget :: handleError
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::handleError(int errorCode, const QString& errorMessage)
-{
-    Q_UNUSED(errorMessage)
-    Q_UNUSED(errorCode)
-}
 // EOF

@@ -41,7 +41,8 @@
 #define LOC_FAILED_MULTIPLE_MESSAGES hbTrId("Failed Messages")
 #define LOC_OUTGOING_SINGLE_MESSAGE hbTrId("Outgoing Message")
 #define LOC_OUTGOING_MULTIPLE_MESSAGES hbTrId("Outgoing Messages")
-
+#define STATUS_MONO_NEW_MESSAGE QString("qtg_status_new_message")
+#define LOC_BUSINESSCARD hbTrId("Business card")
 /**
  * The number of indicators.
  */
@@ -170,7 +171,7 @@ QVariant MsgIndicator::indicatorData(int role) const
     case MonoDecorationNameRole:
     {
         if (NewIndicatorPlugin == mIndicatorType) {
-            return IndicatorInfo[mIndicatorType].icon;
+            return STATUS_MONO_NEW_MESSAGE;
         }
         else {
             // Don't show status-bar icons for indications other 
@@ -318,6 +319,9 @@ QString MsgIndicator::getSecondaryText(MsgInfo& info)
             if (ECsBlueTooth == info.mMessageType) {
                 QFileInfo fname(secondaryText);
                 secondaryText = fname.fileName();
+            }
+            else if(ECsBioMsg_VCard == info.mMessageType) {
+            secondaryText = LOC_BUSINESSCARD;
             }
         }
         else {

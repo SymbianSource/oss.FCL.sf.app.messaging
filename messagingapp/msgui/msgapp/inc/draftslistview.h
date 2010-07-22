@@ -153,11 +153,6 @@ private:
         DRAFTS_EXTN = 0x00, CONVERSATIONS_EXTN = 0x01
     };
     
-    /**
-     * Flag to track if item has been long pressed.
-     * TODO: Remove it, once unique longpress and click event signal released in week16
-     */
-    bool mItemLongPressed;
 };
 
 #endif /* DRAFTS_LISTVIEW_H */

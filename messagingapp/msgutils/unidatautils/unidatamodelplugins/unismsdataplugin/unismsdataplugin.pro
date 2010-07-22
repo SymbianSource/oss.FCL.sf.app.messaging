@@ -26,7 +26,6 @@ TARGET.UID3 = 0x2001FE60
 DEPENDPATH += . inc src
 
 INCLUDEPATH += ./inc
-INCLUDEPATH += ../../../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += ../../../../../inc
 
@@ -49,12 +48,12 @@ BLD_INF_RULES.prj_exports += \
     
  LIBS += -leuser \
 	-lconvergedmessageutils\
-	-ls60qconversions \
 	-lmsgs \
 	-lSmcm \
 	-lgsmu \
 	-letext \
-	-lQtCore
+	-lQtCore \
+	-lxqutils
 	
 # plugin stub deployment
 plugin.sources = unismsdataplugin.dll

@@ -248,6 +248,8 @@ public:
      */
     void GetConversationFromMessageIdL(TInt aMessageId, TPtr8 aResultsBuffer);
     
+    void GetConversationFromConversationIdL(TInt aConversationId, TPtr8 aResultsBuffer);
+
     /**
      * MarkConversationReadL.
      * This function sends the request to conversation server

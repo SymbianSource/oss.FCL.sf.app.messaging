@@ -11,11 +11,6 @@
     <meshitem src="attachmentName" srcEdge="LEFT" dst="attachmentIcon" dstEdge="RIGHT"/>
     <meshitem src="attachmentName" srcEdge="CENTERV" dst="" dstEdge="CENTERV"/>
     <meshitem src="attachmentName" srcEdge="RIGHT" dst="attachmentDetails" dstEdge="LEFT"/>
-
-    <meshitem src="bgFrame" srcEdge="LEFT" dst="" dstEdge="LEFT"/>
-    <meshitem src="bgFrame" srcEdge="TOP" dst="" dstEdge="TOP"/>
-    <meshitem src="bgFrame" srcEdge="RIGHT" dst="" dstEdge="RIGHT"/>
-    <meshitem src="bgFrame" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM"/>
     
   </layout>
 </hbwidget>

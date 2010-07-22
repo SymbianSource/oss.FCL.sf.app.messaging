@@ -20,7 +20,7 @@
 
 #include <QObject>
 
-#include <msgmediainfo.h>
+#include <MsgMediaInfo.h>
 #include <qstring.h>
 
 #ifdef BUILD_MSGUI_UTILS_DLL

@@ -468,4 +468,5 @@ Cancels the relavent CMsvPlainBodyText object
 void CImPlainBodyText::DoCancel()
 	{
 	iPlainTextArray[iIndex]->Cancel();
+	CMsgActive::DoCancel();
 	}

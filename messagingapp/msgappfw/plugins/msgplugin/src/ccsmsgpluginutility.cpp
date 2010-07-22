@@ -72,10 +72,13 @@ CCsConversationEntry* CCsMsgPluginUtility::CreateConversationEntryL(
     CleanupStack::PushL(conversationEntry);
         
     //set the values
-    conversationEntry->SetContactL( *aContact );
+    if(aContact)
+        conversationEntry->SetContactL( *aContact );
     conversationEntry->SetEntryId( aEnryId );
     conversationEntry->SetTimeStampL( aTimeStamp );
+    if (aDescription) {
     conversationEntry->SetDescriptionL( *aDescription );
+    }
     conversationEntry->SetConversationDir( MapDirection( aDir ) );
     conversationEntry->SetSendState( aSendState );
     conversationEntry->ChangeAttributes( aMsgAttribs, ECsAttributeNone );

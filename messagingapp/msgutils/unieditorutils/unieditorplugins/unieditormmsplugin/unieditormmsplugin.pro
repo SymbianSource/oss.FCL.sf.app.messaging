@@ -25,7 +25,6 @@ TARGET.UID3 = 0x102072DB #old editor mms plugin uid
 
 
 
-INCLUDEPATH += ../../../s60qconversions/inc
 INCLUDEPATH += ../../editorgenutils/inc
 INCLUDEPATH += ../../../../../inc
 INCLUDEPATH += ../../../../../mmsengine/mmsmessage/inc 
@@ -56,10 +55,10 @@ SOURCES += src/unieditormmsplugin.cpp \
 				 -leditorgenutils \
 				 -lunidatamodelloader \
 				 -lconvergedmessageutils \
-				 -ls60qconversions \
 				 -lunidatamodel \
 				 -lmsgmedia \
-				 -leikctl 
+				 -leikctl \
+				 -lxqutils 
 
 	
 # Build.inf rules

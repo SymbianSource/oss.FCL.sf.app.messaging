@@ -17,7 +17,6 @@ TEMPLATE = lib
 TARGET = msghistory
 DEPENDPATH += . inc src
 INCLUDEPATH += .
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += MSGHISTORY_DLL
@@ -51,8 +50,15 @@ SOURCES += src/msghistory.cpp \
 				 src/msghistoryprivate.cpp \
 				 src/msgitem.cpp
 
-
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/msghistory.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/msghistory.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
 
 LIBS += -lcsserverclientapi \
         -lcsutils \
-        -ls60qconversions 
+        -lxqutils

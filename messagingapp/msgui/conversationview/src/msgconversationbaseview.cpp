@@ -42,6 +42,9 @@
 
 QTM_USE_NAMESPACE
 
+const int INVALID_MSGID = -1;
+const int INVALID_CONVID = -1;
+
 // LOCALIZATION
 #define LOC_SAVED_TO_DRAFTS    hbTrId("txt_messaging_dpopinfo_saved_to_drafts")
 
@@ -50,12 +53,10 @@ QTM_USE_NAMESPACE
 // Constructor
 //---------------------------------------------------------------
 MsgConversationBaseView::MsgConversationBaseView(QGraphicsItem* parent) :
-MsgBaseView(parent),
-mConversationId(-1),
-mCVIdkey(XQSettingsKey::TargetPublishAndSubscribe,KMsgCVIdProperty, 
-        KMsgCVIdKey)
-{ 
-    connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));   
+    MsgBaseView(parent), mConversationId(-1), mCVIdkey(XQSettingsKey::TargetPublishAndSubscribe,
+        KMsgCVIdProperty, KMsgCVIdKey)
+{
+    connect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(doDelayedConstruction()));
     initView();
 }
 
@@ -64,7 +65,7 @@ mCVIdkey(XQSettingsKey::TargetPublishAndSubscribe,KMsgCVIdProperty,
 // Destructor
 //---------------------------------------------------------------
 MsgConversationBaseView::~MsgConversationBaseView()
-{   
+{
 }
 
 //---------------------------------------------------------------
@@ -75,15 +76,14 @@ void MsgConversationBaseView::openConversation(qint64 convId)
 {
     ConversationsEngine::instance()->getConversations(convId);
     mConversationId = convId;
-    connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
-    
-	// publsih conversation id
-    mSettingsManager->writeItemValue(mCVIdkey,(int)mConversationId);
-    
-    if(mConversationView)
-        {
+    connect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(doDelayedConstruction()));
+
+    // publsih conversation id
+    mSettingsManager->writeItemValue(mCVIdkey, (int) mConversationId);
+
+    if (mConversationView) {
         mConversationView->refreshView();
-        }
+    }
 }
 
 //---------------------------------------------------------------
@@ -91,8 +91,8 @@ void MsgConversationBaseView::openConversation(qint64 convId)
 // create and initialise the conversationview
 //---------------------------------------------------------------
 void MsgConversationBaseView::initView()
-    {
-    
+{
+
     // Create header widget
     mContactCard = new MsgContactCardWidget(this);
 
@@ -100,10 +100,11 @@ void MsgConversationBaseView::initView()
 
     qreal spacing = HbDeviceProfile::profile(this).unitValue();
     mMainLayout->setSpacing(spacing);
-    mMainLayout->setContentsMargins(CONTENT_MARGIN, CONTENT_MARGIN,
-                                   CONTENT_MARGIN, CONTENT_MARGIN);
+    mMainLayout->setContentsMargins(CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN, CONTENT_MARGIN);
 
     mMainLayout->addItem(mContactCard);
+    connect(mContactCard, SIGNAL(conversationIdChanged(qint64)), this,
+        SLOT(handleConversationIdChange(qint64)));
 
     /**
      * Create conversation view and connect to proper signals.
@@ -114,25 +115,24 @@ void MsgConversationBaseView::initView()
 
     mConversationView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    connect(mConversationView, SIGNAL(closeConversationView()),
-            this, SLOT(closeConversationView()));
+    connect(mConversationView, SIGNAL(closeConversationView()), this, SLOT(closeConversationView()));
 
-    connect(mConversationView,SIGNAL(replyStarted()),
-            this,SLOT(markMessagesAsRead()));
+    connect(mConversationView, SIGNAL(replyStarted()), this, SLOT(markMessagesAsRead()));
 
-    connect(mConversationView, SIGNAL(switchView(const QVariantList&)),
-            this, SIGNAL(switchView(const QVariantList&)));
-    
-    connect(mConversationView,SIGNAL(hideChrome(bool)),this,SLOT(hideChrome(bool)));
+    connect(mConversationView, SIGNAL(switchView(const QVariantList&)), this,
+        SIGNAL(switchView(const QVariantList&)));
+
+    connect(mConversationView, SIGNAL(vkbOpened(bool)), this, SLOT(hideChrome(bool)));
+    connect(mConversationView, SIGNAL(vkbOpened(bool)), mContactCard, SLOT(ignoreSignals(bool)));
 
     this->setMenu(mConversationView->menu());
 
     mMainLayout->addItem(mConversationView);
 
     this->setLayout(mMainLayout);
-    
+
     mSettingsManager = new XQSettingsManager(this);
-          
+
 }
 
 //---------------------------------------------------------------
@@ -141,7 +141,7 @@ void MsgConversationBaseView::initView()
 //---------------------------------------------------------------
 void MsgConversationBaseView::closeConversationView()
 {
-   markMessagesAsRead();
+    markMessagesAsRead();
 }
 
 //---------------------------------------------------------------
@@ -149,39 +149,38 @@ void MsgConversationBaseView::closeConversationView()
 // Mark unread msgs in cv as read
 //---------------------------------------------------------------
 void MsgConversationBaseView::markMessagesAsRead()
-    {
-    if( mConversationId >= 0)
-        {
+{
+    if (mConversationId >= 0) {
         ConversationsEngine::instance()->markConversationRead(mConversationId);
-        }
     }
+}
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::saveContentToDrafts
 // saves the editors content to drafts
 //---------------------------------------------------------------
-void MsgConversationBaseView::saveContentToDrafts()
-    {
+int MsgConversationBaseView::saveContentToDrafts()
+{
+    int msgId = INVALID_MSGID;
     bool result = false;
-    if( mConversationId >= 0)
-        {
-        result = mConversationView->saveContentToDrafts();
-        }
-    
-    if(result)
-        {
-        HbNotificationDialog::launchDialog(LOC_SAVED_TO_DRAFTS);
-        }
+    if (mConversationId >= 0) {
+    msgId = mConversationView->saveContentToDrafts();
     }
+
+    if (msgId != INVALID_MSGID) {
+        HbNotificationDialog::launchDialog(LOC_SAVED_TO_DRAFTS);
+    }
+    return msgId;
+}
 
 //--------------------------------------------------------------- 
 // MsgConversationBaseView::conversationId 
 // get the conversation ID 
 //---------------------------------------------------------------     
-qint64 MsgConversationBaseView::conversationId() 
-    { 
-    return mConversationId; 
-    }
+qint64 MsgConversationBaseView::conversationId()
+{
+    return mConversationId;
+}
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::clearContent
@@ -198,19 +197,19 @@ void MsgConversationBaseView::clearContent()
 //
 //---------------------------------------------------------------
 void MsgConversationBaseView::handleOk(const QVariant& result)
-    {
+{
     Q_UNUSED(result)
-    }
+}
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::handleError
 //
 //---------------------------------------------------------------
 void MsgConversationBaseView::handleError(int errorCode, const QString& errorMessage)
-    {
+{
     Q_UNUSED(errorMessage)
     Q_UNUSED(errorCode)
-    }
+}
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::doDelayedConstruction
@@ -218,49 +217,58 @@ void MsgConversationBaseView::handleError(int errorCode, const QString& errorMes
 //---------------------------------------------------------------	
 void MsgConversationBaseView::doDelayedConstruction()
 {
-    disconnect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
-    QTimer::singleShot(50,this,SLOT(handleViewReady()));    
+    disconnect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(doDelayedConstruction()));
+    QTimer::singleShot(50, this, SLOT(handleViewReady()));
 }
-
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::handleViewReady
 //
 //---------------------------------------------------------------	
 void MsgConversationBaseView::handleViewReady()
-    {
-    ConversationsEngine::instance()->fetchMoreConversations();
+{
+    mConversationView->onViewReady();
+}
+
+//---------------------------------------------------------------
+// MsgConversationBaseView::handleConversationIdChange
+//
+//---------------------------------------------------------------
+void MsgConversationBaseView::handleConversationIdChange(qint64 convId)
+{
+    if (INVALID_CONVID != convId && mConversationId != convId) {
+	
+        mConversationId = convId;        
+        // publsih conversation id
+        mSettingsManager->writeItemValue(mCVIdkey, (int) mConversationId);       
     }
+}
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::hideChrome
 //
 //---------------------------------------------------------------
 void MsgConversationBaseView::hideChrome(bool hide)
-    {
-    if(hide)
-        {        
+{
+    if (hide) {
         this->hideItems(Hb::StatusBarItem | Hb::TitleBarItem);
         this->setContentFullScreen(true);
-        
-        if(this->mainWindow()->orientation() == Qt::Horizontal)
-            {
+
+        if (this->mainWindow()->orientation() == Qt::Horizontal) {
             mMainLayout->removeItem(mContactCard);
             mContactCard->hide();
-            }
-        }
-    else
-        {
-        this->showItems(Hb::StatusBarItem | Hb::TitleBarItem);
-        this->setContentFullScreen(false);
-        
-        if(!mContactCard->isVisible())
-            {
-            mMainLayout->insertItem(0,mContactCard);
-            mContactCard->show();
-            }
         }
     }
+    else {
+        this->showItems(Hb::StatusBarItem | Hb::TitleBarItem);
+        this->setContentFullScreen(false);
+
+        if (!mContactCard->isVisible()) {
+            mMainLayout->insertItem(0, mContactCard);
+            mContactCard->show();
+        }
+    }
+}
 
 //---------------------------------------------------------------
 // MsgConversationBaseView::setPSCVId
@@ -268,11 +276,11 @@ void MsgConversationBaseView::hideChrome(bool hide)
 //---------------------------------------------------------------
 void MsgConversationBaseView::setPSCVId(bool setId)
 {
-    if(setId){
-    mSettingsManager->writeItemValue(mCVIdkey,(int)mConversationId);
+    if (setId) {
+        mSettingsManager->writeItemValue(mCVIdkey, (int) mConversationId);
     }
     else {
-    mSettingsManager->writeItemValue(mCVIdkey,-1);
+        mSettingsManager->writeItemValue(mCVIdkey, -1);
     }
 }
 // EOF

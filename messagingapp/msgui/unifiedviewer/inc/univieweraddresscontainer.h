@@ -66,6 +66,12 @@ public:
     void setCcField(ConvergedMessageAddressList ccRecipients);
 
     /**
+     * Sets Bcc recipients
+     * @param bccRecipients list of Bcc recipients
+     */
+    void setBccField(ConvergedMessageAddressList bccRecipients);
+
+    /**
      * Clears the content of the widget
      */
     void clearContent();

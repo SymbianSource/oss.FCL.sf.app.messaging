@@ -32,6 +32,8 @@
 #include <QBool>
 #include <QCoreApplication>
 #include <HbEvent>
+#include <HbMainWindow>
+#include <HbInstance>
 
 #include "debugtraces.h"
 
@@ -42,9 +44,7 @@
 const QString MSG_HIGH_PRIORITY_ICON("qtg_small_priority_high");
 const QString MSG_LOW_PRIORITY_ICON("qtg_small_priority_low");
 const QString MSG_ATTACH_ICON("qtg_small_attachment");
-const QString MSG_AUDIO_ICON("qtg_large_music_player");
-const QString MSG_VIDEO_ICON("qtg_large_video_player");
-const QString MSG_AUDIO_PLAY_ICON("qtg_large_music_player");
+const QString MSG_AUDIO_PLAY_ICON("qtg_small_sound");
 
 
 // Frames
@@ -55,9 +55,6 @@ const QString CV_SENT_NORMAL_FR("qtg_fr_convlist_sent_normal");
 const QString CV_SENT_PRESSED_FR("qtg_fr_convlist_sent_pressed");
 const QString CV_SENT_HIGHLIGHT_FR("qtg_fr_convlist_sent_highlight");
 const QString NEW_ITEM_FRAME("qtg_fr_list_new_item");
-
-//selecet preview-icon query
-_LIT(KSelectPreviewIconStmt,"SELECT  message_id, preview_icon FROM conversation_messages WHERE message_id = :message_id ");
 
 //---------------------------------------------------------------
 // MsgConversationWidget::MsgConversationWidget
@@ -118,7 +115,27 @@ void MsgConversationWidget::init()
     mNewFrameItem = new HbFrameItem(this);
     mNewFrameItem->frameDrawer().setFrameType(HbFrameDrawer::ThreePiecesVertical);
     HbStyle::setItemName(mNewFrameItem, "newItemIcon");
+    mSubjectTextItem = new HbTextItem(this);  
+    mSubjectTextItem->setTextWrapping(Hb::TextWordWrap);      
+    HbStyle::setItemName(mSubjectTextItem, "subject");
+    mBodyTextItem = new HbTextItem(this);
+    mBodyTextItem->setTextWrapping(Hb::TextWordWrap);
+    HbStyle::setItemName(mBodyTextItem, "bodyText");
+    mPreviewIconItem = new HbIconItem(this);
+    HbStyle::setItemName(mPreviewIconItem, "preview");
+    mPriorityIconItem = new HbIconItem(this);            
+    HbStyle::setItemName(mPriorityIconItem, "priority");
+    mAttachmentIconItem = new HbIconItem(this);
+    HbStyle::setItemName(mAttachmentIconItem, "attachment");
+    mPlayIconItem = new HbIconItem(this);                
+    HbStyle::setItemName(mPlayIconItem, "playIcon");
+    mTimeStampTextItem = new HbTextItem(this);
+    HbStyle::setItemName(mTimeStampTextItem, "timeStamp");
     	
+    HbMainWindow *mainWindow = hbInstance->allMainWindows()[0];
+    connect(mainWindow, SIGNAL(orientationChanged(Qt::Orientation)), this, 
+			SLOT(orientationchanged(Qt::Orientation)),Qt::UniqueConnection);
+    polishEvent();
     }
 
 //---------------------------------------------------------------
@@ -127,11 +144,6 @@ void MsgConversationWidget::init()
 //---------------------------------------------------------------
 void MsgConversationWidget::setSubject(const QString &subject)
 {
-    if (!mSubjectTextItem)
-    {
-        mSubjectTextItem = new HbTextItem(this);  
-        mSubjectTextItem->setTextWrapping(Hb::TextWordWrap);      
-    }
     HbStyle::setItemName(mSubjectTextItem, "subject");
     mSubjectTextItem->setText(subject);
     mSubjectTextItem->show();
@@ -143,11 +155,6 @@ void MsgConversationWidget::setSubject(const QString &subject)
 //---------------------------------------------------------------
 void MsgConversationWidget::setBodyText(const QString &body)
 {
-    if (!mBodyTextItem)
-    {
-        mBodyTextItem = new HbTextItem(this);
-        mBodyTextItem->setTextWrapping(Hb::TextWordWrap);
-    }
     HbStyle::setItemName(mBodyTextItem, "bodyText");
 
     mBodyTextItem->setText(body);
@@ -155,107 +162,23 @@ void MsgConversationWidget::setBodyText(const QString &body)
 }
 
 //---------------------------------------------------------------
-// MsgConversationWidget::setPreviewIconPath
+// MsgConversationWidget::setPreviewIcon
 // @see header file
 //---------------------------------------------------------------
-void MsgConversationWidget::setPreviewIconPath(const QString &filePath,int msgId)
+void MsgConversationWidget::setPreviewIcon(HbIcon& icon)
 {
-    if (!mPreviewIconItem)
-    {
-        mPreviewIconItem = new HbIconItem(this);
-        mPreviewIconItem->setAlignment(Qt::AlignHCenter | Qt::AlignTop);        
-    }
+    QCRITICAL_WRITE("MsgConversationWidget::setPreviewIcon start.")
+
 
     HbStyle::setItemName(mPreviewIconItem, "preview");
-    //sql query to get preview-icon from DB
-    TBool isOpen = EFalse;
-    bool imagePreviewed = false;
 
-    //get DB handle and check if it is open
-    RSqlDatabase& sqlDb = ConversationsEngine::instance()->getDBHandle(isOpen);
-    if (isOpen)
-    {
-        RSqlStatement sqlSelectPreviewIconStmt;
-        TInt err = sqlSelectPreviewIconStmt.Prepare(sqlDb,
-            KSelectPreviewIconStmt);
+    mPreviewIconItem->setIcon(icon);
+    mPreviewIconItem->setPreferredSize(icon.size());
+    mPreviewIconItem->show();
 
-        QCRITICAL_WRITE_FORMAT("Error from Prepare()", err)
-
-        if (err == KErrNone)
-        {
-            //msg_id
-            TInt msgIdIndex = sqlSelectPreviewIconStmt.ParameterIndex(
-                _L(":message_id"));
-            sqlSelectPreviewIconStmt.BindInt(msgIdIndex, msgId);
-
-            // get preview-icon from DB
-            err = sqlSelectPreviewIconStmt.Next();
-            QCRITICAL_WRITE_FORMAT("Error from Next()", err)
-
-            if (err == KSqlAtRow)
-            {
-                TInt previewIconIndex = sqlSelectPreviewIconStmt.ColumnIndex(
-                    _L("preview_icon"));
-
-                RSqlColumnReadStream stream;
-
-                //Get data from binary column BLOB
-                err = stream.ColumnBinary(sqlSelectPreviewIconStmt,
-                    previewIconIndex);
-
-                QCRITICAL_WRITE_FORMAT("Error from ColumnBinary()", err)
-
-                if (err == KErrNone)
-                {
-                    CFbsBitmap *bitmap = new CFbsBitmap;
-                    TRAPD(err,bitmap->InternalizeL(stream));
-                    QCRITICAL_WRITE_FORMAT("Error from bitmap InternalizeL()", err)
-
-                    //convert bitmap to pixmap
-                    if (err == KErrNone)
-                    {
-                        TSize size = bitmap->SizeInPixels();
-                        int bytesPerLine = bitmap->ScanLineLength(size.iWidth,
-                            bitmap->DisplayMode());
-                        const uchar* dataPtr =
-                                (const uchar*) bitmap->DataAddress();
-
-                        QPixmap pixmap = QPixmap::fromImage(QImage(dataPtr,
-                            size.iWidth, size.iHeight, bytesPerLine,
-                            QImage::Format_RGB16));
-
-                        mPreviewIconItem->setIcon(HbIcon(pixmap));
-                        mPreviewIconItem->setPreferredSize(pixmap.size());
-                        mPreviewIconItem->setEnabled(true);
-                        mPreviewIconItem->show();
-                        imagePreviewed = true;
-                                                
-                        QCRITICAL_WRITE("Bitmap Conversion completed")
-                    }
-					//remove bitmap
-                    delete bitmap;                    
-                }
-                //close stream
-                stream.Close();
-            }
-        }
-        sqlSelectPreviewIconStmt.Close();
-    }
-
-    // if not found in db, set from file path
-    if(!imagePreviewed)
-    {
-        QPixmap pixmap(filePath);
-        QPixmap scaledPixmap =pixmap.scaled(100,100,Qt::IgnoreAspectRatio);
-        mPreviewIconItem->setIcon(HbIcon(scaledPixmap));
-        mPreviewIconItem->setPreferredSize(scaledPixmap.size());
-	    mPreviewIconItem->setEnabled(true);
-        mPreviewIconItem->show();
-    }
-    
-    QCRITICAL_WRITE("MsgConversationWidget::setPreviewIconPath end.")  
-
+    QCRITICAL_WRITE("MsgConversationWidget::setPreviewIcon end.")
 }
+
 
 //---------------------------------------------------------------
 // MsgConversationWidget::setPriority
@@ -267,10 +190,6 @@ void MsgConversationWidget::setPriority(int priority)
 
     if (priority)
     {
-        if (!mPriorityIconItem)
-        {
-            mPriorityIconItem = new HbIconItem(this);            
-        }
         HbStyle::setItemName(mPriorityIconItem, "priority");
         if (ConvergedMessage::Low == priority)
         {
@@ -303,10 +222,6 @@ void MsgConversationWidget::setAttachment(bool attachment)
 
     if (attachment)
     {
-        if (!mAttachmentIconItem)
-        {
-            mAttachmentIconItem = new HbIconItem(this);
-        }
         HbStyle::setItemName(mAttachmentIconItem, "attachment");
         mAttachmentIconItem->setIcon(HbIcon(MSG_ATTACH_ICON));
         mAttachmentIconItem->show();
@@ -366,27 +281,30 @@ void MsgConversationWidget::displayAudioIcon(const QString &iconPath)
 {
     if (hasAudio())
     {
-        if (hasImage())
+        if (!hasImage())
         {
-            if (!mPlayIconItem)
+            HbStyle::setItemName(mPreviewIconItem, "preview");
+            if(iconPath.isEmpty())
             {
-                mPlayIconItem = new HbIconItem(this);                
+               qreal iconSize = 0;
+               style()->parameter("hb-param-graphic-size-primary-small",iconSize);
+               HbIcon icon(MSG_AUDIO_PLAY_ICON);
+               icon.setHeight(iconSize);
+               icon.setWidth(iconSize);
+               mPreviewIconItem->setIcon(icon);
             }
-            HbStyle::setItemName(mPlayIconItem, "playIcon");
-            mPlayIconItem->setIconName(iconPath.isEmpty() ? MSG_AUDIO_PLAY_ICON : iconPath);
-            mPlayIconItem->show();
+            else
+            {
+               mPreviewIconItem->setIconName(iconPath);
+            }
+            mPreviewIconItem->show();
         }
         else
         {
-            if (!mAudioIconItem)
-            {
-                mAudioIconItem = new HbIconItem(this);    
-            }
-            HbStyle::setItemName(mAudioIconItem, "audioIcon");
-            mAudioIconItem->setIconName(iconPath.isEmpty() ? MSG_AUDIO_PLAY_ICON : iconPath);
-            mAudioIconItem->show();
-           
-        }
+            HbStyle::setItemName(mPlayIconItem, "playIcon");
+            mPlayIconItem->setIconName(iconPath.isEmpty() ? MSG_AUDIO_PLAY_ICON : iconPath);
+            mPlayIconItem->show();          
+        }       
     }
 }
 
@@ -397,18 +315,6 @@ void MsgConversationWidget::displayAudioIcon(const QString &iconPath)
 void MsgConversationWidget::setVideo(bool video)
 {
     mHasVideo = video;
-
-    if (video)
-    {
-        if (!mVideoIconItem)
-        {
-            mVideoIconItem = new HbIconItem(this);
-        }
-        HbStyle::setItemName(mVideoIconItem, "video");
-        mVideoIconItem->setIcon(HbIcon(MSG_VIDEO_ICON));
-        mVideoIconItem->show();
-        
-    }
 }
 
 //---------------------------------------------------------------
@@ -463,6 +369,8 @@ bool MsgConversationWidget::isIncoming()
 void MsgConversationWidget::setUnread(bool unread)
 {
     mUnread = unread;
+    // Needed for colour group changes to be visible
+    QCoreApplication::postEvent(this, new HbEvent(HbEvent::ThemeChanged));  
 }
 
 //---------------------------------------------------------------
@@ -521,6 +429,8 @@ void MsgConversationWidget::setSendingState(int state)
         case ConvergedMessage::SentState:
         {
             mSendingState = Sent;
+            // Needed for colour group changes to be visible
+            QCoreApplication::postEvent(this, new HbEvent(HbEvent::ThemeChanged));  
             break;
         }
         case ConvergedMessage::Sending:
@@ -608,10 +518,6 @@ int MsgConversationWidget::notificationState()
 //---------------------------------------------------------------
 void MsgConversationWidget::setTimeStamp(const QString &timeStamp)
 {
-    if(!mTimeStampTextItem)
-    {
-	  mTimeStampTextItem = new HbTextItem(this);
-	  }
     HbStyle::setItemName(mTimeStampTextItem, "timeStamp");
 
     mTimeStampTextItem->setText(timeStamp);
@@ -657,15 +563,7 @@ void MsgConversationWidget::drawBubbleFrame()
     }
     else
     {
-        if(mSendingState == Sending || mSendingState == Pending || 
-           mSendingState == Unknown || mSendingState == Failed)
-        {
-            mBubbleFrameItem->frameDrawer().setFrameGraphicsName(CV_SENT_HIGHLIGHT_FR);
-        }
-        else
-        {
             mBubbleFrameItem->frameDrawer().setFrameGraphicsName(CV_SENT_NORMAL_FR);
-        }
     }
 }
 
@@ -698,7 +596,11 @@ void MsgConversationWidget::pressStateChanged(bool pressed, bool animate)
     }
 }
 
-    void MsgConversationWidget::resetProperties()
+//---------------------------------------------------------------
+// MsgConversationWidget::resetProperties
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::resetProperties()
     	{
         mHasAttachment = false;
         mHasImage = false;
@@ -740,17 +642,7 @@ void MsgConversationWidget::pressStateChanged(bool pressed, bool animate)
 	       HbStyle::setItemName(mPriorityIconItem, "");
 	        mPriorityIconItem->hide();
 	    }
-   
-	    if(mAudioIconItem){
-	        HbStyle::setItemName(mAudioIconItem, "");
-	        mAudioIconItem->hide();              
-	       }
-    
-	    if(mVideoIconItem){
-	        HbStyle::setItemName(mVideoIconItem, "");
-	        mVideoIconItem->hide();
-	      }
-    
+         
 	    if(mPlayIconItem){
 	        HbStyle::setItemName(mPlayIconItem, "");
 	        mPlayIconItem->hide();
@@ -761,11 +653,68 @@ void MsgConversationWidget::pressStateChanged(bool pressed, bool animate)
 	        mPreviewIconItem->hide();               
 	       }    
     	}
+
+//---------------------------------------------------------------
+// MsgConversationWidget::orientationchanged
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::orientationchanged(Qt::Orientation orientation)
+{
+    QDEBUG_WRITE("MsgConversationWidget:orientationchanged start.")
+            
+    repolish();
     
-    void MsgConversationWidget::repolishWidget()
+    QDEBUG_WRITE("MsgConversationWidget:orientationchanged end.")    
+}
+
+//---------------------------------------------------------------
+// MsgConversationWidget::polish
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::polish(HbStyleParameters &params)
+{   
+    QString bubbleOrig = HbStyle::itemName(mBubbleFrameItem);
+    QString newItemIconOrig = HbStyle::itemName(mNewFrameItem);
+    QString subjectOrig = HbStyle::itemName(mSubjectTextItem);
+    QString bodyTextOrig = HbStyle::itemName(mBodyTextItem);
+    QString previewOrig = HbStyle::itemName(mPreviewIconItem);
+    QString priorityOrig = HbStyle::itemName(mPriorityIconItem);
+    QString attachmentOrig = HbStyle::itemName(mAttachmentIconItem);
+    QString timeStampOrig = HbStyle::itemName(mTimeStampTextItem);
+    QString playIconOrig = HbStyle::itemName(mPlayIconItem);
+
+    // Make sure that all the sub-items are polished in every polish.
+    HbStyle::setItemName(mBubbleFrameItem, "bubble");
+    HbStyle::setItemName(mNewFrameItem, "newItemIcon");
+    HbStyle::setItemName(mSubjectTextItem, "subject");
+    HbStyle::setItemName(mBodyTextItem, "bodyText");
+    HbStyle::setItemName(mPreviewIconItem, "preview");
+    HbStyle::setItemName(mPriorityIconItem, "priority");
+    HbStyle::setItemName(mAttachmentIconItem, "attachment");
+    HbStyle::setItemName(mTimeStampTextItem, "timeStamp");
+    HbStyle::setItemName(mPlayIconItem, "playIcon");
+
+    HbWidget::polish(params);
+
+    HbStyle::setItemName(mBubbleFrameItem, bubbleOrig);
+    HbStyle::setItemName(mNewFrameItem, newItemIconOrig);
+    HbStyle::setItemName(mSubjectTextItem, subjectOrig);
+    HbStyle::setItemName(mBodyTextItem, bodyTextOrig);
+    HbStyle::setItemName(mPreviewIconItem, previewOrig);
+    HbStyle::setItemName(mPriorityIconItem, priorityOrig);
+    HbStyle::setItemName(mAttachmentIconItem, attachmentOrig);
+    HbStyle::setItemName(mTimeStampTextItem, timeStampOrig);
+    HbStyle::setItemName(mPlayIconItem, playIconOrig);
+}
+
+//---------------------------------------------------------------
+// MsgConversationWidget::repolishWidget
+// @see header file
+//---------------------------------------------------------------
+void MsgConversationWidget::repolishWidget()
     	{
-    	QCoreApplication::postEvent(this, new HbEvent(HbEvent::ThemeChanged));	
     	repolish();
     	}
-    
+
+
 // EOF

@@ -253,9 +253,12 @@ CCsConversation::AddEntryL(
 void
 CCsConversation::AddContactDetailsL(
         TInt32  aContactId,
-        const TDesC& aDisplayName)
+        const HBufC* aDisplayName)
     {
-    iContact->SetDisplayNameL(aDisplayName);
+    if(aDisplayName)
+    {
+        iContact->SetDisplayNameL(*aDisplayName);    
+    }
     iContact->SetContactId (aContactId);    
     }
 

@@ -15,24 +15,23 @@
  *
  */
 
-#ifndef UNIFIED_EDITOR_BODY_H
-#define UNIFIED_EDITOR_BODY_H
+#ifndef MSG_UNIFIED_EDITOR_BODY_H
+#define MSG_UNIFIED_EDITOR_BODY_H
 
-#include <msgunifiededitorbasewidget.h>
+#include <msgunieditorbasewidget.h>
 #include <f32file.h>
 #include "msgunieditorprocessimageoperation.h"
 
 class HbTextEdit;
 class HbTextItem;
 class HbFrameItem;
-class HbIconItem;
-class HbPushButton;
-//class HbGestureSceneFilter;
 class CMsgMediaResolver;
 class CMsgImageInfo;
 class MmsConformanceCheck;
 class UniEditorPluginInterface;
 class UniEditorPluginLoader;
+class MsgUnifiedEditorPixmapWidget;
+class MsgUniFiedEditorAudioWidget;
 
 
 class MsgUnifiedEditorBody : public MsgUnifiedEditorBaseWidget,
@@ -97,13 +96,28 @@ public:
       * @return bool
       */
      bool hasAudio();
+     
+    /**
+     * from MUniEditorProcessImageOperationObserver  
+     * @see MUniEditorProcessImageOperationObserver
+     */
+    void EditorOperationEvent( TUniEditorProcessImageOperationEvent aEvent,
+                               TFileName aFileName );
+    /**
+	 * Function which tells whether the image resize process is in progress
+	 */
+    bool isImageResizing()
+        {
+        return mIsImageResizing;
+        }
 
 public slots:
     /**
      * Called to insert image content in editor.
      * @param medialist list of absolute paths of media.
+     * @param draftMessage specifies draft message
      */
-    void setImage(QString& imagefile);
+    void setImage(QString& imagefile, bool draftMessage = false);
 
     /**
      * Called to insert audio content in editor.
@@ -127,14 +141,14 @@ signals:
      * Emitted when msg-body content changes
      */
     void contentChanged();
-
-public: // from MUniEditorProcessImageOperationObserver
-    
-    /*
-     * @see MUniEditorProcessImageOperationObserver
+	
+    /**
+     * Emitted when image is being processed.
+     * @param enable, true to enable/ false to disable.
      */
-    void EditorOperationEvent( TUniEditorProcessImageOperationEvent aEvent,
-        TFileName aFileName );
+   void enableSendButton(bool enable) const;
+
+
 
 protected: // from HbWidget
     
@@ -145,40 +159,16 @@ protected: // from HbWidget
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF &constraint) const;
 
 private slots:
-    /**
-     * called on long press on the media objects
-     */
-    void longPressed(QPointF position);
 
     /**
      * called from the media object's item specific menu
      */
     void removeMedia();
-
-    /**
-     * called from the media object's item specific menu
-     */
-    void openMedia();
-
-    /**
-     * called from the media object's item specific menu
-     */
-    void viewDetails();
     
     /**
      * handle text changes in body field
      */
     void onTextChanged();
-
-    /**
-     * Service launch complete.
-     */
-    void handleOk(const QVariant& result);
-
-    /**
-     * Service launch errors.
-     */
-    void handleError(int errorCode, const QString& errorMessage);
 
 private:
 
@@ -192,12 +182,6 @@ private:
      * Set that body now contains an audio
      */
 	void setAudio(bool audio = false);
-    
-    /**
-     * Get the region (image/audio/video) where longpress happened
-     * @return region
-     */
-    QString getHitRegion(QPointF position);
 
     /**
      * size of the msg
@@ -238,19 +222,14 @@ private:
     HbTextEdit* mTextEdit;
 
     /**
-     * frame for editor.
-     */
-    HbFrameItem* mEditorFrame;
-
-    /**
      * icon item to preview images.
      */
-    HbIconItem* mIconItem;
+    MsgUnifiedEditorPixmapWidget* mPixmapItem;
 
     /**
      * inline audio item
      */
-    HbPushButton* mAudioItem;
+    MsgUniFiedEditorAudioWidget* mAudioItem;
 
 	/**
 	 * Image file contained inside body
@@ -271,11 +250,6 @@ private:
 	 * Video file contained inside body
 	 */
     QString mVideoFile;
-
-    /**
-     * To setup longpress gesture on media objects
-     */
-    //HbGestureSceneFilter* mGestureFilter;
 	
     /**
      * MMs conformance check utility class
@@ -359,6 +333,17 @@ private:
      * Content widget for processing animation.
      */
     HbWidget* mProcessingWidget;
+
+    /**
+     * boolean specifying a draft message
+     */
+    bool mDraftMessage ;
+    
+    /*
+     * Flag to indicate the state of image resizing process. 
+	 * true - resize in progress. false - resize is not underway.
+     */
+    bool mIsImageResizing;
 };
 
-#endif //UNIFIED_EDITOR_BODY_H
+#endif //MSG_UNIFIED_EDITOR_BODY_H

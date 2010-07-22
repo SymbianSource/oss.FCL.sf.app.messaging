@@ -35,12 +35,3 @@ MsgContactCardWidget::addressText
   text-line-count-min:1;
   text-line-count-max:1;
 }
-
-MsgContactCardWidget::backgroundFrame
-{
-  zvalue:-1;
-  left:0un;
-  top:0un;
-  right:0un;
-  bottom:0un;
-}

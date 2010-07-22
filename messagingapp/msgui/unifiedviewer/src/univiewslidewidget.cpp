@@ -53,7 +53,7 @@ UniViewSlideWidget::UniViewSlideWidget(UniViewerFeeder* feeder, int slideNumber,
         mHeaderContainer = new UniViewerHeaderContainer(mViewFeeder, this);
 
         // Always connect to populate sms content
-        connect(mViewFeeder, SIGNAL(msgBody(QString)), mBody, SLOT(setTextContent(QString)));
+        connect(mViewFeeder, SIGNAL(msgBody(QString)), mBody, SLOT(setText(QString)));
         
         connect(mHeaderContainer,SIGNAL(sendMessage(const QString&,const QString&)),
                 this, SIGNAL(sendMessage(const QString&,const QString&)));
@@ -105,8 +105,7 @@ void UniViewSlideWidget::populateContent()
     if (mViewFeeder->msgType() == KSenduiMtmMmsUidValue) {
         QString slideString;
         if (mViewFeeder->slideCount() > 1) {
-            slideString = QString(LOC_SLIDE_COUNTER).arg(mSlideNumber + 1).arg(
-                mViewFeeder->slideCount());
+            slideString = (LOC_SLIDE_COUNTER).arg(mSlideNumber + 1).arg(mViewFeeder->slideCount());
         }
         mBody->setSlideContents(mViewFeeder->slideContent(mSlideNumber), slideString);
     }

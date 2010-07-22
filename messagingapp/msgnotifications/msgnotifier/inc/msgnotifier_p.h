@@ -27,6 +27,7 @@ class CCSRequestHandler;
 class MsgStoreHandler;
 class XQSettingsManager;
 class XQPublishAndSubscribeUtils;
+class XQSystemToneService;
 
 /**
  * @class MsgNotifierPrivate
@@ -65,6 +66,16 @@ public:
      */
     void DeleteConversationList(
             const CCsClientConversation& aClientConversation);
+    
+	/**
+	 * PartialDeleteConversationList
+	 * This is for handling partial delete of conversation event
+	 * Asynchronous
+	 * @param aClientConversation CCsClientConversation - The conversation object
+	 */
+    void PartialDeleteConversationList(
+            const CCsClientConversation& aClientConversation);
+
 
     /**  
      * ModifyConversationList
@@ -162,6 +173,11 @@ private:
      * Owned.
      */
     XQPublishAndSubscribeUtils* mPSUtils;
+    
+    /**
+     * Object to handle audio alert when new message is received
+     */
+    XQSystemToneService* mSts;
     };
 
 #endif // MSGNOTIFIER_PRIVATE_H

@@ -161,10 +161,22 @@ public:
     void emitConversationModelUpdated();
     
     /**
+     * Updates the new conversation id for list view
+     */
+    void emitOpenConversationViewIdUpdate(int newConversationId);
+    
+    void disableRegisterationForCVEvents();
+    
+    /**
      * Emits conversationListModelPopulated signal
      */ 
     void emitConversationListModelPopulated();
 
+    /**
+     * Emits conversationListModelEntryDeleted
+     */
+    void emitConversationListModelEntryDeleted( int conversationId );
+    
     /**
      *  Starts fetching remaing conversations
      */
@@ -210,6 +222,12 @@ public:
      */
     RSqlDatabase& getDBHandle(TBool& isOpen);
     
+    /**
+     * Get the biotype of a message
+     * @param messageId
+     */
+    int getMsgSubType(int messageId);
+    
 private:
 
     /**
@@ -236,6 +254,17 @@ signals:
      * that the model is ready to be displayed
      */
     void conversationListModelPopulated();
+    
+	/** 
+	 * Signal to indicate the completion of conversation delete
+	 * operation.
+	 */
+     void conversationListEntryDeleted( int conversationId );
+	 
+    /**
+     * Signal to specify the CV model empty now
+     */
+    void conversationViewEmpty();
     
 private:
 

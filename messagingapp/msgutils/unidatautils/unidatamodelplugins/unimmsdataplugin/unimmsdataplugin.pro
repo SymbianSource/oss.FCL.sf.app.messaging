@@ -26,7 +26,6 @@ TARGET.UID3 = 0xE01F5465 #need to get a uid
 DEPENDPATH += . inc src
 
 INCLUDEPATH += ./inc
-INCLUDEPATH += ../../../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../../unieditorutils/unieditorutils/inc
 INCLUDEPATH += ../../../../../inc
 INCLUDEPATH += ../../../../mmsengine/mmsmessage/inc 
@@ -57,7 +56,6 @@ BLD_INF_RULES.prj_exports += \
 	-lbafl \
 	-lestor \
 	-lconvergedmessageutils\
-	-ls60qconversions \
 	-lmsgs \
 	-letext \
 	-lmmscli \
@@ -67,7 +65,8 @@ BLD_INF_RULES.prj_exports += \
 	-lunidatamodel \
 	-lmmsserversettings \
 	-lmsgmedia \
-	-leikctl 
+	-leikctl \
+	-lxqutils 
 	
 # plugin stub deployment
 plugin.sources = unimmsdataplugin.dll

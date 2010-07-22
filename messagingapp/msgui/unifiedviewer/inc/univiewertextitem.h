@@ -32,8 +32,10 @@ public:
     void setText(const QString& text);
 
 protected:
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    /**
+     * Gesture event, overridden from base class.
+     */
+    void gestureEvent(QGestureEvent* event);
 
 private:
 
@@ -54,8 +56,9 @@ private:
     /**
      * short tap handler.
      * @param anchor anchor at cursor position.
+     * @param pos tapping position
      */
-    void shortTapAction(QString anchor);    
+    void handleShortTap(QString anchor,const QPointF& pos);    
     
     /**
      * Helper method to highlight find item on tap.
@@ -75,18 +78,26 @@ private slots:
     void menuClosed();
 
 
-    //handlers for phone number specific menu items.
+    /**
+     * handlers for phone number specific menu items.
+     */
     void call();
     void sendMessage();    
 
-    //handlers for e-mail specific menu items.
+    /**
+     * handlers for e-mail specific menu items.
+     */
     void createEmail();
 
-    //handlers for url specific menu items.
+    /**
+     * handlers for url specific menu items.
+     */
     void openLink();
     void addToBookmarks();
 
-    //common handlers.
+    /**
+     * common handlers.
+     */
     void openContactInfo();
     void saveToContacts();
     void copyToClipboard();
@@ -105,7 +116,9 @@ private slots:
      */
     void handleError(int errorCode, const QString& errorMessage);
 
-    //called after service request is completed.
+    /**
+     * called after service request is completed.
+     */
     void onServiceRequestCompleted();
     
 signals:

@@ -17,20 +17,53 @@
 
 #include "univiewerpixmapwidget.h"
 
+// SYSTEM INCLUDES
 #include <HbTapGesture>
 #include <HbWidget>
 #include <HbInstantFeedback>
+#include <HbMenu>
 #include <QPixmap>
+#include <QTimer>
+#include <thumbnailmanager_qt.h>
+
+// USER INCLUDES
+#include "univiewerutils.h"
+#include "unidatamodelplugininterface.h"
+
+// LOCAL CONSTANTS
+#define LOC_OPEN    hbTrId("txt_common_menu_open")
+#define LOC_SAVE    hbTrId("txt_common_menu_save")
+
+const QString PIXMAP_ICON("qtg_small_image");
+const QString CORRUPTED_PIXMAP_ICON("qtg_large_corrupted");
+const QString VIDEO_MIMETYPE("video");
+const QString MSG_VIDEO_ICON("qtg_small_video");
 
 //---------------------------------------------------------------
 // UniViewerPixmapWidget::UniViewerPixmapWidget
 // @see header file
 //---------------------------------------------------------------
 UniViewerPixmapWidget::UniViewerPixmapWidget(QGraphicsItem *parent) :
-    HbIconItem(parent)
+    HbIconItem(parent), mViewerUtils(0), mThumbnailManager(0)
 {
-    mPixmapFile = QString("");
     this->grabGesture(Qt::TapGesture);
+    init();
+}
+
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::init
+// @see header file
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::init() 
+{
+    mThumbnailManager = new ThumbnailManager(this);
+    mThumbnailManager->setMode(ThumbnailManager::Default);
+    mThumbnailManager->setQualityPreference(ThumbnailManager::OptimizeForQuality);
+    mThumbnailManager->setThumbnailSize(ThumbnailManager::ThumbnailLarge);
+
+    connect(mThumbnailManager, SIGNAL(thumbnailReady(QPixmap, void*, int, int)), this,
+    SLOT(thumbnailReady(QPixmap, void*, int, int)));
+
 }
 
 //---------------------------------------------------------------
@@ -45,11 +78,25 @@ UniViewerPixmapWidget::~UniViewerPixmapWidget()
 // UniViewerPixmapWidget::setPixmap
 // @see header file
 //---------------------------------------------------------------
-void UniViewerPixmapWidget::setPixmap(const QString &pixmapPath)
+void UniViewerPixmapWidget::populate(UniMessageInfo *info)
 {
-    mPixmapFile = pixmapPath;
-    QPixmap pixmap(pixmapPath);
-    this->setIcon(HbIcon(pixmap));
+    mMimeType = info->mimetype();
+    mPixmapPath = info->path();
+    if (mMimeType.contains(VIDEO_MIMETYPE)) {
+        this->setIcon(MSG_VIDEO_ICON);
+        mThumbnailManager->getThumbnail(mPixmapPath);
+        this->ungrabGesture(Qt::TapGesture);
+    }
+    else if (info->isProtected()) {
+        this->setIconName(PIXMAP_ICON);
+    }
+    else if (info->isCorrupted()) {
+        this->setIconName(CORRUPTED_PIXMAP_ICON);
+    }
+    else {
+        QPixmap pixmap(mPixmapPath);
+        this->setIcon(HbIcon(pixmap));
+    }
 }
 
 //---------------------------------------------------------------
@@ -70,24 +117,107 @@ void UniViewerPixmapWidget::gestureEvent(QGestureEvent *event)
         case Qt::GestureUpdated:
         {
             if (HbTapGesture::TapAndHold == tapGesture->tapStyleHint()) {
-                // emit longtap
+                // Handle longtap.
+                handleLongTap(tapGesture->scenePosition());
             }
             break;
         }
         case Qt::GestureFinished:
         {
+            HbInstantFeedback::play(HbFeedback::Basic);
             if (HbTapGesture::Tap == tapGesture->tapStyleHint()) {
-                // Emit short tap
-                emit shortTap(mPixmapFile);
+                // Handle short tap
+                handleShortTap();
             }
             break;
         }
         case Qt::GestureCanceled:
         {
+            HbInstantFeedback::play(HbFeedback::Basic);
             break;
         }
         }
     }
+    else {
+        HbIconItem::gestureEvent(event);
+    }
 }
 
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::handleOpen
+// @see header file
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::handleOpen()
+{
+    this->ungrabGesture(Qt::TapGesture);
+
+    if (!mViewerUtils) {
+        mViewerUtils = new UniViewerUtils(this);
+    }
+    mViewerUtils->launchContentViewer(mMimeType, mPixmapPath);
+
+    //fire timer to regrab gesture after some delay.
+    QTimer::singleShot(300,this,SLOT(regrabGesture()));
+}
+
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::handleSave
+// @see header file
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::handleSave()
+{
+}
+
+//----------------------------------------------------------------------------
+// UniViewerPixmapWidget::handleShortTap
+// @see header file
+//----------------------------------------------------------------------------
+void UniViewerPixmapWidget::handleShortTap()
+{
+    emit shortTap(mPixmapPath);
+
+    // Open the media.
+    handleOpen();
+}
+
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::handleLongTap
+// @see header file
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::handleLongTap(const QPointF &position)
+{
+    emit longTap(position);
+
+    HbMenu* menu = new HbMenu;
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    menu->addAction(LOC_OPEN, this, SLOT(handleOpen()));
+    menu->addAction(LOC_SAVE, this, SLOT(handleSave()));
+    menu->setPreferredPos(position);
+    menu->show();
+}
+
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::regrabGesture
+// @see header file
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::regrabGesture()
+{
+    this->grabGesture(Qt::TapGesture);
+}
+
+//---------------------------------------------------------------
+// UniViewerPixmapWidget::thumbnailReady
+// @see header
+//---------------------------------------------------------------
+void UniViewerPixmapWidget::thumbnailReady(const QPixmap& pixmap, void *data, int id, int error)
+{
+    Q_UNUSED(data)
+    Q_UNUSED(id)
+    this->grabGesture(Qt::TapGesture);
+    if (!error) {
+        this->setIcon(HbIcon(pixmap));
+        this->hide();
+        this->updateGeometry();
+    }
+}
 // EOF

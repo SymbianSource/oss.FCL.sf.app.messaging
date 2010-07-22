@@ -27,8 +27,8 @@ class UniViewerDetailsWidget;
 class HbGroupBox;
 class HbFrameItem;
 class UniViewerAddressContainer;
-class UniViewerAttachmentContainer;
 class UniViewerFeeder;
+class UniViewerAttachmentWidget;
 
 class UniViewerHeaderContainer: public HbWidget
 {
@@ -136,10 +136,9 @@ private:
     UniViewerAddressContainer *mAddressContainer;
 
     /**
-     * UniViewerAttachmentContainer object
-     * owned.
+     * List of attachment widgets.
      */
-    UniViewerAttachmentContainer *mAttachmentContainer;
+    QList<UniViewerAttachmentWidget *> mUniViewerAttachmentstList;
 };
 
 #endif /* UNIVIEWER_HEADER_CONTAINER_H */

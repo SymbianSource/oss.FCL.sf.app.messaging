@@ -25,7 +25,7 @@
 #include <QSqlError>
 #include <HbApplication>
 #include <xqappmgr.h>
-#include <HbMessageBox.h>
+#include <hbmessagebox.h>
 #include <HbView>
 
 #include "conversationsengine.h"
@@ -39,20 +39,20 @@
 #include "ringbc.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
+#include "msgcontacthandler.h"
+#include "debugtraces.h"
+#include "msgaudiofetcherview.h"
 
 // LOCALIZATION
-#define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
-#define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
 #define LOC_DIALOG_SAVE_RINGTONE hbTrId("txt_conversations_dialog_save_ringing_tone")
-#define LOC_COMMON_SAVE  hbTrId("txt_common_menu_save")
 
 const qint64 NULL_CONVERSATIONID = -1;
 
-MsgViewManager::MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QObject* parent) :
+MsgViewManager::MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QObject* parent,int activityMsgId) :
     QObject(parent), mMainWindow(mainWindow), mUniEditor(0), mListView(0), mConversationView(0),
-        mUniViewer(0), mDraftsListView(0), mSettingsView(0), mBackAction(0), mServiceRequest(
-            serviceRequest), mConversationId(-1), mViewServiceRequest(false),mMessageId(-1)
+        mUniViewer(0), mDraftsListView(0), mSettingsView(0), mAudioFetcherView(0), mBackAction(0),
+        mServiceRequest(serviceRequest), mConversationId(-1), mViewServiceRequest(false),mMessageId(-1)
 {
     //creating back action.
     mBackAction = new HbAction(Hb::BackNaviAction, this);
@@ -60,10 +60,18 @@ MsgViewManager::MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QO
 
     //create clv as first view if not a service request.
     if (!mServiceRequest) {
+    
+    if(activityMsgId == NULL_CONVERSATIONID)
+        {
         QVariantList param;
         param << MsgBaseView::CLV;
         param << MsgBaseView::CLV;
         switchView(param);
+        }
+    else 
+        {
+        openUniEditorActivity(activityMsgId);
+        }
     }
     else
     {
@@ -77,6 +85,7 @@ MsgViewManager::MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QO
 MsgViewManager::~MsgViewManager()
 {
     // TODO Auto-generated destructor stub
+    mEditorData.clear();
 }
 
 void MsgViewManager::onBackAction()
@@ -102,6 +111,8 @@ void MsgViewManager::onBackAction()
 
     case MsgBaseView::CV:
     {
+	    mConversationId = -1; //reset the conversation view id since its closed
+		
         //Save content to drafts before switching to clv
         mConversationView->saveContentToDrafts();
 
@@ -110,7 +121,7 @@ void MsgViewManager::onBackAction()
 
         // reset the conversation id published
         mConversationView->setPSCVId(false);
-        
+
         //clearing content of cv.
         mConversationView->clearContent();
 
@@ -186,9 +197,18 @@ void MsgViewManager::onBackAction()
         }
         else {
             QVariantList param;
-            param << MsgBaseView::CV;
-            param << MsgBaseView::UNIVIEWER;
-            param << mConversationId;
+            if (mConversationId != -1)
+                {
+                    //this means CV is till open then just open the fresh CV
+                    param << MsgBaseView::CV;
+                    param << MsgBaseView::UNIVIEWER;
+                    param << mConversationView->conversationId();
+                }
+                else
+                {
+                    param << MsgBaseView::CLV;
+                    param << MsgBaseView::UNIVIEWER;
+                }
             switchView(param);
 
         }
@@ -202,6 +222,19 @@ void MsgViewManager::onBackAction()
         switchView(param);
         break;
     }
+    case MsgBaseView::AUDIOFETCHER:
+    {
+        // switch back to previous view
+        QVariantList param;
+        param << mPreviousView;
+        param << MsgBaseView::AUDIOFETCHER;
+        if(mPreviousView == MsgBaseView::CV)
+        {
+            param << mConversationId;
+        }
+        switchView(param);
+        break;
+    }
     default:
     {
         break;
@@ -211,12 +244,10 @@ void MsgViewManager::onBackAction()
 
 void MsgViewManager::switchView(const QVariantList& data)
 {
-   
-    connect(mMainWindow, SIGNAL(viewReady()),this,SLOT(setViewInteractive()));
-    mMainWindow->setInteractive(false);
+    QCRITICAL_WRITE("MsgViewManager::switchView start.");
     
     int viewId = data.at(0).toInt();
-    
+
     switch (viewId) {
     case MsgBaseView::DEFAULT:
     {
@@ -259,7 +290,13 @@ void MsgViewManager::switchView(const QVariantList& data)
         switchToMsgSettings(data);
         break;
     }
+    case MsgBaseView::AUDIOFETCHER:
+    {
+        switchToAudioFetcher(data);
+        break;
     }
+    }
+    QCRITICAL_WRITE("MsgViewManager::switchView end.");
 }
 
 void MsgViewManager::deletePreviousView()
@@ -270,7 +307,6 @@ void MsgViewManager::deletePreviousView()
         mMainWindow->removeView(v);
         delete v;
     }
-    disconnect(mMainWindow, SIGNAL(viewReady()), this, SLOT(deletePreviousView()));
 }
 
 
@@ -369,7 +405,7 @@ void MsgViewManager::open(qint64 conversationId)
     if (conversationId < 0) {
         param << MsgBaseView::CLV;
         param << MsgBaseView::SERVICE;
-        
+
         if( mCurrentView == MsgBaseView::CV && mConversationView)
             {
             mConversationView->setPSCVId(false);
@@ -449,22 +485,53 @@ void MsgViewManager::completeServiceRequest()
 
 void MsgViewManager::switchToClv(const QVariantList& data)
 {
-    //switch to CLV.
-    mCurrentView = MsgBaseView::CLV;
     mPreviousView = data.at(1).toInt();
 
-    // delete case from viewer service  
+    // delete case from viewer service
     if (mViewServiceRequest && (mPreviousView == MsgBaseView::UNIVIEWER)) {
-        // quit the application 
+        // quit the application
         HbApplication::quit();
+    }
+
+    // this is the case when viewer/editor is opened and contacts update takes
+    // place resulting in CV close, the view should directly come to CLV 
+    // bypassing the CV
+    if ((mCurrentView == MsgBaseView::UNIVIEWER 
+            && mPreviousView != MsgBaseView::UNIVIEWER)
+            || (mCurrentView == MsgBaseView::UNIEDITOR
+                    && mPreviousView != MsgBaseView::UNIEDITOR))
+    {
+        //dont do anything
+        //wait for the back from viewer/editor
+        //and reset the open CV id
+        mConversationId = -1;
+        return;
+    }
+    
+    //delete UniEditor
+    if (mUniEditor)
+    {
+        appendViewToBeDeleted(mUniEditor);
+        mUniEditor = NULL;
+    }
+
+    //delete UniViewer
+    if (mUniViewer)
+    {
+        appendViewToBeDeleted(mUniViewer);
+        mUniViewer = NULL;
     }
 
     if (mConversationView) {
         mConversationView->saveContentToDrafts();
         //clearing content of cv.
         mConversationView->clearContent();
+        //reset the open CV id
+        mConversationId = -1;
     }
-
+    
+    //switch to CLV.
+    mCurrentView = MsgBaseView::CLV;
     if (!mListView) {
         mListView = new MsgListView();
         mListView->setNavigationAction(mBackAction);
@@ -474,20 +541,6 @@ void MsgViewManager::switchToClv(const QVariantList& data)
     }
 
     mMainWindow->setCurrentView(mListView);
-    
-    //delete UniEditor
-    if (mUniEditor)
-    {
-        appendViewToBeDeleted(mUniEditor);
-        mUniEditor = NULL;
-    }
-    
-    //delete UniViewer
-    if (mUniViewer)
-    {
-        appendViewToBeDeleted(mUniViewer);
-        mUniViewer = NULL;
-    }
 }
 
 void MsgViewManager::switchToCv(const QVariantList& data)
@@ -498,44 +551,64 @@ void MsgViewManager::switchToCv(const QVariantList& data)
 
     // delete case from viewer service
     if (mViewServiceRequest && (mPreviousView == MsgBaseView::UNIVIEWER)) {
-        // quit the application 
+        // quit the application
         HbApplication::quit();
+    }
+
+    // delete Audio Fetcher view
+    if(mAudioFetcherView)
+    {
+        appendViewToBeDeleted(mAudioFetcherView);
+        mAudioFetcherView = NULL;
+    }
+
+    //delete UniEditor
+    if (mUniEditor)
+    {
+        appendViewToBeDeleted(mUniEditor);
+        mUniEditor = NULL;
+    }
+
+    //delete UniViewer
+    if (mUniViewer)
+    {
+        appendViewToBeDeleted(mUniViewer);
+        mUniViewer = NULL;
     }
 
     QVariant var = data.at(2);
     qint64 conversationId;
     if (var.type() == QVariant::String) {
         QString phoneNumber = var.toString();
-        conversationId = findConversationId(phoneNumber);
+        qint32 contactId = findContactId(phoneNumber);
+        if (contactId != -1) {
+            conversationId = ConversationsEngine::instance()->getConversationIdFromContactId(contactId);
+        }
+        else {
+            conversationId = findConversationId(phoneNumber);
+        }
 
         if (conversationId == NULL_CONVERSATIONID) {
             QVariantList param;
             param << MsgBaseView::CLV;
             param << MsgBaseView::CV;
-            
+
             if( mCurrentView == MsgBaseView::CV && mConversationView){
                 mConversationView->setPSCVId(false);
                 }
-            
+
             switchView(param);
             return;
         }
     }
     else if (var.type() == QVariant::Invalid) {
-        // this case comes when a message is deleted from 
-        // Unified viewer  set curent view as conversation view 
+        // this case comes when a message is deleted from
+        // Unified viewer  set curent view as conversation view
         // and return
         mMainWindow->setCurrentView(mConversationView);
-		
+
 		// publish already opened conversation's id
         mConversationView->setPSCVId(true);
-		
-        if (mUniViewer)
-        {
-            appendViewToBeDeleted(mUniViewer);
-            mUniViewer = NULL;
-        }
-
         return;
     }
     else {
@@ -557,30 +630,10 @@ void MsgViewManager::switchToCv(const QVariantList& data)
         mConversationView->saveContentToDrafts();
         //clearing content of current cv.
         mConversationView->clearContent();
-  	}	
+    }
 
     mConversationView->openConversation(conversationId);
-
-    if (mServiceRequest) {
-        mMainWindow->setCurrentView(mConversationView);
-    }
-    else {
-        mMainWindow->setCurrentView(mConversationView);
-    }
-    
-    //delete UniEditor
-    if (mUniEditor)
-    {
-        appendViewToBeDeleted(mUniEditor);
-        mUniEditor = NULL;
-    }
-    
-    //delete UniViewer
-    if (mUniViewer)
-    {
-        appendViewToBeDeleted(mUniViewer);
-        mUniViewer = NULL;
-    }
+    mMainWindow->setCurrentView(mConversationView);
 }
 
 void MsgViewManager::switchToDlv(const QVariantList& data)
@@ -606,24 +659,43 @@ void MsgViewManager::switchToUniEditor(const QVariantList& data)
      * Editor is tried to open again before exiting the previously
      * opened editor. Multi taping in DLV or Forward.
      */
-    if (mUniEditor) {
+    if (mUniEditor && !mAudioFetcherView)
+    {
         return;
     }
 
     mCurrentView = MsgBaseView::UNIEDITOR;
-    mPreviousView = data.at(1).toInt();
+    if(MsgBaseView::AUDIOFETCHER != data.at(1).toInt())
+    {
+        mPreviousView = data.at(1).toInt();
+    }
 
-    if (mConversationView) {
+    // delete Audio Fetcher view
+    if(mAudioFetcherView)
+    {
+        appendViewToBeDeleted(mAudioFetcherView);
+        mAudioFetcherView = NULL;
+    }
+
+    // delete UniViewer
+	if (mUniViewer )
+	{
+	    appendViewToBeDeleted(mUniViewer);
+	    mUniViewer = NULL;
+	}
+
+    if (mConversationView)
+    {
         //clearing content of cv.
         mConversationView->clearContent();
     }
 
-     // reset conversation id published
-     if(mPreviousView == MsgBaseView::CV && mConversationView)
-         {
-         mConversationView->setPSCVId(false);
-         }
-     
+    // reset conversation id published
+    if(mPreviousView == MsgBaseView::CV && mConversationView)
+    {
+        mConversationView->setPSCVId(false);
+    }
+
     //swich to unieditor.
     if (!mUniEditor) {
         mUniEditor = new MsgUnifiedEditorView();
@@ -642,25 +714,15 @@ void MsgViewManager::switchToUniEditor(const QVariantList& data)
         }
 
         if (MsgBaseView::DLV == mPreviousView) {
-            mUniEditor->openDraftsMessage(editorData);
+            //Populate editor after view ready indication 
+            populateUniEditorAfterViewReady(editorData);
         }
         else {
             mUniEditor->populateContent(editorData);
         }
     }
 
-    if (mServiceRequest) {
-        mMainWindow->setCurrentView(mUniEditor);
-    }
-    else {
-        mMainWindow->setCurrentView(mUniEditor);
-    }
-    //delete UniViewer
-    if (mUniViewer )
-    {
-        appendViewToBeDeleted(mUniViewer);
-        mUniViewer = NULL;
-    }
+    mMainWindow->setCurrentView(mUniEditor);
 }
 
 void MsgViewManager::switchToUniViewer(const QVariantList& data)
@@ -679,29 +741,25 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
     //switch to univiewer.
     if (data.length() > 2) {
         qint32 contactId = data.at(2).toLongLong();
-        QByteArray dataArray = data.at(3).toByteArray();
+        qint32 messageId = data.at(3).toInt();
         int msgCount = data.at(4).toInt();
+        int canForwardMessage = data.at(5).toInt();
 
-        ConvergedMessage *message = new ConvergedMessage;
-        QDataStream stream(&dataArray, QIODevice::ReadOnly);
-        message->deserialize(stream);
-        qint32 messageId = message->id()->getId();
         if (!mUniViewer) {
-            mUniViewer = new UnifiedViewer(messageId);
+            mUniViewer = new UnifiedViewer(messageId, canForwardMessage);
             mUniViewer->setNavigationAction(mBackAction);
             mMainWindow->addView(mUniViewer);
             connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,
                 SLOT(switchView(const QVariantList&)));
         }
         mUniViewer->populateContent(messageId, true, msgCount);
-        delete message;
     }
-    
+
     if(mPreviousView==MsgBaseView::CV && mConversationView)
         {
         mConversationView->setPSCVId(false);
         }
-    
+
     mMainWindow->setCurrentView(mUniViewer);
 }
 void MsgViewManager::switchToMsgSettings(const QVariantList& data)
@@ -710,14 +768,14 @@ void MsgViewManager::switchToMsgSettings(const QVariantList& data)
     mPreviousView = data.at(1).toInt();
 
     if (!mSettingsView) {
-        
+
         MsgSettingsView::SettingsView view = MsgSettingsView::DefaultView;
         if (mPreviousView == MsgBaseView::UNIEDITOR || mPreviousView
                         == MsgBaseView::CV)
                 {
-                    view = (MsgSettingsView::SettingsView)data.at(2).toInt();         
+                    view = (MsgSettingsView::SettingsView)data.at(2).toInt();
                 }
-        
+
         mSettingsView = new MsgSettingsView(view);
         mSettingsView->setNavigationAction(mBackAction);
         mMainWindow->addView(mSettingsView);
@@ -809,9 +867,9 @@ void MsgViewManager::view(int msgId)
     default:
     {
         // for un supported message show delete option
-        HbMessageBox::question(LOC_DELETE_MESSAGE,this,SLOT(onDialogDeleteMsg(HbAction*)),
-            LOC_BUTTON_DELETE,
-            LOC_BUTTON_CANCEL);
+        HbMessageBox::question(LOC_DELETE_MESSAGE,this,
+                               SLOT(onDialogDeleteMsg(HbAction*)),
+                               HbMessageBox::Delete | HbMessageBox::Cancel);
         break;
     }
     }
@@ -847,7 +905,8 @@ void MsgViewManager::handleRingtoneMsg(int msgId)
 {
     mMessageId = msgId;
     HbMessageBox::question(LOC_DIALOG_SAVE_RINGTONE, this,
-        SLOT(onDialogSaveTone(HbAction*)), LOC_COMMON_SAVE, LOC_BUTTON_CANCEL);
+                           SLOT(onDialogSaveTone(HbAction*)), 
+                           HbMessageBox::Save | HbMessageBox::Cancel);
 }
 
 // ----------------------------------------------------------------------------
@@ -888,7 +947,7 @@ void MsgViewManager::setViewInteractive()
     {
         mMainWindow->setInteractive(true);
     }
-    
+
     disconnect(mMainWindow, SIGNAL(viewReady()),this,SLOT(setViewInteractive()));
 }
 
@@ -897,8 +956,35 @@ void  MsgViewManager::appendViewToBeDeleted(HbView* view)
     if (view)
     {
         mViewTobeDeleted << view;
-        connect(mMainWindow, SIGNAL(viewReady()), this, SLOT(deletePreviousView()));
+        connect(mMainWindow, SIGNAL(viewReady()), this, SLOT(deletePreviousView()), Qt::UniqueConnection);
     }
+}
+
+// ----------------------------------------------------------------------------
+// MsgViewManager::populateEditorAfterViewReady
+// @see header
+// ----------------------------------------------------------------------------
+void MsgViewManager::populateUniEditorAfterViewReady(const QVariantList& editorData)
+	{
+	 //Save the editor data and use it in ViewReady handler
+	 mEditorData = editorData;	 
+	 connect(mMainWindow, SIGNAL(viewReady()), this, SLOT(populateUniEditorView()));
+	}
+
+// ----------------------------------------------------------------------------
+// MsgViewManager::populateUniEditorView
+// @see header
+// ----------------------------------------------------------------------------
+void MsgViewManager::populateUniEditorView()
+    {
+    if (mUniEditor)
+        {
+        mUniEditor->openDraftsMessage(mEditorData);
+        }
+    mEditorData.clear();
+    
+    disconnect(mMainWindow, SIGNAL(viewReady()), this,
+            SLOT(populateUniEditorView()));
 }
 
 // ----------------------------------------------------------------------------
@@ -948,3 +1034,124 @@ void MsgViewManager::onDialogSaveTone(HbAction* action)
         HbApplication::quit();
 }
 
+// ----------------------------------------------------------------------------
+// MsgViewManager::currentView
+// @see header
+// ----------------------------------------------------------------------------
+int MsgViewManager::currentView()
+    {
+    return mCurrentView;
+    }
+
+// ----------------------------------------------------------------------------
+// MsgViewManager::switchToAudioFetcher
+// @see header
+// ----------------------------------------------------------------------------
+void MsgViewManager::switchToAudioFetcher(const QVariantList& data)
+    {
+    /**
+     * Audio Fetcher is tried to open again
+     */
+    if(mAudioFetcherView)
+        {
+        return;
+        }
+
+    //switch to Audio Fetcher view
+    mCurrentView = MsgBaseView::AUDIOFETCHER;
+    mPreviousView = data.at(1).toInt();
+    QVariantList editorData;
+    // i=2 because view manager consumed first two args
+    for (int i = 2; i < data.length(); i++) {
+        editorData << data.at(i);
+    }
+    mAudioFetcherView = new MsgAudioFetcherView(editorData);
+    mAudioFetcherView->setNavigationAction(mBackAction);
+    connect(mAudioFetcherView, SIGNAL(switchView(const QVariantList&)), this,
+            SLOT(switchView(const QVariantList&)));
+
+    if(mPreviousView==MsgBaseView::CV && mConversationView)
+        {
+        mConversationView->setPSCVId(false);
+        }
+
+    mMainWindow->addView(mAudioFetcherView);
+    mMainWindow->setCurrentView(mAudioFetcherView);
+    }
+
+// ----------------------------------------------------------------------------
+// MsgViewManager::saveContentToDraft
+// @see header
+// ----------------------------------------------------------------------------
+int MsgViewManager::saveContentToDraft()
+    {
+    int msgId = NULL_CONVERSATIONID;
+    if( mCurrentView == MsgBaseView::CV )
+        {
+        msgId = mConversationView->saveContentToDrafts();
+        }
+    else if( mCurrentView ==MsgBaseView::UNIEDITOR)
+        {
+        msgId  = mUniEditor->saveContentToDrafts();
+        }
+    return msgId;
+    }
+
+// ----------------------------------------------------------------------------
+// MsgViewManager::saveContentToDraft
+// @see header
+// ----------------------------------------------------------------------------
+void MsgViewManager::openUniEditorActivity(int activityMsgId)
+{
+    int msgType;
+    int msgSubType;
+  
+    qint32 messageId(activityMsgId);
+    // get the message type
+    ConversationsEngine::instance()->markAsReadAndGetType(messageId, msgType, msgSubType);
+    
+    if (!mUniEditor) {
+           mUniEditor = new MsgUnifiedEditorView();
+           mMainWindow->addView(mUniEditor);
+           mUniEditor->setNavigationAction(mBackAction);
+           connect(mUniEditor, SIGNAL(switchView(const QVariantList&)), this,
+               SLOT(switchView(const QVariantList&)));
+       }
+    
+    // buffer data to open the draft message
+    ConvergedMessageId convergedMsgId(activityMsgId);
+    ConvergedMessage message;
+    message.setMessageType((ConvergedMessage::MessageType) msgType);
+    message.setMessageId(convergedMsgId);
+
+    // Launch uni-editor view
+    QByteArray dataArray;
+    QDataStream messageStream(&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+    message.serialize(messageStream);
+    
+    QVariantList editorData;
+    editorData << dataArray;
+    mUniEditor->openDraftsMessage(editorData);
+    
+    // set the current view
+    mCurrentView = MsgBaseView::UNIEDITOR;
+    mMainWindow->setCurrentView(mUniEditor);
+}
+
+// ----------------------------------------------------------------------------
+// MsgViewManager::findContactId
+// @see header
+// ----------------------------------------------------------------------------
+qint32 MsgViewManager::findContactId(QString address)
+    {
+    QString displayLabel;
+    int count;
+    int localId =
+            MsgContactHandler::resolveContactDisplayName(address,
+                                                         displayLabel,
+                                                         count);
+
+        return localId;
+    }
+
+//EOF

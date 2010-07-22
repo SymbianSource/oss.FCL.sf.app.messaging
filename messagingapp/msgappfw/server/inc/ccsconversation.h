@@ -139,7 +139,7 @@ public:
      */
     void AddContactDetailsL(
             TInt32 aContactId, 
-            const TDesC& aDisplayName);
+            const HBufC* aDisplayName);
 
     /**
      * AddContactDetailsL

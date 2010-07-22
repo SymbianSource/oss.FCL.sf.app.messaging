@@ -26,7 +26,7 @@
 #include "conversationmsgstorehandler.h"
 #include "draftsmodel.h"
 #include "MuiuOperationWait.h"
-#include "MsgBioUids.h"
+#include "msgbiouids.h"
 #include "UniEditorGenUtils.h"
 
 // SYSTEM INCLUDES
@@ -952,6 +952,9 @@ void ConversationMsgStoreHandler::extractMsgType(const TMsvEntry& entry,
         {
         case KSenduiMtmSmsUidValue:            
             msgType = ConvergedMessage::Sms;
+            if (entry.iBioType == KMsgBioNokiaServiceSentMessage.iUid) {
+                msgSubType = ConvergedMessage::NokiaService;
+            }
             break;
         case KSenduiMtmBtUidValue:
             msgType = ConvergedMessage::BT;
@@ -982,12 +985,29 @@ void ConversationMsgStoreHandler::extractMsgType(const TMsvEntry& entry,
             else if (entry.iBioType == KMsgBioUidVCalendar.iUid)
                 {
                 msgSubType = ConvergedMessage::VCal;
-                }        
+                }
+            else if (entry.iBioType == KMsgBioNokiaServiceSentMessage.iUid) {
+                msgSubType = ConvergedMessage::NokiaService;
+                }
             }
-            break;
-        default:
-            msgType = ConvergedMessage::None;       
-            break;
-        }
+        break;
+    default:
+        msgType = ConvergedMessage::None;
+        break;
     }
+}
+
+int ConversationMsgStoreHandler::getMsgSubType(int msgId)
+{
+    int msgType = ConvergedMessage::None;
+    int msgSubType = ConvergedMessage::None;
+    CMsvEntry* cEntry = NULL;
+    TRAPD(err, cEntry = iMsvSession->GetEntryL(msgId));
+    if (err == KErrNone) {
+        TMsvEntry entry = cEntry->Entry();
+        extractMsgType(entry, msgType, msgSubType);
+    }
+    return msgSubType;
+}
+
 // End of file

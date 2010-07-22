@@ -42,7 +42,8 @@ enum ConversationsEngineRoles
     MessageLocation,
     MessageStore,
     ConversationAlias,
-    NotificationStatus
+    NotificationStatus,
+    PreviewIcon
 };
 
 #endif /* CONVERSATIONS_ENGINE_DEFINES_H */

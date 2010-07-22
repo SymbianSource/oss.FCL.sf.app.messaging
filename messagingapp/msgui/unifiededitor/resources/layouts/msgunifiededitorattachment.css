@@ -33,12 +33,7 @@ MsgUnifiedEditorAttachment::attachmentDetails
   text-height:var(hb-param-text-height-tiny);
   text-line-count-min:1;
   text-line-count-max:1;
-  fixed-width: 13.0un;
+  size-policy:fixed fixed;
   text-align:right;
-}
-
-MsgUnifiedEditorAttachment::bgFrame
-{
-  zvalue:-1;
 }
 

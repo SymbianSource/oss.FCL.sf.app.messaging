@@ -60,6 +60,15 @@ public slots:
     void send(const QString phoneNumber, const QString alias, 
                             const QString bodyText);
 
+    /**
+     * Send message.
+     * @param addressList list of phone numbers and displaynames. 
+     * key is the phone number and value is the display name.
+     * @param bodyText body text.
+     */
+    void send(const QVariantMap addressList, 
+              const QString bodyText = QString());
+
 private:
     
     /**

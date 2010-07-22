@@ -21,22 +21,21 @@ DEPENDPATH += . \
               inc \
               ../inc \ 
               src
-    					
+
 INCLUDEPATH += .
 INCLUDEPATH += ../../../inc
+INCLUDEPATH += ../msgaudiofetcher/inc
 INCLUDEPATH += ../msguiutils/inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../appengine/inc
 INCLUDEPATH += ../../smartmessaging/ringbc/inc
 INCLUDEPATH += ../../msgsettings/settingsview/inc
-
-INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-INCLUDEPATH += /ext/mw/qthighway/inc
-INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
 INCLUDEPATH += ../../msgutils/unidatamodel/univcaldataplugin/inc
 
+INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+
 CONFIG += hb
+HB += hbfeedback
 QT += sql
 
 TARGET.UID3 = 0x20024322
@@ -73,10 +72,17 @@ SOURCES += src/msgconversationview.cpp \
     
 RESOURCES += conversationview.qrc
 
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/conversationview.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/conversationview.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
 
 # Libs
 LIBS += -lappengine \
-    -ls60qconversions \
     -lconvergedmessageutils \
     -lapgrfx \
     -lefsrv \
@@ -95,9 +101,8 @@ LIBS += -lappengine \
     -lgsmu \
     -lsmcm \
     -leditorgenutils \
-    -lthumbnailmanagerqt \
-    -lfbscli \
-    -lestor \
-    -lsqldb \
-    -lxqsettingsmanager
+    -lthumbnailmanagerqt \    
+    -lxqsettingsmanager \
+    -lxqutils \
+    -lmsgaudiofetcher
 

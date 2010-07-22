@@ -27,6 +27,7 @@
 #include <sqldb.h>
 
 //USER INCLUDES
+#include <ccsdefs.h>
 #include "ccspreviewplugin.h"
 #include "UniDataModel.h"
 
@@ -39,6 +40,13 @@ class CCsConversationEntry;
 class CCsPreviewPlugin;
 class CClientMtmRegistry;
 class CMmsClientMtm;
+class CUniDataModel;
+class MMsvAttachmentManager;
+
+enum MmsConformanceCheckErrors
+{
+    EInsertSuccess = 0, EInsertQueryAbort, EInsertNotSupported
+};
 
 /*
  * Thumbnail Request Data
@@ -149,6 +157,55 @@ private:
     void HandleThumbnailReadyL(MThumbnailData& aThumbnail,
             TThumbnailRequestId aId);
 
+    /**
+     * Validates if message can be forwarded
+     * The validation checks include slide count check,MMS size check and
+     * media conformance checks and this fucntion should be called only for mms
+     * @param aUniDataModel, instance of unidatamodel
+     * @return true if message can be forwarded
+     *         false if message cant be forwarded
+     */
+    TBool ValidateMsgForForward(CUniDataModel* aUniDataModel);
+
+    /**
+     * This shall return the particular slide attachments ids
+     * @param aSlideNum slide count
+     * @param aUniDataModel instance of unidatamodel
+     * @return array of attachment id's
+     */
+    RArray<TMsvAttachmentId>* GetSlideAttachmentIds(
+            TInt aSlideNum,
+            CUniDataModel* aUniDataModel);
+
+    /**
+     * This shall return list of attachment id's
+     * @param aUniDataModel instance of unidatamodel
+     * @return array of attachment id's
+     */
+    RArray<TMsvAttachmentId>* GetAttachmentIdList(
+            CUniDataModel* aUniDataModel);
+
+    /**
+     * This shall check the insert mode for the attachment file
+     * @param aFileHandle instance of file handle
+     * @return enum MmsConformanceCheckErrors
+     */
+    TInt CheckModeForInsertL(RFile aFileHandle);
+    
+    /**
+     * Finds the message's processing state
+     * @param aMsgId, message id
+     * @return, TInt from TCsPreviewMsgProcessingState enum
+     */
+    TInt msgProcessingState(TMsvId aMsgId);
+    
+    /**
+     * Sets message under processing to true
+     * @param aMsgId, message id
+     * @param aState, TInt from TCsPreviewMsgProcessingState enum
+     */
+    void setMsgProcessingState(TMsvId aMsgId, TInt aState);
+
 private:
     //Data
 
@@ -198,6 +255,22 @@ private:
      * Sqlite DB Handle
      */
     RSqlDatabase iSqlDb;
-    };
+
+    /**
+     * Max MMS Size
+    */
+    TInt iMaxMmsSize;
+
+    /*
+     * Mms creation mode
+     */
+    TInt iCreationMode;
+
+    /**
+     * Conformance status
+     */
+    TUint32 iConfStatus;
+
+};
 
 #endif // _C_CS_PREVIEW_PLUGIN_HANDLER_H_

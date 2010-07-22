@@ -66,9 +66,10 @@ public:
 
     /**
      * Save the content inside editor to drafts
-     * @return true if save is success else false.
+     * @return valid message id if save is success
+     * else invalid message id ( i.e. -1 )
      */
-    bool saveContentToDrafts();
+    int saveContentToDrafts();
 
 private slots:
 
@@ -102,6 +103,17 @@ private slots:
      */	
     void onDialogSaveTone(HbAction* action);
 
+    /**
+     * This slot is called when the orientation is changed
+     * @param newOrientation orientation
+     */
+    void onOrientationChanged(Qt::Orientation newOrientation);
+
+    /**
+     * This slot is called when the orientation is about to bechanged
+     */
+    void onOrientationAboutToBeChanged();
+    
 private:
 
     /**
@@ -113,6 +125,11 @@ private:
      * Setup view menu items.
      */
     void setupMenu();
+
+    /**
+     * Triggers model to fetch more conversations.
+     */
+    void fetchMoreConversations();
 
     /**
      * Populates ConvergedMessage for sending.
@@ -181,15 +198,6 @@ private:
      * @see ConvergedMessage::MessageType
      */
     void addDownloadItemToContextMenu(MsgConversationViewItem* item, HbMenu* contextMenu);
-    
-    /**
-     * Validates if message can be forwarded
-     * @param messageType
-     * @param messageId
-     * @return true if message can be forwarded
-     *         false if message cant be forwarded
-     */
-    bool validateMsgForForward(int &messageType,qint32 &messageId);
 
     /**
      * Launches the BT message display service.
@@ -203,6 +211,11 @@ public slots:
      * data
      */
     void refreshView();
+
+    /**
+     * This slot is called when the view is successfully added to main window
+     */
+    void onViewReady();
     
 private slots:
 
@@ -210,6 +223,8 @@ private slots:
      * Utility method to scroll the list to show the bottom most item
      */
     void scrollToBottom();
+    
+    void onConversationViewEmpty();
 
     /**
      * Handler for long tap of a list item.
@@ -257,11 +272,6 @@ private slots:
      */
     void contactsFetched(const QVariant& value);
 
-    /*
-     * Get audio files from audio-fetcher and launch editor
-     */
-    void audiosFetched(const QVariant& result );
-    
     /**
      * slot to receive fetched contacts for vcard addition
      */
@@ -328,10 +338,11 @@ signals:
      */
     void replyStarted();
     
-	/**
-	* This signal is emitted when vkb is open.
-	*/
-    void hideChrome(bool);
+   /**
+    * This signal is emitted when vkb is open/closed.
+    * @param state True if keypad is opened else false.
+    */
+    void vkbOpened(bool state);
 
 private slots:
     /**
@@ -410,21 +421,31 @@ private:
      */
     QGraphicsLinearLayout *mMainLayout;
 
-	/**
-	 * Flag to track if item has been long pressed.
-	 * TODO: Remove it, once unique longpress and click event signal released in week16
-	 */
-    bool mItemLongPressed;
     /*
      * Instance of VKB 
      */
     HbStaticVkbHost* mVkbHost;
     
     /**
+     * variable holding the visible model index
+     */
+    QModelIndex mVisibleIndex;
+    
+    /**
      * Flag to check it vkb is open.
      */
     bool mVkbopened;
-
+    
+    /**
+     * Flag is set when model is populated.
+     * @see signal conversationModelPopulated()
+     */
+    bool mModelPopulated;
+    
+    /**
+     * Flag is set when 
+     */
+    bool mViewReady;
 };
 
 #endif // MSG_CONVERSATION_VIEW_H

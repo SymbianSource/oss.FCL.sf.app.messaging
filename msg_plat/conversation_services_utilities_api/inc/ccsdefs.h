@@ -81,6 +81,7 @@ const TUint32 KConversationCachingEventCompleted = 0x00000080;
 const TUint32 KConversationCachingEventError     = 0x00000100;
 const TUint32 KConversationEventListRefresh      = 0x00000200;
 const TUint32 KConversationEventRefresh          = 0x00000400;
+const TUint32 KConversationListEventPartialDelete = 0x00000800;
 
 //-----------------------------------------------------------------------------
 // Conversation Server caching status codes
@@ -120,7 +121,9 @@ enum TCsServerRequestCommands
      EGetConversationId,
      EGetConversationIdFromAddress,
      EGetConversationFromMessageId,
-     EUserMarkReadConversation
+     EUserMarkReadConversation,
+     EGetConversationFromConversationId,
+     EGetConversationFromConversationIdComplete
 };
 
 //-----------------------------------------------------------------------------
@@ -137,6 +140,7 @@ enum TCsServerResponseCommand
     EModifyConversationListEvent,
     EAddConversationEvent,
     EDeleteConversationEvent,
+    EPartialDeleteConversationListEvent,
     EModifyConversationEvent,
     ECachingStartedEvent,
     ECachingCompletedEvent,
@@ -194,6 +198,7 @@ ECsRingingTone,
 ECsProvisioning,
 ECsBioMsg_VCard,
 ECsBioMsg_VCal,
+ECsBioMgs_NokiaService,
 ECsUnknown
 };
 
@@ -289,15 +294,89 @@ const TInt KSimIdOffset = 99999;
 
 enum 
 {
-	EPreviewNone       = 0x00,
-	EPreviewImage      = 0x01,
-	EPreviewAudio      = 0x02,
-	EPreviewVideo      = 0x04,
-	EPreviewAttachment = 0x08
+  EPreviewNone           = 0x0000,
+  EPreviewImage          = 0x0001,
+  EPreviewAudio          = 0x0002,
+  EPreviewVideo          = 0x0004,
+  EPreviewAttachment     = 0x0008,
+  EPreviewForward        = 0x0010,
+  EPreviewProtectedImage = 0x0020,
+  EPreviewProtectedAudio = 0x0040,
+  EPreviewProtectedVideo = 0x0080,
+  EPreviewCorruptedImage = 0x0100,
+  EPreviewCorruptedAudio = 0x0200,
+  EPreviewCorruptedVideo = 0x0400
 };
 
-typedef TUint8 TCsMsgPreviewProperty;
+typedef TUint16 TCsMsgPreviewProperty;
 
+/**
+ * @typedef TCsPreviewMsgProcessingState
+ */
+enum
+{
+    EPreviewMsgNotProcessed       = 0,
+    EPreviewMsgProcessing         = 1,
+    EPreviewMsgProcessed          = 2
+};
+
+/** 
+@publishedAll
+@released
+
+Template class CleanupResetAndDestroy to clean up the array
+of implementation information from the cleanup stack.
+*/
+
+template <class T>
+class CleanupResetAndDestroy
+	{
+public:
+	/**
+	Puts an item on the cleanup stack.
+
+	@param  aRef 
+	        The implementation information to be put on the cleanup stack.
+	*/
+	inline static void PushL(T& aRef);
+	inline static void PushL(T* aPointer);
+private:
+	static void ResetAndDestroy(TAny *aPtr);
+	static void ResetAndDestroyDelete(TAny *aPtr);
+	};
+template <class T>
+inline void CleanupResetAndDestroyPushL(T& aRef);
+
+template <class T>
+inline void CleanupResetAndDestroyPushL(T* aPointer);
+
+template <class T>
+inline void CleanupResetAndDestroy<T>::PushL(T& aRef)
+	{CleanupStack::PushL(TCleanupItem(&ResetAndDestroy,&aRef));}
+
+template <class T>
+inline void CleanupResetAndDestroy<T>::PushL(T* aPointer)
+    {CleanupStack::PushL(TCleanupItem(&ResetAndDestroyDelete,aPointer));}
+
+template <class T>
+void CleanupResetAndDestroy<T>::ResetAndDestroy(TAny *aPtr)
+	{(STATIC_CAST(T*,aPtr))->ResetAndDestroy();}
+
+template <class T>
+void CleanupResetAndDestroy<T>::ResetAndDestroyDelete(TAny *aPtr)
+    {
+    (STATIC_CAST(T*,aPtr))->ResetAndDestroy();
+    delete (STATIC_CAST(T*,aPtr));
+    }
+
+template <class T>
+inline void CleanupResetAndDestroyPushL(T& aRef)
+	{CleanupResetAndDestroy<T>::PushL(aRef);}
+
+template <class T>
+inline void CleanupResetAndDestroyPushL(T* aPointer)
+    {CleanupResetAndDestroy<T>::PushL(aPointer);}
+	
 #endif // __C_CSSERVER_DEFS_H__
 
 // End of file

@@ -397,6 +397,20 @@ void RCsSession::GetConversationIdFromAddressL(TDesC& aContactAddress, TPtr8 aRe
     }
 	
 // ----------------------------------------------------------------------------
+// RCsSession::GetConversationFromConversationIdL
+// ----------------------------------------------------------------------------
+void RCsSession::GetConversationFromConversationIdL(TInt aConversationId, TPtr8 aResultsBuffer)
+    {
+    PRINT( _L("Enter RCsSession::GetConversationFromConversationIdL") );
+
+    TIpcArgs args(aConversationId, &aResultsBuffer);
+
+    // Initiate the request
+    User::LeaveIfError (SendReceive(EGetConversationFromConversationId, args ) );
+    PRINT( _L("End RCsSession::GetConversationFromConversationIdL") );
+    }
+
+// ----------------------------------------------------------------------------
 // RCsSession::GetConversationFromMessageIdL
 // ----------------------------------------------------------------------------
 void RCsSession::GetConversationFromMessageIdL(TInt aMessageId, TPtr8 aResultsBuffer)

@@ -31,14 +31,14 @@
 #include <QTimer>
 #include "unieditorpluginloader.h"
 #include "unieditorplugininterface.h"
-#include "unisendingsettings.h"
-#include "unieditorgenutils.h"
+#include "UniSendingSettings.h"
+#include "UniEditorGenUtils.h"
 #include "debugtraces.h"
 
 // LOCAL CONSTANTS
 
 const QString SEND_ICON("qtg_mono_send");
-const QString BACKGROUND("qtg_fr_input_bg");
+const QString BACKGROUND("qtg_fr_input_v_bg");
 const QString BACKGROUND_FRAME("qtg_fr_btn_normal");
 
 const QString SEND_BUTTON_NORMAL("qtg_fr_input_btn_function_normal");
@@ -46,8 +46,8 @@ const QString SEND_BUTTON_PRESSED("qtg_fr_input_btn_function_pressed");
 const QString SEND_BUTTON_DISABLED("qtg_fr_input_btn_function_disabled");
 
 #define LOC_SMS_CHAR_LIMIT_REACHED hbTrId("txt_messaging_dialog_sms_character_count_exceeded")
-#define LOC_DIALOG_OK hbTrId("txt_common_button_ok")
-#define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
+#define LOC_HINT_TEXT hbTrId("txt_messaging_formlabel_enter_message_here")
+
   
 const TInt KShowCounterLimit = 10;
 
@@ -83,14 +83,15 @@ void MsgEditorWidget::init()
     mMsgEditor->setMaxRows(3); // NOTE: Don't remove this line.
     HbStyle::setItemName(mMsgEditor, "msgEditor");
 
-    mSendButton = new HbPushButton(this);
-    HbStyle::setItemName(mSendButton, "sendButton");
+	mSendButton = new HbPushButton(this); 
+    HbStyle::setItemName(mSendButton, "sendButton"); 
+    mSendButton->setEnabled(false); 
+    
+    HbFrameItem* backGround = new HbFrameItem(this); 
+    backGround->frameDrawer().setFrameType(HbFrameDrawer::NinePieces); 
+    mSendButton->setBackgroundItem(backGround); 
+    updateButtonBackground(SEND_BUTTON_DISABLED); 
     mSendButton->setIcon(HbIcon(SEND_ICON));
-    mSendButton->setEnabled(false);
-    HbFrameDrawer* drawer = new HbFrameDrawer(this);
-    drawer->setFrameType(HbFrameDrawer::NinePieces);
-    mSendButton->setFrameBackground(drawer);
-    updateButtonBackground(SEND_BUTTON_DISABLED);
     
     mCharCounter = new HbTextItem(this);
     HbStyle::setItemName(mCharCounter, "charCounter");
@@ -252,9 +253,8 @@ void MsgEditorWidget::handleSmsCharLimitReached()
     mSmsCharLimitReached = false;
     
     HbMessageBox::question(LOC_SMS_CHAR_LIMIT_REACHED,
-        this,SLOT(onSmsCharLimitReached(HbAction*)),
-        LOC_DIALOG_OK,
-        LOC_BUTTON_CANCEL);
+                           this,SLOT(onSmsCharLimitReached(HbAction*)),
+                           HbMessageBox::Ok | HbMessageBox::Cancel);
 
 
 }
@@ -282,14 +282,15 @@ void MsgEditorWidget::onClicked()
 // MsgEditor::updateButtonBackground
 // @see header
 //---------------------------------------------------------------
-void MsgEditorWidget::updateButtonBackground(const QString& bg)
-    {
-    HbFrameDrawer* drawer = mSendButton->frameBackground();
-    if(drawer)
-        {
-        drawer->setFrameGraphicsName(bg);        
-        }
-    }
+void MsgEditorWidget::updateButtonBackground(const QString& bg) 
+    { 
+    HbFrameItem* drawer = static_cast<HbFrameItem*>(mSendButton->backgroundItem()); 
+    if(drawer) 
+        { 
+        drawer->frameDrawer().setFrameGraphicsName(bg);   
+        } 
+    } 
+    
 
 //---------------------------------------------------------------
 // MsgEditor::onPressed
@@ -356,7 +357,7 @@ void MsgEditorWidget::setEncodingSettingsL()
 MsgEditor::MsgEditor(QGraphicsItem *parent)
 :HbLineEdit(parent)
     {
-    
+     this->setPlaceholderText(LOC_HINT_TEXT);
     }
 
 //---------------------------------------------------------------

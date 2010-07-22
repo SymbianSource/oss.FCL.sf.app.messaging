@@ -66,8 +66,6 @@ const QString SORT_ICON("qtg_mono_sort");
 // Confirmation note
 #define LOC_DELETE_MESSAGE        hbTrId("txt_messaging_dialog_delete_message")
 #define LOC_DELETE_ALL_DRAFTS     hbTrId("txt_messaging_dialog_delate_all_drafts")
-#define LOC_BUTTON_DELETE         hbTrId("txt_common_button_delete")
-#define LOC_BUTTON_CANCEL         hbTrId("txt_common_button_cancel")
 
 //---------------------------------------------------------------
 // DraftsListView::DraftsListView
@@ -77,8 +75,7 @@ DraftsListView::DraftsListView(QGraphicsItem *parent) :
     MsgBaseView(parent),
     mListView(0), 
     mViewExtnList(0),
-    mToolBar(0),
-    mItemLongPressed(false)
+    mToolBar(0)
 {
     // Delayed loading.
     connect(this->mainWindow(), SIGNAL(viewReady()), this, SLOT(doDelayedLoading()));
@@ -123,6 +120,7 @@ void DraftsListView::setupToolbar()
         viewAction->setIcon(HbIcon(SORT_ICON));
 
         mViewExtnList = new HbListWidget();
+        mViewExtnList->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
         mViewExtnList->addItem(LOC_TB_EXTN_DRAFTS);
         mViewExtnList->addItem(LOC_TB_EXTN_CONVERSATIONS);
 
@@ -231,8 +229,8 @@ void DraftsListView::deleteDraftMessage()
     }
 
     HbMessageBox::question(LOC_DELETE_MESSAGE,
-        this,SLOT(onDialogDeleteMsg(HbAction*)),
-        LOC_BUTTON_DELETE, LOC_BUTTON_CANCEL);
+                           this,SLOT(onDialogDeleteMsg(HbAction*)),
+                           HbMessageBox::Delete | HbMessageBox::Cancel);
 
 }
 
@@ -243,9 +241,8 @@ void DraftsListView::deleteDraftMessage()
 void DraftsListView::deleteAllDraftMessage()
 {
     HbMessageBox::question(LOC_DELETE_ALL_DRAFTS,
-        this,SLOT(onDialogDeleteAllMessages(HbAction*)),
-        LOC_BUTTON_DELETE,
-        LOC_BUTTON_CANCEL);
+                           this,SLOT(onDialogDeleteAllMessages(HbAction*)),
+                           HbMessageBox::Delete | HbMessageBox::Cancel);
 }
 
 //------------------------------------------------------------------------------
@@ -267,12 +264,6 @@ void DraftsListView::createNewMessage()
 //------------------------------------------------------------------------------
 void DraftsListView::openDraftMessage(const QModelIndex &index)
 {
-    if(mItemLongPressed)
-        {
-        //reset the flag
-         mItemLongPressed = false;
-         return;
-        }
     QVariant msgId = index.data(ConvergedMsgId);
     QVariant msgType = index.data(MessageType);
     ConvergedMessageId convergedMsgId = ConvergedMessageId(msgId.toInt());
@@ -299,7 +290,6 @@ void DraftsListView::openDraftMessage(const QModelIndex &index)
 //------------------------------------------------------------------------------
 void DraftsListView::handleLongPressed(HbAbstractViewItem *item, const QPointF &coords)
 {
-    mItemLongPressed = true;
     if (this->isVisible()) {
 
         // Set the current index as tapped items index.

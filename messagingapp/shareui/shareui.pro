@@ -17,7 +17,7 @@
 TEMPLATE = lib
 TARGET = shareui
 DEFINES += BUILD_SHAREUI_DLL
-#DEFINES += __SHAREUI_MIME_HANDLING__
+DEFINES += __SHAREUI_MIME_HANDLING__
 
 DEPENDPATH += inc src
 INCLUDEPATH += inc
@@ -42,6 +42,14 @@ BLD_INF_RULES.prj_exports += \
      "sis/shareui_stub.sis   /epoc32/data/z/system/install/shareui_stub.sis" \
      "rom/shareui.iby  CORE_APP_LAYER_IBY_EXPORT_PATH(shareui.iby)" 
      
+defBlock = \      
+	  "$${LITERAL_HASH}if defined(EABI)" \
+	  "DEFFILE  ../eabi/shareui.def" \
+             "$${LITERAL_HASH}else" \
+             "DEFFILE  ../bwins/shareui.def" \
+             "$${LITERAL_HASH}endif"
+	
+MMP_RULES += defBlock
 
 HEADERS += shareuiprivate.h 
     

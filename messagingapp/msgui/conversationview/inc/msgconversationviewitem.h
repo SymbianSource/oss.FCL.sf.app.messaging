@@ -94,13 +94,28 @@ private:
     /*
      * Update item with sms content
      */
-    void updateSmsTypeItem(const QModelIndex& index,int messageSubType = ConvergedMessage::None);
-    
+    void updateSmsTypeItem(const QModelIndex& index, int messageSubType =
+            ConvergedMessage::None);
+
     /*
      * Update item with mms type content
      */
-    void updateMmsTypeItem(const QModelIndex& index, int messageType,int messageSubType);
+    void updateMmsTypeItem(const QModelIndex& index, int messageType,
+        int messageSubType);
 
+    /*
+     * Initializes the msgconverstionviewitem
+     */
+    void init();
+
+private slots:    
+
+    /*
+     * Handler for orientation changed
+     * @param orientation Qt::Orientation
+     */
+    void orientationchanged(Qt::Orientation orientation);
+    
 protected:
 
     /**
@@ -125,10 +140,17 @@ private:
     MsgConversationWidget *mConversation;
 
     /**
+     * Graphics Item to hold message incoming state. 
+     * Applicable for notification
+     * Owned
+     */
+    HbIconItem *mIncomingMsgStateIconItem;
+
+    /**
      * Graphics Item to hold message sending state.
      * Owned
      */
-    HbIconItem *mMessageStateIconItem;
+    HbIconItem *mOutgoingMsgStateIconItem;
 };
 
 #endif // MSG_CONVERSATION_VIEW_ITEM_H

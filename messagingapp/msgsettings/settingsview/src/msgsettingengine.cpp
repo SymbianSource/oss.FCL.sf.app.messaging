@@ -22,7 +22,7 @@
 #include "msgsettingengine.h"
 #include "smssettingsprivate.h"
 #include "mmssettingprivate.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 
 //Constructor
 MsgSettingEngine::MsgSettingEngine()
@@ -237,7 +237,7 @@ void MsgSettingEngine::allMMsAcessPoints(QStringList& nameList,
     for (int i = 0; i < accessPoints.Count(); i++)
         {
         HBufC* name = static_cast<HBufC *> (accessPoints[i]);
-        QString qName = S60QConversions::s60DescToQString(name->Des());
+        QString qName = XQConversions::s60DescToQString(name->Des());
         nameList.append(qName);
 #ifdef _DEBUG_TRACES_
         qDebug() << "\n " << qName;
@@ -292,7 +292,7 @@ void MsgSettingEngine::allSMSMessageCenter(QStringList& nameList,
     for (int i = 0; i < accessPoints.Count(); i++)
         {
         HBufC* name = accessPoints[i];
-        QString qName = S60QConversions::s60DescToQString(name->Des());
+        QString qName = XQConversions::s60DescToQString(name->Des());
         nameList.append(qName);
 #ifdef _DEBUG_TRACES_
         qDebug() << "\n qName";
@@ -341,8 +341,8 @@ void MsgSettingEngine::editSmsMessageCenter(QString& centreName,
             << centreName << " " << centreNumber;
 #endif
 
-    HBufC* d_addr = S60QConversions::qStringToS60Desc(centreNumber);
-    HBufC* d_name = S60QConversions::qStringToS60Desc(centreName);
+    HBufC* d_addr = XQConversions::qStringToS60Desc(centreNumber);
+    HBufC* d_name = XQConversions::qStringToS60Desc(centreName);
 
     dptr_smsSettings->editSMSServiceCentre(d_addr, d_name, index);
     delete d_addr;
@@ -368,8 +368,8 @@ void MsgSettingEngine::addSmsMessageCenter(QString& centreName,
 #endif
 
 
-    HBufC* d_addr = S60QConversions::qStringToS60Desc(centreNumber);
-    HBufC* d_name = S60QConversions::qStringToS60Desc(centreName);
+    HBufC* d_addr = XQConversions::qStringToS60Desc(centreNumber);
+    HBufC* d_name = XQConversions::qStringToS60Desc(centreName);
 
     dptr_smsSettings->addSmsMessageCenter(d_addr, d_name);
     delete d_addr;
@@ -409,8 +409,8 @@ void MsgSettingEngine::smsCenterNameAndNumber(int index, QString& centreName,
 
     dptr_smsSettings->smsCenterNameAndNumber(index, &d_addr, &d_name);
 
-    centreNumber = S60QConversions::s60DescToQString(d_addr->Des());
-    centreName = S60QConversions::s60DescToQString(d_name->Des());
+    centreNumber = XQConversions::s60DescToQString(d_addr->Des());
+    centreName = XQConversions::s60DescToQString(d_name->Des());
 
 #ifdef _DEBUG_TRACES_
     qDebug() << "Exit smsCenterNameAndNumber " << centreNumber << " "

@@ -92,6 +92,13 @@ public:
     void HandleModifyConversationListEventL(
             CCsClientConversation* aClientConversation);      
 
+	/**
+	 * HandlePartialDeleteConversationListEvent
+	 * Handles the partial delete conversation event from cache
+	 */
+    void HandlePartialDeleteConversationListEvent(
+            CCsClientConversation* aClientConversation);
+    
     /**
      * HandleNewConversationEventL
      * Handles the new conversation event received from cache
@@ -329,6 +336,8 @@ private:
      * @param aMessage RMessage instance
      */
     void GetConversationIdfromAddressL(const RMessage2& aMessage);
+
+    void GetConversationFromConversationIdL(const RMessage2& aMessage);
 	
 	/**
      * GetConversationFromMessageIdL
@@ -358,7 +367,7 @@ private:
      * Buf for doing IPC
      * Own
      */
-    HBufC8* des;
+    HBufC8*  iDes;
 
     /**
      * iEventList

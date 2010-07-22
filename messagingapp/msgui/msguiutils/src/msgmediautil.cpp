@@ -15,7 +15,7 @@
  *
  */
 #include <MsgMediaResolver.h>
-#include <XQConversions.h>
+#include <xqconversions.h>
 
 #include "msgmediautil.h"
 

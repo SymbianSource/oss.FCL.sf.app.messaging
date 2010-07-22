@@ -84,6 +84,30 @@ public:
     inline const QString& mimetype();
 
     /**
+     * isProtected
+     * @return true if DRM protected object else false.
+     */
+    inline bool isProtected() const;
+
+    /**
+     * setProtected
+     * @param isProtected true if DRM protected object else false.
+     */
+    inline void setProtected(bool isProtected);
+
+    /**
+     * isCorrupted
+     * @return true if object is corrupted else false.
+     */
+    inline bool isCorrupted() const;
+
+    /**
+     * setCorrupted
+     * @param corrupted true if object is corrupted else false.
+     */
+    inline void setCorrupted(bool corrupted);
+
+    /**
      * Serialize the data memebers into the stream.
      * @param stream data stream to which data is serialized.
      */
@@ -97,8 +121,10 @@ public:
 
 private:
     QString mPath;
-    int mSize;
     QString mMimeType;
+    int mSize;
+    bool mProtected;
+    bool mCorrupt;
 
 };
 

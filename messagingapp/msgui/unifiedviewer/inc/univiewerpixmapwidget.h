@@ -20,6 +20,12 @@
 
 #include <HbIconItem>
 
+// FORWARD DECLARATIONS
+class UniViewerUtils;
+class UniMessageInfo;
+class ThumbnailManager;
+
+
 /**
  * This widget displays the pixmap content in viewer.
  */
@@ -41,17 +47,23 @@ public:
 
     /**
      * Sets the pixmap content to be displayed.
-     * @param pixmapPath File path of the pixmap.
+     * @param info Object information.
      */
-    void setPixmap(const QString &pixmapPath);
+    void populate(UniMessageInfo *info);
 
 signals:
 
     /**
-     * Signal emitted for short tap on pixmap.
-     * @param pixmapPath File path of the pixmap being clicked.
+     * Signal emitted when widget is clicked.
+     * @param mediaPath File path of the media.
      */
-    void shortTap(const QString &pixmapPath);
+    void shortTap(const QString &mediaPath);
+
+    /**
+     * Signal emitted when widget is long tapped.
+     * @param position Scene coordinates of tap.
+     */
+    void longTap(const QPointF &position);
 
 protected:
 
@@ -62,12 +74,70 @@ protected:
      */
     virtual void gestureEvent(QGestureEvent *event);
 
+private slots:
+
+    /**
+     *
+     */
+    void handleOpen();
+
+    /**
+     *
+     */
+    void handleSave();
+
+    /**
+     * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture
+     * events back to back.  
+     */
+    void regrabGesture();
+
+    /**
+     * Slot hit when the thumbnail is ready.
+     */
+   void thumbnailReady(const QPixmap& pixmap, void *data, int id, int error);
+
 private:
+
+    /**
+     * Initialization function.
+     */
+    void init();
+
+    /**
+     * Handles short tap event.
+     */
+    void handleShortTap();
+
+    /**
+     * Handles long tap event.
+     * @param position Scene coordinates of tap.
+     */
+    void handleLongTap(const QPointF &position);
+
+private:
+
+    /**
+     * UniViewerUtils object.
+     * Own
+     */
+    UniViewerUtils *mViewerUtils;
+
+    /**
+     * ThumbnailManager
+     * Own.
+     */
+   ThumbnailManager *mThumbnailManager;
+
+    /**
+     * Mime Type of pixmap.
+     */
+    QString mMimeType;
 
     /**
      * Pixmap file path being set.
      */
-    QString mPixmapFile;
+    QString mPixmapPath;
 };
 
 #endif /* UNI_VIEWER_PIXMAP_WIDGET_H */

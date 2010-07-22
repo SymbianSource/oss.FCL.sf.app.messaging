@@ -22,7 +22,7 @@
 #include "msgindicator_p.h"  
 #include "msgindicator.h"
 #include "debugtraces.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 
 #define LOC_RECEIVED_FILES hbTrId("Received Files")
 
@@ -98,7 +98,7 @@ void MsgIndicatorPrivate::getIndicatorInfoL(MsgInfo& indicatorData)
             // Only take the description from convEntry when there is one entry.
             // description will contain the name list when there are more entries.
             QString descText;
-            descText = S60QConversions::s60DescToQString(*description);
+            descText = XQConversions::s60DescToQString(*description);
             descText.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
             descText.replace('\r', QChar::LineSeparator);
             indicatorData.mDescription = descText;
@@ -116,10 +116,10 @@ void MsgIndicatorPrivate::getIndicatorInfoL(MsgInfo& indicatorData)
             HBufC* number = convEntry->Contact();
 
             if (displayName) {
-                nameList.append(S60QConversions::s60DescToQString(*displayName));
+                nameList.append(XQConversions::s60DescToQString(*displayName));
             }
             else if (number) {
-                nameList.append(S60QConversions::s60DescToQString(*number));
+                nameList.append(XQConversions::s60DescToQString(*number));
             }
         }
     }

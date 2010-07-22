@@ -24,7 +24,7 @@ INCLUDEPATH += ../inc
 DEPENDPATH += .
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += ../../../inc
-INCLUDEPATH += ../../msgutils/s60qconversions/inc
+
 
 
 HEADERS += inc/msgindicatorplugin.h \
@@ -53,5 +53,5 @@ BLD_INF_RULES.prj_exports += \
   
  LIBS += -lxqservice \
  		 -lcsserverclientapi \
-         -ls60qconversions \
-         -lcsutils
+         -lcsutils \
+         -lxqutils

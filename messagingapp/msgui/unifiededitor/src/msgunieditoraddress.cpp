@@ -20,7 +20,6 @@
 #include <HbTextItem>
 #include <HbPushButton>
 #include <HbAction>
-#include <hbinputeditorinterface.h>
 #include <hbmessagebox.h>
 #include <cntservicescontact.h>
 #include <xqaiwrequest.h>
@@ -34,13 +33,13 @@
 // USER INCLUDES
 #include "debugtraces.h"
 #include "msgunieditoraddress.h"
-#include "msgunifiededitorlineedit.h"
-#include "msgmonitor.h"
-#include "unieditorgenutils.h"
+#include "msgunieditorlineedit.h"
+#include "msgunieditormonitor.h"
+#include "UniEditorGenUtils.h"
 
 const QString PBK_ICON("qtg_mono_contacts");
-const QString SEND_ICON("qtg_mono_send");
-const QString replacementStr("; ");
+const QString REPLACEMENT_STR("; ");
+const QString COMMA_SEPERATOR(",");
 
 // Constants
 const int KDefaultGsmNumberMatchLength = 7;  //matching unique ph numbers
@@ -49,6 +48,12 @@ const int KDefaultGsmNumberMatchLength = 7;  //matching unique ph numbers
 #define LOC_DIALOG_OK hbTrId("txt_common_button_ok")
 #define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
 #define LOC_INVALID_RECIPIENT hbTrId("txt_messaging_dialog_invalid_recipient_found")
+#define LOC_INVALID_RECIPIENT_NOT_ADDED hbTrId("txt_messaging_dialog_invalid_recipient_not_added")
+#define LOC_INVALID_RECIPIENTS_NOT_ADDED hbTrId("txt_messaging_dialog_invalid_recipients_not_added")
+
+
+
+
 
 MsgUnifiedEditorAddress::MsgUnifiedEditorAddress( const QString& label,
                                                   QGraphicsItem *parent ) :
@@ -73,13 +78,8 @@ mExceedsMaxMmsRecipientsBy(0)
     connect(mAddressEdit, SIGNAL(contentsChanged(const QString&)),
             this, SLOT(onContentsChanged(const QString&)));
 
-    // add "Send" action in VKB
-    HbEditorInterface editorInterface(mAddressEdit);
     mAddressEdit->setInputMethodHints(Qt::ImhPreferNumbers);
-    HbAction *sendAction = new HbAction(HbIcon(SEND_ICON), QString(),this);
-    connect(sendAction, SIGNAL(triggered()),this, SIGNAL(sendMessage()));
-    editorInterface.addAction(sendAction);
-    }
+}
 
 MsgUnifiedEditorAddress::~MsgUnifiedEditorAddress()
 {
@@ -90,6 +90,8 @@ MsgUnifiedEditorAddress::~MsgUnifiedEditorAddress()
 
 void MsgUnifiedEditorAddress::fetchContacts()
 {
+    mLaunchBtn->blockSignals(true);
+
     QList<QVariant> args;
     QString serviceName("com.nokia.services.phonebookservices");
     QString operation("fetch(QString,QString,QString)");
@@ -112,6 +114,9 @@ void MsgUnifiedEditorAddress::fetchContacts()
     request->setArguments(args);
     request->send();
     delete request;
+
+    //unblock click signal after some delay.
+    QTimer::singleShot(250,this,SLOT(unblockSignals()));
 }
 
 void MsgUnifiedEditorAddress::handleOk(const QVariant& value)
@@ -125,7 +130,14 @@ void MsgUnifiedEditorAddress::handleOk(const QVariant& value)
     {
         ConvergedMessageAddress* address =
                 new ConvergedMessageAddress();
-        address->setAddress(contactList[i].mPhoneNumber);
+        if(!contactList[i].mPhoneNumber.isEmpty())
+        {
+            address->setAddress(contactList[i].mPhoneNumber);
+        }
+        else
+        {
+            address->setAddress(contactList[i].mEmailAddress);
+        }
         address->setAlias(contactList[i].mDisplayName);
         addrlist << address;
     }
@@ -190,6 +202,12 @@ int MsgUnifiedEditorAddress::addressCount()
 
 void MsgUnifiedEditorAddress::setAddresses(ConvergedMessageAddressList addrlist)
 {
+    // avoid processing if no info available
+    if(addrlist.count() == 0)
+    {
+        return;
+    }
+
     // ensure flags are reset before starting the addr addition
     mAboutToExceedMaxSmsRecipients = false;
     mAboutToExceedMaxMmsRecipients = false;
@@ -197,37 +215,63 @@ void MsgUnifiedEditorAddress::setAddresses(ConvergedMessageAddressList addrlist)
 
     // first, we check if MMS max-recipient count will exceed
     int count = addrlist.count();
-	int futureCount = count + MsgMonitor::msgAddressCount();
-	if(futureCount > MsgMonitor::maxMmsRecipients())
+	int futureCount = count + MsgUnifiedEditorMonitor::msgAddressCount();
+	if(futureCount > MsgUnifiedEditorMonitor::maxMmsRecipients())
 	{
 	    mAboutToExceedMaxMmsRecipients = true;
 	    mExceedsMaxMmsRecipientsBy =
-	            futureCount - MsgMonitor::maxMmsRecipients();
+	            futureCount - MsgUnifiedEditorMonitor::maxMmsRecipients();
 	}
 	// else, check if SMS max-recipient count will exceed
 	else if(!mSkipMaxRecipientQuery)
 	{
 	    futureCount = count + addressCount();
-	    if( (addressCount() <= MsgMonitor::maxSmsRecipients()) &&
-	        (futureCount > MsgMonitor::maxSmsRecipients()) )
+	    if( (addressCount() <= MsgUnifiedEditorMonitor::maxSmsRecipients()) &&
+	        (futureCount > MsgUnifiedEditorMonitor::maxSmsRecipients()) )
 	    {
 	        mAboutToExceedMaxSmsRecipients = true;
 	    }
 	}
 
-
+	int  invalidCount= 0;
+    QString invalidContacts;
     for(int i = 0; i < count; i++ )
-    {
-        mAddressMap.insertMulti(addrlist[i]->address(), addrlist[i]->alias());
-        if(!addrlist[i]->alias().isEmpty())
         {
-            mAddressEdit->setText(addrlist[i]->alias());
-        }
-        else
+        bool isValid = false;
+        isValid = checkValidAddress(addrlist.at(i)->address());
+        if(!isValid)
+           {
+            invalidCount ++;
+            // append the comma till last but one contact.
+            // add the invalid ocntacts to the " , " seperated string.
+            if(invalidCount > 1)
+                {
+                invalidContacts.append(COMMA_SEPERATOR);
+                }
+            invalidContacts.append(addrlist.at(i)->alias());
+           }
+       else
+           {
+           mAddressMap.insertMulti(addrlist[i]->address(), addrlist[i]->alias());
+           if(!addrlist[i]->alias().isEmpty())
+              {
+              mAddressEdit->setText(addrlist[i]->alias());
+              }
+           else
+              {
+              mAddressEdit->setText(addrlist[i]->address(), false);
+              }
+           }
+       }
+    if(invalidCount)
         {
-            mAddressEdit->setText(addrlist[i]->address(), false);
+        QString invalidStr;
+        (invalidCount == 1)?(invalidStr = QString(LOC_INVALID_RECIPIENT_NOT_ADDED)) :(invalidStr = QString(LOC_INVALID_RECIPIENTS_NOT_ADDED));
+        // append line seperator
+         invalidStr.append("<br>");
+         invalidStr.append(invalidContacts);
+         HbMessageBox::information(invalidStr);
         }
-    }
 
     // addition operation complete, reset flags
     mAboutToExceedMaxSmsRecipients = false;
@@ -256,7 +300,7 @@ void MsgUnifiedEditorAddress::onContentsChanged(const QString& text)
 {
     // Max MMS recipient count check
     if( mAboutToExceedMaxMmsRecipients ||
-        (MsgMonitor::msgAddressCount() >= MsgMonitor::maxMmsRecipients()) )
+        (MsgUnifiedEditorMonitor::msgAddressCount() >= MsgUnifiedEditorMonitor::maxMmsRecipients()) )
     {
         if(mAboutToExceedMaxMmsRecipients)
         {// show discreet note only once
@@ -272,7 +316,7 @@ void MsgUnifiedEditorAddress::onContentsChanged(const QString& text)
         {
             // update monitor data
             emit contentChanged();
-            if(MsgMonitor::msgAddressCount() > MsgMonitor::maxMmsRecipients())
+            if(MsgUnifiedEditorMonitor::msgAddressCount() > MsgUnifiedEditorMonitor::maxMmsRecipients())
             {
                 HbNotificationDialog::launchDialog(
                         LOC_MMS_RECIPIENT_LIMIT_REACHED);
@@ -290,8 +334,8 @@ void MsgUnifiedEditorAddress::onContentsChanged(const QString& text)
 
     // Max SMS recipient count check
     if( !mSkipMaxRecipientQuery &&
-        (MsgMonitor::messageType() == ConvergedMessage::Sms) &&
-        (mAddressEdit->addresses().count() > MsgMonitor::maxSmsRecipients()) )
+        (MsgUnifiedEditorMonitor::messageType() == ConvergedMessage::Sms) &&
+        (mAddressEdit->addresses().count() > MsgUnifiedEditorMonitor::maxSmsRecipients()) )
     {
         // when we show this dialog, we don't want the intermediate states
         // to be signalled to us
@@ -317,7 +361,8 @@ void MsgUnifiedEditorAddress::handleRecipientLimitReached()
     dlg->setTimeout(HbPopup::NoTimeout);
 
     dlg->setText(LOC_SMS_RECIPIENT_LIMIT_REACHED);
-
+    
+    dlg->clearActions();
     HbAction* okAction = new HbAction(LOC_DIALOG_OK,dlg);
     dlg->addAction(okAction);
 
@@ -328,7 +373,6 @@ void MsgUnifiedEditorAddress::handleRecipientLimitReached()
     // reconnect to get back updates
     connect(mAddressEdit, SIGNAL(contentsChanged(const QString&)),
             this, SLOT(onContentsChanged(const QString&)));
-    emit contentChanged();
 }
 
 void MsgUnifiedEditorAddress::syncDeletionsToMap()
@@ -347,6 +391,18 @@ void MsgUnifiedEditorAddress::syncDeletionsToMap()
         }
         else
         {
+            // ensure that the matched contact is removed from the
+            // address's list
+            int matchedIndex = addrList.indexOf(i.value());
+            if(matchedIndex == -1)
+            {
+                matchedIndex = addrList.indexOf(i.key());
+            }
+            if(matchedIndex != -1)
+            {
+                addrList.removeAt(matchedIndex);
+            }
+            // now go to next index in map
             ++i;
         }
     }
@@ -414,7 +470,7 @@ void MsgUnifiedEditorAddress::resetToPrevious()
             this, SLOT(onContentsChanged(const QString&)));
 
     mAddressEdit->clearContent();
-    QStringList list = mPrevBuffer.split(replacementStr,
+    QStringList list = mPrevBuffer.split(REPLACEMENT_STR,
             QString::SkipEmptyParts);
     int count = list.count();
     QStringList valList = mAddressMap.values();
@@ -444,6 +500,7 @@ void MsgUnifiedEditorAddress::onMaxRecipientsReached(HbAction* action)
     HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
     if (action == dlg->actions().at(0)) {
         // accept new content, update prev-buffer
+        emit contentChanged();
         mPrevBuffer = mAddressEdit->content();
     }
     else {
@@ -467,27 +524,15 @@ bool MsgUnifiedEditorAddress::validateContacts()
     // get the list of contacts in address-field
     QStringList fieldAddresses(mAddressEdit->addresses());
 
-    bool allValid = true;
+    bool isValid = true;
     foreach(QString addr, fieldAddresses)
     {
         // run address validation only if address is unmapped
         // (i.e. user-inserted)
         if(mAddressMap.contains(addr))
         {
-            // 1. perform number validation
-            allValid = CommonPhoneParser::IsValidPhoneNumber(
-                    *XQConversions::qStringToS60Desc(addr),
-                    CommonPhoneParser::ESMSNumber );
-
-            // 2. if number validity fails, then perform email addr validation
-            if( !allValid &&
-                (MsgMonitor::messageType() == ConvergedMessage::Mms) )
-            { // additional check for MMS only
-                allValid = genUtils->IsValidEmailAddress(
-                        *XQConversions::qStringToS60Desc(addr) );
-            }
-
-            if(!allValid)
+        isValid = checkValidAddress(addr);
+            if(!isValid)
             {
                 mAddressEdit->highlightInvalidString(addr);
                 QString invalidAddrStr =
@@ -502,15 +547,46 @@ bool MsgUnifiedEditorAddress::validateContacts()
             }
         }
     }
-    delete genUtils;
-    return allValid;
+
+    return isValid;
 }
+// ----------------------------------------------------------------------------
+// MsgUnifiedEditorAddress::checkValidAddress
+// @see header
+// ----------------------------------------------------------------------------
+bool MsgUnifiedEditorAddress::checkValidAddress(const QString& addr)
+    {
+    bool isValid = false;
+    
+    HBufC *tempAddr = XQConversions::qStringToS60Desc(addr);
+    	
+    // 1. perform number validation
+    isValid = CommonPhoneParser::IsValidPhoneNumber(
+            *tempAddr,
+            CommonPhoneParser::ESMSNumber );
+
+    // 2. if number validity fails, then perform email addr validation
+    UniEditorGenUtils* genUtils = new UniEditorGenUtils;
+    if(!isValid)
+        { // additional check for MMS only
+        isValid = genUtils->IsValidEmailAddress(
+                    *tempAddr );
+        } 
+    delete genUtils;
+    delete tempAddr;
+    return isValid;
+    }
 
 void MsgUnifiedEditorAddress::handleInvalidContactDialog(
         HbAction* act)
 {
     Q_UNUSED(act);
     QTimer::singleShot(250, this, SLOT(setFocus()));
+}
+
+void MsgUnifiedEditorAddress::unblockSignals()
+{
+    mLaunchBtn->blockSignals(false);
 }
 
 Q_IMPLEMENT_USER_METATYPE(CntServicesContact)

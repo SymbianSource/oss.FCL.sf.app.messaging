@@ -65,7 +65,16 @@ public:
     void send(const QString phoneNumber, 
               const QString alias, 
               const QString bodyText);
-    
+              
+    /**
+     * Send message.
+     * @param addressList list of phone numbers and displaynames. 
+     * key is the phone number and value is the display name.
+     * @param bodyText body text.
+     */
+    void send(const QVariantMap addressList, 
+              const QString bodyText = QString());
+
     /**
      * Send message.
      * @param data data to be sent.
@@ -94,7 +103,7 @@ private:
      * Handle sms and mms messge
      * @param msgId message id
      */
-    void handleSmsMmsMsg(int msgId);
+    void handleSmsMmsMsg(int msgId,int msgType);
 
     /**
      * Handle ringtone message

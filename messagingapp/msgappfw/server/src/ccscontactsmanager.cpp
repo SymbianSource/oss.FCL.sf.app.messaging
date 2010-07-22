@@ -16,7 +16,6 @@
  */
 
 // System includes
-#include "qtcontacts.h" 
 #include <QList>
 // User includes
 #include "ccscontactsmanager.h"

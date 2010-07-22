@@ -36,7 +36,7 @@
 #include <StringLoader.h>           // for StringLoader (load and foramt strings from resources)
 #include <CommonContentPolicy.h>
 
-#include <UniDataModel.rsg>           // Viewer/Editor Mimetype strings
+#include <unidatamodel.rsg>           // Viewer/Editor Mimetype strings
 
 #include "UniModelConst.h"
 #include "UniDataUtils.h"

@@ -110,7 +110,14 @@ public:
 
     void ModifyConversationList(
         const CCsClientConversation& aClientConversation);
-
+    
+	/**
+	 * PartialDeleteConversationList
+	 * This is for handling the partial delete of conversation event from server
+	 * @param aClientConversation CCsClientConversation& - reference to client conversation
+	 */
+    void PartialDeleteConversationList(
+            const CCsClientConversation& aClientConversation);
     /**
      * RefreshConversationList
      * This is for handling refresh asynchronusly from the server.
@@ -129,7 +136,18 @@ private:
      * Handles Conversation List received from server and updates into model
      */
     void HandleConversationListL();
-
+    
+    /**
+     * CompareByConvTimeStamp
+     * Helper method to compare conversations by timestamp
+     * 
+     * @param aObj1  CCsConversation object
+     * @param aObj2  CCsConversation object
+     * @return value based of timestamp comparison
+     */
+    static TInt CompareByConvTimeStamp(const CCsClientConversation& aObj1,
+            const CCsClientConversation& aObj2);
+   
 private:
     // data
 

@@ -23,8 +23,8 @@
 // USER INCLUDES
 #include "msgunieditorsubject.h"
 #include "UniEditorGenUtils.h"
-#include "msgunifiededitorlineedit.h"
-#include "msgmonitor.h"
+#include "msgunieditorlineedit.h"
+#include "msgunieditormonitor.h"
 
 // Localized Constants
 #define LOC_SUBJECT hbTrId("txt_messaging_formlabel_subject")
@@ -115,8 +115,8 @@ void MsgUnifiedEditorSubject::onContentsChanged(const QString& text)
 {
     // reject any text input if mms size limit is reached
     int futureSize = subjectSize() +
-            MsgMonitor::containerSize() + MsgMonitor::bodySize();
-    if(futureSize > MsgMonitor::maxMmsSize())
+            MsgUnifiedEditorMonitor::containerSize() + MsgUnifiedEditorMonitor::bodySize();
+    if(futureSize > MsgUnifiedEditorMonitor::maxMmsSize())
     {
         // atomic operation
         disconnect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
@@ -151,7 +151,10 @@ int MsgUnifiedEditorSubject::subjectSize()
 
 void MsgUnifiedEditorSubject::setText(const QString& text)
 {
-    mSubjectEdit->setText(text);
+    if(!text.isEmpty())
+    {
+        mSubjectEdit->setText(text);
+    }
 }
 
 void MsgUnifiedEditorSubject::setFocus()

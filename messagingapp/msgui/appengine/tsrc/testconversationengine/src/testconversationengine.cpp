@@ -23,7 +23,7 @@
 #include "testconversationupdatehandler.h"
 #include <ccsclientconversation.h>
 #include <ccsconversationentry.h>
-#include <s60qconversions.h>
+#include <xqconversions.h>
 #include <conversationsenginedefines.h>
 
 
@@ -103,6 +103,8 @@ void TConversationEngine::MarkConversationReadAndUpdateCV()
             UpdateConvEntry(TestConversationEngineStub::Instance()->
                                 GetConversationID());
     
+    ConversationsEngine::instance()->emitConversationModelUpdated();
+    
     //conversation engine should have emitted signal
     QCOMPARE( convModify.count(), 1 );
 }
@@ -125,6 +127,8 @@ void TConversationEngine::DeleteConversationAndUpdateCV()
     // update the conversation view with deleted entry  
     TestConversationEngineStub::Instance()->UpdateDeletedConvEntry();
 
+    ConversationsEngine::instance()->emitConversationModelUpdated();
+    
     //conversation engine should have emitted signal
     QCOMPARE( convDelete.count(), 1 );
 }
@@ -191,11 +195,11 @@ void TConversationEngine::GetContactDetailsFromConversationID()
           
         //check the bunch of converation client details 
         QCOMPARE(fname,
-               S60QConversions::s60DescToQString(
+               XQConversions::s60DescToQString(
                        *(clientConv->GetDisplayName())));
           
         QCOMPARE(address,
-                S60QConversions::s60DescToQString(
+                XQConversions::s60DescToQString(
                         *(clientConv->GetConversationEntry()->Contact())));
     }
 }
@@ -320,3 +324,16 @@ void TConversationEngine::cleanupTestCase()
     //delete the stub data
     delete TestConversationEngineStub::Instance();
 }
+
+
+//main entry point
+int main(int argc, char *argv[])
+    { 
+    int ret = -1;
+    QCoreApplication app(argc, argv);
+    QObject* tc = new TConversationEngine();
+    ret =  QTest::qExec(tc, argc, argv);
+	delete tc;
+    return ret;
+    }
+

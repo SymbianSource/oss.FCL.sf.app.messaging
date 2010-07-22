@@ -23,6 +23,8 @@
 #include <QStandardItemModel>
 #include <ccsdefs.h>
 #include <sqldb.h>
+#include <QCache>
+#include <HbIcon>
 
 // FORWARD DECLARATIONS
 class CCsConversationEntry;
@@ -83,6 +85,29 @@ public:
      */
     RSqlDatabase& getDBHandle(TBool& isOpen);
 
+    /*
+     * Clears the pixmap cache & model
+     */
+    void clearModel();
+    
+    void emitConversationViewEmpty();
+
+signals:
+
+    /*
+     * Signal emitted to retrieve the pixmap icon
+     */
+    void retrievePreviewIcon(int msgId, QString& filepath) const;
+    
+    void conversationViewEmpty();
+
+private slots:
+
+    /*
+     * Slot which handles retrievePreviewIcon signal
+     */
+    void updatePreviewIcon(int msgId, QString& filePath);
+
 private:
 
     /**
@@ -123,6 +148,31 @@ private:
     void handleBioMessages(QStandardItem& item, 
         const CCsConversationEntry& entry);
 
+    /**
+     * Populates preview icon into the previewicon cache
+     * @param pixmap, QPixmap
+     * @param filePath, filepath to be used if icon is not in Db
+     * @param msgId, key to pixmap in previewicon cache
+     * @param inDb, indicates if icon was available in Db (or) not
+     */    
+    void setPreviewIcon(QPixmap& pixmap, QString& filePath, int msgId,
+        bool inDb);
+
+    /**
+     * Get the preview icon item if available in pixmap cache / create
+     * and return the preview icon
+     * @param msgId, key to pixmap in previewicon cache
+     * @param filePath, filepath to be used if icon is not in cache
+     */
+    HbIcon* getPreviewIconItem(int msgId, QString& filepath) const;
+    
+    /**
+     * Check if a MMS is forwardable or not
+     * @param messageId, message id
+     * @return true/false
+     */
+    bool validateMsgForForward(qint32 messageId);
+
 private:
 
     /**
@@ -158,6 +208,11 @@ private:
      * DB open.
      */
     TBool iSqlDbOpen;
+
+    /*
+     *  preview-icon cache
+     */
+    QCache<int, HbIcon> previewIconCache;
 };
 
 #endif // CONVERSATIONS_MODEL_H

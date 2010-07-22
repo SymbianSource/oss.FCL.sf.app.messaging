@@ -64,7 +64,8 @@ public:
         Provisioning = 0x01,
         VCard = 0x02,
         VCal = 0x03,
-        Audio = 0x04
+        Audio = 0x04,
+        NokiaService = 0x08        
     };
 
     /**

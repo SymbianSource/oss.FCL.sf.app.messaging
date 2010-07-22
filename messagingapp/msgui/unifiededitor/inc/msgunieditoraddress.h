@@ -15,10 +15,10 @@
  *
  */
 
-#ifndef UNIFIED_EDITOR_ADDRESS_H
-#define UNIFIED_EDITOR_ADDRESS_H
+#ifndef MSG_UNIFIED_EDITOR_ADDRESS_H
+#define MSG_UNIFIED_EDITOR_ADDRESS_H
 
-#include <msgunifiededitorbasewidget.h>
+#include <msgunieditorbasewidget.h>
 
 #include <convergedmessageaddress.h>
 #include <QMap>
@@ -132,6 +132,11 @@ private slots:
      * Handle invalid contact dialog useraction
      */
     void handleInvalidContactDialog(HbAction* act);
+    
+    /**
+     * Unblocks signals for pbk buttion after some delay.
+     */
+    void unblockSignals();
 
 private:
     /**
@@ -153,6 +158,13 @@ private:
      * Reset the addresslist to previous list
      */
     void resetToPrevious();
+    
+    /**
+     * checks if the passed sting is a valid address or not.
+     * @param addr
+     * @retunr true/false based on valid/invalid.
+     */
+    bool checkValidAddress(const QString& addr);
 
 private:
 
@@ -202,4 +214,4 @@ private:
     int mExceedsMaxMmsRecipientsBy;
     };
 
-#endif //UNIFIED_EDITOR_ADDRESS_H
+#endif //MSG_UNIFIED_EDITOR_ADDRESS_H

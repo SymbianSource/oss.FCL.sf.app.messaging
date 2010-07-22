@@ -20,7 +20,7 @@
 #ifdef BUILD_TEST_DLL
 #define TEST_EXPORT Q_DECL_EXPORT
 #else
-#define TEST_EXPORT Q_DECL_IMPORT
+#define TEST_EXPORT 
 #endif
 
 // INCLUDES

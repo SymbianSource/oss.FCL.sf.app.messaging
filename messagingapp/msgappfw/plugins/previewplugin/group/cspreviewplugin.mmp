@@ -64,3 +64,5 @@ LIBRARY         fbscli.lib
 LIBRARY         estor.lib 
 LIBRARY         unidatamodel.lib
 LIBRARY         charconv.lib
+LIBRARY         centralrepository.lib
+LIBRARY         MsgMedia.lib

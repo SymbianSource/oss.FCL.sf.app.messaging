@@ -91,10 +91,11 @@ bool MsgServiceInterface::resolveContact(
                                          ContactDetail &contactDetail)
 {
     QString displayLabel = QString("");
+    int count;
     int localId =
             MsgContactHandler::resolveContactDisplayName(address.address(),
                                                          displayLabel,
-                                                         0);
+                                                         count);
 
     if (localId != -1)
     {
@@ -104,5 +105,5 @@ bool MsgServiceInterface::resolveContact(
     }
     
     return false;
-    }
+}
 

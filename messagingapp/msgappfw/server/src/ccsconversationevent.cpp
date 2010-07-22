@@ -31,6 +31,8 @@
 // Default constructor
 // ----------------------------------------------------------------------------
 CCsConversationEvent::CCsConversationEvent()
+    :iClientConversation(NULL),
+    iEvent(KConversationEventNone)
     {
     }
 
@@ -40,8 +42,6 @@ CCsConversationEvent::CCsConversationEvent()
 // ----------------------------------------------------------------------------
 void CCsConversationEvent::ConstructL()
     {
-    iClientConversation = NULL;
-    iEvent = KConversationEventNone;
     }
 
 // ----------------------------------------------------------------------------
@@ -163,6 +163,13 @@ TBool CCsConversationEvent::IsUpdateConversationListEventSet() const
     return iEvent & KConversationListEventUpdate;
     }
 
+// ----------------------------------------------------------------------------
+// CCsConversationEvent::IsPartialDeleteConversationListEventSet
+// ----------------------------------------------------------------------------
+TBool CCsConversationEvent::IsPartialDeleteConversationListEventSet() const
+    {
+    return iEvent & KConversationListEventPartialDelete;
+    }
 // ----------------------------------------------------------------------------
 // CCsNotifyConversationEvent::IsNewConversationEventSet
 // ----------------------------------------------------------------------------

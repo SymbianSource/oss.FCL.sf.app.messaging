@@ -25,14 +25,13 @@
 class HbIconItem;
 class HbTextItem;
 class HbIcon;
-class QGraphicsSceneMouseEvent;
-//class HbGestureSceneFilter;
 class ThumbnailManager;
 
 #include "convergedmessageaddress.h"
 
 /**
- * This class is a custom layout widget for Contact Card layout.
+ * @class MsgContactCardWidget
+ * @brief This class is a custom layout widget for Contact Card layout.
  */
 class MsgContactCardWidget: public HbWidget
 {
@@ -85,27 +84,21 @@ public:
      */
     void clearContent();
 
-    /**
-     * for tactile feed back.
-     * Depricated
-     */
-  //  HbFeedback::InstantEffect overrideFeedback(Hb::InstantInteraction interaction) const;
+signals:
 
     /**
-     * To connect/disconnect clicked signal
+     *
      */
-    void connectSignals(bool yes);
+    void conversationIdChanged(qint64 convId);
 
 protected:
-    /**
-     * reimplemented from base class.
-     */
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     /**
-     * reimplemented from base class.
+     * Event handler for gesture events.
+     * Reimplemented from HbWidgetBase.
+     * @see HbWidgetBase
      */
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual void gestureEvent(QGestureEvent *event);
 
 private:
 
@@ -113,27 +106,28 @@ private:
      * Initialization function.
      */
     void init();
-    
+
     /** Helper method to get contact id against phone number.
      * @param value phone number.
      */
     int resolveContactId(const QString& value);
 
     /**
-     * Helper method to set back ground.
+     * Handles pressed state.
      */
-    void setBackGround(const QString& bg);
+    void setPressed(bool pressed);
 
 private slots:
-    /**
-     * show longpress menu for attachment object
-     */
-    void handleLongPress(QPointF position);
 
     /**
-     * Helper method to initialize gesture.
+     * show longp tap.
      */
-    void initGesture();
+    void handleLongTap(const QPointF &position);
+    
+    /**
+     * handles short tap.
+     */
+    void handleShortTap(const QPointF &position);
 
     /**
      * Slot for handling valid returns from the framework.
@@ -170,26 +164,29 @@ private slots:
      * Called after service request is completed.
      */
     void onServiceRequestCompleted();
-    
+
     /**
      * Slot hit when the thumbnail is ready.
      */
     void thumbnailReady(const QPixmap& pixmap, void *data, int id, int error);
 
-signals:
     /**
-     * Emitted when contact card is short tapped.
+     * Ignore gesture events.
      */
-    void clicked();
+    void ignoreSignals(bool yes);
+    
+    /**
+     * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture
+     * events back to back.  
+     */
+    void regrabGesture();
 
 private:
-    // Data
-
 
     /**
-     * To supress short tap if long tap triggered.
+     * Bool variable on which gesture events are accepted/ignored.
      */
-    bool mMenuShown;
+    bool mIgnoreEvents;
 
     /**
      * Contact Number for the conversation
@@ -218,11 +215,6 @@ private:
      * Own.
      */
     HbTextItem *mAddressTextItem;
-
-    /**
-     * gesture filter for long press.
-     */
-  //  HbGestureSceneFilter* mGestureFilter;
 
     /**
      * ThumbnailManager

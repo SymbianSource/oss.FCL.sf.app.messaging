@@ -32,8 +32,6 @@ HEADERS += inc/msgnotificationdialogwidget.h
 SOURCES += src/msgnotificationdialogplugin.cpp
 SOURCES += src/msgnotificationdialogwidget.cpp
 
-RESOURCES += msgnotificationdialogplugin.qrc
-
 symbian: {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = CAP_GENERAL_DLL

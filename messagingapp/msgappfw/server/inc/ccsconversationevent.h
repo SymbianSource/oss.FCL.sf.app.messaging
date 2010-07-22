@@ -115,6 +115,12 @@ public:
      */
     TBool IsDeleteConversationListEventSet() const;
     
+	/**
+	 * Is partial delete conversation event set in this object
+	 * @ retrun TBool
+	 */
+    TBool IsPartialDeleteConversationListEventSet() const;
+    
     /**
      * Is new conversation event set in this object 
      * 

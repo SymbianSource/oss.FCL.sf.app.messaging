@@ -24,19 +24,19 @@
 #include <xqservicerequest.h>
 #include <QString>
 #include <w32std.h>
-#include <APGTASK.H> 
+#include <apgtask.h> 
 #include <XQSettingsManager>
 #include <xqpublishandsubscribeutils.h>
+#include <xqsystemtoneservice.h>
+#include <xqconversions.h>
 
 //USER INCLUDES
 #include "msgnotifier.h"
 #include "msgnotifier_p.h"
-#include "s60qconversions.h"
 #include "msgstorehandler.h"
 #include "msginfodefs.h"
 #include "conversationidpsconsts.h"
 #include "debugtraces.h"
-
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::MsgNotifierPrivate
@@ -80,6 +80,12 @@ MsgNotifierPrivate::~MsgNotifierPrivate()
         delete mSettingsManager;
         }
     
+    if(mSts)
+        {
+        delete mSts;
+        mSts = NULL;
+        }
+    
     QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Exit")
 }
 
@@ -114,6 +120,8 @@ void MsgNotifierPrivate::initL()
     
     QDEBUG_WRITE_FORMAT("MsgNotifierPrivate::initL "
                            "writing ret value",success)
+    
+    mSts = new XQSystemToneService();
     
     QDEBUG_WRITE("MsgNotifierPrivate::initL : Exit")
 }
@@ -205,16 +213,19 @@ void MsgNotifierPrivate::processListEntry(
         if(displayName)
             {
             notifData.mDisplayName = 
-                                S60QConversions::s60DescToQString(*displayName);
+                                XQConversions::s60DescToQString(*displayName);
             }        
         if(number)
             {
-            notifData.mContactNum =  S60QConversions::s60DescToQString(*number);
+            notifData.mContactNum =  XQConversions::s60DescToQString(*number);
             }
         if(descrp)
             {
-            notifData.mDescription = S60QConversions::s60DescToQString(*descrp);
+            notifData.mDescription = XQConversions::s60DescToQString(*descrp);
             }
+        
+        //Play new message alert tone.
+        mSts->playTone(XQSystemToneService::SmsAlertTone);
         
         // check whether opened cv id and received 
         // cv id are same and show notification
@@ -289,39 +300,44 @@ void MsgNotifierPrivate::displayOutboxIndications(MsgInfo data)
 // @see MsgNotifierPrivate.h
 // ----------------------------------------------------------------------------
 void MsgNotifierPrivate::displayFailedNote(MsgInfo info)
-{
-    // TODO: use XQAiwRequest
-    QDEBUG_WRITE("[MsgNotifierPrivate::handleFailedState] : entered")
-    // change to com.nokia.symbian.messaging (servicename), IMsgErrorNotifier
-    // as the service name.
-    XQServiceRequest snd("messaging.com.nokia.symbian.MsgErrorNotifier",
-        "displayErrorNote(QVariantList)", false);
+    {
+    QDEBUG_WRITE("MsgNotifierPrivate::displayFailedNote start.")
+            
+    // check whether opened cv id and received 
+    // cv id are same then dont show failed note
+    if (!showNotification(info.mConversationId))
+        {
+        return;
+        }
 
-    QVariantList args;
+    //Even if name string is empty we shall add name into args
+    QString nameString;
+
     info.mDisplayName.removeDuplicates();
     info.mDisplayName.sort();
-    
-    QString nameString;
-    
+
     nameString.append(info.mDisplayName.at(0));
-    for(int i = 1; i < info.mDisplayName.count(); ++i){
+    for (int i = 1; i < info.mDisplayName.count(); ++i)
+        {
         nameString.append(", ");
         nameString.append(info.mDisplayName.at(i));
-    }
-      
-    //Even if name string is empty we shall add name into args
-    QVariant nameV(nameString);
-    args << nameV;
+        }
 
-    QDEBUG_WRITE("[MsgNotifierPrivate::handleFailedState] : name and contactnumber")
-
+    // create request arguments
+    QVariantList args;
+    args << QVariant(nameString);
     args << info.mConversationId;
     args << info.mMessageType;
+
+    // TODO: use XQAiwRequest
+    XQServiceRequest snd("messaging.com.nokia.symbian.MsgErrorNotifier",
+            "displayErrorNote(QVariantList)", false);
+
     snd << args;
     snd.send();
-    QDEBUG_WRITE("[MsgNotifierPrivate::handleFailedState] : left")
-
-}
+    
+    QDEBUG_WRITE("MsgNotifierPrivate::displayFailedNote end.")
+    }
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::showNotification
@@ -363,4 +379,11 @@ bool MsgNotifierPrivate::showNotification(int receivedMsgConvId)
     wsSession.Close();
     return showNotification;
 }
+// ----------------------------------------------------------------------------
+// MsgNotifierPrivate::PartialDeleteConversationList
+// @see mcsconversationclientchangeobserver.h
+// ----------------------------------------------------------------------------
+void MsgNotifierPrivate::PartialDeleteConversationList(
+        const CCsClientConversation& aClientConversation){/*empty implementation*/}
+
 //EOF

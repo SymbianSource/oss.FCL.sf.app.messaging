@@ -51,13 +51,10 @@ ConversationsEnginePrivate::ConversationsEnginePrivate(
 //---------------------------------------------------------------
 ConversationsEnginePrivate::~ConversationsEnginePrivate()
 {
-    delete mConvChangeHandler;
-    
-    delete mConvListChangeHandler;
-    
+
     if( mClientConv )
     {        
-        if(mServer)
+        if(mServer && mConvChangeHandler)
         {    
         TRAP_IGNORE(mServer->RemoveConversationChangeEventL(
                 mConvChangeHandler,mClientConv));
@@ -65,7 +62,7 @@ ConversationsEnginePrivate::~ConversationsEnginePrivate()
         delete mClientConv;
         mClientConv = NULL;
     }
-    if(mServer)
+    if(mServer && mConvListChangeHandler)
     {
         TRAP_IGNORE(mServer->RemoveConversationListChangeEventL(
                 mConvListChangeHandler));
@@ -74,6 +71,11 @@ ConversationsEnginePrivate::~ConversationsEnginePrivate()
         delete mServer;
         mServer = NULL;
     }
+    
+    delete mConvChangeHandler;
+    
+    delete mConvListChangeHandler;
+    
 }
 
 //---------------------------------------------------------------
@@ -219,6 +221,14 @@ TInt ConversationsEnginePrivate::getConversationIdFromAddressL(TDesC& contactAdd
     return convId;
 }
 
+//---------------------------------------------------------------
+// ConversationsEnginePrivate::getConversationFromConversationId
+// @see header
+//---------------------------------------------------------------
+CCsClientConversation* ConversationsEnginePrivate::getConversationFromConversationIdL(TInt aConversationId)
+{
+     return mServer->GetConversationFromConversationIdL(aConversationId);
+}
 
 //---------------------------------------------------------------
 // ConversationsEnginePrivate::clearConversationsL
@@ -230,15 +240,17 @@ void ConversationsEnginePrivate::clearConversationsL()
     
     mConvChangeHandler->Cancel();
     //Clear conversations model before populating with new data 
-    mConversationsModel->clear();  
+    mConversationsModel->clearModel();
     
     // Delete old CCsClientConversation object 
     // Remove the old Conversation change observer
     if(mClientConv)
-    {    
-        mServer->RemoveConversationChangeEventL (mConvChangeHandler ,mClientConv);
+    {   
+        int error = KErrNone;
+        TRAP(error, mServer->RemoveConversationChangeEventL (mConvChangeHandler ,mClientConv));
         delete mClientConv;
         mClientConv = NULL;
+        User::LeaveIfError(error);
     }
     
     QCRITICAL_WRITE("ConversationsEnginePrivate::clearConversationsL end.");
@@ -253,6 +265,30 @@ void ConversationsEnginePrivate::registerForConversationUpdatesL()
     //Add the Conversation Change for new  conversationId
     if(mClientConv)
     {    
+    mServer->RequestConversationChangeEventL (mConvChangeHandler ,mClientConv);
+    }
+}
+
+//---------------------------------------------------------------
+// ConversationsEnginePrivate::deRegisterCVUpdatesTemporary
+// @see header
+//---------------------------------------------------------------
+void ConversationsEnginePrivate::deRegisterCVUpdatesTemporary()
+{
+    mServer->RemoveConversationChangeEventL (mConvChangeHandler ,mClientConv);
+}
+
+//---------------------------------------------------------------
+// ConversationsEnginePrivate::registerAgainForConversationUpdatesL
+// @see header
+//---------------------------------------------------------------
+void ConversationsEnginePrivate::registerAgainForConversationUpdatesL(
+        int newConversationId)
+{
+    //Add the Conversation Change for new  conversationId
+    if(mClientConv)
+    {    
+    mClientConv->SetConversationEntryId(newConversationId);
     mServer->RequestConversationChangeEventL (mConvChangeHandler ,mClientConv);
     }
 }

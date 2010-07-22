@@ -104,7 +104,6 @@ void ConversationsChangeHandler::ModifyConversation(
     const CCsConversationEntry& aConvEntry)
 {
     mConversationsModel->addRow(aConvEntry, true);
-    ConversationsEngine::instance()->emitConversationModelUpdated();
 }
 
 // ---------------------------------------------------------------------------
@@ -115,7 +114,13 @@ void ConversationsChangeHandler::DeleteConversation(
     const CCsConversationEntry& aConvEntry)
 {
     mConversationsModel->deleteRow(aConvEntry.EntryId());
-    ConversationsEngine::instance()->emitConversationModelUpdated();
+    
+    //check if the CV model row count has become zero
+    // then needs to emit signal
+    if (mConversationsModel->rowCount() == 0)
+    {
+        mConversationsModel->emitConversationViewEmpty();
+    }
 }
 
 //-----------------------------------------------------------------------

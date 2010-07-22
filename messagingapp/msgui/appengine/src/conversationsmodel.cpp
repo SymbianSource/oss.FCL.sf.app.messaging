@@ -19,26 +19,39 @@
 #include "conversationsenginedefines.h"
 #include "conversationmsgstorehandler.h"
 #include "convergedmessage.h"
-#include "s60qconversions.h"
+#include <xqconversions.h>
 #include "conversationsengineutility.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
 #include "ringbc.h"
 #include "msgcontacthandler.h"
+#include "mmsconformancecheck.h"
 #include <ccsconversationentry.h>
+#include <fileprotectionresolver.h>
 
 #include "debugtraces.h"
 
 #include <QFile>
 #include <QFileInfo>
 #include <s32mem.h>
+#include <s32strm.h>
+#include <fbs.h>
 #include <ccsdefs.h>
 
 //CONSTANTS
 _LIT(KDbFileName, "c:[2002A542]conversations.db");
-// preview sql query
-_LIT(KSelectConvMsgsStmt, "SELECT message_id, subject, body_text, preview_path, msg_property FROM conversation_messages WHERE message_id=:message_id ");
 
+// preview sql query
+_LIT(KSelectConvMsgsStmt, "SELECT message_id, msg_processingstate, subject, body_text, preview_path, msg_property, preview_icon FROM conversation_messages WHERE message_id=:message_id ");
+
+//selecet preview-icon query
+_LIT(KSelectPreviewIconStmt,"SELECT  message_id, preview_icon FROM conversation_messages WHERE message_id = :message_id ");
+
+// preview-cache max cost (items)
+const int CACHE_COST =  50;
+//Preview thumbnail size
+const int KWidth = 9.5 * 6.7;
+const int KHeight = 9.5 * 6.7;
 //---------------------------------------------------------------
 // ConversationsModel::ConversationsModel
 // Constructor
@@ -52,6 +65,11 @@ ConversationsModel::ConversationsModel(ConversationMsgStoreHandler* msgStoreHand
     {
         iSqlDbOpen = ETrue;
     }
+    previewIconCache.setMaxCost(CACHE_COST);
+
+    int err = connect(this, SIGNAL(retrievePreviewIcon(int, QString&)), this,
+        SLOT(updatePreviewIcon(int, QString&)));
+    QCRITICAL_WRITE_FORMAT("Error from connect()", err)
     iDataModelPluginLoader = new UniDataModelLoader;
     iMmsDataPlugin = iDataModelPluginLoader->getDataModelPlugin(ConvergedMessage::Mms);
     iBioMsgPlugin = iDataModelPluginLoader->getDataModelPlugin(ConvergedMessage::BioMsg);
@@ -65,6 +83,9 @@ ConversationsModel::~ConversationsModel()
 {
     //Close SQL-DB
     iSqlDb.Close();
+
+	//clear preview-cache
+    previewIconCache.clear();
 
     if (iDataModelPluginLoader) {
         delete iDataModelPluginLoader;
@@ -146,6 +167,13 @@ QVariant ConversationsModel::data(const QModelIndex & index, int role) const
         value = item->data(SendingState);
         break;
     }
+    case PreviewIcon:
+    {
+        QString filepath(item->data(Attachments).toString());
+        int msgId = item->data(ConvergedMsgId).toInt();
+        HbIcon *icon = getPreviewIconItem(msgId, filepath);
+        return *icon;
+    }
     case MessagePriority:
     {
         value = item->data(MessagePriority);
@@ -178,7 +206,7 @@ QVariant ConversationsModel::data(const QModelIndex & index, int role) const
     }
     case DisplayName: // Fall through start
         value = item->data(DisplayName);
-        break;    
+        break;
     case Avatar: // Fall througn end
         value = item->data(Avatar);
         break;
@@ -272,10 +300,10 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
     HBufC* description = entry.Description();
     QString subject("");
     if (description && description->Length()) {
-        subject = (S60QConversions::s60DescToQString(*description));     
+        subject = (XQConversions::s60DescToQString(*description));     
     }
 
-    // time stamp 
+    // time stamp
     TTime unixEpoch(KUnixEpoch);
     TTimeIntervalSeconds seconds;
     TTime timeStamp(entry.TimeStamp());
@@ -285,7 +313,7 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
     //contact details
     HBufC* contact = entry.Contact();
     if (contact && contact->Length()) {
-        item.setData(S60QConversions::s60DescToQString(*contact), ConversationAddress);
+        item.setData(XQConversions::s60DescToQString(*contact), ConversationAddress);
     }
 
     // message type.
@@ -322,7 +350,7 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
         item.setData(ConvergedMessage::Outbox, MessageLocation);
     }
 
-    //message specific handling    
+    //message specific handling
     if (msgType == ConvergedMessage::Mms) {
         QCRITICAL_WRITE("ConversationsModel::populateItem  MMS start.")
         handleMMS(item, entry);
@@ -347,6 +375,22 @@ void ConversationsModel::populateItem(QStandardItem& item, const CCsConversation
 }
 
 //---------------------------------------------------------------
+// ConversationsModel::validateMsgForForward
+// @see header file
+//---------------------------------------------------------------
+bool ConversationsModel::validateMsgForForward(qint32 messageId)
+{
+    bool retValue = true;
+    //Validate if the mms msg can be forwarded or not
+    MmsConformanceCheck* mmsConformanceCheck = new MmsConformanceCheck;
+    retValue = mmsConformanceCheck->validateMsgForForward(messageId);
+
+    delete mmsConformanceCheck;
+    return retValue;
+}
+
+
+//---------------------------------------------------------------
 // ConversationsModel::handleMMS
 // @see header
 //---------------------------------------------------------------
@@ -357,7 +401,7 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
 
     bool isEntryInDb = false;
     TInt err = KErrNone;
-    
+
     //check if db is open and query db
     if (iSqlDbOpen)
     {
@@ -368,51 +412,100 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
         if (KErrNone == err)
             {
             TInt msgIdIndex = sqlSelectStmt.ParameterIndex(_L(":message_id"));
+            TInt msgProcessingStateIndex = sqlSelectStmt.ColumnIndex(_L("msg_processingstate"));
             TInt subjectIndex = sqlSelectStmt.ColumnIndex(_L("subject"));
             TInt bodyIndex = sqlSelectStmt.ColumnIndex(_L("body_text"));
             TInt previewPathIndex = sqlSelectStmt.ColumnIndex(
                     _L("preview_path"));
             TInt msgpropertyIndex = sqlSelectStmt.ColumnIndex(
-                    _L("msg_property"));
+                _L("msg_property"));
+            TInt previewIconIndex = sqlSelectStmt.ColumnIndex(
+                _L("preview_icon"));
 
             err = sqlSelectStmt.BindInt(msgIdIndex, msgId);
-            
+
             // populate item
             if ((KErrNone == err) && (sqlSelectStmt.Next() == KSqlAtRow))
                 {
-                RBuf subjectBuffer;
-                subjectBuffer.Create(sqlSelectStmt.ColumnSize(subjectIndex));
-                sqlSelectStmt.ColumnText(subjectIndex, subjectBuffer);
+                int msgProcessingState = 0;
+                msgProcessingState = sqlSelectStmt.ColumnInt(
+                        msgProcessingStateIndex);
+                if (msgProcessingState == EPreviewMsgProcessed)
+                    {
+                    // use entry to populate model only when,
+                    // entry is present in DB and its processing is over.
+                    RBuf subjectBuffer;
+                    subjectBuffer.Create(sqlSelectStmt.ColumnSize(
+                            subjectIndex));
+                    sqlSelectStmt.ColumnText(subjectIndex, subjectBuffer);
 
-                item.setData(
-                        S60QConversions::s60DescToQString(subjectBuffer),
-                        Subject);
-                subjectBuffer.Close();
+                    item.setData(XQConversions::s60DescToQString(
+                            subjectBuffer), Subject);
+                    subjectBuffer.Close();
 
-                RBuf bodyBuffer;
-                bodyBuffer.Create(sqlSelectStmt.ColumnSize(bodyIndex));
-                sqlSelectStmt.ColumnText(bodyIndex, bodyBuffer);
+                    RBuf bodyBuffer;
+                    bodyBuffer.Create(sqlSelectStmt.ColumnSize(bodyIndex));
+                    sqlSelectStmt.ColumnText(bodyIndex, bodyBuffer);
 
-                item.setData(S60QConversions::s60DescToQString(bodyBuffer),
-                        BodyText);
-                bodyBuffer.Close();
+                    item.setData(
+                            XQConversions::s60DescToQString(bodyBuffer),
+                            BodyText);
+                    bodyBuffer.Close();
 
-                RBuf previewPathBuffer;
-                previewPathBuffer.Create(sqlSelectStmt.ColumnSize(
-                        previewPathIndex));
-                sqlSelectStmt.ColumnText(previewPathIndex, previewPathBuffer);
+                    RBuf previewPathBuffer;
+                    previewPathBuffer.Create(sqlSelectStmt.ColumnSize(
+                            previewPathIndex));
+                    sqlSelectStmt.ColumnText(previewPathIndex,
+                            previewPathBuffer);
 
-                //Rightnow set inside attachments
-                item.setData(S60QConversions::s60DescToQString(
-                        previewPathBuffer), Attachments);
-                previewPathBuffer.Close();
+                    //Rightnow set inside attachments
+                    QString attachmentPath(XQConversions::s60DescToQString(
+                            previewPathBuffer));
 
-                int msgProperty = 0;
-                msgProperty = sqlSelectStmt.ColumnInt(msgpropertyIndex);
-                item.setData(msgProperty, MessageProperty);
+                    item.setData(attachmentPath, Attachments);
+                    previewPathBuffer.Close();
 
-                //set flag to disable fallback option
-                isEntryInDb = true;
+                    int msgProperty = 0;
+                    msgProperty = sqlSelectStmt.ColumnInt(msgpropertyIndex);
+                    item.setData(msgProperty, MessageProperty);
+
+                    RSqlColumnReadStream stream;
+                    //Get data from binary column BLOB
+                    TInt err = stream.ColumnBinary(sqlSelectStmt,
+                            previewIconIndex);
+
+                    QCRITICAL_WRITE_FORMAT("Error from ColumnBinary()", err)
+
+                    if (err == KErrNone)
+                        {
+                        CFbsBitmap *bitmap = new CFbsBitmap;
+                        TRAPD(err,bitmap->InternalizeL(stream));
+                        QCRITICAL_WRITE_FORMAT("Error from bitmap InternalizeL()", err)
+
+                        //convert bitmap to pixmap
+                        if (err == KErrNone)
+                            {
+                            TSize size = bitmap->SizeInPixels();
+                            int bytesPerLine = bitmap->ScanLineLength(
+                                    size.iWidth, bitmap->DisplayMode());
+                            const uchar* dataPtr =
+                                    (const uchar*) bitmap->DataAddress();
+
+                            QPixmap pixmap = QPixmap::fromImage(QImage(
+                                    dataPtr, size.iWidth, size.iHeight,
+                                    bytesPerLine, QImage::Format_RGB16));
+
+                            setPreviewIcon(pixmap, attachmentPath, msgId,
+                                    true);
+
+                            }
+                        //remove bitmap
+                        delete bitmap;
+                        }
+
+                    //set flag to disable fallback option
+                    isEntryInDb = true;
+                    }
                 }
             }
         sqlSelectStmt.Close();
@@ -422,12 +515,22 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
     //populate from data plugins
     if (!isEntryInDb || err != KErrNone)
     {
-        iMmsDataPlugin->setMessageId(entry.EntryId());
+        int error = iMmsDataPlugin->setMessageId(entry.EntryId());
+        if(error != KErrNone)
+        {
+            // skip all
+            return;
+        }
         int msgProperty = 0;
 
         if (iMmsDataPlugin->attachmentCount() > 0)
         {
             msgProperty |= EPreviewAttachment;
+        }
+
+        if(validateMsgForForward(entry.EntryId()))
+        {
+            msgProperty |= EPreviewForward;
         }
 
         //subject
@@ -457,24 +560,48 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                     isBodyTextSet = true;
                     file.close();
                 }
-                if (!isImageSet && objectList[index]->mimetype().contains(
+                if (!isVideoSet && !isImageSet && objectList[index]->mimetype().contains(
                     "image"))
                 {
                     isImageSet = true;
                     msgProperty |= EPreviewImage;
+                    if (objectList[index]->isProtected())
+                    {
+                        msgProperty |= EPreviewProtectedImage;
+                    }
+                    if (objectList[index]->isCorrupted())
+                    {
+                        msgProperty |= EPreviewCorruptedImage;
+                    }
                     imagePath = objectList[index]->path();
                 }
-                if (!isAudioSet && objectList[index]->mimetype().contains(
+                if (!isVideoSet && !isAudioSet && objectList[index]->mimetype().contains(
                     "audio"))
                 {
                     msgProperty |= EPreviewAudio;
+                    if (objectList[index]->isProtected())
+                    {
+                        msgProperty |= EPreviewProtectedAudio;
+                    }
+                    if (objectList[index]->isCorrupted())
+                    {
+                        msgProperty |= EPreviewCorruptedAudio;
+                    }
                     isAudioSet = true;
                 }
-                if (!isVideoSet && objectList[index]->mimetype().contains(
+                if (!( isImageSet || isAudioSet) && !isVideoSet && objectList[index]->mimetype().contains(
                     "video"))
                 {
                     isVideoSet = true;
                     msgProperty |= EPreviewVideo;
+                    if (objectList[index]->isProtected())
+                    {
+                        msgProperty |= EPreviewProtectedVideo;
+                    }
+                    if (objectList[index]->isCorrupted())
+                    {
+                        msgProperty |= EPreviewCorruptedVideo;
+                    }
                     videoPath = objectList[index]->path();
                 }
             }
@@ -483,14 +610,28 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                     delete slide;
                 }
         }
+        QPixmap pixmap;
         //populate item  with the attachment list
+        //TODO: This code is not required bcoz video icon is show and not preview  
         if (isVideoSet)
         {
             item.setData(videoPath, Attachments);
+            // Store thumbnail only for non protected, non corrupted content.
+            if (!(EPreviewProtectedVideo & msgProperty) &&
+                !(EPreviewCorruptedVideo & msgProperty))
+            {
+                setPreviewIcon(pixmap, videoPath, msgId, false);
+            }
         }
         else if (isImageSet)
         {
             item.setData(imagePath, Attachments);
+            // Store thumbnail only for non protected, non corrupted content.
+            if (!(EPreviewProtectedImage & msgProperty) &&
+                !(EPreviewCorruptedImage & msgProperty))
+            {
+                setPreviewIcon(pixmap, imagePath, msgId, false);
+            }
         }
         //populate msgProperty
         item.setData(msgProperty, MessageProperty);
@@ -520,28 +661,28 @@ void ConversationsModel::handleMMSNotification(QStandardItem& item,
     {
         return;
     }
-    
+
     // fetch relevent info to show in CV
     // msg size
     QString estimatedMsgSizeStr = QString("%1").arg(0);
     estimatedMsgSizeStr.append(" Kb");
-    TRAP_IGNORE(estimatedMsgSizeStr = 
+    TRAP_IGNORE(estimatedMsgSizeStr =
             mMsgStoreHandler->NotificationMsgSizeL());
-    
+
     // msg class type
     QString classInfoStr = mMsgStoreHandler->NotificationClass();
-    
+
     // notification expiry date
     //TODO: Need to do localization of digits used to show expiry time
     TTime expiryTime;
     QString expiryTimeStr;
     mMsgStoreHandler->NotificationExpiryDate(expiryTime, expiryTimeStr);
-    
+
     // notification state e.g. waiting, retrieving etc
     QString statusStr;
     int status;
     mMsgStoreHandler->NotificationStatus(status, statusStr);
-    
+
     // create data for bodytext role
     QString dataText;
     dataText.append("Size: "); // TODO: use logical str name
@@ -580,7 +721,7 @@ void ConversationsModel::handleBlueToothMessages(QStandardItem& item,
 {
     //TODO, needs to be revisited again, once BT team provides the solution for
     //BT received as Biomsg issue.
-    QString description = S60QConversions::s60DescToQString(*(entry.Description()));
+    QString description = XQConversions::s60DescToQString(*(entry.Description()));
 
     if (description.contains(".vcf") || description.contains(".ics")) // "vCard"
     {
@@ -591,8 +732,8 @@ void ConversationsModel::handleBlueToothMessages(QStandardItem& item,
         QString displayName = MsgContactHandler::getVCardDisplayName(
                 description);
         item.setData(displayName, BodyText);
-    }    
-    else 
+    }
+    else
     {
         if (description.contains(".vcs")) // "vCalendar"
         {
@@ -626,10 +767,11 @@ void ConversationsModel::handleBioMessages(QStandardItem& item, const CCsConvers
             QString attachmentPath = attList[0]->path();
 
             //get display-name and set as bodytext
-            QString displayName = 
+            QString displayName =
                     MsgContactHandler::getVCardDisplayName(
                             attachmentPath);
             item.setData(displayName, BodyText);
+            item.setData(attachmentPath, Attachments);
 
             // clear attachement list : its allocated at data model
             while (!attList.isEmpty()) {
@@ -659,7 +801,7 @@ void ConversationsModel::handleBioMessages(QStandardItem& item, const CCsConvers
         HBufC* description = entry.Description();
         QString subject("");
         if (description && description->Length()) {
-            subject = (S60QConversions::s60DescToQString(*description));
+            subject = (XQConversions::s60DescToQString(*description));
             item.setData(subject, BodyText);
         }
     }
@@ -673,5 +815,165 @@ RSqlDatabase& ConversationsModel::getDBHandle(TBool& isOpen)
 {
     isOpen = iSqlDbOpen;
     return iSqlDb;
+}
+
+//---------------------------------------------------------------
+// ConversationsModel::setPreviewIcon()
+// @see header
+//---------------------------------------------------------------
+void ConversationsModel::setPreviewIcon(QPixmap& pixmap, QString& filePath,
+    int msgId, bool inDb)
+{
+
+    //Since the population happens in reverse this check is needed so that
+    //most recent items have their icons present in cache
+    if (previewIconCache.totalCost() >= previewIconCache.maxCost())
+        return;
+
+    // if not found in db, set from file path
+    if (!inDb)
+    {
+        QPixmap pixmap(filePath);
+        QPixmap scaledPixmap = pixmap.scaled(KWidth, KHeight, Qt::IgnoreAspectRatio);
+        HbIcon *previewIcon = new HbIcon(scaledPixmap);
+
+        previewIconCache.insert(msgId, previewIcon);
+
+    }
+    else
+    {
+        HbIcon *previewIcon = new HbIcon(pixmap);
+        previewIconCache.insert(msgId, previewIcon);
+    }
+}
+
+//---------------------------------------------------------------
+// ConversationsModel::getPreviewIconItem()
+// @see header
+//---------------------------------------------------------------
+HbIcon* ConversationsModel::getPreviewIconItem(int msgId,
+    QString& filepath) const
+{
+    QCRITICAL_WRITE("ConversationsModel::getPreviewIconItem start.")
+
+    //Initialize icon from the Cache will be NULL if Item not present
+    HbIcon* previewIcon = previewIconCache[msgId];
+    if (!previewIcon)
+    {
+        //This is done in this way as non-const function call cant be done here
+        emit retrievePreviewIcon(msgId, filepath);
+
+        previewIcon = previewIconCache[msgId];
+    }
+
+    QCRITICAL_WRITE("ConversationsModel::getPreviewIconItem start.")
+
+    return previewIcon;
+}
+
+//---------------------------------------------------------------
+// ConversationsModel::updatePreviewIcon()
+// @see header
+//---------------------------------------------------------------
+void ConversationsModel::updatePreviewIcon(int msgId, QString& filePath)
+{
+    QCRITICAL_WRITE("ConversationsModel::updatePreviewIcon start.")
+
+    //sql query to get preview-icon from DB
+    bool imagePreviewed = false;
+    QPixmap pixmap;
+
+    if (iSqlDbOpen)
+    {
+        RSqlStatement sqlSelectPreviewIconStmt;
+        TInt err = sqlSelectPreviewIconStmt.Prepare(iSqlDb,
+            KSelectPreviewIconStmt);
+
+        QCRITICAL_WRITE_FORMAT("Error from Prepare()", err)
+
+        if (err == KErrNone)
+        {
+            //msg_id
+            TInt msgIdIndex = sqlSelectPreviewIconStmt.ParameterIndex(
+                _L(":message_id"));
+            sqlSelectPreviewIconStmt.BindInt(msgIdIndex, msgId);
+
+            // get preview-icon from DB
+            err = sqlSelectPreviewIconStmt.Next();
+            QCRITICAL_WRITE_FORMAT("Error from Next()", err)
+
+            if (err == KSqlAtRow)
+            {
+                TInt previewIconIndex = sqlSelectPreviewIconStmt.ColumnIndex(
+                    _L("preview_icon"));
+
+                RSqlColumnReadStream stream;
+
+                //Get data from binary column BLOB
+                err = stream.ColumnBinary(sqlSelectPreviewIconStmt,
+                    previewIconIndex);
+
+                QCRITICAL_WRITE_FORMAT("Error from ColumnBinary()", err)
+
+                if (err == KErrNone)
+                {
+                    CFbsBitmap *bitmap = new CFbsBitmap;
+                    TRAPD(err,bitmap->InternalizeL(stream));
+                    QCRITICAL_WRITE_FORMAT("Error from bitmap InternalizeL()", err)
+
+                    //convert bitmap to pixmap
+                    if (err == KErrNone)
+                    {
+                        TSize size = bitmap->SizeInPixels();
+                        int bytesPerLine = bitmap->ScanLineLength(size.iWidth,
+                            bitmap->DisplayMode());
+                        const uchar* dataPtr =
+                                (const uchar*) bitmap->DataAddress();
+
+                        pixmap = QPixmap::fromImage(QImage(dataPtr,
+                            size.iWidth, size.iHeight, bytesPerLine,
+                            QImage::Format_RGB16));
+
+                        imagePreviewed = true;
+
+                        QCRITICAL_WRITE("Bitmap Conversion completed")
+                    }
+                    //remove bitmap
+                    delete bitmap;
+                }
+                //close stream
+                stream.Close();
+            }
+        }
+        sqlSelectPreviewIconStmt.Close();
+    }
+
+    // if not found in db, set from file path
+    if (!imagePreviewed)
+    {
+        QPixmap orgPixmap(filePath);
+        pixmap = orgPixmap.scaled(63.65, 63.65, Qt::IgnoreAspectRatio);
+    }
+    HbIcon * previewIcon = new HbIcon(pixmap);
+
+    previewIconCache.insert(msgId, previewIcon);
+
+    QCRITICAL_WRITE("ConversationsModel::updatePreviewIcon end.")
+
+}
+
+//---------------------------------------------------------------
+// ConversationsModel::clearModel()
+// @see header
+//---------------------------------------------------------------
+void ConversationsModel::clearModel()
+{
+    clear();
+    previewIconCache.clear();
+}
+
+void ConversationsModel:: emitConversationViewEmpty()
+{
+    emit conversationViewEmpty();
 }
 //EOF

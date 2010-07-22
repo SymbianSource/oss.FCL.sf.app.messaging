@@ -21,6 +21,7 @@
 // USER INCLUDES
 #include "ccsmsghandler.h"
 #include "msgbiouids.h"
+#include "ccsdefs.h"
 
 // SYSTEM INCLUDES
 #include <smsclnt.h>                   
@@ -68,7 +69,12 @@ CCsMsgHandler* CCsMsgHandler::NewL(MCsMsgObserver *aMsgObserver)
 CCsMsgHandler::~CCsMsgHandler()
     {
     PRINT ( _L("Enter CCsMsgHandler::~CCsMsgHandler") );
-
+    if(iIdle)
+        {
+        iIdle->Cancel();
+        delete iIdle;
+        iIdle=NULL;
+        }
     if(iMsgPluginUtility)
         {
         delete iMsgPluginUtility;
@@ -107,19 +113,6 @@ CCsMsgHandler::~CCsMsgHandler()
         iSession = NULL;
         }
 
-    if ( iRootEntry )
-        {
-        delete iRootEntry;
-        iRootEntry = NULL;
-        }
-
-    if ( iMessages )
-        {
-	    iMessages->Reset();
-        delete iMessages;
-        iMessages = NULL;
-        }
-    
     if(iMessageArray)
     {
         iMessageArray->Reset();
@@ -146,7 +139,7 @@ void CCsMsgHandler::ConstructL(MCsMsgObserver *aMsgObserver)
 
     iMsgPluginUtility = CCsMsgPluginUtility::NewL();
 
-    iConverstationEntryList = new(ELeave)RPointerArray<CCsConversationEntry>();
+    iConverstationEntryList = new(ELeave) RPointerArray<CCsConversationEntry>(1);
 
     iMtmRegistry = CClientMtmRegistry::NewL( *iSession );
 
@@ -159,8 +152,6 @@ void CCsMsgHandler::ConstructL(MCsMsgObserver *aMsgObserver)
     iState = EReadInbox;
 
     iMessageArray = new (ELeave)RArray <TMsvId>(KMessageArrayGranularity);
-
-    iMessageCount = 0;
 
     PRINT ( _L("End CCsMsgHandler::ConstructL") );
     }
@@ -201,12 +192,15 @@ void CCsMsgHandler::ProcessResultsL(TMsvEntry entry)
          entry.Parent() == KMsvSentEntryIdValue ||
          entry.Parent() == KMsvGlobalOutBoxIndexEntryIdValue )
         {
+        CleanupResetAndDestroyPushL(addressList);
+        
         iMsgPluginUtility->CreateContactL(iSession, entry, addressList);
 
         //process entry
         ExtractAddressesL(entry, ERead, addressList);
-
-        addressList.ResetAndDestroy();	
+        
+        // Cleanup addressList
+        CleanupStack::PopAndDestroy(&addressList);
         }
 
     PRINT ( _L("Exit CCsMsgHandler::ProcessResultsL") );
@@ -348,6 +342,7 @@ void CCsMsgHandler::HandleEventL(CMsvEntrySelection* aSelection, TMsvId aParent)
             if ( aParent == KMsvSentEntryIdValue ||
                  aParent == KMsvGlobalInBoxIndexEntryIdValue )
                 {
+                CleanupResetAndDestroyPushL(addressList);
                 // currently server needs number, so getting it from header
                 iMsgPluginUtility->CreateContactL(iSession, entry,
                         addressList);
@@ -356,7 +351,7 @@ void CCsMsgHandler::HandleEventL(CMsvEntrySelection* aSelection, TMsvId aParent)
                 // entry created in sent already exists, hence an update
                 ExtractAddressesL(entry, EUpdate, addressList);
 
-                addressList.ResetAndDestroy();
+                CleanupStack::PopAndDestroy(&addressList);
                 }  
                 
             //for drafts and outbox, the entry changes multiple times,
@@ -372,6 +367,7 @@ void CCsMsgHandler::HandleEventL(CMsvEntrySelection* aSelection, TMsvId aParent)
                     // as it is going to appear in sent items
                     if( ECsSendStateSent != iMsgPluginUtility->GetSendState(entry) )
                         {
+                         CleanupResetAndDestroyPushL(addressList);
                         // currently server needs number, so getting it from header
                         iMsgPluginUtility->CreateContactL(iSession, entry,
                                 addressList);
@@ -382,7 +378,7 @@ void CCsMsgHandler::HandleEventL(CMsvEntrySelection* aSelection, TMsvId aParent)
                         
                         iPrevEntry = entry;
                         
-                        addressList.ResetAndDestroy();
+                        CleanupStack::PopAndDestroy(&addressList);
                         }
                     }//end check changed entry
                 }
@@ -408,13 +404,11 @@ void CCsMsgHandler::CreateAndAddEntryL(const TDesC& aContact,
 
     if (aContact.Length()>0)
         {
-        contact = aContact.AllocL();
-        CleanupStack::PushL(contact);
+        contact = aContact.AllocLC();
         }
     if (aDescription.Length()>0)
         {
-        sDescription = aDescription.AllocL();
-        CleanupStack::PushL(sDescription);
+        sDescription = aDescription.AllocLC();
         }
 
     //use utility to create conversation entry
@@ -504,7 +498,7 @@ void CCsMsgHandler::ExtractAddressesL(
 	      aEntry.iBioType != KUidMsgSubTypeMmsAudioMsg.iUid ) || 
 		  aEntry.iMtm == KSenduiMtmBtUid ) 
         {
-        tmpBuffer = aEntry.iDescription.AllocL();
+        tmpBuffer = aEntry.iDescription.AllocLC();
         description.Set( tmpBuffer->Des() );         
         }    
     else if ( aEntry.iMtm == KSenduiMtmSmsUid )  
@@ -514,7 +508,7 @@ void CCsMsgHandler::ExtractAddressesL(
             
         CRichText& body = iSmsMtm->Body();
         TInt smsLength = body.DocumentLength();      
-        tmpBuffer = HBufC::NewL(smsLength);
+        tmpBuffer = HBufC::NewLC(smsLength);
         TPtr ptr(tmpBuffer->Des());
         body.Extract(ptr, 0);
         description.Set( tmpBuffer->Des() );  
@@ -522,7 +516,7 @@ void CCsMsgHandler::ExtractAddressesL(
     else if ( aEntry.iMtm == KSenduiMtmMmsUid  || 
 	          aEntry.iMtm == KSenduiMMSNotificationUid)  
         {
-        tmpBuffer = aEntry.iDescription.AllocL();
+        tmpBuffer = aEntry.iDescription.AllocLC();
         description.Set( tmpBuffer->Des() );         
 
         iMmsMtm->SwitchCurrentEntryL( aEntry.Id() );
@@ -568,8 +562,12 @@ void CCsMsgHandler::ExtractAddressesL(
         // Unknown
         ProcessEntryL(aEvent, KNullDesC, description, aEntry);       
         }
-
-    delete tmpBuffer;
+    
+    //Cleanup tmpBuffer
+    if ( tmpBuffer )
+        {
+		 CleanupStack::PopAndDestroy();
+        }
 
     PRINT ( _L("Exit CCsMsgHandler::ExtractAddressesL") );
     }
@@ -589,108 +587,59 @@ static TInt CompareOrder(const TMsvId& aFirst, const TMsvId& aSecond)
 // -----------------------------------------------------------------------------
 //
 TInt CCsMsgHandler::UploadMsgL() 
-{
-    switch ( iState ) 
     {
-        case EReadInbox:
+    //Release scheduler for scheduling.    
+    User::After(1);
+    
+    switch ( iState ) 
         {
-            iRootEntry = iSession->GetEntryL(KMsvGlobalInBoxIndexEntryId);
-
-            // Set sort order
-            TMsvSelectionOrdering order;
-            order.SetSorting(EMsvSortById);
-            iRootEntry->SetSortTypeL(order);
-
-            iMessages = iRootEntry->ChildrenL();
-            iMessageCount = iRootEntry->Count();
-            if(iMessageCount)
+        case EReadInbox:
             {
-                for(int i = 0; i < iMessageCount; i ++)
-                {
-                    iMessageArray->Append(iMessages->At(i));
-                }
-            }
-
+            UpdateMessageArrayL(KMsvGlobalInBoxIndexEntryId);
             iState = EReadSent;
-            CleanupL();              
-
             return 1;
-        }
+            }
 
         case EReadSent:
-        {
-            iRootEntry = iSession->GetEntryL(KMsvSentEntryId);
-
-            // Set sort order
-            TMsvSelectionOrdering order;
-            order.SetSorting(EMsvSortById);
-            iRootEntry->SetSortTypeL(order);
-
-            iMessages = iRootEntry->ChildrenL();    
-            iMessageCount = iRootEntry->Count();
-            if(iMessageCount)
             {
-                for(int i = 0; i < iMessageCount; i++ )
-                {
-                    iMessageArray->Append(iMessages->At(i));
-                }
-            }
-
+            UpdateMessageArrayL(KMsvSentEntryId);
             iState = EReadOutbox;
-            CleanupL();
-
             return 1;
-        }
+            }
 
         case EReadOutbox:
-        {
-            iRootEntry = iSession->GetEntryL(KMsvGlobalOutBoxIndexEntryId);
-
-            // Set sort order
-            TMsvSelectionOrdering order;
-            order.SetSorting(EMsvSortById);
-            iRootEntry->SetSortTypeL(order);
-
-            iMessages = iRootEntry->ChildrenL();  
-            iMessageCount = iRootEntry->Count();
-
-            if(iMessageCount)
             {
-                for(int i = 0; i < iMessageCount; i ++)
-                {
-                    iMessageArray->Append(iMessages->At(i));
-                }
-                iMessageCount=0;
-            }
-            iState = ESortEntries;
-            CleanupL();
-
+            UpdateMessageArrayL(KMsvGlobalOutBoxIndexEntryId);
+            iState = ESortEntries;            
             return 1;
-        }
+            }
         case ESortEntries:
-        {
-             //Sort the elements in the array by descending order of TMsvId's
+            {
+            //Sort the elements in the array by descending order of TMsvId's
             TLinearOrder<TMsvId> order(CompareOrder);
             iMessageArray->Sort(order);
             iState = EProcessEntries;
             return 1;
-        }
-        
+            }            
         case EProcessEntries:
-        { 
+            { 
             //Process one entry at a time in sequence
             //Process the first element in the array on each call, till the end
             if(iMessageArray->Count())
-            {
-                ProcessResultsL(iSession->GetEntryL(iMessageArray->operator[](0))->Entry());
+                {
+                CMsvEntry* msvEntry= iSession->
+                        GetEntryL(iMessageArray->operator[](0));
+                CleanupStack::PushL(msvEntry);
+                ProcessResultsL(msvEntry->Entry());
+                CleanupStack::PopAndDestroy(msvEntry);
                 iMessageArray->Remove(0);
-            }
+                }
             else
-            {
+                {
+                iMessageArray->Reset();
                 iMsgObserver->HandleCachingCompleted();
                 return 0; //DONE 
-            }
-
+                }            
             iState = EProcessEntries;
             return 1; 
         }
@@ -722,33 +671,16 @@ void CCsMsgHandler::StartL()
 
     iState = EReadInbox;
     TCallBack callback = TCallBack(UploadMsg, (TAny*) this);
-    iIdle = CIdle::NewL(CActive::EPriorityLow);
+    
+    if(iIdle)
+        {
+        delete iIdle;
+        iIdle = NULL;
+        }
+    iIdle = CIdle::NewL(CActive::EPriorityIdle);
     iIdle->Start(callback);
 
     PRINT ( _L("End CCsMsgHandler::Start") );
-    }
-
-// -----------------------------------------------------------------------------
-// CCsMsgHandler::CleanupL()
-// Helper function for state machine cleanup
-// -----------------------------------------------------------------------------
-//
-void CCsMsgHandler::CleanupL()
-    {
-    if ( iRootEntry )
-        {
-        delete iRootEntry;
-        iRootEntry = NULL;
-        }
-
-    if ( iMessages )
-        {
-	    iMessages->Reset();
-        delete iMessages;
-        iMessages = NULL;
-        }
-
-    iMessageCount = 0;     
     }
 
 // -----------------------------------------------------------------------------
@@ -823,14 +755,52 @@ TCsType CCsMsgHandler::ExtractCsType( const TMsvEntry& aEntry)
             else if (aEntry.iBioType == KMsgBioUidVCalendar.iUid)
                 {
                 type = ECsBioMsg_VCal;
-                }            
-            }
-            break;
-        default:
-            type = ECsUnknown;           
-	    	break;
+       		 }
+       		 else if (aEntry.iBioType == KMsgBioNokiaServiceMessage.iUid) {
+            	type = ECsBioMgs_NokiaService;
         }
-    return (type);  
+    }
+        break;
+    default:
+        type = ECsUnknown;
+        break;
+    }
+    return (type);
+}
+// -----------------------------------------------------------------------------
+// void CCsMsgHandler::UpdateMessageArrayL(const TMsvId& aFolderId)
+// Update iMessageArray with the message ID before upload message to csserver. 
+// -----------------------------------------------------------------------------
+//
+void CCsMsgHandler::UpdateMessageArrayL(const TMsvId& aFolderId)
+    {
+    CMsvEntry* msvEntry = iSession->GetEntryL(aFolderId);
+    CleanupStack::PushL(msvEntry);
+    // Set sort order
+    TMsvSelectionOrdering order;
+    order.SetSorting(EMsvSortById);
+    msvEntry->SetSortTypeL(order);
+
+    CMsvEntrySelection* messages = msvEntry->ChildrenL();  
+    // Cleanup msvEntry
+    CleanupStack::PopAndDestroy(msvEntry);
+    CleanupStack::PushL(messages);
+
+    TInt messageCount = messages->Count();
+    
+    // In case of large number of message caching
+    // to avoid multiple reallocation alloc memory
+    // one shot.
+    if( messageCount > KMessageArrayGranularity)
+        iMessageArray->Reserve(messageCount);
+    
+    for(int i = 0; i < messageCount; i ++)
+        {
+        TMsvId msgId=messages->At(i);
+        iMessageArray->Append(msgId);
+        }
+    // Cleanup messages
+    CleanupStack::PopAndDestroy(messages); 
     }
 // End of file
 

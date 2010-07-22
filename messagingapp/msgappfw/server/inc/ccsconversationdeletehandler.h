@@ -106,6 +106,13 @@ private:
      * Conversation Id currently being deleted.
      */
     TInt iConversationId;
+    
+    /**
+     *  Number of Messages in Sending state that are not deleted
+     */
+    TInt iSendStateMsgs;
+    
+    
     };
 
 #endif // __C_CS_CONVERSATION_DELETE_HANDLER_H__

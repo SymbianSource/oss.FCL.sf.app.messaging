@@ -49,6 +49,5 @@
 
 ; Conversation Server
 "\epoc32\release\armv5\udeb\csserver.exe" 		- "!:\sys\bin\csserver.exe"
-"\epoc32\data\z\resource\cscontacts.rsc" 		- "!:\resource\cscontacts.rsc"
 "\epoc32\release\armv5\udeb\csserverclientapi.dll" 	- "!:\sys\bin\csserverclientapi.dll"
 "\epoc32\release\armv5\udeb\csutils.dll" 		- "!:\sys\bin\csutils.dll"

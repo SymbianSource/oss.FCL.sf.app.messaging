@@ -14,10 +14,11 @@
 # Description:
 #
 QT += testlib
+QT -= gui
 CONFIG += hb
 CONFIG += symbian_test
 
-TEMPLATE = lib
+TEMPLATE = app
 TARGET = testconversationengine
 DEPENDPATH += . inc
 DEPENDPATH += . src
@@ -29,15 +30,12 @@ INCLUDEPATH += .
 INCLUDEPATH += ../../../../../inc
 INCLUDEPATH += ../../../appengine/inc
 INCLUDEPATH += ../../../../msgappfw/client/inc
-INCLUDEPATH += ../../../../msgutils/s60qconversions/inc
 INCLUDEPATH += ../../../../smartmessaging/ringbc/inc
-INCLUDEPATH += /ext/mw/qtextensions/qtmobileextensions/include
 INCLUDEPATH += ../../../../msgutils/unieditorutils/editorgenutils/inc
+
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
-
-DEFINES += BUILD_TEST_DLL 
-DEFINES += BUILD_DLL 
+DEFINES += BUILD_DLL
 
 HEADERS += \
 		   testconversationengine.h \
@@ -72,17 +70,17 @@ SOURCES += \
            src/draftsmodel.cpp
          
 SYMBIAN_PLATFORMS = WINSCW ARMV5
-symbian {
-    TARGET.CAPABILITY = CAP_GENERAL_DLL
+symbian*:{
+    TARGET.CAPABILITY = CAP_APPLICATION
+    TARGET.UID3 = 0x2001FE76
     TARGET.EPOCSTACKSIZE = 0x8000
     TARGET.EPOCHEAPSIZE = 0x1000 0x1F00000
-    TARGET.EPOCALLOWDLLDATA = 1
 		}
 		
 LIBS += -euser \
         -ecom \
         -lcsutils \
-        -ls60qconversions \
+        -lxqutils \
         -lconvergedmessageutils \
         -lmsgs \
         -lInetProtUtil \
@@ -98,5 +96,8 @@ LIBS += -euser \
         -lmmscli \
         -lcommonengine \
         -lmmsserversettings \
+        -lsqldb \
+        -lestor \
 	-lFeatMgr \
+	-lfbscli \
 	-lringbc 

@@ -14,19 +14,20 @@ EXPORTS
 	_ZN23MsgConversationBaseView21closeConversationViewEv @ 13 NONAME
 	_ZN23MsgConversationBaseView21doDelayedConstructionEv @ 14 NONAME
 	_ZN23MsgConversationBaseView22conversationViewClosedEv @ 15 NONAME
-	_ZN23MsgConversationBaseView8handleOkERK8QVariant @ 16 NONAME
-	_ZN23MsgConversationBaseView8initViewEv @ 17 NONAME
-	_ZN23MsgConversationBaseView9setPSCVIdEb @ 18 NONAME
-	_ZN23MsgConversationBaseViewC1EP13QGraphicsItem @ 19 NONAME
-	_ZN23MsgConversationBaseViewC2EP13QGraphicsItem @ 20 NONAME
-	_ZN23MsgConversationBaseViewD0Ev @ 21 NONAME
-	_ZN23MsgConversationBaseViewD1Ev @ 22 NONAME
-	_ZN23MsgConversationBaseViewD2Ev @ 23 NONAME
-	_ZNK23MsgConversationBaseView10metaObjectEv @ 24 NONAME
-	_ZTI23MsgConversationBaseView @ 25 NONAME
-	_ZTV23MsgConversationBaseView @ 26 NONAME
-	_ZThn16_N23MsgConversationBaseViewD0Ev @ 27 NONAME
-	_ZThn16_N23MsgConversationBaseViewD1Ev @ 28 NONAME
-	_ZThn8_N23MsgConversationBaseViewD0Ev @ 29 NONAME
-	_ZThn8_N23MsgConversationBaseViewD1Ev @ 30 NONAME
+	_ZN23MsgConversationBaseView26handleConversationIdChangeEx @ 16 NONAME
+	_ZN23MsgConversationBaseView8handleOkERK8QVariant @ 17 NONAME
+	_ZN23MsgConversationBaseView8initViewEv @ 18 NONAME
+	_ZN23MsgConversationBaseView9setPSCVIdEb @ 19 NONAME
+	_ZN23MsgConversationBaseViewC1EP13QGraphicsItem @ 20 NONAME
+	_ZN23MsgConversationBaseViewC2EP13QGraphicsItem @ 21 NONAME
+	_ZN23MsgConversationBaseViewD0Ev @ 22 NONAME
+	_ZN23MsgConversationBaseViewD1Ev @ 23 NONAME
+	_ZN23MsgConversationBaseViewD2Ev @ 24 NONAME
+	_ZNK23MsgConversationBaseView10metaObjectEv @ 25 NONAME
+	_ZTI23MsgConversationBaseView @ 26 NONAME
+	_ZTV23MsgConversationBaseView @ 27 NONAME
+	_ZThn16_N23MsgConversationBaseViewD0Ev @ 28 NONAME
+	_ZThn16_N23MsgConversationBaseViewD1Ev @ 29 NONAME
+	_ZThn8_N23MsgConversationBaseViewD0Ev @ 30 NONAME
+	_ZThn8_N23MsgConversationBaseViewD1Ev @ 31 NONAME
 

@@ -20,6 +20,7 @@
 #define MSGVIEWMANAGER_H_
 
 #include <QObject>
+#include <QVariantList>
 #include <QVariant>
 
 class HbMainWindow;
@@ -32,6 +33,7 @@ class DraftsListView;
 class MsgSettingsView;
 class HbAction;
 class HbView;
+class MsgAudioFetcherView;
 
 class MsgViewManager: public QObject
 {
@@ -41,7 +43,8 @@ public:
     /**
      * constructor
      */
-    MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QObject* parent = 0);
+    MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, 
+                   QObject* parent = 0,int activityMsgId = -1);
 
     /**
      * Destructor.
@@ -84,6 +87,15 @@ public:
      */
     void view(int msgId);
 
+    /**
+     * Returns the current active view.
+     */
+    int currentView();
+	
+    /**
+	 * Saves the content of editor or Cv to draft.
+	 */
+    int saveContentToDraft();
 private:
     /**
      * swiches back to last view after service request is complete.
@@ -158,6 +170,29 @@ private:
 	* Appends the views to be deleted into a QList to be deleted when view is ready
 	*/
     void appendViewToBeDeleted(HbView* view);
+
+	 /**
+	  * Save the editor data to be populated
+	  * @param editorData QVariantList
+	  */    
+    void populateUniEditorAfterViewReady(const QVariantList& editorData);
+    
+    /**
+     * Launch Audio fetcher view
+     */
+    void switchToAudioFetcher(const QVariantList& data);
+	
+	/**
+	 * opens unieditor as activity.
+	 * @param activityMsgId activity msg id.
+	 */
+	void openUniEditorActivity(int activityMsgId);
+
+    /**
+    * find contact id corresponding to given phone no.
+    * @param phoneNum
+    */
+    qint32 findContactId(const QString address);
     
 private slots:
     /**
@@ -191,6 +226,11 @@ private slots:
      * @param action selected action (yes or no).
      */	
     void onDialogSaveTone(HbAction* action);
+    
+    /**
+     * When this slot is called the saved editor data is set to the editor
+     */
+    void populateUniEditorView();
 	
 private:
     /**
@@ -207,6 +247,7 @@ private:
     UnifiedViewer* mUniViewer;
     DraftsListView* mDraftsListView;
     MsgSettingsView* mSettingsView;
+    MsgAudioFetcherView* mAudioFetcherView;
     HbAction* mBackAction;
 
     int mPreviousView;
@@ -218,6 +259,8 @@ private:
     QList<HbView*> mViewTobeDeleted;
     HbView* mDummyview;
     int mMessageId;
+    
+    QVariantList mEditorData;
 };
 
 #endif /* MSGVIEWMANAGER_H_ */
