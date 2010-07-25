@@ -43,7 +43,7 @@ const QString ADDRESS_CLOSE(")");
 const QString SPACE(" ");
 
 //localization
-#define LOC_OPEN_CONTACT_INFO hbTrId("txt_messaging_menu_open_contact_info")
+#define LOC_CONTACT_INFO      hbTrId("txt_messaging_menu_contact_info")
 #define LOC_CALL              hbTrId("txt_common_menu_call_verb")
 #define LOC_SEND_MESSAGE      hbTrId("txt_common_menu_send_message")
 #define LOC_SAVE_TO_CONTACTS  hbTrId("txt_common_menu_save_to_contacts")
@@ -123,7 +123,7 @@ void UniViewerAddressWidget::gestureEvent(QGestureEvent* event)
                     //do short tap action.
                     if (!anchor.isEmpty() && !this->textCursor().hasSelection())
                     {
-                        shortTapAction(anchor);
+                        shortTapAction(anchor,tap->scenePosition());
                     }
                 }
                 break;
@@ -349,34 +349,73 @@ void UniViewerAddressWidget::aboutToShowContextMenu(HbMenu *contextMenu, const Q
 
     if(!anchor.isEmpty() && !this->textCursor().hasSelection())
     {
-
-        HbAction* action = NULL;
-
-        action = contextMenu->addAction(LOC_OPEN_CONTACT_INFO, this, SLOT(openContactInfo()));
-        action->setData(anchor);
-
-        action = contextMenu->addAction(LOC_CALL, this, SLOT(call()));
-        action->setData(anchor);
-
-        action = contextMenu->addAction(LOC_SEND_MESSAGE, this, SLOT(sendMessage()));
-        action->setData(anchor);
-
-        action = contextMenu->addAction(LOC_SAVE_TO_CONTACTS, this, SLOT(saveToContacts()));
-        action->setData(anchor);
-
-        action = contextMenu->addAction(LOC_COPY, this, SLOT(copyToClipboard()));
-        action->setData(anchor);
-
+        populateMenu(contextMenu,anchor);
     }
-
-    connect(contextMenu,SIGNAL(aboutToClose()),this,SLOT(menuClosed()));    
 }
 
-void UniViewerAddressWidget::shortTapAction(QString anchor)
+void UniViewerAddressWidget::populateMenu(HbMenu* contextMenu,const QString& data)
+{
+    HbAction* action = NULL;
+
+    int contactId = MsgContactHandler::resolveContactDisplayName(
+                                 data, 
+                                 QContactPhoneNumber::DefinitionName,
+                                 QContactPhoneNumber::FieldNumber); 
+    
+    if(contactId > 0)
+    {
+        action = contextMenu->addAction(LOC_CONTACT_INFO, this, SLOT(openContactInfo()));
+        action->setData(data);
+    }
+    else
+    {
+        action = contextMenu->addAction(LOC_SAVE_TO_CONTACTS, this, SLOT(saveToContacts()));
+        action->setData(data);  
+    }
+
+    action = contextMenu->addAction(LOC_CALL, this, SLOT(call()));
+    action->setData(data);
+
+    action = contextMenu->addAction(LOC_SEND_MESSAGE, this, SLOT(sendMessage()));
+    action->setData(data);
+
+    action = contextMenu->addAction(LOC_COPY, this, SLOT(copyToClipboard()));
+    action->setData(data);
+    
+    connect(contextMenu,SIGNAL(aboutToClose()),this,SLOT(menuClosed())); 
+}
+
+void UniViewerAddressWidget::shortTapAction(QString anchor,const QPointF& pos)
 {
     HbAction action;
     action.setData(anchor);
-    connect(&action,SIGNAL(triggered()),this,SLOT(openContactInfo()));
+
+
+    int contactId = MsgContactHandler::resolveContactDisplayName(
+        anchor, 
+        QContactPhoneNumber::DefinitionName,
+        QContactPhoneNumber::FieldNumber);        
+
+    if(contactId > 0 )
+    {
+        //if resolved conatct open contact card 
+        connect(&action,SIGNAL(triggered()),this,SLOT(openContactInfo()));
+    }
+    else
+    {
+        //unresolved contact show popup.  
+        highlightText(true);
+
+        HbMenu* contextMenu = new HbMenu();
+        contextMenu->setDismissPolicy(HbPopup::TapAnywhere);
+        contextMenu->setAttribute(Qt::WA_DeleteOnClose, true);
+        contextMenu->setPreferredPos(pos); 
+
+        populateMenu(contextMenu,anchor);
+        
+        contextMenu->show();
+    }
+
     action.trigger();
 }
 
@@ -509,7 +548,7 @@ void UniViewerAddressWidget::handleError(int errorCode, const QString& errorMess
 
 void UniViewerAddressWidget::saveToContacts()
 {
-    //handler for save to contacts.
+    openContactInfo();
 }
 
 void UniViewerAddressWidget::sendMessage()

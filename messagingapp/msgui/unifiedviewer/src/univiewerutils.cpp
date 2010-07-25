@@ -57,12 +57,11 @@ UniViewerUtils::~UniViewerUtils()
 //---------------------------------------------------------------
 void UniViewerUtils::launchContentViewer(const QString &mimeType, const QString &filePath)
 {
-    if (mimeType.contains(IMAGE_MIMETYPE) || mimeType.contains(AUDIO_MIMETYPE) || 
-        mimeType.contains(VIDEO_MIMETYPE)) {
-        launchViaSharableFile(filePath);
-    }
-    else if (mimeType.contains(VCARD_MIMETYPE, Qt::CaseInsensitive)) {
+    if (mimeType.contains(VCARD_MIMETYPE, Qt::CaseInsensitive)) {
         MsgContactsUtil::launchVCardViewer(filePath);
+    }
+    else {
+        launchViaSharableFile(filePath);
     }
 }
 

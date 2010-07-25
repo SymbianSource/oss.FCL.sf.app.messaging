@@ -46,7 +46,6 @@ private:
     void expandGroup(HbDataFormModelItem* group,bool expand);
     
 private slots:
-    void onPressedServiceMessages();
     void onPressedCustomButton();
     void changeCharEncoding(int index);
     void changeAccessPoint(int index);

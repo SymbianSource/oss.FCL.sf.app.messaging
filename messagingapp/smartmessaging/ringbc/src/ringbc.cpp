@@ -35,7 +35,7 @@
 RingBc::RingBc()
     {
     QDEBUG_WRITE("RingBc::RingBc : Enter")
-    d_ptr = new RingBcPrivate();
+    QT_TRAP_THROWING(d_ptr = new RingBcPrivate());
     QDEBUG_WRITE("RingBc::RingBc : Exit")
     }
 

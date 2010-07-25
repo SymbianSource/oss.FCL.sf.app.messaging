@@ -1435,6 +1435,9 @@ void UniEditorSmsPluginPrivate::InsertSubjectL( CSmsHeader& aHeader, CRichText& 
             aText.InsertL( 1, *subject );
             aText.InsertL( writePosition-1, KUniSmsEndParenthesis );
             }
+
+         CleanupStack::PopAndDestroy( subject ); 
+
         }
 
     // Clears the CSmsHeaders EmailFields for non Email addresses

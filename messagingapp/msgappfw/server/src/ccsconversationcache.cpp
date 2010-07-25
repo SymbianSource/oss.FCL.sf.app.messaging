@@ -200,6 +200,54 @@ void CCsConversationCache::GetConversationUnreadListL(RPointerArray<
 
 // ----------------------------------------------------------------------------
 // CCsConversationCache::GetConversationsL
+// Get segment of  conversations for a given conversation Id, knownIndex and page size.
+// The return list is set inside aConversationEntryList and aTotalConversationCount
+// has total conversation count.
+// ----------------------------------------------------------------------------
+void 
+CCsConversationCache::GetConversationsL(
+        const CCsClientConversation*  aClientConversation,
+        RPointerArray<CCsConversationEntry>* aConversationEntryList,
+        TInt aKnownIndex,
+        TInt aPageSize,
+        TInt& aTotalConversationCount)
+    {
+    TInt conversationCount = iConversationList->Count();
+
+    // Get the entry id from Client Conversation for which conversations are required
+    TCsConversationEntryID conversationEntryID =
+        aClientConversation->GetConversationEntryId();
+
+    for (TInt loop= 0; loop < conversationCount; loop++ )
+        {
+        //match entry ID;
+        CCsConversation* conversation =
+            static_cast<CCsConversation*>((*iConversationList)[loop]);
+        
+        if(conversationEntryID == conversation->GetConversationId())
+            {
+            TInt endIndex = conversation->GetEntryCount();
+            TInt startIndex(0);
+            if((aKnownIndex!= 0) || (aPageSize !=0 ))
+                {
+                endIndex = endIndex- aKnownIndex;
+                startIndex = endIndex - aPageSize;
+                if( startIndex < 0 ) startIndex = 0;
+                }
+            // Search the conversation id and get the list inside
+            // No need to check, becz it is initialize here only.
+            conversation->GetEntryListL(aConversationEntryList,
+                    startIndex,endIndex);
+            // May, meanwhile new conversation cached.
+            aTotalConversationCount = conversation->GetEntryCount();
+            break;
+            }
+        }
+    PRINT1 ( _L("CCsConversationCache::GetConversationsL - conversationCount:%d"),
+            conversationCount );
+    }
+// ----------------------------------------------------------------------------
+// CCsConversationCache::GetConversationsL
 // Get All Conversations for a given conversation Id
 // the return list is set inside aConversationEntryList
 // ----------------------------------------------------------------------------
@@ -689,7 +737,7 @@ CCsClientConversation* CCsConversationCache::GetConversationFromConversationIdL(
 CCsClientConversation* CCsConversationCache::GetConversationFromMessageIdL(TInt aMessageId)
 {
     TInt conversationCount = iConversationList->Count();
-
+    CCsClientConversation *clientConv = NULL;
     for ( TInt loop = 0; loop < conversationCount; loop++ )
     {
         CCsConversation* conversation =
@@ -704,13 +752,13 @@ CCsClientConversation* CCsConversationCache::GetConversationFromMessageIdL(TInt 
             TInt messageId = entryList[loop1]->EntryId();
             if ( messageId == aMessageId )
             {
-                CCsClientConversation *clientConv = CreateClientConvLC(conversation, entryList[loop1]);
+                clientConv = CreateClientConvLC(conversation, entryList[loop1]);
                 CleanupStack::Pop();
-                return clientConv;
+                break;
             }
         }
     }
-    return NULL;
+    return clientConv;
 }
 
 //end of file

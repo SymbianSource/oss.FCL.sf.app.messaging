@@ -172,6 +172,13 @@ private:
      * @return true/false
      */
     bool validateMsgForForward(qint32 messageId);
+    
+    /*
+     * Handle Vcard messages
+     * @param item, QStandardItem
+     * @param msgId
+     */
+    void handleVCard(QStandardItem& item, int msgId);
 
 private:
 

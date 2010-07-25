@@ -78,7 +78,10 @@ mEditorUtils(0)
 
     int at_size = 0;
     TMsgMediaType mediaType = EMsgMediaUnknown;
-    UniEditorGenUtils* genUtils = new UniEditorGenUtils;
+    
+    UniEditorGenUtils* genUtils = NULL;         
+    QT_TRAP_THROWING(genUtils = new UniEditorGenUtils);
+    
     TRAP_IGNORE(genUtils->getFileInfoL(mPath,at_size,
         mMimeType,mediaType));
     TRAP_IGNORE(mMaxSmsSize = genUtils->MaxSmsMsgSizeL()); 

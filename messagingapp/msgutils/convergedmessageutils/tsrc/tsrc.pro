@@ -11,12 +11,11 @@
 #
 # Contributors:
 #
-# Description: Project Definiton File for both MMSTestBed and TestConvergedMessageUtils 
+# Description: Project Definiton File for testconvergedmessageutilsapp
 #
 
 TEMPLATE = subdirs
 
-SUBDIRS += mmstestbed/mmstestbed.pro 
-SUBDIRS += testconvergedmessageutils/testconvergedmessageutils.pro 
+SUBDIRS += testconvergedmessageutilsapp/testconvergedmessageutilsapp.pro 
 
 CONFIG += ordered

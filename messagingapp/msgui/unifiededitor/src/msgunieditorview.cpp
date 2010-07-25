@@ -35,6 +35,7 @@
 #include <HbListViewItem>
 #include <HbListWidgetItem>
 #include <HbNotificationDialog>
+#include <HbDeviceNotificationDialog>
 #include <HbMessageBox>
 #include <HbAbstractVkbHost>
 #include <HbMainWindow>
@@ -87,9 +88,9 @@ const int MAX_VCARDS(1000);
 #define LOC_BCC hbTrId("txt_messaging_formlabel_bcc")
 
 //attach options
-#define LOC_PHOTO           hbTrId("txt_messaging_button_photo")
-#define LOC_SOUND           hbTrId("txt_messaging_button_sound")
-#define LOC_BUSINESS_CARD   hbTrId("txt_messaging_button_business_card")
+#define LOC_PHOTO           hbTrId("txt_messaging_opt_attach_sub_photo")
+#define LOC_SOUND           hbTrId("txt_messaging_opt_attach_sub_sound")
+#define LOC_BUSINESS_CARD   hbTrId("txt_messaging_opt_sub_business_card")
 
 //options menu.
 #define LOC_ADD_SUBJECT     hbTrId("txt_messaging_opt_add_subject")
@@ -103,7 +104,7 @@ const int MAX_VCARDS(1000);
 #define LOC_LOW hbTrId("txt_messaging_opt_attach_sub_low")
 
 //group box
-#define LOC_OTHER_RECIPIENTS(n) hbTrId("txt_messaging_group_title_ln_other_recipients",n)
+#define LOC_OTHER_RECIPIENTS(n) hbTrId("txt_messaging_title_ln_other_recipients",n)
 #define LOC_OTHER_RECIPIENTS_EXPAND hbTrId("txt_messaging_title_other_recipients")
 
 //saved to draft note
@@ -434,7 +435,10 @@ void MsgUnifiedEditorView::populateContent(const QVariantList& editorData)
             QString mimeType;
             TMsgMediaType mediaType = EMsgMediaUnknown;
             QString filePath = messageDetails->attachments().at(i)->filePath();
-            UniEditorGenUtils* genUtils = new UniEditorGenUtils;
+            
+            UniEditorGenUtils* genUtils = NULL;
+            QT_TRAP_THROWING(genUtils = new UniEditorGenUtils);
+            
             TRAP_IGNORE(genUtils->getFileInfoL(filePath,imageSize,
                                            mimeType,mediaType));
             delete genUtils;
@@ -513,7 +517,8 @@ void MsgUnifiedEditorView::populateContentIntoEditor(
         messageDetails.attachments();
     int attachmentCount = attachmentList.count();
 
-    UniEditorGenUtils* genUtils = new UniEditorGenUtils;
+    UniEditorGenUtils* genUtils = NULL;
+    QT_TRAP_THROWING(genUtils = new UniEditorGenUtils);
 
     QStringList pendingAttList;
     for( int i=0; i < attachmentCount; i++ )
@@ -1182,7 +1187,7 @@ int MsgUnifiedEditorView::saveContentToDrafts()
     
     if(res)
         {
-        HbNotificationDialog::launchDialog(LOC_SAVED_TO_DRAFTS);
+        HbDeviceNotificationDialog::notification("", LOC_SAVED_TO_DRAFTS);
         }
     return msgId;
 }

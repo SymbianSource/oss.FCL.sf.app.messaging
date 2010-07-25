@@ -75,8 +75,9 @@ private:
     /**
      * short tap handler.
      * @param anchor anchor at cursor position.
+     * @param pos tap position.
      */
-    void shortTapAction(QString anchor); 
+    void shortTapAction(QString anchor,const QPointF& pos); 
     
     /** Helper method to get contact id against phone number or e-mail id.
      * @param value phone number or email id.
@@ -87,6 +88,12 @@ private:
                          const QString& fieldName, 
                          const QString& fieldType);
     
+    /**
+     * Helper method to populate menu items.
+     * @param contextMenu menu to be populated.
+     * @param data, highlighted number.
+     */
+    void populateMenu(HbMenu* contextMenu, const QString& data);
     
 private slots:
 

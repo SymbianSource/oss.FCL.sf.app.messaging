@@ -54,7 +54,7 @@ MsgNotifier::MsgNotifier(QObject* parent) :
 {
     QDEBUG_WRITE("MsgNotifier::MsgNotifier : Enter")
 
-    d_ptr = new MsgNotifierPrivate(this);
+    QT_TRAP_THROWING(d_ptr = new MsgNotifierPrivate(this));
 
     mSimHandler = new MsgSimNumDetector();
 

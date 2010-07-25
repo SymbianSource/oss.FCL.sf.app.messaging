@@ -231,6 +231,12 @@ private:
      * Whether to launch the sending application as embedded or not.
      */
     bool mIsEmbedded;  
+    
+    /**
+     * Mapping servicename to the interface descriptor.required to 
+     * sort the services.
+     */ 
+    QMap<QString,XQAiwInterfaceDescriptor > mServiceInterfaceMap;
     };
 
 #endif /* __SHARE_UI_PRIVATE_H__ */

@@ -69,6 +69,7 @@ void CMsgSimOperation::ConstructL()
     // initialise
     iMsvSession = CMsvSession::OpenSyncL(*this);
    
+    // Observes the OUTBOX for any offline messages...
     iOutBoxObserver = COutboxObserver::NewL();
 
     // Create the SMS Service	

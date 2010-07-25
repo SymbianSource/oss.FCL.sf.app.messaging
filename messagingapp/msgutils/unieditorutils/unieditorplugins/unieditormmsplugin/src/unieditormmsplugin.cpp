@@ -28,8 +28,7 @@ UniEditorMmsPlugin::UniEditorMmsPlugin(QObject* parent) :
     QObject(parent)
 {	
     int error;
-    TRAP( error, d_ptr = CUniEditorMmsPluginPrivate::NewL());
-    QDEBUG_WRITE_FORMAT("UniEditorMmsPlugin returning with ",error);
+    QT_TRAP_THROWING( d_ptr = CUniEditorMmsPluginPrivate::NewL()); 
 }
 
 //---------------------------------------------------------------

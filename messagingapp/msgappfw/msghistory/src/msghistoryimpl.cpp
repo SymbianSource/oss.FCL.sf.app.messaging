@@ -27,7 +27,7 @@
 MsgHistoryImpl::MsgHistoryImpl(QObject* parent)
 :QObject(parent)
     {
-    d_ptr = new MsgHistoryPrivate(this);
+    d_ptr = q_check_ptr (new MsgHistoryPrivate(this));
     
     //connect signals
     connect(this, SIGNAL(messagesReady(QList<MsgItem>&)),

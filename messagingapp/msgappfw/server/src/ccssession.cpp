@@ -489,7 +489,11 @@ void CCsSession::GetConversationsL(const RMessage2& aMessage)
         // Stream over the buffer
         RDesReadStream stream(bufferPtr);
         stream.PushL();
-
+        
+        //Read known index and page size
+        TInt knownIndex = stream.ReadInt32L();
+        TInt pageSize  = stream.ReadInt32L();
+        
         // get cache pointer
         CCsConversationCache* cache = iServer->ConversationCacheInterface();
 
@@ -506,8 +510,13 @@ void CCsSession::GetConversationsL(const RMessage2& aMessage)
                 new (ELeave) RPointerArray<CCsConversationEntry>(10);
         CleanupResetAndDestroyPushL(conversationEntryList);
 
-        // get conversationlist for given ClientConversation 
-        cache->GetConversationsL(ClientConversation, conversationEntryList);
+        // get conversation entry  list for given ClientConversation 
+        TInt totalCount(0);
+        cache->GetConversationsL (ClientConversation,
+                conversationEntryList,
+                knownIndex,
+                pageSize,
+                totalCount);
 
         // create a new buffer for writing into stream
         // write all list data into stream
@@ -520,7 +529,10 @@ void CCsSession::GetConversationsL(const RMessage2& aMessage)
         TInt ItemCount = conversationEntryList->Count();
         //write  recent conversation entry list
         writeStream.WriteInt32L(ItemCount);
-
+        
+        //Write total count in the stream to update UI
+        writeStream.WriteInt32L(totalCount);
+        
         // Write the conversation entry
         for (TInt iloop = 0; iloop < ItemCount; iloop++)
         {

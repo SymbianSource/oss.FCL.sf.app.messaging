@@ -48,7 +48,7 @@ MsgNotifierPrivate::MsgNotifierPrivate(MsgNotifier* MsgNotifier) :
 {
     QDEBUG_WRITE("MsgNotifierPrivate::MsgNotifierPrivate : Enter")
 
-    TRAP_IGNORE(initL());
+    initL();
     QDEBUG_WRITE("MsgNotifierPrivate::MsgNotifierPrivate : Exit")
 }
 
@@ -60,7 +60,7 @@ MsgNotifierPrivate::~MsgNotifierPrivate()
 {
     QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Enter")
     if (mCvServer) {
-        mCvServer->RemoveConversationListChangeEventL(this);
+        TRAP_IGNORE(mCvServer->RemoveConversationListChangeEventL(this));
         delete mCvServer;
         mCvServer = NULL;
     }
@@ -103,10 +103,11 @@ void MsgNotifierPrivate::initL()
     updateUnreadIndications(true); 
     updateOutboxIndications();
 
-    mSettingsManager = new XQSettingsManager();
+    QT_TRYCATCH_LEAVING(mSettingsManager = new XQSettingsManager());
     
     // define property
-    mPSUtils = new XQPublishAndSubscribeUtils(*mSettingsManager);
+    QT_TRYCATCH_LEAVING(mPSUtils = new XQPublishAndSubscribeUtils(*mSettingsManager));
+    
     XQPublishAndSubscribeSettingsKey convIdKey(
             KMsgCVIdProperty, KMsgCVIdKey);
     bool success = mPSUtils->defineProperty(convIdKey, 
@@ -121,7 +122,7 @@ void MsgNotifierPrivate::initL()
     QDEBUG_WRITE_FORMAT("MsgNotifierPrivate::initL "
                            "writing ret value",success)
     
-    mSts = new XQSystemToneService();
+    QT_TRYCATCH_LEAVING(mSts = new XQSystemToneService());
     
     QDEBUG_WRITE("MsgNotifierPrivate::initL : Exit")
 }

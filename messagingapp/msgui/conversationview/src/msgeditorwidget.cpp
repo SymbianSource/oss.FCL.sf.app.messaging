@@ -117,8 +117,8 @@ void MsgEditorWidget::init()
         BACKGROUND_FRAME);    
     
     //Create editor utils object
-    mEditorUtils = new UniEditorGenUtils();
-           
+    QT_TRAP_THROWING(mEditorUtils = new UniEditorGenUtils());
+
     FOCUSITEM = mSendButton;
 
 
@@ -341,21 +341,21 @@ void MsgEditorWidget::setEncodingSettingsL()
     mPluginInterface =
                         mPluginLoader->getUniEditorPlugin(ConvergedMessage::Sms);    
 
-    CSmsSettings* settings = CSmsSettings::NewLC();
-    CSmsAccount* account = CSmsAccount::NewLC();
-    account->LoadSettingsL( *settings );
+    QT_TRAP_THROWING( CSmsSettings* settings = CSmsSettings::NewLC();
+        CSmsAccount* account = CSmsAccount::NewLC();
+        account->LoadSettingsL( *settings );
 
-    if( settings->CharacterSet() == TSmsDataCodingScheme::ESmsAlphabetUCS2)
-    {
-    mCharSupportType = TUniSendingSettings::EUniCharSupportFull;
-    }
-    else
-    {
-    mCharSupportType = TUniSendingSettings::EUniCharSupportReduced;
-    }
+        if( settings->CharacterSet() == TSmsDataCodingScheme::ESmsAlphabetUCS2)
+        {
+            mCharSupportType = TUniSendingSettings::EUniCharSupportFull;
+        }
+        else
+        {
+            mCharSupportType = TUniSendingSettings::EUniCharSupportReduced;
+        }
 
-    CleanupStack::PopAndDestroy( account );
-    CleanupStack::PopAndDestroy( settings );                
+        CleanupStack::PopAndDestroy( account );
+        CleanupStack::PopAndDestroy( settings ));
 
     //Set the mPrevBuffer to NULL initially
     mPrevBuffer = QString();

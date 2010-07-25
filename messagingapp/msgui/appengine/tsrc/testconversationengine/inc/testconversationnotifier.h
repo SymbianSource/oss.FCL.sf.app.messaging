@@ -51,7 +51,7 @@ public:
 
     void RemoveCachingStatusNotifier();
     
-    void SendListResultUpdate(RPointerArray<CCsConversationEntry>& aConversationEntryList);
+    void SendListResultUpdate(RPointerArray<CCsConversationEntry>& aConversationEntryList,TInt& aTotalCount);
     
     void UpdateConversationEntryModify(CCsConversationEntry& aConversationEntry);
     

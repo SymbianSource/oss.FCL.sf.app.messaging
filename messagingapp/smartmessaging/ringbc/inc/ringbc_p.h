@@ -21,10 +21,11 @@
 #define RINGBC_PRIVATE_H
 
 #include <QString>
+#include <e32base.h>
 
 class RingBCNSMConverter;
 
-class RingBcPrivate 
+class RingBcPrivate :public CBase
     {
 public:
     /**

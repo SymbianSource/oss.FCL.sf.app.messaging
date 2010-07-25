@@ -32,7 +32,7 @@ class CMmsClientMtm;
 class CMmsNotificationClientMtm;
 
 
-class ConversationMsgStoreHandler: public MMsvSessionObserver
+class ConversationMsgStoreHandler: public CBase, public MMsvSessionObserver
     {
 public:
     

@@ -82,10 +82,18 @@ public:
      * 
      * @param aConversationEntryList List of conversation entries
      * returned by server.
+     * @param aTotalCount total number of conversation entries
      */
 
     void ConversationsL(
-        RPointerArray<CCsConversationEntry>& aConversationEntryList);
+        RPointerArray<CCsConversationEntry>& aConversationEntryList,
+        TInt& aTotalCount);
+    
+    /**
+     * ResetValuesForNewConversation
+     * Resets the values of flags, and indexes for a new conversation
+     */
+    void ResetValuesForNewConversation();
 
 public://MCsConversationChangeObserver
     /**  
@@ -134,7 +142,13 @@ private:
      * Handles Conversations received from server and updates into model
      */    
     void HandleConversationsL();
-
+    
+    /**
+     * Fetch remaning conversations from Server Cache
+     * @param aCount - count of conversations added to entry list
+     */
+    void FetchRemainingConversations(TInt aCount);
+    
 private:
     // Data
 
@@ -145,6 +159,7 @@ private:
     {
         EInit = 500, 
         EInitialCache, 
+        EFetchMoreConversations,
         EListenToEvents
     };
 
@@ -166,6 +181,11 @@ private:
      */
     TInt mCurrentIndex;
     
+    /**
+     * Total count of conversation entries in the Conversation
+     * Own
+     */
+    TInt mTotalCount;
     /**
      * ConversationsModel Object
      * Not Own.

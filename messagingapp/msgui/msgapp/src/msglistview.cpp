@@ -66,7 +66,6 @@ const QString SORT_ICON("qtg_mono_sort");
 #define LOC_SETTINGS    hbTrId("txt_messaging_opt_settings")
 
 #define LOC_TB_VIEW_EXTN hbTrId("txt_messaging_button_view")
-#define LOC_TB_NEW_MESSAGE hbTrId("txt_messaging_button_new_message")
 #define LOC_TB_EXTN_DRAFTS hbTrId("txt_messaging_button_drafts")
 #define LOC_TB_EXTN_CONVERSATIONS hbTrId("txt_messaging_button_conversations")
 

@@ -560,7 +560,7 @@ void MsgViewManager::switchToClv(const QVariantList& data)
         mMainWindow->addView(mListView);
     }
 
-    mMainWindow->setCurrentView(mListView);
+    mMainWindow->setCurrentView(mListView,true,Hb::ViewSwitchSequential);
 }
 
 void MsgViewManager::switchToCv(const QVariantList& data)
@@ -587,6 +587,10 @@ void MsgViewManager::switchToCv(const QVariantList& data)
     //delete UniEditor
     if (mUniEditor)
     {
+        // Save to drafts if CV is launched via service
+        if (mPreviousView == MsgBaseView::SERVICE) {
+            mUniEditor->saveContentToDrafts();
+        }
         appendViewToBeDeleted(mUniEditor);
         mUniEditor = NULL;
     }
@@ -627,7 +631,7 @@ void MsgViewManager::switchToCv(const QVariantList& data)
         // this case comes when a message is deleted from
         // Unified viewer  set curent view as conversation view
         // and return
-        mMainWindow->setCurrentView(mConversationView);
+        mMainWindow->setCurrentView(mConversationView,true,Hb::ViewSwitchSequential);
 
 		// publish already opened conversation's id
         mConversationView->setPSCVId(true);
@@ -655,7 +659,7 @@ void MsgViewManager::switchToCv(const QVariantList& data)
     }
 
     mConversationView->openConversation(conversationId);
-    mMainWindow->setCurrentView(mConversationView);
+    mMainWindow->setCurrentView(mConversationView,true,Hb::ViewSwitchSequential);
     
     QCRITICAL_WRITE("MsgViewManager::switchToCv end.");
 }
@@ -681,7 +685,7 @@ void MsgViewManager::switchToDlv(const QVariantList& data)
 
         mMainWindow->addView(mDraftsListView);
     }
-    mMainWindow->setCurrentView(mDraftsListView);
+    mMainWindow->setCurrentView(mDraftsListView,true,Hb::ViewSwitchSequential);
 }
 
 void MsgViewManager::switchToUniEditor(const QVariantList& data)
@@ -755,7 +759,7 @@ void MsgViewManager::switchToUniEditor(const QVariantList& data)
         }
     }
 
-    mMainWindow->setCurrentView(mUniEditor);
+    mMainWindow->setCurrentView(mUniEditor,true,Hb::ViewSwitchSequential);
     
     QCRITICAL_WRITE("MsgViewManager::switchToUniEditor end.");
 }
@@ -768,6 +772,12 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
      */
     if (mUniViewer) {
         return;
+    }
+
+    if (mUniEditor)
+    {
+        appendViewToBeDeleted(mUniEditor);
+        mUniEditor = NULL;
     }
 
     //Clear the old viewer data
@@ -804,7 +814,7 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
         mConversationView->setPSCVId(false);
         }
 
-    mMainWindow->setCurrentView(mUniViewer);
+    mMainWindow->setCurrentView(mUniViewer,true,Hb::ViewSwitchSequential);
 }
 void MsgViewManager::switchToMsgSettings(const QVariantList& data)
 {
@@ -868,28 +878,28 @@ void MsgViewManager::handleDefault(const QVariantList& data)
         case MsgBaseView::CLV:
         {
             if (mListView)
-                mMainWindow->setCurrentView(mListView);
+                mMainWindow->setCurrentView(mListView,true,Hb::ViewSwitchSequential);
             break;
         }
         case MsgBaseView::CV:
         {
             if (mConversationView)
-                mMainWindow->setCurrentView(mConversationView);
+                mMainWindow->setCurrentView(mConversationView,true,Hb::ViewSwitchSequential);
             break;
         }
         case MsgBaseView::DLV:
         {
             if (mDraftsListView)
-                mMainWindow->setCurrentView(mDraftsListView);
+                mMainWindow->setCurrentView(mDraftsListView,true,Hb::ViewSwitchSequential);
             break;
         }
         case MsgBaseView::UNIEDITOR:
         {
             if (mServiceRequest) {
-                mMainWindow->setCurrentView(mUniEditor);
+                mMainWindow->setCurrentView(mUniEditor,true,Hb::ViewSwitchSequential);
             }
             else {
-                mMainWindow->setCurrentView(mUniEditor);
+                mMainWindow->setCurrentView(mUniEditor,true,Hb::ViewSwitchSequential);
             }
             break;
         }
@@ -958,7 +968,7 @@ void MsgViewManager::handleSmsMmsMsg(int msgId)
     }
     mUniViewer->populateContent(msgId, true, -1);
 
-    mMainWindow->setCurrentView(mUniViewer);
+    mMainWindow->setCurrentView(mUniViewer,true,Hb::ViewSwitchSequential);
 }
 
 // ----------------------------------------------------------------------------
@@ -1144,7 +1154,7 @@ void MsgViewManager::switchToAudioFetcher(const QVariantList& data)
         }
 
     mMainWindow->addView(mAudioFetcherView);
-    mMainWindow->setCurrentView(mAudioFetcherView);
+    mMainWindow->setCurrentView(mAudioFetcherView,true,Hb::ViewSwitchSequential);
     }
 
 // ----------------------------------------------------------------------------
@@ -1203,7 +1213,8 @@ void MsgViewManager::openUniEditorActivity(int activityMsgId)
     
     // set the current view
     mCurrentView = MsgBaseView::UNIEDITOR;
-    mMainWindow->setCurrentView(mUniEditor);
+    mPreviousView =MsgBaseView::CLV;
+    mMainWindow->setCurrentView(mUniEditor,true,Hb::ViewSwitchSequential);
 }
 
 // ----------------------------------------------------------------------------

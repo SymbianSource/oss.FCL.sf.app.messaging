@@ -219,6 +219,33 @@ CCsConversation::GetEntryListL (
     }
 
 // ----------------------------------------------------------------------------
+// CCsConversation::GetEntryListL
+// This function shall return segment of Conversation Entry
+// of ConversationEntry based on aStartIndex and aEndIndex
+// ----------------------------------------------------------------------------
+void
+CCsConversation::GetEntryListL (
+        RPointerArray<CCsConversationEntry>* aConversationEntryList,
+        TInt aStartIndex,
+        TInt aEndIndex)
+    {
+    TInt EntryCount = iEntryList->Count();
+    if (EntryCount > 0 && aStartIndex>=0 && aEndIndex<=EntryCount)
+        {
+        // loop through each entry make a clone and add 
+        // it to aConversationEntryList class
+        for (TInt index=aEndIndex-1 ; index>=aStartIndex ; index--)
+            {
+            CCsConversationEntry* conEntry =
+                (static_cast<CCsConversationEntry*>(
+                    (*iEntryList)[index]))->CloneL();
+            aConversationEntryList->Append(conEntry);
+            }
+        }
+    }
+
+
+// ----------------------------------------------------------------------------
 // CCsConversation::AddEntryL
 // Add a entry to this conversation
 // ----------------------------------------------------------------------------

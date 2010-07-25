@@ -20,7 +20,7 @@
 // SYSTEM INCLUDES
 #include <QGraphicsLinearLayout>
 #include <HbMainWindow>
-#include <HbNotificationDialog>
+#include <HbDeviceNotificationDialog>
 
 #include <xqaiwrequest.h>
 #include <xqappmgr.h>
@@ -162,13 +162,12 @@ void MsgConversationBaseView::markMessagesAsRead()
 int MsgConversationBaseView::saveContentToDrafts()
 {
     int msgId = INVALID_MSGID;
-    bool result = false;
     if (mConversationId >= 0) {
     msgId = mConversationView->saveContentToDrafts();
     }
 
     if (msgId != INVALID_MSGID) {
-        HbNotificationDialog::launchDialog(LOC_SAVED_TO_DRAFTS);
+        HbDeviceNotificationDialog::notification("", LOC_SAVED_TO_DRAFTS);
     }
     return msgId;
 }

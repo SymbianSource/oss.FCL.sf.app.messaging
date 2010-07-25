@@ -65,7 +65,7 @@ const QString SORT_ICON("qtg_mono_sort");
 
 // Confirmation note
 #define LOC_DELETE_MESSAGE        hbTrId("txt_messaging_dialog_delete_message")
-#define LOC_DELETE_ALL_DRAFTS     hbTrId("txt_messaging_dialog_delate_all_drafts")
+#define LOC_DELETE_ALL_DRAFTS     hbTrId("txt_messaging_dialog_delete_all_drafts")
 
 //---------------------------------------------------------------
 // DraftsListView::DraftsListView

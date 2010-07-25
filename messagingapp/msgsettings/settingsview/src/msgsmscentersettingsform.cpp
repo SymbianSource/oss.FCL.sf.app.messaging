@@ -32,8 +32,8 @@
 //Localized constants
 #define LOC_SMS_CENTRE_NAME hbTrId("txt_messaging_setlabel_message_centre_name")
 #define LOC_SMS_CENTRE_NUMBER hbTrId("txt_messaging_setlabel_message_centre_number")
-#define LOC_DELETE hbTrId("txt_messaging_button_delete_message_centre")
-#define LOC_SMS_CENTRE_DELETE hbTrId("txt_messaging_dialog_delete_message_centre")
+#define LOC_SMS_CENTRE_DELETE_BUTTON hbTrId("txt_messaging_button_delete_message_centre")
+#define LOC_SMS_CENTRE_DELETE_DIALOG hbTrId("txt_messaging_dialog_delete_message_centre")
 #define LOC_MESSAGE_CENTER_SAVED hbTrId("txt_messaging_dpopinfo_message_centre_saved")
 
 MsgSMSCenterSettingsForm::MsgSMSCenterSettingsForm(int view,
@@ -115,7 +115,7 @@ void MsgSMSCenterSettingsForm::initSettingModel()
                                 QString(""),
                                 settingsmodel->invisibleRootItem());
 
-        deleteMessageCentre->setContentWidgetData("text",LOC_DELETE);
+        deleteMessageCentre->setContentWidgetData("text",LOC_SMS_CENTRE_DELETE_BUTTON);
         this->addConnection(deleteMessageCentre,SIGNAL(clicked()),
                             this,SLOT(onPressedCustomButton()));
     }
@@ -186,7 +186,7 @@ void MsgSMSCenterSettingsForm::onItemShown(const QModelIndex& topLeft)
 
 void MsgSMSCenterSettingsForm::onPressedCustomButton()
 {
-   HbMessageBox::question(LOC_SMS_CENTRE_DELETE, this,
+   HbMessageBox::question(LOC_SMS_CENTRE_DELETE_DIALOG, this,
                           SLOT(onDialogDeleteMsgCentre(HbAction*)),
                           HbMessageBox::Delete | HbMessageBox::Cancel);
 }

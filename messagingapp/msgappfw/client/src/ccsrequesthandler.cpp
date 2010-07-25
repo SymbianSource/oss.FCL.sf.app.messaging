@@ -232,6 +232,8 @@ void CCSRequestHandler::HandleGetConversationResults()
     TInt error = KErrNone;
 
     RPointerArray<CCsConversationEntry> ConversationEntryList;
+    TInt totalConversationCount(0);
+    
     // Parse the results
     RDesReadStream resultStream(iConvResultsBuffer->Des());
     TInt  conversationEntryCount = 0;
@@ -239,6 +241,9 @@ void CCSRequestHandler::HandleGetConversationResults()
     TRAP(error, resultStream.PushL();
 
     conversationEntryCount = resultStream.ReadInt32L();
+
+    //Read total conversation count
+   totalConversationCount = resultStream.ReadInt32L();
 
     resultStream.Pop());
 
@@ -289,7 +294,7 @@ void CCSRequestHandler::HandleGetConversationResults()
     // Pass the results to the observer
     if ( iResultsObserver )
         {
-        iResultsObserver->Conversations(ConversationEntryList);
+        iResultsObserver->Conversations(ConversationEntryList, totalConversationCount);
         }
         
     // cleanup heap data
@@ -705,7 +710,9 @@ EXPORT_C void CCSRequestHandler::GetConversationUnreadListL(RPointerArray<
 // convresation view.
 // -----------------------------------------------------------------------------
 EXPORT_C void CCSRequestHandler::GetConversationsL(
-        CCsClientConversation*  aClientConversation)
+        CCsClientConversation*  aClientConversation,
+        TInt aKnownIndex, 
+        TInt aPageSize)
     {
     PRINT( _L("Enter CCSRequestHandler::GetConversationsL") );
 
@@ -724,7 +731,11 @@ EXPORT_C void CCSRequestHandler::GetConversationsL(
     // Stream over the temp buffer
     RBufWriteStream dataStream(*dataBuf);
     dataStream.PushL();
-
+    
+    //Write requested details in buffer.
+    dataStream.WriteInt32L(aKnownIndex);
+    dataStream.WriteInt32L(aPageSize);
+    
     // Write the Client Conversation in the stream
     aClientConversation->ExternalizeL(dataStream);
     dataStream.CommitL();
@@ -1332,7 +1343,9 @@ EXPORT_C CCsClientConversation* CCSRequestHandler::GetConversationFromMessageIdL
 // -----------------------------------------------------------------------------
 // CCSRequestHandler::GetMessagingHistoryL()
 // -----------------------------------------------------------------------------
-EXPORT_C void CCSRequestHandler::GetMessagingHistoryL(TInt aContactId)
+EXPORT_C void CCSRequestHandler::GetMessagingHistoryL(TInt aContactId,
+        TInt aKnownIndex, 
+        TInt aPageSize)
     {
     TInt conversationId = GetConversationIdL(aContactId);
     if ( conversationId == -1 )
@@ -1343,7 +1356,7 @@ EXPORT_C void CCSRequestHandler::GetMessagingHistoryL(TInt aContactId)
     //set dummy entry
     CCsConversationEntry *entry = CCsConversationEntry::NewL();
     clientConversation->SetConversationEntryL(entry);
-    GetConversationsL(clientConversation);
+    GetConversationsL(clientConversation,aKnownIndex,aPageSize);
     
     //delete 
     delete clientConversation;

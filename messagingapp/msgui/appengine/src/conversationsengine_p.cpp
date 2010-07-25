@@ -28,6 +28,12 @@
 #include "conversationlistchangehandler.h"
 #include "debugtraces.h"
 
+
+//CONSTANTS
+/**
+ *Max number of conversation that can be exchanged in IPC call
+ */
+const TInt KMaxConversationIPCLimit =  250;
 //---------------------------------------------------------------
 // ConversationsEnginePrivate::ConversationsEnginePrivate
 // @see header
@@ -128,8 +134,11 @@ void ConversationsEnginePrivate::getConversationsL( TInt aConversationId)
         CleanupStack::PushL(entry);
         mClientConv->SetConversationEntryL(entry);
         CleanupStack::PopAndDestroy(entry);
+        // Reset the values in change handler before initiating a request
+        mConvChangeHandler->ResetValuesForNewConversation();
+        
         //Get the conversations for new conversationId 
-        mServer->GetConversationsL(mClientConv);
+        mServer->GetConversationsL(mClientConv,0,KMaxConversationIPCLimit);
 
         QCRITICAL_WRITE("ConversationsEnginePrivate::getConversationsL end.");
         }   
@@ -310,14 +319,15 @@ void ConversationsEnginePrivate::ConversationList(
 // @see header
 //---------------------------------------------------------------
 void ConversationsEnginePrivate::Conversations(
-    RPointerArray<CCsConversationEntry>& aConversationEntryList)
+    RPointerArray<CCsConversationEntry>& aConversationEntryList,
+    TInt& aTotalCount)
 {
     int error;
     if (mClientConv)
         {
         QCRITICAL_WRITE("ConversationsEnginePrivate::Conversations start.");
 
-        TRAP(error,mConvChangeHandler->ConversationsL(aConversationEntryList));
+        TRAP(error,mConvChangeHandler->ConversationsL(aConversationEntryList,aTotalCount));
 
         QCRITICAL_WRITE("ConversationsEnginePrivate::Conversations end.");
         }
@@ -336,6 +346,21 @@ void ConversationsEnginePrivate::fetchMoreConversations()
         }
 }
 
+//---------------------------------------------------------------
+// ConversationsEngine::fetchRemainingConversations
+// @see header
+//---------------------------------------------------------------
+void ConversationsEnginePrivate::fetchRemainingConversations(TInt& aCount)
+    {
+    if ( mServer && mClientConv )
+            {
+                    
+            // Get conversations from server
+             mServer->GetConversationsL(mClientConv, 
+                     (aCount - 1),
+                    KMaxConversationIPCLimit);
+            }
+    }
 //---------------------------------------------------------------
 // ConversationsEnginePrivate::resendMessage()
 // @see header

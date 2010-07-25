@@ -112,6 +112,19 @@ public:
     void
             GetEntryListL(
                           RPointerArray<CCsConversationEntry>* aConversationEntryList);
+    
+    /**
+     * GetEntryListL
+     * This function shall return all the entries this conversation holds
+     * 
+     * @param aConversationEntryList, list of conversation entries
+	 * @param aStartIndex, start index for conversation entries.
+	 * @param aEndIndex, end index for conversation entries.
+     */
+    void GetEntryListL(
+            RPointerArray<CCsConversationEntry>* aConversationEntryList,
+            TInt aStartIndex,
+            TInt aEndIndex);
 
     /**
      * GetEntryL

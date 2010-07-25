@@ -31,11 +31,11 @@
 ;rom will not allow to update it if name is testframework, after install need to rename it to testframework.ini
 
 ;INI FILE
-"..\init\test_plugin.ini"        			-"c:\Testframework\testframework.ini"
+"..\init\testframework.ini"                             -"c:\Testframework\ttestframework.ini"
 
 ;CFG FILES
-"..\conf\test_plugin.cfg"        			-"c:\Testframework\test_plugin.cfg"
+"..\conf\test_pluginpreview.cfg"        			-"c:\Testframework\test_pluginpreview.cfg"
 
 
-"\EPOC32\RELEASE\ARMV5\UREL\test_plugin.dll" 	-"!:\sys\bin\test_plugin.dll"
+"\EPOC32\RELEASE\ARMV5\UREL\test_pluginpreview.dll" 	-"!:\sys\bin\test_pluginpreview.dll"
     

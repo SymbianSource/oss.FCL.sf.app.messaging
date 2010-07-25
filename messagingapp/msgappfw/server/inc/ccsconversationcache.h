@@ -74,6 +74,23 @@ public:
             GetConversationListL(
                                  RPointerArray<CCsClientConversation>* aClientConversationList);
 
+/**
+     * GetConversationsL
+     * Gets the Conversation Entries of a given Client Conversation
+     * 
+     * @param aClientConversation object of CCsClientConversation
+     * for which the Converstion entries needs to be fetched
+     * @param aConversationEntryList list of CCsConversationEntries
+	 * @param aKnownIndex - last message index of client total messages.
+	 * @param aPageSize  - Number of messages need to be fetched.
+	 * @param aTotalConversationCount - Has total number of message count                    
+     */    
+    void GetConversationsL(
+            const CCsClientConversation*  aClientConversation, 
+            RPointerArray<CCsConversationEntry>* aConversationEntryList,
+            TInt aKnownIndex, TInt aPageSize,
+            TInt& aTotalConversationCount);
+
     /**
      * GetConversationUnreadListL
      * Get Conversation list with contact details and unread conversation

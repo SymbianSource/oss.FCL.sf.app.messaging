@@ -51,7 +51,7 @@ const QString MSG_VIDEO_ICON("qtg_small_video");
 #define LOC_BUSINESS_CARD hbTrId("txt_messaging_list_business_card")
 #define LOC_CALENDAR_EVENT hbTrId("txt_messaging_list_calendar_event")
 #define LOC_UNSUPPORTED_MSG_TYPE hbTrId("txt_messaging_list_listview_unsupported_message_type")
-#define LOC_RESEND_AT hbTrId("Resend at ")
+#define LOC_RESEND_AT hbTrId("txt_messaging_list_resend_at_time")
 
 //---------------------------------------------------------------
 // MsgConversationViewItem::MsgConversationViewItem
@@ -581,6 +581,7 @@ void MsgConversationViewItem::init()
 //---------------------------------------------------------------
 void MsgConversationViewItem::orientationchanged(Qt::Orientation orientation)
 {
+    Q_UNUSED(orientation)
     QDEBUG_WRITE("MsgConversationViewItem:orientationchanged start.")
 
     repolish();

@@ -57,7 +57,8 @@ public:
      */
 
     virtual void Conversations(
-            RPointerArray<CCsConversationEntry>& aConversationEntryList) = 0;
+            RPointerArray<CCsConversationEntry>& aConversationEntryList,
+            TInt& aTotalCount) = 0;
     };
 
 #endif // __M_CS_RESULTS_OBSERVER_H__

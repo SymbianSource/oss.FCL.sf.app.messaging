@@ -31,7 +31,7 @@
 #include "nativemessageconsts.h"
 
 // LOCALIZATION
-#define LOC_SEND_FAILED hbTrId("txt_messaging_formlabel_sending_failed")
+#define LOC_SEND_FAILED hbTrId("txt_messaging_list_message_sending_failed")
 
 // LOCAL CONSTANTS
 const QString ADDR_LIST_SEPARATOR(", ");

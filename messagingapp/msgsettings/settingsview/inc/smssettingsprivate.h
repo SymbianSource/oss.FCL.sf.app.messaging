@@ -37,25 +37,17 @@ public:
     ~SmsSettingsPrivate();
 
     /**
-     * sets the status of service messages
-     * @param serviceMessages status true or false
-     */
-    void setReceiveSerivceMessages(TBool serviceMessages);
-
-    /**
      * set the character encoding
      * @param status true or false
      */
-    void setCharacterEncoding(TBool status);
+    void setCharacterEncodingL(TBool status);
 
     /**
      * get the status of deliver report and
      * character encoding
-     * @param report status of delivery report
      * @param statusEncoding charcter encoding
      */
-    void settingsServiceMessagesAndCharEncoding(TBool& report,
-                                              TBool& statusEncoding);
+    void settingsCharEncodingL(TBool& statusEncoding);
 
     /**
      * get all the sms service names and 
@@ -63,14 +55,14 @@ public:
      * @param accessPoints array of access names
      * @param defaultIndex, default set index
      */
-    void getAllSMSMessageCenter(RPointerArray<HBufC>& accessPoints,
+    void getAllSMSMessageCenterL(RPointerArray<HBufC>& accessPoints,
                                 int &defaultIndex);
 
     /**
      * set the default index
      * @param index default index
      */
-    void setSMSMessageCenter(int index);
+    void setSMSMessageCenterL(int index);
 
     /**
      * edit the sms service address
@@ -78,20 +70,20 @@ public:
      * @param name sms service name
      * @param index value to modify
      */
-    void editSMSServiceCentre(HBufC* address, HBufC* name, TInt index);
+    void editSMSServiceCentreL(HBufC* address, HBufC* name, TInt index);
 
     /**
      * add a new sms service address
      * @param address service address number
      * @param name service name
      */
-    void addSmsMessageCenter(HBufC* address, HBufC* name);
+    void addSmsMessageCenterL(HBufC* address, HBufC* name);
     
     /**
      * delete sms service address
      * @param aDeleteIndex refers to the index to delete
      */
-    void deleteSmsMessageCenter(TInt aDeleteIndex);
+    void deleteSmsMessageCenterL(TInt aDeleteIndex);
     
 
     /**
@@ -100,7 +92,7 @@ public:
      * @param centerNumber address of the service
      * @param centerName name of the service
      */
-    void smsCenterNameAndNumber(int index, HBufC** centerNumber,
+    void smsCenterNameAndNumberL(int index, HBufC** centerNumber,
                                 HBufC** centerName);
 
 private:

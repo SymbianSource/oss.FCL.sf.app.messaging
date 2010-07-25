@@ -29,7 +29,7 @@
 // CONSTANTS
 _LIT( KAmrMime, "audio/amr" );
 
-MsgAudioSelectionEngine::MsgAudioSelectionEngine()
+MsgAudioSelectionEngine::MsgAudioSelectionEngine():iQuery(NULL)
     {
 
     }
@@ -43,7 +43,7 @@ MsgAudioSelectionEngine::~MsgAudioSelectionEngine()
 
 void MsgAudioSelectionEngine::CreateMetaDataSession()
 {
-    TRAP_IGNORE(iSession = CMdESession::NewL(*this));
+    QT_TRAP_THROWING(iSession = CMdESession::NewL(*this));
 }
 
 
@@ -100,7 +100,7 @@ void MsgAudioSelectionEngine::AddObjectObserverL()
     if (iSessionOpen)
         {
         TUint32 notificationType = ENotifyAdd | ENotifyModify | ENotifyRemove;
-        User::LeaveIfNull(iSession);
+        q_check_ptr(iSession);
         CMdENamespaceDef& defNS = iSession->GetDefaultNamespaceDefL();
         iSession->AddObjectObserverL(*this, 0, notificationType, &defNS);
         iSession->AddObjectPresentObserverL(*this);
@@ -201,13 +201,13 @@ void MsgAudioSelectionEngine::LeaveIfSessionClosedL()
     {
     if (!iSession || !iSessionOpen)
         {
-        User::Leave(KErrDisconnected);
+        qt_symbian_throwIfError (KErrDisconnected);
         }
     }
 
 CMdEPropertyDef& MsgAudioSelectionEngine::PropertyDefL(TInt aAttr)
     {
-    User::LeaveIfNull(iSession);
+    q_check_ptr(iSession);
     return PropertyDefL(iSession, aAttr);
     }
 
@@ -253,7 +253,7 @@ CMdEPropertyDef& MsgAudioSelectionEngine::PropertyDefL(CMdESession* aSession,
         }
     else
         {
-        User::Leave(KErrNotSupported);
+        qt_symbian_throwIfError(KErrNotSupported);
         }
 
     return objectDef.GetPropertyDefL(MdeConstants::Object::KTitleProperty);

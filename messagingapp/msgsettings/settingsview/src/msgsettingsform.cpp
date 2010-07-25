@@ -27,7 +27,7 @@
 
 //Localized constants
 #define LOC_RECEIVING_SERVICE_MESSAGES hbTrId("txt_messaging_setlabel_receiving_service_messages")
-#define LOC_ON hbTrId("txt_messaging_setlabel_val_on")
+
 #define LOC_OFF hbTrId("txt_messaging_setlabel_val_off")
 #define LOC_REDUCED_SUPPORT hbTrId("txt_messaging_setlabel_val_reduced_support")
 #define LOC_FULL_SUPPORT hbTrId("txt_messaging_setlabel_val_full_support")
@@ -83,11 +83,7 @@ void MsgSettingsForm::initSettingModel(
     MsgSettingEngine::CharacterEncoding charEncoding =
             MsgSettingEngine::ReducedSupport;
 
-    bool receiveServiceMessages = false;
-
-    mSettingEngine->settingsServiceMessagesAndCharEncoding(
-            receiveServiceMessages,
-            charEncoding);
+    mSettingEngine->settingsCharEncoding(charEncoding);
 
     // 1. Character encoding
     HbDataFormModelItem *characterEncoding =
@@ -109,29 +105,7 @@ void MsgSettingsForm::initSettingModel(
                         this,
                         SLOT(changeCharEncoding(int)));
 
-    //2. receiving service messages
-    QStringList serviceMessagesList;
-    serviceMessagesList << LOC_OFF << LOC_ON;
-
-    index = int (receiveServiceMessages);
-    int otherIndex = (receiveServiceMessages + 1) % serviceMessagesList.count();
-
-    HbDataFormModelItem *serviceMessagesItem =
-            new HbDataFormModelItem(HbDataFormModelItem::ComboBoxItem,
-                                    LOC_RECEIVING_SERVICE_MESSAGES,
-                                    0);
-
-    serviceMessagesItem->setContentWidgetData("items", serviceMessagesList);
-    serviceMessagesItem->setContentWidgetData("currentIndex", index);
-
-    settingsModel->appendDataFormItem(serviceMessagesItem,
-                                      settingsModel->invisibleRootItem());
-    this->addConnection(serviceMessagesItem,
-                        SIGNAL(clicked()),
-                        this,
-                        SLOT(onPressedServiceMessages()));
-
-    // 3. MMS Settings
+    // 2. MMS Settings
     HbDataFormModelItem* mmsGroup =
             new HbDataFormModelItem(HbDataFormModelItem::GroupItem,
                                     LOC_MMS_SETTINGS,
@@ -381,26 +355,6 @@ void MsgSettingsForm::addSmsMCGroupItem(HbDataFormModelItem* parent)
                         SLOT(onPressedCustomButton()));
 }
 
-void MsgSettingsForm::onPressedServiceMessages()
-{
-    HbPushButton *btn = qobject_cast<HbPushButton *> (sender());
-
-    if (btn)
-    {
-        QString btnText = btn->text();
-
-        //check if the button pressed was On or Off
-        if (LOC_OFF == btnText)
-        {
-            mSettingEngine->setReceiveSerivceMessages(false);
-        }
-        else
-        {
-            mSettingEngine->setReceiveSerivceMessages(true);
-        }
-    }
-}
-
 void MsgSettingsForm::changeCharEncoding(int index)
 {
     //set the character encoding
@@ -443,11 +397,11 @@ void MsgSettingsForm::allowMMSAdverts()
         //check if the button pressed was Yes or NO
         if (LOC_MMS_NO == btnText)
         {
-            mSettingEngine->setReceiveMMSAdverts(true);
+            mSettingEngine->setReceiveMMSAdverts(false);
         }
         else
         {
-            mSettingEngine->setReceiveMMSAdverts(false);
+            mSettingEngine->setReceiveMMSAdverts(true);
         }
     }
 }

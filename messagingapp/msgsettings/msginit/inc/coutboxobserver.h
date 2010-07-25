@@ -65,7 +65,7 @@ public:
 
     /**
      *   The messaging server sends notifications of changes in the
-     *   observed entry to CNcnOutboxObserver by calling this method.
+     *   observed entry to COutboxObserver by calling this method.
      */
     void
         HandleEntryEventL(TMsvEntryEvent aEvent, TAny* /*aArg1*/, TAny* /*aArg2*/, TAny* /*aArg3*/);

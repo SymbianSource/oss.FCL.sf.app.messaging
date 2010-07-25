@@ -47,14 +47,15 @@ ConversationsEngine* ConversationsEngine::instance()
 ConversationsEngine::ConversationsEngine(QObject* parent):
     QObject(parent), mDraftsModel(NULL)
 {
-    mConversationMsgStoreHandler = new ConversationMsgStoreHandler;
+    QT_TRAP_THROWING(mConversationMsgStoreHandler = new ConversationMsgStoreHandler);
+    
     mConversationsSummaryModel = new ConversationsSummaryModel(this);    
     mConversationsModel = new ConversationsModel(mConversationMsgStoreHandler,
         this);   
 
-    d_ptr = new ConversationsEnginePrivate(mConversationMsgStoreHandler,
+    QT_TRAP_THROWING( d_ptr = new ConversationsEnginePrivate(mConversationMsgStoreHandler,
         mConversationsSummaryModel,
-        mConversationsModel);
+        mConversationsModel));
     
     connect (mConversationsModel,
             SIGNAL(conversationViewEmpty()),
@@ -170,6 +171,7 @@ void ConversationsEngine::deleteAllDraftMessages()
 {
     int error;
     TRAP(error, d_ptr->deleteAllDraftMessagesL());
+    qt_symbian_throwIfError(error);
 }
 
 //---------------------------------------------------------------
@@ -227,7 +229,9 @@ void ConversationsEngine::getContactDetails(qint64 conversationId,
         int error;
         CCsClientConversation* clientConv = NULL;
         TRAP(error, clientConv = d_ptr->getConversationFromConversationIdL(conversationId));
-
+       
+        qt_symbian_throwIfError(error);
+        
         HBufC *name = clientConv->GetDisplayName();
         if (name && name->Length())
         {
@@ -329,7 +333,7 @@ void ConversationsEngine::emitOpenConversationViewIdUpdate(
         int newConversationId)
 {
     //also register for subscription now
-    d_ptr->registerAgainForConversationUpdatesL(newConversationId);   
+    QT_TRAP_THROWING(d_ptr->registerAgainForConversationUpdatesL(newConversationId));   
 }
 
 //---------------------------------------------------------------

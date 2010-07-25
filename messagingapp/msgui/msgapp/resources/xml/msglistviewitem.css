@@ -69,16 +69,6 @@ MsgListViewItem[unReadMsg="false"]::previewLabel[layoutName="custom"]:portrait {
   text-line-count-max:2;
 }
 
-MsgListViewItem::unreadCount[layoutName="custom"]:portrait {
-  right:var(hb-param-margin-gene-middle-horizontal);
-  size-policy-horizontal: fixed;
-  text-align: right;
-  font-variant: primary;
-  text-height: var(hb-param-text-height-primary);
-  text-line-count-min:1;
-  text-line-count-max:1;
-}
-
 MsgListViewItem[unReadMsg="true"]::timeLabel[layoutName="custom"]:portrait {
   right:var(hb-param-margin-gene-right);
   bottom:var(hb-param-margin-gene-bottom);
@@ -103,8 +93,18 @@ MsgListViewItem[unReadMsg="false"]::timeLabel[layoutName="custom"]:portrait {
   text-line-count-max:1;
 }
 
-MsgListViewItem::presenceIndicator[layoutName="custom"]:portrait {
-  right: var(hb-param-margin-gene-right);
+MsgListViewItem::unreadCount[layoutName="custom"]:portrait {
+  right:var(hb-param-margin-gene-right);
+  size-policy-horizontal: fixed;
+  min-width: 5un;
+  text-align: right;
+  font-variant: primary;
+  text-height: var(hb-param-text-height-primary);
+  text-line-count-min:1;
+  text-line-count-max:1;
+}
+
+MsgListViewItem::msgCommonIndicator[layoutName="custom"]:portrait {
   size-policy-horizontal: fixed;
   size-policy-vertical: fixed;
   pref-width: var(hb-param-graphic-size-secondary);
@@ -112,7 +112,9 @@ MsgListViewItem::presenceIndicator[layoutName="custom"]:portrait {
   aspect-ratio: ignore;
 }
 
+
 /*Landscape mode*/
+
 MsgListViewItem::newMsgIndicator[layoutName="custom"]:landscape {
   left:-var(hb-param-margin-view-left);
   size-policy-horizontal: fixed;
@@ -167,6 +169,7 @@ MsgListViewItem[unReadMsg="false"]::previewLabel[layoutName="custom"]:landscape 
 MsgListViewItem::unreadCount[layoutName="custom"]:landscape {
   right:var(hb-param-margin-gene-middle-horizontal);
   size-policy-horizontal: fixed;
+  min-width: 5un;
   text-align: right;
   font-variant: primary;
   text-height: var(hb-param-text-height-primary);
@@ -174,8 +177,7 @@ MsgListViewItem::unreadCount[layoutName="custom"]:landscape {
   text-line-count-max:1;
 }
 
-MsgListViewItem::presenceIndicator[layoutName="custom"]:landscape {
-  right: var(hb-param-margin-gene-middle-horizontal);
+MsgListViewItem::msgCommonIndicator[layoutName="custom"]:landscape {
   size-policy-horizontal: fixed;
   size-policy-vertical: fixed;
   pref-width: var(hb-param-graphic-size-secondary);

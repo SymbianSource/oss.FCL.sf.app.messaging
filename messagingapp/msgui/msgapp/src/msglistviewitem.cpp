@@ -27,6 +27,7 @@
 #include <HbIconItem>
 #include <QCoreApplication>
 #include <HbEvent>
+#include <HbInstance>
 
 #include "msgcommondefines.h"
 #include "conversationsengine.h"
@@ -38,7 +39,7 @@
 #define LOC_RINGING_TONE hbTrId("txt_messaging_dpopinfo_ringing_tone")
 #define LOC_MSG_SEND_FAILED hbTrId("txt_messaging_list_message_sending_failed")
 #define LOC_MSG_OUTGOING hbTrId("txt_messaging_list_outgoing_message")
-#define LOC_MSG_RESEND_AT hbTrId("Resend at ")
+#define LOC_MSG_RESEND_AT hbTrId("txt_messaging_list_listview_resend_at_time")
 #define LOC_BUSINESS_CARD hbTrId("txt_messaging_list_business_card")
 #define LOC_CALENDAR_EVENT hbTrId("txt_messaging_list_calendar_event")
 #define LOC_UNSUPPORTED_MSG_TYPE hbTrId("txt_messaging_list_unsupported_message_type")
@@ -61,7 +62,7 @@ MsgListViewItem::MsgListViewItem(QGraphicsItem* parent) :
     mTimestampItem(NULL),
     mPreviewLabelItem(NULL),
     mUnreadCountItem(NULL),
-    mPresenceIndicatorItem(NULL)
+    mMsgCommonIndicatorItem(NULL)
 {
 }
 
@@ -99,35 +100,6 @@ void MsgListViewItem::updateChildItems()
     }
     mAddressLabelItem->setText(contactName);
 
-    // Unread message count
-    int unreadCount = modelIndex().data(UnreadCount).toInt();
-
-    if (unreadCount > 0)
-    {
-        QString unRead(tr("(%n)", "", unreadCount));
-        mUnreadCountItem->setText(unRead);
-        if(!mUnReadMsg)
-        {
-            mUnReadMsg = true;
-            mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(NEW_ITEM_FRAME);
-            repolish();
-            // Needed for colour group changes to be visible
-            QCoreApplication::postEvent(this, new HbEvent(HbEvent::ThemeChanged));  
-        }       
-    }
-    else
-    {
-        mUnreadCountItem->setText(QString());        
-        if(mUnReadMsg)
-        {
-            mUnReadMsg = false;  
-            mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(QString());
-            repolish();
-            // Needed for colour group changes to be visible
-            QCoreApplication::postEvent(this, new HbEvent(HbEvent::ThemeChanged));  
-        }
-    }
-
     HbListViewItem::updateChildItems();
 }
 
@@ -151,8 +123,8 @@ void MsgListViewItem::initItems()
         HbStyle::setItemName(mPreviewLabelItem, "previewLabel");
     }
     if (!mUnreadCountItem) {
-        mUnreadCountItem = new HbTextItem(this);
-        HbStyle::setItemName(mUnreadCountItem, "unreadCount");
+       mUnreadCountItem = new HbTextItem(this);
+       HbStyle::setItemName(mUnreadCountItem, "unreadCount");
     }
     if (!mNewMsgIndicatorItem) {
         mNewMsgIndicatorItem = new HbFrameItem(this);
@@ -160,11 +132,19 @@ void MsgListViewItem::initItems()
 
         mNewMsgIndicatorItem->frameDrawer().setFrameType(HbFrameDrawer::ThreePiecesVertical);
     }
-    if (!mPresenceIndicatorItem) {
-        mPresenceIndicatorItem = new HbIconItem(this);
-        HbStyle::setItemName(mPresenceIndicatorItem, "presenceIndicator");
+    if (!mMsgCommonIndicatorItem) {
+        mMsgCommonIndicatorItem = new HbIconItem(this);
+        HbStyle::setItemName(mMsgCommonIndicatorItem, "msgCommonIndicator");
     }
+    mUnreadCountItem->hide();
+    mMsgCommonIndicatorItem->hide();
+    
+    HbMainWindow *mainWindow = hbInstance->allMainWindows()[0];
+    
+    connect(mainWindow, SIGNAL(orientationChanged(Qt::Orientation)), this,
+        SLOT(orientationchanged(Qt::Orientation)), Qt::UniqueConnection);
 }
+
 //---------------------------------------------------------------
 // MsgListViewItem::defaultPreviewText
 // @see header
@@ -193,8 +173,6 @@ QString MsgListViewItem::defaultPreviewText(int msgType, int msgSubType)
         else {
             previewText = LOC_UNSUPPORTED_MSG_TYPE;
         }
-
-        mPresenceIndicatorItem->setVisible(false);
     }
     else if (msgType == ConvergedMessage::BT) {
 
@@ -206,14 +184,12 @@ QString MsgListViewItem::defaultPreviewText(int msgType, int msgSubType)
         else {
             previewText = bodyText;
         }
-
-        mPresenceIndicatorItem->setIconName(BT_ICON);
-        mPresenceIndicatorItem->setVisible(true);
+        
+        setCommonIndicator(BT_ICON);
     }
     else {
         // All message types except BIO & BT.
         previewText = modelIndex().data(BodyText).toString();
-        mPresenceIndicatorItem->setVisible(false);
     }
     return previewText;
 }
@@ -243,17 +219,22 @@ void MsgListViewItem::setTimestampAndPreviewText()
     int msgDirection = modelIndex().data(Direction).toInt();
     QString previewText;
     if (ConvergedMessage::Incoming == msgDirection) {
-        previewText = defaultPreviewText(msgType, msgSubType);
+        if( ConvergedMessage::BT != msgType)            
+            {
+            setUnreadCountStatus();
+            }
+        previewText = defaultPreviewText(msgType, msgSubType);        
     }
     else if (msgDirection == ConvergedMessage::Outgoing) {
-
+        
+        setUnreadCountStatus();
+        
         switch (sendState) {
         case ConvergedMessage::Resend:
         {
             previewText = LOC_MSG_RESEND_AT + dateString;
-            dateString = QString();
-            mPresenceIndicatorItem->setIconName(MSG_OUTGOING_ICON);
-            mPresenceIndicatorItem->setVisible(true);
+            dateString = QString();            
+            setCommonIndicator(MSG_OUTGOING_ICON);
             break;
         }
         case ConvergedMessage::Sending:
@@ -261,21 +242,24 @@ void MsgListViewItem::setTimestampAndPreviewText()
         case ConvergedMessage::Scheduled:
         case ConvergedMessage::Waiting:
         {
-            previewText = QString(LOC_MSG_OUTGOING);
-            mPresenceIndicatorItem->setIconName(MSG_OUTGOING_ICON);
-            mPresenceIndicatorItem->setVisible(true);
+            previewText = QString(LOC_MSG_OUTGOING);            
+            setCommonIndicator(MSG_OUTGOING_ICON);
             break;
         }
         case ConvergedMessage::Failed:
         {
             previewText = QString(LOC_MSG_SEND_FAILED);
-            mPresenceIndicatorItem->setIconName(MSG_FAILED_ICON);
-            mPresenceIndicatorItem->setVisible(true);
+            setCommonIndicator(MSG_FAILED_ICON);
             break;
         }
         default:
         {
-            // Successful case
+        // Successful case
+        if( ConvergedMessage::BT != msgType)
+            {
+            setUnreadCountStatus();
+            }
+            
             previewText = defaultPreviewText(msgType, msgSubType);
             break;
         }
@@ -315,6 +299,70 @@ void MsgListViewItem::setHasUnReadMsg(bool unread)
 bool MsgListViewItem::hasUnReadMsg()
 {
     return mUnReadMsg;
+}
+
+//---------------------------------------------------------------
+// MsgListViewItem::setUnreadCountStatus
+// @see header file
+//---------------------------------------------------------------
+void MsgListViewItem::setUnreadCountStatus()
+    {
+    // Unread message count
+    int unreadCount = modelIndex().data(UnreadCount).toInt();
+
+    if (unreadCount > 0)
+        {
+        QString unRead(tr("(%n)", "", unreadCount));
+      
+        mMsgCommonIndicatorItem->hide();
+        mUnreadCountItem->setText(unRead);
+        mUnreadCountItem->show();
+                
+        if (!mUnReadMsg)
+            {
+            mUnReadMsg = true;
+            mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(
+                    NEW_ITEM_FRAME);
+            repolish();
+            // Needed for colour group changes to be visible
+            QCoreApplication::postEvent(this, new HbEvent(
+                    HbEvent::ThemeChanged));
+            }
+        }
+    else
+        {
+        if (mUnReadMsg)
+            {
+            mUnReadMsg = false;
+            mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(
+                    QString());
+            repolish();
+            // Needed for colour group changes to be visible
+            QCoreApplication::postEvent(this, new HbEvent(
+                    HbEvent::ThemeChanged));
+            }
+        }
+    }
+
+//---------------------------------------------------------------
+// MsgListViewItem::setCommonIndicator
+// @see header file
+//---------------------------------------------------------------
+void MsgListViewItem::setCommonIndicator(const QString& string)
+    {
+        mUnreadCountItem->hide();
+        mMsgCommonIndicatorItem->setIconName(string);
+        mMsgCommonIndicatorItem->show();
+    }
+
+//---------------------------------------------------------------
+// MsgListViewItem::orientationchanged
+// @see header file
+//---------------------------------------------------------------
+void MsgListViewItem::orientationchanged(Qt::Orientation orientation)
+{
+    Q_UNUSED(orientation)
+    repolish();
 }
 
 //EOF

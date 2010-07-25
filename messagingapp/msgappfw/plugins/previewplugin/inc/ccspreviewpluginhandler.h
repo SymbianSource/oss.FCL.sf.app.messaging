@@ -40,6 +40,7 @@ class CCsConversationEntry;
 class CCsPreviewPlugin;
 class CClientMtmRegistry;
 class CMmsClientMtm;
+class CBIOClientMtm;
 class CUniDataModel;
 class MMsvAttachmentManager;
 
@@ -132,6 +133,18 @@ private:
      *@param aSelection, CMsvEntrySelections
      */
     void HandleEventL(CMsvEntrySelection* aSelection);
+    
+    /**
+     * Process MMS entry
+     *@param aEntry, TMsvEntry
+     */
+    void HandleMMSEntryL(const TMsvEntry& aEntry);
+
+    /**
+     * Process VCard enry
+     *@param aEntry, TMsvEntry
+     */
+    void HandleVCardEntryL(const TMsvEntry& aEntry);
 
     /**
      * Bind bodytext to sql statement.
@@ -233,6 +246,12 @@ private:
      * Own.
      */
     CMmsClientMtm* iMmsMtm;
+    
+    /**
+     * BioMsg client mtm object
+     * Own.
+     */
+    CBIOClientMtm* iBioClientMtm;
 
     /*
      * File session

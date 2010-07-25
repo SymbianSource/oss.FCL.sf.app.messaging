@@ -20,17 +20,20 @@ EXPORTS
 	_ZN17UniEditorGenUtils8UTF8SizeE7QString @ 19 NONAME
 	_ZN17UniEditorGenUtilsC1Ev @ 20 NONAME
 	_ZN17UniEditorGenUtilsC2Ev @ 21 NONAME
-	_ZN17UniEditorGenUtilsD1Ev @ 22 NONAME
-	_ZN17UniEditorGenUtilsD2Ev @ 23 NONAME
-	_ZN18CMuiuOperationWait4RunLEv @ 24 NONAME
-	_ZN18CMuiuOperationWait5NewLCEi @ 25 NONAME
-	_ZN18CMuiuOperationWait5StartEv @ 26 NONAME
-	_ZN18CMuiuOperationWait8DoCancelEv @ 27 NONAME
-	_ZN18CMuiuOperationWaitC1Ei @ 28 NONAME
-	_ZN18CMuiuOperationWaitC2Ei @ 29 NONAME
-	_ZN18CMuiuOperationWaitD0Ev @ 30 NONAME
-	_ZN18CMuiuOperationWaitD1Ev @ 31 NONAME
-	_ZN18CMuiuOperationWaitD2Ev @ 32 NONAME
-	_ZTI18CMuiuOperationWait @ 33 NONAME
-	_ZTV18CMuiuOperationWait @ 34 NONAME
+	_ZN17UniEditorGenUtilsD0Ev @ 22 NONAME
+	_ZN17UniEditorGenUtilsD1Ev @ 23 NONAME
+	_ZN17UniEditorGenUtilsD2Ev @ 24 NONAME
+	_ZN18CMuiuOperationWait4RunLEv @ 25 NONAME
+	_ZN18CMuiuOperationWait5NewLCEi @ 26 NONAME
+	_ZN18CMuiuOperationWait5StartEv @ 27 NONAME
+	_ZN18CMuiuOperationWait8DoCancelEv @ 28 NONAME
+	_ZN18CMuiuOperationWaitC1Ei @ 29 NONAME
+	_ZN18CMuiuOperationWaitC2Ei @ 30 NONAME
+	_ZN18CMuiuOperationWaitD0Ev @ 31 NONAME
+	_ZN18CMuiuOperationWaitD1Ev @ 32 NONAME
+	_ZN18CMuiuOperationWaitD2Ev @ 33 NONAME
+	_ZTI17UniEditorGenUtils @ 34 NONAME
+	_ZTI18CMuiuOperationWait @ 35 NONAME
+	_ZTV17UniEditorGenUtils @ 36 NONAME
+	_ZTV18CMuiuOperationWait @ 37 NONAME
 

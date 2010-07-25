@@ -62,13 +62,6 @@ public:
     ~MsgSettingEngine();
 
     /**
-     * for basic message settings
-     * set the status of service messages
-     * @param serviceMessages bool true or false
-     */
-    void setReceiveSerivceMessages(bool serviceMessages);
-
-    /**
      * set the character encoding
      * @param encoding specifying encoding type
      */
@@ -77,11 +70,9 @@ public:
     /**
      * returns settings delivery report status
      * and character encoding
-     * @param receiveServiceMessages for getting status service messages
      * @param encoding for char encoding
      */
-    void settingsServiceMessagesAndCharEncoding( 
-            bool& receiveServiceMessages,
+    void settingsCharEncoding( 
             MsgSettingEngine::CharacterEncoding& encoding);
     
     /**

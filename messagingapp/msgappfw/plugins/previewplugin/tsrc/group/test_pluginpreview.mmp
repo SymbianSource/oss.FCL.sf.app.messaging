@@ -63,6 +63,7 @@ SOURCE 		  ..\..\src\proxy.cpp
 
 USERINCLUDE     ..\inc 
 USERINCLUDE     ..\..\inc
+USERINCLUDE     ..\..\..\..\..\..\inc
 USERINCLUDE     ..\..\..\..\..\msgutils\unidatautils\unidatamodel\inc
 USERINCLUDE     ..\..\..\..\..\..\messagingappbase\obexmtms\TObexMTM\INC
 USERINCLUDE     ..\..\..\..\utils\inc

@@ -330,7 +330,9 @@ EXPORT_C void CCSRequestHandler::GetConversationUnreadListL(RPointerArray<
 // convresation view.
 // -----------------------------------------------------------------------------
 EXPORT_C void CCSRequestHandler::GetConversationsL(
-        CCsClientConversation*  aClientConversation)
+        CCsClientConversation*  aClientConversation, 
+        TInt /*aKnownIndex*/, 
+        TInt /*aPageSize*/)
     {
     // check if the aclientconversation is null then return
     if ( !aClientConversation)
@@ -492,7 +494,9 @@ EXPORT_C TInt CCSRequestHandler::GetConversationIdFromAddressL(TDesC& aContactAd
 // -----------------------------------------------------------------------------
 // CCSRequestHandler::GetMessagingHistoryL()
 // -----------------------------------------------------------------------------
-EXPORT_C void CCSRequestHandler::GetMessagingHistoryL(TInt /*aContactId*/)
+EXPORT_C void CCSRequestHandler::GetMessagingHistoryL(TInt /*aContactId*/, 
+        TInt /*aKnownIndex*/, 
+        TInt /*aPageSize*/)
     {
     }
 

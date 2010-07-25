@@ -62,22 +62,7 @@ SmsSettingsPrivate::~SmsSettingsPrivate()
     //do nothing
 }
 
-void SmsSettingsPrivate::setReceiveSerivceMessages(
-        TBool serviceMessages)
-{
-    CSmsAccount* smsAccount = CSmsAccount::NewLC();
-    CSmsSettings* smsSettings = CSmsSettings::NewLC();
-
-    smsAccount->LoadSettingsL(*smsSettings);
-
-    //TODO set the receive message part
-
-    smsAccount->SaveSettingsL(*smsSettings);
-
-    CleanupStack::PopAndDestroy(2);
-}
-
-void SmsSettingsPrivate::setCharacterEncoding(TBool status)
+void SmsSettingsPrivate::setCharacterEncodingL(TBool status)
 {
     CSmsAccount* smsAccount = CSmsAccount::NewLC();
     CSmsSettings* smsSettings = CSmsSettings::NewLC();
@@ -98,16 +83,12 @@ void SmsSettingsPrivate::setCharacterEncoding(TBool status)
     CleanupStack::PopAndDestroy(2);
 }
 
-void SmsSettingsPrivate::settingsServiceMessagesAndCharEncoding(
-                                                              TBool& report,
-                                                              TBool& statusEncoding)
+void SmsSettingsPrivate::settingsCharEncodingL(TBool& statusEncoding)
 {
     CSmsAccount* smsAccount = CSmsAccount::NewLC();
     CSmsSettings* smsSettings = CSmsSettings::NewLC();
 
     smsAccount->LoadSettingsL(*smsSettings);
-
-    //TODO: service messages read
 
     TSmsDataCodingScheme::TSmsAlphabet charSet = smsSettings->CharacterSet();
 
@@ -119,7 +100,7 @@ void SmsSettingsPrivate::settingsServiceMessagesAndCharEncoding(
     CleanupStack::PopAndDestroy(2);
 }
 
-void SmsSettingsPrivate::getAllSMSMessageCenter(
+void SmsSettingsPrivate::getAllSMSMessageCenterL(
                                                 RPointerArray<HBufC>& accessPoints,
                                                 TInt &defaultIndex)
 {
@@ -144,7 +125,7 @@ void SmsSettingsPrivate::getAllSMSMessageCenter(
     return;
 }
 
-void SmsSettingsPrivate::setSMSMessageCenter(int index)
+void SmsSettingsPrivate::setSMSMessageCenterL(int index)
 {
     CSmsAccount* smsAccount = CSmsAccount::NewLC();
     CSmsSettings* smsSettings = CSmsSettings::NewLC();
@@ -156,7 +137,7 @@ void SmsSettingsPrivate::setSMSMessageCenter(int index)
     CleanupStack::PopAndDestroy(2);
 }
 
-void SmsSettingsPrivate::editSMSServiceCentre(HBufC* address, HBufC* name,
+void SmsSettingsPrivate::editSMSServiceCentreL(HBufC* address, HBufC* name,
                                               TInt index)
 {
     CSmsAccount* smsAccount = CSmsAccount::NewLC();
@@ -188,7 +169,7 @@ void SmsSettingsPrivate::editSMSServiceCentre(HBufC* address, HBufC* name,
     CleanupStack::PopAndDestroy(2);
 }
 
-void SmsSettingsPrivate::addSmsMessageCenter(HBufC* address, HBufC* name)
+void SmsSettingsPrivate::addSmsMessageCenterL(HBufC* address, HBufC* name)
 {
     CSmsAccount* smsAccount = CSmsAccount::NewLC();
     CSmsSettings* smsSettings = CSmsSettings::NewLC();
@@ -208,7 +189,7 @@ void SmsSettingsPrivate::addSmsMessageCenter(HBufC* address, HBufC* name)
     CleanupStack::PopAndDestroy(2);
 }
 
-void SmsSettingsPrivate::deleteSmsMessageCenter(TInt aDeleteIndex)
+void SmsSettingsPrivate::deleteSmsMessageCenterL(TInt aDeleteIndex)
 {
     CSmsAccount* smsAccount = CSmsAccount::NewLC();
     CSmsSettings* smsSettings = CSmsSettings::NewLC();
@@ -231,7 +212,7 @@ void SmsSettingsPrivate::deleteSmsMessageCenter(TInt aDeleteIndex)
     CleanupStack::PopAndDestroy(2);
 }
 
-void SmsSettingsPrivate::smsCenterNameAndNumber(int index,
+void SmsSettingsPrivate::smsCenterNameAndNumberL(int index,
                                                 HBufC** centerNumber,
                                                 HBufC** centerName)
 {

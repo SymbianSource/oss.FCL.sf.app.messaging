@@ -29,7 +29,7 @@
 MsgSimNumDetector::MsgSimNumDetector()
 {
 	QDEBUG_WRITE("MsgSimNumDetector::MsgSimNumDetector : Enter")
-	d_ptr = new MsgSimNumDetectorPrivate();
+    QT_TRAP_THROWING(d_ptr = new MsgSimNumDetectorPrivate());
 	QDEBUG_WRITE("MsgSimNumDetector::MsgSimNumDetector : Exit")
 }
 
@@ -51,7 +51,7 @@ mSimOperation(NULL)
 {
   QDEBUG_WRITE("MsgSimNumDetectorPrivate::MsgSimNumDetectorPrivate : Enter")
   
-  TRAP_IGNORE(initL());
+  initL();
   
   QDEBUG_WRITE("MsgSimNumDetectorPrivate::MsgSimNumDetectorPrivate : Exit")
 

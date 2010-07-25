@@ -31,7 +31,7 @@
 #include <HbNotificationDialog>
 #include <HbIconItem>
 #include <HbTextItem>
-
+#include <HbColorScheme>
 #include <xqserviceglobal.h>
 #include <xqaiwrequest.h>
 #include <xqaiwinterfacedescriptor.h>
@@ -53,6 +53,8 @@
 #define LOC_NO_FILES            hbTrId("No files found.")
 #define LOC_SERVICE_ERROR       hbTrId("Service error.")
 #define LOC_PROTECTED_CONTENT   hbTrId("Protected content.")
+
+const QString LIST_ITEM_TITLE("qtc_list_item_title_normal");
 
 /**
  * Constructor.
@@ -84,7 +86,7 @@ void ShareUiPrivate::reset()
         delete request;
     }
     mAiwRequestList.clear();
-
+    mServiceInterfaceMap.clear();
     }
 
 /**
@@ -95,106 +97,105 @@ void ShareUiPrivate::reset()
  * 
  */
 bool ShareUiPrivate::init(QStringList& fileList, bool embedded)
-    {    
+    {
     reset();
     mIsEmbedded = embedded;
     // No input files
-    if ( fileList.count() == 0 )
-        {
+    if (fileList.count() == 0) {
         showNote(LOC_NO_FILES);
-        return true;       
-        }
+        return true;
+    }
 
 #ifdef __SHAREUI_MIME_HANDLING__   
     // Get the file attributes (MIME and forward lock)
     QStringList mimeTypeList;
     QStringList forwardStatusList;
     getFileAttributes(fileList, mimeTypeList, forwardStatusList);
-    
+
     // Ignore protected files
     QStringList filteredFileList;
     QStringList filteredMimeList;
-    for ( int i = 0; i < forwardStatusList.count(); i++ )
-        {
-        if ( forwardStatusList[i].toInt() )
-            {
+    for (int i = 0; i < forwardStatusList.count(); i++) {
+        if (forwardStatusList[i].toInt()) {
             filteredFileList << fileList[i];
             filteredMimeList << mimeTypeList[i];
-            }
         }
-    filteredMimeList.removeDuplicates();    
-    
+    }
+    filteredMimeList.removeDuplicates();
+
     // Some protected content
-    if ( fileList.count() != filteredFileList.count() )
-        {
-        showNote(LOC_PROTECTED_CONTENT);      
+    if (fileList.count() != filteredFileList.count()) {
+        showNote(LOC_PROTECTED_CONTENT);
         return true;
-        }
-    
+    }
+
     // Only protected content
-    if ( filteredFileList.count() == 0 )
-        {
+    if (filteredFileList.count() == 0) {
         showNote(LOC_NO_FILES);
-        return true;       
-        }
+        return true;
+    }
 #endif
 
 #ifdef __SHAREUI_MIME_HANDLING__ 
-    for ( int i = 0; i < filteredFileList.count(); i++ )
-        {     
+    for (int i = 0; i < filteredFileList.count(); i++) {
         mFileList.append(QDir::toNativeSeparators(filteredFileList[i]));
-        }
+    }
 #else
     for ( int i = 0; i < fileList.count(); i++ )
-        {     
+    {
         mFileList.append(QDir::toNativeSeparators(fileList[i]));
-        }
+    }
 #endif
-    
-    QList<XQAiwInterfaceDescriptor> serviceDescriptorList = 
-            mAppManager.list(SERVICE_INTERFACE, SHARE_OP);
-    if ( serviceDescriptorList.size() > 0 )
-        {          
-        initializeUi();
 
-        for ( int i = 0; i < serviceDescriptorList.count() ; i++ )
-            { 
+    QList<XQAiwInterfaceDescriptor> serviceDescriptorList = mAppManager.list(SERVICE_INTERFACE,
+        SHARE_OP);
+
+    if (serviceDescriptorList.size() > 0) {
+        initializeUi();
+        //sorting the services based on service names,
+        //reinserting sorted list into serviceDescriptorList
+        for (int i = 0; i < serviceDescriptorList.count(); i++) {
+            mServiceInterfaceMap.insert(serviceDescriptorList[i].serviceName(),
+                serviceDescriptorList[i]);
+        }
+        QStringList serviceNames = mServiceInterfaceMap.keys();
+        serviceNames.sort();
+        serviceDescriptorList.clear();
+        for (int i = 0; i < serviceNames.count(); i++) {
+            serviceDescriptorList.append(mServiceInterfaceMap.value(serviceNames.at(i)));
+        }
+        for (int i = 0; i < serviceDescriptorList.count(); i++) {
 #ifdef __SHAREUI_MIME_HANDLING__          
             // Filter services based on content type
-            QString allowedTypes = serviceDescriptorList[i].customProperty
-                    (QString("allowed_mime_types"));              
-            QString blockedTypes = serviceDescriptorList[i].customProperty
-                    (QString("blocked_mime_types"));
-            
+            QString allowedTypes = serviceDescriptorList[i].customProperty(QString(
+                "allowed_mime_types"));
+            QString blockedTypes = serviceDescriptorList[i].customProperty(QString(
+                "blocked_mime_types"));
+
             // Check against MIME filters
-            if ( ! isContentAllowed( filteredMimeList, allowedTypes ) )
+            if (!isContentAllowed(filteredMimeList, allowedTypes))
                 continue;
-            
-            if ( isContentBlocked( filteredMimeList, blockedTypes ) )
-                continue;                     
+
+            if (isContentBlocked(filteredMimeList, blockedTypes))
+                continue;
 #endif            
             HbAction* action = fetchServiceAction(serviceDescriptorList[i]);
-            QString iconName = serviceDescriptorList[i].customProperty
-                    (QString("aiw_action_icon"));
-            if ( action )
-                {
+            QString iconName = serviceDescriptorList[i].customProperty(QString("aiw_action_icon"));
+            if (action) {
                 updateShareUiDialogList(action, iconName);
-                }
             }
-        
-        if ( mContentItemModel->rowCount() == 0 )
-            {
+        }
+        if (mContentItemModel->rowCount() == 0) {
             showNote(LOC_NO_SERVICES);
             return true;
-            }
+        }
 
         mSharePopup->show();
-        }
-    else
-        {
+    }
+    else {
         showNote(LOC_NO_SERVICES);
-        }
-    
+    }
+
     return true;
     }
 
@@ -208,6 +209,8 @@ void ShareUiPrivate::initializeUi()
     // make it delete itself on close
     mSharePopup->setAttribute( Qt::WA_DeleteOnClose, true );
     HbTextItem* heading = new HbTextItem(LOC_SEND_SELECTED_ITEM, mSharePopup);
+    QColor color = HbColorScheme::color( LIST_ITEM_TITLE );
+    heading->setTextColor( color );
     heading->setAlignment(Qt::AlignCenter);
     mSharePopup->setDismissPolicy(HbDialog::TapAnywhere);
     mSharePopup->setHeadingWidget(heading);
@@ -486,7 +489,7 @@ void ShareUiPrivate::showNote(QString text)
     HbNotificationDialog* dlg = new HbNotificationDialog();
     dlg->setFocusPolicy(Qt::NoFocus);
     dlg->setAttribute(Qt::WA_DeleteOnClose, true);
-    dlg->setText(text);
+    dlg->setTitle(text);
     dlg->show();
     }
 

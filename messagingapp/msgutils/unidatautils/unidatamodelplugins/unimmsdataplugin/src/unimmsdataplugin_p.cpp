@@ -127,7 +127,7 @@ int UniMMSDataPluginPrivate::messageSize()
 }
 
 
-QString UniMMSDataPluginPrivate::subject()
+QString UniMMSDataPluginPrivate::subjectL()
 {
    TPtrC sub =  mMmsClient->SubjectL();
    return XQConversions::s60DescToQString(sub);

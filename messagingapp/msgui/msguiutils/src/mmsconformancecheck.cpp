@@ -90,7 +90,7 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
     HBufC* filePath = XQConversions::qStringToS60Desc(file);
     if (filePath)
     {
-        CleanupStack::PushL(filePath);
+        QT_TRAP_THROWING(CleanupStack::PushL(filePath);
 
         CMmsConformance* mmsConformance = CMmsConformance::NewL();
         mmsConformance->CheckCharacterSet(EFalse);
@@ -173,7 +173,7 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
 
             return EInsertNotSupported;
         }
-        delete info;
+        delete info);
     }
     QDEBUG_WRITE("MmsConformanceCheck::CheckModeForInsert end");
     return EInsertSuccess;

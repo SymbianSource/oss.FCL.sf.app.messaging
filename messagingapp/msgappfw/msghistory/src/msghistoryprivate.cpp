@@ -29,14 +29,20 @@
 // CONSTANTS
 _LIT(KUnixEpoch, "19700000:000000.000000");
 
+const TInt KMaxConversationIPCLimit = 250;
+
 
 //---------------------------------------------------------------
 // MsgHistoryPrivate::MsgHistoryPrivate
 // @see header
 //---------------------------------------------------------------
 MsgHistoryPrivate::MsgHistoryPrivate( MsgHistoryImpl* ptr )
-:q_ptr(ptr)
-    {    
+:CActive(EPriorityStandard),
+currentState(EInit),
+q_ptr(ptr) 
+
+    { 
+    CActiveScheduler::Add(this);
     handler = CCSRequestHandler::NewL();
     handler->RequestResultsEventL(this);
     }
@@ -49,15 +55,69 @@ MsgHistoryPrivate::~MsgHistoryPrivate()
     {
     if ( handler )
         delete handler;
+     if(msgs.count())
+        {
+         msgs.clear();
+        }
+    // Cancel the active Object 
+    Cancel();
     }
 
+// ---------------------------------------------------------------------------
+// RunL
+// ---------------------------------------------------------------------------
+//
+void MsgHistoryPrivate::RunL()
+{
+    if (iStatus != KErrNone)
+    {
+        return;
+    }
+    //process
+    switch (currentState)
+    {
+       case EFetchMoreConversations:
+           GetMessagingHistory(contactId, msgs.count());
+            break;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// DoCancel
+// ---------------------------------------------------------------------------
+//
+void MsgHistoryPrivate::DoCancel()
+{
+    currentState = EInit;
+    contactId = -1;
+   
+}
+
+// ---------------------------------------------------------------------------
+// Make the active object alive.
+// ---------------------------------------------------------------------------
+//
+void MsgHistoryPrivate::IssueRequest()
+{
+    if (!IsActive())
+    {
+        iStatus = KRequestPending;
+        TRequestStatus* status = &iStatus;
+        SetActive();
+        User::RequestComplete(status, KErrNone);
+    }
+}
 //---------------------------------------------------------------
 // MsgHistoryPrivate::GetMessagingHistory
 // @see header
 //---------------------------------------------------------------
-TBool MsgHistoryPrivate::GetMessagingHistory( const TInt aContactId )
+TBool MsgHistoryPrivate::GetMessagingHistory( const TInt aContactId ,
+                                              TInt aKnownIndex)
     {
-    TRAPD(err, handler->GetMessagingHistoryL(aContactId));
+    contactId = aContactId;
+    TRAPD(err, handler->GetMessagingHistoryL(contactId,
+                                             aKnownIndex,
+                                             KMaxConversationIPCLimit));
     if ( err == KErrNone )
         return ETrue;
 
@@ -160,18 +220,29 @@ void MsgHistoryPrivate::ConversationList
 // @see header
 //---------------------------------------------------------------
 void MsgHistoryPrivate::Conversations
-( RPointerArray<CCsConversationEntry>& aConversationEntryList )
+( RPointerArray<CCsConversationEntry>& aConversationEntryList,
+        TInt& aTotalCount)
     {
-    QList<MsgItem> msgs;
-
-    for(TInt i=aConversationEntryList.Count()-1; i >= 0; --i )
+ 
+    for(TInt i = 0 ; i < aConversationEntryList.Count(); i++ )
         {
         MsgItem item;
         PopulateMsgItem(item,*(aConversationEntryList[i]));
         msgs.append(item);
         }  
-    //emit signal
-    q_ptr->messagesReadyEvent(msgs);
+    //emit signal, when all the messages in the conversation are fetched.
+    if(msgs.count()== aTotalCount)
+        {
+            currentState = EInit;
+            q_ptr->messagesReadyEvent(msgs);
+            msgs.clear();
+
+        }
+        else
+        {
+            currentState = EFetchMoreConversations;
+            IssueRequest();
+        }
     }
 
 //---------------------------------------------------------------

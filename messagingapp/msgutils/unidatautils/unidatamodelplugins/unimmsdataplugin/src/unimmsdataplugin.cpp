@@ -23,7 +23,7 @@
 UniMMSDataPlugin::UniMMSDataPlugin(QObject* parent) :
     QObject(parent)
 {
-    d_ptr = new UniMMSDataPluginPrivate();
+    QT_TRAP_THROWING( d_ptr = new UniMMSDataPluginPrivate());
 }
 
 UniMMSDataPlugin::~UniMMSDataPlugin()
@@ -138,11 +138,14 @@ void UniMMSDataPlugin::restore(CBaseMtm& mtm)
     int error;    
     TRAP(error,d_ptr->restoreL(mtm));    
     QDEBUG_WRITE_FORMAT("Exiting restore with error= ",error);
+    qt_symbian_throwIfError(error);
 }
 
 QString UniMMSDataPlugin::subject()
 {
-    return d_ptr->subject(); 
+    QString subject;
+    TRAPD(err, subject =d_ptr->subjectL());
+    return  subject;
 }
 
 CMsvSession* UniMMSDataPlugin::session()

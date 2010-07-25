@@ -40,7 +40,7 @@ class CMsvEntrySelection;
  * @class MsgStoreHandler
  * handles the Messaging store for outbox events.
  */
-class MsgStoreHandler: public MMsvSessionObserver, public MMsvEntryObserver
+class MsgStoreHandler: public CBase, public MMsvSessionObserver, public MMsvEntryObserver
 {
 public:
 

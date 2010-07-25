@@ -48,6 +48,7 @@ const QString DELETE_ICON("qtg_mono_delete");
 
 //LOCALIZED CONSTANTS
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
+#define LOC_DELETE_SHARED_MESSAGE hbTrId("txt_messaging_dialog_same_message_exists_in_multip")
 
 //----------------------------------------------------------------------------
 // UnifiedViewer::UnifiedViewer
@@ -234,8 +235,18 @@ void UnifiedViewer::resizeEvent(QGraphicsSceneResizeEvent * event)
 //---------------------------------------------------------------
 void UnifiedViewer::handleDeleteAction()
 {
-    HbMessageBox::question(LOC_DELETE_MESSAGE,this,
-                           SLOT(onDialogDeleteMsg(HbAction*)),
+    QString txt = LOC_DELETE_MESSAGE;
+    
+    //if mms and out going. check for sharing    
+    if((mViewFeeder->msgType() == KSenduiMtmMmsUidValue) && (!mViewFeeder->isIncoming()))
+    {
+        if(mViewFeeder->recipientCount() > 1 )
+        {
+            txt =  LOC_DELETE_SHARED_MESSAGE;
+        }
+    }
+    
+    HbMessageBox::question(txt,this,SLOT(onDialogDeleteMsg(int)),
                            HbMessageBox::Delete | HbMessageBox::Cancel);
 }
 
@@ -270,10 +281,9 @@ void UnifiedViewer::sendMessage(const QString& phoneNumber,const QString& alias)
 // UnifiedViewer::onDialogDeleteMsg
 // @see header file
 //---------------------------------------------------------------
-void UnifiedViewer::onDialogDeleteMsg(HbAction* action)
+void UnifiedViewer::onDialogDeleteMsg(int val)
 {
-    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
-    if (action == dlg->actions().at(0)) {
+    if (val == HbMessageBox::Delete) {
         QList<int> msgIdList;
         msgIdList << mMessageId;
 

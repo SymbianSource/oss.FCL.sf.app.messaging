@@ -18,7 +18,10 @@
 // USER INCLUDES
 #include "ccspreviewpluginhandler.h"
 #include "UniObject.h"
+#include "msgbiouids.h"
 // SYSTEM INCLUDES
+#include <bioscmds.h>
+#include <biocmtm.h>
 #include <mmsclient.h>
 #include <mtclreg.h>
 #include <msvids.h>
@@ -53,6 +56,8 @@ _LIT(KSqlUpdateBitmapStmt, "UPDATE conversation_messages SET preview_icon=:previ
 _LIT(KSelectProcessingStateStmt, " SELECT message_id, msg_processingstate FROM conversation_messages WHERE message_id=:message_id ");
 // Remove record from conversation_messages table.
 _LIT(KRemoveMsgStmnt,"DELETE FROM conversation_messages WHERE message_id=:message_id");
+//Insert vcard meta-daa query
+_LIT(KSqlInsertBioMsgStmt, "INSERT OR REPLACE INTO conversation_messages ( message_id, msg_processingstate, preview_path ) VALUES( :message_id, :msg_processingstate, :preview_path )");
 
 const TInt KDefaultMaxSize = 300 * 1024;
 //Preview thumbnail size
@@ -101,6 +106,12 @@ CCsPreviewPluginHandler::~CCsPreviewPluginHandler()
         iMmsMtm = NULL;
     }
 
+    if (iBioClientMtm)
+        {
+        delete iBioClientMtm;
+        iBioClientMtm = NULL;
+        }
+
     if (iMtmRegistry)
     {
         delete iMtmRegistry;
@@ -144,7 +155,11 @@ void CCsPreviewPluginHandler::ConstructL(CCsPreviewPlugin *aMsgObserver)
 
     //create mms client mtm
     iMmsMtm = static_cast<CMmsClientMtm*> (iMtmRegistry-> NewMtmL(
-        KSenduiMtmMmsUid));
+            KSenduiMtmMmsUid));
+
+    // create biomsg client mtm
+    iBioClientMtm = static_cast<CBIOClientMtm*> (iMtmRegistry->NewMtmL(
+            KSenduiMtmBioUid));
 
     //create thumbnail manager
     iThumbnailManager = CThumbnailManager::NewL(*this);
@@ -275,7 +290,7 @@ void CCsPreviewPluginHandler::HandleSessionEventL(TMsvSessionEvent aEvent,
 //
 void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
 {
-    PRINT ( _L("Enter CCsPreviewPluginHandler::HandleEvent") );
+    PRINT ( _L("Enter CCsPreviewPluginHandler::HandleEvent start.") );
 
     TMsvEntry entry;
     TMsvId service;
@@ -285,190 +300,277 @@ void CCsPreviewPluginHandler::HandleEventL(CMsvEntrySelection* aSelection)
     {
         error = iSession->GetEntry(aSelection->At(i), service, entry);
 
-        if ( (KErrNone == error) && !entry.InPreparation() && entry.Visible()
-                && (KSenduiMtmMmsUidValue == entry.iMtm.iUid))
+        if ((KErrNone == error) && !entry.InPreparation() && entry.Visible())
         {
             PRINT ( _L("Enter CCsPreviewPluginHandler::HandleEvent for loop started.") );
-
-            TInt msgId = entry.Id();
-
-            // check if the msg is already under processing Or processed
-            if( EPreviewMsgNotProcessed != msgProcessingState(msgId) )
-            {
-                // skip processing this event for the given message
-                continue;
-            }
-            else
-            {
-                // start processing message, set flag
-                setMsgProcessingState(msgId, EPreviewMsgProcessing);
-            }
-
-            // update db with message preview data
-            RSqlStatement sqlInsertStmt;
-            CleanupClosePushL(sqlInsertStmt);
-            sqlInsertStmt.PrepareL(iSqlDb, KSqlInsertStmt);
-            
-            // parse message
-            iMmsMtm->SwitchCurrentEntryL(msgId);
-            iMmsMtm->LoadMessageL();
-
-            CUniDataModel* iUniDataModel = CUniDataModel::NewL(ifsSession,
-                *iMmsMtm);
-            CleanupStack::PushL(iUniDataModel);
-            iUniDataModel->RestoreL(*this, ETrue);
-
-            //msg property
-            TInt msgProperty = 0;
-            if (iUniDataModel->AttachmentList().Count() > 0)
-            {
-                msgProperty |= EPreviewAttachment;
-            }
-
-            //check for msg forward
-            //Validate if the mms msg can be forwarded or not
-            if (ValidateMsgForForward(iUniDataModel))
-            {
-                msgProperty |= EPreviewForward;
-            }
-
-            TPtrC videoPath;
-            TPtrC imagePath;
-           
-            // preview parsing
-            TInt slideCount = iUniDataModel->SmilModel().SlideCount();
-            TBool isBodyTextSet = EFalse;
-            TBool isImageSet = EFalse;
-            TBool isAudioSet = EFalse;
-            TBool isVideoSet = EFalse;
-
-            for (int i = 0; i < slideCount; i++)
-            {
-                int slideobjcount =
-                        iUniDataModel->SmilModel().SlideObjectCount(i);
-                for (int j = 0; j < slideobjcount; j++)
+            if ((KSenduiMtmMmsUidValue == entry.iMtm.iUid))
                 {
-                    CUniObject *obj =
-                            iUniDataModel->SmilModel(). GetObjectByIndex(i, j);
-                    CMsgMediaInfo *mediaInfo = obj->MediaInfo();
-
-                    TPtrC8 mimetype = obj->MimeType();
-                    TMsvAttachmentId attachId = obj->AttachmentId();
-
-                    //bodytext
-                    if (!isBodyTextSet && (mimetype.Find(_L8("text"))
-                            != KErrNotFound))
-                    {
-                        //bind bodytext into statement
-                        BindBodyText(sqlInsertStmt, attachId);
-                        isBodyTextSet = ETrue;
-                    }
-
-                    //image parsing
-                    if (!isVideoSet && !isImageSet && (mimetype.Find(_L8("image"))
-                            != KErrNotFound))
-                    {
-                        //get thumbnail for this image
-                        isImageSet = ETrue;
-                        imagePath.Set(mediaInfo->FullFilePath());
-                        msgProperty |= EPreviewImage;
-
-                        if (EFileProtNoProtection != mediaInfo->Protection())
-                        {
-                            msgProperty |= EPreviewProtectedImage;
-                        }
-                        if (mediaInfo->Corrupt())
-                        {
-                            msgProperty |= EPreviewCorruptedImage;
-                        }
-
-                        if (!(EPreviewProtectedImage & msgProperty) &&
-                            !(EPreviewCorruptedImage & msgProperty))
-                        {
-                            //Generate thumbnail for non protected,
-                            //non corrupted image.
-                            GetThumbNailL(attachId, mimetype, msgId);
-                        }
-                    }
-
-                    //audio content
-                    if (!isVideoSet && !isAudioSet && (mimetype.Find(_L8("audio"))
-                            != KErrNotFound))
-                    {
-                        isAudioSet = ETrue;
-                        msgProperty |= EPreviewAudio;
-                        if (EFileProtNoProtection != mediaInfo->Protection())
-                        {
-                            msgProperty |= EPreviewProtectedAudio;
-                        }
-                        if (mediaInfo->Corrupt())
-                        {
-                            msgProperty |= EPreviewCorruptedAudio;
-                        }
-                    }
-
-                    //video content
-                    if (!( isImageSet || isAudioSet) && !isVideoSet && (mimetype.Find(_L8("video"))
-                            != KErrNotFound))
-                    {
-                        videoPath.Set(mediaInfo->FullFilePath());
-                        isVideoSet = ETrue;
-                        msgProperty |= EPreviewVideo;
-                        if (EFileProtNoProtection != mediaInfo->Protection())
-                        {
-                            msgProperty |= EPreviewProtectedVideo;
-                        }
-                        if (mediaInfo->Corrupt())
-                        {
-                            msgProperty |= EPreviewCorruptedVideo;
-                        }
+                HandleMMSEntryL(entry);
+                }
+            else if ((KSenduiMtmSmsUidValue == entry.iMtm.iUid) || (KSenduiMtmBioUidValue == entry.iMtm.iUid))
+                {
+                if ((KMsgBioUidVCard.iUid == entry.iBioType))
+                    {                 
+                    HandleVCardEntryL(entry);
                     }
                 }
             }
+        }//end for loop
 
-            //set preview path
-            TInt previewPathIndex = sqlInsertStmt.ParameterIndex(_L(
-                ":preview_path"));
-            if (isVideoSet)
-            {
-                User::LeaveIfError(sqlInsertStmt.BindText(previewPathIndex,
-                    videoPath));
-            }
-            else if (isImageSet)
-            {
-                User::LeaveIfError(sqlInsertStmt.BindText(previewPathIndex,
-                    imagePath));
-            }
+    PRINT ( _L("Exit CCsPreviewPluginHandler::HandleEvent end.") );
+    }
+// -----------------------------------------------------------------------------
+// CCsPreviewPluginHandler::HandleMMSEntryL()
+// 
+// -----------------------------------------------------------------------------
+//
+void CCsPreviewPluginHandler::HandleMMSEntryL(const TMsvEntry& aEntry)
+    {
+    PRINT ( _L("Enter CCsPreviewPluginHandler::HandleMMSEntry start.") );
 
-            //msg_id
-            TInt msgIdIndex = sqlInsertStmt.ParameterIndex(_L(":message_id"));
-            User::LeaveIfError(sqlInsertStmt.BindInt(msgIdIndex, msgId));
+    TInt msgId = aEntry.Id();
 
-            //subjext
-            TInt subjectIndex = sqlInsertStmt.ParameterIndex(_L(":subject"));
-            User::LeaveIfError(sqlInsertStmt.BindText(subjectIndex,
-                iMmsMtm->SubjectL()));
-
-            //msg_property
-            TInt msgPropertyIndex = sqlInsertStmt.ParameterIndex(_L(
-                ":msg_property"));
-            User::LeaveIfError(sqlInsertStmt.BindInt(msgPropertyIndex,
-                msgProperty));
-
-            //msg_processingstate
-            TInt msgProcessingStateIndex = sqlInsertStmt.ParameterIndex(_L(":msg_processingstate"));
-            User::LeaveIfError(sqlInsertStmt.BindInt(msgProcessingStateIndex, EPreviewMsgProcessed));
-
-            //execute sql stament
-            User::LeaveIfError(sqlInsertStmt.Exec());
-
-            //cleanup
-            CleanupStack::PopAndDestroy(2, &sqlInsertStmt);
+    // check if the msg is already under processing Or processed
+    if (EPreviewMsgNotProcessed != msgProcessingState(msgId))
+        {
+        // skip processing this event for the given message
+        return;
         }
-}//end for loop
 
-PRINT ( _L("Exit CCsPreviewPluginHandler::HandleEvent") );
-}
+    // start processing message, set flag
+    setMsgProcessingState(msgId, EPreviewMsgProcessing);
+
+    // update db with message preview data
+    RSqlStatement sqlInsertStmt;
+    CleanupClosePushL(sqlInsertStmt);
+    sqlInsertStmt.PrepareL(iSqlDb, KSqlInsertStmt);
+
+    // parse message
+    iMmsMtm->SwitchCurrentEntryL(msgId);
+    iMmsMtm->LoadMessageL();
+
+    CUniDataModel* iUniDataModel = CUniDataModel::NewL(ifsSession, *iMmsMtm);
+    CleanupStack::PushL(iUniDataModel);
+    iUniDataModel->RestoreL(*this, ETrue);
+
+    //msg property
+    TInt msgProperty = 0;
+    if (iUniDataModel->AttachmentList().Count() > 0)
+        {
+        msgProperty |= EPreviewAttachment;
+        }
+
+    //check for msg forward
+    //Validate if the mms msg can be forwarded or not
+    if (ValidateMsgForForward(iUniDataModel))
+        {
+        msgProperty |= EPreviewForward;
+        }
+
+    TPtrC videoPath;
+    TPtrC imagePath;
+
+    // preview parsing
+    TInt slideCount = iUniDataModel->SmilModel().SlideCount();
+    TBool isBodyTextSet = EFalse;
+    TBool isImageSet = EFalse;
+    TBool isAudioSet = EFalse;
+    TBool isVideoSet = EFalse;
+
+    for (int i = 0; i < slideCount; i++)
+        {
+        int slideobjcount = iUniDataModel->SmilModel().SlideObjectCount(i);
+        for (int j = 0; j < slideobjcount; j++)
+            {
+            CUniObject *obj = iUniDataModel->SmilModel(). GetObjectByIndex(i,
+                    j);
+            CMsgMediaInfo *mediaInfo = obj->MediaInfo();
+
+            TPtrC8 mimetype = obj->MimeType();
+            TMsvAttachmentId attachId = obj->AttachmentId();
+
+            //bodytext
+            if (!isBodyTextSet
+                    && (mimetype.Find(_L8("text")) != KErrNotFound))
+                {
+                //bind bodytext into statement
+                BindBodyText(sqlInsertStmt, attachId);
+                isBodyTextSet = ETrue;
+                }
+
+            //image parsing
+            if (!isVideoSet && !isImageSet && (mimetype.Find(_L8("image"))
+                    != KErrNotFound))
+                {
+                //get thumbnail for this image
+                isImageSet = ETrue;
+                imagePath.Set(mediaInfo->FullFilePath());
+                msgProperty |= EPreviewImage;
+
+                if (EFileProtNoProtection != mediaInfo->Protection())
+                    {
+                    msgProperty |= EPreviewProtectedImage;
+                    }
+                if (mediaInfo->Corrupt())
+                    {
+                    msgProperty |= EPreviewCorruptedImage;
+                    }
+
+                if (!(EPreviewProtectedImage & msgProperty)
+                        && !(EPreviewCorruptedImage & msgProperty))
+                    {
+                    //Generate thumbnail for non protected,
+                    //non corrupted image.
+                    GetThumbNailL(attachId, mimetype, msgId);
+                    }
+                }
+
+            //audio content
+            if (!isVideoSet && !isAudioSet && (mimetype.Find(_L8("audio"))
+                    != KErrNotFound))
+                {
+                isAudioSet = ETrue;
+                msgProperty |= EPreviewAudio;
+                if (EFileProtNoProtection != mediaInfo->Protection())
+                    {
+                    msgProperty |= EPreviewProtectedAudio;
+                    }
+                if (mediaInfo->Corrupt())
+                    {
+                    msgProperty |= EPreviewCorruptedAudio;
+                    }
+                }
+
+            //video content
+            if (!(isImageSet || isAudioSet) && !isVideoSet && (mimetype.Find(
+                    _L8("video")) != KErrNotFound))
+                {
+                videoPath.Set(mediaInfo->FullFilePath());
+                isVideoSet = ETrue;
+                msgProperty |= EPreviewVideo;
+                if (EFileProtNoProtection != mediaInfo->Protection())
+                    {
+                    msgProperty |= EPreviewProtectedVideo;
+                    }
+                if (mediaInfo->Corrupt())
+                    {
+                    msgProperty |= EPreviewCorruptedVideo;
+                    }
+                }
+            }
+        }
+
+    //set preview path
+    TInt previewPathIndex = sqlInsertStmt.ParameterIndex(_L(
+            ":preview_path"));
+    if (isVideoSet)
+        {
+        User::LeaveIfError(
+                sqlInsertStmt.BindText(previewPathIndex, videoPath));
+        }
+    else if (isImageSet)
+        {
+        User::LeaveIfError(
+                sqlInsertStmt.BindText(previewPathIndex, imagePath));
+        }
+
+    //msg_id
+    TInt msgIdIndex = sqlInsertStmt.ParameterIndex(_L(":message_id"));
+    User::LeaveIfError(sqlInsertStmt.BindInt(msgIdIndex, msgId));
+
+    //subjext
+    TInt subjectIndex = sqlInsertStmt.ParameterIndex(_L(":subject"));
+    User::LeaveIfError(sqlInsertStmt.BindText(subjectIndex,
+            iMmsMtm->SubjectL()));
+
+    //msg_property
+    TInt msgPropertyIndex = sqlInsertStmt.ParameterIndex(_L(
+            ":msg_property"));
+    User::LeaveIfError(sqlInsertStmt.BindInt(msgPropertyIndex, msgProperty));
+
+    //msg_processingstate
+    TInt msgProcessingStateIndex = sqlInsertStmt.ParameterIndex(
+            _L(":msg_processingstate"));
+    User::LeaveIfError(sqlInsertStmt.BindInt(msgProcessingStateIndex,
+            EPreviewMsgProcessed));
+
+    //execute sql stament
+    User::LeaveIfError(sqlInsertStmt.Exec());
+
+    //cleanup
+    CleanupStack::PopAndDestroy(2, &sqlInsertStmt);
+
+    PRINT ( _L("Enter CCsPreviewPluginHandler::HandleMMSEntry end.") );
+    }
+
+// -----------------------------------------------------------------------------
+// CCsPreviewPluginHandler::HandleVCardEntryL()
+// 
+// -----------------------------------------------------------------------------
+//
+void CCsPreviewPluginHandler::HandleVCardEntryL(const TMsvEntry& aEntry)
+    {
+    PRINT ( _L("Enter CCsPreviewPluginHandler::HandleBioMsgEntry start.") );
+
+    TMsvId msgId = aEntry.Id();   
+    
+    // check if the msg is already under processing Or processed
+    TInt msgProcessState = EPreviewMsgNotProcessed;
+    msgProcessState = msgProcessingState(msgId);
+    if (EPreviewMsgProcessed == msgProcessState)
+        {
+        return;
+        }
+    //get attachments
+    CMsvEntry* cMsvEntry = CMsvEntry::NewL(iBioClientMtm->Session(), msgId,
+               TMsvSelectionOrdering());
+    
+    CleanupStack::PushL(cMsvEntry);
+    CMsvStore* store = cMsvEntry->ReadStoreL();
+    CleanupStack::PushL(store);
+    MMsvAttachmentManager& attachMan = store->AttachmentManagerL();
+
+    TInt attachmentCount = attachMan.AttachmentCount();
+    if (attachmentCount)
+        {
+        // get attachment file path
+        RFile file = attachMan.GetAttachmentFileL(0);
+        CleanupClosePushL(file);
+        TFileName fullName;
+        User::LeaveIfError(file.FullName(fullName));
+
+        // update db with meta-data
+        RSqlStatement sqlInsertStmt;
+        CleanupClosePushL(sqlInsertStmt);
+        sqlInsertStmt.PrepareL(iSqlDb, KSqlInsertBioMsgStmt);
+       
+        //msg_id
+        TInt msgIdIndex = sqlInsertStmt.ParameterIndex(_L(":message_id"));
+        User::LeaveIfError(sqlInsertStmt.BindInt(msgIdIndex, msgId));
+
+        //set attachment path
+        TInt previewPathIndex = sqlInsertStmt.ParameterIndex(_L(
+                ":preview_path"));
+        User::LeaveIfError(sqlInsertStmt.BindText(previewPathIndex, fullName));
+
+        //msg_processingstate
+        TInt msgProcessingStateIndex = sqlInsertStmt.ParameterIndex(
+                _L(":msg_processingstate"));
+        User::LeaveIfError(sqlInsertStmt.BindInt(msgProcessingStateIndex,
+                EPreviewMsgProcessed));
+
+        //execute sql stament
+        User::LeaveIfError(sqlInsertStmt.Exec());
+
+        //cleanup
+        CleanupStack::PopAndDestroy(&sqlInsertStmt);
+        CleanupStack::PopAndDestroy(&file);
+        }
+
+    CleanupStack::PopAndDestroy(2, cMsvEntry);//cMsvEntry,store
+
+    PRINT ( _L("Enter CCsPreviewPluginHandler::HandleBioMsgEntry End.") );
+    }
 
 // -----------------------------------------------------------------------------
 // CCsPreviewPluginHandler::RestoreReady()

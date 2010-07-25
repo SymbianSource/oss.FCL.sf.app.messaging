@@ -25,6 +25,8 @@
 #include "msgaudiofetcherwidget.h"
 #include "convergedmessage.h"
 
+#define LOC_SELECT_SOUND hbTrId("txt_messaging_title_select_a_sound")
+
 MsgAudioFetcherView::MsgAudioFetcherView(const QVariantList& data) :
 message(NULL)
 {
@@ -70,7 +72,7 @@ void MsgAudioFetcherView::initToolBar()
     mToolBarRightAction = new HbAction(this);
     mToolBarRightAction->setObjectName("rightAction");
     //TODO: need localized string
-    mToolBarRightAction->setText(hbTrId("Select"));
+    mToolBarRightAction->setText(LOC_SELECT_SOUND);
     mToolBarRightAction->setEnabled(false);
     toolBar()->addAction(mToolBarRightAction);
 

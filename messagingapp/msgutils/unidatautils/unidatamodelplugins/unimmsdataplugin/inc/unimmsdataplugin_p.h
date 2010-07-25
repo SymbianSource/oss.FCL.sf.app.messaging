@@ -36,7 +36,7 @@ class CMsgMediaInfo;
 /**
  * Symbian specific implementation of the uni MMS plugin
  */
-class UniMMSDataPluginPrivate : public MUniDataModelObserver, public MMsvSessionObserver
+class UniMMSDataPluginPrivate :public CBase, public MUniDataModelObserver, public MMsvSessionObserver
 {
 public:
     /**
@@ -165,11 +165,11 @@ public:
 
     
 	
-	/**
-     * Subject of the message
-     * @QString subject
-     */
-	QString subject();
+   /**
+    * Subject of the message
+    * @QString subject
+    */
+		QString subjectL();
 	 
 	/**
 	 * Session with the Messaging server

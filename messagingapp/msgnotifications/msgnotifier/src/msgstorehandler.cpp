@@ -39,7 +39,7 @@
 MsgStoreHandler::MsgStoreHandler(MsgNotifierPrivate* notifier, CCSRequestHandler* aCvServer) :
     iMsvSession(NULL), iNotifier(notifier), iRequestHandler(aCvServer)
 {
-    TRAP_IGNORE(InitL());
+    InitL();
 }
 
 // ---------------------------------------------------------

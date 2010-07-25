@@ -19,6 +19,7 @@
 #define UNIBIOMESSAGEDATAPLUGINPRIVATE_H_
 
 #include "unidatamodelplugininterface.h"
+#include <e32base.h>
 
 //Forward Declarations
 class CClientMtmRegistry;
@@ -30,7 +31,7 @@ class CMsvSession;
 /**
  * Symbian specific implementation of the uni SMS plugin
  */
-class UniBioMessageDataPluginPrivate : public MMsvSessionObserver
+class UniBioMessageDataPluginPrivate : public CBase, public MMsvSessionObserver
 {
 
 public:

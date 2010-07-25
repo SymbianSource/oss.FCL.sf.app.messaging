@@ -28,6 +28,7 @@ class MsgHistoryImpl;
 class MsgItem;
 
 class MsgHistoryPrivate : public CBase,
+public CActive,
 public MCsResultsObserver,
 public MCsConversationChangeObserver
     {
@@ -42,12 +43,24 @@ public:
      */
     ~MsgHistoryPrivate();
 
+public:// CActive
+
+    /**
+     * RunL.
+     */
+    void RunL();
+
+    /**
+     * DoCancel
+     */
+    void DoCancel();
+
 public:   
     /*
      * GetMessagingHistory
      * @param aContactId, contactId
      */
-    TBool GetMessagingHistory( TInt aContactId );
+    TBool GetMessagingHistory( TInt aContactId , TInt aKnownIndex = 0 );
     
     /*
      * ClearMessagingHistory
@@ -96,10 +109,12 @@ public: // From MCsResultsObserver
      * 
      * @param aConversationEntryList List of conversation entries
      * returned by server.
+     * @param aTotalCount total number of conversaitons entries in the conversation
      */
 
     void Conversations(
-            RPointerArray<CCsConversationEntry>& aConversationEntryList);
+            RPointerArray<CCsConversationEntry>& aConversationEntryList,
+            TInt& aTotalCount);
   
 public://MCsConversationChangeObserver
     
@@ -157,20 +172,56 @@ public://MCsConversationChangeObserver
     void SetMsgAttributes
     (MsgItem& item, const CCsConversationEntry& entry);
 
-
+private :
+    /**
+     * Make the active object alive
+     */
+    void IssueRequest();
+    
 private: 
     
+    /**
+     * Msghistory Internal States
+     */
+    enum MsgHistoryStates
+        {
+        EInit = 500, 
+        EFetchMoreConversations
+        };
+    /**
+     * MsgHistoryStates
+     * Own
+     */
+    MsgHistoryStates currentState;
+
+    /**
+     * Current entry being processed
+     * Own.
+     */
+    TInt mCurrentIndex;
+
     /*
      * MsgHistoryImpl
      * Not Own
      */
     MsgHistoryImpl* q_ptr;
-    
+
     /*
      * CCSRequestHandler
      * Own
      */
     CCSRequestHandler* handler;
+    /*
+     * List of MsgItem's
+     * Own
+     */
+    QList<MsgItem> msgs;
+    
+    /*
+     * Contact Id
+     * Own
+     */
+    TInt contactId;
     };
 
 #endif // __MSG_HISTORY_PRIVATE__

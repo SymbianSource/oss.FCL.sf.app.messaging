@@ -33,7 +33,7 @@
 MsgIndicatorPrivate::MsgIndicatorPrivate(MsgIndicator* inidcator) :
     q_ptr(inidcator), mCvServer(NULL)
 {
-    TRAP_IGNORE(initL());
+    initL();
 }
 
 // ----------------------------------------------------------------------------

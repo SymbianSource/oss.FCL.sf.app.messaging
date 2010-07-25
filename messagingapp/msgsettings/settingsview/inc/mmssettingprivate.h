@@ -28,7 +28,7 @@
  * The settings will be stored in the central repository.
  */
 
-class MmsSettingsPrivate
+class MmsSettingsPrivate : public CBase
 {
 public:
 
@@ -42,19 +42,19 @@ public:
      */
     ~MmsSettingsPrivate();
 
-    void setMMSRetrieval(MsgSettingEngine::MmsRetrieval aRetrieval);
+    void setMMSRetrievalL(MsgSettingEngine::MmsRetrieval aRetrieval);
 
-    void setAnonymousMessages(TBool aAnonymous);
+    void setAnonymousMessagesL(TBool aAnonymous);
 
-    void setReceiveMMSAdverts(TBool aReceiveAdvert);
+    void setReceiveMMSAdvertsL(TBool aReceiveAdvert);
 
-    void advanceMmsSettings(MsgSettingEngine::MmsRetrieval& aRetrieval,
+    void advanceMmsSettingsL(MsgSettingEngine::MmsRetrieval& aRetrieval,
                             TBool& aAnonymousStatus, TBool& aMmsAdvertsStatus);
 
-    void getAllAccessPoints(RPointerArray<HBufC>& aAccessPoints,
+    void getAllAccessPointsL(RPointerArray<HBufC>& aAccessPoints,
                             TInt& aDefaultIndex);
 
-    void setMMSAccesspoint(TInt& aDefaultIndex);
+    void setMMSAccesspointL(TInt& aDefaultIndex);
 
 private:
 

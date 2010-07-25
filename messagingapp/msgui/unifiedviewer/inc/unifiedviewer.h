@@ -106,9 +106,9 @@ private slots:
 
     /**
      * This slot is called when delete message dialog is launched.
-     * @param action selected action (yes or no).
+     * @param val selected action value.
      */
-    void onDialogDeleteMsg(HbAction* action);
+    void onDialogDeleteMsg(int val);
     
     /**
      * Handle reply

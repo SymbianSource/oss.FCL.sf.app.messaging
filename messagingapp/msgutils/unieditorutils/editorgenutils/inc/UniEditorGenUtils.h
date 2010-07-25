@@ -45,7 +45,7 @@ const TInt KEstimatedMimeHeaderSize = 1400;
 class CMsgMediaResolver;
 
 // CLASS DECLARATION
-class MUIU_UTILS_EXPORT UniEditorGenUtils
+class MUIU_UTILS_EXPORT UniEditorGenUtils :public CBase
     {
 
       public:

@@ -188,11 +188,6 @@ public:
 
 private:
     /**
-     * Fetches message details from the store.
-     */
-    void fetchDetailsL();
-
-    /**
      * initialise the symbian constructions.
      */
     void initL(qint32 msgId);

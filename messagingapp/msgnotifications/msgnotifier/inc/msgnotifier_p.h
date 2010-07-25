@@ -33,7 +33,7 @@ class XQSystemToneService;
  * @class MsgNotifierPrivate
  */
 
-class MsgNotifierPrivate : public MCsConversationListChangeObserver
+class MsgNotifierPrivate : public CBase, public MCsConversationListChangeObserver
     {
 
 public:

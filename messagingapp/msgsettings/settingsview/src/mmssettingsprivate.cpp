@@ -127,7 +127,7 @@ void MmsSettingsPrivate::createRepositoryL()
     CleanupStack::PopAndDestroy(3); // settings    
 }
 
-void MmsSettingsPrivate::setMMSRetrieval(MsgSettingEngine::MmsRetrieval aRetrieval)
+void MmsSettingsPrivate::setMMSRetrievalL(MsgSettingEngine::MmsRetrieval aRetrieval)
 {
     CEventHandler* pObserver = new (ELeave) CEventHandler();
     CleanupStack::PushL(pObserver);
@@ -196,7 +196,7 @@ void MmsSettingsPrivate::setMMSRetrieval(MsgSettingEngine::MmsRetrieval aRetriev
     CleanupStack::PopAndDestroy(5);
 }
 
-void MmsSettingsPrivate::setAnonymousMessages(TBool aAnonymous)
+void MmsSettingsPrivate::setAnonymousMessagesL(TBool aAnonymous)
 {
     CMmsAccount* mMmsAccount = CMmsAccount::NewL();
     CleanupStack::PushL(mMmsAccount);
@@ -214,7 +214,7 @@ void MmsSettingsPrivate::setAnonymousMessages(TBool aAnonymous)
     CleanupStack::PopAndDestroy(2);
 }
 
-void MmsSettingsPrivate::setReceiveMMSAdverts(TBool aReceiveAdvert)
+void MmsSettingsPrivate::setReceiveMMSAdvertsL(TBool aReceiveAdvert)
 {
     CMmsAccount* mMmsAccount = CMmsAccount::NewL();
     CleanupStack::PushL(mMmsAccount);
@@ -232,7 +232,7 @@ void MmsSettingsPrivate::setReceiveMMSAdverts(TBool aReceiveAdvert)
     CleanupStack::PopAndDestroy(2);
 }
 
-void MmsSettingsPrivate::advanceMmsSettings(
+void MmsSettingsPrivate::advanceMmsSettingsL(
                                             MsgSettingEngine::MmsRetrieval& aRetrieval,
                                             TBool& aAnonymousStatus,
                                             TBool& aMmsAdvertsStatus)
@@ -286,7 +286,7 @@ void MmsSettingsPrivate::advanceMmsSettings(
 // SmsSettings::iAPSelector
 // @see header
 //---------------------------------------------------------------
-void MmsSettingsPrivate::getAllAccessPoints(
+void MmsSettingsPrivate::getAllAccessPointsL(
                                             RPointerArray<HBufC>& aAccessPoints,
                                             TInt& aDefaultIndex)
 {
@@ -368,7 +368,7 @@ void MmsSettingsPrivate::getAllAccessPoints(
 // MmsSettingsPrivate::setMMSAccesspoint
 // @see header
 //---------------------------------------------------------------
-void MmsSettingsPrivate::setMMSAccesspoint(TInt& aDefaultIndex)
+void MmsSettingsPrivate::setMMSAccesspointL(TInt& aDefaultIndex)
 {
 #ifdef _DEBUG_TRACES_
 		qDebug() << "Enter MmsSettingsPrivate::setMMSAccesspoint: Index=" 

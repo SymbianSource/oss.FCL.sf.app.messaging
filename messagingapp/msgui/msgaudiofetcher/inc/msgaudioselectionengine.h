@@ -27,7 +27,6 @@
 #include <mdccommon.h>
 #include <mdeitem.h>
 #include <mdeobject.h>
-#include <e32base.h>
 #include <QObject>
 #include <QStringList>
 
@@ -36,8 +35,7 @@
 /**
  *  This class is used for quering tones from mde.
  */
-class MsgAudioSelectionEngine : public QObject,
-        public CBase,
+class MsgAudioSelectionEngine : public QObject,   
         public MMdESessionObserver,
         public MMdEQueryObserver,
         public MMdEObjectObserver,

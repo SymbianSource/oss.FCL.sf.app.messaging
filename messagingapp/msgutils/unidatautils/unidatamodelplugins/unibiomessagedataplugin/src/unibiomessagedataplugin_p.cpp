@@ -52,11 +52,11 @@ UniBioMessageDataPluginPrivate::~UniBioMessageDataPluginPrivate()
     
     if(attachmentProcessed == EFalse && iAttachmentCount == 1)
     {
-        CMsvStore* store = iMsvEntry->EditStoreL();
+       TRAP_IGNORE( CMsvStore* store = iMsvEntry->EditStoreL();
         CleanupStack::PushL(store);
         MMsvAttachmentManagerSync& attachMan = store->AttachmentManagerExtensionsL();
         attachMan.RemoveAttachmentL(0);
-        CleanupStack::PopAndDestroy();
+        CleanupStack::PopAndDestroy(););
     }
     
     if (iMsvEntry) {

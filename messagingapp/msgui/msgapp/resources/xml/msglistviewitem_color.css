@@ -47,7 +47,7 @@ MsgListViewItem[state="pressed"]::timeLabel {
   color: var(qtc_list_item_pressed);
 }
 
-MsgListViewItem::presenceIndicator {
+MsgListViewItem::msgCommonIndicator {
   color: var(qtc_list_item_title_normal);
 }
 

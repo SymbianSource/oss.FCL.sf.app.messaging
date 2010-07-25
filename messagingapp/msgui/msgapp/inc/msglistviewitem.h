@@ -34,7 +34,7 @@ class HbIconItem;
 class MsgListViewItem : public HbListViewItem
     {  
     Q_OBJECT    	
-    Q_PROPERTY(bool unReadMsg READ hasUnReadMsg WRITE setHasUnReadMsg)    	  
+    Q_PROPERTY(bool unReadMsg READ hasUnReadMsg WRITE setHasUnReadMsg)   
 
 public:
     /**
@@ -71,7 +71,15 @@ public:
      * Returns the value of mUnReadMsg
      * @return bool
      */
-    bool hasUnReadMsg();
+    bool hasUnReadMsg();    
+   
+private slots:    
+
+    /*
+     * Handler for orientation changed
+     * @param orientation Qt::Orientation
+     */
+    void orientationchanged(Qt::Orientation orientation);
     
 private:
 
@@ -91,6 +99,16 @@ private:
      * Sets the preview text and timestamp.
      */
     void setTimestampAndPreviewText();
+    
+    /*
+     * set Unread Count and frame
+     */
+    void setUnreadCountStatus();
+    
+    /*
+     * set common indicator (icon/unread count)
+     */
+    void setCommonIndicator(const QString& string);
 
 private:
     /**
@@ -130,7 +148,7 @@ private:
     /**
      * To display the presence indication
      */
-    HbIconItem* mPresenceIndicatorItem;
+    HbIconItem* mMsgCommonIndicatorItem;
     
     };
 

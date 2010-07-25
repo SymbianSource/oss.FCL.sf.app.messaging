@@ -45,7 +45,7 @@ class UniEditorGenUtils;
 /**
 * UniEditorSmsPluginPrivate
 */ 
-class UniEditorSmsPluginPrivate :public MMsvSessionObserver
+class UniEditorSmsPluginPrivate :public CBase, public MMsvSessionObserver
 	{
 	public:  // Constructors and destructor
         

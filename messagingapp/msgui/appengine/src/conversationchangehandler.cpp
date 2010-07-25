@@ -61,9 +61,10 @@ ConversationsChangeHandler::~ConversationsChangeHandler()
 // ---------------------------------------------------------------------------
 //
 void ConversationsChangeHandler::ConversationsL(RPointerArray<
-        CCsConversationEntry>& aConversationEntryList)
+        CCsConversationEntry>& aConversationEntryList, TInt& aTotalCount)
 {
-    mConversationEntryList.ResetAndDestroy();
+    
+    mTotalCount = aTotalCount;
 
     for (TInt i = 0; i < aConversationEntryList.Count(); ++i)
     {
@@ -72,8 +73,6 @@ void ConversationsChangeHandler::ConversationsL(RPointerArray<
     }
     if (aConversationEntryList.Count() > 0)
     {
-        mFirstWindowCached = EFalse;
-        mCurrentIndex = 0;
         mCurrentState = EInitialCache;
         IssueRequest();
     }
@@ -83,6 +82,20 @@ void ConversationsChangeHandler::ConversationsL(RPointerArray<
         mConvEnginePrivate->registerForConversationUpdatesL();
         mCurrentState = EListenToEvents;
     }
+}
+// ---------------------------------------------------------------------------
+// This is for resetting the values before initiating a request 
+// for fetching entries for a new conversation
+// ---------------------------------------------------------------------------
+//
+void ConversationsChangeHandler::ResetValuesForNewConversation()
+{
+	mConvEnginePrivate->registerForConversationUpdatesL();
+    mCurrentIndex = 0;
+    mFirstWindowCached = EFalse;
+    mConversationEntryList.ResetAndDestroy();
+    
+
 }
 
 // ---------------------------------------------------------------------------
@@ -147,6 +160,9 @@ void ConversationsChangeHandler::RunL()
         case EInitialCache:
             HandleConversationsL();
             break;
+        case EFetchMoreConversations:
+            FetchRemainingConversations(mConversationEntryList.Count());
+            break;
     }
 }
 
@@ -202,6 +218,15 @@ void ConversationsChangeHandler::HandleConversationsL()
             return;
         }
         IssueRequest();
+        return;
+    }
+    //if more entries have to be fetched , issue a request,
+    // else listen for events.
+    if(mCurrentIndex < mTotalCount )
+    {
+        //fetch more
+        mCurrentState = EFetchMoreConversations;
+        IssueRequest();
     }
     else
     {
@@ -211,11 +236,19 @@ void ConversationsChangeHandler::HandleConversationsL()
             mFirstWindowCached = ETrue;
         }
         mConversationEntryList.ResetAndDestroy();
-        mConvEnginePrivate->registerForConversationUpdatesL();
         mCurrentState = EListenToEvents;
     }
 }
 
+// ---------------------------------------------------------------------------
+//  Fetches remaining conversations from the server 
+// ---------------------------------------------------------------------------
+//
+void ConversationsChangeHandler::FetchRemainingConversations(TInt aTotalCount)
+{
+    mConvEnginePrivate->fetchRemainingConversations(aTotalCount);
+    
+}
 // ---------------------------------------------------------------------------
 //  Starts fetching remaining conversations
 // ---------------------------------------------------------------------------

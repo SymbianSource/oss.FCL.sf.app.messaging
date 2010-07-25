@@ -216,9 +216,13 @@ public: // New functions
      * This is a Async API. 
      * 
      * @param aClientConversation - class encapsulating Conversation Entry ID 
+     * @param aKnownIndex - known index that is fetched
+     * @aPageSize - page size that has to be fetched.
      */
-    IMPORT_C void GetConversationsL( 
-            CCsClientConversation* aClientConversation );
+    IMPORT_C void GetConversationsL(
+            CCsClientConversation*  aClientConversation,
+            TInt aKnownIndex, 
+            TInt aPageSize);
 
     /**
      *  Delete a conversation.
@@ -279,8 +283,12 @@ public: // New functions
      * Data is returned via MCsResultsObserver.
      * 
      * @param aContactId Contact Id.
+     * @param aKnownIndex known index fetched
+     * @param aPageSize page size to be fetched
      */
-    IMPORT_C void GetMessagingHistoryL ( TInt aContactId );
+    IMPORT_C void GetMessagingHistoryL(TInt aContactId,
+        TInt aKnownIndex, 
+        TInt aPageSize);
 
     /**
      * ClearMessagingHistoryL

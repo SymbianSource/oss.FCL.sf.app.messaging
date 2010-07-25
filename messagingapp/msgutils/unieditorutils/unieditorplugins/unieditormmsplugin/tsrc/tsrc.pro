@@ -11,12 +11,11 @@
 #
 # Contributors:
 #
-# Description:
+# Description: Project file for testmmsgplugin
 #
 
 TEMPLATE = subdirs
 
-SUBDIRS += mmstestbed/mmstestbed.pro 
-SUBDIRS += testmmsgplugin/testmmsplugin.pro
+SUBDIRS += testmmsgpluginapp/testmmsgpluginapp.pro 
 
 CONFIG += ordered

@@ -32,7 +32,7 @@ class CMsvSession;
 /**
  * Symbian specific implementation of the uni SMS plugin
  */
-class UniSMSDataPluginPrivate :public MMsvSessionObserver
+class UniSMSDataPluginPrivate :public CBase, public MMsvSessionObserver
 {
 
 public:

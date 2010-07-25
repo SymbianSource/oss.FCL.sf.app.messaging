@@ -151,9 +151,15 @@ public:
     CCsClientConversation* getConversationFromConversationIdL(TInt aConversationId);
 
     /**
-     *  Starts fetching remaing conversations
+     *  Starts fetching rest of the conversations
      */
     void fetchMoreConversations();
+    
+    /**
+     *  Starts fetching remaing conversations
+     *  @param aCount - count of conversation entries
+     */
+    void fetchRemainingConversations(TInt& aCount);
 
     
     /**
@@ -202,7 +208,8 @@ public: // From MCsResultsObserver
      */
 
     void Conversations(
-            RPointerArray<CCsConversationEntry>& aConversationEntryList);
+            RPointerArray<CCsConversationEntry>& aConversationEntryList,
+            TInt& totalCount);
          
 private:
 

@@ -30,7 +30,7 @@
 UniBioMessageDataPlugin::UniBioMessageDataPlugin(QObject* parent) :
     QObject(parent)
     {
-    d_ptr = new UniBioMessageDataPluginPrivate(this);
+    QT_TRAP_THROWING(d_ptr = new UniBioMessageDataPluginPrivate(this));
     }
 
 // UniBioMessageDataPlugin::~UniBioMessageDataPlugin()
@@ -120,7 +120,8 @@ void UniBioMessageDataPlugin::fromAddress(QString& messageAddress)
 //---------------------------------------------------------------
 UniMessageInfoList UniBioMessageDataPlugin::attachmentList()
 {
-    RFile file = d_ptr->attachmentL();
+    RFile file;
+    QT_TRAP_THROWING(file = d_ptr->attachmentL());
 
     if(attachmentCount() == 0)
     {
@@ -135,8 +136,8 @@ UniMessageInfoList UniBioMessageDataPlugin::attachmentList()
     int size;
 
     TFileName fullName;
-    User::LeaveIfError(file.FullName(fullName));
-    User::LeaveIfError(file.Size(size));
+    qt_symbian_throwIfError(file.FullName(fullName));
+    qt_symbian_throwIfError(file.Size(size));
 
     path = XQConversions::s60DescToQString(*fullName.AllocL());
 

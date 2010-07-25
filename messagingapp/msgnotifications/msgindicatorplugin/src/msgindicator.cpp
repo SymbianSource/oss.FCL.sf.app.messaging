@@ -121,7 +121,7 @@ MsgIndicator::MsgIndicator(const QString &indicatorType) :
         InteractionActivated),
 		mIndicatorType(NULL)
 {
-    d_ptr = new MsgIndicatorPrivate(this);
+    QT_TRAP_THROWING( d_ptr = new MsgIndicatorPrivate(this));
 }
 
 // ----------------------------------------------------------------------------

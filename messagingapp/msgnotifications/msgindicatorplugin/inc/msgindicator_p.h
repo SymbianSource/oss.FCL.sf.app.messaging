@@ -18,7 +18,11 @@
 
 #ifndef MSGINDICATOR_PRIVATE_H
 #define MSGINDICATOR_PRIVATE_H
+
+#include <e32base.h>
 #include "msginfodefs.h"
+
+// Forward Declarations
 class MsgIndicator;
 class CCSRequestHandler;
 class IndicatorData;
@@ -27,7 +31,7 @@ class IndicatorData;
  * Message indicator class. 
  * Handles client request and showing the indications. 
  */
-class MsgIndicatorPrivate 
+class MsgIndicatorPrivate : public CBase
 {
 public:
     /**

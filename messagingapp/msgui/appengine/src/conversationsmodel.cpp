@@ -47,6 +47,9 @@ _LIT(KSelectConvMsgsStmt, "SELECT message_id, msg_processingstate, subject, body
 //selecet preview-icon query
 _LIT(KSelectPreviewIconStmt,"SELECT  message_id, preview_icon FROM conversation_messages WHERE message_id = :message_id ");
 
+//selecet vcard-path query
+_LIT(KSelectVCardStmt,"SELECT  message_id, msg_processingstate, preview_path FROM conversation_messages WHERE message_id = :message_id ");
+
 // preview-cache max cost (items)
 const int CACHE_COST =  50;
 //Preview thumbnail size
@@ -706,51 +709,36 @@ void ConversationsModel::handleMMSNotification(QStandardItem& item,
 //---------------------------------------------------------------
 void ConversationsModel::handleBlueToothMessages(QStandardItem& item,
     const CCsConversationEntry& entry)
-{
-     int msgSubType = ConversationsEngineUtility::messageSubType(entry.GetType());
-      if (msgSubType == ConvergedMessage::VCard) 
-			{
-           iBioMsgPlugin->setMessageId(entry.EntryId());          
-
-           if (iBioMsgPlugin->attachmentCount() > 0) 
-		   			{
-               UniMessageInfoList attList = iBioMsgPlugin->attachmentList();
-               QString attachmentPath = attList[0]->path();
-
-               //get display-name and set as bodytext
-               QString displayName = MsgContactHandler::getVCardDisplayName(attachmentPath);
-               item.setData(displayName, BodyText);
-			   	 // clear attachement list : its allocated at data model
-            	while (!attList.isEmpty()) 
-							{
-                delete attList.takeFirst();
-            	}
-
-           }
-       }
-
-       else 
-	   	 {
-           QString description = XQConversions::s60DescToQString(*(entry.Description()));
-
-           if (msgSubType == ConvergedMessage::VCal) // "vCalendar"
-           {
-               //message sub-type
-               item.setData(ConvergedMessage::VCal, MessageSubType);
-           }
-           else 
-		       {
-               //message sub-type
-               item.setData(ConvergedMessage::None, MessageSubType);
-           }
-           //for BT messages we show filenames for all other (except vcard) messages
-           //get filename and set as body
-           QFileInfo fileinfo(description);
-           QString filename = fileinfo.fileName();
-           item.setData(filename, BodyText);
-       }
+    {
+    int msgSubType = ConversationsEngineUtility::messageSubType(
+            entry.GetType());
     
-}
+    if (msgSubType == ConvergedMessage::VCard)
+        {
+        handleVCard(item, entry.EntryId());
+        }
+    else
+        {
+        QString description = XQConversions::s60DescToQString(
+                *(entry.Description()));
+
+        if (msgSubType == ConvergedMessage::VCal) // "vCalendar"
+            {
+            //message sub-type
+            item.setData(ConvergedMessage::VCal, MessageSubType);
+            }
+        else
+            {
+            //message sub-type
+            item.setData(ConvergedMessage::None, MessageSubType);
+            }
+        //for BT messages we show filenames for all other (except vcard) messages
+        //get filename and set as body
+        QFileInfo fileinfo(description);
+        QString filename = fileinfo.fileName();
+        item.setData(filename, BodyText);
+        }
+    }
 
 //---------------------------------------------------------------
 // ConversationsModel::handleBioMessages
@@ -758,30 +746,16 @@ void ConversationsModel::handleBlueToothMessages(QStandardItem& item,
 //---------------------------------------------------------------
 void ConversationsModel::handleBioMessages(QStandardItem& item, const CCsConversationEntry& entry)
 {
-    iBioMsgPlugin->setMessageId(entry.EntryId());
     int msgSubType = ConversationsEngineUtility::messageSubType(entry.GetType());
-    if (ConvergedMessage::VCard == msgSubType) {
-        if (iBioMsgPlugin->attachmentCount() > 0) {
-            UniMessageInfoList attList = iBioMsgPlugin->attachmentList();
-            QString attachmentPath = attList[0]->path();
-
-            //get display-name and set as bodytext
-            QString displayName =
-                    MsgContactHandler::getVCardDisplayName(
-                            attachmentPath);
-            item.setData(displayName, BodyText);
-            item.setData(attachmentPath, Attachments);
-
-            // clear attachement list : its allocated at data model
-            while (!attList.isEmpty()) {
-                delete attList.takeFirst();
-            }
+    if (ConvergedMessage::VCard == msgSubType)
+        {
+        handleVCard(item, entry.EntryId());
         }
-    }
     else if (ConvergedMessage::VCal == msgSubType) {
         //not supported
     }
     else if (ConvergedMessage::RingingTone == msgSubType) {
+        iBioMsgPlugin->setMessageId(entry.EntryId());
         if (iBioMsgPlugin->attachmentCount() > 0) {
             UniMessageInfoList attList = iBioMsgPlugin->attachmentList();
             QString attachmentPath = attList[0]->path();
@@ -962,6 +936,113 @@ void ConversationsModel::updatePreviewIcon(int msgId, QString& filePath)
 }
 
 //---------------------------------------------------------------
+// ConversationsModel::handleVCard()
+// @see header
+//---------------------------------------------------------------
+void ConversationsModel::handleVCard(QStandardItem& item, int msgId)
+    {
+    //sql query to get vcard-path from DB
+    bool vCardParsed = false;
+
+    if (iSqlDbOpen)
+        {
+        RSqlStatement sqlSelectVcardStmt;
+        TInt err = sqlSelectVcardStmt.Prepare(iSqlDb, KSelectVCardStmt);
+
+        QCRITICAL_WRITE_FORMAT("Error from Prepare()", err)
+
+        if (err == KErrNone)
+            {
+            //msg_id
+            TInt msgIdIndex = sqlSelectVcardStmt.ParameterIndex(
+                    _L(":message_id"));
+            sqlSelectVcardStmt.BindInt(msgIdIndex, msgId);
+            // state
+            TInt msgProcessingStateIndex = sqlSelectVcardStmt.ColumnIndex(
+                    _L("msg_processingstate"));
+           
+            // get vacrd-path from DB
+            err = sqlSelectVcardStmt.Next();
+            QCRITICAL_WRITE_FORMAT("Error from Next()", err)
+
+            if (err == KSqlAtRow)
+                {
+                int msgProcessingState = 0;
+                msgProcessingState = sqlSelectVcardStmt.ColumnInt(
+                        msgProcessingStateIndex);
+                if (msgProcessingState == EPreviewMsgProcessed)
+                    {
+                    //path-index
+                    TInt previewPathIndex = sqlSelectVcardStmt.ColumnIndex(
+                            _L("preview_path"));
+
+                    //Get vcard-path data from path-index
+                    RSqlColumnReadStream stream;
+                    err = stream.ColumnBinary(sqlSelectVcardStmt,
+                            previewPathIndex);
+
+                    QCRITICAL_WRITE_FORMAT("Error from ColumnBinary()", err)
+
+                    if (err == KErrNone)
+                        {
+                        RBuf vCardPathBuffer;
+                        vCardPathBuffer.Create(sqlSelectVcardStmt.ColumnSize(
+                                previewPathIndex));
+                        sqlSelectVcardStmt.ColumnText(previewPathIndex,
+                                vCardPathBuffer);
+
+                        //set inside attachments
+                        QString attachmentPath(
+                                XQConversions::s60DescToQString(
+                                        vCardPathBuffer));
+                        item.setData(attachmentPath, Attachments);
+
+                        //get display-name and set as bodytext
+                        QString displayName =
+                                MsgContactHandler::getVCardDisplayName(
+                                        attachmentPath);
+                        item.setData(displayName, BodyText);
+
+                        vCardPathBuffer.Close();
+                        vCardParsed = true;
+
+                        QCRITICAL_WRITE("vcard parsing complete.")
+
+                        }
+                    //close stream
+                    stream.Close();
+                    }
+                }
+            }
+        sqlSelectVcardStmt.Close();
+        }
+
+    // fallback, if not parsed in DB, parse from store
+    if (!vCardParsed)
+        {
+        iBioMsgPlugin->setMessageId(msgId);
+
+        if (iBioMsgPlugin->attachmentCount() > 0)
+            {
+            UniMessageInfoList attList = iBioMsgPlugin->attachmentList();
+            QString attachmentPath = attList[0]->path();
+
+            //get display-name and set as bodytext
+            QString displayName = MsgContactHandler::getVCardDisplayName(
+                    attachmentPath);
+            item.setData(displayName, BodyText);
+            item.setData(attachmentPath, Attachments);
+
+            // clear attachement list : its allocated at data model
+            while (!attList.isEmpty())
+                {
+                delete attList.takeFirst();
+                }
+            }
+        }
+    }
+
+//---------------------------------------------------------------
 // ConversationsModel::clearModel()
 // @see header
 //---------------------------------------------------------------
@@ -971,6 +1052,10 @@ void ConversationsModel::clearModel()
     previewIconCache.clear();
 }
 
+//---------------------------------------------------------------
+// ConversationsModel::emitConversationViewEmpty()
+// @see header
+//---------------------------------------------------------------
 void ConversationsModel:: emitConversationViewEmpty()
 {
     emit conversationViewEmpty();

@@ -545,11 +545,14 @@ int MsgUnifiedEditorBody::bodySize()
 	if( mImageSize || mTextEdit->toPlainText().size() || 
 	    mAudioSize || mVideoSize )
 	{
-	   UniEditorGenUtils* uniEditorGenUtils = new UniEditorGenUtils;
+	  
+	    UniEditorGenUtils* genUtils = NULL;	        
+	    QT_TRAP_THROWING(genUtils = new UniEditorGenUtils);
+	    
         bodysize +=  mImageSize + mAudioSize + mVideoSize +
-            uniEditorGenUtils->UTF8Size(mTextEdit->toPlainText()) +
+            genUtils->UTF8Size(mTextEdit->toPlainText()) +
             KEstimatedMimeHeaderSize + KEstimatedMmsSmilHeaderSize;
-        delete uniEditorGenUtils;
+        delete genUtils;
 	}
 	return bodysize;
 }

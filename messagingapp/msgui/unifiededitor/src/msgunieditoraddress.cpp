@@ -29,6 +29,7 @@
 #include <HbNotificationDialog>
 #include <commonphoneparser.h>      // Common phone number validity checker
 #include <xqconversions.h>
+#include <HbEditorInterface>
 
 // USER INCLUDES
 #include "debugtraces.h"
@@ -79,6 +80,10 @@ mExceedsMaxMmsRecipientsBy(0)
             this, SLOT(onContentsChanged(const QString&)));
 
     mAddressEdit->setInputMethodHints(Qt::ImhPreferNumbers);
+    
+    //To allow only latin char(s) in address fields.
+    HbEditorInterface editorInterface(mAddressEdit);
+    editorInterface.setInputConstraints(HbEditorConstraintLatinAlphabetOnly);
 }
 
 MsgUnifiedEditorAddress::~MsgUnifiedEditorAddress()

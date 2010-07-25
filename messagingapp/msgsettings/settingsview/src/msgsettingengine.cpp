@@ -32,8 +32,8 @@ MsgSettingEngine::MsgSettingEngine()
 #endif
 
 
-    dptr_smsSettings = SmsSettingsPrivate::NewL();
-    dptr_mmsSettings = MmsSettingsPrivate::NewL();
+    QT_TRAP_THROWING(dptr_smsSettings = SmsSettingsPrivate::NewL());
+    QT_TRAP_THROWING(dptr_mmsSettings = MmsSettingsPrivate::NewL());
 
 #ifdef _DEBUG_TRACES_
     qDebug() << "Exit MsgSettingEngine::MsgSettingEngine";
@@ -59,17 +59,6 @@ MsgSettingEngine::~MsgSettingEngine()
 }
 
 /**
- * for basic message settings
- * set the service messages status
- * @param serviceMessages bool true or false
- */
-void MsgSettingEngine::setReceiveSerivceMessages(bool serviceMessages)
-{
-    dptr_smsSettings->setReceiveSerivceMessages(serviceMessages);
-    
-}
-
-/**
  * set the character encoding
  * @param encoding specifying encoding type
  */
@@ -86,7 +75,7 @@ void MsgSettingEngine::setCharacterEncoding(MsgSettingEngine::CharacterEncoding 
     {
         flag = ETrue;
     }
-    dptr_smsSettings->setCharacterEncoding(flag);
+    QT_TRAP_THROWING(dptr_smsSettings->setCharacterEncodingL(flag));
     
 #ifdef _DEBUG_TRACES_
     qDebug() << "MsgSettingEngine::setCharacterEncoding";
@@ -97,21 +86,16 @@ void MsgSettingEngine::setCharacterEncoding(MsgSettingEngine::CharacterEncoding 
 /**
  * returns settings delivery report status
  * and character encoding
- * @param receiveServiceMessages for getting receive service messages
  * @param encoding for char encoding
  */
-void MsgSettingEngine::settingsServiceMessagesAndCharEncoding( 
-        bool& receiveServiceMessages,
+void MsgSettingEngine::settingsCharEncoding( 
         MsgSettingEngine::CharacterEncoding& encoding )
 {
     QDEBUG_WRITE("settingsServiceMessagesAndCharEncoding");
     
     TBool encoding1;
-    TBool receiveServiceMessages1;
-    
-    dptr_smsSettings->settingsServiceMessagesAndCharEncoding(
-            receiveServiceMessages1,
-            encoding1);
+        
+    QT_TRAP_THROWING(dptr_smsSettings->settingsCharEncodingL(encoding1));
     
     if (encoding1)
     {
@@ -119,10 +103,6 @@ void MsgSettingEngine::settingsServiceMessagesAndCharEncoding(
     }
     else
         encoding = MsgSettingEngine::ReducedSupport;
-    
-    //TODO remove hardcoding later
-    //receiveServiceMessages = (bool)receiveServiceMessages1;
-    receiveServiceMessages = true;
     
     return;
 }
@@ -138,7 +118,7 @@ void MsgSettingEngine::setMMSRetrieval(MsgSettingEngine::MmsRetrieval retrieval)
 #endif
 
 
-    dptr_mmsSettings->setMMSRetrieval(retrieval);
+    QT_TRAP_THROWING(dptr_mmsSettings->setMMSRetrievalL(retrieval));
 
 #ifdef _DEBUG_TRACES_
     qDebug() << "Exit setMMSRetrieval";
@@ -157,7 +137,7 @@ void MsgSettingEngine::setAnonymousMessages(bool status)
 #endif
 
 
-    dptr_mmsSettings->setAnonymousMessages(status);
+    QT_TRAP_THROWING (dptr_mmsSettings->setAnonymousMessagesL(status));
 
 #ifdef _DEBUG_TRACES_
     qDebug() << "Exit setAnonymousMessages";
@@ -176,7 +156,7 @@ void MsgSettingEngine::setReceiveMMSAdverts(bool status)
 #endif
 
 
-    dptr_mmsSettings->setReceiveMMSAdverts(status);
+    QT_TRAP_THROWING(dptr_mmsSettings->setReceiveMMSAdvertsL(status));
 
 #ifdef _DEBUG_TRACES_
     qDebug() << "Exit setReceiveMMSAdverts";
@@ -202,9 +182,9 @@ void MsgSettingEngine::advanceMmsSettings(MsgSettingEngine::MmsRetrieval& retrie
 
     TBool anonymous_Status;
     TBool mmsAdverts_Status;
-    dptr_mmsSettings->advanceMmsSettings(retrieval,
+    QT_TRAP_THROWING(dptr_mmsSettings->advanceMmsSettingsL(retrieval,
                                          anonymous_Status,
-                                         mmsAdverts_Status);
+                                         mmsAdverts_Status));
 
     anonymousStatus = (bool) anonymous_Status;
     mmsAdvertsStatus = (bool) mmsAdverts_Status;
@@ -232,7 +212,7 @@ void MsgSettingEngine::allMMsAcessPoints(QStringList& nameList,
     RPointerArray<HBufC> accessPoints;
     //= new(ELeave)RPointerArray<HBufC>();
 
-    dptr_mmsSettings->getAllAccessPoints(accessPoints, defaultIndex);
+    QT_TRAP_THROWING( dptr_mmsSettings->getAllAccessPointsL(accessPoints, defaultIndex));
 
     for (int i = 0; i < accessPoints.Count(); i++)
         {
@@ -264,7 +244,7 @@ void MsgSettingEngine::setMMSAccesspoint(int index)
 #endif
 
 
-    dptr_mmsSettings->setMMSAccesspoint(index);
+    QT_TRAP_THROWING(dptr_mmsSettings->setMMSAccesspointL(index));
 
 #ifdef _DEBUG_TRACES_
     qDebug() << "Exit setMMSAccesspoint ";
@@ -287,7 +267,7 @@ void MsgSettingEngine::allSMSMessageCenter(QStringList& nameList,
 
     RPointerArray<HBufC> accessPoints;
 
-    dptr_smsSettings->getAllSMSMessageCenter(accessPoints, defaultIndex);
+    QT_TRAP_THROWING(dptr_smsSettings->getAllSMSMessageCenterL(accessPoints, defaultIndex));
 
     for (int i = 0; i < accessPoints.Count(); i++)
         {
@@ -319,7 +299,7 @@ void MsgSettingEngine::setSMSMessageCenter(int index)
 #endif
 
 
-    dptr_smsSettings->setSMSMessageCenter(index);
+    QT_TRAP_THROWING(dptr_smsSettings->setSMSMessageCenterL(index));
 
 #ifdef _DEBUG_TRACES_
     qDebug() << "Exit setSMSMessageCenter ";
@@ -344,7 +324,7 @@ void MsgSettingEngine::editSmsMessageCenter(QString& centreName,
     HBufC* d_addr = XQConversions::qStringToS60Desc(centreNumber);
     HBufC* d_name = XQConversions::qStringToS60Desc(centreName);
 
-    dptr_smsSettings->editSMSServiceCentre(d_addr, d_name, index);
+    QT_TRAP_THROWING(dptr_smsSettings->editSMSServiceCentreL(d_addr, d_name, index));
     delete d_addr;
     delete d_name;
 
@@ -371,7 +351,7 @@ void MsgSettingEngine::addSmsMessageCenter(QString& centreName,
     HBufC* d_addr = XQConversions::qStringToS60Desc(centreNumber);
     HBufC* d_name = XQConversions::qStringToS60Desc(centreName);
 
-    dptr_smsSettings->addSmsMessageCenter(d_addr, d_name);
+    QT_TRAP_THROWING(dptr_smsSettings->addSmsMessageCenterL(d_addr, d_name));
     delete d_addr;
     delete d_name;
 
@@ -387,7 +367,7 @@ void MsgSettingEngine::addSmsMessageCenter(QString& centreName,
  */
 void MsgSettingEngine::deleteSmsMessageCenter(int deleteIndex)
 {
-    dptr_smsSettings->deleteSmsMessageCenter(deleteIndex);
+    QT_TRAP_THROWING( dptr_smsSettings->deleteSmsMessageCenterL(deleteIndex));
 }
 
 /**
@@ -407,7 +387,7 @@ void MsgSettingEngine::smsCenterNameAndNumber(int index, QString& centreName,
     HBufC* d_addr;
     HBufC* d_name;
 
-    dptr_smsSettings->smsCenterNameAndNumber(index, &d_addr, &d_name);
+    QT_TRAP_THROWING(  dptr_smsSettings->smsCenterNameAndNumberL(index, &d_addr, &d_name));
 
     centreNumber = XQConversions::s60DescToQString(d_addr->Des());
     centreName = XQConversions::s60DescToQString(d_name->Des());

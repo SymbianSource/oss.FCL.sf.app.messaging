@@ -36,7 +36,7 @@ class MsgSimNumDetectorPrivate;
  *  MsgSimOperation
  *  
  */
-class MSGINIT_DLL_EXPORT MsgSimNumDetector 
+class MSGINIT_DLL_EXPORT MsgSimNumDetector :public QObject
 {
 public:
     
@@ -57,7 +57,7 @@ private:
 };
 
 
-class MsgSimNumDetectorPrivate : public MSimOperationObserver
+class MsgSimNumDetectorPrivate : public CBase, public MSimOperationObserver
     {
 
 public:

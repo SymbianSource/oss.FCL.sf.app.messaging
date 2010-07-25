@@ -30,7 +30,7 @@
 MsgStoreHandler::MsgStoreHandler():
 iMsvSession(NULL)
         {
-        TRAP_IGNORE(InitL());
+        InitL();
         }
 
 //----------------------------------------------------------------------------

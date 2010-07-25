@@ -225,8 +225,9 @@ void TestConversationEngineStub
 void TestConversationEngineStub::UpdateConversationList()
 {
     TInt error;
-    TRAP(error, PrepareConversationListL(iConversationID, 5, iUnReadCount));    
-    iNotifier->SendListResultUpdate(iConversationEntryList);
+    TInt totalCount = 5;
+    TRAP(error, PrepareConversationListL(iConversationID, totalCount, iUnReadCount));    
+    iNotifier->SendListResultUpdate(iConversationEntryList,totalCount);
 }
 
 void TestConversationEngineStub::UpdateConvEntry(TInt aConversationId)

@@ -12,8 +12,7 @@
  * Contributors:
  *
  * Description:  
- *     A class which takes care of reading the possible new
- *     service centres from SIM and adds them to pda-side Sms Settings.
+ *     
  *
  */
 
@@ -40,9 +39,7 @@ RingBcPrivate::RingBcPrivate()
 
     {
     QDEBUG_WRITE("RingBcPrivate::RingBcPrivate : Enter")
-
-    TRAP_IGNORE(initL());
-
+    initL();
     QDEBUG_WRITE("RingBcPrivate::RingBcPrivate : Exit")
 
     }
@@ -163,6 +160,10 @@ void RingBcPrivate::saveToneL(const QString& path)
             }
         CleanupStack::PopAndDestroy(2); // title,fileMan        
         }
+    else
+    	{
+        User::Leave(KErrCorrupt);
+    	}
 
     CleanupStack::PopAndDestroy(); // dataBuf
     CleanupStack::PopAndDestroy(); //file

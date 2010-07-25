@@ -74,15 +74,6 @@ void UniViewerFeederPrivate::initL(qint32 msgId)
 }
 
 // ---------------------------------------------------------------------------
-// UniViewerFeederPrivate::fetchDetails
-// Fetches message details from the store
-// ---------------------------------------------------------------------------
-void UniViewerFeederPrivate::fetchDetails()
-{
-    TRAP_IGNORE(fetchDetailsL());
-}
-
-// ---------------------------------------------------------------------------
 // UniViewerFeederPrivate::msgType
 // Returns the message type.
 // ---------------------------------------------------------------------------
@@ -153,7 +144,7 @@ QDateTime UniViewerFeederPrivate::timeStamp()
 // UniViewerFeederPrivate::fetchDetailsL
 // Fetches message details from the store.
 // ---------------------------------------------------------------------------
-void UniViewerFeederPrivate::fetchDetailsL()
+void UniViewerFeederPrivate::fetchDetails()
 {
     QDEBUG_WRITE("UniViewerFeederPrivate fetchDetailsL : SMS start");
     if (msgType() == KSenduiMtmSmsUidValue || (msgType() == KSenduiMtmBioUidValue

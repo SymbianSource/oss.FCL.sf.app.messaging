@@ -79,12 +79,13 @@ void TestConversationNotifier::RemoveCachingStatusNotifier()
 
 void TestConversationNotifier
 ::SendListResultUpdate(RPointerArray<CCsConversationEntry>& 
-                                        aConversationEntryList)
+                                        aConversationEntryList,
+                                        TInt& aTotalCount)
 {
     // Pass the results to the observer
     if ( iResultsObserver )
     {
-        iResultsObserver->Conversations(aConversationEntryList);
+        iResultsObserver->Conversations(aConversationEntryList,aTotalCount);
     }
 }
 

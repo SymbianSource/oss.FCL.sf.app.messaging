@@ -52,9 +52,9 @@ int MsgUnifiedEditorMonitor::mMsgCurrAddressCount;
 MsgUnifiedEditorMonitor::MsgUnifiedEditorMonitor(QObject* parent) :
 QObject(parent),
 mSkipNote(false)
-{
-    init();
-    mUniEditorGenUtils = new UniEditorGenUtils;
+{    
+    mUniEditorGenUtils = q_check_ptr( new UniEditorGenUtils);
+    init(); 
 }
 
 //---------------------------------------------------------------
@@ -78,18 +78,14 @@ void MsgUnifiedEditorMonitor::init()
     mSubjectSize = 0;
     mMsgCurrAddressCount = 0;
 
-    UniEditorGenUtils* uniEditorGenUtils = new UniEditorGenUtils;
-
     mMaxMmsSize = KDefaultMaxSize;
-    TRAP_IGNORE(mMaxMmsSize = uniEditorGenUtils->MaxMmsMsgSizeL());
+    TRAP_IGNORE(mMaxMmsSize = mUniEditorGenUtils->MaxMmsMsgSizeL());
 
     mMaxSmsRecipients = KDefaultSmsRecipients;
-    TRAP_IGNORE(mMaxSmsRecipients = uniEditorGenUtils->MaxSmsRecipientsL());
+    TRAP_IGNORE(mMaxSmsRecipients = mUniEditorGenUtils->MaxSmsRecipientsL());
 
     mMaxMmsRecipients = KDefaultMmsRecipients;
-    TRAP_IGNORE(mMaxMmsRecipients = uniEditorGenUtils->MaxMmsRecipientsL());
-
-    delete uniEditorGenUtils;
+    TRAP_IGNORE(mMaxMmsRecipients = mUniEditorGenUtils->MaxMmsRecipientsL());
 }
 
 //---------------------------------------------------------------
@@ -211,7 +207,7 @@ void MsgUnifiedEditorMonitor::showPopup(const QString& text)
         dlg->setFocusPolicy(Qt::NoFocus);
         dlg->setDismissPolicy(HbPopup::TapAnywhere);
         dlg->setAttribute(Qt::WA_DeleteOnClose, true);
-        dlg->setText(text);
+        dlg->setTitle(text);
         dlg->show();
     }
     // reset skip note flag

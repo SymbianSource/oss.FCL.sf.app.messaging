@@ -41,7 +41,7 @@ mStoreHandler(NULL),
 mViewManager(NULL)
     {
     // create stote handler
-    mStoreHandler = new MsgStoreHandler();
+    QT_TRAP_THROWING( mStoreHandler = new MsgStoreHandler());
     
     // create view manager
     mViewManager = new MsgServiceViewManager(mStoreHandler,this);

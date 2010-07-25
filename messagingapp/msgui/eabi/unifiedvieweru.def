@@ -10,7 +10,7 @@ EXPORTS
 	_ZN13UnifiedViewer15populateContentEibi @ 9 NONAME
 	_ZN13UnifiedViewer16staticMetaObjectE @ 10 NONAME DATA 16
 	_ZN13UnifiedViewer17handleReplyActionEv @ 11 NONAME
-	_ZN13UnifiedViewer17onDialogDeleteMsgEP8HbAction @ 12 NONAME
+	_ZN13UnifiedViewer17onDialogDeleteMsgEi @ 12 NONAME
 	_ZN13UnifiedViewer18handleDeleteActionEv @ 13 NONAME
 	_ZN13UnifiedViewer19getStaticMetaObjectEv @ 14 NONAME
 	_ZN13UnifiedViewer20handleReplyAllActionEv @ 15 NONAME

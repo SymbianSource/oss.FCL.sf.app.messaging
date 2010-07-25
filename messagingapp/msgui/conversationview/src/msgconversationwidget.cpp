@@ -660,6 +660,7 @@ void MsgConversationWidget::resetProperties()
 //---------------------------------------------------------------
 void MsgConversationWidget::orientationchanged(Qt::Orientation orientation)
 {
+    Q_UNUSED(orientation)
     QDEBUG_WRITE("MsgConversationWidget:orientationchanged start.")
             
     repolish();

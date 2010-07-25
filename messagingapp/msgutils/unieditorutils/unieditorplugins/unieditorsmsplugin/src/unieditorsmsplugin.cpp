@@ -35,8 +35,7 @@ UniEditorSmsPlugin::UniEditorSmsPlugin(QObject* parent) :
     QObject(parent),
     d_ptr(NULL)
 {
-    TRAPD(error, d_ptr = UniEditorSmsPluginPrivate::NewL());
-    QDEBUG_WRITE_FORMAT("UniEditorSmsPlugin::UniEditorSmsPlugin error = ",error);
+    QT_TRAP_THROWING(d_ptr = UniEditorSmsPluginPrivate::NewL());
 }
 
 //---------------------------------------------------------------
