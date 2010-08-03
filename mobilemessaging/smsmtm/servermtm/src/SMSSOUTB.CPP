@@ -23,7 +23,6 @@
 #include <logsmspdudata.h>
 #include <smsulog.h>
 #include <logwraplimits.h>
-#include <exterror.h>
 
 #include "SMSSendSession.h"
 #include "SMSSPAN.H"
@@ -211,15 +210,8 @@ void CSmsOutboxSend::DoRunL()		// required by PV declaration in CActive
 			{
 			if (iCurrentMessage)
 				{
-				if( (iProgress.iError == KErrGsmSMSShortMessageTransferRejected) || (iProgress.iError == KErrGsmSMSInvalidMandatoryInformation) || (iProgress.iError == KErrGsmSMSUnidentifiedSubscriber) ||
-					(iProgress.iError == KErrGsmSMSUnknownSubscriber) || (iProgress.iError == KErrGsmSMSNetworkOutOfOrder) )
-				    {
-					DoComplete(iProgress.iError);
-				    }
-				else
-				    {
-					ReScheduleFailedMessageL();
-				    }	
+                SMSSLOG(FLogFormat(_L8("CSmsOutboxSend::DoRunL(), error for ReSchedule %d"), iProgress.iError));
+				ReScheduleFailedMessageL();
 				}
 			else
 				{
@@ -523,7 +515,7 @@ void CSmsOutboxSend::SendNextHeaderL()
 		_LIT16(KComma, ",");
 		
 		RBuf16 buffer;
-		buffer.Create(size+num);
+		buffer.CreateL(size+num);
 		if(num > 0)
 			{
 			rcpt = numbers[0];
