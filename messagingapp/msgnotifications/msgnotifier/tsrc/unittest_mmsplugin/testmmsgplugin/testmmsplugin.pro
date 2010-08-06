@@ -55,14 +55,17 @@ HEADERS += \
 SYMBIAN_PLATFORMS = WINSCW ARMV5
 
 symbian {
-	TARGET.UID3 =  0xE7232a7c
+    TARGET.UID3 =  0xE7232a7c
     TARGET.CAPABILITY = CAP_GENERAL_DLL
     TARGET.EPOCSTACKSIZE = 0x8000
     TARGET.EPOCHEAPSIZE = 0x1000 0x1F00000
     TARGET.EPOCALLOWDLLDATA = 1
     VENDORID =  VID_DEFAULT
     BLD_INF_RULES.prj_exports += "data/testmmsplugin.cfg c:/testmmsplugin.cfg"
-    BLD_INF_RULES.prj_exports += "data/testmmsplugin.pl c:/testmmsplugin.pl"
+    BLD_INF_RULES.prj_exports += "data/testmmsplugin.pl  c:/testmmsplugin.pl"
+    BLD_INF_RULES.prj_exports += "data/SmileyFace.gif    c:/SmileyFace.gif"
+    BLD_INF_RULES.prj_exports += "data/sample.txt        c:/sample.txt"
+
 	}
 
  LIBS += -leuser \
@@ -161,4 +164,14 @@ symbian: {
 	addFiles.sources = mmstestbed.dll
 	addFiles.path = /sys/bin
 	DEPLOYMENT += addFiles
-	}
+
+      addP2.sources = ./data/SmileyFace.gif
+	addP2.path = C:/
+	DEPLOYMENT += addP2
+
+	addP3.sources = ./data/sample.txt
+	addP3.path = C:/
+	DEPLOYMENT += addP3	
+
+
+}

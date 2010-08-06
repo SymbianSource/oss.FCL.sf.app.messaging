@@ -41,17 +41,6 @@ const TUid KBioUidValueUid =
 {KBioUidValue};
 
 
-
-
-//out put directory for test results.
-QString OUTPUTDIRECTORY = "c:/logs/TestUniDataModelVCalPlugin";
-//o/p directory for data to be written on temp file.
-QString TEMPDIR = "c:/logs/TestUniDataModelVCalPlugin/testdata";
-//test result O/P file name.
-QString RESULTFILE = "c:/logs/TestUniDataModelVCalPlugin/result_%1.txt";
-// folder named UID3 of TestUniDataModelVCalPlugin inside private folder.
-const QString PRIVATE_DIR("C:/private/Ed034a47");
-
 //factory method to create objects.
 QObject* getObject(QString className)
 {
@@ -65,59 +54,31 @@ QObject* getObject(QString className)
 	}
 }
 
-//creating o/p directory.
-void createOutPutDirectory()
-    {
-    QDir dir;
-    //o/p dir
-    dir.mkdir(OUTPUTDIRECTORY);
-    //tmp dir
-    dir.mkdir(TEMPDIR);
-    // dir inside private folder.
-    dir.mkdir(PRIVATE_DIR);
-    }
-
 //main entry point
 int main(int argc, char *argv[])
     { 
     int ret = -1;
-    QCoreApplication app(argc, argv);    
-    
-    //creating output directory.
-    createOutPutDirectory();
-    
-    //the configuration file.
-    QFile data("c:/TestUniDataModelVCalPlugin.cfg");
-
+	QCoreApplication app(argc, argv);
+	
+	//the configuration file.
+	QFile data("c:/TestUniDataModelVCalPlugin.cfg");
     if (data.open(QFile::ReadOnly)) 
         {
-        QTextStream in(&data);
-        while(!in.atEnd())
-            {
-            QStringList args;
-            QString appName = argv[0];
-            args << appName;
+		QTextStream in(&data);
+		while(!in.atEnd())
+			{
+			QString name = in.readLine();
+			QObject* tc = getObject(name);
+			
+			if(tc)
+				{
+				ret =  QTest::qExec(tc, argc, argv);
+				delete tc;
+				}
+			}
+        }
+	return ret;
 
-            QString option  = "-o";
-            args << option;
-
-            QString outFile = RESULTFILE;
-            QString name = in.readLine();
-            outFile = outFile.arg(name);
-            args << outFile;
-
-            QObject* tc = getObject(name);
-
-            if(tc)
-                {
-
-                ret =  QTest::qExec(tc, args); 
-                delete tc;
-                }
-            }
-        }    
-    data.close();
-    return ret;
     }
 
 

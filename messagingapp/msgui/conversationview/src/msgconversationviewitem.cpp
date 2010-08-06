@@ -22,10 +22,12 @@
 #include "debugtraces.h"
 #include <QDir>
 #include <QChar>
+#include <QStringBuilder>
 #include <HbTextItem>
 #include <HbIconItem>
 #include <HbIconAnimationManager>
 #include <HbIconAnimator>
+#include <HbExtendedLocale>
 #include <ccsdefs.h>
 #include <HbInstance>
 
@@ -37,14 +39,18 @@
 #include "conversationsenginedefines.h"
 
 // LOCAL CONSTANTS
-const QString MSG_OUTBOX_ICON("qtg_small_outbox");
-const QString MSG_FAIL_ICON("qtg_small_fail");
-const QString ANIMATION_FILE(":/qtg_anim_loading.axml");
-const QString ANIMATION_ICON_NAME("qtg_anim_loading");
-const QString VCARD_ICON("qtg_large_mycard");
-const QString IMAGE_ICON("qtg_small_image");
-const QString CORRUPTED_ICON("qtg_small_corrupted");
-const QString MSG_VIDEO_ICON("qtg_small_video");
+static const char MSG_OUTBOX_ICON[]     = "qtg_small_outbox";
+static const char MSG_FAIL_ICON[]       = "qtg_small_fail";
+static const char ANIMATION_FILE[]      = ":/qtg_anim_loading.axml";
+static const char ANIMATION_ICON_NAME[] = "qtg_anim_loading";
+static const char VCARD_ICON[]          = "qtg_large_mycard";
+static const char IMAGE_ICON[]          = "qtg_small_image";
+static const char CORRUPTED_ICON[]      = "qtg_small_corrupted";
+static const char MSG_VIDEO_ICON[]      = "qtg_small_video";
+
+// @see hbi18ndef.h
+static const char DATE_FORMAT[] = r_qtn_date_short_with_zero;
+static const char TIME_FORMAT[] = r_qtn_time_usual_with_zero;
 
 // LOCALIZATION
 #define LOC_RINGING_TONE hbTrId("txt_messaging_dpopinfo_ringing_tone")
@@ -171,17 +177,17 @@ void MsgConversationViewItem::updateSmsTypeItem(const QModelIndex& index,
     dateTime.setTime_t(index.data(TimeStamp).toUInt());
     QString resendStateNote((index.data(SendingState).toInt()
                     == ConvergedMessage::Resend) ? LOC_RESEND_AT : "");
-    if (dateTime.date() == QDateTime::currentDateTime().date())
-        {
 
-        mConversation->setTimeStamp(resendStateNote + dateTime.toString(
-                        TIME_FORMAT));
-        }
-    else
-        {
-        mConversation->setTimeStamp(resendStateNote + dateTime.toString(
-                        DATE_FORMAT));
-        }
+    HbExtendedLocale locale = HbExtendedLocale::system();
+    QString date = locale.format(dateTime.date(), DATE_FORMAT);
+    QString time = locale.format(dateTime.time(), TIME_FORMAT);
+
+    if (dateTime.date() == QDateTime::currentDateTime().date()) {
+        mConversation->setTimeStamp(resendStateNote % time);
+    }
+    else {
+        mConversation->setTimeStamp(resendStateNote % date);
+    }
 
     if (messageSubType == ConvergedMessage::VCal)
         {
@@ -192,7 +198,7 @@ void MsgConversationViewItem::updateSmsTypeItem(const QModelIndex& index,
         QString bodyText = index.data(BodyText).toString();
         bodyText.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
         bodyText.replace('\r', QChar::LineSeparator);
-        mConversation->setSubject(bodyText);
+        mConversation->setBodyText(bodyText);
         }
     
     //repolish
@@ -256,17 +262,17 @@ void MsgConversationViewItem::updateMmsTypeItem(const QModelIndex& index,
     dateTime.setTime_t(index.data(TimeStamp).toUInt());
     QString resendStateNote((index.data(SendingState).toInt()
             == ConvergedMessage::Resend) ? LOC_RESEND_AT : "");
-    if (dateTime.date() == QDateTime::currentDateTime().date())
-        {
 
-        mConversation->setTimeStamp(resendStateNote + dateTime.toString(
-                TIME_FORMAT));
-        }
-    else
-        {
-        mConversation->setTimeStamp(resendStateNote + dateTime.toString(
-                DATE_FORMAT));
-        }
+    HbExtendedLocale locale = HbExtendedLocale::system();
+    QString date = locale.format(dateTime.date(), DATE_FORMAT);
+    QString time = locale.format(dateTime.time(), TIME_FORMAT);
+
+    if (dateTime.date() == QDateTime::currentDateTime().date()) {
+        mConversation->setTimeStamp(resendStateNote % time);
+    }
+    else {
+        mConversation->setTimeStamp(resendStateNote % date);
+    }
 
     if (messageType == ConvergedMessage::Mms)
         {
@@ -457,43 +463,31 @@ bool MsgConversationViewItem::isIncoming()
 void MsgConversationViewItem::setMessageStateIcon(int messageState)
 {
     HbIconAnimator& iconAnimator = mOutgoingMsgStateIconItem->animator();
-    HbIconAnimationManager* iconAnimationManager =
-            HbIconAnimationManager::global();
+
     switch (messageState)
     {
         case ConvergedMessage::Waiting:
         case ConvergedMessage::Scheduled:
         case ConvergedMessage::Sending:
         {
-            bool defined = iconAnimationManager->addDefinitionFile(
-                ANIMATION_FILE);
-            HbIcon animIcon;
-            animIcon.setIconName(ANIMATION_ICON_NAME);
-            QSizeF size = mOutgoingMsgStateIconItem->size();
-            mOutgoingMsgStateIconItem->setIcon(animIcon);
+            HbIconAnimationManager::global()->addDefinitionFile(ANIMATION_FILE);
+            mOutgoingMsgStateIconItem->setIconName(ANIMATION_ICON_NAME);
             mOutgoingMsgStateIconItem->setVisible(true);
             iconAnimator.startAnimation();
             break;
         }     
         case ConvergedMessage::Suspended:
-        {
-            iconAnimator.stopAnimation();
-            mOutgoingMsgStateIconItem->setIcon(MSG_OUTBOX_ICON);
-            mOutgoingMsgStateIconItem->setVisible(true);
-            break;
-
-        }
         case ConvergedMessage::Resend:
         {
             iconAnimator.stopAnimation();
-            mOutgoingMsgStateIconItem->setIcon(MSG_OUTBOX_ICON);
+            mOutgoingMsgStateIconItem->setIconName(MSG_OUTBOX_ICON);
             mOutgoingMsgStateIconItem->setVisible(true);
             break;
         }
         case ConvergedMessage::Failed:
         {
             iconAnimator.stopAnimation();
-            mOutgoingMsgStateIconItem->setIcon(MSG_FAIL_ICON);
+            mOutgoingMsgStateIconItem->setIconName(MSG_FAIL_ICON);
             mOutgoingMsgStateIconItem->setVisible(true);
             break;
         }   

@@ -34,21 +34,19 @@
 #define LOC_OPEN    hbTrId("txt_common_menu_open")
 #define LOC_SAVE    hbTrId("txt_common_menu_save")
 
-const QString PIXMAP_ICON("qtg_small_image");
-const QString CORRUPTED_PIXMAP_ICON("qtg_large_corrupted");
-const QString VIDEO_MIMETYPE("video");
-const QString MSG_VIDEO_ICON("qtg_small_video");
-const QString VIDEO_OVERLAY_ICON("qtg_large_video_player");
+static const char PIXMAP_ICON[] = "qtg_small_image";
+static const char CORRUPTED_PIXMAP_ICON[] = "qtg_large_corrupted";
+static const char VIDEO_MIMETYPE[] = "video";
 
-const int WIDTH_RATIO = 4;
-const int HEIGHT_RATIO = 3;
+static const int WIDTH_RATIO = 4;
+static const int HEIGHT_RATIO = 3;
 
 //---------------------------------------------------------------
 // UniViewerPixmapWidget::UniViewerPixmapWidget
 // @see header file
 //---------------------------------------------------------------
 UniViewerPixmapWidget::UniViewerPixmapWidget(QGraphicsItem *parent) :
-    HbIconItem(parent), mViewerUtils(0), mThumbnailManager(0)
+    HbIconItem(parent), mInfo(0), mViewerUtils(0), mThumbnailManager(0)
 {
     this->grabGesture(Qt::TapGesture);
     init();
@@ -60,30 +58,54 @@ UniViewerPixmapWidget::UniViewerPixmapWidget(QGraphicsItem *parent) :
 //---------------------------------------------------------------
 UniViewerPixmapWidget::~UniViewerPixmapWidget()
 {
+    if (mInfo) {
+        delete mInfo;
+        mInfo = NULL;
+    }
 }
 
 //---------------------------------------------------------------
-// UniViewerPixmapWidget::setPixmap
+// UniViewerPixmapWidget::populate
 // @see header file
 //---------------------------------------------------------------
 void UniViewerPixmapWidget::populate(UniMessageInfo *info)
 {
     mMimeType = info->mimetype();
     mPixmapPath = info->path();
+
+    /**
+     * Create a copy of info for video content.
+     * mInfo will be deleted in the destructor.
+     */
     if (mMimeType.contains(VIDEO_MIMETYPE)) {
-        this->setIcon(MSG_VIDEO_ICON);
-        mThumbnailManager->getThumbnail(mPixmapPath);
-        this->ungrabGesture(Qt::TapGesture);
+        mInfo = new UniMessageInfo(*info);
     }
-    else if (info->isProtected()) {
-        this->setIconName(PIXMAP_ICON);
+
+    if (info->isProtected()) {
+        if (mMimeType.contains(VIDEO_MIMETYPE)) {
+            emit thumbnailFound(false, mInfo);
+        }
+        else {
+            this->setIconName(PIXMAP_ICON);
+        }
     }
     else if (info->isCorrupted()) {
-        this->setIconName(CORRUPTED_PIXMAP_ICON);
+        if (mMimeType.contains(VIDEO_MIMETYPE)) {
+            emit thumbnailFound(false, mInfo);
+        }
+        else {
+            this->setIconName(CORRUPTED_PIXMAP_ICON);
+        }
     }
     else {
-        QPixmap pixmap(mPixmapPath);
-        this->setIcon(HbIcon(pixmap));
+        if (mMimeType.contains(VIDEO_MIMETYPE)) {
+            mThumbnailManager->getThumbnail(mPixmapPath);
+            this->ungrabGesture(Qt::TapGesture);
+        }
+        else {
+            QPixmap pixmap(mPixmapPath);
+            this->setIcon(HbIcon(pixmap));
+        }
     }
 }
 
@@ -174,10 +196,13 @@ void UniViewerPixmapWidget::thumbnailReady(const QPixmap& pixmap, void *data, in
     Q_UNUSED(data)
     Q_UNUSED(id)
     this->grabGesture(Qt::TapGesture);
-    if (!error) {
+    if (error) {
+        emit thumbnailFound(false, mInfo);
+    }
+    else {
         this->setIcon(HbIcon(pixmap));
         this->hide();
-        emit setOverlayIcon(VIDEO_OVERLAY_ICON);
+        emit thumbnailFound(true, NULL);
     }
 }
 

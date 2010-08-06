@@ -46,7 +46,6 @@ data=DATAZ_\BIOFILE_DIR\cbcp.mbm                                  BIOFILE_DIR\cb
 data=DATAZ_\BIOFILE_DIR\olp.rsc                                  BIOFILE_DIR\olp.rsc
 data=DATAZ_\BIOFILE_DIR\olp.mbm                                  BIOFILE_DIR\olp.mbm
 
-data=DATAZ_\BIOFILE_DIR\prov.rsc                                  BIOFILE_DIR\prov.rsc
 
 #endif // __UNI_VCAL_DATA_PLUGIN_IBY__
 

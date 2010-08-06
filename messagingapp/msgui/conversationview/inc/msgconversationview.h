@@ -454,11 +454,6 @@ private:
     QModelIndex mVisibleIndex;
     
     /**
-     * Flag to check it vkb is open.
-     */
-    bool mVkbopened;
-    
-    /**
      * Flag is set when model is populated.
      * @see signal conversationModelPopulated()
      */

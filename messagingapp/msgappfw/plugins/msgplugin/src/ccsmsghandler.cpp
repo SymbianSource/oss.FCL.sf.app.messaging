@@ -306,8 +306,26 @@ void CCsMsgHandler::HandleEventL(CMsvEntrySelection* aSelection, TMsvId aParent)
         {
         error = iSession->GetEntry(aSelection->At(i),service,entry);
         
-        if ( entry.Visible() == EFalse )
-            {
+        if (aParent == KMsvGlobalInBoxIndexEntryIdValue && KSenduiMtmSmsUidValue == entry.iMtm.iUid) 
+						{
+            iSmsMtm->SwitchCurrentEntryL(entry.Id());
+            iSmsMtm->LoadMessageL();
+
+            CSmsHeader& header = static_cast<CSmsClientMtm*> (iSmsMtm)->SmsHeader();
+            CSmsPDU& pdu = header.Message().SmsPDU();
+            TSmsDataCodingScheme::TSmsClass smsClass;
+
+            if (pdu.Class(smsClass) && smsClass == TSmsDataCodingScheme::ESmsClass0
+                && entry.ReadOnly()) 
+							{
+                iSmsMtm->SwitchCurrentEntryL(entry.iServiceId);
+                // for class 0 sms dont create conversation entry.. 
+                continue;
+            	}
+
+        	 }
+        if (entry.Visible() == EFalse) 
+						{
             // Do a delete if entry becomes invisible.
             // e.g) My Nokia registration messages.
             RPointerArray<CCsConversationEntry>* hiddenEntries =  
@@ -630,7 +648,27 @@ TInt CCsMsgHandler::UploadMsgL()
                 CMsvEntry* msvEntry= iSession->
                         GetEntryL(iMessageArray->operator[](0));
                 CleanupStack::PushL(msvEntry);
+            TBool isNotClass0 = ETrue;
+
+            if (msvEntry->Entry().iMtm.iUid == KSenduiMtmSmsUidValue && msvEntry->Entry().Parent()
+                == KMsvGlobalInBoxIndexEntryIdValue) 
+								{
+                iSmsMtm->SwitchCurrentEntryL(msvEntry->Entry().Id());
+                iSmsMtm->LoadMessageL();
+
+                CSmsHeader& header = static_cast<CSmsClientMtm*> (iSmsMtm)->SmsHeader();
+                CSmsPDU& pdu = header.Message().SmsPDU();
+                TSmsDataCodingScheme::TSmsClass smsClass;
+
+                if (pdu.Class(smsClass) && smsClass == TSmsDataCodingScheme::ESmsClass0)
+									{
+                    isNotClass0 = EFalse;                  
+                	}
+            	}
+            if (isNotClass0) 
+							{
                 ProcessResultsL(msvEntry->Entry());
+            	}
                 CleanupStack::PopAndDestroy(msvEntry);
                 iMessageArray->Remove(0);
                 }

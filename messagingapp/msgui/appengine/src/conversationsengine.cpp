@@ -47,13 +47,13 @@ ConversationsEngine* ConversationsEngine::instance()
 ConversationsEngine::ConversationsEngine(QObject* parent):
     QObject(parent), mDraftsModel(NULL)
 {
-    QT_TRAP_THROWING(mConversationMsgStoreHandler = new ConversationMsgStoreHandler);
+    mConversationMsgStoreHandler = q_check_ptr(new ConversationMsgStoreHandler);
     
     mConversationsSummaryModel = new ConversationsSummaryModel(this);    
     mConversationsModel = new ConversationsModel(mConversationMsgStoreHandler,
         this);   
 
-    QT_TRAP_THROWING( d_ptr = new ConversationsEnginePrivate(mConversationMsgStoreHandler,
+    d_ptr = q_check_ptr( new ConversationsEnginePrivate(mConversationMsgStoreHandler,
         mConversationsSummaryModel,
         mConversationsModel));
     

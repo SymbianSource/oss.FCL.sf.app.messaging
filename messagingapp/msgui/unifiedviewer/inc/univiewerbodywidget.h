@@ -51,38 +51,6 @@ public:
      */
     ~UniViewerBodyWidget();
 
-public slots:
-
-    /**
-     * Called to insert image content in viewer.
-     * @param info Object information.
-     */
-    void setPixmap(UniMessageInfo *info);
-
-    /**
-     * Called to insert audio content in viewer.
-     * @param info Object information.
-     */
-    void setAudio(UniMessageInfo *info);
-
-    /**
-     * Called to insert video content in viewer.
-     * @param info Object information.
-     */
-    void setVideo(UniMessageInfo *info);
-
-    /**
-     * Called to insert text content in viewer.
-     * @param text Body text to be set.
-     */
-    void setText(QString text);
-
-    /**
-     * Sets the slide counter.
-     * @param slideCounter Slide counter string to be set.
-     */
-    void setSlideCounter(QString &slideCounter);
-
     /**
      * Specify if this slide has text
      * @param bool
@@ -119,13 +87,20 @@ public slots:
      */
     void clearContent();
 
-private slots:
+signals:
 
     /**
-     * Sets overlay icon on top of pixmap widget.
-     * @param iconName Overlay icon name to be set.
+     * this signal is emitted when sendMessage is emitted from UniViewerTextItem.
      */
-    void setOverlayIcon(const QString &iconName);
+    void sendMessage(const QString& phoneNumber);
+
+public slots:
+
+    /**
+     * Called to insert text content in viewer.
+     * @param text Body text to be set.
+     */
+    void setText(QString text);
 
 protected:
 
@@ -135,13 +110,49 @@ protected:
      */
     QSizeF sizeHint(Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
 
-signals:
+private:
+
     /**
-     * this signal is emitted when sendMessage is emitted from UniViewerTextItem.
+     * Called to insert image content in viewer.
+     * @param info Object information.
      */
-    void sendMessage(const QString& phoneNumber);
+    void setPixmap(UniMessageInfo *info);
+
+    /**
+     * Called to insert audio content in viewer.
+     * @param info Object information.
+     */
+    void setAudio(UniMessageInfo *info);
+
+    /**
+     * Called to insert video content in viewer.
+     * @param info Object information.
+     */
+    void setVideo(UniMessageInfo *info);
+
+    /**
+     * Sets the slide counter.
+     * @param slideCounter Slide counter string to be set.
+     */
+    void setSlideCounter(QString &slideCounter);
+
+    /**
+     * Sets overlay icon on top of pixmap widget.
+     * @param iconName Overlay icon name to be set.
+     */
+    void setOverlayIcon(const QString &iconName);
+
+private slots:
+
+    /**
+     * Handles the cases related to video thumbnail generation success/failure.
+     * @param result true if thumbnail was found else false.
+     * @param info UniMessageInfo of the media object.
+     */
+    void onThumbnailFound(bool result, UniMessageInfo *info);
 
 private:
+
     /**
      * Info if slide has text.
      * true if slide has text else false.

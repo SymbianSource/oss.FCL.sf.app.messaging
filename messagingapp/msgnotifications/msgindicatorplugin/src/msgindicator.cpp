@@ -43,6 +43,7 @@
 #define LOC_OUTGOING_MULTIPLE_MESSAGES hbTrId("Outgoing Messages")
 #define STATUS_MONO_NEW_MESSAGE QString("qtg_status_new_message")
 #define LOC_BUSINESSCARD hbTrId("Business card")
+#define LOC_MULTIMEDIA_MSG hbTrId("txt_messaging_list_indimenu_multimedia_message")
 /**
  * The number of indicators.
  */
@@ -121,7 +122,7 @@ MsgIndicator::MsgIndicator(const QString &indicatorType) :
         InteractionActivated),
 		mIndicatorType(NULL)
 {
-    QT_TRAP_THROWING( d_ptr = new MsgIndicatorPrivate(this));
+    d_ptr = q_check_ptr(new MsgIndicatorPrivate(this));
 }
 
 // ----------------------------------------------------------------------------
@@ -321,7 +322,11 @@ QString MsgIndicator::getSecondaryText(MsgInfo& info)
                 secondaryText = fname.fileName();
             }
             else if(ECsBioMsg_VCard == info.mMessageType) {
-            secondaryText = LOC_BUSINESSCARD;
+                secondaryText = LOC_BUSINESSCARD;
+            }
+            else if (secondaryText.isEmpty() &&
+                (ECsMMS == info.mMessageType || ECsAudio == info.mMessageType)) {
+                secondaryText = LOC_MULTIMEDIA_MSG;
             }
         }
         else {

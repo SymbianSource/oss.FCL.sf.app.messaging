@@ -36,11 +36,8 @@
 const int NoError = 0;
 const int ParameterError = 10000;
 
-const QString BT_ICON("qtg_large_bluetooth");
-const QString SMS_ICON("qtg_large_new_message");
-const QString MMS_ICON("qtg_large_new_message");
-const QString RINGTONE_ICON("qtg_large_new_message");
-const QString VCARD_ICON("qtg_large_new_message");
+static const char NEW_MSG_ICON[] = "qtg_large_new_message";
+
 // ----------------------------------------------------------------------------
 // ServiceRequestSenderTask::ServiceRequestSenderTask
 // @see msgnotificationdialogwidget.h
@@ -126,50 +123,22 @@ bool MsgNotificationDialogWidget::constructDialog(
 
     prepareDisplayName(parameters);
 
+    setIcon(HbIcon(NEW_MSG_ICON));
+
     int messageType = parameters.value(KMessageTypeKey).toInt();
     if( messageType == ECsSMS)
         {
-        HbIcon icon(SMS_ICON);
-        setIcon(icon);
         QString messageBody;
         messageBody = parameters.value(KMessageBodyKey).toString();
         messageBody.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
         messageBody.replace('\r', QChar::LineSeparator);
         setText(messageBody);    
         }
-    else if(messageType == ECsMMS)
-        {
-        HbIcon icon(MMS_ICON);
-        setIcon(icon);
-        setText(parameters.value(KMessageSubjectKey).toString());       
-        }
-    else if(messageType == ECsMmsNotification)
-        {
-        HbIcon icon(MMS_ICON);
-        setIcon(icon);
-        setText(parameters.value(KMessageSubjectKey).toString());       
-        }
-    else if(messageType == ECsRingingTone)
-        {
-        HbIcon icon(RINGTONE_ICON);
-        setIcon(icon);
-        setText(parameters.value(KMessageBodyKey).toString());      
-        }
-    else if(messageType == ECsBlueTooth)
-        {
-        HbIcon icon(BT_ICON); // show default for other message types
-        setIcon(icon);
-        setText(parameters.value(KMessageBodyKey).toString());    
-        }
-    else if(messageType == ECsBioMsg_VCard)
-        {
-        HbIcon icon(VCARD_ICON); // show default for other message types
-        setIcon(icon);
-        setText(parameters.value(KMessageBodyKey).toString());    
-        }
     else
         {
-        setText(parameters.value(KMessageBodyKey).toString());    
+        // No special handling required for other message types.
+        // Subject & Body text are both set to description in msgnotifier.
+        setText(parameters.value(KMessageSubjectKey).toString());
         }
     
     // enable touch activation and connect to slot

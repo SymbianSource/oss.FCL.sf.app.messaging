@@ -50,6 +50,12 @@ public:
      */
     void populate(UniMessageInfo *info);
 
+    /**
+     * Overloaded from base class.
+     * @see HbPushButton
+     */
+    void setStretched(bool stretched = true);
+
 signals:
 
     /**
@@ -110,6 +116,11 @@ private:
      * Mime type of media.
      */
     QString mMimeType;
+
+    /**
+     * True if valid media duration else false.
+     */
+    bool mValidMediaDuration;
 };
 
 #endif //UNI_VIEWER_AUDIO_WIDGET_H

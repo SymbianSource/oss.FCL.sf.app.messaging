@@ -21,6 +21,5 @@
 const qreal CONTENT_MARGIN      = 0.0;  // Content margin for layout.
 const qreal CONTENT_SPACING     = 0.0;  // Spacing for layout.
 const qreal Z_VALUE             = 3.0;  // Z value for layout.
-const QString DATE_FORMAT("dd/MM");     // Date format.
-const QString TIME_FORMAT("hh:mm");     // Time format.
+
 #endif // MSG_VIEW_DEFINES_H

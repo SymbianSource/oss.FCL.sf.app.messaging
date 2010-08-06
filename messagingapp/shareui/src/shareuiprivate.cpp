@@ -86,7 +86,6 @@ void ShareUiPrivate::reset()
         delete request;
     }
     mAiwRequestList.clear();
-    mServiceInterfaceMap.clear();
     }
 
 /**
@@ -153,23 +152,20 @@ bool ShareUiPrivate::init(QStringList& fileList, bool embedded)
     if (serviceDescriptorList.size() > 0) {
         initializeUi();
         //sorting the services based on service names,
-        //reinserting sorted list into serviceDescriptorList
+        QMap<QString,XQAiwInterfaceDescriptor > serviceInterfaceMap;
         for (int i = 0; i < serviceDescriptorList.count(); i++) {
-            mServiceInterfaceMap.insert(serviceDescriptorList[i].serviceName(),
+            serviceInterfaceMap.insert(serviceDescriptorList[i].serviceName(),
                 serviceDescriptorList[i]);
         }
-        QStringList serviceNames = mServiceInterfaceMap.keys();
-        serviceNames.sort();
+        QStringList serviceNames = serviceInterfaceMap.keys();
         serviceDescriptorList.clear();
+        
         for (int i = 0; i < serviceNames.count(); i++) {
-            serviceDescriptorList.append(mServiceInterfaceMap.value(serviceNames.at(i)));
-        }
-        for (int i = 0; i < serviceDescriptorList.count(); i++) {
 #ifdef __SHAREUI_MIME_HANDLING__          
             // Filter services based on content type
-            QString allowedTypes = serviceDescriptorList[i].customProperty(QString(
+            QString allowedTypes = serviceInterfaceMap[serviceNames.at(i)].customProperty(QString(
                 "allowed_mime_types"));
-            QString blockedTypes = serviceDescriptorList[i].customProperty(QString(
+            QString blockedTypes = serviceInterfaceMap[serviceNames.at(i)].customProperty(QString(
                 "blocked_mime_types"));
 
             // Check against MIME filters
@@ -179,12 +175,13 @@ bool ShareUiPrivate::init(QStringList& fileList, bool embedded)
             if (isContentBlocked(filteredMimeList, blockedTypes))
                 continue;
 #endif            
-            HbAction* action = fetchServiceAction(serviceDescriptorList[i]);
-            QString iconName = serviceDescriptorList[i].customProperty(QString("aiw_action_icon"));
+            HbAction* action = fetchServiceAction(serviceInterfaceMap[serviceNames.at(i)]);
+            QString iconName = serviceInterfaceMap[serviceNames.at(i)].customProperty(QString("aiw_action_icon"));
             if (action) {
                 updateShareUiDialogList(action, iconName);
             }
         }
+        serviceInterfaceMap.clear();
         if (mContentItemModel->rowCount() == 0) {
             showNote(LOC_NO_SERVICES);
             return true;

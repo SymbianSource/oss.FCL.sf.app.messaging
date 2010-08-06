@@ -22,6 +22,7 @@
 #include <msvapi.h>
 #include <ccsdefs.h>
 #include <QString>
+#include <platform/ssm/ssmstateawaresession.h>
 
 //USER INCLUDES
 #include "msginfodefs.h"
@@ -40,7 +41,7 @@ class CMsvEntrySelection;
  * @class MsgStoreHandler
  * handles the Messaging store for outbox events.
  */
-class MsgStoreHandler: public CBase, public MMsvSessionObserver, public MMsvEntryObserver
+class MsgStoreHandler: public CActive, public MMsvSessionObserver, public MMsvEntryObserver
 {
 public:
 
@@ -116,6 +117,18 @@ private:
      */
     TBool OperationOngoing(const TMsvEntry& aEntry) const;
 
+    /**
+     * Process the class0 SMS and extract all the relevant information
+     * @param aHeader, Class0 SMS header
+     */
+    void HandleClass0SmsL(CMsvEntry* aMsgEntry, TMsvId aMsgId);
+
+	/**
+	 * From CActive
+	 */
+    void DoCancel();
+    void RunL();
+
 private:
     /**
      * Own. Msv Session
@@ -141,7 +154,12 @@ private:
      * List of messages in Fialed states
      */
     CMsvEntrySelection* iFailedMessages;   
-   
+    
+    /**
+     * Interface to receive notifications when the
+     * System State changes.
+     */
+    RSsmStateAwareSession iStateAwareSession;   
 };
 
 #endif // MSG_STORE_HANDLER_H

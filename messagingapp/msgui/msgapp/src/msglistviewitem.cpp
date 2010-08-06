@@ -26,8 +26,10 @@
 #include <HbFrameItem>
 #include <HbIconItem>
 #include <QCoreApplication>
+#include <QStringBuilder>
 #include <HbEvent>
 #include <HbInstance>
+#include <HbExtendedLocale>
 
 #include "msgcommondefines.h"
 #include "conversationsengine.h"
@@ -44,11 +46,16 @@
 #define LOC_CALENDAR_EVENT hbTrId("txt_messaging_list_calendar_event")
 #define LOC_UNSUPPORTED_MSG_TYPE hbTrId("txt_messaging_list_unsupported_message_type")
 #define LOC_RECEIVED_FILES hbTrId("txt_messaging_list_received_files")
+#define LOC_MULTIMEDIA_MSG hbTrId("txt_messaging_list_multimedia_message")
 
 const QString NEW_ITEM_FRAME("qtg_fr_list_new_item");
 const QString BT_ICON("qtg_large_bluetooth");
 const QString MSG_OUTGOING_ICON("qtg_mono_outbox");
 const QString MSG_FAILED_ICON("qtg_mono_failed");
+
+// @see hbi18ndef.h
+static const char DATE_FORMAT[] = r_qtn_date_short_with_zero;
+static const char TIME_FORMAT[] = r_qtn_time_usual_with_zero;
 
 //---------------------------------------------------------------
 // MsgListViewItem::MsgListViewItem
@@ -190,6 +197,9 @@ QString MsgListViewItem::defaultPreviewText(int msgType, int msgSubType)
     else {
         // All message types except BIO & BT.
         previewText = modelIndex().data(BodyText).toString();
+        if (previewText.isEmpty() && ConvergedMessage::Mms == msgType) {
+            previewText = LOC_MULTIMEDIA_MSG;
+        }
     }
     return previewText;
 }
@@ -204,12 +214,14 @@ void MsgListViewItem::setTimestampAndPreviewText()
     // Get timestamp
     QDateTime dateTime;
     dateTime.setTime_t(modelIndex().data(TimeStamp).toUInt());
-    QString dateString;
+
+    HbExtendedLocale locale = HbExtendedLocale::system();
+    QString dateTimeString;
     if (dateTime.date() == QDateTime::currentDateTime().date()) {
-        dateString = MsgUtils::dateTimeToString(dateTime, TIME_FORMAT);
+        dateTimeString = locale.format(dateTime.time(), TIME_FORMAT);
     }
     else {
-        dateString = MsgUtils::dateTimeToString(dateTime, DATE_FORMAT);
+        dateTimeString = locale.format(dateTime.date(), DATE_FORMAT);
     }
 
     // Set preview text & time based on direction
@@ -232,8 +244,8 @@ void MsgListViewItem::setTimestampAndPreviewText()
         switch (sendState) {
         case ConvergedMessage::Resend:
         {
-            previewText = LOC_MSG_RESEND_AT + dateString;
-            dateString = QString();            
+            previewText = LOC_MSG_RESEND_AT + dateTimeString;
+            dateTimeString = QString();            
             setCommonIndicator(MSG_OUTGOING_ICON);
             break;
         }
@@ -268,7 +280,7 @@ void MsgListViewItem::setTimestampAndPreviewText()
     previewText.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
     previewText.replace('\r', QChar::LineSeparator);
     mPreviewLabelItem->setText(previewText);
-    mTimestampItem->setText(dateString);
+    mTimestampItem->setText(dateTimeString);
 }
 
 //---------------------------------------------------------------

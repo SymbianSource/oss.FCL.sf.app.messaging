@@ -123,7 +123,6 @@ void MsgConversationBaseView::initView()
         SIGNAL(switchView(const QVariantList&)));
 
     connect(mConversationView, SIGNAL(vkbOpened(bool)), this, SLOT(hideChrome(bool)));
-    connect(mConversationView, SIGNAL(vkbOpened(bool)), mContactCard, SLOT(ignoreSignals(bool)));
 
     this->setMenu(mConversationView->menu());
 
@@ -267,6 +266,9 @@ void MsgConversationBaseView::hideChrome(bool hide)
             mContactCard->show();
         }
     }
+    
+    //forcing relayouting
+    mMainLayout->activate();
 }
 
 //---------------------------------------------------------------

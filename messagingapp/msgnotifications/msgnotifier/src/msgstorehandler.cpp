@@ -21,14 +21,20 @@
 #include <ccsrequesthandler.h>
 #include <ccsconversationentry.h>
 #include <ccsclientconversation.h>
-
+#include "msgcontacthandler.h"
 #include <msvids.h>
 #include <mmsconst.h>
+#include <smuthdr.h>
 #include <SendUiConsts.h>
 #include <msvsearchsortquery.h>
 #include <msvsearchsortoperation.h>
+#include <tmsvsmsentry.h>
+#include <txtrich.h>
+#include <ssm/ssmdomaindefs.h>
+#include "debugtraces.h"
 
 // CONSTANTS
+_LIT(KUnixEpoch, "19700000:000000.000000");
 
 // ================= MEMBER FUNCTIONS =======================
 
@@ -37,7 +43,7 @@
 // ---------------------------------------------------------
 //
 MsgStoreHandler::MsgStoreHandler(MsgNotifierPrivate* notifier, CCSRequestHandler* aCvServer) :
-    iMsvSession(NULL), iNotifier(notifier), iRequestHandler(aCvServer)
+    CActive(EPriorityStandard), iMsvSession(NULL), iNotifier(notifier), iRequestHandler(aCvServer)
 {
     InitL();
 }
@@ -48,6 +54,9 @@ MsgStoreHandler::MsgStoreHandler(MsgNotifierPrivate* notifier, CCSRequestHandler
 //
 MsgStoreHandler::~MsgStoreHandler()
 {
+	Cancel();
+    iStateAwareSession.Close();
+    
     if (iMsvEntry) {
         delete iMsvEntry;
         iMsvEntry = NULL;
@@ -76,8 +85,82 @@ void MsgStoreHandler::InitL()
     iMsvEntry->AddObserverL(*this);
 
     iFailedMessages = new (ELeave) CMsvEntrySelection;
+    
+    User::LeaveIfError(iStateAwareSession.Connect(KSM2GenMiddlewareDomain3));
+    CActiveScheduler::Add(this);
+    
+    TSsmState ssmState = iStateAwareSession.State();
+    
+    if (ssmState.MainState() != ESsmNormal) 
+    {
+        iStateAwareSession.RequestStateNotification(iStatus);
+        SetActive();
+    }
+    else
+    {  
+        RunL();
+    }
+
 }
 
+void MsgStoreHandler::RunL()
+{
+    TSsmState ssmState = iStateAwareSession.State();
+    if (ssmState.MainState() != ESsmNormal) 
+    {        
+        iStateAwareSession.RequestStateNotification(iStatus);
+        SetActive();
+    }
+    else 
+    {
+        //Create  the query/operation object
+        CMsvSearchSortOperation *operation = CMsvSearchSortOperation::NewL(*iMsvSession);
+        CleanupStack::PushL(operation);
+        CMsvSearchSortQuery *query = CMsvSearchSortQuery::NewL();
+        CleanupStack::PushL(query);
+
+        //set the query options
+        query->SetParentId(KMsvGlobalInBoxIndexEntryId);
+        query->SetResultType(EMsvResultAsTMsvId);
+        query->AddSearchOptionL(EMsvMtmTypeUID, KSenduiMtmSmsUidValue, EMsvEqual);
+        query->AddSearchOptionL(EMsvUnreadMessages, ETrue);
+        CleanupStack::Pop(query);
+
+        CMsvOperationActiveSchedulerWait* wait = CMsvOperationActiveSchedulerWait::NewLC();
+        //ownership of Query transferred to Operation  
+        operation->RequestL(query, EFalse, wait->iStatus);
+        wait->Start();
+
+        //Get No of entries
+        RArray<TMsvId> messageArray;
+        operation->GetResultsL(messageArray);
+
+        CMsvEntry* entry = NULL;
+        for (TInt i = 0; i < messageArray.Count(); ++i) 
+        {
+            entry = iMsvSession->GetEntryL(messageArray[i]);
+            TMsvSmsEntry smsEntry = entry->Entry();
+            TSmsDataCodingScheme::TSmsClass classType(TSmsDataCodingScheme::ESmsClass0);
+            if (smsEntry.Class(classType)) 
+            {
+                HandleClass0SmsL(entry, smsEntry.Id());
+            }
+            else
+            {
+                delete entry;
+                entry = NULL;
+            }
+        }
+        messageArray.Close();
+        CleanupStack::PopAndDestroy(2, operation);
+    }
+
+}
+
+void MsgStoreHandler::DoCancel()
+{
+    iStateAwareSession.RequestStateNotificationCancel();
+}
 // ---------------------------------------------------------
 // MsgStoreHandler::HandleSessionEventL()
 // ---------------------------------------------------------
@@ -102,8 +185,32 @@ void MsgStoreHandler::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1, 
         return;
     }
 
+    // check for incoming class 0 sms 
+    if (parent == KMsvGlobalInBoxIndexEntryIdValue && aEvent == EMsvEntriesChanged) {
+        CMsvEntry* inboxEntry = iMsvSession->GetEntryL(KMsvGlobalInBoxIndexEntryId);
+        for (TInt i = 0; i < selection->Count(); ++i) {
+            TMsvEntry entry = inboxEntry->ChildDataL(selection->At(i));
+            if (KSenduiMtmSmsUidValue == entry.iMtm.iUid) {
+                CMsvEntry* msgEntry = iMsvSession->GetEntryL(entry.Id());
+                TMsvSmsEntry smsEntry = msgEntry->Entry();
+                TSmsDataCodingScheme::TSmsClass classType(TSmsDataCodingScheme::ESmsClass0);
+
+                if (smsEntry.Class(classType) && smsEntry.Unread()) 
+                {
+                    HandleClass0SmsL(msgEntry, smsEntry.Id());
+                }
+                else 
+                {
+                    delete msgEntry;
+                    msgEntry = NULL;
+                }
+            }
+
+        } // for (TInt i = 0; i < selection->Count(); ++i)
+        delete inboxEntry;
+    }
     //Handling for outbox entries
-    if (parent == KMsvGlobalOutBoxIndexEntryIdValue) {
+    else if (parent == KMsvGlobalOutBoxIndexEntryIdValue) {
         CMsvEntry* rootEntry = iMsvSession->GetEntryL(KMsvGlobalOutBoxIndexEntryId);
 
         for (TInt i = 0; i < selection->Count(); ++i) {
@@ -163,6 +270,79 @@ void MsgStoreHandler::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1, 
         } // for loop
     }
 
+}
+
+// ---------------------------------------------------------
+// MsgStoreHandler::HandleClass0SmsL()
+// ---------------------------------------------------------
+//
+void MsgStoreHandler::HandleClass0SmsL(CMsvEntry* aMsgEntry, TMsvId aMsgId)
+{
+    CleanupStack::PushL(aMsgEntry);
+
+    CMsvStore* store = aMsgEntry->ReadStoreL();
+    CleanupStack::PushL(store);
+
+    CParaFormatLayer* paraFormatLayer = CParaFormatLayer::NewL();
+    CleanupStack::PushL(paraFormatLayer);
+
+    CCharFormatLayer* charFormatLayer = CCharFormatLayer::NewL();
+    CleanupStack::PushL(charFormatLayer);
+
+    CRichText* richText = CRichText::NewL(paraFormatLayer, charFormatLayer);
+    CleanupStack::PushL(richText);
+
+    store->RestoreBodyTextL(*richText);
+
+    TInt len = richText->DocumentLength();
+    HBufC* bufBody = HBufC::NewLC(len * 2);
+
+    // Get Body content of SMS message
+    TPtr bufBodyPtr = bufBody->Des();
+    richText->Extract(bufBodyPtr, 0, len);
+
+    //convert bufbody to qstring..
+    QString body = XQConversions::s60DescToQString(*bufBody);
+
+    Class0Info class0Info;
+
+    class0Info.body = body;
+    CleanupStack::PopAndDestroy(bufBody);
+
+    // Get From address of SMS message
+    CPlainText* nullString = CPlainText::NewL();
+    CleanupStack::PushL(nullString);
+
+    CSmsHeader* smsheader = CSmsHeader::NewL(CSmsPDU::ESmsDeliver, *nullString);
+    CleanupStack::PushL(smsheader);
+    smsheader->RestoreL(*store);
+
+    QString address = XQConversions::s60DescToQString(smsheader->FromAddress());
+    class0Info.address = address;
+
+    // Get alias of SMS message
+    QString alias;
+    int count;
+    MsgContactHandler::resolveContactDisplayName(address, alias, count);
+    class0Info.alias = alias;
+
+    // Get timestamp of SMS message
+    QDateTime timeStamp;
+    TTime time = aMsgEntry->Entry().iDate;
+    TTime unixEpoch(KUnixEpoch);
+    TTimeIntervalSeconds seconds;
+    time.SecondsFrom(unixEpoch, seconds);
+    timeStamp.setTime_t(seconds.Int());
+
+    const QString times = timeStamp.toString("dd/MM/yy hh:mm ap");
+    class0Info.time = times;
+
+    class0Info.messageId = aMsgId;
+    CleanupStack::PopAndDestroy(7);
+    aMsgEntry = NULL;
+
+    // Show the SMS message..  
+    iNotifier->ShowClass0Message(class0Info);
 }
 
 // ---------------------------------------------------------

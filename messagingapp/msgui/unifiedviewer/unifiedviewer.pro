@@ -106,4 +106,5 @@ LIBS = -letext \
        -lmsguiutils \
        -lcentralrepository \
        -lthumbnailmanagerqt \
-       -lxqserviceutil
+       -lxqserviceutil \
+       -lsqldb

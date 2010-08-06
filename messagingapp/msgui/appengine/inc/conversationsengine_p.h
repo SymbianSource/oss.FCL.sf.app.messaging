@@ -41,7 +41,7 @@ class ConversationsListChangeHandler;
  *  @endcode
  *  @since S60 v10.1
  */
-class ConversationsEnginePrivate :public MCsResultsObserver
+class ConversationsEnginePrivate :public CBase, public MCsResultsObserver
     {
 
 public:

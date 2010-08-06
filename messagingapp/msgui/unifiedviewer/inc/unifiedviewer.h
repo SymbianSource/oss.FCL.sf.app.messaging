@@ -24,6 +24,7 @@
 #define UNI_VIEWER_DLL Q_DECL_IMPORT
 #endif
 
+#include <sqldb.h>
 #include "msgbaseview.h"
 
 #include "convergedmessage.h"
@@ -46,8 +47,7 @@ public:
     /**
      * Constructor
      */
-    UnifiedViewer(const qint32 messageId, 
-                  int canForwardMessage = 0,
+    UnifiedViewer(const qint32 messageId,
                   QGraphicsItem *parent = 0);
 
     /**
@@ -69,6 +69,11 @@ protected:
     void resizeEvent(QGraphicsSceneResizeEvent * event);
 
 private:
+    /**
+     * Check if this message can be forwarded
+     * @return true, if possible to forward
+     */
+    bool isForwardOk();
 
     /**
      * Creates tool bar actions
@@ -154,11 +159,6 @@ private:
      * Message count
      */
     int mMsgCount;
-    
-	/**
-	 * Forward status of message
-	 */
-    bool mForwardMessage;
 };
 
 #endif

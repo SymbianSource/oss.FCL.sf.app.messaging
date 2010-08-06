@@ -33,7 +33,6 @@
 #include <QCoreApplication>
 #include <HbEvent>
 #include <HbMainWindow>
-#include <HbInstance>
 
 #include "debugtraces.h"
 
@@ -41,20 +40,22 @@
 #include "conversationsengine.h"
 
 // Icons
-const QString MSG_HIGH_PRIORITY_ICON("qtg_small_priority_high");
-const QString MSG_LOW_PRIORITY_ICON("qtg_small_priority_low");
-const QString MSG_ATTACH_ICON("qtg_small_attachment");
-const QString MSG_AUDIO_PLAY_ICON("qtg_small_sound");
-
+static const char MSG_HIGH_PRIORITY_ICON[] = "qtg_small_priority_high";
+static const char MSG_LOW_PRIORITY_ICON[]  = "qtg_small_priority_low";
+static const char MSG_ATTACH_ICON[]        = "qtg_small_attachment";
+static const char MSG_AUDIO_PLAY_ICON[]    = "qtg_small_sound";
 
 // Frames
-const QString CV_RECEIVED_NORMAL_FR("qtg_fr_convlist_received_normal");
-const QString CV_RECEIVED_PRESSED_FR("qtg_fr_convlist_received_pressed");
-const QString CV_RECEIVED_HIGHLIGHT_FR("qtg_fr_convlist_received_highlight");
-const QString CV_SENT_NORMAL_FR("qtg_fr_convlist_sent_normal");
-const QString CV_SENT_PRESSED_FR("qtg_fr_convlist_sent_pressed");
-const QString CV_SENT_HIGHLIGHT_FR("qtg_fr_convlist_sent_highlight");
-const QString NEW_ITEM_FRAME("qtg_fr_list_new_item");
+static const char CV_RECEIVED_NORMAL_FR[]    = "qtg_fr_convlist_received_normal";
+static const char CV_RECEIVED_PRESSED_FR[]   = "qtg_fr_convlist_received_pressed";
+static const char CV_RECEIVED_HIGHLIGHT_FR[] = "qtg_fr_convlist_received_highlight";
+static const char CV_SENT_NORMAL_FR[]        = "qtg_fr_convlist_sent_normal";
+static const char CV_SENT_PRESSED_FR[]       = "qtg_fr_convlist_sent_pressed";
+static const char CV_SENT_HIGHLIGHT_FR[]     = "qtg_fr_convlist_sent_highlight";
+static const char NEW_ITEM_FRAME[]           = "qtg_fr_list_new_item";
+
+//Localization
+#define LOC_MULTIMEDIA_MESSAGE hbTrId("txt_messaging_list_bubble_multimedia_message")
 
 //---------------------------------------------------------------
 // MsgConversationWidget::MsgConversationWidget
@@ -115,24 +116,34 @@ void MsgConversationWidget::init()
     mNewFrameItem = new HbFrameItem(this);
     mNewFrameItem->frameDrawer().setFrameType(HbFrameDrawer::ThreePiecesVertical);
     HbStyle::setItemName(mNewFrameItem, "newItemIcon");
+    
     mSubjectTextItem = new HbTextItem(this);  
-    mSubjectTextItem->setTextWrapping(Hb::TextWordWrap);      
+    mSubjectTextItem->setTextWrapping(Hb::TextNoWrap);  
     HbStyle::setItemName(mSubjectTextItem, "subject");
+    
     mBodyTextItem = new HbTextItem(this);
     mBodyTextItem->setTextWrapping(Hb::TextWordWrap);
     HbStyle::setItemName(mBodyTextItem, "bodyText");
+    
     mPreviewIconItem = new HbIconItem(this);
     HbStyle::setItemName(mPreviewIconItem, "preview");
+    
     mPriorityIconItem = new HbIconItem(this);            
     HbStyle::setItemName(mPriorityIconItem, "priority");
+    
     mAttachmentIconItem = new HbIconItem(this);
     HbStyle::setItemName(mAttachmentIconItem, "attachment");
+    
     mPlayIconItem = new HbIconItem(this);                
     HbStyle::setItemName(mPlayIconItem, "playIcon");
+    
     mTimeStampTextItem = new HbTextItem(this);
     HbStyle::setItemName(mTimeStampTextItem, "timeStamp");
-    	
-    HbMainWindow *mainWindow = hbInstance->allMainWindows()[0];
+    
+    HbWidget* headerContainer = new HbWidget(this);
+    HbStyle::setItemName(headerContainer, "headerItem");
+    
+    HbMainWindow *mainWindow = this->mainWindow();
     connect(mainWindow, SIGNAL(orientationChanged(Qt::Orientation)), this, 
 			SLOT(orientationchanged(Qt::Orientation)),Qt::UniqueConnection);
     polishEvent();
@@ -144,8 +155,13 @@ void MsgConversationWidget::init()
 //---------------------------------------------------------------
 void MsgConversationWidget::setSubject(const QString &subject)
 {
+    QString sub = subject;
+    if(subject.trimmed().isEmpty())
+    {
+        sub = LOC_MULTIMEDIA_MESSAGE;
+    }
     HbStyle::setItemName(mSubjectTextItem, "subject");
-    mSubjectTextItem->setText(subject);
+    mSubjectTextItem->setText(sub);
     mSubjectTextItem->show();
 }
 
@@ -155,6 +171,10 @@ void MsgConversationWidget::setSubject(const QString &subject)
 //---------------------------------------------------------------
 void MsgConversationWidget::setBodyText(const QString &body)
 {
+    if(body.isEmpty())
+    {
+        return;
+    }
     HbStyle::setItemName(mBodyTextItem, "bodyText");
 
     mBodyTextItem->setText(body);
@@ -284,20 +304,8 @@ void MsgConversationWidget::displayAudioIcon(const QString &iconPath)
         if (!hasImage())
         {
             HbStyle::setItemName(mPreviewIconItem, "preview");
-            if(iconPath.isEmpty())
-            {
-               qreal iconSize = 0;
-               style()->parameter("hb-param-graphic-size-primary-small",iconSize);
-               HbIcon icon(MSG_AUDIO_PLAY_ICON);
-               icon.setHeight(iconSize);
-               icon.setWidth(iconSize);
-               mPreviewIconItem->setIcon(icon);
-            }
-            else
-            {
-               mPreviewIconItem->setIconName(iconPath);
-            }
-            mPreviewIconItem->show();
+            mPreviewIconItem->setIconName(iconPath.isEmpty() ? MSG_AUDIO_PLAY_ICON : iconPath);
+            mPreviewIconItem->show(); 
         }
         else
         {

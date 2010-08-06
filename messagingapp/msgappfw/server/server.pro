@@ -80,7 +80,6 @@ LIBS += -leuser \
         -leikcore \
         -lefsrv \
         -lestor \
-        -laknnotify \
         -lflogger \
         -lecom \
         -lcsutils \

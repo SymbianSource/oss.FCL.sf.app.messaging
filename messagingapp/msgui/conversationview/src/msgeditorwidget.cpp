@@ -117,7 +117,7 @@ void MsgEditorWidget::init()
         BACKGROUND_FRAME);    
     
     //Create editor utils object
-    QT_TRAP_THROWING(mEditorUtils = new UniEditorGenUtils());
+    mEditorUtils = q_check_ptr(new UniEditorGenUtils());
 
     FOCUSITEM = mSendButton;
 
@@ -373,6 +373,7 @@ void MsgEditorWidget::setEncodingSettingsL()
 MsgEditor::MsgEditor(QGraphicsItem *parent)
 :HbLineEdit(parent)
     {
+     this->setFontSpec(HbFontSpec(HbFontSpec::Secondary));
      this->setPlaceholderText(LOC_HINT_TEXT);
     }
 

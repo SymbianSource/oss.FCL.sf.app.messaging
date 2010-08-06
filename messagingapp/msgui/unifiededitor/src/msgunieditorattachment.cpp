@@ -79,8 +79,8 @@ mEditorUtils(0)
     int at_size = 0;
     TMsgMediaType mediaType = EMsgMediaUnknown;
     
-    UniEditorGenUtils* genUtils = NULL;         
-    QT_TRAP_THROWING(genUtils = new UniEditorGenUtils);
+            
+    UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
     
     TRAP_IGNORE(genUtils->getFileInfoL(mPath,at_size,
         mMimeType,mediaType));

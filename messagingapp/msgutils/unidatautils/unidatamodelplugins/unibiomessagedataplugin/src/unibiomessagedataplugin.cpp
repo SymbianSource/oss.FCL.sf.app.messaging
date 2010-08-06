@@ -30,7 +30,7 @@
 UniBioMessageDataPlugin::UniBioMessageDataPlugin(QObject* parent) :
     QObject(parent)
     {
-    QT_TRAP_THROWING(d_ptr = new UniBioMessageDataPluginPrivate(this));
+    d_ptr = q_check_ptr(new UniBioMessageDataPluginPrivate(this));
     }
 
 // UniBioMessageDataPlugin::~UniBioMessageDataPlugin()

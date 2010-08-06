@@ -104,5 +104,6 @@ LIBS += -lappengine \
     -lthumbnailmanagerqt \    
     -lxqsettingsmanager \
     -lxqutils \
-    -lmsgaudiofetcher
+    -lmsgaudiofetcher \
+    -lmsgs
 

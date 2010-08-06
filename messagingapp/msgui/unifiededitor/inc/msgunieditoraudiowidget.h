@@ -50,6 +50,12 @@ public:
      */
     void populate(const QString &filePath);
 
+    /**
+     * Overloaded from base class.
+     * @see HbPushButton
+     */
+    void setStretched(bool stretched = true);
+
 signals:
 
     /**
@@ -110,6 +116,11 @@ private:
      * Media file path.
      */
     QString mMediaPath;
+
+    /**
+     * True if valid media duration else false.
+     */
+    bool mValidMediaDuration;
 };
 
 #endif //MSG_UNIFIED_EDITOR_AUDIO_WIDGET_H

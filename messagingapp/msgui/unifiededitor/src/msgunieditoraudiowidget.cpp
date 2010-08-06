@@ -37,8 +37,7 @@ const QString AUDIO_MIMETYPE("audio");
 // @see header file
 //----------------------------------------------------------------------------
 MsgUniFiedEditorAudioWidget::MsgUniFiedEditorAudioWidget(QGraphicsItem *parent) :
-HbPushButton(parent),
-mEditorUtils(0)
+HbPushButton(parent), mEditorUtils(0), mValidMediaDuration(true)
 {
     connect(this, SIGNAL(clicked()), this, SLOT(handleShortTap()));
     connect(this, SIGNAL(longPress(QPointF)), this, SLOT(handleLongTap(QPointF)));
@@ -64,8 +63,29 @@ void MsgUniFiedEditorAudioWidget::populate(const QString &filePath)
     QFileInfo fileInfo(mMediaPath);
     this->setText(fileInfo.baseName());    
     MsgMediaUtil mediaUtil;
-    this->setAdditionalText(mediaUtil.mediaDuration(mMediaPath));
+    QString mediaDuration(mediaUtil.mediaDuration(mMediaPath));
+    if (mediaDuration.isEmpty()) {
+        mValidMediaDuration = false;
+    }
+    else {
+        mValidMediaDuration = true;
+        this->setAdditionalText(mediaDuration);
+    }
     this->setTextAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+}
+
+//----------------------------------------------------------------------------
+// MsgUniFiedEditorAudioWidget::setStretched
+// @see header file
+//----------------------------------------------------------------------------
+void MsgUniFiedEditorAudioWidget::setStretched(bool stretched)
+{
+    if (mValidMediaDuration) {
+        HbPushButton::setStretched(stretched);
+    }
+    else {
+        HbPushButton::setStretched(true);
+    }
 }
 
 //----------------------------------------------------------------------------

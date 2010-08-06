@@ -62,7 +62,7 @@ const QString BG_FRAME_PRESSED("qtg_fr_groupbox_pressed");
 // @see header
 //---------------------------------------------------------------
 MsgContactCardWidget::MsgContactCardWidget(QGraphicsItem *parent) :
-    HbWidget(parent), mIgnoreEvents(false), mAvatarIconItem(NULL), mPresenceIconItem(NULL),
+    HbWidget(parent), mAvatarIconItem(NULL), mPresenceIconItem(NULL),
         mAddressTextItem(NULL), mThumbnailManager(NULL)
 {
     init();
@@ -295,11 +295,6 @@ void MsgContactCardWidget::setPressed(bool pressed)
 //---------------------------------------------------------------
 void MsgContactCardWidget::handleLongTap(const QPointF &position)
 {
-    // Check if events need to be ignored/accepted
-    if (mIgnoreEvents) {
-        return;
-    }
-
     if (KBluetoothMsgsConversationId != ConversationsEngine::instance()->getCurrentConversationId()) {
         HbMenu* contextMenu = new HbMenu();
         contextMenu->setDismissPolicy(HbPopup::TapAnywhere);
@@ -327,11 +322,6 @@ void MsgContactCardWidget::handleLongTap(const QPointF &position)
 void MsgContactCardWidget::handleShortTap(const QPointF &position)
 {
     this->ungrabGesture(Qt::TapGesture);
-    
-    // Check if events need to be ignored/accepted
-    if (mIgnoreEvents) {
-        return;
-    }
     
     int contactId = resolveContactId(mContactNumber);
     if(contactId > 0)
@@ -456,7 +446,18 @@ void MsgContactCardWidget::handleOk(const QVariant& result)
         if (!avatarDetails.isEmpty()) {
             mThumbnailManager->getThumbnail(avatarDetails.at(0).imageUrl().toString());
         }
+        else {
+            //Set default avatar since avtar is deleted        
+            setAvatar(HbIcon(DEFAULT_AVATAR_ICON));
+        }        
 	}
+    else  {
+        //case for deletion from contact card widget
+        //set the default number as address
+        setAddress(mContactNumber);
+        //Set default avatar since contact is deleted
+        setAvatar(HbIcon(DEFAULT_AVATAR_ICON));
+    }
 	
 	// Get the new conversation id.
     qint64 convId = ConversationsEngine::instance()->getConversationIdFromAddress(
@@ -514,15 +515,6 @@ void MsgContactCardWidget::thumbnailReady(const QPixmap& pixmap, void *data, int
     else {
         setAvatar(HbIcon(DEFAULT_AVATAR_ICON));
     }
-}
-
-//---------------------------------------------------------------
-// MsgContactCardWidget::ignoreSignals
-// @see header
-//---------------------------------------------------------------
-void MsgContactCardWidget::ignoreSignals(bool yes)
-{
-    mIgnoreEvents = yes;
 }
 
 //---------------------------------------------------------------

@@ -50,6 +50,8 @@ SOURCES += src/main.cpp \
 TARGET.CAPABILITY = ALL -TCB
 TARGET.UID3 = 0x2002E6DA
 
+RESOURCES += msgserviceapp.qrc
+
 LIBS += -lxqservice \
         -lxqserviceutil \
         -lconvergedmessageutils \
@@ -62,4 +64,8 @@ LIBS += -lxqservice \
 	
 
 BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
-                             ".\rom\msgserviceapp.iby CORE_APP_LAYER_IBY_EXPORT_PATH(msgserviceapp.iby)"
+    ".\rom\msgserviceapp.iby CORE_APP_LAYER_IBY_EXPORT_PATH(msgserviceapp.iby)" \
+    "resources/messagingsendservice.splashml /epoc32/data/z/resource/hb/splashml/messagingsendservice.splashml" \
+    "resources/messagingsendservice.docml /epoc32/data/z/resource/hb/splashml/messagingsendservice.docml" \
+    "resources/messagingviewservice.splashml /epoc32/data/z/resource/hb/splashml/messagingviewservice.splashml" \
+    "resources/messagingviewservice.docml /epoc32/data/z/resource/hb/splashml/messagingviewservice.docml"

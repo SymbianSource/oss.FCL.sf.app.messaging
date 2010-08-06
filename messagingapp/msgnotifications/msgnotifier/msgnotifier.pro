@@ -30,6 +30,7 @@ symbian:
 TARGET.CAPABILITY = ALL -TCB
 TARGET.UID3 = 0x2002E678
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+INCLUDEPATH += $$OS_LAYER_SYSTEMINCLUDE
 SYMBIAN_PLATFORMS = WINSCW ARMV5
 }
 
@@ -70,5 +71,7 @@ LIBS += -lcsserverclientapi \
         -lxqutils \
         -lws32 \
         -lapgrfx \
-	-lxqsystemtoneservice
+	-lxqsystemtoneservice \
+	-lgsmu \
+	-lssmcmn
         

@@ -71,6 +71,7 @@ const int BYTES_TO_KBYTES_FACTOR = 1024;
 #define LOC_UNABLE_TO_ATTACH_ITEM hbTrId("txt_messaging_dpopinfo_unable_to_attach_item_avai")
 #define LOC_PROCESSING hbTrId("txt_messaging_formlabel_loading")
 #define LOC_HINT_TEXT hbTrId("txt_messaging_formlabel_enter_message_here")
+#define LOC_ATTACHED_PHOTO_SIZE hbTrId("txt_messaging_dpopinfo_attached_photo_size_is_l1")
 
 const QString ANIMATION_ICON("qtg_anim_loading");
 const QString ANIMATION_FILE(":/qtg_anim_loading.axml");
@@ -111,6 +112,7 @@ mIsImageResizing(false)
 {
     mTextEdit = new HbTextEdit(this);
     mTextEdit->setPlaceholderText(LOC_HINT_TEXT);
+    mTextEdit->setFontSpec(HbFontSpec(HbFontSpec::Secondary));
     HbStyle::setItemName(mTextEdit,"textEdit");
     connect(mTextEdit, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
 
@@ -545,9 +547,8 @@ int MsgUnifiedEditorBody::bodySize()
 	if( mImageSize || mTextEdit->toPlainText().size() || 
 	    mAudioSize || mVideoSize )
 	{
-	  
-	    UniEditorGenUtils* genUtils = NULL;	        
-	    QT_TRAP_THROWING(genUtils = new UniEditorGenUtils);
+	     
+	    UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
 	    
         bodysize +=  mImageSize + mAudioSize + mVideoSize +
             genUtils->UTF8Size(mTextEdit->toPlainText()) +
@@ -649,6 +650,10 @@ void MsgUnifiedEditorBody::EditorOperationEvent(
             aFileName.Length() > 0)
     {
         mImageFile = XQConversions::s60DescToQString(aFileName);
+        
+        QSize modifiedSize(QImageReader(mImageFile).size());
+        QString information = LOC_ATTACHED_PHOTO_SIZE.arg(modifiedSize.width()).arg(modifiedSize.height());
+        HbNotificationDialog::launchDialog(information);        
     }
     else
     {
@@ -678,6 +683,7 @@ void MsgUnifiedEditorBody::startResizeAnimation()
     mProcessingWidget->setLayout(processingLayout);
     
     HbTextItem* processingText = new HbTextItem(LOC_PROCESSING,mProcessingWidget);
+    processingText->setFontSpec(HbFontSpec(HbFontSpec::Secondary));
     processingText->setAlignment(Qt::AlignCenter);
     processingLayout->addItem(processingText);
     

@@ -84,7 +84,7 @@ symbian: {
 	DEPLOYMENT += addPl
 
 	addP2.sources = ./vcal1.txt
-	addP2.path = C:/
+	addP2.path = C:/test
 	DEPLOYMENT += addP2
 
 	}

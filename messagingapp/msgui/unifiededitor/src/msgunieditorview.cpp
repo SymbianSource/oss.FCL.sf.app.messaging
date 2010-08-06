@@ -436,8 +436,8 @@ void MsgUnifiedEditorView::populateContent(const QVariantList& editorData)
             TMsgMediaType mediaType = EMsgMediaUnknown;
             QString filePath = messageDetails->attachments().at(i)->filePath();
             
-            UniEditorGenUtils* genUtils = NULL;
-            QT_TRAP_THROWING(genUtils = new UniEditorGenUtils);
+           
+            UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
             
             TRAP_IGNORE(genUtils->getFileInfoL(filePath,imageSize,
                                            mimeType,mediaType));
@@ -516,9 +516,8 @@ void MsgUnifiedEditorView::populateContentIntoEditor(
     ConvergedMessageAttachmentList attachmentList =
         messageDetails.attachments();
     int attachmentCount = attachmentList.count();
-
-    UniEditorGenUtils* genUtils = NULL;
-    QT_TRAP_THROWING(genUtils = new UniEditorGenUtils);
+     
+    UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
 
     QStringList pendingAttList;
     for( int i=0; i < attachmentCount; i++ )
@@ -575,8 +574,8 @@ void MsgUnifiedEditorView::addToolBar()
     
     //tool bar extension for attach action.
     HbToolBarExtension* attachExtension = new HbToolBarExtension();
-    HbAction *attachAction = toolBar->addExtension(attachExtension);    
-    attachAction->setIcon(HbIcon(ATTACH_ICON));
+    mAttachAction = toolBar->addExtension(attachExtension);    
+    mAttachAction->setIcon(HbIcon(ATTACH_ICON));
     
     mTBExtnContentWidget = new HbListWidget();
     mTBExtnContentWidget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
@@ -673,8 +672,8 @@ void MsgUnifiedEditorView::addCcBcc()
     ccBccLayout->addItem(mCcField);
     ccBccLayout->addItem(mBccField);
 
-    HbGroupBox* groupBox = new HbGroupBox(0);    
-    groupBox->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Preferred);
+    HbGroupBox* groupBox = new HbGroupBox(0);  
+    groupBox->setObjectName("groupBox");
     
     groupBox->setContentWidget(groupWidget);
     groupBox->setHeading(LOC_OTHER_RECIPIENTS_EXPAND);
@@ -1529,6 +1528,29 @@ void MsgUnifiedEditorView::vkbClosed()
 }
 
 //---------------------------------------------------------------
+// MsgUnifiedEditorView::vkbAboutToOpen
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorView::vkbAboutToOpen()
+{    
+	  //This is done to avoid user action on attachment
+	  //toolbar button when vkb is opening
+    mAttachAction->setDisabled(true);
+    disconnect(mVkbHost,SIGNAL(aboutToOpen()),
+            this,SLOT(vkbAboutToOpen()));
+}
+      
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::vkbAboutToClose
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorView::vkbAboutToClose()
+{      
+    mAttachAction->setDisabled(false);
+    connect(mVkbHost,SIGNAL(aboutToOpen()),
+            this,SLOT(vkbAboutToOpen()));
+}
+//---------------------------------------------------------------
 // MsgUnifiedEditorView::hideChrome
 //
 //---------------------------------------------------------------
@@ -1559,6 +1581,8 @@ void MsgUnifiedEditorView::doDelayedConstruction()
     mVkbHost = new HbAbstractVkbHost(this);
     connect(mVkbHost, SIGNAL(keypadOpened()), this, SLOT(vkbOpened()));
     connect(mVkbHost, SIGNAL(keypadClosed()), this, SLOT(vkbClosed()));
+    connect(mVkbHost,SIGNAL(aboutToOpen()),this,SLOT(vkbAboutToOpen()));
+    connect(mVkbHost,SIGNAL(aboutToClose()),this,SLOT(vkbAboutToClose()));
     
     disconnect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
     

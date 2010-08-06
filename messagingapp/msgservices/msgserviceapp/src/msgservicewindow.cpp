@@ -34,14 +34,16 @@
 // MsgServiceWindow::MsgServiceWindow
 // @see header
 // ----------------------------------------------------------------------------
-MsgServiceWindow::MsgServiceWindow():HbMainWindow(),mSendInterface(NULL),
+MsgServiceWindow::MsgServiceWindow():HbMainWindow(
+        NULL,Hb::WindowFlagTransparent),
+mSendInterface(NULL),
 mViewInterface(NULL),
 mShareUiInterface(NULL),
 mStoreHandler(NULL),
 mViewManager(NULL)
     {
     // create stote handler
-    QT_TRAP_THROWING( mStoreHandler = new MsgStoreHandler());
+    mStoreHandler = q_check_ptr(new MsgStoreHandler());
     
     // create view manager
     mViewManager = new MsgServiceViewManager(mStoreHandler,this);

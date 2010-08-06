@@ -26,7 +26,6 @@
 #include    <commdb.h>
 #include    <in_sock.h>
 #include    <commdbconnpref.h>
-#include    <AknGlobalNote.h>
 
 // LOCAL INCLUDE FILES
 #include    "mmsconst.h"

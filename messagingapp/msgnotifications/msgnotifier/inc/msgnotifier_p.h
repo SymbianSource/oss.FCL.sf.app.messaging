@@ -20,6 +20,7 @@
 #define MSGNOTIFIER_PRIVATE_H
 
 #include <mcsconversationlistchangeobserver.h>
+#include <QRunnable>
 
 // CLASS DECLARATION
 class MsgNotifier;
@@ -28,6 +29,18 @@ class MsgStoreHandler;
 class XQSettingsManager;
 class XQPublishAndSubscribeUtils;
 class XQSystemToneService;
+
+/**
+ * Structure to hold the details of a class 0 SMS
+ */
+struct Class0Info
+{
+    QString body;
+    QString address;
+    QString alias;
+    QString time;
+    int messageId;
+};
 
 /**
  * @class MsgNotifierPrivate
@@ -114,6 +127,13 @@ public:
      */
     void displayFailedNote(MsgInfo msgInfo);
 
+    /**
+     * ShowClass0Message
+     * Popups a Dialog with Class 0 SMS message...
+     * @param msgInfo MsgInfo The message information object
+     */
+    void ShowClass0Message(Class0Info& aClass0Info);
+
 private:
     /**
      * Does all the initializations. 
@@ -179,6 +199,36 @@ private:
      */
     XQSystemToneService* mSts;
     };
+
+
+/**
+ * Class for launching the Class0 SMS dialog in a separate thread..
+ */
+class Class0SmsServiceTask : public QRunnable
+{
+public:
+    /**
+     * Constructor
+     */
+    Class0SmsServiceTask(Class0Info& class0info);
+    
+    /**
+     * Destructor
+     */
+    ~Class0SmsServiceTask();
+     
+    /**
+     * create and send service request
+     */
+     void run();
+
+private: 
+     Class0Info mClass0info;
+};
+
+
+
+
 
 #endif // MSGNOTIFIER_PRIVATE_H
 //EOF

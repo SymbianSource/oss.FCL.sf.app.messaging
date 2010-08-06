@@ -21,7 +21,10 @@
 
 #include <QObject>
 #include <QVariant>
+#include <HbEffect>
 
+class QGraphicsItem;
+class QGraphicsPixmapItem;
 class HbMainWindow;
 class MsgUnifiedEditorView;
 class UnifiedViewer;
@@ -123,6 +126,35 @@ private:
      */
     void handleBTMessage(int msgId);
     
+    /**
+     * Start a custom effect animation
+     * e.g. editor's send effect
+     * @param effectEvent, effect type for animation
+     */
+    void startAnimation(QString effectEvent);
+    
+    /**
+     * Reset a custom effect animation
+     * e.g. editor's send effect
+     * @param effectEvent, animation effect type which needs to be reset
+     * @param item, QGraphicsItem on which the effect was run
+     */
+    void resetAnimation(QString effectEvent, QGraphicsItem* item);
+    
+    /**
+     * Grab screenshot for animation purpose
+     * e.g. editor's send effect animation
+     * @return QGraphicsPixmapItem, item on which animation will run
+     */
+    QGraphicsPixmapItem *screenShot();
+    
+    /**
+     * find and return animation file for an effect
+     * @param effectEvent, effect for which file definition needs to be found
+     * @return QString, animation definition file path
+     */
+    QString getAnimationFile(QString effectEvent);
+    
 private slots:
     /**
      * This slot is called on mainwindows back action.
@@ -146,7 +178,14 @@ private slots:
      * @param action selected action (yes or no)
      */
     void onDialogSaveTone(HbAction* action);
-	
+    
+    /**
+     * Handle a custom effect animation complete signal
+     * e.g. editor's send effect complete
+     * @param status, status information of the effect that has finished
+     */
+    void onAnimationComplete(const HbEffect::EffectStatus &status);
+    
 private:
     /**
      * Main window pointer. 
@@ -192,8 +231,7 @@ private:
 	/**
 	 * message Id
 	 */
-    int mMessageId;
-  
+    int mMessageId;    
 };
 
 #endif /* MSGSERVICEVIEWMANAGER_H_ */

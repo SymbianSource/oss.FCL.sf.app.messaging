@@ -438,36 +438,46 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                     // use entry to populate model only when,
                     // entry is present in DB and its processing is over.
                     RBuf subjectBuffer;
-                    subjectBuffer.Create(sqlSelectStmt.ColumnSize(
-                            subjectIndex));
-                    sqlSelectStmt.ColumnText(subjectIndex, subjectBuffer);
-
-                    item.setData(XQConversions::s60DescToQString(
-                            subjectBuffer), Subject);
-                    subjectBuffer.Close();
-
+                    if( subjectBuffer.Create(
+                            sqlSelectStmt.ColumnSize(
+                                    subjectIndex)) == KErrNone)
+                    {
+                        sqlSelectStmt.ColumnText(subjectIndex, subjectBuffer);
+                        item.setData(
+                                XQConversions::s60DescToQString(
+                                        subjectBuffer), Subject);
+                        subjectBuffer.Close();
+                    }
+                    
                     RBuf bodyBuffer;
-                    bodyBuffer.Create(sqlSelectStmt.ColumnSize(bodyIndex));
-                    sqlSelectStmt.ColumnText(bodyIndex, bodyBuffer);
-
-                    item.setData(
-                            XQConversions::s60DescToQString(bodyBuffer),
-                            BodyText);
-                    bodyBuffer.Close();
+                    if (bodyBuffer.Create(
+                            sqlSelectStmt.ColumnSize(
+                                    bodyIndex)) == KErrNone)
+                    {
+                       sqlSelectStmt.ColumnText(bodyIndex, bodyBuffer);
+                       item.setData(
+                               XQConversions::s60DescToQString(
+                                       bodyBuffer), BodyText);
+                       bodyBuffer.Close();
+                    }
 
                     RBuf previewPathBuffer;
-                    previewPathBuffer.Create(sqlSelectStmt.ColumnSize(
-                            previewPathIndex));
-                    sqlSelectStmt.ColumnText(previewPathIndex,
-                            previewPathBuffer);
+                    QString attachmentPath;
+                    if (previewPathBuffer.Create(
+                            sqlSelectStmt.ColumnSize(
+                                    previewPathIndex)) == KErrNone)
+                    {
+                        sqlSelectStmt.ColumnText(
+                                previewPathIndex,
+                                previewPathBuffer);
 
-                    //Rightnow set inside attachments
-                    QString attachmentPath(XQConversions::s60DescToQString(
-                            previewPathBuffer));
-
-                    item.setData(attachmentPath, Attachments);
-                    previewPathBuffer.Close();
-
+                        //Rightnow set inside attachments
+                        attachmentPath = XQConversions::s60DescToQString(
+                                previewPathBuffer);
+                        item.setData(attachmentPath, Attachments);
+                        previewPathBuffer.Close();
+                    }
+                    
                     int msgProperty = 0;
                     msgProperty = sqlSelectStmt.ColumnInt(msgpropertyIndex);
                     item.setData(msgProperty, MessageProperty);
@@ -984,31 +994,34 @@ void ConversationsModel::handleVCard(QStandardItem& item, int msgId)
                     QCRITICAL_WRITE_FORMAT("Error from ColumnBinary()", err)
 
                     if (err == KErrNone)
-                        {
+                    {
                         RBuf vCardPathBuffer;
-                        vCardPathBuffer.Create(sqlSelectVcardStmt.ColumnSize(
-                                previewPathIndex));
-                        sqlSelectVcardStmt.ColumnText(previewPathIndex,
-                                vCardPathBuffer);
+                        if (vCardPathBuffer.Create(
+                                sqlSelectVcardStmt.ColumnSize(
+                                previewPathIndex)) == KErrNone)
+                        {
+                            sqlSelectVcardStmt.ColumnText(
+                                    previewPathIndex,
+                                    vCardPathBuffer);
 
-                        //set inside attachments
-                        QString attachmentPath(
-                                XQConversions::s60DescToQString(
-                                        vCardPathBuffer));
-                        item.setData(attachmentPath, Attachments);
+                            //set inside attachments
+                            QString attachmentPath(
+                                    XQConversions::s60DescToQString(
+                                            vCardPathBuffer));
+                            item.setData(attachmentPath, Attachments);
 
-                        //get display-name and set as bodytext
-                        QString displayName =
-                                MsgContactHandler::getVCardDisplayName(
-                                        attachmentPath);
-                        item.setData(displayName, BodyText);
+                            //get display-name and set as bodytext
+                            QString displayName =
+                                    MsgContactHandler::getVCardDisplayName(
+                                            attachmentPath);
+                            item.setData(displayName, BodyText);
 
-                        vCardPathBuffer.Close();
-                        vCardParsed = true;
-
-                        QCRITICAL_WRITE("vcard parsing complete.")
-
+                            vCardPathBuffer.Close();
+                            vCardParsed = true;
+                            
+                            QCRITICAL_WRITE("vcard parsing complete.")
                         }
+                    }
                     //close stream
                     stream.Close();
                     }

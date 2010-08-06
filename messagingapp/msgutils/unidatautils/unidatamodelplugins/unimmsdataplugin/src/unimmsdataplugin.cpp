@@ -23,7 +23,7 @@
 UniMMSDataPlugin::UniMMSDataPlugin(QObject* parent) :
     QObject(parent)
 {
-    QT_TRAP_THROWING( d_ptr = new UniMMSDataPluginPrivate());
+    d_ptr = q_check_ptr (new UniMMSDataPluginPrivate());
 }
 
 UniMMSDataPlugin::~UniMMSDataPlugin()

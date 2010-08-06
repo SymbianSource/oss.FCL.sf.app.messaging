@@ -51,7 +51,7 @@ mGenUtils(0)
         mSubjectEdit->setMinRows(1);
         mSubjectEdit->setMaxRows(10);
         
-        QT_TRAP_THROWING( mGenUtils = new UniEditorGenUtils());
+        mGenUtils = q_check_ptr(new UniEditorGenUtils());
         
         connect(mSubjectEdit, SIGNAL(contentsChanged(const QString&)),
                 this, SLOT(onContentsChanged(const QString&)));

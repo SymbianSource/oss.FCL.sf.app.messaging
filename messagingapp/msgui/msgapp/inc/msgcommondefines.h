@@ -32,9 +32,6 @@ const qreal AVATAR_HEIGHT = 50.0; //Height for avatar.
 const qreal TIMESTAMP_WIDTH = 45.0; //Width for timestamp.
 const qreal UNREADCOUNT_WIDTH = 40.0; //Width for unread count.
 
-const QString DATE_FORMAT("dd/MM"); //Date format.
-const QString TIME_FORMAT("hh:mm"); //Time format.
-
 const QColor SEPARATOR_COLOR(0, 0, 0, 51); //separator color.
 
 #endif /* MSGCOMMONDEFINES_H_ */

@@ -34,6 +34,8 @@ const QString AUDIO_MIMETYPE("audio");
 const QString VIDEO_MIMETYPE("video");
 const QString TEXT_MIMETYPE("text");
 
+static const char VIDEO_ICON[] = "qtg_large_video_player";
+
 //---------------------------------------------------------------
 //UniViewerBodyWidget::UniViewerBodyWidget
 // @see header file
@@ -51,98 +53,6 @@ UniViewerBodyWidget::UniViewerBodyWidget(QGraphicsItem *parent) :
 //---------------------------------------------------------------
 UniViewerBodyWidget::~UniViewerBodyWidget()
 {
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::setImage
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::setPixmap(UniMessageInfo *info)
-{
-    setHasPixmap(true);
-    //create image item instance
-    if (!mPixmapItem) {
-        mPixmapItem = new UniViewerPixmapWidget(this);
-        HbStyle::setItemName(mPixmapItem, "pixmap");
-    }
-    mPixmapItem->hide();
-    mPixmapItem->populate(info);
-
-    this->repolish();
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::setAudio
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::setAudio(UniMessageInfo *info)
-{
-    if (!mAudioItem) {
-        mAudioItem = new UniViewerAudioWidget(this);
-        HbStyle::setItemName(mAudioItem, "audioItem");
-    }
-    mAudioItem->hide();
-    mAudioItem->populate(info);
-
-    this->repolish();
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::setVideo
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::setVideo(UniMessageInfo *info)
-{
-    setHasPixmap(true);
-    //create image item instance
-    if (!mPixmapItem) {
-       mPixmapItem = new UniViewerPixmapWidget(this);
-       HbStyle::setItemName(mPixmapItem, "pixmap");
-       connect(mPixmapItem, SIGNAL(setOverlayIcon(QString)), this, SLOT(setOverlayIcon(QString)));
-    }
-    mPixmapItem->hide();
-    mPixmapItem->populate(info);
-    
-    this->repolish();
-}
-
-//---------------------------------------------------------------
-//UniViewerBodyWidget::setText
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::setText(QString text)
-{
-    setHasText(true);
-
-    if (!mTextItem) {
-        mTextItem = new UniViewerTextItem(this);
-        HbStyle::setItemName(mTextItem, "textItem");
-        connect(mTextItem, SIGNAL(sendMessage(const QString&)), this,
-            SIGNAL(sendMessage(const QString&)));
-    }
-    mTextItem->hide();
-    text.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
-    text.replace('\r', QChar::LineSeparator);
-    mTextItem->setText(text);
-
-    this->repolish();
-}
-
-//---------------------------------------------------------------
-// UniViewerBodyWidget::setSlideCounter
-// @see header file
-//---------------------------------------------------------------
-void UniViewerBodyWidget::setSlideCounter(QString &slideCounter)
-{
-    if (!mSlideCounter) {
-        mSlideCounter = new HbTextItem(this);
-        HbStyle::setItemName(mSlideCounter, "slideCounter");
-    }
-
-    mSlideCounter->hide();
-    mSlideCounter->setText(slideCounter);
-
-    this->repolish();
 }
 
 //---------------------------------------------------------------
@@ -263,18 +173,24 @@ void UniViewerBodyWidget::clearContent()
 }
 
 //---------------------------------------------------------------
-// UniViewerBodyWidget::setOverlayIcon
+// UniViewerBodyWidget::setText
 // @see header file
 //---------------------------------------------------------------
-void UniViewerBodyWidget::setOverlayIcon(const QString &iconName)
+void UniViewerBodyWidget::setText(QString text)
 {
-    if (!mOverlayItem) {
-        mOverlayItem = new HbIconItem(this);
-        HbStyle::setItemName(mOverlayItem, "overlayItem");
-    }
+    setHasText(true);
 
-    mOverlayItem->hide();
-    mOverlayItem->setIconName(iconName);
+    if (!mTextItem) {
+        mTextItem = new UniViewerTextItem(this);
+        mTextItem->setObjectName("textItem");
+        HbStyle::setItemName(mTextItem, "textItem");
+        connect(mTextItem, SIGNAL(sendMessage(const QString&)), this,
+            SIGNAL(sendMessage(const QString&)));
+    }
+    mTextItem->hide();
+    text.replace(QChar::ParagraphSeparator, QChar::LineSeparator);
+    text.replace('\r', QChar::LineSeparator);
+    mTextItem->setText(text);
 
     this->repolish();
 }
@@ -427,6 +343,117 @@ QSizeF UniViewerBodyWidget::sizeHint(Qt::SizeHint which, const QSizeF & constrai
     szHint.rheight() = qMax(maxHeight, szHint.height());
 
     return szHint;
+}
+
+//---------------------------------------------------------------
+//UniViewerBodyWidget::setPixmap
+// @see header file
+//---------------------------------------------------------------
+void UniViewerBodyWidget::setPixmap(UniMessageInfo *info)
+{
+    setHasPixmap(true);
+    //create image item instance
+    if (!mPixmapItem) {
+        mPixmapItem = new UniViewerPixmapWidget(this);
+        HbStyle::setItemName(mPixmapItem, "pixmap");
+    }
+    mPixmapItem->hide();
+    mPixmapItem->populate(info);
+
+    this->repolish();
+}
+
+//---------------------------------------------------------------
+//UniViewerBodyWidget::setAudio
+// @see header file
+//---------------------------------------------------------------
+void UniViewerBodyWidget::setAudio(UniMessageInfo *info)
+{
+    if (!mAudioItem) {
+        mAudioItem = new UniViewerAudioWidget(this);
+        HbStyle::setItemName(mAudioItem, "audioItem");
+    }
+    mAudioItem->hide();
+    mAudioItem->populate(info);
+
+    this->repolish();
+}
+
+//---------------------------------------------------------------
+//UniViewerBodyWidget::setVideo
+// @see header file
+//---------------------------------------------------------------
+void UniViewerBodyWidget::setVideo(UniMessageInfo *info)
+{
+    setHasPixmap(true);
+    //create image item instance
+    if (!mPixmapItem) {
+        mPixmapItem = new UniViewerPixmapWidget(this);
+        HbStyle::setItemName(mPixmapItem, "pixmap");
+        connect(mPixmapItem, SIGNAL(thumbnailFound(bool, UniMessageInfo*)), this,
+            SLOT(onThumbnailFound(bool, UniMessageInfo*)));
+    }
+    mPixmapItem->hide();
+    mPixmapItem->populate(info);
+
+    this->repolish();
+}
+
+//---------------------------------------------------------------
+// UniViewerBodyWidget::setSlideCounter
+// @see header file
+//---------------------------------------------------------------
+void UniViewerBodyWidget::setSlideCounter(QString &slideCounter)
+{
+    if (!mSlideCounter) {
+        mSlideCounter = new HbTextItem(this);
+        HbStyle::setItemName(mSlideCounter, "slideCounter");
+    }
+
+    mSlideCounter->hide();
+    mSlideCounter->setText(slideCounter);
+
+    this->repolish();
+}
+
+//---------------------------------------------------------------
+// UniViewerBodyWidget::setOverlayIcon
+// @see header file
+//---------------------------------------------------------------
+void UniViewerBodyWidget::setOverlayIcon(const QString &iconName)
+{
+    if (!mOverlayItem) {
+        mOverlayItem = new HbIconItem(this);
+        HbStyle::setItemName(mOverlayItem, "overlayItem");
+    }
+
+    mOverlayItem->hide();
+    mOverlayItem->setIconName(iconName);
+
+    this->repolish();
+}
+
+//---------------------------------------------------------------
+// UniViewerBodyWidget::onThumbnailFound
+// @see header file
+//---------------------------------------------------------------
+void UniViewerBodyWidget::onThumbnailFound(bool result, UniMessageInfo *info)
+{
+    if (result) {
+        // Thumbnail generation success
+        setOverlayIcon(VIDEO_ICON);
+    }
+    else {
+        // Show video content in audio widget.
+        setAudio(info);
+
+        // Remove the pixmap widget.
+        setHasPixmap(false);
+        if (mPixmapItem) {
+            HbStyle::setItemName(mPixmapItem, "");
+            mPixmapItem->hide();
+        }
+    }
 }
 
 // EOF

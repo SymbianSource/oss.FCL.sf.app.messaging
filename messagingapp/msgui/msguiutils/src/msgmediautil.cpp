@@ -16,8 +16,13 @@
  */
 #include <MsgMediaResolver.h>
 #include <xqconversions.h>
+#include <HbExtendedLocale>
+#include <QTime>
 
 #include "msgmediautil.h"
+
+// @see hbi18ndef.h
+static const char TIME_FORMAT[] = r_qtn_time_durat_min_sec_with_zero;
 
 //---------------------------------------------------------------
 // MsgMediaUtil::MsgMediaUtil
@@ -43,32 +48,21 @@ MsgMediaUtil::~MsgMediaUtil()
 //---------------------------------------------------------------
 QString MsgMediaUtil::mediaDuration(const QString& mediaFile)
     {
-    QString formattedDuration(" ");
+    QString formattedDuration;
     
     HBufC *name = XQConversions::qStringToS60Desc(mediaFile);
     TInt duration = 0;
     TRAPD(error, duration = mediaDurationL(*name));
     delete name;
     
-    if ( error )
+    if ( error || duration <= 0)
         return formattedDuration;
-        
-    int sec_duration = duration / 1000;
-    int hour_component = sec_duration / (60*60);
-    int min_component = (sec_duration - (hour_component*60*60))/60;
-    int sec_component = (sec_duration - (hour_component*60*60) - (min_component*60));
-    
-    if( hour_component > 0)
-        {
-        formattedDuration = QString("%1:%2:%3").arg(hour_component, 2, 10, QChar('0')).
-            arg(min_component, 2, 10, QChar('0')).arg(sec_component, 2, 10, QChar('0'));
-        }
-    else
-        {
-        formattedDuration = QString("%1:%2").arg(min_component, 2, 10, QChar('0')).
-            arg(sec_component, 2, 10, QChar('0'));
-        }
 
+    // Media duration in milliseconds.
+    QTime mediaDuration(0, 0);
+    mediaDuration = mediaDuration.addMSecs(duration);
+    HbExtendedLocale locale = HbExtendedLocale::system();
+    formattedDuration = locale.format(mediaDuration, TIME_FORMAT);
     return formattedDuration;
     }
 

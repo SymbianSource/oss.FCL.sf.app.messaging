@@ -30,8 +30,7 @@
 UniSMSDataPlugin::UniSMSDataPlugin(QObject* parent) :
     QObject(parent)
     {
-    QT_TRAP_THROWING(d_ptr = new UniSMSDataPluginPrivate(this));
-    
+    d_ptr = q_check_ptr(new UniSMSDataPluginPrivate(this));    
     }
 
 //---------------------------------------------------------------

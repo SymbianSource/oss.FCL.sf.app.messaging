@@ -169,11 +169,6 @@ private slots:
      * Slot hit when the thumbnail is ready.
      */
     void thumbnailReady(const QPixmap& pixmap, void *data, int id, int error);
-
-    /**
-     * Ignore gesture events.
-     */
-    void ignoreSignals(bool yes);
     
     /**
      * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture
@@ -182,11 +177,6 @@ private slots:
     void regrabGesture();
 
 private:
-
-    /**
-     * Bool variable on which gesture events are accepted/ignored.
-     */
-    bool mIgnoreEvents;
 
     /**
      * Contact Number for the conversation

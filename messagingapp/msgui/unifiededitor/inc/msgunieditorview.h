@@ -327,6 +327,16 @@ private slots:
      * @param true/false to enable/disable.
      */
      void enableSendButton(bool enable);
+     
+     /**
+      * This slot is triggered when vkb is about to be opened.
+      */
+     void vkbAboutToOpen();
+     
+     /**
+      * This slot is triggered when vkb is about to be closed.
+      */
+     void vkbAboutToClose();
     
 private:
     HbAction* mSubjectAction;
@@ -347,7 +357,8 @@ private:
     ConvergedMessageId mOpenedMessageId;
     ConvergedMessage::MessageType mmOpenedMessageType;
 	bool mCanSaveToDrafts;
-
+	HbAction *mAttachAction;
+    
 	/**
 	 * TBE's content widget
 	 */

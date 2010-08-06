@@ -30,15 +30,17 @@
 #define LOC_OPEN    hbTrId("txt_common_menu_open")
 #define LOC_SAVE    hbTrId("txt_common_menu_save")
 
-const QString AUDIO_ICON("qtg_mono_audio");
-const QString CORRUPTED_AUDIO_ICON("qtg_mono_corrupted");
+static const char VIDEO_MIMETYPE[] = "video";
+static const char AUDIO_ICON[] = "qtg_mono_audio";
+static const char VIDEO_ICON[] = "qtg_mono_video";
+static const char CORRUPTED_AUDIO_ICON[] = "qtg_mono_corrupted";
 
 //----------------------------------------------------------------------------
 // UniViewerAudioWidget::UniViewerAudioWidget
 // @see header file
 //----------------------------------------------------------------------------
 UniViewerAudioWidget::UniViewerAudioWidget(QGraphicsItem *parent) :
-    HbPushButton(parent), mViewerUtils(0)
+    HbPushButton(parent), mViewerUtils(0), mValidMediaDuration(true)
 {
     connect(this, SIGNAL(clicked()), this, SLOT(handleShortTap()));
     connect(this, SIGNAL(longPress(QPointF)), this, SLOT(handleLongTap(QPointF)));
@@ -62,14 +64,25 @@ void UniViewerAudioWidget::populate(UniMessageInfo *info)
     mMediaPath = info->path();
 
     HbIcon audioIcon;
+
     if (info->isProtected()) {
-        audioIcon.setIconName(AUDIO_ICON);
+        if (mMimeType.contains(VIDEO_MIMETYPE)) {
+            audioIcon.setIconName(VIDEO_ICON);
+        }
+        else {
+            audioIcon.setIconName(AUDIO_ICON);
+        }
     }
     else if (info->isCorrupted()) {
         audioIcon.setIconName(CORRUPTED_AUDIO_ICON);
     }
     else {
-        audioIcon.setIconName(AUDIO_ICON);
+        if (mMimeType.contains(VIDEO_MIMETYPE)) {
+            audioIcon.setIconName(VIDEO_ICON);
+        }
+        else {
+            audioIcon.setIconName(AUDIO_ICON);
+        }
     }
 
     this->setIcon(audioIcon);
@@ -77,7 +90,28 @@ void UniViewerAudioWidget::populate(UniMessageInfo *info)
     this->setText(fileInfo.baseName());
     this->setTextAlignment(Qt::AlignLeft);
     MsgMediaUtil mediaUtil;
-    this->setAdditionalText(mediaUtil.mediaDuration(mMediaPath));
+    QString mediaDuration(mediaUtil.mediaDuration(mMediaPath));
+    if (mediaDuration.isEmpty()) {
+        mValidMediaDuration = false;
+    }
+    else {
+        mValidMediaDuration = true;
+        this->setAdditionalText(mediaDuration);
+    }
+}
+
+//----------------------------------------------------------------------------
+// UniViewerAudioWidget::setStretched
+// @see header file
+//----------------------------------------------------------------------------
+void UniViewerAudioWidget::setStretched(bool stretched)
+{
+    if (mValidMediaDuration) {
+        HbPushButton::setStretched(stretched);
+    }
+    else {
+        HbPushButton::setStretched(true);
+    }
 }
 
 //----------------------------------------------------------------------------

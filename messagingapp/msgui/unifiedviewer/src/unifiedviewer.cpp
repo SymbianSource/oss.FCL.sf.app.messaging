@@ -26,6 +26,7 @@
 #include <HbStyleLoader>
 #include <centralrepository.h>
 #include <MmsEngineDomainCRKeys.h>
+#include <ccsdefs.h>
 
 // USER INCLUDES
 #include "uniscrollarea.h"
@@ -38,6 +39,7 @@
 #include "conversationsengine.h"
 #include "debugtraces.h"
 #include "nativemessageconsts.h"
+#include "mmsconformancecheck.h"
 
 // LOCAL CONSTANTS
 const QString REPLY_ICON("qtg_mono_reply");
@@ -45,6 +47,12 @@ const QString REPLY_ALL_ICON("qtg_mono_reply_all");
 const QString FORWARD_ICON("qtg_mono_forward_msg");
 const QString SEND_ICON("qtg_mono_send");
 const QString DELETE_ICON("qtg_mono_delete");
+
+//DB-file
+_LIT(KDbFileName, "c:[2002A542]conversations.db");
+// query to see if msg is forwardable
+_LIT(KSelectMsgPropertyStmt, " SELECT message_id, msg_property FROM conversation_messages WHERE message_id=:message_id ");
+
 
 //LOCALIZED CONSTANTS
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
@@ -54,10 +62,9 @@ const QString DELETE_ICON("qtg_mono_delete");
 // UnifiedViewer::UnifiedViewer
 // constructor
 //----------------------------------------------------------------------------
-UnifiedViewer::UnifiedViewer(const qint32 messageId, 
-                             int canForwardMessage,
+UnifiedViewer::UnifiedViewer(const qint32 messageId,
                              QGraphicsItem *parent) :
-    MsgBaseView(parent), mForwardMessage(false)
+    MsgBaseView(parent)
 {
     QDEBUG_WRITE("UnifiedViewer contruction start");
 
@@ -69,8 +76,6 @@ UnifiedViewer::UnifiedViewer(const qint32 messageId,
     mMessageId = messageId;
     mViewFeeder = new UniViewerFeeder(mMessageId, this);
 
-    if (canForwardMessage > 0) mForwardMessage = true;
-    
     mScrollArea = new UniScrollArea(this);
     this->setWidget(mScrollArea);
 
@@ -127,7 +132,7 @@ void UnifiedViewer::createToolBar()
         }
     }
 
-    if (mForwardMessage)    
+    if (isForwardOk())
     {
         toolbar->addAction(HbIcon(FORWARD_ICON), "", this, SLOT(handleFwdAction()));
     }
@@ -188,7 +193,7 @@ void UnifiedViewer::populateContent(const qint32 messageId, bool update, int msg
 
     //Creation of toolbar now depends on content
     createToolBar();
-    
+
     QDEBUG_WRITE("UnifiedViewer populateContent END");
 }
 
@@ -197,7 +202,7 @@ void UnifiedViewer::populateContent(const qint32 messageId, bool update, int msg
 // @see header file
 //---------------------------------------------------------------
 void UnifiedViewer::handleFwdAction()
-{    
+{
     launchEditor(MsgBaseView::FORWARD_MSG);
 }
 
@@ -207,7 +212,7 @@ void UnifiedViewer::handleFwdAction()
 //---------------------------------------------------------------
 void UnifiedViewer::handleReplyAction()
 {
-    launchEditor(MsgBaseView::REPLY_MSG); 
+    launchEditor(MsgBaseView::REPLY_MSG);
 }
 
 //---------------------------------------------------------------
@@ -236,8 +241,8 @@ void UnifiedViewer::resizeEvent(QGraphicsSceneResizeEvent * event)
 void UnifiedViewer::handleDeleteAction()
 {
     QString txt = LOC_DELETE_MESSAGE;
-    
-    //if mms and out going. check for sharing    
+
+    //if mms and out going. check for sharing
     if((mViewFeeder->msgType() == KSenduiMtmMmsUidValue) && (!mViewFeeder->isIncoming()))
     {
         if(mViewFeeder->recipientCount() > 1 )
@@ -245,7 +250,7 @@ void UnifiedViewer::handleDeleteAction()
             txt =  LOC_DELETE_SHARED_MESSAGE;
         }
     }
-    
+
     HbMessageBox::question(txt,this,SLOT(onDialogDeleteMsg(int)),
                            HbMessageBox::Delete | HbMessageBox::Cancel);
 }
@@ -321,7 +326,7 @@ void UnifiedViewer::launchEditor(
     }
     else
     {
-        message.setMessageType(ConvergedMessage::Sms);    
+        message.setMessageType(ConvergedMessage::Sms);
     }
 
     QByteArray dataArray;
@@ -335,8 +340,51 @@ void UnifiedViewer::launchEditor(
 
     params << dataArray;
     params << operation;
-        
+
     emit switchView(params);
+}
+
+//---------------------------------------------------------------
+// UnifiedViewer::isForwardOk
+// @see header file
+//---------------------------------------------------------------
+bool UnifiedViewer::isForwardOk()
+{
+    bool canForwardMsg = true;
+    if(mViewFeeder->msgType() == KSenduiMtmMmsUidValue)
+    {
+        // open DB
+        RSqlDatabase sqlDb;
+        TInt error = sqlDb.Open(KDbFileName);
+        if(error == KErrNone)
+        {
+            RSqlStatement sqlSelectStmt;
+            CleanupClosePushL(sqlSelectStmt);
+            sqlSelectStmt.PrepareL(sqlDb,KSelectMsgPropertyStmt);
+            TInt msgIdIndex = sqlSelectStmt.ParameterIndex(_L(":message_id"));
+            sqlSelectStmt.BindInt(msgIdIndex, mMessageId);
+            // read the flag
+            TInt msgPropertyIndex =
+                    sqlSelectStmt.ColumnIndex(_L("msg_property"));
+            TInt retValue = 0;
+            if (sqlSelectStmt.Next() == KSqlAtRow)
+            {
+                retValue = static_cast<TInt>
+                    (sqlSelectStmt.ColumnInt(msgPropertyIndex));
+            }
+            CleanupStack::PopAndDestroy(&sqlSelectStmt);
+            sqlDb.Close();
+            canForwardMsg = (retValue & EPreviewForward)? true:false;
+        }
+        else
+        {
+            // fall-back plan
+            MmsConformanceCheck* mmsConformanceCheck = new MmsConformanceCheck;
+            canForwardMsg = mmsConformanceCheck->validateMsgForForward(mMessageId);
+            delete mmsConformanceCheck;
+        }
+    }
+    return canForwardMsg;
 }
 
 // EOF

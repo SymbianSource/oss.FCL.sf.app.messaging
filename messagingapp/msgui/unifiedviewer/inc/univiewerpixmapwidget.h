@@ -65,11 +65,11 @@ signals:
     void longTap(const QPointF &position);
 
     /**
-     * Signal emitted when the thumbnail returned by Thumbnail manager is set
-     * to pixmap widget.
-     * @param iconName Overlay icon name to be set.
+     * Signal emitted indicating if thumbnail was found or not
+     * @param result true if thumbnail was found else false.
+     * @param info UniMessageInfo of the media object.
      */
-    void setOverlayIcon(const QString& iconName);
+    void thumbnailFound(bool result, UniMessageInfo *info);
 
 protected:
 
@@ -128,6 +128,12 @@ private:
     QSize getThumbnailSize();
 
 private:
+
+    /**
+     * UniMessageInfo object.
+     * Own.
+     */
+    UniMessageInfo *mInfo;
 
     /**
      * UniViewerUtils object.

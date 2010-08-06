@@ -26,9 +26,12 @@
 #include <w32std.h>
 #include <apgtask.h> 
 #include <XQSettingsManager>
+#include <xqaiwrequest.h>
+#include <xqappmgr.h>
 #include <xqpublishandsubscribeutils.h>
 #include <xqsystemtoneservice.h>
 #include <xqconversions.h>
+#include <QThreadPool>
 
 //USER INCLUDES
 #include "msgnotifier.h"
@@ -134,12 +137,12 @@ void MsgNotifierPrivate::initL()
 void MsgNotifierPrivate::AddConversationList(
                   const CCsClientConversation& aClientConversation)
 {
-    QDEBUG_WRITE("MsgNotifierPrivate::AddConversationList : Enter")
+    QCRITICAL_WRITE("MsgNotifierPrivate::AddConversationList : Enter")
 
     processListEntry(aClientConversation);
     updateUnreadIndications();
 
-    QDEBUG_WRITE("MsgNotifierPrivate::AddConversationList : Exit")
+    QCRITICAL_WRITE("MsgNotifierPrivate::AddConversationList : Exit")
 }
 
 // ----------------------------------------------------------------------------
@@ -160,12 +163,12 @@ void MsgNotifierPrivate::DeleteConversationList(
 // ----------------------------------------------------------------------------
 void MsgNotifierPrivate::ModifyConversationList(const CCsClientConversation& aClientConversation)
 {
-    QDEBUG_WRITE("MsgNotifierPrivate::ModifyConversationList : Enter")
+    QCRITICAL_WRITE("MsgNotifierPrivate::ModifyConversationList : Enter")
 
     processListEntry(aClientConversation);
     updateUnreadIndications();
 
-    QDEBUG_WRITE("MsgNotifierPrivate::ModifyConversationList : Exit")
+    QCRITICAL_WRITE("MsgNotifierPrivate::ModifyConversationList : Exit")
 }
 
 // ----------------------------------------------------------------------------
@@ -184,7 +187,7 @@ void MsgNotifierPrivate::RefreshConversationList()
 void MsgNotifierPrivate::processListEntry(
         const CCsClientConversation& aClientConversation)
     {
-    QDEBUG_WRITE("MsgNotifierPrivate::processListEntry : Enter")
+    QCRITICAL_WRITE("MsgNotifierPrivate::processListEntry : Enter")
     
     CCsConversationEntry* convEntry = 
                                  aClientConversation.GetConversationEntry();
@@ -238,7 +241,7 @@ void MsgNotifierPrivate::processListEntry(
        
         }
     
-    QDEBUG_WRITE("MsgNotifierPrivate::processListEntry : Exit")
+    QCRITICAL_WRITE("MsgNotifierPrivate::processListEntry : Exit")
     }
 
 // ----------------------------------------------------------------------------
@@ -385,6 +388,82 @@ bool MsgNotifierPrivate::showNotification(int receivedMsgConvId)
 // @see mcsconversationclientchangeobserver.h
 // ----------------------------------------------------------------------------
 void MsgNotifierPrivate::PartialDeleteConversationList(
-        const CCsClientConversation& aClientConversation){/*empty implementation*/}
+        const CCsClientConversation& /*aClientConversation*/){/*empty implementation*/}
+
+
+// ----------------------------------------------------------------------------
+// MsgNotifierPrivate::ShowClass0Message
+// @see msgnotifier_p.h
+// ----------------------------------------------------------------------------
+
+void MsgNotifierPrivate::ShowClass0Message(Class0Info& class0Info)
+{
+    QCRITICAL_WRITE("flashmsgnotifier BEGIN");
+    QThreadPool::globalInstance()->start(new Class0SmsServiceTask(class0Info));
+    QCRITICAL_WRITE("flashmsgnotifier END");
+}
+
+
+
+
+// ----------------------------------------------------------------------------
+// Class0SmsServiceTask::Class0SmsServiceTask
+// @see msgnotifier_p.h
+// ----------------------------------------------------------------------------  
+Class0SmsServiceTask::Class0SmsServiceTask(Class0Info& class0Info):
+mClass0info(class0Info)
+     {     
+     }
+
+// ----------------------------------------------------------------------------
+// Class0SmsServiceTask::~Class0SmsServiceTask
+// @see msgnotifier_p.h
+// ----------------------------------------------------------------------------   
+Class0SmsServiceTask::~Class0SmsServiceTask()
+     {     
+     }
+     
+// ----------------------------------------------------------------------------
+// Class0SmsServiceTask::run
+// @see msgnotifier_p.h
+// ----------------------------------------------------------------------------   
+void Class0SmsServiceTask::run()
+     {
+   	  QList<QVariant> args;
+      QString serviceName("flashmsgnotifier");
+      QString interfaceName("com.nokia.symbian.IFlashMsgNotifier");
+      QString operation("displayFlashMsg(QByteArray)");
+      XQAiwRequest* request;
+      XQApplicationManager appManager;
+
+      request = appManager.create(interfaceName, operation, false); //non-embedded
+
+      if ( request == NULL )
+      {
+          QCRITICAL_WRITE("flashmsgnotifier request == NULL");
+          return; 
+      }
+
+      QByteArray ba; 
+      QDataStream stream(&ba, QIODevice::ReadWrite);
+      stream << mClass0info.body;
+      stream << mClass0info.address;
+      stream << mClass0info.alias;
+      stream << mClass0info.time;     
+      stream << mClass0info.messageId;
+       
+      args << ba;
+      request->setArguments(args);    
+       
+      if(!request->send())
+      {
+         QString lastErr;
+          lastErr = request->lastErrorMessage();
+          QDEBUG_WRITE_FORMAT("flashmsgnotifier launch failed", lastErr);
+      }
+       
+      QCRITICAL_WRITE("flashmsgnotifier END");
+      delete request;  
+     }
 
 //EOF

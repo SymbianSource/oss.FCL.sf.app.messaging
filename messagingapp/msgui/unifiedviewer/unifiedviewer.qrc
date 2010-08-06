@@ -9,5 +9,6 @@
         <file alias="univiewerattachmentwidget.css">resources/layouts/univiewerattachmentwidget.css</file>
         <file alias="univiewerattachmentwidget_color.css">resources/layouts/univiewerattachmentwidget_color.css</file>
         <file alias="univiewerattachmentwidget.widgetml">resources/layouts/univiewerattachmentwidget.widgetml</file>
+        <file alias="univieweraddresswidget.css">resources/layouts/univieweraddresswidget.css</file>
     </qresource>
 </RCC>

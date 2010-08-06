@@ -20,7 +20,9 @@
 // SYSTEM INCLUDES
 #include <HbTextItem>
 #include <HbIconItem>
+#include <HbExtendedLocale>
 #include <QDateTime>
+#include <QStringBuilder>
 
 // USER INCLUDES
 #include "convergedmessage.h"
@@ -29,9 +31,9 @@
 // LOCALIZATION
 #define LOC_MESSAGE_RESEND hbTrId("txt_common_menu_resend_message")
 
-// LOCAL CONSTANTS
-const QString DATE_TIME_FORMAT("dd/MM/yy hh:mm ap"); //Date format.
-const QString TIME_FORMAT("hh:mm ap");
+// @see hbi18ndef.h
+static const char DATE_FORMAT[] = r_qtn_date_usual_with_zero;
+static const char TIME_FORMAT[] = r_qtn_time_usual_with_zero;
 
 const QString MSG_HIGH_PRIORITY_ICON("qtg_small_priority_high");
 const QString MSG_LOW_PRIORITY_ICON("qtg_small_priority_low");
@@ -78,12 +80,15 @@ void UniViewerDetailsWidget::setSubject(const QString &subject)
 //---------------------------------------------------------------
 void UniViewerDetailsWidget::setTimeStamp(const QDateTime &aTimeStamp, const int &aSendingState)
 {
+    HbExtendedLocale locale = HbExtendedLocale::system();
+    QString date = locale.format(aTimeStamp.date(), DATE_FORMAT);
+    QString time = locale.format(aTimeStamp.time(), TIME_FORMAT);
 
     if (aSendingState == ConvergedMessage::Resend) {
-        mTime->setText(LOC_MESSAGE_RESEND + aTimeStamp.toString(TIME_FORMAT));
+        mTime->setText(LOC_MESSAGE_RESEND % time);
     }
     else {
-        mTime->setText(aTimeStamp.toString(DATE_TIME_FORMAT));        
+        mTime->setText(date % QChar(' ') % time);
     }
 }
 

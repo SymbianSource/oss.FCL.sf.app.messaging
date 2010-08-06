@@ -191,12 +191,10 @@ void MsgViewManager::onBackAction()
                 qint32 contactId = mViewerData.at(0).toLongLong();
                 qint32 messageId = mViewerData.at(1).toInt();
                 int msgCount = mViewerData.at(2).toInt();
-                int canForwardMessage = mViewerData.at(3).toInt();
                 
                 param << contactId;
                 param << messageId;
                 param << msgCount;
-                param << canForwardMessage;
             }
             else if(mPreviousView == MsgBaseView::UNIEDITOR){
                 //TODO: Remove error handling once Audio fetcher 
@@ -527,7 +525,7 @@ void MsgViewManager::switchToClv(const QVariantList& data)
         mConversationId = -1;
         return;
     }
-    
+
     //delete UniEditor
     if (mUniEditor)
     {
@@ -791,16 +789,14 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
         qint32 contactId = data.at(2).toLongLong();
         qint32 messageId = data.at(3).toInt();
         int msgCount = data.at(4).toInt();
-        int canForwardMessage = data.at(5).toInt();
 
         //Save the viewer data to be used when u come back from Editor
         mViewerData << contactId;
         mViewerData << messageId;
         mViewerData << msgCount;
-        mViewerData << canForwardMessage;
         
         if (!mUniViewer) {
-            mUniViewer = new UnifiedViewer(messageId, canForwardMessage);
+            mUniViewer = new UnifiedViewer(messageId);
             mUniViewer->setNavigationAction(mBackAction);
             mMainWindow->addView(mUniViewer);
             connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,

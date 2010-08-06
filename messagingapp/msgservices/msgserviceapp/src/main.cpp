@@ -21,6 +21,8 @@
 #include <QFile>
 #include <QPointer>
 #include <QDateTime>
+#include <HbSplashScreen>
+#include <xqserviceutil.h>
 
 #include "msgservicewindow.h"
 #include "debugtraces.h"
@@ -29,6 +31,7 @@
 #define LOC_TITLE hbTrId("txt_messaging_title_messaging")
 
 const QString debugFileName("c:/msgservice_app.txt");
+const QString TRANSLATOR_FILE_PATH("z:/resource/qt/translations/");
 
 #ifdef _DEBUG_TRACES_
 void debugInit(QtMsgType type, const char *msg)
@@ -75,15 +78,27 @@ void debugInit(QtMsgType type, const char *msg)
 
 int main(int argc, char **argv)
 {
+    // if else loop to launch the splash screen based on the service called.
+    
+    QString serviceName = XQServiceUtil::interfaceName( argc, argv);
+    
+    if( !serviceName.compare( QString( "com.nokia.symbian.IMessageSend") ) )
+        {
+        HbSplashScreen::setScreenId( "sendservice" );
+        }
+    else if ( !serviceName.compare( "com.nokia.symbian.IMessageView") )
+        {
+        HbSplashScreen::setScreenId( "viewservice" );
+        }
+    
     HbApplication app( argc, argv );
     
    //installing translator.
     QString locale = QLocale::system().name();
-    QString path = "z:/resource/qt/translations/";
     QTranslator translator;
     QTranslator translator_comm;
-    translator.load(path + "messaging_" + locale);
-    translator_comm.load(path + "common_" + locale);
+    translator.load(TRANSLATOR_FILE_PATH + QString("messaging_") + locale);
+    translator_comm.load(TRANSLATOR_FILE_PATH + QString("common_") + locale);
     app.installTranslator(&translator);
     app.installTranslator(&translator_comm);
 

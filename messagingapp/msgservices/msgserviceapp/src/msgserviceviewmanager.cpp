@@ -17,6 +17,7 @@
 
 #include "msgserviceviewmanager.h"
 
+#include <QPixmap>
 #include <HbMainWindow>
 #include <HbAction>
 #include <HbApplication>
@@ -34,6 +35,10 @@
 #include "ringbc.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
+
+// CONSTANTS
+static const char SEND_EFFECT[] = "sendeffect";
+static const char SEND_EFFECT_FILE[] = ":/effects/sendeffect.fxml";
 
 // LOCALIZATION
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
@@ -128,7 +133,8 @@ void MsgServiceViewManager::onBackAction()
 void MsgServiceViewManager::switchView(const QVariantList& data)
     {
     int viewId = data.at(0).toInt();
-    switch (viewId) {
+    switch (viewId)
+        {
         case MsgBaseView::UNIEDITOR:
             {
             // except first 2 parameters pass other parameters
@@ -148,9 +154,18 @@ void MsgServiceViewManager::switchView(const QVariantList& data)
             }
         default: 
             {
-            HbApplication::quit();
+            // if send from editor is successful, then run effects
+            int previousView = data.at(1).toInt();
+            if(previousView == MsgBaseView::UNIEDITOR)
+                {
+                startAnimation(SEND_EFFECT);
+                }
+            else
+                {
+                HbApplication::quit();
+                }
             }
-    }
+        }
     }
 
 //----------------------------------------------------------------------------
@@ -161,6 +176,7 @@ void MsgServiceViewManager::send(const QString phoneNumber,
         const qint32 contactId, 
         const QString displayName)
     {
+    Q_UNUSED(contactId);
     ConvergedMessage message;
     ConvergedMessageAddress address;
     address.setAddress(phoneNumber);
@@ -557,3 +573,123 @@ void MsgServiceViewManager::onDialogSaveTone(HbAction* action)
         HbApplication::quit();
 }
 
+//-----------------------------------------------------------------------------
+//MsgServiceViewManager::startAnimation
+//@see header
+//-----------------------------------------------------------------------------
+void MsgServiceViewManager::startAnimation(QString effectEvent)
+    {
+    // take screen shot
+    QGraphicsPixmapItem *animationScreenShot = screenShot();
+    if (animationScreenShot)
+        {
+        // but don't show it yet.
+        animationScreenShot->hide();
+        animationScreenShot->setPos(0,0);
+        animationScreenShot->setZValue(0);
+
+        // hide items, so that background app's items are visible immediately
+        mMainWindow->currentView()->hideItems(Hb::AllItems);
+        
+        // reset background & set the base transparent
+        mMainWindow->setBackgroundImageName(
+                mMainWindow->orientation(), QString("dummy_blank"));
+        QPalette p = mMainWindow->viewport()->palette();
+        p.setColor(QPalette::Base, Qt::transparent);
+        mMainWindow->viewport()->setPalette(p);
+
+        // add animating item directly to the scene
+        mMainWindow->scene()->addItem(animationScreenShot);
+        
+        // hide other views
+        QList<HbView*> vws = mMainWindow->views();
+        while (!vws.isEmpty())
+            {
+            HbView* view = vws.takeLast();
+            view->hide();
+            }
+        
+        // now show the animating item, and start animation on it
+        animationScreenShot->show();
+        QString effectFile = getAnimationFile(effectEvent);
+        HbEffect::add(animationScreenShot, effectFile, effectEvent);
+        HbEffect::start(animationScreenShot, effectEvent, this,
+                "onAnimationComplete");
+        }
+    }
+
+//-----------------------------------------------------------------------------
+//MsgServiceViewManager::resetAnimation
+//@see header
+//-----------------------------------------------------------------------------
+void MsgServiceViewManager::resetAnimation(
+        QString effectEvent,
+        QGraphicsItem* item)
+    {
+    if (item) 
+        {
+        QString effectFile = getAnimationFile(effectEvent);
+        HbEffect::remove(item, effectFile, effectEvent);
+        mMainWindow->scene()->removeItem(item);
+        delete item;
+        item = NULL;
+        }
+    }
+
+//-----------------------------------------------------------------------------
+//MsgServiceViewManager::onAnimationComplete
+//@see header
+//-----------------------------------------------------------------------------
+void MsgServiceViewManager::onAnimationComplete(
+        const HbEffect::EffectStatus &status)
+    {
+    QGraphicsItem* item = status.item;
+    QString effectEvent = status.effectEvent;
+    resetAnimation(effectEvent, item);
+    HbApplication::quit();
+    }
+
+//-----------------------------------------------------------------------------
+//MsgServiceViewManager::screenShot
+//@see header
+//-----------------------------------------------------------------------------
+QGraphicsPixmapItem* MsgServiceViewManager::screenShot()
+    {
+    // set fullscreen and hide unwanted items
+    mMainWindow->currentView()->hideItems(Hb::ToolBarItem | Hb::DockWidgetItem | Hb::StatusBarItem);
+    mMainWindow->currentView()->setContentFullScreen(true);
+
+    // grab whole view into pixmap image
+    QPixmap screenCapture = QPixmap::grabWindow(mMainWindow->internalWinId());
+
+    // create an QGraphicsItem to do animation
+    QGraphicsPixmapItem *ret(NULL);
+
+    // for landscape, the screenshot must be rotated
+    if(mMainWindow->orientation() == Qt::Horizontal)
+        {
+        QMatrix mat;
+        mat.rotate(-90); // rotate 90 degrees counter-clockwise
+        ret = new QGraphicsPixmapItem(screenCapture.transformed(mat));
+        }
+    else
+        {
+        ret = new QGraphicsPixmapItem(screenCapture);
+        }
+    return ret;
+    }
+
+//-----------------------------------------------------------------------------
+//MsgServiceViewManager::getAnimationFile
+//@see header
+//-----------------------------------------------------------------------------
+QString MsgServiceViewManager::getAnimationFile(QString effectEvent)
+    {
+    QString animFile;
+    if(effectEvent == SEND_EFFECT)
+        {
+        animFile.append(SEND_EFFECT_FILE);
+        }
+
+    return animFile;
+    }

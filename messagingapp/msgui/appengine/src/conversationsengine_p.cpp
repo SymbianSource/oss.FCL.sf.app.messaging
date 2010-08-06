@@ -48,7 +48,7 @@ ConversationsEnginePrivate::ConversationsEnginePrivate(
     mConversationsSummaryModel(conversationsSummaryModel),
     mConversationsModel(conversationsModel)
 {
-        TRAP_IGNORE(initL());
+        initL();
 }
 
 //---------------------------------------------------------------

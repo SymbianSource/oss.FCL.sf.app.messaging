@@ -185,11 +185,13 @@ QString RingBcPrivate::toneTitle(const QString &path)
     QString extension = pathList.at(pathList.count() - 1);
 
     HBufC* fileName = XQConversions::qStringToS60Desc(path);
-    TRAP_IGNORE( title = titleL(*fileName));
-    
-    title.append(QChar('.'));
-    title.append(extension);
-    
+    TRAPD(err, title = titleL(*fileName));
+    if(err == KErrNone)
+        {
+        title.append(QChar('.'));
+        title.append(extension);                
+        }
+     
     QDEBUG_WRITE("RingBcPrivate::toneTitle : Exit")
     return title;
     }
@@ -228,7 +230,11 @@ QString RingBcPrivate::titleL(const TDesC& aFileName)
                     {
                     HBufC* toneTitle = mConverter->TitleLC(data);
                     title = XQConversions::s60DescToQString(*toneTitle);
-                    CleanupStack::PopAndDestroy(); //title
+                    CleanupStack::PopAndDestroy(); //tonetitle
+                    }
+                else
+                    {
+                    User::Leave(KErrCorrupt);
                     }
                 CleanupStack::PopAndDestroy(); //dataBuf
                 }

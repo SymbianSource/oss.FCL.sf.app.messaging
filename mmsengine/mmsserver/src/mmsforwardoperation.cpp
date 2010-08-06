@@ -27,7 +27,6 @@
 #include    <in_sock.h>
 #include    <commdbconnpref.h>
 #include    <featmgr.h>
-#include    <AknGlobalNote.h>
 
 // the rest are local includes, needed always
 #include    "mmsconst.h"

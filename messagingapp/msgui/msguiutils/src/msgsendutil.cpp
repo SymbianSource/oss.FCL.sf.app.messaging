@@ -33,7 +33,7 @@ MsgSendUtil::MsgSendUtil(QObject* parentObject) :
     {
     // Load Plugins for send
     mPluginLoader = new UniEditorPluginLoader(this);
-    QT_TRAP_THROWING(mUniEditorGenUtils = new UniEditorGenUtils());
+    mUniEditorGenUtils = q_check_ptr(new UniEditorGenUtils());
     }
 
 //---------------------------------------------------------------

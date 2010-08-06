@@ -35,9 +35,10 @@
 #include "debugtraces.h"
 
 // LOCALIZATION CONSTANTS
-#define LOC_RECEIVED_FILES           hbTrId("txt_messaging_title_received_files")
-#define LOC_BUSINESS_CARD           hbTrId("txt_messaging_dpopinfo_business_card")
+#define LOC_RECEIVED_FILES hbTrId("txt_messaging_title_received_files")
+#define LOC_BUSINESS_CARD hbTrId("txt_messaging_dpopinfo_business_card")
 #define CARD_SEPERATOR "-"
+#define LOC_MULTIMEDIA_MSG hbTrId("txt_messaging_dpopinfo_multimedia_message")
 
 // plugin ids 
 const QString IndicationsPluginId("com.nokia.messaging.newindicatorplugin");
@@ -54,7 +55,7 @@ MsgNotifier::MsgNotifier(QObject* parent) :
 {
     QDEBUG_WRITE("MsgNotifier::MsgNotifier : Enter")
 
-    QT_TRAP_THROWING(d_ptr = new MsgNotifierPrivate(this));
+    d_ptr = q_check_ptr(new MsgNotifierPrivate(this));
 
     mSimHandler = new MsgSimNumDetector();
 
@@ -118,10 +119,15 @@ void MsgNotifier::displayNewMessageNotification(NotificationData& data)
             } 
         delete pluginLoader;
         }
+    else if( data.mDescription.isEmpty() && (ECsMMS == data.mMsgType || ECsAudio == data.mMsgType) )
+        {
+        description = LOC_MULTIMEDIA_MSG;
+        }
     else
         {
         description =  data.mDescription;
         }
+
     notificationData[QString(KDisplayNameKey)] = data.mDisplayName ;
     notificationData[QString(KConversationIdKey)] = data.mConversationId;
     notificationData[QString(KMessageTypeKey)] = data.mMsgType;

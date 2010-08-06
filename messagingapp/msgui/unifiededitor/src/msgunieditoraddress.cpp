@@ -518,7 +518,7 @@ void MsgUnifiedEditorAddress::onMaxRecipientsReached(HbAction* action)
 // ----------------------------------------------------------------------------
 bool MsgUnifiedEditorAddress::validateContacts()
 {
-    UniEditorGenUtils* genUtils = new UniEditorGenUtils;
+    UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
 
     // sync-up map to account for user-actions on address-field
     syncDeletionsToMap();
@@ -569,7 +569,7 @@ bool MsgUnifiedEditorAddress::checkValidAddress(const QString& addr)
             CommonPhoneParser::ESMSNumber );
 
     // 2. if number validity fails, then perform email addr validation
-    UniEditorGenUtils* genUtils = new UniEditorGenUtils;
+    UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
     if(!isValid)
         { // additional check for MMS only
         isValid = genUtils->IsValidEmailAddress(

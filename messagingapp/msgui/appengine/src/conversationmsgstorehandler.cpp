@@ -58,10 +58,6 @@ _LIT(KUnixEpoch, "19700000:000000.000000");
 #define LOC_MMS_RETRIEVING hbTrId("Retrieving message...")   //TODO: localization
 #define LOC_MMS_EXPIRY_DATE hbTrId("txt_messaging_list_expiry_date")
 
-// TODO: read global setting of formats on the phone
-const QString DATE_FORMAT("dd/MM");
-const QString TIME_FORMAT("hh:mm");
-
 // ================= MEMBER FUNCTIONS =======================
 
 // ---------------------------------------------------------

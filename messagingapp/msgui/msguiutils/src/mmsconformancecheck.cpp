@@ -90,6 +90,9 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
     HBufC* filePath = XQConversions::qStringToS60Desc(file);
     if (filePath)
     {
+        TMsgMediaType mediaType = EMsgMediaUnknown;
+        TUint32 mediaProtection = EFileProtNoProtection;
+            
         QT_TRAP_THROWING(CleanupStack::PushL(filePath);
 
         CMmsConformance* mmsConformance = CMmsConformance::NewL();
@@ -111,10 +114,14 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
         TMmsConformance conformance = mmsConformance->MediaConformance(*info);
         iConfStatus = conformance.iConfStatus;
 
-        CleanupStack::PopAndDestroy(4);
+        mediaType = info->MediaType();
+        mediaProtection = info->Protection();
+        delete info;
+        
+        CleanupStack::PopAndDestroy(4));
 
         // TODO: Remove this check once Video support is provided in UniEditor.
-        if (info->MediaType() == EMsgMediaVideo)
+        if (mediaType == EMsgMediaVideo)
         {
             return EInsertNotSupported;
         }
@@ -130,8 +137,8 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
             // If user answers yes to Guided mode confirmation query he/she moves to free mode
             if ( (iConfStatus & i) && ! (iConfStatus & j))
             {
-                if (iCreationMode == EMmsCreationModeFree || info->Protection()
-                        & EFileProtSuperDistributable)
+                if (iCreationMode == EMmsCreationModeFree || 
+                        mediaProtection & EFileProtSuperDistributable)
                 {
                     // SuperDistribution not checked here
                     // Mask "FreeModeOnly" and "ScalingNeeded" away in free mode
@@ -161,7 +168,7 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
             if(showNote)
             {
                 // For protected objects.
-                if (EFileProtNoProtection != info->Protection())
+                if (EFileProtNoProtection != mediaProtection)
                 {
                     showPopup(INSERT_PROTECTED_ERROR);
                 }
@@ -170,13 +177,11 @@ int MmsConformanceCheck::checkModeForInsert(const QString& file,
                     showPopup(INSERT_ERROR);
                 }
             }
-
             return EInsertNotSupported;
-        }
-        delete info);
+        }        
     }
     QDEBUG_WRITE("MmsConformanceCheck::CheckModeForInsert end");
-    return EInsertSuccess;
+    return EInsertSuccess;    
 }
 
 // ---------------------------------------------------------

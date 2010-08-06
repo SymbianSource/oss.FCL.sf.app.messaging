@@ -24,14 +24,18 @@
 #include <ccsconversationentry.h>
 #include <msvstd.h>
 #include <QDateTime>
+#include <HbExtendedLocale>
 #include <hbicon.h>
 #include <xqconversions.h>
 //CONSTANTS
-const QString DATE_FORMAT("dd/MM"); //Date format.
-const QString TIME_FORMAT("hh:mm"); //Time format.
+// @see hbi18ndef.h
+static const char DATE_FORMAT[] = r_qtn_date_short_with_zero;
+static const char TIME_FORMAT[] = r_qtn_time_usual_with_zero;
 //priority icons
 const QString MSG_HIGH_PRIORITY_ICON("qtg_small_priority_high");
 const QString MSG_LOW_PRIORITY_ICON("qtg_small_priority_low");
+// Localization
+#define LOC_NO_RECIPIENTS hbTrId("txt_messaging_list_no_recipients")
 
 //---------------------------------------------------------------
 // DraftsModel::DraftsModel
@@ -65,19 +69,19 @@ QVariant DraftsModel::data(const QModelIndex & index, int role) const
         //timestamp conversion
         QDateTime dateTime;
         dateTime.setTime_t(item->data(TimeStamp).toUInt());
+
+        HbExtendedLocale locale = HbExtendedLocale::system();
         QString dateString;
-        if (dateTime.date() == QDateTime::currentDateTime().date())
-        {
-            dateString = dateTime.toString(TIME_FORMAT);
+        if (dateTime.date() == QDateTime::currentDateTime().date()) {
+            dateString = locale.format(dateTime.time(), TIME_FORMAT);
         }
-        else
-        {
-            dateString = dateTime.toString(DATE_FORMAT);
+        else {
+            dateString = locale.format(dateTime.date(), DATE_FORMAT);
         }
         //display name
         QString contactName = item->data(DisplayName).toString();
         if (contactName.isEmpty()) {
-            contactName = tr("(no recipient)");
+            contactName = LOC_NO_RECIPIENTS;
         }
         //description
         QString description = item->data(Subject).toString();

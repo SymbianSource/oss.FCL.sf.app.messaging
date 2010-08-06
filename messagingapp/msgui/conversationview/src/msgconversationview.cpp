@@ -107,7 +107,6 @@ MsgConversationView::MsgConversationView(MsgContactCardWidget *contactCardWidget
     mSendUtil(NULL),
     mVkbHost(NULL),
     mVisibleIndex(),
-    mVkbopened(false),
     mModelPopulated(false),
     mViewReady(false)
 {
@@ -293,8 +292,8 @@ void MsgConversationView::setContextMenu(MsgConversationViewItem* item, HbMenu* 
     addResendItemToContextMenu(item, contextMenu, sendingState);
     addForwardItemToContextMenu(item, contextMenu, sendingState);
     addDownloadItemToContextMenu(item, contextMenu);
-    addDeleteItemToContextMenu(item, contextMenu, sendingState);
     addSaveItemToContextMenu(item , contextMenu,sendingState);
+    addDeleteItemToContextMenu(item, contextMenu, sendingState);
 }
 
 
@@ -623,16 +622,11 @@ void MsgConversationView::fetchAudio()
 //---------------------------------------------------------------
 void MsgConversationView::contactsFetched(const QVariant& value)
 {
-    CntServicesContactList contactList = 
-            qVariantValue<CntServicesContactList>(value);
-	int count = contactList.count();
-	if(count > 0)
-    {
-        QVariantList params;
-        params << MsgBaseView::ADD_RECIPIENTS;
-        params << value;
-        launchUniEditor(params);
-    }
+    //switch to editor.
+    QVariantList params;
+    params << MsgBaseView::ADD_RECIPIENTS;
+    params << value;
+    launchUniEditor(params);
 }
 
 //---------------------------------------------------------------
@@ -892,7 +886,7 @@ void MsgConversationView::menuAboutToShow()
 void MsgConversationView::openItem(const QModelIndex & index)
 {
     // Return if invalid index.
-    if (!index.isValid() || mVkbopened)
+    if (!index.isValid())
     {
         return;
     }
@@ -1010,14 +1004,7 @@ void MsgConversationView::openItem(const QModelIndex & index)
         msgIdList << messageId;
         ConversationsEngine::instance()->markMessagesRead(msgIdList);
     }
-    
-    qint32 messageProperty = index.data(MessageProperty).toInt();
 
-    bool canForwardMessage  = true;
-    if (messageType == ConvergedMessage::Mms){
-        canForwardMessage = (messageProperty & EPreviewForward)? true:false;
-    } 
-    
     //switch view
     QVariantList param;
     param << MsgBaseView::UNIVIEWER;  // target view
@@ -1026,14 +1013,6 @@ void MsgConversationView::openItem(const QModelIndex & index)
     param << contactId;
     param << messageId;
     param << mMessageModel->rowCount();
-    if (canForwardMessage == true)
-    {
-      param << 1;
-    }
-    else
-   	{
-   		param << 0;
-   	}
     emit switchView(param);
 }
 
@@ -1195,9 +1174,9 @@ void MsgConversationView::handleSmsCharLimitReached()
 //---------------------------------------------------------------
 void MsgConversationView::vkbOpened()
 {
-    mVkbopened = true;
-    
     emit vkbOpened(true);
+    
+    scrollToBottom();
     
     QRectF appRect = mVkbHost->applicationArea();    
     qreal spacing = 0.0;
@@ -1209,10 +1188,10 @@ void MsgConversationView::vkbOpened()
         }
     
     this->setMaximumHeight(appRect.height()- cardHeight - spacing);
+    mConversationList->adjustSize();
     
     disconnect(mVkbHost,SIGNAL(keypadOpened()),this,SLOT(vkbOpened()));
-    
-    scrollToBottom();
+
 }
 	  
 //---------------------------------------------------------------
@@ -1221,14 +1200,14 @@ void MsgConversationView::vkbOpened()
 //---------------------------------------------------------------
 void MsgConversationView::vkbClosed()
 {
-    mVkbopened = false;
-    
     emit vkbOpened(false);
     
-    this->setMaximumHeight(-1);
-    connect(mVkbHost,SIGNAL(keypadOpened()),this,SLOT(vkbOpened()));
-    
     scrollToBottom();
+    
+    this->setMaximumHeight(-1);
+    mConversationList->adjustSize();    
+    
+    connect(mVkbHost,SIGNAL(keypadOpened()),this,SLOT(vkbOpened()));
 }
 
 //---------------------------------------------------------------
@@ -1489,27 +1468,21 @@ bool MsgConversationView::isSharedMessage(qint32 messageId)
 {
     bool shared = false;
 
-    UniEditorPluginLoader* pluginLoader = new UniEditorPluginLoader();
+    UniDataModelLoader* pluginLoader = new UniDataModelLoader();
     
-    UniEditorPluginInterface* pluginInterface =
-        pluginLoader->getUniEditorPlugin(ConvergedMessage::Mms);
+    UniDataModelPluginInterface* pluginInterface =
+        pluginLoader->getDataModelPlugin(ConvergedMessage::Mms);
+    
+    CMsvSession* session = pluginInterface->session();
 
-    ConvergedMessage* msg = pluginInterface->convertFrom(messageId);    
-    if(msg)
+    TMsvEntry entry; 
+    TMsvId service;
+    session->GetEntry(messageId, service, entry);
+    
+    if(entry.MultipleRecipients())
     {
-        int count = 0;
-        count += msg->toAddressList().count();
-        count += msg->ccAddressList().count();
-        count += msg->bccAddressList().count();
-
-        if(count > 1)
-        {
-            shared = true;
-        }
-        
-        delete msg;
+        shared = true;
     }
-
     delete pluginLoader;    
 
     return shared;
