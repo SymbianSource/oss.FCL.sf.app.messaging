@@ -6449,7 +6449,7 @@ void CImEmailOperation::AppendHtmlAttachmentL()
 				// def070915 - propagated fix
 				attachment->SetId(iHtmlId);
 				CleanupStack::Pop(attachment);
-				iAttachmentInfoList.Append(attachment);
+				iAttachmentInfoList.AppendL(attachment);
 				++iTotalAttachments;
 				iPartList=iPartList|KMsvMessagePartAttachments;
 				}

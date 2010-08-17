@@ -588,6 +588,7 @@ void CSmsOutboxSend::MoveEntryL()
 			iEntry.SetConnected(EFalse);
 			iEntry.SetFailed(EFalse);
 			iEntry.SetSendingState(KMsvSendStateSent);
+			iEntry.iDate.UniversalTime();
 
 			//Only update the message if it has changed
  			if (!(iEntry == iServerEntry.Entry()))

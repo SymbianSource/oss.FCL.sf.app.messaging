@@ -687,6 +687,7 @@ EXPORT_C void CMmsSettings::CopyL(const CMmsSettings& aMmsSettings)
 	iApplicationId 			= aMmsSettings.iApplicationId;
 	
 	delete iAddress;
+    iAddress = NULL;
 	iAddress	=	aMmsSettings.Address().AllocL();
 	
 	iCreationMode 			= aMmsSettings.iCreationMode;
@@ -695,14 +696,14 @@ EXPORT_C void CMmsSettings::CopyL(const CMmsSettings& aMmsSettings)
 	iProxy.Reset();
 	for(TInt loop=0; loop < count; ++loop)
 		{
-		iProxy.Append(aMmsSettings.GetProxy(loop));
+		iProxy.AppendL(aMmsSettings.GetProxy(loop));
 		}
 
 	count = aMmsSettings.NapIdCount();
 	iNapId.Reset();
 	for(TInt loop=0; loop < count; ++loop)
 		{
-		iNapId.Append(aMmsSettings.GetNapId(loop));
+		iNapId.AppendL(aMmsSettings.GetNapId(loop));
 		}
 
 	iAutomaticDownloadOptions = aMmsSettings.iAutomaticDownloadOptions;

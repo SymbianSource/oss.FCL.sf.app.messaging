@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2000-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -152,7 +152,8 @@ void CSmsSend::OpenEntryL(const TMsvId aMsvId)
 	iEntry.SetFailed(EFalse);
 	iEntry.SetSendingState(KMsvSendStateSending);
 	iEntry.iError = KErrNone;
-
+	iEntry.iDate.UniversalTime();
+	
 	ChangeEntryL(iEntry);
 	}
 
