@@ -49,6 +49,10 @@ class CWaitingObserver:
         virtual ~CWaitingObserver();
         
         TInt GetMsgCount(const TIndicatorMessageType aMsgType);
+		/**
+         * Check the KMuiuSupressAllNotificationConfiguration value
+         */        
+        TBool CheckSupressNotificationSettingL();
                 
     public: // From CActive
     

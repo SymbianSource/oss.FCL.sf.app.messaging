@@ -631,3 +631,9 @@
 //d:queued when the phone is outside coverage area
 //l:list_setting_pane_t1
 #define qtn_mce_settings_sms_queuing		"Message queuing"
+
+//d:REQ:417-48417 Message forward with sender info
+//l:list_setting_pane_t1
+//r:9.2
+#define qtn_mce_setting_sms_forward       "Forward with sender info"
+// End REQ:417-48417

@@ -190,13 +190,15 @@ void CMceSettingsGSPluginContainer::UpdateSettingItemsL()
 
     TUid uid;
     uid.iUid = KMceSettingsCBSUid;
+	if(iCbs)
+	{
+    	HBufC* text = StringLoader::LoadL( R_MCEUI_CBS_SETTINGS_TEXT, iEikonEnv );
+    	TUidNameInfo cbsSettings( uid, *text );
+    	delete text;
+    	iMsgTypesSettings->AppendL( cbsSettings );
+	}
 
-    HBufC* text = StringLoader::LoadL( R_MCEUI_CBS_SETTINGS_TEXT, iEikonEnv );
-    TUidNameInfo cbsSettings( uid, *text );
-    delete text;
-    iMsgTypesSettings->AppendL( cbsSettings );
-
-    text = StringLoader::LoadL( R_MCEUI_GENERAL_SETTINGS_TEXT, iEikonEnv );
+    HBufC* text = StringLoader::LoadL( R_MCEUI_GENERAL_SETTINGS_TEXT, iEikonEnv );
     TUidNameInfo generalSettings( uid, *text );
     delete text;
     iMsgTypesSettings->AppendL( generalSettings );

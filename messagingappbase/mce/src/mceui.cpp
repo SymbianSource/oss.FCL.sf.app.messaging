@@ -22,6 +22,7 @@
 // INCLUDE FILES
 #include <bldvariant.hrh>
 #include <featmgr.h>
+#include <mtmuidef.hrh> 
 
 #include <messagingvariant.hrh>
 #include <centralrepository.h>
@@ -204,7 +205,7 @@ const TUid KMailTechnologyTypeUid = { 0x10001671 };
 _LIT( KMmsMessageDumpDirectory, "C:\\Private\\1000484b\\mmsvar");
 _LIT( KRootPath, "C:\\" );
 const TInt KMmsCodecClientChunkSize = 1024;
-
+#define KMtmUiFunctionSimDialog  ( KMtmFirstFreeMtmUiFunctionId + 1 )
 // LOCAL FUNCTION PROTOTYPES
 
 //  ==================== LOCAL FUNCTIONS ====================
@@ -232,7 +233,8 @@ CMceUi::CMceUi()
     iAnchorId( NULL ),
     iEmailClientIntegration(EFalse),
     iSelectableEmail(EFalse),
-    iEmailFramework(EFalse)
+    iEmailFramework(EFalse),
+    iSimDialogOpen(EFalse)
     {
     iMceUiFlags.SetMceFlag( EMceUiFlagsExitOnMsvMediaAvailableEvent );
     }
@@ -831,6 +833,7 @@ void CMceUi::HandleCommandL( TInt aCommand )
     switch (aCommand)
         {
         case EEikCmdExit:
+            iSimDialogOpen = EFalse;
             Exit();
             break;
         case EMceCmdExit:
@@ -2556,21 +2559,26 @@ CMsvEntrySelection* CMceUi::ConnectedServicesLC()
     const TInt numAccounts=sel->Count();
     for (TInt cc=0; cc<numAccounts; cc++)
         {
-        uid.iUid=sel->At(cc);
-        const TMsvEntry& tentry=iRootEntry->ChildDataL(uid.iUid);
-
-        TRAPD(error, ( uiData=GetMtmUiDataL(tentry.iMtm) ) );
-        if (error==KErrNone && uiData)
-            {
-            TInt rid;
-            if (uiData->QueryCapability(connectCapability, rid)==KErrNone)
-                {
-                if (tentry.Connected())
-                    {
-                    connectedAccounts->AppendL( sel->At(cc) );
-                    }
-                }
-            }
+         uid.iUid=sel->At(cc);
+         const TMsvEntry& tentry=iRootEntry->ChildDataL(uid.iUid);
+         // if cmail  feature is enabled, no need to add cmail account in connectedAccounts.
+         if ( !( iEmailFramework && 
+               ( tentry.iMtm == KSenduiMtmImap4Uid || tentry.iMtm == KSenduiMtmPop3Uid ||
+                 tentry.iMtm.iUid == KUidMsgTypeFsMtmVal )))
+             {
+              TRAPD(error, ( uiData=GetMtmUiDataL(tentry.iMtm) ) );
+              if (error==KErrNone && uiData)
+                 {
+                  TInt rid;
+                  if (uiData->QueryCapability(connectCapability, rid)==KErrNone)
+                     {
+                      if (tentry.Connected())
+                         {
+                          connectedAccounts->AppendL( sel->At(cc) );
+                         }
+                     }
+                 }
+             }  
         }
     CleanupStack::PopAndDestroy( sel );
     MCELOGGER_LEAVEFN("ConnectedServicesLC()");
@@ -4484,6 +4492,10 @@ void CMceUi::HandleMTMFunctionL(const TMsgFunctionInfo& aFunction)
     TBuf8<1> buf;
     if (!(aFunction.iFlags&EMtudAsynchronous))
         {
+        if(aFunction.iFuncId == KMtmUiFunctionSimDialog)
+            {
+            iSimDialogOpen = ETrue;
+            }
         mtmUi.InvokeSyncFunctionL(aFunction.iFuncId, *sel, buf);
         }
     else
@@ -6649,13 +6661,24 @@ void CMceUi::HideOrExit()
 // ----------------------------------------------------
 void CMceUi::ResetAndHide()
     {
-	if (!MceViewActive( EMceMainViewActive ))
+    // To close embedded MsgEditor
+    if ( IsEditorOpen() )
+        {
+        CloseEditorApp();
+        }
+    // Messaging was not exiting properly when "exit" is pressed from settings dialog.
+    // iMceUiFlags.MceFlag( EMceUiFlagsSettingsDialogOpen ) will be true 
+    // when we exit from any of the settings Dialog. 
+    // Closing of Settings dialogs will be taken care by AVKON. 
+	if (!(MceViewActive( EMceMainViewActive) && IsForeground()) || 
+	      iMceUiFlags.MceFlag( EMceUiFlagsSettingsDialogOpen ) || iSimDialogOpen )
         {
         SetCustomControl(1);    // Disable bring-to-foreground on view activation
         TRAP_IGNORE( CAknViewAppUi::CreateActivateViewEventL( \
             KMessagingCentreMainViewUid, \
             TUid::Uid(KMceHideInBackground), \
             KNullDesC8 ) ) ;
+        iSimDialogOpen = EFalse;
         }
     else
         {

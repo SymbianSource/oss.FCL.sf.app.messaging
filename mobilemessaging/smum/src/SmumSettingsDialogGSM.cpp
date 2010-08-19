@@ -150,6 +150,9 @@ void CSmumMainSettingsDialogGSM::ConstructL()
     // Prepare FeatureManager, read values to members and uninitialize FeatureManager
     FeatureManager::InitializeLibL();
     iHelpFeatureSupported = FeatureManager::FeatureSupported( KFeatureIdHelp );
+    // REQ:417-48417 Message forward with sender info
+    iForwardWithSenderSupported = FeatureManager::FeatureSupported(KFeatureIdMsgForwardWithSender);     
+    // End REQ:417-48417
     FeatureManager::UnInitializeLib();
     // Read the supported settings
     iEmailFeatureSupported = SmumUtil::CheckEmailOverSmsSupportL();
@@ -624,6 +627,23 @@ void CSmumMainSettingsDialogGSM::OpeningDialogL()
             SetItem( index, iSettings.ReplyPath() ? ESmumSettingsYes : ESmumSettingsNo );
             }
         }
+    
+    // REQ:417-48417 Message forward with sender info
+       if (!iTypeOfSettings && iForwardWithSenderSupported)
+        {  
+        if ( !iSettingsArrayIndex->Find ( ESmumForwardWithSenderInfoLBI, key, index ) )
+            {
+            TInt forwardWithSenderInfo;
+            if ( iCentralRapository->Get( KForwardWithSenderInfo, forwardWithSenderInfo ) != KErrNone )
+                {
+                //In case of any error,set the default value to 0
+                forwardWithSenderInfo = 0;            
+                }
+            SetItem(index, forwardWithSenderInfo? ESmumSettingsYes : ESmumSettingsNo);
+            }                
+        }
+    // End REQ:417-48417
+
     SMUMLOGGER_LEAVEFN(" CSmumMainSettingsDialogGSM::OpeningDialogL");
     }
 
@@ -766,6 +786,17 @@ void CSmumMainSettingsDialogGSM::ClosingDialogL()
             iSettings.SetReplyPath( Item( index ) == ESmumSettingsYes );
             }
         }
+        
+    // REQ:417-48417 Message forward with sender info
+    if (!iTypeOfSettings && iForwardWithSenderSupported)
+        {        
+        if (!iSettingsArrayIndex->Find ( ESmumForwardWithSenderInfoLBI, key, index ))
+            {        
+            iCentralRapository->Set(KForwardWithSenderInfo , Item( index ) == ESmumSettingsYes);
+            }
+        }        
+    // End REQ:417-48417
+    
     SMUMLOGGER_LEAVEFN(" CSmumMainSettingsDialogGSM::ClosingDialogL");
     }
 
@@ -1091,6 +1122,15 @@ TInt CSmumMainSettingsDialogGSM::GetVariatedSelectionIndex(
 	            }					// ServiceCentreInUseLBI are removed
             }
         }
+    // REQ:417-48417 Message forward with sender info
+    if (!iTypeOfSettings)
+        {
+        if (!iForwardWithSenderSupported && variatedValue >= ESmumForwardWithSenderInfoLBI)
+            {
+            variatedValue ++; // if not support this feature, ESmumForwardWithSenderInfoLBI is removed
+            }
+        }
+    // End REQ:417-48417
     return variatedValue;    
     }
 
@@ -1150,6 +1190,21 @@ void CSmumMainSettingsDialogGSM::DeleteVariatedSettings()
         	 ESmumSendOptServiceCentreInUseLBI : ESmumServiceCentreInUseLBI );
         needToBeCompressed = ETrue;
         }
+        
+    // REQ:417-48417 Message forward with sender info    
+    if (!iForwardWithSenderSupported && !iTypeOfSettings)
+        {
+        TInt index;
+        TKeyArrayFix key(0, ECmpTInt); 
+        TInt found = iSettingsArrayIndex->Find(ESmumForwardWithSenderInfoLBI, key, index);
+        if (0 == found)
+            {
+            DeleteSettingItemFromArrays(index);
+            needToBeCompressed = ETrue;
+            }
+        }
+    // End REQ:417-48417
+        
     if ( needToBeCompressed )
         {
         iSettingsArray->Compress();

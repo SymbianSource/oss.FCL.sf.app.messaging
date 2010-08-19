@@ -415,11 +415,9 @@ void CImRecvConvert::ConstructL(RFs& anFs)
 	iStore8BitData = reader.ReadInt8();
 	CleanupStack::PopAndDestroy(buf);
 	
-	//read iStorePlainBodyText flag for writing bodytext chunk bu chunk.
-	buf = resFile.AllocReadLC( STORE_PLAIN_BODY_TEXT );
-	reader.SetBuffer(buf);
-	iStorePlainBodyText = reader.ReadInt8();
-	CleanupStack::PopAndDestroy(buf);
+	//read iStorePlainBodyText flag for writing bodytext chunk by chunk.
+	//For Pop case, it always writes bodytext chunk by chunk
+	iStorePlainBodyText = 1;
 
 
 	buf = resFile.AllocReadLC( REMOVED_ATTACHMENT_TAG );

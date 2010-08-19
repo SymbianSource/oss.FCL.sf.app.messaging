@@ -425,28 +425,31 @@ EXPORT_C TBool CMsgEditorAppUi::IsNextMessageAvailableL( TBool aForward )
         //We should not create iterator here  navi pane iterator
         //will be refered  in  CMsgEditorAppUi
          
-        __ASSERT_DEBUG( iIterator != NULL, Panic( ENullPointer1 ) );
+
         // Next is ETrue if layout is EAknLayoutIdABRW,
         // EFalse if EAknLayoutIdELAF or EAknLayoutIdAPAC
         if ( AknLayoutUtils::LayoutMirrored() )
             {
             aForward = !aForward;
             }
-
-        if ( aForward )
-            {
-            if ( iIterator->NextMessageExists() )
-                {
-                ret = ETrue;
-                }
-            }
-        else
-            {
-            if ( iIterator->PreviousMessageExists() )
-                {
-                ret = ETrue;
-                }
-            }
+		if(iIterator)
+		{
+        	if ( aForward )
+            	{
+            	if ( iIterator->NextMessageExists() )
+                	{
+                	ret = ETrue;
+                	}
+            	}
+        	else
+            	{
+            	if ( iIterator->PreviousMessageExists() )
+                	{
+                	ret = ETrue;
+                	}
+            	}
+		}
+	
         }
         
     return ret;
@@ -466,10 +469,11 @@ EXPORT_C void CMsgEditorAppUi::MessageIndexInFolderL( TInt& aCurrentIndex,
         CMsgEditorDocument* doc = Document();
         //We should not create iterator here, navi pane iterator
         //will be refered  in  CMsgEditorAppUi
-        __ASSERT_DEBUG( iIterator != NULL, Panic( ENullPointer1 ) );
-
-        aCurrentIndex = iIterator->CurrentMessageIndex();
-        aMsgsInFolder = iIterator->MessagesInFolder();
+        if(iIterator)
+            {
+        	aCurrentIndex = iIterator->CurrentMessageIndex();
+        	aMsgsInFolder = iIterator->MessagesInFolder();
+            }
         }
     else
         {

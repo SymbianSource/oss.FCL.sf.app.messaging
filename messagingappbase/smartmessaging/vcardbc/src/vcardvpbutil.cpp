@@ -246,15 +246,25 @@ TBool CVCardVpbUtil::CommitVCardToStoreL()
 MVPbkStoreContact* CVCardVpbUtil::ContactData() const
 	{
 	__ASSERT_DEBUG( iContactsToShow.Count() > 0, Panic( ENoContactImported ) );
+	// If iContactsToShow.Count() is zero, then it is not possible to parse the fields,so it has to return from here..
+	if ( iContactsToShow.Count() == 0 )
+		{
+	    return NULL;
+		}
 	return iContactsToShow[0];
 	}
 
 TBool CVCardVpbUtil::IsContactItemEmpty()
 	{
-	const MVPbkStoreContactFieldCollection& fields = ContactData()->Fields();
+	TBool ret( ETrue );
+	MVPbkStoreContact* storeContact = ContactData();
+	if ( !storeContact )
+		{
+	    return ret;
+		}
+	const MVPbkStoreContactFieldCollection& fields = storeContact->Fields();
     TInt count = fields.FieldCount();
 
-    TBool ret( ETrue );
     while( count )
         {
         __ASSERT_DEBUG( count <= fields.FieldCount() && count > 0,

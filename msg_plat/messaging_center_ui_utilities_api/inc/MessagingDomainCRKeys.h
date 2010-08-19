@@ -56,4 +56,11 @@ const TUint32 KMuiuDLNewVoiceMailFlag   = 4;
 const TUint32 KMuiuDLNewEmailFlag       = 8;
 const TUint32 KMuiuDLInstantMessageFlag = 16;
 const TUint32 KMuiuDLAudioMessageFlag   = 32;
+
+//
+// The field controlling the value that takes the decision to supress 
+// the whole notification/indicator for voice mail
+const TUint32 KMuiuSupressAllNotificationConfiguration = 0x00000004;
+const TUint32 KMuiuNotificationSupressedForVoiceMail = 1;
+
 #endif // MESSAGINGDOMAINCRKEYS_H

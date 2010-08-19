@@ -924,7 +924,7 @@ void CUniObjectsViewDialog::DynInitMenuPaneL( TInt aMenuId,
                         aMenuPane->SetItemDimmed( EMsgViewAttachmentCmdSave, ETrue );
                         showSendMenu = EFalse;
                         }
-                    if ( index != -1 )
+                    if ( index != -1 && !iBusy)
                         {
                         // Catch this leave. If something peculiar coming in msg headers
                         // and atta not natively handled by viewer CanSave might leave.

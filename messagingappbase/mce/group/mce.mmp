@@ -26,7 +26,12 @@ MACRO             RD_HIDE_MEMORY_IN_USE
 
 TARGET          mce.exe
 EPOCSTACKSIZE   0x6000
-EPOCHEAPSIZE    0x1000 0x2000000
+
+// Not allowing emulator to allocation 0x2000000  Maximum head size for messaging, making emulator more stable.
+#ifndef WINSCW
+    EPOCHEAPSIZE    0x1000 0x2000000
+#endif
+
 TARGETTYPE      exe
 UID             0x100039CE 0x100058C5
 

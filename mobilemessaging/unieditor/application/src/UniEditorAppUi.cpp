@@ -141,6 +141,8 @@
 #include <UniEditor.rsg>
 #include <MsgEditorAppUi.rsg>
 
+#include <akndiscreetpopup.h>
+#include <aknsconstants.hrh>
 
 #include "UniSendingSettings.h"
 #include "UniPluginApi.h"
@@ -265,6 +267,8 @@ CUniEditorAppUi::CUniEditorAppUi() :
     iWaitResId( -1 ),
     iOriginalSlide( -1 ),
     iNextFocus( EMsgComponentIdNull ),
+    iPopupChangedMmsBuffer(NULL),
+    iPopupChangedSmsBuffer(NULL),
     iEditorFlags( EShowInfoPopups ),
     iMskResId( R_UNIEDITOR_OPTIONS_CLOSE ),
     iOptimizedFlow(EFalse),
@@ -451,6 +455,18 @@ void CUniEditorAppUi::ConstructL()
 		iLongTapDetector->SetTimeDelayBeforeAnimation( KUniLongTapStartDelay );
 		iLongTapDetector->SetLongTapDelay( KUniLongTapTimeDelay );
 		iTapConsumed = EFalse;
+
+		//Korean Req: 415-5434
+		if ( iEditorFlags & EShowInfoPopups )
+     		{
+	        iPopupNote = CAknInfoPopupNoteController::NewL();
+            iPopupNote->SetTimeDelayBeforeShow( 0 );
+            iPopupNote->SetTimePopupInView( 3000 );
+
+			iPopupSmsSizeAboveLimitBuffer = StringLoader::LoadL( R_UNIEDITOR_POPUP_SMS_SIZE_ABOVE_LIMIT, Document()->SmsSizeWarningBytes(), iCoeEnv );
+			iPopupSmsSizeBelowLimitBuffer = StringLoader::LoadL( R_UNIEDITOR_POPUP_SMS_SIZE_UNDER_LIMIT, Document()->SmsSizeWarningBytes(), iCoeEnv );		
+	    	}
+
     }
 
 
@@ -794,16 +810,8 @@ void CUniEditorAppUi::FinalizeLaunchL()
         
     if ( iEditorFlags & EShowInfoPopups )
         {
-        iPopupNote = CAknInfoPopupNoteController::NewL();
-        iPopupNote->SetTimeDelayBeforeShow( 0 );
-        iPopupNote->SetTimePopupInView( 3000 );
-
         iPopupChangedMmsBuffer = StringLoader::LoadL( R_UNIEDITOR_POPUP_MSG_CHANGED_MMS, iCoeEnv );
-        iPopupChangedSmsBuffer = StringLoader::LoadL( R_UNIEDITOR_POPUP_MSG_CHANGED_SMS, iCoeEnv );
-
-        //Korean Req: 415-5434        
-        iPopupSmsSizeAboveLimitBuffer = StringLoader::LoadL( R_UNIEDITOR_POPUP_SMS_SIZE_ABOVE_LIMIT, Document()->SmsSizeWarningBytes(), iCoeEnv );
-        iPopupSmsSizeBelowLimitBuffer = StringLoader::LoadL( R_UNIEDITOR_POPUP_SMS_SIZE_UNDER_LIMIT, Document()->SmsSizeWarningBytes(), iCoeEnv );
+		iPopupChangedSmsBuffer = StringLoader::LoadL( R_UNIEDITOR_POPUP_MSG_CHANGED_SMS, iCoeEnv );
 
         }
 
@@ -1184,7 +1192,17 @@ void CUniEditorAppUi::MsgLengthToNavipaneL( TBool aForceDraw )
                     {
                     // No absolute maximum characters defined -> Calculate
                     // character maximum using maximum SMS part limit.
-                    maxSmsCharacters = maxSmsParts * lengthMany;
+
+                    if( maxSmsParts > 1 )
+                        {
+                        maxSmsCharacters = maxSmsParts * lengthMany;
+                        }
+                    else
+                        {
+						// for korean variant
+                        maxSmsCharacters = lengthOne;
+                        }
+
                     }
                 CalculateSMSMsgLen(charsLeft,msgsParts);
                 if( model->ObjectList().Count() == 0 &&
@@ -6337,8 +6355,15 @@ void CUniEditorAppUi::DoInsertCompleteL( TUniEditorOperationEvent aEvent )
                 {
                 case EMsgMediaImage:
                     {
-                    // Set focus always first to the image control...
-                    iView->SetFocus( EMsgComponentIdImage );
+                    // Set the focus to Text field so that user will be able to
+					// Type the text when image height is too big
+                    CMsgBodyControl* bodyCtrl = BodyCtrl();
+                    if ( bodyCtrl )
+                        {
+						// Put the cursor at the end of Text.
+                        bodyCtrl->SetCursorPosL( bodyCtrl->Editor().TextLength() );
+                        iView->SetFocus( EMsgComponentIdBody );                           
+                        }
                     break;
                     }
                 case EMsgMediaAudio:
@@ -7876,8 +7901,7 @@ TBool CUniEditorAppUi::IsBodySmsCompatibleL( TBool aInAutoMode /*= ETrue*/ )
                     iEditorFlags |= ESmsSizeWarningNoteShown;
                     if( iPopupNote )
                         {
-                        iPopupNote->SetTextL( iPopupSmsSizeAboveLimitBuffer->Des() );
-                        iPopupNote->ShowInfoPopupNote();
+						ShowDiscreetPopUpL(iPopupSmsSizeAboveLimitBuffer->Des());
                         }
                     }
                 }
@@ -7890,8 +7914,7 @@ TBool CUniEditorAppUi::IsBodySmsCompatibleL( TBool aInAutoMode /*= ETrue*/ )
                     iEditorFlags &= ~ESmsSizeWarningNoteShown;
                     if( iPopupNote )
                         {
-                        iPopupNote->SetTextL( iPopupSmsSizeBelowLimitBuffer->Des() );
-                        iPopupNote->ShowInfoPopupNote();
+                        ShowDiscreetPopUpL(iPopupSmsSizeBelowLimitBuffer->Des());
                         }                
                     }
                 }          
@@ -8589,11 +8612,12 @@ void CUniEditorAppUi::HidePopupNote()
 //
 void CUniEditorAppUi::ShowPopupNoteL( TBool aMms )
     {
-    if( iPopupNote )
+    if( iPopupNote && iPopupChangedMmsBuffer )
         {
-        iPopupNote->SetTextL( aMms? iPopupChangedMmsBuffer->Des():
-                                    iPopupChangedSmsBuffer->Des() );
-        iPopupNote->ShowInfoPopupNote();
+        // additional check  iPopupChangedMmsBuffer is required as iPopupNote
+        // will be intialized in ConstructL but not iPopupChangedMmsBuffer.
+        // This change is done as part of Korean req.
+            ShowDiscreetPopUpL(aMms? iPopupChangedMmsBuffer->Des(): iPopupChangedSmsBuffer->Des());
         }
     }
  
@@ -10025,6 +10049,36 @@ TBool CUniEditorAppUi::IsObjectsPathValidL() const
         }      
     return bCanSave;
     }
+
+// ---------------------------------------------------------
+// CUniEditorAppUi::ShowDiscreetPopUpL
+// Shows the Popup note in ITUT, when message size exceeds or deceeds 
+// a certain limit or it changes from sms to mms and vice versa
+// ---------------------------------------------------------
+//
+void CUniEditorAppUi::ShowDiscreetPopUpL(const TDesC& aMessage)
+	{
+	TInt  bitmapId = KErrNotFound;
+	TInt  maskId = KErrNotFound;
+   
+   // No discreet popup => Uid 0
+   const TUid KDiscreetPopupUidNone =
+	   {
+	   0x0
+	   };
+	
+	CAknDiscreetPopup::ShowGlobalPopupL(aMessage, // 1st text row
+			KNullDesC, // second text row
+			KAknsIIDDefault, // icon skin id
+			KNullDesC, // bitmap file path
+			bitmapId, // bitmap id
+			maskId, // mask id
+			KAknDiscreetPopupDurationLong, // flags
+			0, // command id
+			NULL, // command observer
+			KDiscreetPopupUidNone, // application to be launched
+			KDiscreetPopupUidNone); // view to be activated
+	}
 
 // End of file
 

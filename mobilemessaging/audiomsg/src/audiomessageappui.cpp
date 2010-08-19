@@ -50,6 +50,7 @@
 
 // Common components
 #include <commonphoneparser.h> //Common phone number validity checker
+#include <PhCltTypes.h>                 // PhCltTypes
 #include <CommonUiInternalCRKeys.h>
 #include <DocumentHandler.h>
 #include <featmgr.h>
@@ -1333,7 +1334,15 @@ void CAudioMessageAppUi::DynInitMenuPaneL( TInt aResourceId, CEikMenuPane* aMenu
             break;
         case R_AUDIOMESSAGE_VIEWER_CONTEXT_MENU://call, reply fw, delete
           	{
+          	TPhCltTelephoneNumber  number;          // phoneclient
+          	number.Zero();
           	const TPtrC details = iMtm->Entry().Entry().iDetails;
+          	
+          	if(CommonPhoneParser::IsValidPhoneNumber( 
+          	                  details, CommonPhoneParser::ESMSNumber ))
+                {
+             number = details;
+                }   
             if( (FocusedControlId( ) == EMsgComponentIdFrom) && ( ( iMtm->Sender( ) ).Length() ) )
                 {
                 iFindItemMenu->SetSenderHighlightStatus( ETrue );
@@ -1348,7 +1357,7 @@ void CAudioMessageAppUi::DynInitMenuPaneL( TInt aResourceId, CEikMenuPane* aMenu
         		aMenuPane,
               	EFindItemContextMenuPlaceHolder,
               	TMmsGenUtils::PureAddress( iMtm->Sender() ),
-        		( details.Length() == 0 ), //"Is sender known"
+        		( KErrNotFound == number.Match( details ) ), //"Is sender known"
             	ETrue );
             // no items dimmed for now
           	if ( iMtm->Sender().Length() <= 0 )

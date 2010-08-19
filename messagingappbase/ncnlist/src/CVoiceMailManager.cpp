@@ -26,6 +26,7 @@
 #include  <NcnListInternalCRKeys.h>		// For CR key handling
 #include  <RSSSettings.h>				// For ALS detection
 #include  <startupdomainpskeys.h>
+#include  <MessagingDomainCRKeys.h>
 
 #include "NcnDebug.h"
 #include "NcnCRHandler.h"
@@ -76,7 +77,12 @@ void CVoiceMailManager::ConstructL( )
 	//Clear soft notifications	that might be drawn automatically by avkon
 	//TSW Error TWOK-6PNT26	
 	ClearVoiceMailSoftNotes();
-			
+	//clear Voicemail indicators only when KMuiuSupressAllNotificationConfiguration(VVM) is enabled.
+	if(CheckSupressNotificationSettingL())
+		{	
+     	iModel.MsgWaitingManager().SetIndicator( MNcnMsgWaitingManager::ENcnIndicatorVMLine1, EFalse );
+     	iModel.MsgWaitingManager().SetIndicator( MNcnMsgWaitingManager::ENcnIndicatorVMLine2, EFalse );
+		}
  	//Get SIM change status at the startup. If the SIM will change after
  	//boot-up we get notifed by the Model so no need to subscribe for this key
  	//TSW ID EHCN-6NRAZE
@@ -179,13 +185,16 @@ void CVoiceMailManager::UpdateNoteAndIndicationWithALS( TInt aVoiceMailsInLine1,
     NCN_RDEBUG_INT(_L("CVoiceMailManager : %d voice mails in line 1 (ALS supported)"), aVoiceMailsInLine1 );
     NCN_RDEBUG_INT(_L("CVoiceMailManager : %d voice mails in line 2 (ALS supported)"), aVoiceMailsInLine2 );
     
-    iModel.NcnNotifier().SetNotification( MNcnNotifier::ENcnVoiceMailOnLine1Notification, aVoiceMailsInLine1 );
-    iModel.NcnNotifier().SetNotification( MNcnNotifier::ENcnVoiceMailOnLine2Notification, aVoiceMailsInLine2 );
-    
-    // Indications
-    // SysApp checks ALS support and decides whether to use o_o or O_o (left O full), if ALS supported
-    iModel.MsgWaitingManager().SetIndicator( MNcnMsgWaitingManager::ENcnIndicatorVMLine1, aVoiceMailsInLine1 ? ETrue : EFalse );
-    iModel.MsgWaitingManager().SetIndicator( MNcnMsgWaitingManager::ENcnIndicatorVMLine2, aVoiceMailsInLine2 ? ETrue : EFalse );      
+    if(!CheckSupressNotificationSettingL())
+        {
+        iModel.NcnNotifier().SetNotification( MNcnNotifier::ENcnVoiceMailOnLine1Notification, aVoiceMailsInLine1 );
+        iModel.NcnNotifier().SetNotification( MNcnNotifier::ENcnVoiceMailOnLine2Notification, aVoiceMailsInLine2 );
+        NCN_RDEBUG( _L("CVoiceMailManager: UpdateNoteAndIndicationWithALS With VVM off") );
+        // Indications
+        // SysApp checks ALS support and decides whether to use o_o or O_o (left O full), if ALS supported
+        iModel.MsgWaitingManager().SetIndicator( MNcnMsgWaitingManager::ENcnIndicatorVMLine1, aVoiceMailsInLine1 ? ETrue : EFalse );
+        iModel.MsgWaitingManager().SetIndicator( MNcnMsgWaitingManager::ENcnIndicatorVMLine2, aVoiceMailsInLine2 ? ETrue : EFalse );
+        }
     }
             
 // ---------------------------------------------------------
@@ -243,12 +252,16 @@ void CVoiceMailManager::UpdateVMNotifications()
 		{
 		NCN_RDEBUG_INT(_L("CVoiceMailManager : %d voice mails in line 1 (ALS not supported)"), voiceMailsInLine1 );
 		
-		//Soft notification. The SN must not contain any reference to line numbers
-		iModel.NcnNotifier().SetNotification( MNcnNotifier::ENcnVoiceMailNotification, voiceMailsInLine1 );	
-
-		// SysApp checks ALS support and decides whether to use o_o or O_o (left O full), if ALS supported
-		// ENcnIndicatorVMLine1 is mapped to KDisplayVoicemailActive in CNcnMsgWaitingManager
-		iModel.MsgWaitingManager().SetIndicator( MNcnMsgWaitingManager::ENcnIndicatorVMLine1, ETrue );
+		 if(!CheckSupressNotificationSettingL())
+            {
+			NCN_RDEBUG( _L("CVoiceMailManager:SetIndicator and Notification ALS not supported With VVM off") );
+            //Soft notification. The SN must not contain any reference to line numbers
+            iModel.NcnNotifier().SetNotification( MNcnNotifier::ENcnVoiceMailNotification, voiceMailsInLine1 );	
+    
+            // SysApp checks ALS support and decides whether to use o_o or O_o (left O full), if ALS supported
+            // ENcnIndicatorVMLine1 is mapped to KDisplayVoicemailActive in CNcnMsgWaitingManager
+            iModel.MsgWaitingManager().SetIndicator( MNcnMsgWaitingManager::ENcnIndicatorVMLine1, ETrue );
+            }
 		}
 	else if( iIsALSSupported == TRUE )		
 	    {
@@ -315,4 +328,30 @@ TBool CVoiceMailManager::UpdateALSStatus()
 		return EFalse;		
 		}
 	}
+
+// -------------------------------------------------------------------
+// Check the KMuiuSupressAllNotificationConfiguration value
+// -------------------------------------------------------------------
+//
+TBool CVoiceMailManager::CheckSupressNotificationSettingL()
+{
+    TBool result = EFalse; 
+    TInt value = 0;
+    CRepository* repository = NULL;
+   
+   TRAPD( err, repository = CRepository::NewL( KCRUidMuiuMessagingConfiguration ) );
+   if( err == KErrNone && repository != NULL )
+       {
+       CleanupStack::PushL( repository ); 
+       err = repository->Get( KMuiuSupressAllNotificationConfiguration, value );
+       
+       if(err == KErrNone && (value & KMuiuNotificationSupressedForVoiceMail ))
+           {
+           result = ETrue;
+           }
+        }  
+       NCN_RDEBUG_INT( _L("CNcnNotifier::CheckSupressNotificationSetting() -  result: %d"), result );
+       CleanupStack::PopAndDestroy( repository );
+       return result;
+}
 //  End of File

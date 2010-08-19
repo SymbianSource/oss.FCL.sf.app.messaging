@@ -763,6 +763,17 @@ void CMsgSmsViewerAppUi::SmsBasedMsgHandlingL(
                 EMsgHeader );
             // take the number
             iNumber = iSmsHeader->FromAddress();
+            if ( !iFlags.iIsEmailMessage )
+                {
+                iFlags.iValidSenderNumber = CommonPhoneParser::IsValidPhoneNumber(
+                    iNumber, CommonPhoneParser::ESMSNumber );
+                }
+            else
+                {
+                iFlags.iValidSenderNumber =
+                    MsvUiServiceUtilities::IsValidEmailAddressL(
+                        iRecipientstring );
+                }
             break;
         default:
 #if defined ( _DEBUG )
@@ -884,6 +895,7 @@ void CMsgSmsViewerAppUi::DynInitMenuPaneL(
             {
             // Prepare FindItem
             iFindItemMenu = CFindItemMenu::NewL( EFindItemMenuPlaceHolder );
+            iFindItemMenu->SetCallSubMenuVisibility ( EFalse ); // Click-To-Call
             iFindItemMenu->AttachItemFinderMenuL( R_SMSV_OPTIONSMENUPANE );
             }
         }
@@ -3118,6 +3130,17 @@ void CMsgSmsViewerAppUi::QuickSmsMsgNaviHandlingL( CMsvStore* aStore )
               }            
             // take the number
             iNumber = iSmsHeader->FromAddress();
+            if ( !iFlags.iIsEmailMessage )
+                {
+                iFlags.iValidSenderNumber = CommonPhoneParser::IsValidPhoneNumber(
+                    iNumber, CommonPhoneParser::ESMSNumber );
+                }
+            else
+                {
+                iFlags.iValidSenderNumber =
+                    MsvUiServiceUtilities::IsValidEmailAddressL(
+                        iRecipientstring );
+                }
             break;
         default:
 #if defined ( _DEBUG )

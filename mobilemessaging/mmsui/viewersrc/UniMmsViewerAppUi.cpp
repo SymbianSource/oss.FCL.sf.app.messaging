@@ -1105,6 +1105,7 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
     if ( !iFindItemMenu )
         {
         iFindItemMenu = CFindItemMenu::NewL( EFindItemMenuPlaceHolder );
+        iFindItemMenu->SetCallSubMenuVisibility ( EFalse ); // Click-To-Call
         if ( iHeader->SenderType( ) == EMuiuAddressTypeEmail )
             {
             // Set sender type to find menu

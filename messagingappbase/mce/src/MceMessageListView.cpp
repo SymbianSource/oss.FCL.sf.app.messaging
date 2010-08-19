@@ -92,8 +92,11 @@ const TInt KMSKPosition = 3;
 const TUid KMailTechnologyTypeUid = { 0x10001671 };
 
 // These are for opening the viewer in inbox. 
-// We need to wait possible opened editor to be closed before opening received message.
-const TInt KMceLaunchViewerStartTime = 1; // try to open viewer immediately
+// try to open viewer immediately if there is no other viewer is open
+const TInt KMceLaunchViewerStartTime = 1; 
+//0.3 sec delay is taken to ensure previously launched viewer is closed as to avoid the crashes and KErrCancel/KErrInUse errors due to launching of new viewer when currently running 
+//viewer is still in the process of exiting
+const TInt KMceLaunchViewerStartTimeWhenEditorOpen = 300000; 
 const TInt KMceLaunchViewerRetryTime = 500000; // wait 0.5 secs for the next trial
 const TInt KMceLaunchViewerRetryCounter = 20; // so editors have approx 10 secs to save...
 
@@ -2453,6 +2456,12 @@ TBool CMceMessageListView::IsFolderNameUsedL(const TDesC& aName, TMsvId aId /* =
 // ----------------------------------------------------
 TBool CMceMessageListView::FindUnreadMessageAndOpenItL( const TMsvId aId )
     {
+    TInt launchViewerStartTime = KMceLaunchViewerStartTime;
+    if(iMceUi->IsEditorOpen())
+        {
+        launchViewerStartTime = KMceLaunchViewerStartTimeWhenEditorOpen;
+        }
+    
 // TODO: how to simplify this ?
     TMsvId firstUnreadMessageId = KErrNotFound;
     TBool oneUnreadMessage = EFalse;
@@ -2504,7 +2513,7 @@ TBool CMceMessageListView::FindUnreadMessageAndOpenItL( const TMsvId aId )
                 iLocalScreenClearer = NULL;
                 iLocalScreenClearer = CAknLocalScreenClearer::NewL( EFalse );
                 MCELOGGER_WRITE("FindUnreadMessageAndOpenItL: start viewer launcher");
-                const TTimeIntervalMicroSeconds32 startTimeInterval = KMceLaunchViewerStartTime;
+                TTimeIntervalMicroSeconds32 startTimeInterval = launchViewerStartTime;
                 const TTimeIntervalMicroSeconds32 retryTimeInterval = KMceLaunchViewerRetryTime;
                 iLaunchViewerCounter = 0;
                 iMessageViewerLauncher->Start( 

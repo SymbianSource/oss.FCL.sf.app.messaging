@@ -360,12 +360,15 @@ void CMceSettingsDialog::LoadAllMtmsL()
     TUid uid;
     uid.iUid = KMceSettingsCBSUid;
 
-    HBufC* text = StringLoader::LoadL( R_MCE_CBS_SETTINGS_TEXT, iEikonEnv );
-    TUidNameInfo cbsSettings( uid, *text );
-    delete text;
-    iMsgTypesSettings->AppendL( cbsSettings );
+	if(iCbs)
+	{
+    	HBufC* text = StringLoader::LoadL( R_MCE_CBS_SETTINGS_TEXT, iEikonEnv );
+    	TUidNameInfo cbsSettings( uid, *text );
+    	delete text;
+    	iMsgTypesSettings->AppendL( cbsSettings );
+	}
 
-    text = StringLoader::LoadL( R_MCE_GENERAL_SETTINGS_TEXT, iEikonEnv );
+    HBufC* text = StringLoader::LoadL( R_MCE_GENERAL_SETTINGS_TEXT, iEikonEnv );
     TUidNameInfo generalSettings( uid, *text );
     delete text;
     iMsgTypesSettings->AppendL( generalSettings );

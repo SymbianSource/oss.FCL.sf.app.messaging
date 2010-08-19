@@ -18,6 +18,7 @@
 
 
 #include <etelmm.h>
+#include <MessagingDomainCRKeys.h>
 #include "MsgWaitingObserver.h"
 #include "msgindicatorpluginlog.h"
 #include "msgindicatorpluginimplementation.h"
@@ -169,19 +170,21 @@ void CWaitingObserver::UpdateIndicatorStatusL()
     MSGPLUGINLOGGER_WRITE_FORMAT( "::UpdateIndicatorStatus: Fax count %d", iMsgWaiting.iFaxMsgs );
 
     iMsgWaiting = iMsgWaitingPckg();
-
-    if(iMsgWaiting.iDisplayStatus & RMobilePhone::KDisplayVoicemailActive)
+    if(!CheckSupressNotificationSettingL())
         {
-        if ( !iIndicatorPlugin.IsALSSupported() )
-            {
-            MSGPLUGINLOGGER_WRITE( "iIndicatorPlugin.UpdateTextL( EAknIndicatorVoiceMailWaiting )");
-            iIndicatorPlugin.UpdateL( EAknIndicatorVoiceMailWaiting );
-            }
-        else
-            {
-            MSGPLUGINLOGGER_WRITE( "iIndicatorPlugin.UpdateTextL( EAknIndicatorVoiceMailWaitingOnLine1 )");
-            iIndicatorPlugin.UpdateL( EAknIndicatorVoiceMailWaitingOnLine1 );
-            }
+    	if(iMsgWaiting.iDisplayStatus & RMobilePhone::KDisplayVoicemailActive)
+        	{
+        	if ( !iIndicatorPlugin.IsALSSupported() )
+            	{
+            	MSGPLUGINLOGGER_WRITE( "iIndicatorPlugin.UpdateTextL( EAknIndicatorVoiceMailWaiting )");
+            	iIndicatorPlugin.UpdateL( EAknIndicatorVoiceMailWaiting );
+            	}
+        	else
+            	{
+            	MSGPLUGINLOGGER_WRITE( "iIndicatorPlugin.UpdateTextL( EAknIndicatorVoiceMailWaitingOnLine1 )");
+            	iIndicatorPlugin.UpdateL( EAknIndicatorVoiceMailWaitingOnLine1 );
+            	}
+        	}
         }
     if ( iMsgWaiting.iDisplayStatus & RMobilePhone::KDisplayAuxVoicemailActive )
         {
@@ -194,5 +197,29 @@ void CWaitingObserver::UpdateIndicatorStatusL()
         iIndicatorPlugin.UpdateL( EAknIndicatorFaxMessage );
         }
 	}	    
-	    
+// -------------------------------------------------------------------
+// Check the KMuiuSupressAllNotificationConfiguration value
+// -------------------------------------------------------------------
+//
+TBool CWaitingObserver::CheckSupressNotificationSettingL()
+{
+    TBool result = EFalse; 
+    TInt value = 0;
+    CRepository* repository = NULL;
+   
+   TRAPD( err, repository = CRepository::NewL( KCRUidMuiuMessagingConfiguration ) );
+   if( err == KErrNone && repository != NULL )
+       {
+       CleanupStack::PushL( repository ); 
+       err = repository->Get( KMuiuSupressAllNotificationConfiguration, value );
+       
+       if(err == KErrNone && (value & KMuiuNotificationSupressedForVoiceMail ))
+           {
+           result = ETrue;
+           }
+        } 
+       MSGPLUGINLOGGER_WRITE_FORMAT( "CWaitingObserver:  SupressNotification %d", result );
+       CleanupStack::PopAndDestroy( repository );
+       return result;
+}	    
 //  End of File

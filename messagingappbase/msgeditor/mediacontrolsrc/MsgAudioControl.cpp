@@ -343,6 +343,11 @@ void CMsgAudioControl::HandleCallback( TInt aError,
             SetState( EMsgAsyncControlStateNoRights );
             break;
             }
+		case KErrInUse: // To handle if head phone is removed from the jack while playing audio.
+            {
+            Stop();
+            break;
+            }
         case KErrNoMemory:
         case KErrNotSupported:
         case KErrCorrupt:

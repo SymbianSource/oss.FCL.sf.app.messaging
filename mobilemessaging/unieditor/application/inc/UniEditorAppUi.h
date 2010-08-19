@@ -1249,6 +1249,12 @@ class CUniEditorAppUi :
          *     Notification from central repository
          */
        	void HandleNotifyInt( TUint32 aId, TInt aNewValue );
+
+       	/**
+       	 *  Shows the Popup note in ITUT, when message size exceeds or deceeds
+       	 *  a certain limit or it changes from sms to mms and vice versa
+       	 */
+       	void ShowDiscreetPopUpL(const TDesC& aMessage);
        	
        	/**
        	 * Is Inserted objects path are valid.
