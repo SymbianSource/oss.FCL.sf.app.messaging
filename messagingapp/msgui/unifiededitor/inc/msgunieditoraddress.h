@@ -62,7 +62,7 @@ public:
      * setter method to set address
      * @param addrlist, list of addresses to be set in address editor
      */
-    void setAddresses(ConvergedMessageAddressList addrlist);
+    void setAddresses(ConvergedMessageAddressList addrlist,bool aSkipCheck=FALSE);
 
     /**
      * Get amount of digits to be used in contact matching

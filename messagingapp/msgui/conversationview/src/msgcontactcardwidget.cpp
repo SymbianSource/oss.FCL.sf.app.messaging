@@ -439,8 +439,16 @@ void MsgContactCardWidget::handleOk(const QVariant& result)
     QList<QContact> matchingContacts = MsgContactHandler::findContactList(mContactNumber);
 
     if (!matchingContacts.isEmpty()) {
-        setAddress(matchingContacts.at(0).displayLabel());
-
+        QString displayLabel = matchingContacts.at(0).displayLabel();
+        if(!displayLabel.isEmpty())
+        {
+            setAddress(displayLabel);
+        }
+        else
+        {
+            setAddress(mContactNumber);
+        }
+        
         QList<QContactAvatar> avatarDetails = matchingContacts.at(0).details<QContactAvatar> ();
 
         if (!avatarDetails.isEmpty()) {

@@ -19,7 +19,7 @@ TEMPLATE = subdirs
 CONFIG += symbian_test
 
 #Sub .pro files
-SUBDIRS += unittest_mmsplugin/unittest_mmsplugin.pro
+SUBDIRS += unittest_mmsplugin
 
 # Platforms
 SYMBIAN_PLATFORMS = DEFAULT

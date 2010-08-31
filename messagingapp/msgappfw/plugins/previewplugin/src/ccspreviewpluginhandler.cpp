@@ -35,6 +35,7 @@
 #include <MsgMediaResolver.h>
 #include <fileprotectionresolver.h>
 #include <MmsEngineInternalCRKeys.h>
+#include <imageconversion.h>
 //CONSTANTS
 //DB-file
 _LIT(KDbFileName, "c:[2002A542]conversations.db");
@@ -61,8 +62,8 @@ _LIT(KSqlInsertBioMsgStmt, "INSERT OR REPLACE INTO conversation_messages ( messa
 
 const TInt KDefaultMaxSize = 300 * 1024;
 //Preview thumbnail size
-const TInt KWidth = 9.5 * 6.7;
-const TInt KHeight = 9.5 * 6.7;
+const TInt KWidth = 24 * 6.7;
+const TInt KHeight = 24 * 6.7;
 
 // NOTE:- DRAFTS ENTRIES ARE NOT HANDLED IN THE PLUGIN
 
@@ -336,15 +337,18 @@ void CCsPreviewPluginHandler::HandleMMSEntryL(const TMsvEntry& aEntry)
         // skip processing this event for the given message
         return;
         }
-
+    
     // start processing message, set flag
     setMsgProcessingState(msgId, EPreviewMsgProcessing);
 
+
+    TRAPD( err,
+            {        
     // update db with message preview data
     RSqlStatement sqlInsertStmt;
     CleanupClosePushL(sqlInsertStmt);
     sqlInsertStmt.PrepareL(iSqlDb, KSqlInsertStmt);
-
+    
     // parse message
     iMmsMtm->SwitchCurrentEntryL(msgId);
     iMmsMtm->LoadMessageL();
@@ -352,7 +356,7 @@ void CCsPreviewPluginHandler::HandleMMSEntryL(const TMsvEntry& aEntry)
     CUniDataModel* iUniDataModel = CUniDataModel::NewL(ifsSession, *iMmsMtm);
     CleanupStack::PushL(iUniDataModel);
     iUniDataModel->RestoreL(*this, ETrue);
-
+    
     //msg property
     TInt msgProperty = 0;
     if (iUniDataModel->AttachmentList().Count() > 0)
@@ -499,6 +503,12 @@ void CCsPreviewPluginHandler::HandleMMSEntryL(const TMsvEntry& aEntry)
 
     //cleanup
     CleanupStack::PopAndDestroy(2, &sqlInsertStmt);
+            }); //TRAP
+    
+    if( err != KErrNone )
+        {
+        setMsgProcessingState(msgId, EPreviewMsgNotProcessed);
+        }
 
     PRINT ( _L("Enter CCsPreviewPluginHandler::HandleMMSEntry end.") );
     }
@@ -897,15 +907,6 @@ void CCsPreviewPluginHandler::BindBodyText(RSqlStatement& sqlStmt,
 void CCsPreviewPluginHandler::GetThumbNailL(TMsvAttachmentId attachmentId,
     TDesC8& mimeType, TMsvId msgId)
 {
-    //Scale the image
-    iThumbnailManager->SetFlagsL(CThumbnailManager::ECropToAspectRatio);
-
-    //TODO replace with hb-param-graphic-size-image-portrait * value of un in pixcels
-    iThumbnailManager->SetThumbnailSizeL(TSize(KWidth, KHeight)); 
-    
-    //optimize for performace
-    iThumbnailManager->SetQualityPreferenceL(
-        CThumbnailManager::EOptimizeForPerformance);
 
     // Create Thumbnail object source representing a path to a file
     HBufC* mimeInfo = HBufC::NewLC(mimeType.Length());
@@ -918,6 +919,53 @@ void CCsPreviewPluginHandler::GetThumbNailL(TMsvAttachmentId attachmentId,
     MMsvAttachmentManager& attachMan = store->AttachmentManagerL();
     RFile file = attachMan.GetAttachmentFileL(attachmentId);
     CleanupClosePushL(file);
+
+    //Find if the image is portrait image (or) landscape image
+    CImageDecoder *decoder =  CImageDecoder::FileNewL(file,mimeType,ContentAccess::EUnknown);
+    CleanupStack::PushL(decoder);
+    TSize size(0,0);
+       
+    TFrameInfo info = decoder->FrameInfo();
+    
+    size = info.iOverallSizeInPixels;
+    
+    CleanupStack::PopAndDestroy(decoder);
+   
+    TReal32 newLength = 0;
+    
+    if(size.iWidth >= size.iHeight)
+    {
+        //TODO replace with hb-param-graphic-size-image-portrait * value of un in pixcels
+        if(size.iWidth < KWidth)
+        {
+            iThumbnailManager->SetThumbnailSizeL(size);    
+        }
+        else
+        {
+            newLength = (KWidth * size.iHeight) /size.iWidth;
+            iThumbnailManager->SetThumbnailSizeL(TSize(KWidth, newLength));
+        }
+    }
+    else
+    {        
+        //TODO replace with hb-param-graphic-size-image-portrait * value of un in pixcels
+        if(size.iHeight < KHeight)
+        {
+            iThumbnailManager->SetThumbnailSizeL(size);    
+        }
+        else
+        {
+            newLength = (KHeight * size.iWidth) / size.iHeight;
+            iThumbnailManager->SetThumbnailSizeL(TSize(newLength, KHeight));    
+        }
+    }
+
+    //Scale the image
+    iThumbnailManager->SetFlagsL(CThumbnailManager::ECropToAspectRatio);
+
+    //optimize for performace
+    iThumbnailManager->SetQualityPreferenceL(
+        CThumbnailManager::EOptimizeForQuality);
 
     CThumbnailObjectSource* source = CThumbnailObjectSource::NewLC(
         (RFile64&) file, mimeInfo->Des());

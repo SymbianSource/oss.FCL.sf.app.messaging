@@ -22,6 +22,7 @@ DEPENDPATH += . src
 HEADERS += $$PUBLIC_HEADERS
 INCLUDEPATH += . inc ../../../inc 
 INCLUDEPATH += ../../msgsettings/msginit/inc
+INCLUDEPATH += ../msgerrorwatcher/inc
 INCLUDEPATH += ../inc
 INCLUDEPATH += $$APP_LAYER_INCLUDEPATH
 INCLUDEPATH += $$MW_LAYER_INCLUDEPATH
@@ -66,12 +67,13 @@ LIBS += -lcsserverclientapi \
         -lQtContacts \
         -lQtVersit \
         -lunidatamodelloader \
-	-lxqsettingsmanager \
+	    -lxqsettingsmanager \
         -apgrfx.lib \
         -lxqutils \
         -lws32 \
         -lapgrfx \
-	-lxqsystemtoneservice \
-	-lgsmu \
-	-lssmcmn
+	    -lxqsystemtoneservice \
+        -lmsgerrorwatcher \
+	    -lgsmu \
+	    -lssmcmn
         

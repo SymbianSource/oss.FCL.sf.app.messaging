@@ -776,4 +776,40 @@ void MsgUnifiedEditorBody::setFocus()
 {
     mTextEdit->setFocus(Qt::MouseFocusReason);
 }
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorBody :: removeMediaContent
+// @see header file
+//---------------------------------------------------------------
+void MsgUnifiedEditorBody::removeMediaContent(QString fileName)
+{
+    if(!(mImageFile.compare(fileName))) //remove image
+    {
+        mImageFile.clear();
+        if(mPixmapItem)
+        {
+            mPixmapItem->setParent(NULL);
+            delete mPixmapItem;
+            mPixmapItem = NULL;
+        }
+        setImage(false);
+        mImageSize = 0;
+    }
+    else if(!(mAudioFile.compare(fileName)))//remove audio item
+    {
+        mAudioFile.clear();
+        if(mAudioItem)
+        {
+            mAudioItem->setParent(NULL);
+            delete mAudioItem;
+            mAudioItem = NULL;
+        }
+        setAudio(false);
+        mAudioSize = 0;
+    }
+
+    this->repolish();
+
+    emit contentChanged();
+}
 // EOF

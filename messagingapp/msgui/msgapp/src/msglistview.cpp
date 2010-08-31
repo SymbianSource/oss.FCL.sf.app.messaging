@@ -55,6 +55,7 @@ const QString SORT_ICON("qtg_mono_sort");
 //Localized constants
 
 #define LOC_DIALOG_DELETE_CONVERSATION hbTrId("txt_messaging_dialog_delete_conversation")
+#define LOC_DIALOG_UNABLE_TO_DELETE_CONVERSATION hbTrId("txt_messaging_dialog_unable_to_delete_conversation")
 
 //itemspecific menu
 #define LOC_OPEN hbTrId("txt_common_menu_open")
@@ -225,10 +226,28 @@ void MsgListView::deleteItem()
 #ifdef _DEBUG_TRACES_
     qDebug() << "Inside MsgListView::deleteItem";
 #endif
-    //confirmation dialog.
-    HbMessageBox::question(LOC_DIALOG_DELETE_CONVERSATION,
-                           this,SLOT(onDialogDeleteMsg(HbAction*)),
-                           HbMessageBox::Delete | HbMessageBox::Cancel);    
+    QModelIndex index = mMsgList->currentIndex();
+    if (index.isValid())
+    {
+        int sendState = index.data(SendingState).toInt();
+        if(ConvergedMessage::Sending == sendState)
+        {
+            //confirmation dialog.
+            HbMessageBox::information(LOC_DIALOG_UNABLE_TO_DELETE_CONVERSATION,
+                0,0,
+                HbMessageBox::Ok);      
+        }
+        // not in sending state and hence can be deleted.
+        else
+        {
+            //confirmation dialog.
+            HbMessageBox::question(LOC_DIALOG_DELETE_CONVERSATION,
+                this,SLOT(onDialogDeleteMsg(HbAction*)),
+                HbMessageBox::Delete | HbMessageBox::Cancel);       
+        }
+
+    }
+    
 #ifdef _DEBUG_TRACES_	
     qDebug() << " Leaving MsgConversationView::deleteItem";
 #endif

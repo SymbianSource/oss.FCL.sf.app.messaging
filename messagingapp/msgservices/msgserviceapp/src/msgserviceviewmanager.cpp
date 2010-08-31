@@ -693,3 +693,26 @@ QString MsgServiceViewManager::getAnimationFile(QString effectEvent)
 
     return animFile;
     }
+
+//-----------------------------------------------------------------------------
+//MsgServiceViewManager::send
+//@see header
+//-----------------------------------------------------------------------------
+
+void MsgServiceViewManager::send(ConvergedMessage message)
+    {
+    QVariantList param;
+    QByteArray dataArray;
+    QDataStream messageStream(&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+    
+    message.serialize(messageStream);
+    param << dataArray;
+
+    // switch to editor
+    switchToUniEditor(param);
+    
+    XQServiceUtil::toBackground(false);    
+    }
+	
+	
+	

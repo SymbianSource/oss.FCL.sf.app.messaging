@@ -416,5 +416,41 @@ void ConvergedMessage::deserialize(QDataStream &stream)
     mConvergedMessageImpl->deserialize(stream);
     }
 
+//----------------------------------------------------------------
+// ConvergedMessage::setReplyPath
+// @see header
+//----------------------------------------------------------------
+void ConvergedMessage::setReplyPath(bool replypath)
+    {
+    mConvergedMessageImpl->setReplyPath(replypath);
+    }
+
+//----------------------------------------------------------------
+// ConvergedMessage::replyPath
+// @see header
+//----------------------------------------------------------------
+bool ConvergedMessage::replyPath()
+    {
+    return mConvergedMessageImpl->replyPath();
+    }
+
+//----------------------------------------------------------------
+// ConvergedMessage::setOriginatingSC
+// @see header
+//----------------------------------------------------------------
+void ConvergedMessage::setOriginatingSC(const QString& scaddress)
+    {
+    mConvergedMessageImpl->setOriginatingSC(scaddress);
+    }
+
+//----------------------------------------------------------------
+// ConvergedMessage::originatingSC
+// @see header
+//----------------------------------------------------------------
+const QString& ConvergedMessage::originatingSC() const
+    {
+    return mConvergedMessageImpl->originatingSC();
+    }
+
 // eof
 

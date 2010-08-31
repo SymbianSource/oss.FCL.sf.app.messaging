@@ -20,9 +20,7 @@
 // SYSTEM INCLUDES
 #include <QDateTime>
 #include "debugtraces.h"
-#include <QDir>
 #include <QChar>
-#include <QStringBuilder>
 #include <HbTextItem>
 #include <HbIconItem>
 #include <HbIconAnimationManager>
@@ -173,21 +171,7 @@ void MsgConversationViewItem::updateSmsTypeItem(const QModelIndex& index,
     mConversation->drawBubbleFrame();
     mConversation->drawNewItemFrame();
 
-    QDateTime dateTime;
-    dateTime.setTime_t(index.data(TimeStamp).toUInt());
-    QString resendStateNote((index.data(SendingState).toInt()
-                    == ConvergedMessage::Resend) ? LOC_RESEND_AT : "");
-
-    HbExtendedLocale locale = HbExtendedLocale::system();
-    QString date = locale.format(dateTime.date(), DATE_FORMAT);
-    QString time = locale.format(dateTime.time(), TIME_FORMAT);
-
-    if (dateTime.date() == QDateTime::currentDateTime().date()) {
-        mConversation->setTimeStamp(resendStateNote % time);
-    }
-    else {
-        mConversation->setTimeStamp(resendStateNote % date);
-    }
+    mConversation->setTimeStamp(getMsgTimeStamp(index));
 
     if (messageSubType == ConvergedMessage::VCal)
         {
@@ -258,21 +242,7 @@ void MsgConversationViewItem::updateMmsTypeItem(const QModelIndex& index,
     mConversation->drawBubbleFrame();
     mConversation->drawNewItemFrame();
 
-    QDateTime dateTime;
-    dateTime.setTime_t(index.data(TimeStamp).toUInt());
-    QString resendStateNote((index.data(SendingState).toInt()
-            == ConvergedMessage::Resend) ? LOC_RESEND_AT : "");
-
-    HbExtendedLocale locale = HbExtendedLocale::system();
-    QString date = locale.format(dateTime.date(), DATE_FORMAT);
-    QString time = locale.format(dateTime.time(), TIME_FORMAT);
-
-    if (dateTime.date() == QDateTime::currentDateTime().date()) {
-        mConversation->setTimeStamp(resendStateNote % time);
-    }
-    else {
-        mConversation->setTimeStamp(resendStateNote % date);
-    }
+    mConversation->setTimeStamp(getMsgTimeStamp(index));
 
     if (messageType == ConvergedMessage::Mms)
         {
@@ -567,6 +537,35 @@ void MsgConversationViewItem::init()
 
     // Force polish to get all the sub-item properties right.
     polishEvent();
+}
+
+//---------------------------------------------------------------
+// MsgConversationViewItem::getMsgTimeStamp
+// @see header file
+//---------------------------------------------------------------
+QString MsgConversationViewItem::getMsgTimeStamp(const QModelIndex& index)
+{
+    QDateTime dateTime;
+    dateTime.setTime_t(index.data(TimeStamp).toUInt());
+    
+    HbExtendedLocale locale = HbExtendedLocale::system();
+
+    QString timeStampStr;
+    if (dateTime.date() == QDateTime::currentDateTime().date()) {
+        timeStampStr = locale.format(dateTime.time(), TIME_FORMAT);
+    }
+    else {
+        timeStampStr = locale.format(dateTime.date(), DATE_FORMAT);
+    }
+
+    QString msgTimeStamp;
+    if (ConvergedMessage::Resend == index.data(SendingState).toInt()) {
+        msgTimeStamp = LOC_RESEND_AT.arg(timeStampStr);
+    }
+    else {
+        msgTimeStamp = timeStampStr;
+    }
+    return msgTimeStamp;
 }
 
 //---------------------------------------------------------------

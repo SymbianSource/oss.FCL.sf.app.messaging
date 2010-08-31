@@ -60,6 +60,13 @@ public:
 private:
     // Data
 
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgViewUtils;
+#endif
+
 };
 
 #endif // MSGVIEWUTILS_H

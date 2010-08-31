@@ -46,7 +46,6 @@
 #include "msgcontacthandler.h"
 #include <xqconversions.h>
 #include "debugtraces.h"
-#include "UniEditorGenUtils.h"
 
 // Possible values for mms validity period in seconds
 const TInt32 KUniMmsValidityPeriod1h = 3600;
@@ -103,6 +102,7 @@ CUniEditorMmsPluginPrivate::~CUniEditorMmsPluginPrivate()
     {
         delete iSession;
     }
+    delete iGenUtils;
 }
 
 // -----------------------------------------------------------------------------
@@ -113,6 +113,7 @@ CUniEditorMmsPluginPrivate::~CUniEditorMmsPluginPrivate()
 CUniEditorMmsPluginPrivate::CUniEditorMmsPluginPrivate( )
 {
     TRAP_IGNORE(iSession = CMsvSession::OpenSyncL(*this));
+    iGenUtils = new UniEditorGenUtils();
 }
 
 // -----------------------------------------------------------------------------
@@ -664,9 +665,7 @@ void CUniEditorMmsPluginPrivate::MakeDetailsL( TDes& aDetails )
             // Internal data structures always holds the address data in western format.
             // UI is responsible of doing language specific conversions.    
             //MuiuTextUtils::ConvertDigitsTo( addressPtr, EDigitTypeWestern );
-            UniEditorGenUtils* genUtils = new UniEditorGenUtils();
-            genUtils->ConvertDigitsTo( addressPtr, EDigitTypeWestern );
-            delete genUtils;
+            iGenUtils->ConvertDigitsTo( addressPtr, EDigitTypeWestern );
         }
 
         if ( ( aDetails.Length() != 0 ) &&   // Not a first address
@@ -1032,10 +1031,11 @@ void CUniEditorMmsPluginPrivate::convertFromReplyHandlerL(
             {
             QString alias;
             int count;
-            int localId =
-                    MsgContactHandler::resolveContactDisplayName(
-                            addr->address(), alias, count);
-            addr->setAlias(alias);
+            if(-1 != MsgContactHandler::resolveContactDisplayName(
+                            addr->address(), alias, count))
+                {
+                addr->setAlias(alias);
+                }
             }
         }
     }
@@ -1048,67 +1048,16 @@ void CUniEditorMmsPluginPrivate::convertFromReplyHandlerL(
 void CUniEditorMmsPluginPrivate::convertFromReplyAllHandlerL(
         ConvergedMessage* aMessage)
     {
+    ConvergedMessage* tempmsg = new ConvergedMessage();
     // populate all recipients (and sender for received mms)
     TMsvEntry entry = MmsMtmL()->Entry().Entry();
     if( entry.Parent() == KMsvGlobalInBoxIndexEntryIdValue )
         {
-        populateSenderL(*aMessage);
+        populateSenderL(*tempmsg);
         }
-    populateRecipientsL(*aMessage);
-    
-    // resolve to-field contacts
-    ConvergedMessageAddressList addrList = aMessage->toAddressList();
-    int addrCount = addrList.count();
-    for(int i=0; i<addrCount; i++)
-        {
-        ConvergedMessageAddress* addr = addrList.at(i);
-        // resolve contact if alias is empty
-        if(addr->alias().isEmpty())
-            {
-            QString alias;
-            int count;
-            int localId =
-                    MsgContactHandler::resolveContactDisplayName(
-                            addr->address(), alias, count);
-            addr->setAlias(alias);
-            }
-        }
-
-    // resolve cc-field contacts
-    addrList = aMessage->ccAddressList();
-    addrCount = addrList.count();
-    for(int i=0; i<addrCount; i++)
-        {
-        ConvergedMessageAddress* addr = addrList.at(i);
-        // resolve contact if alias is empty
-        if(addr->alias().isEmpty())
-            {
-            QString alias;
-            int count;
-            int localId =
-                    MsgContactHandler::resolveContactDisplayName(
-                            addr->address(), alias, count);
-            addr->setAlias(alias);
-            }
-        }
-
-    // resolve bcc-field contacts
-    addrList = aMessage->bccAddressList();
-    addrCount = addrList.count();
-    for(int i=0; i<addrCount; i++)
-        {
-        ConvergedMessageAddress* addr = addrList.at(i);
-        // resolve contact if alias is empty
-        if(addr->alias().isEmpty())
-            {
-            QString alias;
-            int count;
-            int localId =
-                    MsgContactHandler::resolveContactDisplayName(
-                            addr->address(), alias, count);
-            addr->setAlias(alias);
-            }
-        }
+    populateRecipientsL(*tempmsg);
+    removeOwnNumberForReplyAll(tempmsg, aMessage);
+    delete tempmsg;
 
     // populate the subject field
     QString subject = XQConversions::s60DescToQString(
@@ -1176,4 +1125,178 @@ void CUniEditorMmsPluginPrivate::convertFromDefaultHandlerL(ConvergedMessage* aM
     
     QDEBUG_WRITE("Exit convertFromDefaultHandlerL");
 }
+
+// -----------------------------------------------------------------------------
+// removeOwnNumberForReplyAll
+// @see Header
+// -----------------------------------------------------------------------------
+void CUniEditorMmsPluginPrivate::removeOwnNumberForReplyAll(
+        ConvergedMessage* sourcemsg, 
+        ConvergedMessage* targetmsg)
+{
+    // allocate new memory for trimming the address list
+    // why do we need it? Because ConvergedMessageAddressList is implicitely
+    // shared, and Implicit sharing automatically detaches the object from
+    // a shared block if the object is about to change and the reference count
+    // is greater than one. This is called copy-on-write or value semantics.
+    ConvergedMessageAddressList toAddrList = 
+            copyAddrList(sourcemsg->toAddressList());
+    ConvergedMessageAddressList ccAddrList = 
+            copyAddrList(sourcemsg->ccAddressList());
+    ConvergedMessageAddressList bccAddrList = 
+            copyAddrList(sourcemsg->bccAddressList());
+
+    // start self-address check/remove process. Stop if there's only one
+    // address left in the address-list (to+cc+bcc)
+    QStringList selfAddrs = MsgContactHandler::selfAddresses();
+    int remainingAddr = 
+            toAddrList.count() + ccAddrList.count() + bccAddrList.count();
+    bool runOwnAddrCheck =(remainingAddr>1)?true:false;
+    if(runOwnAddrCheck)
+    {
+        foreach(ConvergedMessageAddress *bccAddress,bccAddrList)
+        {
+            if(isSelfAddress(bccAddress->address(), selfAddrs))
+            {
+                bccAddrList.removeOne(bccAddress);
+                --remainingAddr;
+                if(remainingAddr == 1)
+                {
+                    runOwnAddrCheck = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    if(runOwnAddrCheck)
+    {
+        foreach(ConvergedMessageAddress *ccAddress,ccAddrList)
+        {
+            if(isSelfAddress(ccAddress->address(), selfAddrs))
+            {
+                ccAddrList.removeOne(ccAddress);
+                --remainingAddr;
+                if(remainingAddr == 1)
+                {
+                    runOwnAddrCheck = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    if(runOwnAddrCheck)
+    {
+        foreach(ConvergedMessageAddress *toAddress,toAddrList)
+        {
+            if(isSelfAddress(toAddress->address(), selfAddrs))
+            {
+                toAddrList.removeOne(toAddress);
+                --remainingAddr;
+                if(remainingAddr == 1)
+                {
+                    runOwnAddrCheck = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Run contact-resolution on address list now. This is needed
+    // because we by-pass server and directly feed data in UI
+    resolveContacts(toAddrList);
+    resolveContacts(ccAddrList);
+    resolveContacts(bccAddrList);
+
+    // restore addresses to aMessage
+    targetmsg->addToRecipients(toAddrList);
+    targetmsg->addCcRecipients(ccAddrList);
+    targetmsg->addBccRecipients((bccAddrList));
+}
+
+// -----------------------------------------------------------------------------
+// copyAddrList
+// @see Header
+// -----------------------------------------------------------------------------
+ConvergedMessageAddressList CUniEditorMmsPluginPrivate::copyAddrList(
+        ConvergedMessageAddressList addrList)
+{
+    ConvergedMessageAddressList copyAddrList;
+    int count = addrList.count();
+    for(int i=0; i<count; i++)
+    {
+        ConvergedMessageAddress* addr = new ConvergedMessageAddress;
+        addr->setAddress(addrList.at(i)->address());
+        addr->setAlias(addrList.at(i)->alias());
+        copyAddrList << addr;
+    }
+    return copyAddrList;
+}
+
+// -----------------------------------------------------------------------------
+// resolveContacts
+// @see Header
+// -----------------------------------------------------------------------------
+void CUniEditorMmsPluginPrivate::resolveContacts(
+        ConvergedMessageAddressList addrList)
+{
+    int count = addrList.count();
+    for(int i=0; i<count; i++)
+    {
+        ConvergedMessageAddress* addr = addrList.at(i);
+        // resolve contact if alias is empty
+        if(addr->alias().isEmpty())
+        {
+            QString alias;
+            int count;
+            if(-1 != MsgContactHandler::resolveContactDisplayName(
+                            addr->address(), alias, count))
+            {
+                addr->setAlias(alias);
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// isSelfAddress
+// @see Header
+// -----------------------------------------------------------------------------
+bool CUniEditorMmsPluginPrivate::isSelfAddress(
+        QString address,
+        QStringList selfAddrList)
+{
+    bool ifSelfAddr = false;
+    
+    TRAP_IGNORE(
+    // check if the given address is an email-address
+    HBufC* addr = XQConversions::qStringToS60Desc(address);
+    CleanupStack::PushL(addr);
+
+    if( iGenUtils->IsValidEmailAddress(*addr) )
+    {
+        ifSelfAddr = selfAddrList.contains(address, Qt::CaseInsensitive);
+    }
+    else // address is a phonenumber, use contact matching
+    {
+        foreach(QString selfaddress, selfAddrList)
+        {
+            bool ret = false;
+            HBufC* selfAddr = XQConversions::qStringToS60Desc(selfaddress);
+            CleanupStack::PushL(selfAddr);
+            ret = iGenUtils->MatchPhoneNumberL(*addr,*selfAddr);
+            CleanupStack::PopAndDestroy(selfAddr);
+            if(ret)
+            {
+                ifSelfAddr = true;
+                break;
+            }
+        }
+    }
+    CleanupStack::PopAndDestroy(addr);
+    );
+    return ifSelfAddr;
+}
+
 //  End of File

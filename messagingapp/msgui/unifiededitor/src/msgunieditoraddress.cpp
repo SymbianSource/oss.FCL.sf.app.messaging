@@ -205,7 +205,7 @@ int MsgUnifiedEditorAddress::addressCount()
     return mAddressEdit->addresses().count();
 }
 
-void MsgUnifiedEditorAddress::setAddresses(ConvergedMessageAddressList addrlist)
+void MsgUnifiedEditorAddress::setAddresses(ConvergedMessageAddressList addrlist,bool aSkipCheck)
 {
     // avoid processing if no info available
     if(addrlist.count() == 0)
@@ -243,7 +243,15 @@ void MsgUnifiedEditorAddress::setAddresses(ConvergedMessageAddressList addrlist)
     for(int i = 0; i < count; i++ )
         {
         bool isValid = false;
-        isValid = checkValidAddress(addrlist.at(i)->address());
+        if(!aSkipCheck)
+        {
+            isValid = checkValidAddress(addrlist.at(i)->address());
+        }
+        else
+        {
+            // no need to validate, assume correct
+            isValid = true;
+        }
         if(!isValid)
            {
             invalidCount ++;
@@ -253,7 +261,10 @@ void MsgUnifiedEditorAddress::setAddresses(ConvergedMessageAddressList addrlist)
                 {
                 invalidContacts.append(COMMA_SEPERATOR);
                 }
-            invalidContacts.append(addrlist.at(i)->alias());
+            if(addrlist[i]->alias().isEmpty())
+                invalidContacts.append(addrlist.at(i)->address());
+            else
+                invalidContacts.append(addrlist.at(i)->alias());
            }
        else
            {
@@ -271,12 +282,10 @@ void MsgUnifiedEditorAddress::setAddresses(ConvergedMessageAddressList addrlist)
     if(invalidCount)
         {
         QString invalidStr;
-        (invalidCount == 1)?(invalidStr = QString(LOC_INVALID_RECIPIENT_NOT_ADDED)) :(invalidStr = QString(LOC_INVALID_RECIPIENTS_NOT_ADDED));
-        // append line seperator
-         invalidStr.append("<br>");
-         invalidStr.append(invalidContacts);
-         HbMessageBox::information(invalidStr, 0, 0, HbMessageBox::Ok);
-        }
+        (invalidCount == 1)?(invalidStr = QString(LOC_INVALID_RECIPIENT_NOT_ADDED.arg(invalidContacts))) :(invalidStr = QString(LOC_INVALID_RECIPIENTS_NOT_ADDED.arg(invalidContacts)));
+		HbMessageBox::information(invalidStr, 0, 0, HbMessageBox::Ok);
+    }
+    
 
     // addition operation complete, reset flags
     mAboutToExceedMaxSmsRecipients = false;

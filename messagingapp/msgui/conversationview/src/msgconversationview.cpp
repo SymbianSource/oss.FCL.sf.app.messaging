@@ -18,6 +18,7 @@
 #include "msgconversationview.h"
 
 // SYSTEM INCLUDES
+#include <hbapplication.h>
 #include <HbMenu>
 #include <HbAction>
 #include <HbListView>
@@ -31,6 +32,7 @@
 #include <xqappmgr.h>
 #include <HbMainWindow>
 
+#include <QInputContext>
 #include <QDir>
 #include <QDateTime>
 #include <QGraphicsLinearLayout>
@@ -57,9 +59,9 @@
 #include "ringbc.h"
 #include "mmsconformancecheck.h"
 #include "msgsettingsview.h"
-#include "msgaudiofetcherview.h"
 #include "unieditorpluginloader.h"
 #include "unieditorplugininterface.h"
+#include "msgaudiofetcherdialog.h"
 
 //Item specific menu.
 
@@ -106,6 +108,7 @@ MsgConversationView::MsgConversationView(MsgContactCardWidget *contactCardWidget
     mContactCardWidget(contactCardWidget),
     mSendUtil(NULL),
     mVkbHost(NULL),
+    mDialog(NULL),
     mVisibleIndex(),
     mModelPopulated(false),
     mViewReady(false)
@@ -133,7 +136,8 @@ MsgConversationView::MsgConversationView(MsgContactCardWidget *contactCardWidget
 //---------------------------------------------------------------
 MsgConversationView::~MsgConversationView()
 {
-    
+    //delete the popup dialog
+    delete mDialog;
 }
 //---------------------------------------------------------------
 // MsgConversationView::setupView
@@ -485,6 +489,15 @@ void MsgConversationView::send()
         }
     }
     deactivateInputBlocker();
+
+    // make sure virtual keyboard is closed
+    QInputContext *ic = qApp->inputContext();
+    if (ic) {
+    QEvent *closeEvent = new QEvent(QEvent::CloseSoftwareInputPanel);
+    ic->filterEvent(closeEvent);
+    delete closeEvent;
+    }
+
     if( sendResult == KErrNotFound)
     {
     HbMessageBox::question(LOC_DIALOG_SMS_SETTINGS_INCOMPLETE, this,
@@ -595,25 +608,18 @@ void MsgConversationView::fetchImages()
 //---------------------------------------------------------------
 void MsgConversationView::fetchAudio()
 {
-    // Launch Audio fetcher view
-    QVariantList params;
-    QByteArray dataArray;
-    QDataStream messageStream
-    (&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+    // Launch Audio fetcher dialog
+    if (!mDialog)
+    {
+        mDialog = new MsgAudioFetcherDialog();
+        bool b = connect(mDialog,
+                SIGNAL(audioSelected(QString&)),
+                this,
+                SLOT(onAudioSelected(QString&)));
+    }
 
-    ConvergedMessage message;
-    message.setBodyText(mEditorWidget->content());
-    // add address from contact-card to to-field
-    ConvergedMessageAddress address;
-    address.setAlias(mContactCardWidget->address().at(0)->alias());
-    address.setAddress(mContactCardWidget->address().at(0)->address());
-    message.addToRecipient(address);
-    message.serialize(messageStream);
-
-    params << MsgBaseView::AUDIOFETCHER; // target view
-    params << MsgBaseView::CV; // source view
-    params << dataArray;
-    emit switchView(params);
+    //show the dialog
+    mDialog->show();    
 }
 
 //---------------------------------------------------------------
@@ -841,7 +847,7 @@ void MsgConversationView::launchBtDisplayService(const QModelIndex & index)
 
     args << QVariant(messageId);
     request->setSynchronous(true);
-    
+    request->setEmbedded(true);
     request->setArguments(args);
     request->send();
     delete request;    
@@ -1486,6 +1492,36 @@ bool MsgConversationView::isSharedMessage(qint32 messageId)
     delete pluginLoader;    
 
     return shared;
+}
+
+void MsgConversationView::onAudioSelected(QString& filePath)
+{
+    QVariantList params;
+    QByteArray dataArray;
+    QDataStream messageStream
+    (&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+
+    ConvergedMessage message;
+    message.setBodyText(mEditorWidget->content());
+    // add address from contact-card to to-field
+    ConvergedMessageAddress address;
+    address.setAlias(mContactCardWidget->address().at(0)->alias());
+    address.setAddress(mContactCardWidget->address().at(0)->address());
+    message.addToRecipient(address);
+    
+    //add the attachment as selected from audio picker
+    ConvergedMessageAttachment* attachment =
+                new ConvergedMessageAttachment(filePath);
+    ConvergedMessageAttachmentList attachmentList;
+    attachmentList.append(attachment);
+    message.addAttachments(attachmentList);
+    message.serialize(messageStream);
+
+    params << MsgBaseView::UNIEDITOR; // target view
+    params << MsgBaseView::CV; // source view
+    params << dataArray;
+    params << MsgBaseView::ADD_AUDIO;
+    emit switchView(params);
 }
 
 // EOF

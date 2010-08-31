@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QVariant>
 #include <HbEffect>
+#include <convergedmessage.h>
 
 class QGraphicsItem;
 class QGraphicsPixmapItem;
@@ -83,6 +84,13 @@ public:
      * @param data data to be sent.
      */
     void send(QVariant data);
+	
+    /**
+     * Send message.
+     */
+    void send(ConvergedMessage message);
+	
+	
 
     /**
      * Opens the viewer to view the message.

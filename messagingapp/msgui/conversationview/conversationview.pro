@@ -24,7 +24,6 @@ DEPENDPATH += . \
 
 INCLUDEPATH += .
 INCLUDEPATH += ../../../inc
-INCLUDEPATH += ../msgaudiofetcher/inc
 INCLUDEPATH += ../msguiutils/inc
 INCLUDEPATH += ../../msgutils/unieditorutils/editorgenutils/inc
 INCLUDEPATH += ../appengine/inc

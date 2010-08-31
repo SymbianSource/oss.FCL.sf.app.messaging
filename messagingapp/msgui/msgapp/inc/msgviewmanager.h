@@ -33,7 +33,6 @@ class DraftsListView;
 class MsgSettingsView;
 class HbAction;
 class HbView;
-class MsgAudioFetcherView;
 
 class MsgViewManager: public QObject
 {
@@ -178,11 +177,6 @@ private:
     void populateUniEditorAfterViewReady(const QVariantList& editorData);
     
     /**
-     * Launch Audio fetcher view
-     */
-    void switchToAudioFetcher(const QVariantList& data);
-	
-	/**
 	 * opens unieditor as activity.
 	 * @param activityMsgId activity msg id.
 	 */
@@ -247,7 +241,7 @@ private:
     UnifiedViewer* mUniViewer;
     DraftsListView* mDraftsListView;
     MsgSettingsView* mSettingsView;
-    MsgAudioFetcherView* mAudioFetcherView;
+    
     HbAction* mBackAction;
 
     int mPreviousView;

@@ -41,7 +41,6 @@
 #include "unidatamodelplugininterface.h"
 #include "msgcontacthandler.h"
 #include "debugtraces.h"
-#include "msgaudiofetcherview.h"
 
 // LOCALIZATION
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
@@ -51,7 +50,7 @@ const qint64 NULL_CONVERSATIONID = -1;
 
 MsgViewManager::MsgViewManager(bool serviceRequest, HbMainWindow* mainWindow, QObject* parent,int activityMsgId) :
     QObject(parent), mMainWindow(mainWindow), mUniEditor(0), mListView(0), mConversationView(0),
-        mUniViewer(0), mDraftsListView(0), mSettingsView(0), mAudioFetcherView(0), mBackAction(0),
+        mUniViewer(0), mDraftsListView(0), mSettingsView(0), mBackAction(0),
         mServiceRequest(serviceRequest), mConversationId(-1), mViewServiceRequest(false),mMessageId(-1)
 {
     //creating back action.
@@ -240,20 +239,7 @@ void MsgViewManager::onBackAction()
         param << MsgBaseView::MSGSETTINGS;
         switchView(param);
         break;
-    }
-    case MsgBaseView::AUDIOFETCHER:
-    {
-        // switch back to previous view
-        QVariantList param;
-        param << mPreviousView;
-        param << MsgBaseView::AUDIOFETCHER;
-        if(mPreviousView == MsgBaseView::CV)
-        {
-            param << mConversationId;
-        }
-        switchView(param);
-        break;
-    }
+    }    
     default:
     {
         break;
@@ -306,11 +292,6 @@ void MsgViewManager::switchView(const QVariantList& data)
     case MsgBaseView::MSGSETTINGS:
     {
         switchToMsgSettings(data);
-        break;
-    }
-    case MsgBaseView::AUDIOFETCHER:
-    {
-        switchToAudioFetcher(data);
         break;
     }
     }
@@ -575,13 +556,6 @@ void MsgViewManager::switchToCv(const QVariantList& data)
         HbApplication::quit();
     }
 
-    // delete Audio Fetcher view
-    if(mAudioFetcherView)
-    {
-        appendViewToBeDeleted(mAudioFetcherView);
-        mAudioFetcherView = NULL;
-    }
-
     //delete UniEditor
     if (mUniEditor)
     {
@@ -694,24 +668,14 @@ void MsgViewManager::switchToUniEditor(const QVariantList& data)
      * Editor is tried to open again before exiting the previously
      * opened editor. Multi taping in DLV or Forward.
      */
-    if (mUniEditor && !mAudioFetcherView)
+    if (mUniEditor)
     {
         return;
     }
 
     mCurrentView = MsgBaseView::UNIEDITOR;
-    if(MsgBaseView::AUDIOFETCHER != data.at(1).toInt())
-    {
-        mPreviousView = data.at(1).toInt();
-    }
-
-    // delete Audio Fetcher view
-    if(mAudioFetcherView)
-    {
-        appendViewToBeDeleted(mAudioFetcherView);
-        mAudioFetcherView = NULL;
-    }
-
+    mPreviousView = data.at(1).toInt();
+    
     // delete UniViewer
 	if (mUniViewer )
 	{
@@ -1115,42 +1079,6 @@ void MsgViewManager::onDialogSaveTone(HbAction* action)
 int MsgViewManager::currentView()
     {
     return mCurrentView;
-    }
-
-// ----------------------------------------------------------------------------
-// MsgViewManager::switchToAudioFetcher
-// @see header
-// ----------------------------------------------------------------------------
-void MsgViewManager::switchToAudioFetcher(const QVariantList& data)
-    {
-    /**
-     * Audio Fetcher is tried to open again
-     */
-    if(mAudioFetcherView)
-        {
-        return;
-        }
-
-    //switch to Audio Fetcher view
-    mCurrentView = MsgBaseView::AUDIOFETCHER;
-    mPreviousView = data.at(1).toInt();
-    QVariantList editorData;
-    // i=2 because view manager consumed first two args
-    for (int i = 2; i < data.length(); i++) {
-        editorData << data.at(i);
-    }
-    mAudioFetcherView = new MsgAudioFetcherView(editorData);
-    mAudioFetcherView->setNavigationAction(mBackAction);
-    connect(mAudioFetcherView, SIGNAL(switchView(const QVariantList&)), this,
-            SLOT(switchView(const QVariantList&)));
-
-    if(mPreviousView==MsgBaseView::CV && mConversationView)
-        {
-        mConversationView->setPSCVId(false);
-        }
-
-    mMainWindow->addView(mAudioFetcherView);
-    mMainWindow->setCurrentView(mAudioFetcherView,true,Hb::ViewSwitchSequential);
     }
 
 // ----------------------------------------------------------------------------

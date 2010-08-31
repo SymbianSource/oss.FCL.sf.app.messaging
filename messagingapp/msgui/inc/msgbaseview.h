@@ -45,8 +45,7 @@ class MsgBaseView : public HbView
         UNIEDITOR,
         UNIVIEWER,
         MSGSETTINGS,
-        SERVICE,
-        AUDIOFETCHER
+        SERVICE
         };
     
     /**

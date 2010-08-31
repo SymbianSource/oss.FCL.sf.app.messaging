@@ -382,19 +382,12 @@ MsgEditor::MsgEditor(QGraphicsItem *parent)
 // @see header
 //---------------------------------------------------------------
 void MsgEditor::focusInEvent(QFocusEvent *event)
- {
-    if(event->reason() == Qt::MouseFocusReason)
-    {
-        HbLineEdit::focusInEvent(event);
-        FOCUSITEM->setFocusProxy(this);
-        setCursorVisibility(Hb::TextCursorVisible);
-        emit replyStarted();
-    }
-    else
-    {
-        setCursorVisibility(Hb::TextCursorHidden);
-    }
- }
+	{
+	HbLineEdit::focusInEvent(event);
+    FOCUSITEM->setFocusProxy(this);
+    setCursorVisibility(Hb::TextCursorVisible);
+    emit replyStarted();    
+	}
 
 //---------------------------------------------------------------
 // MsgEditor::focusOutEvent

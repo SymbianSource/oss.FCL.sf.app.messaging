@@ -116,6 +116,12 @@ public:
         return mIsImageResizing;
         }
 
+    /**
+     * remove media content.called when file is not avaialable
+     * @param fileName file name
+     */
+    void removeMediaContent(QString fileName);
+    
 public slots:
     /**
      * Called to insert image content in editor.

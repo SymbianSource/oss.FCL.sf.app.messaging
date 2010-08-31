@@ -329,6 +329,17 @@ void UniEditorSmsPluginPrivate::DoConvertFromL( TMsvId aId,
 
         //Populate message body
         populateMessageBodyL(aMessage,msvEntry);
+
+        // read flag for reply-via-same-smsc usecase
+        bool replyPath = SmsMtmL()->SmsHeader().Submit().ReplyPath();
+        aMessage->setReplyPath(replyPath);
+        if(replyPath)
+        {
+            // save smsc in the message
+            QString scaddress = XQConversions::s60DescToQString(
+                    SmsMtmL()->SmsHeader().Message().ServiceCenterAddress());
+            aMessage->setOriginatingSC(scaddress);
+        }
     }
     else if(aOperation == UniEditorPluginInterface::Forward)
     {
@@ -368,7 +379,7 @@ TMsvId UniEditorSmsPluginPrivate::ConvertToL( ConvergedMessage* message )
                 // set sms data
                 SetSmsDataL( message );
                 // set sms settings
-                SetSmsSettingsL();
+                SetSmsSettingsL( message );
                 // save all changes for the entry
                 SmsMtmL()->SaveMessageL();
         );
@@ -692,7 +703,7 @@ void UniEditorSmsPluginPrivate::CreateAttachmentL(CMsvStore* aStore, const TDesC
 // SetSmsSettingsL
 // @see header
 // -----------------------------------------------------------------------------
-void UniEditorSmsPluginPrivate::SetSmsSettingsL()
+void UniEditorSmsPluginPrivate::SetSmsSettingsL(ConvergedMessage* message)
     {
     CSmsSettings* sendOptions = CSmsSettings::NewL();
     CleanupStack::PushL( sendOptions );
@@ -728,7 +739,7 @@ void UniEditorSmsPluginPrivate::SetSmsSettingsL()
     sendOptions->SetDeliveryReport( defaultSettings->DeliveryReport() );
     sendOptions->SetSmsBearer( defaultSettings->SmsBearer() );
     sendOptions->SetValidityPeriod( defaultSettings->ValidityPeriod() );
-    sendOptions->SetReplyPath( defaultSettings->ReplyPath() );
+    sendOptions->SetReplyPath( message->replyPath() );
 
     if (defaultSettings->CharacterSet()
             == TSmsDataCodingScheme::ESmsAlphabetUCS2)
@@ -744,9 +755,16 @@ void UniEditorSmsPluginPrivate::SetSmsSettingsL()
 
     // Move all the stuff from iSmsHeader::SmsSettings to SmsMtm::SmsHeader::SmsSettings
     SmsMtmL()->SmsHeader( ).SetSmsSettingsL( *sendOptions );
-    //If sc is existant then only set the default service center
-    if(ValidateSCNumberL())
+
+    // if reply-path is present, then lets use it
+    if(message->replyPath())
     {
+    QString scaddress = message->originatingSC();
+    SmsMtmL()->SmsHeader( ).Message( ).
+        SetServiceCenterAddressL( *XQConversions::qStringToS60Desc(scaddress) );
+    }
+    else if(ValidateSCNumberL())
+    {    // Or if default SC is existant then only set the default SC
     SmsMtmL()->SmsHeader( ).Message( ).
         SetServiceCenterAddressL( defaultSettings->GetServiceCenter(defaultSettings->DefaultServiceCenter()).Address() );
     }
@@ -1917,6 +1935,16 @@ void UniEditorSmsPluginPrivate::populateMessageForReplyL(
             ConvergedMessageAddress messageAddress(addr);
             aMessage->addToRecipient(messageAddress);
             }
+        // read flag for reply-via-same-smsc usecase
+        bool replyPath = SmsMtmL()->SmsHeader().Deliver().ReplyPath();
+        aMessage->setReplyPath(replyPath);
+        if(replyPath)
+            {
+            // save smsc in the message
+            QString scaddress = XQConversions::s60DescToQString(
+                    SmsMtmL()->SmsHeader().Deliver().ServiceCenterAddress());
+            aMessage->setOriginatingSC(scaddress);
+            }
         }
     // else, for outgoing message, populate receiver address in To-field
     else if(smsPduType == CSmsPDU::ESmsSubmit)
@@ -1935,10 +1963,11 @@ void UniEditorSmsPluginPrivate::populateMessageForReplyL(
             {
             QString alias;
             int count;
-            int localId =
-                    MsgContactHandler::resolveContactDisplayName(
-                            addr->address(), alias, count);
-            addr->setAlias(alias);
+            if(-1 != MsgContactHandler::resolveContactDisplayName(
+                                        addr->address(), alias, count))
+                {
+                addr->setAlias(alias);
+                }
             }
         }
     }

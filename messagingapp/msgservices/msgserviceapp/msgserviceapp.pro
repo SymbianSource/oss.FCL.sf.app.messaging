@@ -36,15 +36,17 @@ HEADERS += inc/msgviewinterface.h \
 	         inc/msgstorehandler.h \
 	         inc/msgsendinterface.h \
 			 inc/msgshareuiinterface.h \
-			 inc/msgserviceviewmanager.h
+			 inc/msgserviceviewmanager.h \
+		    	 inc/msgurihandlerinterface.h
 			
 SOURCES += src/main.cpp \
            src/msgviewinterface.cpp \
            src/msgservicewindow.cpp \
            src/msgstorehandler.cpp \
            src/msgsendinterface.cpp \
-		   src/msgshareuiinterface.cpp \
-		   src/msgserviceviewmanager.cpp
+	   src/msgshareuiinterface.cpp \
+	   src/msgserviceviewmanager.cpp \
+     	   src/msgurihandlerinterface.cpp
 			
 # Capability
 TARGET.CAPABILITY = ALL -TCB

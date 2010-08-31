@@ -265,67 +265,30 @@ void TestConvergedMessageUtils::cleanupTestCase()
 }
 
 //---------------------------------------------------------------
-// getObject
-// factory method to create objects.
-//---------------------------------------------------------------
-QObject* getObject(QString className)
-{
-    if(className == "TestConvergedMessageUtils" )
-    {
-        return new TestConvergedMessageUtils;
-    }
- 	else
-	{
-		return 0;
-	}
-}
-
-//---------------------------------------------------------------
-// createOutPutDirectory
-// creating o/p directory.
-//---------------------------------------------------------------
-void createOutPutDirectory()
-    {
-    QDir dir;
-    //o/p dir
-    dir.mkdir(OUTPUTDIRECTORY);
-    //tmp dir
-    dir.mkdir(TEMPDIR);
-    // dir inside private folder.
-    dir.mkdir(PRIVATE_DIR);
-    }
-
-//---------------------------------------------------------------
 // main
 // main entry point
 //---------------------------------------------------------------
 int main(int argc, char *argv[])
     { 
-    int ret = -1;
-    QCoreApplication app(argc, argv);    
-    
-    //creating output directory.
-    createOutPutDirectory();
-    
-	QStringList args;
-	QString appName = argv[0];
-	args << appName;
-
-	QString option  = "-o";
-	args << option;
-
-	QString outFile = RESULTFILE;
-	outFile = outFile.arg(appClassName);
-	args << outFile;
-
-	QObject* tc = getObject(appClassName);
-
-	if(tc)
-		{
-		ret =  QTest::qExec(tc, args); 
-		delete tc;
-		}
-    return ret;
+	int ret = -1;
+	QCoreApplication app(argc, argv);
+	QObject* tc = new TestConvergedMessageUtils();
+	
+#ifdef __WINSCW__
+	char *new_argv[3]; 
+	QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log";	
+	QByteArray bytes = str.toAscii();	
+	char arg1[] = "-o";	
+	new_argv[0] = argv[0];	
+	new_argv[1] = arg1;	
+	new_argv[2] = bytes.data();	
+	ret = QTest::qExec(tc, 3, new_argv);
+#else
+	ret = QTest::qExec(tc, argc, argv);	
+#endif
+	
+	delete tc;
+	return ret;
     }
 
 //End of File

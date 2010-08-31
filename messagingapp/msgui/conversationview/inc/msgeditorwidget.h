@@ -234,6 +234,13 @@ private:
      * Indication for sms char limt reached
      */
     bool mSmsCharLimitReached;
+
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgEditorWidget;
+#endif
 };
 
 #endif // MSGEDITORWIDGET_H

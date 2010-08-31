@@ -16,7 +16,7 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += mmstestbed/mmstestbed.pro 
-SUBDIRS += testmmsplugin/testmmsplugin.pro
+SUBDIRS += mmstestbed 
+SUBDIRS += testmmsplugin
 
 CONFIG += ordered

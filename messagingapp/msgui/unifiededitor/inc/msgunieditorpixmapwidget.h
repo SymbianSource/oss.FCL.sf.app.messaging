@@ -89,11 +89,6 @@ private slots:
     void handleRemove(); 
     
     /**
-     * Handles opening of details view.
-     */
-    void viewDetails();
-    
-    /**
      * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture
      * events back to back.  
      */

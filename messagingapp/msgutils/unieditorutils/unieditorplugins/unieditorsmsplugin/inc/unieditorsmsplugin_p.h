@@ -259,7 +259,7 @@ class UniEditorSmsPluginPrivate :public CBase, public MMsvSessionObserver
         /**
          * set/update sms settings 
          */
-        void SetSmsSettingsL();
+        void SetSmsSettingsL(ConvergedMessage* message);
      
         /**
          * set data to the sms

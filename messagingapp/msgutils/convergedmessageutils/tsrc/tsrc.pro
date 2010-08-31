@@ -16,6 +16,6 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += testconvergedmessageutilsapp/testconvergedmessageutilsapp.pro 
+SUBDIRS += testconvergedmessageutilsapp
 
 CONFIG += ordered

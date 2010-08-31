@@ -180,6 +180,14 @@ private:
      */
     void handleVCard(QStandardItem& item, int msgId);
 
+    /*
+     * Get the scaled size from the original image size
+     * @param originalSize, QSize
+     * @param scaledSize, QSize
+     */
+    void getScaledSize(const QSize &originalSize,
+            QSize &scaledSize);
+
 private:
 
     /**

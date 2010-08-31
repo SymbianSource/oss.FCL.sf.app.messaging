@@ -160,8 +160,11 @@ public:
      * Add contact Number for the conversation
      * 
      * @param aContactNumber Contact number
+     * @param aContactId Contact id
      */
-    void AddContactDetailsL(TDesC& aContactNumber);
+    void AddContactDetailsL(
+            TDesC& aContactNumber,
+            TInt32 aContactID);
 
     /**
      * UpdateEntryL

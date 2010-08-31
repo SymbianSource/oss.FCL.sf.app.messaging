@@ -91,7 +91,7 @@ signals:
      */
     void emptyAttachmentContainer();
     
-private slots:
+public slots:
     /**
      * delete attachment from the container
      */

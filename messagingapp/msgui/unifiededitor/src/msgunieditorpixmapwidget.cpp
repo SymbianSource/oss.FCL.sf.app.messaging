@@ -31,7 +31,6 @@
 // LOCAL CONSTANTS
 #define LOC_OPEN    hbTrId("txt_common_menu_open")
 #define LOC_REMOVE  hbTrId("txt_common_menu_remove")
-#define LOC_DETAILS hbTrId("txt_common_menu_details")
 
 const QString IMAGE_MIMETYPE("image");
 
@@ -135,15 +134,6 @@ void MsgUnifiedEditorPixmapWidget::handleRemove()
     emit remove();
 }
 
-//---------------------------------------------------------------
-// MsgUnifiedEditorPixmapWidget::handleSave
-// @see header file
-//---------------------------------------------------------------
-void MsgUnifiedEditorPixmapWidget::viewDetails()
-{
-    
-}
-
 //----------------------------------------------------------------------------
 // MsgUnifiedEditorPixmapWidget::handleShortTap
 // @see header file
@@ -170,7 +160,6 @@ void MsgUnifiedEditorPixmapWidget::handleLongTap(const QPointF &position)
     
     menu->addAction(LOC_OPEN, this, SLOT(handleOpen()));
     menu->addAction(LOC_REMOVE, this, SLOT(handleRemove()));
-    menu->addAction(LOC_DETAILS, this, SLOT(viewDetails()));
     
     menu->setPreferredPos(position);
     menu->show();

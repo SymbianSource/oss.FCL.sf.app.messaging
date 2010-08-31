@@ -33,6 +33,8 @@ class MsgConversationViewItem;
 class HbStaticVkbHost;
 class QGraphicsLinearLayout;
 class HbAction;
+class MsgAudioFetcherDialog;
+
 //Defines
 #define INVALID_MSG_ID -1
 
@@ -337,6 +339,12 @@ private slots:
      */
     bool isSharedMessage(qint32 messageId);
     
+    /** 
+     * This slot is called after sound clip is 
+     * selected from audio fetcher dialog    
+     */
+    void onAudioSelected(QString& filePath);
+    
 signals:
     /**
      * Signal emitted to inform close the conversation view.
@@ -449,6 +457,12 @@ private:
     HbStaticVkbHost* mVkbHost;
     
     /**
+     * Instance of Audio Fetcher Dialog
+     * Need to show when attachment audio selected
+     */
+    MsgAudioFetcherDialog* mDialog;
+    
+    /**
      * variable holding the visible model index
      */
     QModelIndex mVisibleIndex;
@@ -463,6 +477,13 @@ private:
      * Flag is set when 
      */
     bool mViewReady;
+
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgConversationView;
+#endif
 };
 
 #endif // MSG_CONVERSATION_VIEW_H

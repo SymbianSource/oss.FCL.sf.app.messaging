@@ -38,7 +38,8 @@ ConvergedMessageImpl::ConvergedMessageImpl(
             mPriority(ConvergedMessage::Normal), mLocation(
                     ConvergedMessage::Delete), mDirection(
                     ConvergedMessage::Incoming), mSendingState(
-                    ConvergedMessage::Unknown)
+                    ConvergedMessage::Unknown),
+    mOriginatingSC(0)
     {
     mMessageType = messageType;
     mId = new ConvergedMessageId();
@@ -56,11 +57,11 @@ ConvergedMessageImpl::ConvergedMessageImpl(const ConvergedMessageId &id) :
             mPriority(ConvergedMessage::Normal), mLocation(
                     ConvergedMessage::Delete), mDirection(
                     ConvergedMessage::Incoming), mSendingState(
-                    ConvergedMessage::Unknown)
+                    ConvergedMessage::Unknown),
+    mOriginatingSC(0)
     {
     mId = new ConvergedMessageId(id);
     mFromAddress = new ConvergedMessageAddress();
-
     }
 
 //----------------------------------------------------------------
@@ -121,6 +122,7 @@ ConvergedMessageImpl::ConvergedMessageImpl(const ConvergedMessage& msg)
     mLocation = msg.location();
     mDirection = msg.direction();
     mSendingState = msg.sendingState();
+    mOriginatingSC = QString(msg.originatingSC());
     }
 
 //----------------------------------------------------------------
@@ -507,7 +509,6 @@ void ConvergedMessageImpl::addAttachments(
         ConvergedMessageAttachmentList attachmentList)
     {
     mAttachments.append(attachmentList);
-
     }
 
 //----------------------------------------------------------------
@@ -560,6 +561,7 @@ void ConvergedMessageImpl::serialize(QDataStream &stream) const
     stream << mLocation;
     stream << mDirection;
     stream << mSendingState;
+    stream << mOriginatingSC;
     }
 
 //----------------------------------------------------------------
@@ -633,6 +635,52 @@ void ConvergedMessageImpl::deserialize(QDataStream &stream)
     stream >> mLocation;
     stream >> mDirection;
     stream >> mSendingState;
+    stream >> mOriginatingSC;
+    }
+
+//----------------------------------------------------------------
+// ConvergedMessageImpl::setReplyPath
+// @see header
+//----------------------------------------------------------------
+void ConvergedMessageImpl::setReplyPath(bool replypath)
+    {
+    if( replypath )
+        {
+        // set replypath property
+        mProperty |= ConvergedMessage::ReplyPath;
+        }
+    else
+        {
+        // reset replypath property
+        mProperty &= ~ConvergedMessage::ReplyPath;
+        }
+    }
+
+//----------------------------------------------------------------
+// ConvergedMessageImpl::replyPath
+// @see header
+//----------------------------------------------------------------
+bool ConvergedMessageImpl::replyPath()
+    {
+    return mProperty & ConvergedMessage::ReplyPath;
+    }
+
+//----------------------------------------------------------------
+// ConvergedMessageImpl::setOriginatingSC
+// @see header
+//----------------------------------------------------------------
+void ConvergedMessageImpl::setOriginatingSC(const QString& scaddress)
+    {
+    mOriginatingSC = scaddress;
+    }
+    
+//----------------------------------------------------------------
+// ConvergedMessageImpl::originatingSC
+// @see header
+//----------------------------------------------------------------
+const QString& ConvergedMessageImpl::originatingSC() const
+    {
+    return mOriginatingSC;
     }
 
 // eof

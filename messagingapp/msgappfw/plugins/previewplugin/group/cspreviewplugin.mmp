@@ -66,3 +66,4 @@ LIBRARY         unidatamodel.lib
 LIBRARY         charconv.lib
 LIBRARY         centralrepository.lib
 LIBRARY         MsgMedia.lib
+LIBRARY         imageconversion.lib

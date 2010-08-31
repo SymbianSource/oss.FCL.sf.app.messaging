@@ -18,10 +18,14 @@
 #ifndef MSG_UNIFIED_EDITOR_VIEW_H
 #define MSG_UNIFIED_EDITOR_VIEW_H
 
-#ifdef UNIFIEDEDITOR_DLL
-#define UNIFIEDEDITOR_EXPORT Q_DECL_EXPORT
+#ifdef MSGUI_UNIT_TEST
+ #define UNIFIEDEDITOR_EXPORT
 #else
-#define UNIFIEDEDITOR_EXPORT Q_DECL_IMPORT
+ #ifdef UNIFIEDEDITOR_DLL
+  #define UNIFIEDEDITOR_EXPORT Q_DECL_EXPORT
+ #else
+  #define UNIFIEDEDITOR_EXPORT Q_DECL_IMPORT
+ #endif
 #endif
 
 #include "msgbaseview.h"
@@ -42,6 +46,7 @@ class HbListWidgetItem;
 class HbAbstractVkbHost;
 class MsgUnifiedEditorBaseWidget;
 class HbListWidget;
+class MsgAudioFetcherDialog;
 
 class UNIFIEDEDITOR_EXPORT MsgUnifiedEditorView : public MsgBaseView
     {
@@ -100,8 +105,9 @@ private:
      * @param [OUT]msg, converged message to hold editor data
      * @param isSave, flag to indicate that msg needs to be packed
      * for saving to draft or not
+     * @return returns error if something fails
      */
-    void packMessage(ConvergedMessage &msg, bool isSave=false);
+    int packMessage(ConvergedMessage &msg, bool isSave=false);
 
     /**
      * Populate editor with prepopulated msg content
@@ -337,8 +343,21 @@ private slots:
       * This slot is triggered when vkb is about to be closed.
       */
      void vkbAboutToClose();
+     
+     /** 
+      * This slot is called after sound clip is 
+      * selected from audio fetcher dialog    
+      */
+     void onAudioSelected(QString& filePath);
+	 
+	 /**
+      * Check if the reply-path is broken
+      * @return bool, true if reply-path constraints are broken
+      */
+     bool isReplyPathBroken();
     
 private:
+     
     HbAction* mSubjectAction;
     HbAction* mCcBccAction;
     HbAction* mSendAction;
@@ -369,6 +388,29 @@ private:
      */
 	HbAbstractVkbHost* mVkbHost;
 	
+	/**
+	 * Instance of Audio Fetcher Dialog
+	 * Need to show when attachment audio selected
+	 */
+	MsgAudioFetcherDialog* mDialog;
+
+    /**
+     * Originating SC, 
+     * to be used only when reply-path is available
+     */
+    QString mOriginatingSC;
+
+    /**
+     * Originating SME,
+     * to be used only when reply-path is available
+     */
+    QString mOriginatingSME;
+
+    /**
+     * Flag to tell if reply-path is available
+     */
+    bool mReplyPath;	
+
 	friend class MsgUnifiedEditorMonitor;
     };
 

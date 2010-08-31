@@ -283,7 +283,7 @@ ConvergedMessageAddressList UniViewerFeederPrivate::ccAddressList()
     int count;
     for (int i = 0; i < mCcAddressList.count(); ++i) {
         MsgContactHandler::resolveContactDisplayName(
-		mToAddressList.at(i)->address(), alias, count);
+        mCcAddressList.at(i)->address(), alias, count);
         mCcAddressList.at(i)->setAlias(alias);
         alias.clear();
 

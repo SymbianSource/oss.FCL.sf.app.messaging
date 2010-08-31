@@ -26,6 +26,7 @@ class MsgStoreHandler;
 class MsgServiceViewManager;
 class MsgShareUiInterface;
 class MsgSendInterface;
+class MsgUriHandlerInterface;
 
 class MsgServiceWindow : public HbMainWindow
     {
@@ -60,6 +61,12 @@ private:
      * Owned
      */
     MsgShareUiInterface*  mShareUiInterface;
+
+    /**
+     * URI handler interface object
+     * Owned
+     */
+    MsgUriHandlerInterface*  mUriInterface;
     
     /**
      * Message store handler

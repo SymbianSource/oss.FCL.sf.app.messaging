@@ -98,6 +98,10 @@ private:
     int mSelectionStart;
     int mSelectionEnd;
     bool mDefaultBehaviour;
+    
+#ifdef MSGUI_UNIT_TEST
+    friend class TestMsgUnifiedEditorLineEdit;
+#endif
 };
 
 #endif // MSG_UNIFIED_EDITOR_LINEEDIT_H

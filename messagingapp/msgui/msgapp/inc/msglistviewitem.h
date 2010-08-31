@@ -149,6 +149,14 @@ private:
      * To display the presence indication
      */
     HbIconItem* mMsgCommonIndicatorItem;
+
+    /**
+     * Unit Testing
+     */
+    #ifdef MSGUI_UNIT_TEST
+	  friend class TestMsgListViewItem;
+	  
+	#endif
     
     };
 

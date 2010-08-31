@@ -295,9 +295,11 @@ CCsConversation::AddContactDetailsL(
 // ----------------------------------------------------------------------------
 void
 CCsConversation::AddContactDetailsL(
-        TDesC& aContactNumber)
+        TDesC& aContactNumber,
+        TInt32 aContactID)
     {
     iContact->AddPhoneNumberL(aContactNumber);
+    iContact->SetContactId(aContactID);
     }
 
 // ----------------------------------------------------------------------------

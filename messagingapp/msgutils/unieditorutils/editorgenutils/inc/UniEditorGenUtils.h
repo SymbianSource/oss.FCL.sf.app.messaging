@@ -187,6 +187,14 @@ class MUIU_UTILS_EXPORT UniEditorGenUtils :public CBase
          */
         TBool IsValidEmailAddress( const TDesC& aAddress );
         
+        /**
+         * Verifies if the given two numbers are same
+         * @param aFirstNumber, phone number to be matched
+         * @param aSecondNumber, phone number to be matched
+         * @return TBool, true if the numbers match
+         */
+        TBool MatchPhoneNumberL(TDesC& aFirstNumber, TDesC& aSecondNumber);
+        
       private:
           /**
            * get sms character limits from feature manager
@@ -236,6 +244,11 @@ class MUIU_UTILS_EXPORT UniEditorGenUtils :public CBase
            * MMS size limit
            */
           int mMaxMmsSize;
+          
+          /**
+           * The amount of digits to be used in contact matching
+           */
+          int mMatchDigitCount;
     };
 
 

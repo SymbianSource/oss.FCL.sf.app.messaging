@@ -43,15 +43,12 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
 # Input
 HEADERS += msgaudioselectionengine.h \
            msgaudiofetchermodel.h \
-           msgaudiofetcherwidget.h \
-           msgaudiofetcherview.h \
-           msgaudiopreview.h \
-           ../inc/msgbaseview.h
+           ../inc/msgaudiofetcherdialog.h \
+           msgaudiopreview.h
            
 SOURCES += msgaudioselectionengine.cpp \
            msgaudiofetchermodel.cpp \
-           msgaudiofetcherwidget.cpp \
-           msgaudiofetcherview.cpp \
+           msgaudiofetcherdialog.cpp \
            msgaudiopreview.cpp
 
 defBlock = \      
@@ -64,8 +61,7 @@ defBlock = \
 MMP_RULES += defBlock
 
 # Libs
-LIBS += -lconvergedmessageutils \
-        -lxqutils \
+LIBS += -lxqutils \
         -lmdeclient \
         -lcentralrepository \
         -lProfileEng \

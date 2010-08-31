@@ -66,18 +66,11 @@ mCurrentView(settingsView)
 
 MsgSettingsView::~MsgSettingsView()
 {
-    delete mSMSCenterView;
 }
 
 void MsgSettingsView::onNewSMSCCenterClicked(int index)
 {
     //open the sms center views
-    if (mSMSCenterView)
-    {
-        delete mSMSCenterView;
-        mSMSCenterView = NULL;
-    }
-
     mSMSCenterView = new MsgSMSCenterView(index);
 
     connect(mSMSCenterView,
@@ -95,11 +88,16 @@ void MsgSettingsView::onSmsCenterEditViewClosed()
     //sms center view was directly launched, no need to go back to settings view.
     if(mCurrentView == SMSView)
     {
+        // mSMSCenterView will be deleted by MainWindow. 
         this->navigationAction()->trigger();
         return;
     }
     //remove the view 
     mMainWindow->removeView(mSMSCenterView);
+    // Delete the view since the ownership is transferred to caller.
+    // @see HbMainWindow::removeView()
+    delete mSMSCenterView;
+    mSMSCenterView = NULL;
     
     // This check is needed in case when smsc center view is 
     // launched directly 

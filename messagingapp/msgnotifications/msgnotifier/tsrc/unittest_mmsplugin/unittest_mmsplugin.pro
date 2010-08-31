@@ -20,8 +20,8 @@ CONFIG += symbian_test
 CONFIG += ordered
 
 #Sub .pro files
-SUBDIRS += mmstestbed/mmstestbed.pro
-SUBDIRS += testmmsgplugin/testmmsplugin.pro
+SUBDIRS += mmstestbed
+SUBDIRS += testmmsplugin
 
 
 # Platforms

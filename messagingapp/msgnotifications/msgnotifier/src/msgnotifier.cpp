@@ -31,6 +31,7 @@
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
 #include "msgcontacthandler.h"
+#include "msgerrorwatcher.h"
 
 #include "debugtraces.h"
 
@@ -58,6 +59,7 @@ MsgNotifier::MsgNotifier(QObject* parent) :
     d_ptr = q_check_ptr(new MsgNotifierPrivate(this));
 
     mSimHandler = new MsgSimNumDetector();
+    mErrorWatcher = new MsgErrorWatcher(this);
 
     QDEBUG_WRITE("MsgNotifier::MsgNotifier : Exit")
 }
@@ -72,6 +74,7 @@ MsgNotifier::~MsgNotifier()
 
     delete d_ptr;
     delete mSimHandler;
+	delete mErrorWatcher;
 
     QDEBUG_WRITE("MsgNotifier::~MsgNotifier : Enter")
 }

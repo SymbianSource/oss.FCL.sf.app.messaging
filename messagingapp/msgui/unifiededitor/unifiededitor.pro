@@ -109,6 +109,7 @@ LIBS += -lconvergedmessageutils \
         -lsmcm \
         -lxqserviceutil \
         -lcommonengine \
-        -lefsrv
+        -lefsrv \
+        -lmsgaudiofetcher
 
         

@@ -21,7 +21,6 @@ DEPENDPATH += . inc src ../inc
 INCLUDEPATH += .
 INCLUDEPATH += ../inc
 INCLUDEPATH += ../../../inc
-INCLUDEPATH += ../msgaudiofetcher/inc
 INCLUDEPATH += ../unifiededitor/inc
 INCLUDEPATH += ../appengine/inc
 INCLUDEPATH += ../conversationview/inc
@@ -102,6 +101,5 @@ LIBS += -lappengine \
         -lQtContacts \
         -lsettingsview \
         -lringbc \
-        -lunidatamodelloader \
-        -lmsgaudiofetcher
+        -lunidatamodelloader 
 

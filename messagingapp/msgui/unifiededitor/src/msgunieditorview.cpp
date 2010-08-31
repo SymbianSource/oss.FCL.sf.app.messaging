@@ -66,6 +66,8 @@
 #include "unieditorpluginloader.h"
 #include "unieditorplugininterface.h"
 #include "msgsettingsview.h"
+#include "msgcontacthandler.h"
+#include "msgaudiofetcherdialog.h"
 
 QTM_USE_NAMESPACE
 // Constants
@@ -122,6 +124,8 @@ const QString POPUP_LIST_FRAME("qtg_fr_popup_list_normal");
 //settings confirmation
 #define LOC_DIALOG_SMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_sms_message_centre_does_not_e")
 #define LOC_DIALOG_MMS_SETTINGS_INCOMPLETE hbTrId("txt_messaging_dialog_mms_access_point_not_defined")
+#define LOC_NOTE_FILES_MISSED_DRAFTS hbTrId("txt_messaging_dpopinfo_some_files_in_the_message")
+#define LOC_NOTE_FILES_MISSED_SEND hbTrId("txt_messaging_dialog_unable_to_send_message_some")
 // LOCAL FUNCTIONS
 
 //---------------------------------------------------------------
@@ -158,7 +162,11 @@ MsgUnifiedEditorView::MsgUnifiedEditorView( QGraphicsItem *parent ) :
     mAttachmentContainer(0),
     mPluginLoader(0),
     mCanSaveToDrafts(true),
-    mVkbHost(NULL)
+    mVkbHost(NULL),
+	mDialog(NULL),
+    mOriginatingSC(0),
+    mOriginatingSME(0),
+    mReplyPath(false)
     {
     connect(this->mainWindow(),SIGNAL(viewReady()),this,SLOT(doDelayedConstruction()));
     
@@ -174,6 +182,9 @@ MsgUnifiedEditorView::~MsgUnifiedEditorView()
 {
     // clean editor's temporary contents before exiting
     removeTempFolder();
+    
+    //delete the popup dialog
+    delete mDialog;
 }
 
 //---------------------------------------------------------------
@@ -295,6 +306,12 @@ void MsgUnifiedEditorView::openDraftsMessage(const QVariantList& editorData)
 
     if( msg != NULL )
     {
+        mReplyPath = msg->replyPath();
+        if(mReplyPath)
+        {
+            mOriginatingSC = msg->originatingSC();
+            mOriginatingSME = msg->toAddressList().at(0)->address();
+        }
         //Populate the content inside editor
         populateContentIntoEditor(*msg,true); // true as it is  draft message
         delete msg;
@@ -330,6 +347,15 @@ void MsgUnifiedEditorView::fetchMessageFromStore(
                     (UniEditorPluginInterface::EditorOperation)editorOperation);
     if( msg != NULL )
     {
+        if(editorOperation == UniEditorPluginInterface::Reply)
+        {
+            mReplyPath = msg->replyPath();
+            if(mReplyPath)
+            {
+                mOriginatingSC = msg->originatingSC();
+                mOriginatingSME = msg->toAddressList().at(0)->address();
+            }
+        }
         //Populate the content inside editor
         populateContentIntoEditor(*msg);
         delete msg;
@@ -474,14 +500,14 @@ void MsgUnifiedEditorView::populateContentIntoEditor(
     mMsgMonitor->setSkipNote(true);
     mToField->skipMaxRecipientQuery(true);
 
-    mToField->setAddresses(messageDetails.toAddressList());
+    mToField->setAddresses(messageDetails.toAddressList(),draftMessage);
     if(messageDetails.ccAddressList().count() > 0 )
     {
         if(!mCcField)
         {
         addCcBcc();
         }
-        mCcField->setAddresses(messageDetails.ccAddressList());
+        mCcField->setAddresses(messageDetails.ccAddressList(),draftMessage);
     }
     if(messageDetails.bccAddressList().count() > 0 )
     {
@@ -489,7 +515,7 @@ void MsgUnifiedEditorView::populateContentIntoEditor(
         {
         addCcBcc();
         }
-        mBccField->setAddresses(messageDetails.bccAddressList());
+        mBccField->setAddresses(messageDetails.bccAddressList(),draftMessage);
     }
     if(messageDetails.subject().size() > 0)
     {
@@ -860,8 +886,13 @@ void MsgUnifiedEditorView::send()
     //close vkb before switching view.
     mVkbHost->closeKeypad(true);
 
-    packMessage(msg);
-    
+    int result = packMessage(msg);
+    if(result == KErrNotFound)
+    {
+        HbMessageBox::information(LOC_NOTE_FILES_MISSED_SEND, 0, 0, HbMessageBox::Ok);
+        deactivateInputBlocker();
+        return;
+    }
     // send message
     MsgSendUtil *sendUtil = new MsgSendUtil(this);
     int sendResult = sendUtil->send(msg);
@@ -952,8 +983,20 @@ void MsgUnifiedEditorView::send()
     }
 }
 
-void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg, bool isSave)
+int MsgUnifiedEditorView::packMessage(ConvergedMessage &msg, bool isSave)
 {
+    // reset reply-path if originating SME constraint is broken
+    if(mReplyPath && isReplyPathBroken())
+    {
+        mReplyPath = false;
+    }
+
+    msg.setReplyPath(mReplyPath);
+    if(mReplyPath)
+    {
+        msg.setOriginatingSC(mOriginatingSC);
+    }
+
     ConvergedMessage::MessageType messageType = MsgUnifiedEditorMonitor::messageType();
     msg.setMessageType(messageType);
     // If isSave is true (save to draft usecase), then don't remove duplicates
@@ -963,7 +1006,8 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg, bool isSave)
             mToField->addresses(removeDuplicates);
     ConvergedMessageAddressList ccAddresses;
     ConvergedMessageAddressList bccAddresses;
-    
+    ConvergedMessageAttachmentList mediaList;
+    int errorCode = 0;
 	//Don't format the addresses for save to drfats case
 	if(!isSave)
 	{
@@ -1050,18 +1094,23 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg, bool isSave)
             msg.setPriority(mSubjectField->priority());
         }
 
-        ConvergedMessageAttachmentList mediaList;
-
         QStringList mediafiles(mBody->mediaContent());
         if (!mediafiles.isEmpty())
         {
             for (int i = 0; i < mediafiles.size(); ++i)
             {
+                if(QFile::exists(mediafiles.at(i)))
+                {
                 ConvergedMessageAttachment* attachment =
                     new ConvergedMessageAttachment(
                         mediafiles.at(i),
                         ConvergedMessageAttachment::EInline);
                 mediaList << attachment;
+                }
+                else
+                {   mBody->removeMediaContent(mediafiles.at(i));
+                    errorCode = KErrNotFound;
+                }
             }
 
         }
@@ -1079,17 +1128,26 @@ void MsgUnifiedEditorView::packMessage(ConvergedMessage &msg, bool isSave)
                 mAttachmentContainer->attachmentList();
                 for (int i = 0; i < editorAttachmentList.count(); ++i)
                 {
-                    ConvergedMessageAttachment* attachment =
-                        new ConvergedMessageAttachment(
-                            editorAttachmentList.at(i)->path(),
-                            ConvergedMessageAttachment::EAttachment);
-                    attachmentList << attachment;
+                    if(QFile::exists(editorAttachmentList.at(i)->path()))
+                    {
+                        ConvergedMessageAttachment* attachment =
+                                                new ConvergedMessageAttachment(
+                                                    editorAttachmentList.at(i)->path(),
+                                                    ConvergedMessageAttachment::EAttachment);
+                                            attachmentList << attachment;    
+                    }
+                    else
+                    {
+                        mAttachmentContainer->deleteAttachment(editorAttachmentList.at(i));
+                        errorCode = KErrNotFound;
+                    }   
                 }
             }
         if(attachmentList.count() > 0)
         {
             msg.addAttachments(attachmentList);
         }
+        return errorCode;
 }
 
 int MsgUnifiedEditorView::saveContentToDrafts()
@@ -1165,8 +1223,25 @@ int MsgUnifiedEditorView::saveContentToDrafts()
         return INVALID_MSGID;
     }
     ConvergedMessage msg;
-    packMessage(msg, true);
+    int result = packMessage(msg, true);
+    if(result == KErrNotFound)
+        {
+        HbNotificationDialog::launchDialog(LOC_NOTE_FILES_MISSED_DRAFTS);
+        if(messageType == ConvergedMessage::Sms &&
+                    addresses.isEmpty() &&
+                    MsgUnifiedEditorMonitor::bodySize() <= 0 &&
+                    MsgUnifiedEditorMonitor::containerSize() <= 0)
+            {
+                if(mOpenedMessageId.getId() != -1)
+                {
+                pluginInterface->deleteDraftsEntry(mOpenedMessageId.getId());
+                }
 
+                // if empty msg, do not save
+                deactivateInputBlocker();
+                return INVALID_MSGID;
+            }
+        }
     // save to drafts
     MsgSendUtil *sendUtil = new MsgSendUtil(this);
     int msgId = sendUtil->saveToDrafts(msg);
@@ -1429,11 +1504,18 @@ void MsgUnifiedEditorView::fetchImages()
 //---------------------------------------------------------------
 void MsgUnifiedEditorView::fetchAudio()
 {
-    // Launch Audio fetcher view
-    QVariantList params;
-    params << MsgBaseView::AUDIOFETCHER; // target view
-    params << MsgBaseView::UNIEDITOR; // source view
-    emit switchView(params);
+    // Launch Audio fetcher dialog
+    if(!mDialog)
+    {
+       mDialog = new MsgAudioFetcherDialog();
+       connect(mDialog,
+            SIGNAL(audioSelected(QString&)),
+            this,
+            SLOT(onAudioSelected(QString&)));
+    }
+
+    //show the dialog
+    mDialog->show();    
 }
 
 //---------------------------------------------------------------
@@ -1550,6 +1632,20 @@ void MsgUnifiedEditorView::vkbAboutToClose()
     connect(mVkbHost,SIGNAL(aboutToOpen()),
             this,SLOT(vkbAboutToOpen()));
 }
+
+//---------------------------------------------------------------
+// MsgUnifiedEditorView::onAudioSelected
+// @see header file
+//---------------------------------------------------------------
+void 
+MsgUnifiedEditorView::onAudioSelected(QString& filePath)
+{
+    if (!filePath.isEmpty())
+        {
+            mBody->setAudio(filePath);
+        }    
+}
+
 //---------------------------------------------------------------
 // MsgUnifiedEditorView::hideChrome
 //
@@ -1750,4 +1846,60 @@ void MsgUnifiedEditorView::formatAddresses(
         delete tempAddr;                                                       
     }       
 }
+
+// ----------------------------------------------------------------------------
+// MsgUnifiedEditorView::isReplyPathBroken
+// @see header
+// ----------------------------------------------------------------------------
+bool MsgUnifiedEditorView::isReplyPathBroken()
+{
+    // 1. Never set for MMS
+    // 2. if additional recipients exits
+    if( (MsgUnifiedEditorMonitor::messageType() == ConvergedMessage::Mms) ||
+        (mToField->addressCount() != 1) )
+    {
+        // broken
+        return true;
+    }
+
+    // 3. if only recipient is not same as originating SME
+    QString dispName;
+    int phCount;
+    int origCntLocalId = MsgContactHandler::resolveContactDisplayName(
+            mOriginatingSME, dispName, phCount);
+    int currCntLocalId = -1;
+    QString currAddress(mToField->addresses().at(0)->address());
+    if(origCntLocalId != -1)
+    {
+        currCntLocalId = MsgContactHandler::resolveContactDisplayName(
+            currAddress, dispName, phCount);
+    }
+
+    if(currCntLocalId != -1)
+    { // both are mapped contacts present in contacts db
+        if(currCntLocalId != origCntLocalId)
+        {
+            return true;
+        }
+    }
+    else
+    { // atleast one contact is not present in contacts db
+      // direct compare
+        UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
+        bool compareResult = false;
+        TRAP_IGNORE(
+        compareResult = genUtils->MatchPhoneNumberL(
+                *XQConversions::qStringToS60Desc(mOriginatingSME),
+                *XQConversions::qStringToS60Desc(currAddress))
+        );
+        delete genUtils;
+        if(!compareResult)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 //EOF

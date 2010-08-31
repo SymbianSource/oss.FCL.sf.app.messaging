@@ -16,6 +16,6 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += testmmsgpluginapp/testmmsgpluginapp.pro 
+SUBDIRS += testmmsgpluginapp 
 
 CONFIG += ordered

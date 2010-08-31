@@ -108,6 +108,13 @@ private:
      */
     void init();
 
+    /**
+     * Finds the message timestamp to be set.
+     * @parma index Model index of the item.
+     * @return Timestamp string to be set.
+     */
+    QString getMsgTimeStamp(const QModelIndex& index);
+
 private slots:    
 
     /*

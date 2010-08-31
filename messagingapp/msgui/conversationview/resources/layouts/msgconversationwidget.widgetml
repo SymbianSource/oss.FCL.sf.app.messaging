@@ -83,7 +83,7 @@
     <meshitem src="timeStamp" srcEdge="TOP" dst="bodyText" dstEdge="BOTTOM" spacer="topSpacer" />
     <meshitem src="timeStamp" srcEdge="LEFT" dst="playIcon" dstEdge="RIGHT" />
     <meshitem src="timeStamp" srcEdge="RIGHT" dst="" dstEdge="RIGHT" />
-    <meshitem src="timeStamp" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM"  />
+    <meshitem src="timeStamp" srcEdge="BOTTOM" dst="" dstEdge="BOTTOM" spacer="bottomSpacer" />
 
     <meshitem src="newItemIcon" srcEdge="LEFT" dst="" dstEdge="LEFT"/>
     <meshitem src="newItemIcon" srcEdge="TOP" dst="" dstEdge="TOP"/>

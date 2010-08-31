@@ -459,6 +459,13 @@ private:
      * Owned
      */
     HbIconItem *mPreviewIconItem;
+
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgConversationWidget;
+#endif
 };
 
 #endif // MSG_CONVERSATIONWIDGET_H

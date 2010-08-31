@@ -16,7 +16,7 @@
 
 TEMPLATE = subdirs
 
-SUBDIRS += mmstestbed/mmstestbed.pro 
-SUBDIRS += testconvergedmessageutils/testconvergedmessageutils.pro 
+SUBDIRS += mmstestbed
+SUBDIRS += testconvergedmessageutils 
 
 CONFIG += ordered

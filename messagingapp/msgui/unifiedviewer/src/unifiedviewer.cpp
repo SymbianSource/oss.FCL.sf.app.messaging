@@ -51,7 +51,7 @@ const QString DELETE_ICON("qtg_mono_delete");
 //DB-file
 _LIT(KDbFileName, "c:[2002A542]conversations.db");
 // query to see if msg is forwardable
-_LIT(KSelectMsgPropertyStmt, " SELECT message_id, msg_property FROM conversation_messages WHERE message_id=:message_id ");
+_LIT(KSelectMsgPropertyStmt, " SELECT message_id, msg_property, msg_processingstate FROM conversation_messages WHERE message_id=:message_id ");
 
 
 //LOCALIZED CONSTANTS
@@ -366,15 +366,36 @@ bool UnifiedViewer::isForwardOk()
             // read the flag
             TInt msgPropertyIndex =
                     sqlSelectStmt.ColumnIndex(_L("msg_property"));
+            
+            TInt msgProcessingStateIndex = sqlSelectStmt.ColumnIndex(
+                       _L("msg_processingstate"));
+            
             TInt retValue = 0;
+            TInt processingStateVal = 0;
             if (sqlSelectStmt.Next() == KSqlAtRow)
             {
                 retValue = static_cast<TInt>
                     (sqlSelectStmt.ColumnInt(msgPropertyIndex));
-            }
+                processingStateVal = static_cast<TInt>
+                    (sqlSelectStmt.ColumnInt(msgProcessingStateIndex));              
+            }        
+           
             CleanupStack::PopAndDestroy(&sqlSelectStmt);
             sqlDb.Close();
-            canForwardMsg = (retValue & EPreviewForward)? true:false;
+            
+            bool processing =  (processingStateVal & EPreviewMsgProcessed)? true:false;
+            if(processing)
+            {
+                canForwardMsg = (retValue & EPreviewForward)? true:false;
+            }
+            else
+            {
+               	// If message is still getting processed, forward field may not be updated in
+               	// Preview DB, so get the forwardable state from MMS conformance checks...
+                MmsConformanceCheck* mmsConformanceCheck = new MmsConformanceCheck;
+                canForwardMsg = mmsConformanceCheck->validateMsgForForward(mMessageId);
+                delete mmsConformanceCheck;  
+            }
         }
         else
         {

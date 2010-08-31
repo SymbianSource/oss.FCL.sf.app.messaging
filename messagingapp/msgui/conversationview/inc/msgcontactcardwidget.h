@@ -211,6 +211,13 @@ private:
      * Own.
      */
     ThumbnailManager *mThumbnailManager;
+
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgContactCardWidget;
+#endif
 };
 
 #endif // MSGCONTACTCARDWIDGET_H

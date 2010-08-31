@@ -574,13 +574,15 @@ void CCsConversationCacheHelper::AddNewConversationL(
 
     // fill firstname and lastname and contact Id
     if(aDisplayName)
+    {
    		conversation->AddContactDetailsL(aContactId,
                                      aDisplayName);
+    }
 
-    // fill the phone number
+    // fill the phone number and contact Id
     if (aConversationEntry->Contact())
     {
-        conversation->AddContactDetailsL(* (aConversationEntry->Contact()));
+        conversation->AddContactDetailsL(* (aConversationEntry->Contact()), aContactId);
     }
 
     // add into the list

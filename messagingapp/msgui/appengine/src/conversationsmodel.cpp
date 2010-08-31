@@ -53,8 +53,8 @@ _LIT(KSelectVCardStmt,"SELECT  message_id, msg_processingstate, preview_path FRO
 // preview-cache max cost (items)
 const int CACHE_COST =  50;
 //Preview thumbnail size
-const int KWidth = 9.5 * 6.7;
-const int KHeight = 9.5 * 6.7;
+const int KWidth = 24 * 6.7;
+const int KHeight = 24 * 6.7;
 //---------------------------------------------------------------
 // ConversationsModel::ConversationsModel
 // Constructor
@@ -512,6 +512,12 @@ void ConversationsModel::handleMMS(QStandardItem& item, const CCsConversationEnt
                                     true);
 
                             }
+                        else
+                            {
+                            QPixmap pixmap;
+                            setPreviewIcon(pixmap, attachmentPath, msgId,
+                                    false);
+                            }
                         //remove bitmap
                         delete bitmap;
                         }
@@ -817,7 +823,12 @@ void ConversationsModel::setPreviewIcon(QPixmap& pixmap, QString& filePath,
     if (!inDb)
     {
         QPixmap pixmap(filePath);
-        QPixmap scaledPixmap = pixmap.scaled(KWidth, KHeight, Qt::IgnoreAspectRatio);
+        QSize originalIconSize = pixmap.size();
+        QSize scaledIconSize;
+        getScaledSize(originalIconSize,scaledIconSize);
+
+        QPixmap scaledPixmap = pixmap.scaled(scaledIconSize.width(), 
+                scaledIconSize.height(), Qt::KeepAspectRatio);
         HbIcon *previewIcon = new HbIcon(scaledPixmap);
 
         previewIconCache.insert(msgId, previewIcon);
@@ -935,7 +946,12 @@ void ConversationsModel::updatePreviewIcon(int msgId, QString& filePath)
     if (!imagePreviewed)
     {
         QPixmap orgPixmap(filePath);
-        pixmap = orgPixmap.scaled(63.65, 63.65, Qt::IgnoreAspectRatio);
+        QSize originalIconSize = pixmap.size();
+        QSize scaledIconSize;
+        getScaledSize(originalIconSize,scaledIconSize);
+
+        QPixmap scaledPixmap = orgPixmap.scaled(scaledIconSize.width(), 
+                scaledIconSize.height(), Qt::KeepAspectRatio);
     }
     HbIcon * previewIcon = new HbIcon(pixmap);
 
@@ -1073,4 +1089,45 @@ void ConversationsModel:: emitConversationViewEmpty()
 {
     emit conversationViewEmpty();
 }
+
+//---------------------------------------------------------------
+// ConversationsModel::getScaledSize()
+// @see header
+//---------------------------------------------------------------
+void ConversationsModel::getScaledSize(const QSize &originalSize,
+        QSize &scaledSize)
+{
+    qreal newLength =0;
+    if(originalSize.width() >= originalSize.height())
+        {
+        if(originalSize.width() < KWidth)
+            {
+            scaledSize.setHeight(originalSize.height());
+            scaledSize.setWidth(originalSize.width());
+            }
+        else
+            {
+            scaledSize.setWidth(KWidth);
+            newLength = (KWidth * originalSize.height())/
+                    originalSize.width();
+            scaledSize.setHeight(newLength);
+            }
+        }
+    else
+        {
+        if(originalSize.height() < KHeight)
+            {
+            scaledSize.setHeight(originalSize.height());
+            scaledSize.setWidth(originalSize.width());
+            }
+        else
+            {
+            scaledSize.setHeight(KHeight);
+            newLength = (KHeight * originalSize.width())/
+                    originalSize.height();
+            scaledSize.setWidth(newLength);
+            }            
+        }
+}
+
 //EOF

@@ -286,6 +286,33 @@ public:
      * @param stream data stream from which data is deserialized.
      */
     void deserialize(QDataStream &stream);
+    
+    /**
+     * Sets the message property, if reply-path is present
+     * @param replypath, TP-RP (Reply Path) Found in first octet of
+     * Submit and Deliver PDU
+     */
+    void setReplyPath(bool replypath);
+    
+    /**
+     * Tells if the reply-path is set for this message
+     * @return bool, if the reply-path exists
+     */
+    bool replyPath();
+    
+    /**
+     * Set originating service center address. This is used for reply
+     * purposes, if the reply-via-same-smsc flag is ON
+     * @param scaddress, service center address
+     */
+    void setOriginatingSC(const QString& scaddress);
+    
+    /**
+     * Get originating service center address,
+     * if preserved for reply-via-same-smsc
+     * @return originating service center address
+     */
+    const QString& originatingSC() const;
 
 private:
     /**
@@ -379,6 +406,12 @@ private:
      * Messaging sending states
      */
     quint8 mSendingState;
+    
+    /**
+     * Originating SC, 
+     * to be used only when reply-path is available
+     */
+    QString mOriginatingSC;    
     };
 
 #endif // CONVERGED_MESSAGE_IMPL_H

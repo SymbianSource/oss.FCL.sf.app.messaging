@@ -28,6 +28,7 @@
 #include <qversitcontactimporter.h>
 #include <qversitdocument.h>
 #include <qversitreader.h>
+#include <qcontactid.h>
 
 QTM_BEGIN_NAMESPACE
 class QContactManager;
@@ -37,14 +38,14 @@ QTM_USE_NAMESPACE
 
 class MsgContactHandler
 {
-    
+
 public:
 
     /**
      * This shall resolve contact number with display name
      * @param contactNumber number to resolve
      * @param displayName resolved name
-     * @param countPhoneNumber specifies number of contacts inside 
+     * @param countPhoneNumber specifies number of contacts inside
      * the resolved contact ex mobile, home, office etc
      * @return contacts unique localId
      */
@@ -148,12 +149,12 @@ public:
             QContactPhoneNumber::FieldNumber);
         phoneFilter.setValue(phoneNumber);
         phoneFilter.setMatchFlags(QContactFilter::MatchEndsWith);
-        
+
         QList<QContact> matchingContacts = phonebookManager.contacts(phoneFilter);
 
         return matchingContacts;
     }
-    
+
     /**
      * Get display-name of a contact from VCard.
      * @param filePath, VCard file-path
@@ -202,6 +203,46 @@ public:
         file.close();
         return displayName;
     }
+
+    /**
+     * Get list of self-addresses
+     * @return QStringList, list of self-addresses
+     */
+    static QStringList selfAddresses()
+    {
+        QStringList selfAddrs;
+        QContactManager* contactManager =
+                                        new QContactManager("symbian");
+        QContactLocalId selfId = contactManager->selfContactId();
+        if( (selfId == 0) ||
+            (contactManager->error() == QContactManager::DoesNotExistError) )
+        {
+            // if no self-address exists
+            return selfAddrs;
+        }
+
+        QContact selfContact = contactManager->contact(selfId);
+        
+        // append numbers to the list of self-addresses
+        QList<QContactPhoneNumber> selfPhoneNumbers = 
+                        selfContact.details<QContactPhoneNumber>();
+        int selfNumCount = selfPhoneNumbers.count();
+        for(int i=0; i< selfNumCount; i++)
+        {
+            selfAddrs << selfPhoneNumbers.at(i).number();
+        }
+
+        // append email-addresses to the list
+        QList<QContactEmailAddress> selfEmailAddrs = 
+                        selfContact.details<QContactEmailAddress>();
+        int selfEmailAddrCount = selfEmailAddrs.count();
+        for(int i=0; i< selfEmailAddrCount; i++)
+        {
+            selfAddrs << selfEmailAddrs.at(i).emailAddress();
+        }
+        return selfAddrs;
+    }
+
 };
 
 #endif /* MSGCONTACTHANDLER_H_ */

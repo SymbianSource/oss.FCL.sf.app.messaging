@@ -22,6 +22,8 @@
 #include <MmsEngineDomainCRKeys.h>
 #include <MsgMediaResolver.h>
 #include <DRMHelper.h>
+#include <ccsdefs.h> // for KDefaultGsmNumberMatchLength
+#include <telconfigcrkeys.h> // for KCRUidTelephonyConfiguration
 
 #include "MessagingVariant.hrh"
 #include "MessagingInternalCRKeys.h"  // Keys
@@ -47,7 +49,8 @@ _LIT( KRFC822Specials,"()<>@,;:\\\"[]");
 UniEditorGenUtils::UniEditorGenUtils() :
 mAbsMaxConcatenatedSms(-1),
 mAbsMaxSmsCharacters(-1),
-mMaxMmsSize(-1)
+mMaxMmsSize(-1),
+mMatchDigitCount(-1)
 {
 
 }
@@ -600,6 +603,43 @@ TBool UniEditorGenUtils::IsValidDomain ( const TDesC& aDomain )
     while ( ++c < length );
   
     return ( aDomain[length-1] != '.' );
+    }
+
+// ----------------------------------------------------
+// UniEditorGenUtils::MatchPhoneNumber
+// @see header
+// ----------------------------------------------------
+TBool UniEditorGenUtils::MatchPhoneNumberL(
+        TDesC& aFirstNumber, TDesC& aSecondNumber)
+    {
+    // if matching digit count is already read from CR, then don't do that again
+    if(mMatchDigitCount == -1)
+        {
+        mMatchDigitCount = KDefaultGsmNumberMatchLength;
+        // Read the amount of digits to be used in contact matching
+        // The key is owned by PhoneApp
+        CRepository* repository = CRepository::NewL(KCRUidTelConfiguration);
+        CleanupStack::PushL(repository);
+        if (repository->Get(KTelMatchDigits, mMatchDigitCount) == KErrNone)
+            {
+            // Min is 7
+            mMatchDigitCount = Max(mMatchDigitCount, KDefaultGsmNumberMatchLength);
+            }
+        CleanupStack::PopAndDestroy(); // repository
+        }
+    
+    // start matching
+    if( (aFirstNumber.Length() == 0) || (aSecondNumber.Length() == 0) )
+        {
+        return EFalse;
+        }
+    
+    if (aFirstNumber.Right(mMatchDigitCount).CompareF(
+            aSecondNumber.Right(mMatchDigitCount)) == 0)
+        {
+        return ETrue;
+        }
+    return EFalse;
     }
 
 // End of file

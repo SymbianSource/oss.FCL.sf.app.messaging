@@ -24,6 +24,8 @@
 #include "convergedmessage.h"
 #include "convergedmessageid.h"
 #include "UniDataModel.h"
+#include "UniEditorGenUtils.h"
+
 // DATA TYPES
 
 // FORWARD DECLARATIONS
@@ -230,6 +232,39 @@ private: // Constructors
      * Populates converged message for default case
      */
     void convertFromDefaultHandlerL(ConvergedMessage* aMessage);
+    
+    /**
+     * Handles own-number identification/deletion for composing reply-all
+     * to a message
+     * @param sourcemsg, message on which own-number logic is applied
+     * @param targetmsg, message to which trimmed address list is committed
+     */
+    void removeOwnNumberForReplyAll(
+            ConvergedMessage* sourcemsg, 
+            ConvergedMessage* targetmsg);
+    
+    /**
+     * Helper method to make a copy of address list
+     * @param addrList, list of addresses to make a copy of
+     * @return ConvergedMessageAddressList, copy of list of addresses
+     */
+    ConvergedMessageAddressList copyAddrList(
+            ConvergedMessageAddressList addrList);
+
+    /**
+     * Helper method to resolve contacts in an addresslist
+     * @param addrList, list of addresses whose contacts need to be resolved
+     */
+    void resolveContacts(ConvergedMessageAddressList addrList);
+    
+    /**
+     * Helper method to check if a given address is self-address or not
+     * @param address, address to be verified
+     * @param selfAddrList, list of self-addresses
+     * @return bool, true if address is a self-address
+     */
+    bool isSelfAddress(QString address,QStringList selfAddrList);
+
 
 private:
     // Data
@@ -255,6 +290,8 @@ private:
     CEikRichTextEditor* iEditor;
     // owned
     CMDXMLDocument* iDom;
+    // owned
+    UniEditorGenUtils* iGenUtils;
 };
 
 #endif   // __UNIEDITORMMSPLUGINPRIVATE_H

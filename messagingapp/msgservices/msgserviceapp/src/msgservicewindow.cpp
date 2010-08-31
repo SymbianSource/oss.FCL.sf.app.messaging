@@ -20,6 +20,7 @@
 #include "msgviewinterface.h"
 #include "msgsendinterface.h"
 #include "msgshareuiinterface.h"
+#include "msgurihandlerinterface.h"
 
 #include "msgstorehandler.h"
 #include "msgserviceviewmanager.h"
@@ -51,6 +52,7 @@ mViewManager(NULL)
     // create interfaces 
     mSendInterface = new MsgSendInterface(mViewManager);
     mViewInterface = new MsgViewInterface(mViewManager);
+    mUriInterface = new MsgUriHandlerInterface(mViewManager);
     mShareUiInterface = new MsgShareUiInterface(mViewManager);
     }
 
@@ -64,6 +66,12 @@ MsgServiceWindow::~MsgServiceWindow()
         {
         delete mShareUiInterface;
         }
+	
+	if(mUriInterface)
+        {
+        delete mUriInterface;
+        }
+		
     if(mViewInterface)
         {
         delete mViewInterface;

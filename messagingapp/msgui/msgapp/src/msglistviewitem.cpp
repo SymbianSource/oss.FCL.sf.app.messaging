@@ -244,7 +244,7 @@ void MsgListViewItem::setTimestampAndPreviewText()
         switch (sendState) {
         case ConvergedMessage::Resend:
         {
-            previewText = LOC_MSG_RESEND_AT + dateTimeString;
+            previewText = LOC_MSG_RESEND_AT.arg(dateTimeString);
             dateTimeString = QString();            
             setCommonIndicator(MSG_OUTGOING_ICON);
             break;

@@ -118,6 +118,10 @@ private:
      * Holds the previous buffer inside subject field
      */
     QString mPrevBuffer;
+    
+#ifdef MSGUI_UNIT_TEST
+    friend class TestMsgUnifiesEditorSubject;
+#endif
     };
 
 #endif //MSG_UNIFIED_EDITOR_SUBJECT_H

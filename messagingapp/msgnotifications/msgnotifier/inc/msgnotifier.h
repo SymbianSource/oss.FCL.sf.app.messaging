@@ -28,6 +28,7 @@
 // CLASS DECLARATION
 class MsgNotifierPrivate;
 class MsgSimNumDetector;
+class MsgErrorWatcher;
 
 /**
  * Stores the data required for notification.
@@ -137,6 +138,12 @@ private:
      * Sim settings handler
      */
     MsgSimNumDetector* mSimHandler;
+    
+    /**
+     * Pointer to error watcher
+     * Own
+     */
+   MsgErrorWatcher* mErrorWatcher;
 };
 
 #endif // MSGNOTIFIER_H

@@ -19,6 +19,7 @@ TEMPLATE = subdirs
 SYMBIAN_PLATFORMS = WINSCW ARMV5
 SUBDIRS += msgnotificationdialogplugin/msgnotificationdialogplugin.pro
 SUBDIRS += msgindicatorplugin/msgindicatorplugin.pro
+SUBDIRS += msgerrorwatcher/msgerrorwatcher.pro
 SUBDIRS += msgnotifier/msgnotifier.pro
 SUBDIRS += msgerrornotifier/msgerrornotifier.pro
 SUBDIRS += flashmsgnotifier/flashmsgnotifier.pro

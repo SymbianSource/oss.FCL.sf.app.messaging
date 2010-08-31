@@ -112,11 +112,6 @@ private slots:
 	 * slot to open attachment
 	 */
     void handleOpen();
-
-	/**
-	 * slot to view details of the attachment file
-	 */
-    void viewDetails();
     
     /**
      * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture

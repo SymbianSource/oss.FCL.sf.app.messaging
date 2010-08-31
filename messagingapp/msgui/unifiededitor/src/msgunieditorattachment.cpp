@@ -46,7 +46,6 @@
 //Localized Constants for item specific menu
 #define LOC_OPEN    hbTrId("txt_common_menu_open")
 #define LOC_REMOVE  hbTrId("txt_common_menu_remove")
-#define LOC_DETAILS hbTrId("txt_common_menu_details")
 
 const QString LIST_ITEM_BG_FRAME_NORMAL ("qtg_fr_list_normal");
 const QString LIST_ITEM_BG_FRAME_PRESSED("qtg_fr_list_pressed");
@@ -141,9 +140,10 @@ const QString& MsgUnifiedEditorAttachment::mimeType()
 void MsgUnifiedEditorAttachment::handleLongTap(QPointF position)
 {
     HbMenu* menu = new HbMenu;
+    
     menu->addAction(LOC_OPEN, this, SLOT(handleOpen()));
     menu->addAction(LOC_REMOVE, this, SLOT(handleRemove()));
-    menu->addAction(LOC_DETAILS, this, SLOT(viewDetails()));
+
     menu->setDismissPolicy(HbPopup::TapAnywhere);
     menu->setAttribute(Qt::WA_DeleteOnClose, true);
     menu->setPreferredPos(position);
@@ -169,11 +169,6 @@ void MsgUnifiedEditorAttachment::handleOpen()
     
     //fire timer to regrab gesture after some delay.
     QTimer::singleShot(300,this,SLOT(regrabGesture()));
-}
-
-void MsgUnifiedEditorAttachment::viewDetails()
-{
-    //open details view.
 }
 
 bool MsgUnifiedEditorAttachment::isMultimediaContent()
