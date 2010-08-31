@@ -19,7 +19,7 @@
 // 
 //
 
-#include "smildtd.h"
+#include "SmilDtd.h"
 #include "SmilData.h"
 #include <stringpool.h>
 #include "smilelements.h"

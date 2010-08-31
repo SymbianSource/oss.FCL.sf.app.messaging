@@ -24,12 +24,12 @@
 PRJ_PLATFORMS
 DEFAULT
 
-#include "../obexmtm/obexutil/group/BLD.INF"
-#include "../obexmtm/obexclient/group/BLD.INF"
-#include "../obexmtm/obexserver/group/BLD.INF"
-#include "../btmtm/btclient/group/BLD.INF"
-#include "../btmtm/btserver/group/BLD.INF"
-#include "../irmtm/irclient/group/BLD.INF"
-#include "../irmtm/irserver/group/BLD.INF"
+#include "../obexmtm/obexutil/group/bld.inf"
+#include "../obexmtm/obexclient/group/bld.inf"
+#include "../obexmtm/obexserver/group/bld.inf"
+#include "../btmtm/btclient/group/bld.inf"
+#include "../btmtm/btserver/group/bld.inf"
+#include "../irmtm/irclient/group/bld.inf"
+#include "../irmtm/irserver/group/bld.inf"
 #include "../Rom/bld.inf"
 #include "../TObexMTM/GROUP/bld.inf"

@@ -40,7 +40,7 @@
 #include "POPSMTM.H"
 #include "POPS.H"
 #include "POPSOFFL.H"
-#include "iapprefs.h"
+#include "IAPPrefs.h"
 #include "PopsDele.h"
 #include "POPSRFSH.h"
 #include "PopsCpMv.h"

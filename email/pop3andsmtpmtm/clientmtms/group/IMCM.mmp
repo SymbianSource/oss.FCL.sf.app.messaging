@@ -48,7 +48,7 @@ LIBRARY                 cntmodel.lib apgrfx.lib apmime.lib eikcore.lib cone.lib 
 LIBRARY			centralrepository.lib tzclient.lib numberconversion.lib
 
 SOURCEPATH              .
-START RESOURCE  imcm.rss
+START RESOURCE  IMCM.rss
 LANG	SC
 HEADER
 TARGETPATH      resource/messaging

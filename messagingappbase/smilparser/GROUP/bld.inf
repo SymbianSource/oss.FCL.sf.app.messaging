@@ -26,6 +26,6 @@ DEFAULT
 
 // Subproject builds
 #include "../SMILdtd/GROUP/bld.inf"
-#include "../Rom/BLD.INF"
+#include "../Rom/bld.inf"
 
 PRJ_MMPFILES
