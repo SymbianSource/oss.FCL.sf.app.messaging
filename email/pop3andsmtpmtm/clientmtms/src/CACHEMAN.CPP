@@ -122,6 +122,12 @@ void CImFinder::DoRunL()
 		}
 	}
 
+void CImFinder::DoCancel()
+    {   
+    CMsgActive::DoCancel();   
+    }
+
+
 CImFinder::CImFinder(CMsvEntry& aEntry) : CMsgActive(EPriorityStandard), 	iCurrentEntry(aEntry)
 	{
 	}

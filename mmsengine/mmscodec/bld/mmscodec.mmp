@@ -56,7 +56,6 @@ USERINCLUDE     ../../mmsmessage/inc
 SYSTEMINCLUDE   ../../mmsserver/inc
 SYSTEMINCLUDE   ../../../inc
 APP_LAYER_SYSTEMINCLUDE
-SYSTEMINCLUDE   /epoc32/include/http
 
 LIBRARY         euser.lib
 LIBRARY         msgs.lib
@@ -64,7 +63,7 @@ LIBRARY         bafl.lib
 LIBRARY         efsrv.lib
 LIBRARY         charconv.lib
 LIBRARY         apparc.lib
-LIBRARY         inetprotutil.lib 
+LIBRARY         InetProtUtil.lib 
 LIBRARY         mmsmessage.lib
 LIBRARY         mmsgenutils.lib
 LIBRARY         featmgr.lib

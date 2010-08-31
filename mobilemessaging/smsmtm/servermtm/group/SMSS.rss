@@ -64,12 +64,7 @@ RESOURCE SEND_ERROR_ACTIONS error_actions
 				
 				//SMS Errors
 				SEND_ERROR { error = -4814; },	// KErrGsmSMSOperationNotAllowed
-				SEND_ERROR { error = -5252; },	// KPKIErrKeyStoreEmpty
-				SEND_ERROR { error = -4533; },  // KErrGsmSMSShortMessageTransferRejected
-				SEND_ERROR { error = -4540; },  // KErrGsmSMSUnidentifiedSubscriber
-				SEND_ERROR { error = -4542; },  // KErrGsmSMSUnknownSubscriber
-				SEND_ERROR { error = -4550; },  // KErrGsmSMSNetworkOutOfOrder
-				SEND_ERROR { error = -4608; }   // KErrGsmSMSInvalidMandatoryInformation
+				SEND_ERROR { error = -5252; }	// KPKIErrKeyStoreEmpty
 				};
 			},
 		SEND_ERROR_ACTION

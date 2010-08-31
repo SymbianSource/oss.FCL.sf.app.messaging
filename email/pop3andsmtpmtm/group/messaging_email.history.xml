@@ -3,17 +3,13 @@
   <purpose>
     Message Type Module (MTM) plugin to Messaging Framework supporting send/receive/edit of POP3 email messages.
   </purpose>
-   
+   <defect number="PDEF144737" title=" Previously retrieved mails stay in inbox after changing the amount to a smaller " revision="157">
     Modified IMAP/POP server MTM API to delete the old messages for new CMail  UI. 
   </defect>
-   
-    Modified APIs to include embedded images. 
-  </defect>
-
-  <defect number="DEF144968" title="Mail connection is disconnected with mVPN in MCL follow up" revision="157">
+ 
+  <defect number="PDEF145102" title="Mail connection is disconnected with mVPN in MCL follow up" revision="157">
    Handling cancel in   CAPA command 
   </defect>
-
   <defect number="PDEF137958" title="Denial of Service vulnerability in mail retrieval" revision="156">
    Restricting the field size of the header to 5000, to avoid DOS condition.
   </defect>

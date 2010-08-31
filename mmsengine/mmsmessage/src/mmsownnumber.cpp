@@ -252,7 +252,7 @@ void CMmsOwnNumber::FindCompleteL( MVPbkContactLinkArray* aResults )
         {
         // we found at least one match.
         // What do we do now...
-        // Analyse the result in detail or just say "This is our own number"...
+        // Analyze the result in detail or just say "This is our own number"...
         
         // First approximation: Say this is our own.
         // Actually exact match cases should be checked, too (short number)
@@ -521,13 +521,9 @@ void CMmsOwnNumber::CheckDuplicatesL()
         {
         iMatch = EFalse;
         iState = EMmsOwnNumberSearching;
-		// Coverty fix, Forward NULL
-        if(iResultArray)
-        	{
-        	iOperation = iContactManager->RetrieveContactL(
+        iOperation = iContactManager->RetrieveContactL(
                 iResultArray->At( iContactToMatch ),
                 *this);
-            }
         iStatus = KRequestPending;
         SetActive();
         }

@@ -19,6 +19,7 @@
 /**
  @file
 */
+#include <platform_paths.hrh>
 
 TARGET                  imcm.dll
 TARGETPATH              /system/libs
@@ -47,10 +48,10 @@ LIBRARY                 cntmodel.lib apgrfx.lib apmime.lib eikcore.lib cone.lib 
 LIBRARY			centralrepository.lib tzclient.lib numberconversion.lib
 
 SOURCEPATH              .
-START RESOURCE	IMCM.rss
-TARGETPATH resource/messaging
+START RESOURCE  imcm.rss
 LANG	SC
 HEADER
+TARGETPATH      resource/messaging
 END
 
 #include                "../../../../../../mw/messagingmw/messagingfw/msgtests/group/msgopt.mph"
@@ -70,7 +71,7 @@ END
 #endif	
 
 
-
+OS_LAYER_SYSTEMINCLUDE
 
 
 

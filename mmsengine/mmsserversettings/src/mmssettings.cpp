@@ -21,7 +21,7 @@
 #include <centralrepository.h>
 #include <msvids.h>
 #include <msvapi.h>
-#include <messaginginternalcrkeys.h>
+#include <MessagingInternalCRKeys.h>
 
 // USERINCLUDE FILES
 #include "mmssettings.h"
@@ -138,7 +138,7 @@ EXPORT_C void CMmsSettings::Reset()
     iApplicationFolderId =    KMsvNullIndexEntryId;
     iAccesspointArray.Reset();
     iReceivingModeHome =      EMmsReceivingAutomatic;
-    iReceivingModeForeign =   EMmsReceivingManual;
+    iReceivingModeForeign =   EMmsReceivingAutomatic;
     iAcceptPersonal =         ETrue;
     iAcceptAdvertisement =    ETrue;
     iAcceptInformational =    ETrue;
@@ -346,7 +346,7 @@ EXPORT_C void CMmsSettings::LoadSettingsL()
         SaveSetting( KMmsEngineAccessPointCount, 0 );
         }
     LOG2(_L("- Loading AP array of length %d"), arrayLength );
-    for( TInt index = 0; index < arrayLength; index++ )
+    for( TInt index = 0; index < arrayLength; ++index )
         {
         retval = iMmsRepository->Get( KMmsAccesspointArrayBase + index, value ) ;
         if ( retval == KErrNone )
@@ -491,7 +491,7 @@ void CMmsSettings::SaveAccesspointArrayL()
     User::LeaveIfError( iMmsRepository->Get( KMmsEngineAccessPointCount, origCRArrayCount ) );
     TInt localArrayCount = iAccesspointArray.Count();
     // If CenRep array is longer -> delete extra elements from it
-    for( TInt index = localArrayCount; index < origCRArrayCount; index++ )
+    for( TInt index = localArrayCount; index < origCRArrayCount; ++index )
         {
         LOG(_L("- deleting extra element from CenRep"));
         iMmsRepository->Delete( KMmsAccesspointArrayBase + index );
@@ -505,7 +505,7 @@ void CMmsSettings::SaveAccesspointArrayL()
     SaveSetting( KMmsEngineAccessPointCount, localArrayCount );
     
     // Save the array itself
-    for( TInt index = 0; index < localArrayCount; index++ )
+    for( TInt index = 0; index < localArrayCount; ++index )
         {
         SaveSetting( KMmsAccesspointArrayBase + index, (TInt)iAccesspointArray[ index ] ); 
         LOG3(_L("- saved array[%d] with value %d"), index, iAccesspointArray[ index ]);
@@ -596,7 +596,7 @@ EXPORT_C TInt CMmsSettings::ValidateSettings()
             // Accesspoint array is checked by CMmsConnectionInitiator
             // All defined accesspoints should contain proper values in CommDb
             
-            for( TInt index = 0; index < iAccesspointArray.Count(); index++ )
+            for( TInt index = 0; index < iAccesspointArray.Count(); ++index )
                 {
                 TUint32 ap = 0;
                 HBufC* serverUri = NULL;
@@ -708,7 +708,7 @@ EXPORT_C void CMmsSettings::AddAccessPointL( TUint32 aAccessPointId, TInt aIndex
         }
 
     // If the same reference already exists, ignore adding and just return
-    for(TInt index = 0; index < count; index++ )
+    for(TInt index = 0; index < count; ++index )
         {
         if( iAccesspointArray[ index ] == aAccessPointId )
             {

@@ -1,7 +1,0 @@
-EXPORTS
-	_Z5Dummyv @ 1 NONAME
-	_ZTI14CMailInitAppUi @ 2 NONAME ; #<TI>#
-	_ZTI18CMailInitServerEnv @ 3 NONAME ; #<TI>#
-	_ZTV14CMailInitAppUi @ 4 NONAME ; #<VT>#
-	_ZTV18CMailInitServerEnv @ 5 NONAME ; #<VT>#
-

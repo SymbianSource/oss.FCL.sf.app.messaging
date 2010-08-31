@@ -850,7 +850,7 @@ void CMmsWatcher::DoRunL()
                 // However, we retry all.
                 count = iQueuedMessages->Count();
                 TInt i;
-                for ( i = 0; i < count; i++ )
+                for ( i = 0; i < count; ++i )
                     {
                     iQueuedMessages->At( i )->iStatus = EWaiting;
                     }
@@ -1135,7 +1135,7 @@ HBufC8* CMmsWatcher::CreateNotificationL(TDesC8& aUrl, TInt aSize)
     // server MTM
 
     TInt i;
-    for ( i = 0; i < aUrl.Length(); i++ )
+    for ( i = 0; i < aUrl.Length(); ++i )
         {
         random += aUrl[ i ];
         }
@@ -1241,7 +1241,7 @@ HBufC8* CMmsWatcher::CreateNotificationL(TDesC8& aUrl, TInt aSize)
 
     length -= 2; // actual integer length 
 
-    for (i = 0; i < length; i++)
+    for (i = 0; i < length; ++i)
         {
         array[i] = TInt8( ( temp >> ( KConst8 * (3 - i) ) ) & 0xFF );
         }

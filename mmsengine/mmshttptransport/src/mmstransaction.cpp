@@ -512,7 +512,7 @@ void CMmsTransaction::FinishL()
     //
     switch ( iEvent.iStatus )
         {
-        // Successfull case
+        // Successful case
         case THTTPEvent::ESucceeded:
             {
             iRetryCount = 0;

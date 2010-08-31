@@ -23,7 +23,6 @@
 #define __TMSVSMSENTRY_H__
 
 #include <gsmuelem.h>
-#include <smutset.h>
 
 /**
 A specialisation of the message server index class for SMS message entries.

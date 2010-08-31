@@ -19,9 +19,6 @@
 
 
 // INCLUDE FILES
-#ifdef SYMBIAN_ENABLE_SPLIT_HEADERS
-#include <logengdurations.h>
-#endif
 #include    <apparc.h>
 #include    <msventry.h>
 #include    <msvschedulepackage.h>
@@ -36,8 +33,8 @@
 #include    <centralrepository.h>
 #include    <utf.h>
 #include    <cmsvmimeheaders.h>
-#include    <LogsApiConsts.h>
-
+#include    "LogsApiConsts.h"
+#include    <logengdurations.h>
 
 // MMS specific
 #include    "mmsconst.h"
@@ -2153,7 +2150,7 @@ void CMmsServerMtm::UpdateDeliveryReportsL( TMsvSchedulePackage& aPackage )
         {
         TUint temp(0);
         TUint total(0);
-        if (iDeliveryStatus) //Succesfully delivered
+        if (iDeliveryStatus) //successfully delivered
             {
             total = ( entry.iMtmData3 & KMmsSentItemTotalRecipientsMask ) >>
                 KMmsSentItemTotalRecipientsShift;
@@ -2856,7 +2853,7 @@ void CMmsServerMtm::DecodePushedMessageL()
         }
 
     // we mark delivery reports as already sent so that
-    // we get rid of them at next garbage collecion, if the phone
+    // we get rid of them at next garbage collection, if the phone
     // boots or crashes before they are handled.
     // Delivery reports are lost if phone crashes.
     if ( messageType == KMmsMessageDeliveryInd ||
@@ -3258,7 +3255,7 @@ void CMmsServerMtm::LogDeliveryReportL()
                     if ( iMmsHeaders->ReadStatus() == KMmsReadStatusRead )
                         {
                         // read
-                        iLogString.Copy( KLogsMsgReadText );
+                         iLogString.Copy( KLogsMsgReadText );
                         }
                     else
                         {

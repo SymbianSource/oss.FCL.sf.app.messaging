@@ -26,7 +26,6 @@
 #include    <commdb.h>
 #include    <in_sock.h>
 #include    <commdbconnpref.h>
-#include    <AknGlobalNote.h>
 
 // LOCAL INCLUDE FILES
 #include    "mmsconst.h"
@@ -64,7 +63,7 @@ extern void gPanic( TMmsPanic aPanic );
 // ---------------------------------------------------------
 //
 CMmsSendOperation::CMmsSendOperation( RFs& aFs ): CMmsBaseOperation( aFs )
-    // members that get initial value 0, need not be intialized here
+    // members that get initial value 0, need not be initialized here
     {
     }
 

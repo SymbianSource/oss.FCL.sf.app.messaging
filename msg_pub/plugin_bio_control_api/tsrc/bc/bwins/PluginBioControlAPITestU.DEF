@@ -1,4 +1,0 @@
-EXPORTS
-	?LibEntryL@@YAPAVCScriptBase@@AAVCTestModuleIf@@@Z @ 1 NONAME ; class CScriptBase * __cdecl LibEntryL(class CTestModuleIf &)
-	?NewL@CMsgBioCtrlTest@@SAPAVCMsgBioControl@@AAVMMsgBioControlObserver@@PAVCMsvSession@@JW4TMsgBioMode@@PBVRFile@@@Z @ 2 NONAME ; class CMsgBioControl * CMsgBioCtrlTest::NewL(class MMsgBioControlObserver &, class CMsvSession *, long, enum TMsgBioMode, class RFile const *)
-

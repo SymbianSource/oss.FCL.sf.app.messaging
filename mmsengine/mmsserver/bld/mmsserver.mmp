@@ -65,7 +65,6 @@ USERINCLUDE     ../../mmsmessage/inc
 
 SYSTEMINCLUDE   ../../../inc
 APP_LAYER_SYSTEMINCLUDE
-SYSTEMINCLUDE   /epoc32/include/http
 
 LIBRARY         mmstransport.lib
 LIBRARY         mmsmessage.lib

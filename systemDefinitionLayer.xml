@@ -1,7 +1,0 @@
-<layer name="messaging">
-  <module name="messaging">
-    <component name="messaging">
-      <unit unitID="messaging" mrp="" bldFile="&layer_real_source_path;\group" name="messaging" />
-    </component>
-  </module>
-</layer>

@@ -1,5 +1,0 @@
-EXPORTS
-	_ZN23COperatorLogoBioControl4NewLER22MMsgBioControlObserverP11CMsvSessionl11TMsgBioModePK5RFile @ 1 NONAME
-	_ZTI23COperatorLogoBioControl @ 2 NONAME ; #<TI>#
-	_ZTV23COperatorLogoBioControl @ 3 NONAME ; #<VT>#
-

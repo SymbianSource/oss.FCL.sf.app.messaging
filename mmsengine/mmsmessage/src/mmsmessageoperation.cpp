@@ -574,7 +574,7 @@ void CMmsMessageOperation::CreateNewMmsHeaderL()
     if ( ( iOperation == EReply ) ||
          ( iOperation == EForward ))
         {
-        // Copy appropiate parts from original MMS headers
+        // Copy appropriate parts from original MMS headers
         // We checked in the beginning that we have a source entry
         originalMmsHeaders = CMmsHeaders::NewL( iSettings->MmsVersion() );
         CleanupStack::PushL( originalMmsHeaders );     // ***
@@ -607,27 +607,7 @@ void CMmsMessageOperation::CreateNewMmsHeaderL()
                     TMmsGenUtils::PureAddress( iNewMmsHeaders->BccRecipients().MdcaPoint( i ) ) );
                 }
                 
-            // Find own number
-            // don't remove if only one recipient in the list
-            if ( recipientList->MdcaCount() > 1 )
-                {
-                CMmsOwnNumber* ownNumberSearcher = 
-                    CMmsOwnNumber::NewL( &iMsvSession.FileSession() );
-                CleanupStack::PushL( ownNumberSearcher );
-                
-                TInt index = -1;
-                index = ownNumberSearcher->StartL( *recipientList );
-                
-                if ( index >= 0 )
-                    {
-                    // found something
-                    while ( iNewMmsHeaders->RemoveAddressee( recipientList->MdcaPoint( index ) ) )
-                        {
-                        }
-                    }
-                    
-                CleanupStack::PopAndDestroy( ownNumberSearcher );
-                }
+           
             CleanupStack::PopAndDestroy( recipientList );
             }
 

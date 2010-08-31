@@ -1,7 +1,0 @@
-EXPORTS
-	NewSmsMtmUiDataL__FR17CRegisteredMtmDll @ 1 NONAME R3UNUSED ; NewSmsMtmUiDataL(CRegisteredMtmDll &)
-	NewSmsMtmUiL__FR8CBaseMtmR17CRegisteredMtmDll @ 2 NONAME R3UNUSED ; NewSmsMtmUiL(CBaseMtm &, CRegisteredMtmDll &)
-	FindDefaultNameForSCL__8SmumUtilR6TDes16iP16CDesC16ArrayFlat @ 3 NONAME R3UNUSED ; SmumUtil::FindDefaultNameForSCL(TDes16 &, int, CDesC16ArrayFlat *)
-	NewL__23CSmumMainSettingsDialogR12CSmsSettingsiRiP10CSmsHeader @ 4 NONAME ; CSmumMainSettingsDialog::NewL(CSmsSettings &, int, int &, CSmsHeader *)
-	NewL__16CMsgSimOperationR14TRequestStatus @ 5 NONAME R3UNUSED ; CMsgSimOperation::NewL(TRequestStatus &)
-

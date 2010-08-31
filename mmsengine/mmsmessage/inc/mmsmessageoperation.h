@@ -191,7 +191,7 @@ class CMmsMessageOperation :public CMsvOperation
 
         // Different operations that this class is able to perform
         // NOTE: Forward without retrieval operation is not in this list
-        //       because it is a static and syncronous operation.
+        //       because it is a static and synchronous operation.
         enum TMmsOperation
             {
             ENew,

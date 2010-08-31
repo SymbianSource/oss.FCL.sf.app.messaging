@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1432,6 +1432,14 @@ void CImppServerMtm::DoRunL()
 			{	
 			CommandComplete( eCode );
 			}
+		else if(iState.iLastCurrentOperation == EPopConnectedAndIdle && iState.iCurrentOperation == EPopDisconnected && eCode != KErrNone)
+		    {
+            // Some email servers doesn’t wait for QUIT command, in such cases need to close RConnection
+            delete iSessionManager; 
+            iSessionManager = NULL;
+			
+            iPopProgress.iErrorCode = eCode;
+		    }
 		else
 			{
 			iPopProgress.iErrorCode = eCode;

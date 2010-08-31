@@ -1,0 +1,23 @@
+EXPORTS
+	?createMMS@TestUniDataModelMMSPlugin@@AAEXJH@Z @ 1 NONAME ; void TestUniDataModelMMSPlugin::createMMS(long, int)
+	?testOutboxMessage@TestUniDataModelMMSPlugin@@AAEXXZ @ 2 NONAME ; void TestUniDataModelMMSPlugin::testOutboxMessage(void)
+	?tr@TestUniDataModelMMSPlugin@@SA?AVQString@@PBD0H@Z @ 3 NONAME ; class QString TestUniDataModelMMSPlugin::tr(char const *, char const *, int)
+	?cleanup@TestUniDataModelMMSPlugin@@AAEXXZ @ 4 NONAME ; void TestUniDataModelMMSPlugin::cleanup(void)
+	?staticMetaObject@TestUniDataModelMMSPlugin@@2UQMetaObject@@B @ 5 NONAME ; struct QMetaObject const TestUniDataModelMMSPlugin::staticMetaObject
+	?initTestCase@TestUniDataModelMMSPlugin@@AAEXXZ @ 6 NONAME ; void TestUniDataModelMMSPlugin::initTestCase(void)
+	?testInboxMessage@TestUniDataModelMMSPlugin@@AAEXXZ @ 7 NONAME ; void TestUniDataModelMMSPlugin::testInboxMessage(void)
+	?tr@TestUniDataModelMMSPlugin@@SA?AVQString@@PBD0@Z @ 8 NONAME ; class QString TestUniDataModelMMSPlugin::tr(char const *, char const *)
+	?getStaticMetaObject@TestUniDataModelMMSPlugin@@SAABUQMetaObject@@XZ @ 9 NONAME ; struct QMetaObject const & TestUniDataModelMMSPlugin::getStaticMetaObject(void)
+	?metaObject@TestUniDataModelMMSPlugin@@UBEPBUQMetaObject@@XZ @ 10 NONAME ; struct QMetaObject const * TestUniDataModelMMSPlugin::metaObject(void) const
+	?testInboxImageMMSMessage@TestUniDataModelMMSPlugin@@AAEXXZ @ 11 NONAME ; void TestUniDataModelMMSPlugin::testInboxImageMMSMessage(void)
+	?init@TestUniDataModelMMSPlugin@@AAEXXZ @ 12 NONAME ; void TestUniDataModelMMSPlugin::init(void)
+	?qt_metacast@TestUniDataModelMMSPlugin@@UAEPAXPBD@Z @ 13 NONAME ; void * TestUniDataModelMMSPlugin::qt_metacast(char const *)
+	?testGetPluginWithoutLoading@TestUniDataModelMMSPlugin@@AAEXXZ @ 14 NONAME ; void TestUniDataModelMMSPlugin::testGetPluginWithoutLoading(void)
+	?trUtf8@TestUniDataModelMMSPlugin@@SA?AVQString@@PBD0@Z @ 15 NONAME ; class QString TestUniDataModelMMSPlugin::trUtf8(char const *, char const *)
+	?trUtf8@TestUniDataModelMMSPlugin@@SA?AVQString@@PBD0H@Z @ 16 NONAME ; class QString TestUniDataModelMMSPlugin::trUtf8(char const *, char const *, int)
+	?createInboxImageMMS@TestUniDataModelMMSPlugin@@AAEXXZ @ 17 NONAME ; void TestUniDataModelMMSPlugin::createInboxImageMMS(void)
+	?testPluginLoading@TestUniDataModelMMSPlugin@@AAEXXZ @ 18 NONAME ; void TestUniDataModelMMSPlugin::testPluginLoading(void)
+	?cleanupTestCase@TestUniDataModelMMSPlugin@@AAEXXZ @ 19 NONAME ; void TestUniDataModelMMSPlugin::cleanupTestCase(void)
+	?qt_metacall@TestUniDataModelMMSPlugin@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 20 NONAME ; int TestUniDataModelMMSPlugin::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?testPluginLoadingMultipleTimes@TestUniDataModelMMSPlugin@@AAEXXZ @ 21 NONAME ; void TestUniDataModelMMSPlugin::testPluginLoadingMultipleTimes(void)
+

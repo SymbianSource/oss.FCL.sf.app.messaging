@@ -1,5 +1,0 @@
-EXPORTS
-	_Z9LibEntryLR13CTestModuleIf @ 1 NONAME
-	_ZTI20CTestVideoConversion @ 2 NONAME ; #<TI>#
-	_ZTV20CTestVideoConversion @ 3 NONAME ; #<VT>#
-

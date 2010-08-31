@@ -1,8 +1,0 @@
-EXPORTS
-	_Z18NewAudioMessageUiLR8CBaseMtmR17CRegisteredMtmDll @ 1 NONAME
-	_Z22NewAudiomessageUiDataLR17CRegisteredMtmDll @ 2 NONAME
-	_ZTI15CAudioMessageUi @ 3 NONAME ; #<TI>#
-	_ZTI19CAudioMessageUiData @ 4 NONAME ; #<TI>#
-	_ZTV15CAudioMessageUi @ 5 NONAME ; #<VT>#
-	_ZTV19CAudioMessageUiData @ 6 NONAME ; #<VT>#
-

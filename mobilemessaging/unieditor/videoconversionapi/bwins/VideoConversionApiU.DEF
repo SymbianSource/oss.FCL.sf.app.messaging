@@ -1,4 +1,0 @@
-EXPORTS
-	??1CVideoConversionPlugin@@UAE@XZ @ 1 NONAME ; CVideoConversionPlugin::~CVideoConversionPlugin(void)
-	?NewL@CVideoConversionPlugin@@SAPAV1@VTUid@@@Z @ 2 NONAME ; class CVideoConversionPlugin * CVideoConversionPlugin::NewL(class TUid)
-

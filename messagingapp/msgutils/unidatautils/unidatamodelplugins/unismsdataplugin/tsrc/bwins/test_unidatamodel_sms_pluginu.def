@@ -1,0 +1,27 @@
+EXPORTS
+	?testGetPluginWithoutLoading@TestUniDataModelSMSPlugin@@AAEXXZ @ 1 NONAME ; void TestUniDataModelSMSPlugin::testGetPluginWithoutLoading(void)
+	?qt_metacall@TestUniDataModelSMSPlugin@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 2 NONAME ; int TestUniDataModelSMSPlugin::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?tr@TestUniDataModelSMSPlugin@@SA?AVQString@@PBD0H@Z @ 3 NONAME ; class QString TestUniDataModelSMSPlugin::tr(char const *, char const *, int)
+	?createDraftsSMSNoRecipient@TestUniDataModelSMSPlugin@@AAEXXZ @ 4 NONAME ; void TestUniDataModelSMSPlugin::createDraftsSMSNoRecipient(void)
+	?createSentSMS@TestUniDataModelSMSPlugin@@AAEXXZ @ 5 NONAME ; void TestUniDataModelSMSPlugin::createSentSMS(void)
+	?testOutboxMessage@TestUniDataModelSMSPlugin@@AAEXXZ @ 6 NONAME ; void TestUniDataModelSMSPlugin::testOutboxMessage(void)
+	?testDraftsMessageNoRecipient@TestUniDataModelSMSPlugin@@AAEXXZ @ 7 NONAME ; void TestUniDataModelSMSPlugin::testDraftsMessageNoRecipient(void)
+	?staticMetaObject@TestUniDataModelSMSPlugin@@2UQMetaObject@@B @ 8 NONAME ; struct QMetaObject const TestUniDataModelSMSPlugin::staticMetaObject
+	?metaObject@TestUniDataModelSMSPlugin@@UBEPBUQMetaObject@@XZ @ 9 NONAME ; struct QMetaObject const * TestUniDataModelSMSPlugin::metaObject(void) const
+	?cleanup@TestUniDataModelSMSPlugin@@AAEXXZ @ 10 NONAME ; void TestUniDataModelSMSPlugin::cleanup(void)
+	?trUtf8@TestUniDataModelSMSPlugin@@SA?AVQString@@PBD0H@Z @ 11 NONAME ; class QString TestUniDataModelSMSPlugin::trUtf8(char const *, char const *, int)
+	?testUnusedAPIs@TestUniDataModelSMSPlugin@@AAEXXZ @ 12 NONAME ; void TestUniDataModelSMSPlugin::testUnusedAPIs(void)
+	?testInboxMessage@TestUniDataModelSMSPlugin@@AAEXXZ @ 13 NONAME ; void TestUniDataModelSMSPlugin::testInboxMessage(void)
+	?createInboxSMS@TestUniDataModelSMSPlugin@@AAEXXZ @ 14 NONAME ; void TestUniDataModelSMSPlugin::createInboxSMS(void)
+	?qt_metacast@TestUniDataModelSMSPlugin@@UAEPAXPBD@Z @ 15 NONAME ; void * TestUniDataModelSMSPlugin::qt_metacast(char const *)
+	?init@TestUniDataModelSMSPlugin@@AAEXXZ @ 16 NONAME ; void TestUniDataModelSMSPlugin::init(void)
+	?tr@TestUniDataModelSMSPlugin@@SA?AVQString@@PBD0@Z @ 17 NONAME ; class QString TestUniDataModelSMSPlugin::tr(char const *, char const *)
+	?getStaticMetaObject@TestUniDataModelSMSPlugin@@SAABUQMetaObject@@XZ @ 18 NONAME ; struct QMetaObject const & TestUniDataModelSMSPlugin::getStaticMetaObject(void)
+	?testPluginLoading@TestUniDataModelSMSPlugin@@AAEXXZ @ 19 NONAME ; void TestUniDataModelSMSPlugin::testPluginLoading(void)
+	?trUtf8@TestUniDataModelSMSPlugin@@SA?AVQString@@PBD0@Z @ 20 NONAME ; class QString TestUniDataModelSMSPlugin::trUtf8(char const *, char const *)
+	?testDraftsMessage@TestUniDataModelSMSPlugin@@AAEXXZ @ 21 NONAME ; void TestUniDataModelSMSPlugin::testDraftsMessage(void)
+	?testPluginLoadingMultipleTimes@TestUniDataModelSMSPlugin@@AAEXXZ @ 22 NONAME ; void TestUniDataModelSMSPlugin::testPluginLoadingMultipleTimes(void)
+	?createOutboxSMS@TestUniDataModelSMSPlugin@@AAEXXZ @ 23 NONAME ; void TestUniDataModelSMSPlugin::createOutboxSMS(void)
+	?createDraftsSMS@TestUniDataModelSMSPlugin@@AAEXXZ @ 24 NONAME ; void TestUniDataModelSMSPlugin::createDraftsSMS(void)
+	?testSentMessage@TestUniDataModelSMSPlugin@@AAEXXZ @ 25 NONAME ; void TestUniDataModelSMSPlugin::testSentMessage(void)
+

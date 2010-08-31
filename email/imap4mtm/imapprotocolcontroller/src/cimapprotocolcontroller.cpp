@@ -3510,49 +3510,17 @@ EXPORT_C void CImapProtocolController::UpdateFlagL( TRequestStatus& aStatus)
 	__LOG_TEXT(KDefaultLog, "CImapProtocolController::UpdateFlagL()");
 	__ASSERT_DEBUG(iImapCompound==NULL, TImapServerPanic::ImapPanic(TImapServerPanic::ECreateCompoundIsNotNull));
 	ResetProgress();
+	if (!CompleteIfBackgroundOpInProgress(aStatus))	
+		{
+		iImapCompound = CImapUpdateFlagOperation::NewL(*iImapSyncManager,
+												   iEntry,
+												   *iImapSettings
+												   );
+		iRequestedOp = EUpdateFlag;
+		StartPrimaryOperation();
+		Queue(aStatus);
+		SetActive();
+		}
+	}
 	
-    if (!CompleteIfBackgroundOpInProgress(aStatus)) 
-            {
-        
-            iImapCompound = CImapUpdateFlagOperation::NewL(*iImapSyncManager,
-                                                       iEntry,
-                                                       *iImapSettings
-                                                       );
-            
-            iRequestedOp = EUpdateFlag;
-            StartPrimaryOperation();
-            Queue(aStatus);
-            SetActive();
-            }
-
-	    }	
-
-
-
-/**
-Updates  the selection of  messages read/unread status from the remote server.
-@param aStatus
-*/  
-EXPORT_C void CImapProtocolController::UpdateEntriesFlagL( TRequestStatus& aStatus,const CMsvEntrySelection& aSourceSel ,TBool aFlagChanged)
- 
-    {
-    __LOG_TEXT(KDefaultLog, "CImapProtocolController::UpdateEntriesFlagL()");
-    __ASSERT_DEBUG(iImapCompound==NULL, TImapServerPanic::ImapPanic(TImapServerPanic::ECreateCompoundIsNotNull));
-    ResetProgress();
-    
-   if (!CompleteIfBackgroundOpInProgress(aStatus)) 
-        {
-    
-        iImapCompound = CImapUpdateFlagOperation::NewL(*iImapSyncManager,
-                                                   iEntry,
-                                                   *iImapSettings,
-                                                   aSourceSel,
-                                                   aFlagChanged);
-        iRequestedOp = EUpdateFlag;
-        StartPrimaryOperation();
-        Queue(aStatus);
-        SetActive();
-        }
-        
-    }   
 

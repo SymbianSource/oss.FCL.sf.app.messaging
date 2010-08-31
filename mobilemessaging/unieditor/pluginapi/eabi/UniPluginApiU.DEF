@@ -1,8 +1,0 @@
-EXPORTS
-	_ZN16CUniEditorPlugin4NewLERK4TUidR11CMsvSessionR13CUniClientMtm @ 1 NONAME
-	_ZN16CUniEditorPluginD0Ev @ 2 NONAME
-	_ZN16CUniEditorPluginD1Ev @ 3 NONAME
-	_ZN16CUniEditorPluginD2Ev @ 4 NONAME
-	_ZTI16CUniEditorPlugin @ 5 NONAME ; #<TI>#
-	_ZTV16CUniEditorPlugin @ 6 NONAME ; #<VT>#
-

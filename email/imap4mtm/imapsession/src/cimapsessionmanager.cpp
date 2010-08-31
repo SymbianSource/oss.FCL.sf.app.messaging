@@ -141,7 +141,11 @@ EXPORT_C void CImapSessionManager::Disconnect(TRequestStatus& aStatus, const RPo
 		{
 		__LOG_TEXT(aSessionList[session]->LogId(), "CImapSessionManager::Disconnect (async, list)");
 
-		iDisconnectList.Append(aSessionList[session]);
+		TInt err = iDisconnectList.Append(aSessionList[session]);
+		if(err != KErrNone)
+			{
+			break;
+			}
 		}
 
 	iProgressState = TImap4GenericProgress::EDisconnecting;
@@ -167,7 +171,11 @@ EXPORT_C void CImapSessionManager::Disconnect(const RPointerArray<CImapSession>&
 		{
 		__LOG_TEXT(aSessionList[session]->LogId(), "CImapSessionManager::Disconnect (sync, list)");
 
-		iDisconnectList.Append(aSessionList[session]);
+		TInt err = iDisconnectList.Append(aSessionList[session]);
+		if(KErrNone != err)
+            {
+		    CloseSessionStreams(aSessionList[session]);
+            }
 		}
 
 	ImmediateDisconnect();
@@ -187,9 +195,20 @@ EXPORT_C void CImapSessionManager::Disconnect(const CImapSession& aSession)
 
 	// Create a disconnect list with just this one session
 	iDisconnectList.Reset();
-	iDisconnectList.Append(&aSession);
+	TInt err = iDisconnectList.Append(&aSession);
+	
+	if(KErrNone != err)
+        {
+	    // remove contness of aSession
+	    CImapSession& session = const_cast<CImapSession&>(aSession);
+	    MOutputStream* outputStream = session.OutputStream();    
+        if (outputStream != NULL)
+            {
+            outputStream->Close();
+            }
+        }
+	
 	ImmediateDisconnect();
-
     __LOG_TEXT(aSession.LogId(), "CImapSessionManager::Disconnect() - END - (sync, session)");
 	}
 

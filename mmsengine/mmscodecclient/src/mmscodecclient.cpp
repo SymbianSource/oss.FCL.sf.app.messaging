@@ -222,7 +222,7 @@ EXPORT_C TInt CMmsCodecClient::DeleteMM(
     TMsvId aMmId )
     {
     //Let's first make sure that the client is not illegally trashing the 
-    //message store with empty entrys. Only the AddMML -function is allowed to 
+    //message store with empty entries. Only the AddMML -function is allowed to 
     //be called after the new entry has been created.
     ResetChunkedMode();
     
@@ -254,7 +254,7 @@ EXPORT_C void CMmsCodecClient::RetrieveMML(
     
     ResetChunkedMode();
     //Let's first make sure that the client is not illegally trashing the 
-    //message store with empty entrys. Only the AddMM -function is allowed to 
+    //message store with empty entries. Only the AddMM -function is allowed to 
     //be called after the new entry has been created.
     if ( iState == EEntryCreated ) 
         {
@@ -320,7 +320,7 @@ EXPORT_C CMsvOperation* CMmsCodecClient::SendMML(
     iClientStatus = &aStatus;
     ResetChunkedMode();
     //Let's first make sure that the client is not illegally trashing the 
-    //message store with empty entrys. Only the AddMM -function is allowed to 
+    //message store with empty entries. Only the AddMM -function is allowed to 
     //be called after the new entry has been created.
     if ( iState == EEntryCreated ) 
         {
@@ -356,7 +356,7 @@ EXPORT_C void CMmsCodecClient::ReplaceMML(
     iClientStatus = &aStatus;
     ResetChunkedMode();
     //Let's first make sure that the client is not illegally trashing the 
-    //message store with empty entrys. Only the AddMM -function is allowed to 
+    //message store with empty entries. Only the AddMM -function is allowed to 
     //be called after the new entry has been created.
     if ( iState == EEntryCreated ) 
         {
@@ -443,7 +443,7 @@ EXPORT_C void CMmsCodecClient::MoveMML( TMsvId aMmId,
     iClientStatus = &aStatus;
     ResetChunkedMode();
     //Let's first make sure that the client is not illegally trashing the 
-    //message store with empty entrys. Only the AddMM -function is allowed to 
+    //message store with empty entries. Only the AddMM -function is allowed to 
     //be called after the new entry has been created.
     if ( iState == EEntryCreated ) 
         {
@@ -525,7 +525,7 @@ EXPORT_C TInt CMmsCodecClient::SetFlags(
     TInt error( KErrNone );
     ResetChunkedMode();
     //Let's first make sure that the client is not illegally trashing the 
-    //message store with empty entrys. Only the AddMM -function is allowed to 
+    //message store with empty entries. Only the AddMM -function is allowed to 
     //be called after the new entry has been created.
     if ( iState == EEntryCreated ) 
         {
@@ -706,7 +706,7 @@ EXPORT_C TInt CMmsCodecClient::CreateNewMessageEntryL( TMsvId aFolder, TMsvId& a
 
     ResetChunkedMode();
     //Let's first make sure that the client is not illegally trashing the 
-    //message store with empty entrys. Only the AddMM -function is allowed to be called
+    //message store with empty entries. Only the AddMM -function is allowed to be called
     //after the new entry has been created.
     if ( iState == EEntryCreated ) 
         {
@@ -841,7 +841,7 @@ void CMmsCodecClient::GenerateRecipientsL( TDes& aDetails )
     TInt addrCnt = addresses.Count();
 
     TPtrC stringToAdd;
-    for ( TInt i = 0; i < addrCnt; i++)
+    for ( TInt i = 0; i < addrCnt; ++i)
         {      
         TPtrC address = TMmsGenUtils::PureAddress( addresses[i] );
 
@@ -891,7 +891,7 @@ void CMmsCodecClient::GenerateRecipientsL( TDes& aDetails )
             if ( charsToAdd >= stringToAdd.Length() )
                 {
                 //Guarantee that charsToAdd is not larger that stringToAdd 
-                //lenght 
+                //length
                 charsToAdd = stringToAdd.Length();
                 }
 
@@ -1229,7 +1229,7 @@ EXPORT_C void CMmsCodecClient::InitializeChunkedReplacingL(
     
     ResetChunkedMode();
     //Let's first make sure that the client is not illegally trashing the 
-    //message store with empty entrys. Only the AddMM -function is allowed to 
+    //message store with empty entries. Only the AddMM -function is allowed to 
     //be called after the new entry has been created.
     if ( iState == EEntryCreated ) 
         {

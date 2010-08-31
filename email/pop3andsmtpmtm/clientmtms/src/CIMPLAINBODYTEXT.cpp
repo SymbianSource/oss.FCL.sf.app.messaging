@@ -70,7 +70,7 @@ void CImPlainBodyText::ConstructL(TInt aChunkLength, CImEmailMessage::TImEmailEn
 	TInt count = iEmailMessage.Selection().Count();
 	for(TInt i=0;i<count;++i)
 		{
-		textIdArray.Append(iEmailMessage.Selection().At(i));
+		textIdArray.AppendL(iEmailMessage.Selection().At(i));
 		}
 		
 	TUint charset = 0; // Will contain the charset when GetCharacterSetL returns.
@@ -93,7 +93,7 @@ void CImPlainBodyText::ConstructL(TInt aChunkLength, CImEmailMessage::TImEmailEn
 		iMsvEntry.SetEntryL(textIdArray[0]);
 		iStore = iMsvEntry.EditStoreL();
 		// Body text is stored in MailStore as 16 bit so set iIs8Bit to EFalse.
-		iPlainTextArray.Append(iStore->InitialisePlainBodyTextForWriteL(EFalse, charset, defaultCharset));	
+		iPlainTextArray.AppendL(iStore->InitialisePlainBodyTextForWriteL(EFalse, charset, defaultCharset));	
 		}	
 	else
 		{
@@ -105,7 +105,7 @@ void CImPlainBodyText::ConstructL(TInt aChunkLength, CImEmailMessage::TImEmailEn
 			CMsvStore* store = iMsvEntry.ReadStoreL();
 			CleanupStack::PushL(store);
 			
-			iPlainTextArray.Append( store->InitialisePlainBodyTextForReadL(aChunkLength));
+			iPlainTextArray.AppendL( store->InitialisePlainBodyTextForReadL(aChunkLength));
 			// if the existing charset was overidden by calling CImEmailMessage::SetCharacterSetL
 			if(override)
 				{
@@ -468,4 +468,5 @@ Cancels the relavent CMsvPlainBodyText object
 void CImPlainBodyText::DoCancel()
 	{
 	iPlainTextArray[iIndex]->Cancel();
+	CMsgActive::DoCancel();
 	}
