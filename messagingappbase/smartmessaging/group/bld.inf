@@ -1,0 +1,123 @@
+/*
+* Copyright (c) 2002-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Build information file for project Smart Messaging
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+/*
+ * RichBio
+ */
+#include "../richbio/group/bld.inf"
+
+/*
+ * MsgEditorUtils
+ */
+#include "../msgeditorutils/group/bld.inf"
+
+/*
+ * BVA
+ */
+#include "../bva/group/bld.inf"
+
+/*
+ * GSM Model group
+ */
+#include "../gmsmodel/group/bld.inf"
+
+/*
+ * Vrec
+ */
+#include "../vrec/group/bld.inf"
+
+/*
+ * Oplogo
+ */
+#include "../oplogobc/group/bld.inf"
+
+/*
+ * RingBC
+ */
+#include "../ringbc/group/bld.inf"
+
+/*
+ * VCardBC
+ */
+#include "../vcardbc/group/bld.inf"
+
+/*
+ * VCalBC
+ */
+#include "../vcalbc/group/bld.inf"
+
+/*
+ * WMLBC
+ */
+#include "../wmlbc/group/bld.inf"
+
+/*
+ * ICALBC
+ */
+#ifdef __MEETING_REQUEST_SUPPORT
+#include "../icalbc/group/bld.inf"
+#endif //__MEETING_REQUEST_SUPPORT
+
+
+PRJ_PLATFORMS
+DEFAULT
+
+// Help exports
+#include "../help/group/bld.inf"
+
+PRJ_EXPORTS
+../rom/Bva.iby CORE_APP_LAYER_IBY_EXPORT_PATH(Bva.iby)
+../rom/BvaResources.iby LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(BvaResources.iby)
+../rom/ENotifBC.iby CORE_APP_LAYER_IBY_EXPORT_PATH(ENotifBC.iby)
+../rom/Gmsbc.iby CORE_APP_LAYER_IBY_EXPORT_PATH(Gmsbc.iby)
+../rom/icalbc.iby CORE_APP_LAYER_IBY_EXPORT_PATH(icalbc.iby)
+../rom/Msgeditorutils.iby CORE_APP_LAYER_IBY_EXPORT_PATH(Msgeditorutils.iby)
+../rom/OpLogoBC.iby CORE_APP_LAYER_IBY_EXPORT_PATH(OpLogoBC.iby)
+../rom/Richbio.iby CORE_APP_LAYER_IBY_EXPORT_PATH(Richbio.iby)
+../rom/RingBC.iby CORE_APP_LAYER_IBY_EXPORT_PATH(RingBC.iby)
+../rom/SmartMessagingResources.iby LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(SmartMessagingResources.iby)
+../rom/Vcalbc.iby CORE_APP_LAYER_IBY_EXPORT_PATH(Vcalbc.iby)
+../rom/Vcardbc.iby CORE_APP_LAYER_IBY_EXPORT_PATH(Vcardbc.iby)
+../rom/Vrec.iby CORE_APP_LAYER_IBY_EXPORT_PATH(Vrec.iby)
+../rom/WMLBC.iby CORE_APP_LAYER_IBY_EXPORT_PATH(WMLBC.iby)
+
+
+PRJ_EXTENSIONS
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE bva_aif.mif
+OPTION SOURCES -c8,8 qgn_menu_mce_card.svg
+END
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE ringbc.mif
+OPTION HEADERFILE ringbc.mbg
+OPTION SOURCES -c8,8 qgn_prop_ota_tone.svg
+END
+
+PRJ_MMPFILES
+
+/*
+ * Removal of Symbian BIO information files from emulator environment
+ *
+*/
+//gnumakefile remove_symbian_BIF_from_emulator.mk
+

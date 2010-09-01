@@ -2280,7 +2280,7 @@ void CMMSClientMTMBCTesterController::ClearFolderL( TMsvId aFolder )
 
 	// Delete the wanted item...
     TInt i;
-    for ( i = 0; i < msvEntrySelection->Count(); ++i )
+    for ( i = 0; i < msvEntrySelection->Count(); i++ )
         {
         CMsvEntry* entry = iSession->GetEntryL( msvEntrySelection->At(i) );
         CleanupStack::PushL( entry );

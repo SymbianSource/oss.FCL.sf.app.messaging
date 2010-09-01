@@ -2865,7 +2865,7 @@ void CImHeader::CreateEncodingInfoL(TDesC16& aEncodingStr1)
 				{
 				TPtrC16 str2 = str1.Left(startPos);
 				TInt a= ConvertToTInt(str2);
-				encodingData.AppendL(a);
+				encodingData.Append(a);
 				
 				startPos++;
 				str1.Set(str1.Mid(startPos, str1.Length()- startPos));

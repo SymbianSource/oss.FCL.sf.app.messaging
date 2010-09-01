@@ -1,0 +1,145 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is project specification file for the Muiu_domain.
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+target          muiu.dll
+targettype      dll
+UID             0x1000008d 0x100058CD
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_GENERAL_DLL
+VERSION 	10.0
+PAGED
+
+SOURCEPATH      .
+
+START RESOURCE ../data/muiudomain.rss
+HEADER
+TARGETPATH   RESOURCE_FILES_DIR
+TARGET       muiu.rsc
+LANGUAGE_IDS
+END
+
+#if defined(ARMCC)
+deffile ../eabi/eabi.def
+#elif defined( WINSCW )
+deffile ../bwinscw/winscwu.def
+#endif
+
+userinclude     ../../inc
+userinclude     ../inc
+userinclude     ../factorysettings/inc
+userinclude     ../folderselectiondialog/inc
+userinclude     ../launcher/inc
+userinclude     ../messageinfo/inc
+userinclude     ../messageiterator/inc
+userinclude     ../msgarrays/inc
+userinclude     ../mtmstore/inc
+userinclude     ../operationwait/inc
+userinclude     ../reporteroperation/inc
+userinclude     ../servicesdomain/inc
+
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+// Generic
+sourcepath      .
+source          muiudomainpan.cpp
+
+// FactorySettings
+sourcepath      ../factorysettings/src
+source          MsvFactorySettings.cpp
+
+// FolderSelectionDialog
+sourcepath      ../folderselectiondialog/src
+source          MsgFolderSelectionDialog.cpp
+source          MsgFolderSelectionListArray.cpp
+
+// Launcher
+sourcepath      ../launcher/src
+source          MuiuMsgEditorLauncher.cpp
+source          MuiuMsgEditorServerWatchingOperation.cpp
+source          MuiuMsgEditorService.cpp
+source          MuiuMsgeditorServiceSession.cpp
+
+// MessageInfo
+sourcepath      ../messageinfo/src
+#ifdef __PROTOCOL_CDMA
+source          MuiuMsgInfoCDMA.cpp
+#else
+source          muiumsginfo.cpp
+#endif
+
+// MessageIterator
+sourcepath      ../messageiterator/src
+source          MuiuMessageIterator.cpp
+
+// MsgArrays
+sourcepath      ../msgarrays/src
+source          msgarrays.cpp
+
+// MtmStore
+sourcepath      ../mtmstore/src
+source          mtmstore.cpp
+source          mtmstoreitem.cpp
+source          mtmusagetimer.cpp
+
+// OperationWait
+sourcepath      ../operationwait/src
+source          MuiuOperationWait.cpp
+
+// ReporterOperation
+sourcepath      ../reporteroperation/src
+source          MuiuMsvProgressReporterOperation.cpp
+source          MuiuMsvRemoteOperationProgress.cpp
+source          MuiuMsvSingleOpWatcher.cpp
+source          MuiuMsvWrappableProgressDialog.cpp
+
+// ServicesDomain
+sourcepath      ../servicesdomain/src
+source          MuiuMsvUiServiceUtilities.cpp
+
+library         euser.lib
+library         estor.lib
+library         apparc.lib
+library         cone.lib
+library         bafl.lib
+library         efsrv.lib
+library         apgrfx.lib
+library         msgs.lib
+library         mtur.lib
+library         eikcore.lib
+library         eikdlg.lib
+library         eikcoctl.lib
+library         egul.lib
+library         avkon.lib
+library         eikctl.lib
+library         commonengine.lib
+LIBRARY         aknskins.lib
+LIBRARY         aknicon.lib      // AknIconUtils::AvkonIconFileName()
+LIBRARY         centralrepository.lib
+LIBRARY         muiu_internal.lib
+
+#if defined(WINS)
+DEBUGLIBRARY	flogger.lib
+#endif
+
+//End of file

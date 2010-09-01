@@ -1,0 +1,56 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is a localisation file for OpLogo
+*
+*/
+
+
+
+// LOCALISATION STRINGS
+
+//d:Operator Logo title pane item.
+//l:title_pane_t2/opt12
+//
+#define qtn_sm_title_operator_logo      "Operator logo"        
+
+//d:Options list text for setting received Operator logo in use.
+//l:list_single_pane_t1_cp2
+//
+#define qtn_sm_use_logo                 "Use operator logo"        
+
+//d:Confirmation query for replacing old logo with new one
+//l:popup_note_window 
+//
+#define qtn_sm_replace_logo             "Replace old operator logo with new one"
+
+//d:Operator logo copied information note
+//l:popup_note_window 
+//
+#define qtn_sm_note_logo_copied         "Operator logo copied"
+
+//d:Confirmation query for deleting all logos
+//l:popup_note_window 
+//
+#define qtn_sm_delete_all_logos         "Delete all operator logos?"
+
+//****************************************************************
+//from the mce ui specification
+
+//d:Name of the message [type].
+//l:list_double_graphic_pane_t2
+#define qtn_mce_inbox_type_smart_ol     "Operator logo"
+
+
+// End of File

@@ -505,7 +505,7 @@ void CMmsReceiveMessage::SubmitTransactionL()
     // The function IsNotificationInsaneL() checks if the notification
     // has incorrect message type or incorrect major version number.
     // If the message is unrecognized, the response will be "unrecognized"
-    // The function sets the status, and later the response will be sent
+    // The funtion sets the status, and later the response will be sent
     // but there is no need to check for expiration or disk space in
     // case the message will be rejected anyway.
     
@@ -2993,7 +2993,7 @@ void CMmsReceiveMessage::DeleteApplicationMessagesL()
     // Check if we fond enough old messages to free space.
     if ( deleteCount > 0 )
         {
-        for ( i = selection->Count(); i > deleteCount; ++i )
+        for ( i = selection->Count(); i > deleteCount; i-- )
             {
             // We may be able to leave some entries
             selection->Delete( i - 1 );

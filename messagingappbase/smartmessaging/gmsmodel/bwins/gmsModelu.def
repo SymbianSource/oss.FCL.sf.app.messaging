@@ -1,0 +1,42 @@
+EXPORTS
+	??1CGmsModel@@UAE@XZ @ 1 NONAME ; public: virtual __thiscall CGmsModel::~CGmsModel(void)
+	?ExportGMS16LC@CGmsModel@@QAEPAVHBufC16@@XZ @ 2 NONAME ; public: class HBufC16 * __thiscall CGmsModel::ExportGMS16LC(void)
+	?ExportGMS8LC@CGmsModel@@QAEPAVHBufC8@@XZ @ 3 NONAME ; public: class HBufC8 * __thiscall CGmsModel::ExportGMS8LC(void)
+	?ExportOTABitmapL@CGmsModel@@QAEXAAVRWriteStream@@@Z @ 4 NONAME ; public: void __thiscall CGmsModel::ExportOTABitmapL(class RWriteStream &)
+	?HasPicture@CGmsModel@@QBEHXZ @ 5 NONAME ; public: int __thiscall CGmsModel::HasPicture(void)const 
+	?HasText@CGmsModel@@QBEHXZ @ 6 NONAME ; public: int __thiscall CGmsModel::HasText(void)const 
+	?ImportGMSL@CGmsModel@@QAEXABVCRichText@@@Z @ 7 NONAME ; public: void __thiscall CGmsModel::ImportGMSL(class CRichText const &)
+	?ImportGMSL@CGmsModel@@QAEXABVTDesC8@@@Z @ 8 NONAME ; public: void __thiscall CGmsModel::ImportGMSL(class TDesC8 const &)
+	?ImportOTABitmapL@CGmsModel@@QAEXAAVRReadStream@@@Z @ 9 NONAME ; public: void __thiscall CGmsModel::ImportOTABitmapL(class RReadStream &)
+	?IsTextLatin@CGmsModel@@QBEHXZ @ 10 NONAME ; public: int __thiscall CGmsModel::IsTextLatin(void)const 
+	?NewL@CGmsModel@@SAPAV1@AAVRFs@@H@Z @ 11 NONAME ; public: static class CGmsModel * __cdecl CGmsModel::NewL(class RFs &,int)
+	?Reset@CGmsModel@@QAEXXZ @ 12 NONAME ; public: void __thiscall CGmsModel::Reset(void)
+	?SetTextL@CGmsModel@@QAEXABVTDesC16@@@Z @ 13 NONAME ; public: void __thiscall CGmsModel::SetTextL(class TDesC16 const &)
+	?SetTextLatinL@CGmsModel@@QAEXABVTDesC16@@@Z @ 14 NONAME ; public: void __thiscall CGmsModel::SetTextLatinL(class TDesC16 const &)
+	?SetTextUnicodeL@CGmsModel@@QAEXABVTDesC16@@@Z @ 15 NONAME ; public: void __thiscall CGmsModel::SetTextUnicodeL(class TDesC16 const &)
+	?SizeOfCompleteMsgExcludingTextAndPic@CGmsModel@@QBEHXZ @ 16 NONAME ; public: int __thiscall CGmsModel::SizeOfCompleteMsgExcludingTextAndPic(void)const 
+	?TextAsHBufC16LC@CGmsModel@@QBEPAVHBufC16@@XZ @ 17 NONAME ; public: class HBufC16 * __thiscall CGmsModel::TextAsHBufC16LC(void)const 
+	?Textlength@CGmsModel@@QBEHXZ @ 18 NONAME ; public: int __thiscall CGmsModel::Textlength(void)const 
+	?TotalSize@CGmsModel@@QBEHXZ @ 19 NONAME ; public: int __thiscall CGmsModel::TotalSize(void)const 
+	?TotalSizeExcludingText@CGmsModel@@QBEHXZ @ 20 NONAME ; public: int __thiscall CGmsModel::TotalSizeExcludingText(void)const 
+	?_TestingL@CGmsModel@@QAEHHAAHABVTDesC8@@ABVTDesC16@@@Z @ 21 NONAME ; public: int __thiscall CGmsModel::_TestingL(int,int &,class TDesC8 const &,class TDesC16 const &)
+	?PictureSize@CGmsModel@@QBEHXZ @ 22 NONAME ; public: int __thiscall CGmsModel::PictureSize(void)const 
+	??1CGmsPictureControl@@UAE@XZ @ 23 NONAME ; public: virtual __thiscall CGmsPictureControl::~CGmsPictureControl(void)
+	??1CGmsWrapper@@UAE@XZ @ 24 NONAME ; public: virtual __thiscall CGmsWrapper::~CGmsWrapper(void)
+	?AddPictureControlToViewL@CGmsWrapper@@QAEXAAVCMsgEditorView@@H@Z @ 25 NONAME ; public: void __thiscall CGmsWrapper::AddPictureControlToViewL(class CMsgEditorView &,int)
+	?AddToPhotoAlbumL@CGmsWrapper@@QAEXHH@Z @ 26 NONAME ; public: void __thiscall CGmsWrapper::AddToPhotoAlbumL(int,int)
+	?GetMessageLC@CGmsWrapper@@QAEPAVHBufC16@@XZ @ 27 NONAME ; public: class HBufC16 * __thiscall CGmsWrapper::GetMessageLC(void)
+	?GetTextLC@CGmsWrapper@@QAEPAVCRichText@@XZ @ 28 NONAME ; public: class CRichText * __thiscall CGmsWrapper::GetTextLC(void)
+	?LoadImageL@CGmsPictureControl@@QAEXABV?$TBuf@$0BAA@@@I@Z @ 29 NONAME ; public: void __thiscall CGmsPictureControl::LoadImageL(class TBuf<256> const &,unsigned int)
+	?LoadMsgL@CGmsWrapper@@QAEXABVCRichText@@@Z @ 30 NONAME ; public: void __thiscall CGmsWrapper::LoadMsgL(class CRichText const &)
+	?MsgSizeExcludingText@CGmsWrapper@@QAEHXZ @ 31 NONAME ; public: int __thiscall CGmsWrapper::MsgSizeExcludingText(void)
+	?NewL@CGmsPictureControl@@SAPAV1@PBVCCoeControl@@@Z @ 32 NONAME ; public: static class CGmsPictureControl * __cdecl CGmsPictureControl::NewL(class CCoeControl const *)
+	?NewL@CGmsWrapper@@SAPAV1@AAVRFs@@@Z @ 33 NONAME ; public: static class CGmsWrapper * __cdecl CGmsWrapper::NewL(class RFs &)
+	?OriginalImageResolution@CGmsPictureControl@@QBE?AVTSize@@XZ @ 34 NONAME ; public: class TSize  __thiscall CGmsPictureControl::OriginalImageResolution(void)const 
+	?PictureSelectionPopupL@CGmsWrapper@@QAEXH@Z @ 35 NONAME ; public: void __thiscall CGmsWrapper::PictureSelectionPopupL(int)
+	?SetPictureMsgTitleL@CGmsWrapper@@QAEXAAVCEikStatusPane@@H@Z @ 36 NONAME ; public: void __thiscall CGmsWrapper::SetPictureMsgTitleL(class CEikStatusPane &,int)
+	?SetTextL@CGmsWrapper@@QAEXAAVCRichText@@@Z @ 37 NONAME ; public: void __thiscall CGmsWrapper::SetTextL(class CRichText &)
+	?ExtractTextFromMsgLC@CGmsModel@@QAEPAVHBufC16@@ABVTDesC16@@H@Z @ 38 NONAME ; public: class HBufC16 * __thiscall CGmsModel::ExtractTextFromMsgLC(class TDesC16 const &,int)
+	?Model@CGmsWrapper@@QBEABVCGmsModel@@XZ @ 39 NONAME ; public: class CGmsModel const & __thiscall CGmsWrapper::Model(void)const 
+	?IsPictureValidL@CGmsModel@@QAEHXZ @ 40 NONAME ; public: int __thiscall CGmsModel::IsPictureValidL(void)
+

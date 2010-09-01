@@ -1,0 +1,406 @@
+/*
+* Copyright (c) 2002-2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME    MSET
+
+//  INCLUDES
+#include <eikon.rh>
+#include <avkon.rsg>
+#include <avkon.hrh>
+#include <avkon.rsg>
+#include <avkon.rh>
+#include <mtud.rh>
+#include <MtmExtendedCapabilities.hrh>
+#include <avkon.loc>
+#include <muiusettingsarray.rh>
+
+#include "MmsSettings.hrh"
+#include <mmsui.loc>
+
+//  CONSTANTS  
+
+//  MACROS  
+
+//  RESOURCE DEFINITIONS 
+
+    RESOURCE RSS_SIGNATURE { }
+
+    RESOURCE TBUF { buf=""; }
+
+    // Settings
+    RESOURCE TBUF r_mms_settings_none                 { buf = qtn_mce_settings_mms_none; }
+    RESOURCE TBUF r_mms_settings_compulsory           { buf = qtn_selec_setting_compulsory; }
+
+    // Always enabled setting, used by MsgErrorWatcher!!!
+    RESOURCE TBUF r_mms_settings_enabled_always   { buf = qtn_mms_stng_mms_rcpt_enab_alw; }
+
+    // Settings dialog title
+    RESOURCE TBUF r_mms_settings_title_text { buf = qtn_mce_title_settings_mms ; }
+
+    // Settings dialog
+    RESOURCE DIALOG r_mmsui_mmssettings
+    {
+    flags = EEikDialogFlagWait | EEikDialogFlagNotifyEsc | EEikDialogFlagCbaButtons
+        | EEikDialogFlagNoDrag | EEikDialogFlagNoTitleBar | EEikDialogFlagNoShadow 
+        | EEikDialogFlagNoBorder | EEikDialogFlagFillAppClientRect;
+
+    buttons = r_mmsui_softkeys_options_back__change;
+    items =
+        {
+        DLG_LINE
+            {
+            type=EAknCtSettingListBox;
+            itemflags=EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+            id=EDlgSettingListBox;
+            control=LISTBOX
+                {
+                flags = 0;
+                height = 8;
+                width = 256;
+                };
+            }
+        };
+    }
+
+
+    RESOURCE CBA r_mmsui_softkeys_options_back__change
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=EChangeItem; txt = qtn_msk_change; }
+        };
+    }
+
+
+    RESOURCE MENU_BAR r_settingsdialog_menubar
+    {
+    titles = { MENU_TITLE { menu_pane=r_settingsdialog_menupane ; txt=""; } };
+    }
+
+    RESOURCE MENU_PANE r_settingsdialog_menupane
+    {
+    items =
+        {
+        MENU_ITEM 
+            { 
+            command = EChangeItem; 
+            txt = qtn_mce_settings_change;
+            flags = EEikMenuItemAction;
+            },
+
+        MENU_ITEM
+            {   
+            command = EAknCmdHelp;
+            txt = qtn_options_help; 
+                        
+            },
+
+        MENU_ITEM 
+            { 
+            command = EExitItem; 
+            txt = qtn_mce_settings_exit;
+            } 
+        };
+    }
+
+    // Main settings dialog listbox items
+    RESOURCE MUIU_SETTINGS_ARRAY r_mms_service_settings_list
+    {
+    items =
+        {
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_mms_image_size;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_mms_image_size_list;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mms_stng_creation_modes;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_mms_creation_mode_list;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_mms_pc;
+            type = EMuiuSettingsEditableText;
+            compulsory = EMuiuSettingsCompulsoryYes;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mms_reception_setting;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_receiving_mms_list;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_mms_fetch_anonymous;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_mms_yes_no_list;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_mms_receive_ad;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_mms_yes_no_list;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_mms_reports;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_mce_mms_reports;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_mms_deny_reports;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_mms_yes_no_list;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_mms_validity_period;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_mms_validity_period_list;
+            }
+        };
+    }
+
+    RESOURCE AVKON_SETTING_PAGE r_mms_setting_page
+    { 
+        softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+        menubar = R_AVKON_MENUPANE_EMPTY;
+        type = EAknSetListBox;
+        editor_resource_id = r_mms_settings_listbox_list;
+    }
+
+    RESOURCE LISTBOX r_mms_settings_listbox_list
+    {
+        flags = EEikListBoxMultipleSelection;
+        height = 8; 
+    }
+
+    RESOURCE ARRAY r_receiving_mms_list
+    {
+    items =
+        {
+        LBUF {txt=qtn_mms_recept_sett_auto_always; },
+        LBUF {txt=qtn_mms_recept_sett_auto_home; },
+        LBUF {txt=qtn_mms_recept_sett_manual_always; },
+        LBUF {txt=qtn_mms_stng_mms_rcpt_disenab; }
+        };
+    }
+
+
+
+    RESOURCE ARRAY r_mms_yes_no_list
+    {
+    items =
+        {
+        LBUF {txt=qtn_mce_settings_mms_yes; },
+        LBUF {txt=qtn_mce_settings_mms_no; }        
+        };
+    }
+
+
+    RESOURCE ARRAY r_mms_validity_period_list
+    {
+    items=
+        {
+        LBUF {txt=qtn_mce_settings_mms_1; },
+        LBUF {txt=qtn_mce_settings_mms_6; },
+        LBUF {txt=qtn_mce_settings_mms_24; },
+        LBUF {txt=qtn_mce_settings_mms_3; },
+        LBUF {txt=qtn_mce_settings_mms_week; },
+        LBUF {txt=qtn_mce_settings_mms_maximum; }
+        };
+    }
+
+    RESOURCE ARRAY r_mms_image_size_list
+    {
+    items =
+        {
+        LBUF {txt=qtn_mce_settings_mms_small; },
+        LBUF {txt=qtn_mce_settings_mms_large; }
+        };
+    }
+
+    RESOURCE ARRAY r_mce_mms_reports
+    {
+    items =
+        {
+        LBUF {txt=qtn_mce_settings_mms_both_reprts; },
+        LBUF {txt=qtn_mce_settings_mms_deliv_only; },
+        LBUF {txt=qtn_mce_settings_mms_no; }
+        };
+    }
+
+    RESOURCE ARRAY r_mms_creation_mode_list
+    {
+    items =
+        {
+        LBUF {txt=qtn_mms_stng_restricted_mode; },
+        LBUF {txt=qtn_mms_stng_guided_mode; },
+        LBUF {txt=qtn_mms_stng_free_mode; }
+        };
+    }
+
+
+    RESOURCE ARRAY r_mms_mt_message_info_list
+    {
+    items =
+        {
+        LBUF {txt=qtn_msg_from; },
+        LBUF {txt=qtn_msg_subject; },
+        LBUF {txt=qtn_mms_date; },
+        LBUF {txt=qtn_mms_time; },
+        LBUF {txt=qtn_mms_type; },
+        LBUF {txt=qtn_mms_size; },
+        LBUF {txt=qtn_msg_to; }     
+        };
+    }
+
+    RESOURCE ARRAY r_mms_mo_message_info_list
+    {
+    items =
+        {
+        LBUF {txt=qtn_msg_subject; },
+        LBUF {txt=qtn_mms_date; },
+        LBUF {txt=qtn_mms_time; },
+        LBUF {txt=qtn_mms_type; },
+        LBUF {txt=qtn_mms_size; },
+        LBUF {txt=qtn_msg_to; }
+        };
+    }
+
+    RESOURCE DIALOG r_mmsui_query_ap_error
+        {
+        flags = EGeneralQueryFlags;
+        buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+        items =
+            {
+            DLG_LINE
+                {
+                type    = EAknCtQuery;
+                id      = EGeneralQuery;
+                control = AVKON_CONFIRMATION_QUERY
+                    {
+                    layout  = EConfirmationQueryLayout;
+                    label   = qtn_mce_conf_no_ap;
+                    };
+                }
+            };
+        }
+
+    RESOURCE DIALOG r_mmsui_query_always_enabled_confirmation
+        {
+        flags = EGeneralQueryFlags;
+        buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+        items =
+            {
+            DLG_LINE
+                {
+                type    = EAknCtQuery;
+                id      = EGeneralQuery;
+                control = AVKON_CONFIRMATION_QUERY
+                    {
+                    layout  = EConfirmationQueryLayout;
+                    label   = qtn_mms_sttng_enabled_conf_q;
+                    };
+                }
+            };
+        }
+
+    RESOURCE DIALOG r_mmsui_query_exit_anyway
+        {
+        flags = EGeneralQueryFlags;
+        buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+        items =
+            {
+            DLG_LINE
+                {
+                type    = EAknCtQuery;
+                id      = EGeneralQuery;
+                control = AVKON_CONFIRMATION_QUERY
+                    {
+                    layout  = EConfirmationQueryLayout;
+                    label   = qtn_mce_settings_mms_invalid;
+                    };
+                }
+            };
+        }
+
+    RESOURCE DIALOG r_mmsui_query_change_to_free
+        {
+        flags = EGeneralQueryFlags;
+        buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+        items =
+            {
+            DLG_LINE
+                {
+                type    = EAknCtQuery;
+                id      = EGeneralQuery;
+                control = AVKON_CONFIRMATION_QUERY
+                    {
+                    layout  = EConfirmationQueryLayout;
+                    label   = qtn_mms_query_change_to_free;
+                    };
+                }
+            };
+        }
+	
+    // Creation mode disabled info note
+    RESOURCE TBUF r_mmsui_info_cannot_change_cmode { buf = qtn_mms_cannot_change_cmode ; }
+
+    // Image size changed to small info note
+    RESOURCE TBUF r_mmsui_info_image_size_changed { buf = qtn_mms_info_im_size_to_small ; }
+    
+	RESOURCE TBUF r_mms_settings_processing		  { buf = qtn_gen_note_processing; }
+
+// ----------------------------------------------------------------------------
+//   
+//      saving_wait_note
+//      The wait note when fetch mode is changed to automatic
+//		and lots of notifications are being scheduled
+//
+// ----------------------------------------------------------------------------
+RESOURCE DIALOG saving_wait_note
+    {
+    flags = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtNote;
+            id = 1;
+            control= AVKON_NOTE 
+                { 
+                layout = EWaitLayout;
+                animation =R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }
+
+
+// End of File

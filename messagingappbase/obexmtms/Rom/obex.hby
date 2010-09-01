@@ -20,17 +20,17 @@
 REM Messaging OBEX MTM is not included in this ROM, because it depends on excluded OBEX
 #else
 
-#ifndef __IRDA 
+#ifdef SYMBIAN_EXCLUDE_INFRARED
 REM Infrared watcher is not included in this ROM, because it depends on excluded INFRARED
 #else
 data=MULTI_LINGUIFY(RSC ZSYSTEM\Data\irwatcher		System\Data\irwatcher)
-#endif // __IRDA
+#endif // SYMBIAN_EXCLUDE_INFRARED
 
-#ifndef __BT
+#ifdef SYMBIAN_EXCLUDE_BLUETOOTH
 REM Bluetooth watcher is not included in this ROM, because it depends on excluded BLUETOOTH
 #else
 REM data=MULTI_LINGUIFY(RSC ZSYSTEM\Data\btwatcher		System\Data\btwatcher)
-#endif // __BT
+#endif // SYMBIAN_EXCLUDE_BLUETOOTH
 
 #endif // SYMBIAN_EXCLUDE_OBEX
 

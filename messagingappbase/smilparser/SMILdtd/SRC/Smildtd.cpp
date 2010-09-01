@@ -18,8 +18,10 @@
 // of SMIL documents
 // 
 //
-
-#include "smildtd.h"
+#ifdef SYMBIAN_ENABLE_SPLIT_HEADERS 
+#include "smildtdenum.h"
+#endif
+#include <smildtd.h>
 #include "SmilData.h"
 #include <stringpool.h>
 #include "smilelements.h"

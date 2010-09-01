@@ -1,0 +1,77 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Project definition file for project Message Editor Utils
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+#include <data_caging_paths.hrh>
+#include "../src/MsgEditorUtilsLogDef.h"
+
+TARGET          MsgEditorUtils.dll
+TARGETTYPE      dll
+UID             0x1000008d 0x100007aa
+VERSION 	10.0
+deffile msgeditorutilsu_sec.def
+
+CAPABILITY CAP_GENERAL_DLL
+PAGED
+
+SOURCEPATH	../src
+SOURCE		MsgBioControl.cpp
+SOURCE		MsgBioBodyControl.cpp 
+SOURCE		MsgBioControlFactory.cpp
+SOURCE		MsgEditorUtilsDll.cpp
+SOURCE		MsgDetailWindow.cpp
+SOURCE		MsgNameValue.cpp
+SOURCE		MsgAsyncItemSaver.cpp
+SOURCE		MsgBioUtils.cpp
+SOURCE		MsgEditorUtilsLog.cpp		
+
+START RESOURCE ../group/MsgEditorUtils.rss
+HEADER
+TARGETPATH  RESOURCE_FILES_DIR
+LANGUAGE_IDS
+END
+
+USERINCLUDE     ../inc 
+USERINCLUDE     ../group
+
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+SOURCEPATH	../inc
+
+// EPOC32 libraries
+
+LIBRARY     euser.lib
+LIBRARY     cone.lib
+LIBRARY     efsrv.lib
+LIBRARY     eikcoctl.lib
+LIBRARY     msgeditorview.lib
+LIBRARY     biodb.lib
+LIBRARY     commonengine.lib 	// StringLoader
+LIBRARY     avkon.lib
+LIBRARY     bafl.lib 		//CDesCArray
+LIBRARY     richBio.lib 	// CRichBio
+
+LIBRARY	    InetProtUtil.lib	// Uri
+
+#ifdef MSGEDITORUTILS_ENABLE_LOGGING
+#ifdef MSGEDITORUTILS_LOG_TO_FILE
+LIBRARY	flogger.lib
+#endif // MSGEDITORUTILS_LOG_TO_FILE
+#endif // MSGEDITORUTILS_ENABLE_LOGGING

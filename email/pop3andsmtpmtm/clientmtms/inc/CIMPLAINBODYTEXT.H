@@ -16,6 +16,9 @@
 #ifndef _CIMPLAINBODYTEXT_H_
 #define _CIMPLAINBODYTEXT_H_
 
+#include <miuthdr.h>
+#include <miutmsg.h>
+
 class CImEmailMessage;
 class CImStoreMessagePart;
 class CMsgActive;

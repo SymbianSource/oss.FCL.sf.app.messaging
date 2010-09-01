@@ -462,12 +462,6 @@ void CImMhtmlChildEntrySearcher::DoRunL()
 			}
 		}
 	}
-	
-	
-void CImMhtmlChildEntrySearcher::DoCancel()
-	{
-	CMsgActive::DoCancel();
-	}	
 
 void CImMhtmlChildEntrySearcher::DoComplete(TInt& )
 	{
@@ -1049,10 +1043,7 @@ void CImMhtmlFirstPageFinder::DoComplete(TInt& aStatus)
 		}
 	}
 
-void CImMhtmlFirstPageFinder::DoCancel()
-	{
-		CMsgActive::DoCancel();
-	}
+
 
 
 // The following class implements a class for parsing and combining URI's.

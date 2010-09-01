@@ -1,0 +1,84 @@
+EXPORTS
+	_Z22NewIMPIMtmUiDataLayerLR17CRegisteredMtmDll @ 1 NONAME
+	_Z13NewIMPUMtmUiLR8CBaseMtmR17CRegisteredMtmDll @ 2 NONAME
+	_Z22NewPP3IMtmUiDataLayerLR17CRegisteredMtmDll @ 3 NONAME
+	_Z13NewPP3UMtmUiLR8CBaseMtmR17CRegisteredMtmDll @ 4 NONAME
+	_Z22NewSMTIMtmUiDataLayerLR17CRegisteredMtmDll @ 5 NONAME
+	_Z13NewSMTUMtmUiLR8CBaseMtmR17CRegisteredMtmDll @ 6 NONAME
+	_ZTI10CPop3MtmUi @ 7 NONAME ; #<TI>#
+	_ZTI10CSmtpMtmUi @ 8 NONAME ; #<TI>#
+	_ZTI11CImap4MtmUi @ 9 NONAME ; #<TI>#
+	_ZTI12CSmtpTimerOp @ 10 NONAME ; #<TI>#
+	_ZTI13CImap4FetchOp @ 11 NONAME ; #<TI>#
+	_ZTI14CPop3MtmUiData @ 12 NONAME ; #<TI>#
+	_ZTI14CSmtpMtmUiData @ 13 NONAME ; #<TI>#
+	_ZTI15CImap4MtmUiData @ 14 NONAME ; #<TI>#
+	_ZTI15CSmtpCopyMoveOp @ 15 NONAME ; #<TI>#
+	_ZTI16CSmtpCreateNewOp @ 16 NONAME ; #<TI>#
+	_ZTI17CEmailPreCreation @ 17 NONAME ; #<TI>#
+	_ZTI17CImap4ConnectedOp @ 18 NONAME ; #<TI>#
+	_ZTI17CImapConnectionOp @ 19 NONAME ; #<TI>#
+	_ZTI17CMsvPop3ConnectOp @ 20 NONAME ; #<TI>#
+	_ZTI18CImumEditOperation @ 21 NONAME ; #<TI>#
+	_ZTI20CImap4SizeAndFetchOp @ 22 NONAME ; #<TI>#
+	_ZTI20CImumOnlineOperation @ 23 NONAME ; #<TI>#
+	_ZTI20CSmtpCancelSendingOp @ 24 NONAME ; #<TI>#
+	_ZTI21CImap4CopyMoveLocalOp @ 25 NONAME ; #<TI>#
+	_ZTI22CImumDiskSpaceObserver @ 26 NONAME ; #<TI>#
+	_ZTI22CMsvPop3FetchOperation @ 27 NONAME ; #<TI>#
+	_ZTI22CSmtpPreCreationOpBase @ 28 NONAME ; #<TI>#
+	_ZTI23CEmailMsgSizerOperation @ 29 NONAME ; #<TI>#
+	_ZTI23CImap4ConnectedDeleteOp @ 30 NONAME ; #<TI>#
+	_ZTI23CImap4FetchAttachmentOp @ 31 NONAME ; #<TI>#
+	_ZTI23CSelectionOperationBase @ 32 NONAME ; #<TI>#
+	_ZTI23CSmtpResetPreCreationOp @ 33 NONAME ; #<TI>#
+	_ZTI24CImapFolderSyncOperation @ 34 NONAME ; #<TI>#
+	_ZTI24CImumDisconnectOperation @ 35 NONAME ; #<TI>#
+	_ZTI24TMsvAttachmentNamesArray @ 36 NONAME ; #<TI>#
+	_ZTI25CMsvPop3CopyMoveOperation @ 37 NONAME ; #<TI>#
+	_ZTI26CImumDeleteMessagesLocally @ 38 NONAME ; #<TI>#
+	_ZTI26CImumFetchAndEditOperation @ 39 NONAME ; #<TI>#
+	_ZTI29CImumDeleteMessagesFromServer @ 40 NONAME ; #<TI>#
+	_ZTI30CImumUsernameAndPasswordDialog @ 41 NONAME ; #<TI>#
+	_ZTI31CImumDiskSpaceObserverOperation @ 42 NONAME ; #<TI>#
+	_ZTI32CImapConnectAndRefreshFolderList @ 43 NONAME ; #<TI>#
+	_ZTI35CMsvEmailConnectionProgressProvider @ 44 NONAME ; #<TI>#
+	_ZTV10CPop3MtmUi @ 45 NONAME ; #<VT>#
+	_ZTV10CSmtpMtmUi @ 46 NONAME ; #<VT>#
+	_ZTV11CImap4MtmUi @ 47 NONAME ; #<VT>#
+	_ZTV12CSmtpTimerOp @ 48 NONAME ; #<VT>#
+	_ZTV13CImap4FetchOp @ 49 NONAME ; #<VT>#
+	_ZTV14CPop3MtmUiData @ 50 NONAME ; #<VT>#
+	_ZTV14CSmtpMtmUiData @ 51 NONAME ; #<VT>#
+	_ZTV15CImap4MtmUiData @ 52 NONAME ; #<VT>#
+	_ZTV15CSmtpCopyMoveOp @ 53 NONAME ; #<VT>#
+	_ZTV16CSmtpCreateNewOp @ 54 NONAME ; #<VT>#
+	_ZTV17CEmailPreCreation @ 55 NONAME ; #<VT>#
+	_ZTV17CImap4ConnectedOp @ 56 NONAME ; #<VT>#
+	_ZTV17CImapConnectionOp @ 57 NONAME ; #<VT>#
+	_ZTV17CMsvPop3ConnectOp @ 58 NONAME ; #<VT>#
+	_ZTV18CImumEditOperation @ 59 NONAME ; #<VT>#
+	_ZTV20CImap4SizeAndFetchOp @ 60 NONAME ; #<VT>#
+	_ZTV20CImumOnlineOperation @ 61 NONAME ; #<VT>#
+	_ZTV20CSmtpCancelSendingOp @ 62 NONAME ; #<VT>#
+	_ZTV21CImap4CopyMoveLocalOp @ 63 NONAME ; #<VT>#
+	_ZTV22CImumDiskSpaceObserver @ 64 NONAME ; #<VT>#
+	_ZTV22CMsvPop3FetchOperation @ 65 NONAME ; #<VT>#
+	_ZTV22CSmtpPreCreationOpBase @ 66 NONAME ; #<VT>#
+	_ZTV23CEmailMsgSizerOperation @ 67 NONAME ; #<VT>#
+	_ZTV23CImap4ConnectedDeleteOp @ 68 NONAME ; #<VT>#
+	_ZTV23CImap4FetchAttachmentOp @ 69 NONAME ; #<VT>#
+	_ZTV23CSelectionOperationBase @ 70 NONAME ; #<VT>#
+	_ZTV23CSmtpResetPreCreationOp @ 71 NONAME ; #<VT>#
+	_ZTV24CImapFolderSyncOperation @ 72 NONAME ; #<VT>#
+	_ZTV24CImumDisconnectOperation @ 73 NONAME ; #<VT>#
+	_ZTV24TMsvAttachmentNamesArray @ 74 NONAME ; #<VT>#
+	_ZTV25CMsvPop3CopyMoveOperation @ 75 NONAME ; #<VT>#
+	_ZTV26CImumDeleteMessagesLocally @ 76 NONAME ; #<VT>#
+	_ZTV26CImumFetchAndEditOperation @ 77 NONAME ; #<VT>#
+	_ZTV29CImumDeleteMessagesFromServer @ 78 NONAME ; #<VT>#
+	_ZTV30CImumUsernameAndPasswordDialog @ 79 NONAME ; #<VT>#
+	_ZTV31CImumDiskSpaceObserverOperation @ 80 NONAME ; #<VT>#
+	_ZTV32CImapConnectAndRefreshFolderList @ 81 NONAME ; #<VT>#
+	_ZTV35CMsvEmailConnectionProgressProvider @ 82 NONAME ; #<VT>#
+

@@ -127,7 +127,7 @@ class CMmsSession : public CActive, public MHTTPSessionEventCallback
         * from MHTTPSessionEventCallback
         * Called when the filters registration conditions are satisfied for events that occur
         * on the session.
-        * @ param aEvent The session event that has occurred.
+        * @ param aEvent The session event that has occured.
         * @ exception Any leaves must be handled by the appropriate MHFRunError.
         */
         void MHFSessionRunL( const THTTPSessionEvent& aEvent );

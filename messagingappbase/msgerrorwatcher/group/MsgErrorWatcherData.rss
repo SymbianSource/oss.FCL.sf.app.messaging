@@ -1,0 +1,194 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME    MSEW
+
+//  INCLUDES
+#include <eikon.rh>
+#include <msgerrorwatcher.loc>
+#include <avkon.loc>
+//  RESOURCE DEFINITIONS 
+
+RESOURCE RSS_SIGNATURE {}           // Resource file signature
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_no_ap
+//    String for "No Access Point" global query
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_no_ap   { buf = qtn_mms_errh_no_access_points_def; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_invalid_ap
+//    String for "Invalid Access Point" global query
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_invalid_ap  { buf = qtn_mms_errh_access_points_inv; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_conn_in_use
+//    String for "Connection In Use" global query, receiving
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_conn_in_use_receive { buf = qtn_mms_query_close_connections; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_conn_in_use
+//    String for "Connection In Use" global query, sending
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_conn_in_use_send { buf = qtn_mms_query_sending_close_conns; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_disk_low
+//    String for "Disk Low" global query, one message
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_disk_low_1  { buf = qtn_mms_errh_low_disk_space_1; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_disk_low
+//    String for "Disk Low" global query, multiple messages
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_disk_low_n  { buf = qtn_mms_errh_low_disk_space_n; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_memory_low
+//    String for "Memory Low" global query
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_memory_low  { buf = qtn_mms_errh_low_memory_space; }
+
+//-----------------------------------------------------   
+//
+//    r_mms_errh_roaming_reminder
+//    String for "Roaming Reminder" global query
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_roaming_reminder    { buf = qtn_mms_conf_reception_off; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_sending_message
+//    String for "Sending message" global note
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_sending_message    { buf = qtn_info_mms_sending_msg; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_send_error
+//    String for "Sending error" global query
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_send_error  { buf = qtn_mms_errh_send_error; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_forward_error
+//    String for "Forward request failed" global query
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_forward_error  { buf = qtn_mms_err_fwd_rqst_failed; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_retrieval_error
+//    String for "Message retrieval failed" global query
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_retrieval_error  { buf = qtn_mms_err_retrieval_failed; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_send_error_info
+//    String for "Sending error" global query
+//    with recipient info
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_send_error_info  { buf = qtn_mms_err_snd_failed_rcpnt_info; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_forward_error_info
+//    String for "Forward request failed" global query
+//    with recipient info
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_forward_error_info  { buf = qtn_mms_err_fwd_rqst_failed_rcpnt_info; }
+
+//-----------------------------------------------------   
+//
+//    r_msg_errh_retrieval_error_info
+//    String for "Message retrieval failed" global query
+//    with sender info
+//
+//-----------------------------------------------------
+//
+RESOURCE TBUF r_msg_errh_retrieval_error_info  { buf = qtn_mms_err_retr_failed_sender_info; }
+
+//----------------------------------------------------
+//   
+//    r_mms_delivered
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF256 r_mms_delivered { buf = qtn_mms_dr_delivered; }
+
+//----------------------------------------------------
+//   
+//    r_mms_read
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF256 r_mms_read { buf = qtn_mms_conf_read; } 
+
+//----------------------------------------------------
+//   
+//    r_memlo_memory_low_messages
+//    SMS low memory notification string
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF256 r_memlo_memory_low_messages { buf = qtn_memlo_memory_low_messages; }
+// End of File

@@ -4,6 +4,10 @@
     Message Type Module (MTM) plugin to Messaging Framework, supporting sending/receiving/editing of SMS messages.
   </purpose>
 
+<defect number="DEF144773" title="[System Build] Program closed on Auto smoke test in tb92sf_1065" revision="040">
+     Logical error in last code submission in smsclnt.cpp in  void CMsvServer::ConstructL(). Updated those changes accordingly.
+  </defect>
+  
   <defect number="DEF144509 " title="Bell Mobility Canada -GSM/WCDMA -OTC-SMS-MO-to invalid destination is retried" revision="039">
      Checking for the error codes to avoid sending messages to invlaid numbers.
   </defect>

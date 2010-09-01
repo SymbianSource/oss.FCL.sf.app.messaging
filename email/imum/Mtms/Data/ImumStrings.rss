@@ -1,0 +1,118 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*     This file contains all the string resources for the module Imum.
+*
+*
+*/
+
+
+//  RESOURCE IDENTIFIER
+//  INCLUDES
+//  CONSTANTS
+//  MACROS
+//  RESOURCE DEFINITIONS
+
+// COMMON
+RESOURCE RSS_SIGNATURE
+    { 
+    }
+    
+// COMDBUTILS
+
+// Message fetching
+
+RESOURCE TBUF256 r_email_retrieve_no_diskspace_text 
+    { 
+    buf = qtn_memlo_not_enough_memory; 
+    }
+
+RESOURCE TBUF r_email_retrieve_1_text               
+    { 
+    buf = qtn_mce_quest_message_not_fethe; 
+    }
+
+RESOURCE TBUF r_email_retrieve_reply_fwd_text       
+    { 
+    buf = qtn_mce_quest_message_not_fethe; 
+    }
+
+RESOURCE TBUF r_email_fetch_message_before_copy_query       
+    { 
+    buf = qtn_mce_quest_fetch_message; 
+    }
+
+RESOURCE TBUF r_email_fetch_messages_before_copy_query       
+    { 
+    buf = qtn_mce_quest_fetch_messages; 
+    }
+
+RESOURCE TBUF r_email_big_attachment_to_fetch
+    { 
+    buf = qtn_mce_conf_large_attachment;
+    }
+
+RESOURCE TBUF r_email_undelete_message_query
+    { 
+    buf = qtn_query_common_conf_undelete;
+    }
+
+RESOURCE TBUF r_email_undelete_many_messages_query
+    { 
+    buf = qtn_query_common_conf_undeletes;
+    }
+
+RESOURCE NUMBER_INT32 r_email_fetch_attachment_query_limit
+    {
+    value = 300;
+    }
+RESOURCE TBUF r_imum_delete_many_mails_server_query
+    {
+    buf = qtn_mbxs_conf_mail_del_server;
+    }
+
+RESOURCE TBUF r_imum_delete_many_mails_phone_query
+    {
+    buf = qtn_mbxs_conf_mail_del_phone;
+    }
+
+RESOURCE TBUF r_imum_error_locked_settigns
+    { 
+    buf = qtn_mbxs_err_locked_conn_settings;
+    }    
+    
+//
+// Connection Operation.
+//
+RESOURCE TBUF r_email_connecting_via_iap
+    { 
+    buf=qtn_ics_conct_note_txt; 
+    }
+
+RESOURCE TBUF r_email_disconnect
+    { 
+    buf=qtn_ics_wnote_disconn_from_netw; 
+    }
+       
+RESOURCE TBUF r_imas_settings_dialog_updating_folderlist
+    {
+    buf = qtn_mce_settings_mail_update_search;
+    } 
+
+RESOURCE TBUF80 r_email_svcdelop_dialog_title
+    { 
+    buf = qtn_mce_wait_delete_mail; 
+    }
+        
+// End of File

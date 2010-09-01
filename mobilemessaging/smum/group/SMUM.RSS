@@ -1,0 +1,1041 @@
+/*
+* Copyright (c) 2002-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module smum.
+*
+*/
+
+
+
+
+
+//  RESOURCE IDENTIFIER
+
+NAME SMUM
+
+#include <eikon.rh>                      // ?description
+#include <eikon.rsg>                     // ?description
+#include <mtud.rh>                       // ?description
+#include <mtud.hrh>                      // ?description
+#include <mtmuidef.hrh>                  // ?description
+#include <MtmExtendedCapabilities.hrh>
+#include <muiusettingsarray.rh>  // needed for settingshelp-class
+#include <avkon.rh>
+#include <avkon.rsg>
+#include <avkon.mbg>
+#include <avkon.loc>
+#include <muiusettingsarray.hrh>         // MUIU_SETTINGS_ITEM
+#include "SMSU.HRH"                      
+#include <smum.loc>
+
+#include <bldvariant.hrh>
+
+//  CONSTANTS  
+#define SmumScNameMaxLength   30
+
+//  EIKON HEADER INFORMATION
+
+//===========================================================================
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF16 { buf="smum"; }
+
+/*
+-----------------------------------------------------------------------------
+
+    r_smsi_function_array
+
+-----------------------------------------------------------------------------
+*/
+
+RESOURCE MTUD_FUNCTION_ARRAY r_smsi_function_array
+    {
+    functions=      
+        {       
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_settings_sms;
+            command = KMtmUiMceSettings;
+            flags = EMtudCommandTransferSend;
+            },
+        MTUD_FUNCTION
+            {
+            functiontext = qtn_mce_sim_messages; // Cannot be longer that 40 characters
+            command = KMtmUiFunctionSimDialog;
+            flags = EMtudCommandTransferReceive;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_info;
+            command = KMtmUiFunctionMessageInfo;
+            flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+            }
+        };
+    }
+
+RESOURCE TBUF r_smum_delete_confirmation_common
+    {
+    buf = qtn_query_common_conf_delete;
+    }
+
+
+// Series 60 specific resource definitions
+
+// Settings related resources...
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_main_sms_settings_choice_menubar - menubar definition
+//    A definition for menupane to use
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_main_sms_settings_choice_menubar
+    {
+    titles=
+        { 
+        MENU_TITLE 
+            { 
+            menu_pane=r_main_sms_settings_choice_menupane ; 
+            txt=""; 
+            } 
+        };
+    }
+
+// ---------------------------------------------------------
+//   
+//    r_main_sms_settings_choice_menupane - menupane definition
+//    A menu texts for main sms settings
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_main_sms_settings_choice_menupane
+    {
+    items=
+        {
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuOpen;
+            txt = qtn_mce_settings_open; 
+            flags = EEikMenuItemAction;
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuChange;
+            txt = qtn_mce_settings_change; 
+            flags = EEikMenuItemAction;
+            },
+        MENU_ITEM
+            {   
+            command = EAknCmdHelp;
+            txt = qtn_options_help;                     
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuExit; 
+            txt = qtn_mce_settings_exit; 
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//   
+//    r_sms_servicecentres_choice_menubar - menubar definition
+//    A definition for menupane to use
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_sms_servicecentres_choice_menubar
+    {
+    titles=
+        { 
+        MENU_TITLE 
+            { 
+            menu_pane=r_sms_servicecentres_choice_menupane ; 
+            txt=""; 
+            } 
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_servicecentres_choice_menupane - menupane definition
+//    A menu texts for service centres -dialog
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_sms_servicecentres_choice_menupane
+    {
+    items=
+        {
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuEdit;
+            txt = qtn_mce_settings_edit; 
+            flags = EEikMenuItemAction;
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuOpen;
+            txt = qtn_mce_settings_open; 
+            flags = EEikMenuItemAction;
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuNew;
+            txt = qtn_mce_settings_sms_new; 
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuDelete;
+            txt = qtn_mce_settings_delete; 
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {   
+            command = EAknCmdHelp;
+            txt = qtn_options_help;                     
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuExit; 
+            txt = qtn_mce_settings_exit; 
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_servicecentre_item_choice_menubar - menubar definition
+//    A definition for menupane to use
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_BAR r_sms_servicecentre_item_choice_menubar
+    {
+    titles=
+        { 
+        MENU_TITLE 
+            { 
+            menu_pane=r_sms_servicecentre_item_choice_menupane ; 
+            txt=""; 
+            } 
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_servicecentre_item_choice_menupane - menupane definition
+//    A menu texts for service centres -dialog
+//
+// ---------------------------------------------------------
+//
+RESOURCE MENU_PANE r_sms_servicecentre_item_choice_menupane
+    {
+    items=
+        {
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuChange;
+            txt = qtn_mce_settings_change; 
+            flags = EEikMenuItemAction;
+            },
+        MENU_ITEM
+            {   
+            command = EAknCmdHelp;
+            txt = qtn_options_help;                     
+            },
+        MENU_ITEM 
+            { 
+            command = ESmsSettingsChoiceMenuExit; 
+            txt = qtn_mce_settings_exit; 
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_main_settings_items - listbox definition
+//    A setting listbox item texts
+//
+// ---------------------------------------------------------
+//
+RESOURCE MUIU_SETTINGS_ARRAY r_sms_main_settings_items
+    {
+    items = 
+        {
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_centres;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_empty_service_centres; // to make empty array
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_sc_in_use;
+            type = EMuiuSettingsSelectionList;
+            //array is created dynamically 
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_sett_sms_mail;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_empty_service_centres;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_sett_sms_chars;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_character_support;
+            },
+
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_delivery;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_yes_no;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_validity;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_validity_period;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_conversion;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_message_conversion;
+            },
+        // REQ:417-48417 Message forward with sender info
+        // must pay attention to the order: order of item in rss file is same with the enum defined in head file.
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_setting_sms_forward;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_yes_no;
+            },
+        // End REQ:417-48417
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_connection;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_preferred_connection;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_reply;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_yes_no;
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_sending_options_items - listbox definition
+//    A setting listbox item texts
+//
+// ---------------------------------------------------------
+//
+RESOURCE MUIU_SETTINGS_ARRAY r_sms_sending_options_items
+    {
+    items = 
+        {
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_sc_in_use;
+            type = EMuiuSettingsSelectionList;
+            //array is created dynamically 
+            },
+
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_sett_sms_chars;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_character_support;
+            },
+
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_delivery;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_yes_no;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_validity;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_validity_period;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_conversion;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_message_conversion;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_reply;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_yes_no;
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_settings_empty_service_centres
+//    To empty service centres listbox item
+//
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_sms_settings_empty_service_centres
+    {
+    items=
+        {
+        LBUF 
+            {
+            txt="\t"; 
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_settings_yes_no - an array definition for settings
+//    A list of possible values for setting page
+//
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_sms_settings_yes_no
+    {
+    items=
+        {
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_yes; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_no; 
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_settings_validity_period - an array definition for settings
+//    A list of possible values for setting page
+//
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_sms_settings_validity_period
+    {
+    items=
+        {
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_1; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_6; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_24; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_3; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_week; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_maximum; 
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_character_support - an array definition for settings
+//    A list of possible values for setting page
+//
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_sms_character_support
+    {
+    items=
+        {
+        LBUF 
+            {
+            txt=  qtn_mce_sett_sms_chars_full; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_sett_sms_chars_reduced; 
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_settings_message_conversion - an array definition for settings
+//    A list of possible values for setting page
+//
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_sms_settings_message_conversion
+    {
+    items=
+        {
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_none; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_fax; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_paging; 
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_settings_preferred_connection - an array definition for settings
+//    A list of possible values for setting page
+//
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_sms_settings_preferred_connection
+    {
+    items=
+        {
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_gsm; 
+            },
+        LBUF 
+            {
+            txt=  qtn_mce_settings_sms_packet_dat; 
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_main_settings_dialog - dialog
+//    A main sms settings dialog
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_main_settings_dialog
+    {
+    flags = EGeneralQueryFlags | EEikDialogFlagNotifyEsc | EEikDialogFlagNoShadow |
+            EEikDialogFlagNoBorder | EEikDialogFlagFillAppClientRect;
+    buttons=R_SMUM_MAIN_SETTINGS_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtSettingListBox;
+            id=ESmsSettingsListBoxId;
+            itemflags=EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+            control = LISTBOX
+                {
+                flags=EAknListBoxSelectionList;
+                };
+            }
+        };
+    }
+    
+        
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    R_SMUM_MAIN_SETTINGS_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+//    Main sms settings dialog softkeys 
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA R_SMUM_MAIN_SETTINGS_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=ESmsSettingsChoiceMenuOpen; txt = qtn_msk_open; }
+        };
+    }
+            
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_main_ser_add_edit_servicecentresttings_dialog - dialog
+//    A dialog for add/edit service centre items
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_add_edit_servicecentres
+    {
+    flags = EGeneralQueryFlags | EEikDialogFlagNotifyEsc | EEikDialogFlagNoShadow |
+            EEikDialogFlagNoBorder | EEikDialogFlagFillAppClientRect;
+    buttons=R_SMUM_ADDEDIT_SCSETTINGS_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtSettingListBox;
+            id=ESmsSCAddEditId;
+            itemflags=EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+            control = LISTBOX
+                {
+                flags=EAknListBoxSelectionList;
+                };
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    R_SMUM_ADDEDIT_SCSETTINGS_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+//    Add/edit service centre items softkeys 
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA R_SMUM_ADDEDIT_SCSETTINGS_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=ESmsSettingsChoiceMenuChange; txt = qtn_msk_change; }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_servicecentre_items - an array for listbox values
+//    An array containing the values for service centre listbox
+//
+// ---------------------------------------------------------
+//
+RESOURCE MUIU_SETTINGS_ARRAY r_servicecentre_items
+    {
+    items = 
+        {
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_sc_name;
+            type = EMuiuSettingsEditableText;
+            maxlength = SmumScNameMaxLength;
+            //array is created dynamically
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_sc_number;
+            type = EMuiuSettingsScNumber;
+            compulsory = EMuiuSettingsCompulsoryYes;
+            //array is created dynamically
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_email_servicecentre_items - an array for listbox values
+//    An array containing the values for email service centre listbox
+//
+// ---------------------------------------------------------
+//
+RESOURCE MUIU_SETTINGS_ARRAY r_email_servicecentre_items
+    {
+    items = 
+        {
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_sett_sms_mail_gateway;
+            type = EMuiuSettingsScNumber;
+            maxlength = SmumScNameMaxLength;
+            compulsory = EMuiuSettingsCompulsoryYes;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_sett_sms_mail_scentre;
+            type = EMuiuSettingsScNumber;
+			maxlength = SmumScNameMaxLength;
+            compulsory = EMuiuSettingsCompulsoryYes;
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_servicecentrelist_dialog - dialog
+//    Service centres -dialog
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_servicecentrelist_dialog
+    {
+    flags = EGeneralQueryFlags | EEikDialogFlagNotifyEsc | EEikDialogFlagNoShadow |
+            EEikDialogFlagNoBorder | EEikDialogFlagFillAppClientRect;
+    buttons=R_SMUM_SERVICECENTRES_DLG_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtSingleListBox;
+            id=ESmsSCListId;
+            itemflags=EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+            control = LISTBOX
+                {
+                flags = EAknListBoxSelectionList;
+                };
+            }
+        };
+    }
+    
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    R_SMUM_SERVICECENTRES_DLG_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+//    Add/edit service centre items softkeys 
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA R_SMUM_SERVICECENTRES_DLG_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=ESmsSettingsChoiceMenuOpen; txt = qtn_msk_open; }
+        };
+    }
+    
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_create_new_sc_query - query
+//    A query for creating or not new service centre
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_create_new_sc_query 
+    {
+    flags = EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control= AVKON_CONFIRMATION_QUERY
+                { 
+                layout = EConfirmationLayout;
+                label =  qtn_mce_settings_sms_new_sc;
+                };
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_email_over_sms_settings - query
+//    A query for setting EmailOverSms settings
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_email_over_sms_settings 
+    {
+    flags = EGeneralQueryFlags | EEikDialogFlagNotifyEsc | EEikDialogFlagNoShadow |
+            EEikDialogFlagNoBorder | EEikDialogFlagFillAppClientRect;
+    buttons=R_SMUM_EMAILOVERSMS_SETTINGS_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtSettingListBox;
+            id=ESmsSCAddEditId;
+            itemflags=EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+            control = LISTBOX
+                {
+                flags=EAknListBoxSelectionList;
+                };
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    R_SMUM_EMAILOVERSMS_SETTINGS_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+//    EmailOverSms dialog softkeys 
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA R_SMUM_EMAILOVERSMS_SETTINGS_SOFTKEYS_OPTIONS_BACK__CONTEXTOPTIONS
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=ESmsSettingsChoiceMenuChange; txt = qtn_msk_change; }
+        };
+    }
+    
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_override_provided_replypath_query - query
+//    A query for over riding given reply path
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_override_provided_replypath_query 
+    {
+    flags = EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control= AVKON_CONFIRMATION_QUERY
+                { 
+                    layout = EConfirmationLayout;
+                    label =  qtn_sms_quest_reply_path;
+                };
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_delete_sc_query - query
+//    A query to confirm user's deletion of service centre
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_delete_sc_query 
+    {
+    flags = EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control= AVKON_CONFIRMATION_QUERY
+                { 
+                    layout = EConfirmationLayout;
+                    label = qtn_query_common_conf_delete;
+                };
+            }
+        };
+    }
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sc_without_all_fields_delete_query - query
+//    A query to confirm users saving of not complete service centre
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_sc_without_all_fields_delete_query 
+    {
+    flags = EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control= AVKON_CONFIRMATION_QUERY
+                { 
+                    layout = EConfirmationLayout;
+                    label = qtn_mce_settings_sms_invalid; 
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//   
+//    r_sc_name_already_in_use_query - dialog
+//    Shown when user tries to save SC with already used name. 
+//     
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_sc_name_already_in_use_query
+    {
+    flags=  EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type =  EAknCtQuery;
+            id =    EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                layout = EConfirmationLayout;
+                label = "";// filled dynamically
+                };
+            }
+        };
+    }
+
+//----------------------------------------------------
+//
+//    r_smum_msk_button_open
+//
+//----------------------------------------------------
+//
+RESOURCE CBA_BUTTON r_smum_msk_button_open
+    {
+    id = ESmsSettingsChoiceMenuOpen;
+    txt = qtn_msk_open;
+    }
+
+//----------------------------------------------------
+//
+//    r_mmum_msk_button_change
+//
+//----------------------------------------------------
+//
+RESOURCE CBA_BUTTON r_smum_msk_button_change
+    {
+    id = ESmsSettingsChoiceMenuChangeMSK;
+    txt = qtn_msk_change;
+    }
+
+
+    
+
+//
+// Used texts. Notice that there is no TBUF-lengths, so usage of dynamic loading is strongly
+// recommended.
+//
+RESOURCE TBUF r_qtn_mce_settings_sms_no_sc              { buf = qtn_mce_settings_sms_no_sc ; }
+RESOURCE TBUF r_qtn_mce_settings_sms_sc_d_name          { buf = qtn_mce_settings_sms_sc_d_name ; }
+RESOURCE TBUF r_qtn_mce_settings_sim_centre             { buf = qtn_mce_settings_sim_centre ; }
+RESOURCE TBUF r_qtn_selec_sett_val_field_none           { buf = qtn_selec_sett_val_field_none ; }
+RESOURCE TBUF r_qtn_sms_title_sending                   { buf = qtn_sms_title_sending ; }
+RESOURCE TBUF r_qtn_mce_title_settings_sms              { buf = qtn_mce_title_settings_sms ; }
+RESOURCE TBUF r_qtn_mce_settings_sms_title_sc           { buf = qtn_mce_settings_sms_title_sc ; }
+RESOURCE TBUF r_qtn_fldr_rename_query                   { buf = qtn_fldr_rename_query ; }
+RESOURCE TBUF r_qtn_mce_settings_sms_quest_d            { buf = qtn_mce_settings_sms_quest_d ; }
+RESOURCE TBUF r_qtn_mce_settings_sms_quest_del          { buf = qtn_mce_settings_sms_quest_del ; }
+RESOURCE TBUF r_qtn_mce_settings_sms_list_sc            { buf = qtn_mce_settings_sms_list_sc ; }
+RESOURCE TBUF r_qtn_sms_minfo_type_sms                  { buf = qtn_sms_minfo_type_sms; }
+RESOURCE TBUF r_qtn_info_invalid_number                 { buf = qtn_info_invalid_number; }
+RESOURCE TBUF r_qtn_mce_outbox_status_sending           { buf = qtn_mce_outbox_status_sending; }
+RESOURCE TBUF r_qtn_mce_outbox_status_suspended         { buf = qtn_mce_outbox_status_suspended; }
+RESOURCE TBUF r_qtn_mce_outbox_status_waiting           { buf = qtn_mce_outbox_status_waiting; }
+RESOURCE TBUF r_qtn_mce_outbox_status_failed            { buf = qtn_mce_outbox_status_failed; }
+RESOURCE TBUF r_qtn_mce_outbox_status_retry_at          { buf = qtn_mce_outbox_status_retry_at; }
+RESOURCE TBUF r_qtn_sms_reply_path                      { buf = qtn_sms_reply_path; }
+RESOURCE TBUF r_qtn_sms_settings_info_no_sc             { buf = qtn_sms_settings_info_no_sc; }
+RESOURCE TBUF r_qtn_mce_info_cannot_change_sms_chars    { buf = qtn_mce_info_cannot_change_sms_chars; }
+RESOURCE TBUF r_qtn_sms_email_sett_cannot_change        { buf = qtn_sms_email_sett_cannot_change; }
+
+// MESSAGE INFO TYPES FOR BIO MESSAGES
+
+RESOURCE TBUF r_qtn_sm_info_gms                         { buf = qtn_sm_info_gms; }
+RESOURCE TBUF r_qtn_sm_info_calendar                    { buf = qtn_sm_info_calendar; }
+RESOURCE TBUF r_qtn_sm_info_business_card               { buf = qtn_sm_info_business_card; }
+RESOURCE TBUF r_qtn_sm_title_configuration              { buf = qtn_sm_title_configuration; }
+
+// message texts
+RESOURCE TBUF r_qtn_mce_settings_sms_service_disabled   { buf = qtn_mce_settings_sms_service_disabled; }
+
+
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_email_settings_incomplete_query - query
+//    A query to confirm exit without complete setting details
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_email_settings_incomplete_query 
+    {
+    flags = EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control= AVKON_CONFIRMATION_QUERY
+                { 
+                    layout = EConfirmationLayout;
+                    label = qtn_sms_email_sett_invalid; 
+                };
+            }
+        };
+    }
+
+RESOURCE TBUF r_qtn_mce_info_message_not_opened     { buf = qtn_mce_info_message_not_opened; }
+RESOURCE TBUF r_qtn_su_note_insert_sim              { buf = qtn_su_note_insert_sim; }
+RESOURCE TBUF r_qtn_offline_not_possible_sap        { buf = qtn_offline_not_possible_sap; }
+RESOURCE TBUF r_qtn_mce_sett_sms_mail               { buf = qtn_mce_sett_sms_mail; }
+RESOURCE TBUF r_qtn_mce_sett_title_sms_mail         { buf = qtn_mce_sett_title_sms_mail; }
+RESOURCE TBUF r_qtn_offline_not_possible            { buf = qtn_offline_not_possible; }
+#include "SmumCdma.rss"
+//  End of File

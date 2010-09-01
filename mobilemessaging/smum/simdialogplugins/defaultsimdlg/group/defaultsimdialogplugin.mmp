@@ -1,0 +1,81 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   This is project specification file for the  Default SIM Dilaog
+*                Plugin
+*
+*/
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+
+TARGET          defaultsimdialogplugin.dll
+TARGETTYPE      PLUGIN
+UID             0x10009D8D 0x20029F1C
+VENDORID        VID_DEFAULT
+VERSION 	10.0
+CAPABILITY      CAP_ECOM_PLUGIN
+PAGED
+
+
+// ECom resource file
+START RESOURCE  ../rss/0x20029F1C.rss
+TARGET          defaultsimdialogplugin.rsc 
+END	
+
+// RESOURCE
+START RESOURCE ../rss/defaultsimdialog.rss
+	TARGETPATH      RESOURCE_FILES_DIR
+HEADER
+LANGUAGE_IDS
+END
+
+SOURCEPATH      ../src
+
+SOURCE 			proxy.cpp
+SOURCE          defaultsimdialog.cpp
+SOURCE          simdeletecopyoperation.cpp
+SOURCE 			smssimdialog.cpp
+
+USERINCLUDE     ../inc
+USERINCLUDE     ../../../inc
+SYSTEMINCLUDE   ../../../../../inc
+
+APP_LAYER_SYSTEMINCLUDE
+SYSTEMINCLUDE   /epoc32/include/ecom
+
+LIBRARY         euser.lib
+LIBRARY         eCom.lib
+
+
+
+// Msg Server
+LIBRARY         Smcm.lib
+LIBRARY         mtur.lib
+LIBRARY         etext.lib
+LIBRARY         msgs.lib
+LIBRARY         avkon.lib
+LIBRARY         hlplch.lib // HlpLauncher
+LIBRARY         AknIcon.lib      // AknIconUtils::AvkonIconFileName()
+LIBRARY         FeatMgr.lib // FeatureManager
+LIBRARY         eikctl.lib
+LIBRARY         CentralRepository.lib
+LIBRARY         eikcore.lib eikcoctl.lib eikdlg.lib 
+LIBRARY         AknSkins.lib
+LIBRARY         CommonEngine.lib
+LIBRARY         muiu.lib
+LIBRARY         cone.lib
+LIBRARY         efsrv.lib // TParseBase
+LIBRARY         bafl.lib

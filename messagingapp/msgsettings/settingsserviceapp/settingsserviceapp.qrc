@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/translations">
-        <file alias="messaging_en_GB">resources/messaging_en_GB</file>
-    </qresource>
-</RCC>

@@ -1,0 +1,56 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*	 This file provides the information required for building the
+*    whole of a sendui library.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+
+../rom/Sendui.iby                      CORE_APP_LAYER_IBY_EXPORT_PATH(Sendui.iby)
+../rom/SendnormResources.iby           LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(SendnormResources.iby)
+
+#ifdef __SENDUI_MMS_UPLOAD
+../MmsDirectupload/loc/MmsDirectUpload.loc    APP_LAYER_LOC_EXPORT_PATH(MmsDirectUpload.loc)
+#endif // __SENDUI_MMS_UPLOAD
+
+PRJ_MMPFILES
+
+// SendUI
+../genericmtmplugin/group/GenericMtmPlugin.mmp
+
+// SendUI ECom plugins
+#ifdef __MEETING_REQUEST_SUPPORT
+../MeetingRequestSender/group/MeetingRequestSender.mmp
+#endif
+
+#ifdef __DRM_OMA2
+../drmlinksender/Group/DrmLinkSender.mmp
+#endif // __DRM_OMA2
+
+#ifdef __SENDUI_MMS_UPLOAD
+// Build MMS upload plug-ins
+../MmsDirectUpload/group/MmsDirectUpload.mmp
+../MmsInDirectUpload/group/MmsIndirectUpload.mmp
+#endif // __SENDUI_MMS_UPLOAD
+
+/* End of File */

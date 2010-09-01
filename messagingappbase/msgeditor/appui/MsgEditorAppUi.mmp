@@ -1,0 +1,123 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is project specification file for the MsgEditorAppUi.DLL.
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+#include "../inc/MsgEditor.mph" // Common options for all components (logging etc.)
+
+TARGET                  msgeditorappui.dll
+TARGETTYPE              dll
+UID                     0x1000008D 0x100058C1
+VENDORID                VID_DEFAULT
+CAPABILITY              CAP_GENERAL_DLL
+VERSION 		10.0
+PAGED
+
+START RESOURCE          MsgEditorAppUi.rss
+TARGETPATH              RESOURCE_FILES_DIR
+HEADER
+LANGUAGE_IDS
+END
+
+SOURCEPATH              ../appuisrc
+
+SOURCE                  MsgEditorBaseUi.cpp
+SOURCE                  MsgEditorAppUi.cpp
+SOURCE                  MsgEditorAppUiDll.cpp
+SOURCE                  MsgViewAttachmentsDialog.cpp
+SOURCE                  MsgSendKeyAcceptingQuery.cpp
+SOURCE                  MsgCheckNames.cpp
+SOURCE                  MsgEditorShutter.cpp
+SOURCE                  MsgEditorAppUiExtension.cpp
+SOURCE                  MsgEditorSettingCacheUpdatePlugin.cpp
+SOURCE                  MsgNaviPaneControl.cpp
+SOURCE                  MsgAttaListItemArray.cpp
+SOURCE                  MsgAttachmentItemDrawer.cpp
+SOURCE                  MsgAttachmentsListBox.cpp
+
+USERINCLUDE             ../appuiinc
+USERINCLUDE             ../viewinc
+USERINCLUDE             ../inc
+USERINCLUDE             ../../../msg_plat/messaging_editor_api/inc
+USERINCLUDE             ../../../msg_pub/messaging_editor_constants_api/inc
+
+SYSTEMINCLUDE           ../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+
+LIBRARY                 euser.lib               // E32 User Library
+LIBRARY                 msgeditormodel.lib      // Messaging Editor Model
+LIBRARY                 msgeditorview.lib       // Messaging Editor View
+LIBRARY                 msgs.lib
+LIBRARY                 muiu.lib
+LIBRARY                 muiu_internal.lib
+LIBRARY                 mtur.lib
+LIBRARY                 eikcore.lib
+LIBRARY                 cone.lib
+LIBRARY                 avkon.lib
+LIBRARY                 eikdlg.lib
+LIBRARY                 eikcoctl.lib
+LIBRARY                 apmime.lib              // TDataType
+LIBRARY                 bafl.lib                // Nearest Language File
+LIBRARY                 estor.lib               // Streams
+LIBRARY                 efsrv.lib               // Files
+LIBRARY                 commonengine.lib
+LIBRARY                 commonui.lib
+LIBRARY                 npdlib.lib              // Notepad library
+LIBRARY                 eikctl.lib
+LIBRARY                 pbkeng.lib                      //CheckNames
+LIBRARY                 pbkview.lib                     //CheckNames
+LIBRARY                 cntmodel.lib                    //CheckNames
+LIBRARY                 featmgr.lib                     //feature manager
+LIBRARY                 cdlengine.lib // Layout
+LIBRARY                 aknskins.lib // skinned icons
+LIBRARY                 apparc.lib
+LIBRARY                 servicehandler.lib
+LIBRARY                 centralrepository.lib
+
+LIBRARY                 vpbkeng.lib
+LIBRARY                 msgcommonutils.lib
+LIBRARY                 pbk2presentation.lib
+
+LIBRARY                 aknlayout2.lib
+LIBRARY                 aknlayout2scalable.lib
+LIBRARY                 apgrfx.lib 
+
+LIBRARY                 ws32.lib
+LIBRARY                 aknicon.lib
+LIBRARY                 aknlistloadertfx.lib
+
+#ifdef RD_TACTILE_FEEDBACK
+LIBRARY         touchfeedback.lib // tactilefeedback
+#endif
+START WINS
+  BASEADDRESS 0x77300000
+END
+
+#if defined(ARMCC)
+deffile                 ../eabi/msgeditorappui.def 
+#elif defined (WINS)
+deffile                 ../appui/WINS.DEF
+#else
+deffile                 ../AppUi/marm.def
+#endif
+
+/* End of File */

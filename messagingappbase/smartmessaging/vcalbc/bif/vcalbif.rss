@@ -1,0 +1,85 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     Bio Info File resource for vcalbc.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+
+NAME    VCLB
+
+//  INCLUDES
+#include <biftool2.rh>
+#include <vcalbc.loc>
+
+//  RESOURCE DEFINITIONS 
+
+RESOURCE BIO_INFO_FILE
+	{
+	message_type_uid = 0x10005533;
+	message_parser_name = "gfp.dll";
+	message_appctrl_name = "vcalbc.dll";
+	message_app_uid = KUidUseDefaultApp;
+	file_extension = ".vcs";
+	description = qtn_mce_inbox_type_smart_vcal;
+	icons_filename = "none";
+	icon_zoom_levels = {1};
+
+	ids=
+		{
+// -- remove after iby variation done
+		ID	
+			{
+			type=EWap;
+			confidence=ECertain;
+			port=9205 ;
+			},
+		ID	
+			{
+			type=EWapSecure;
+			confidence=ECertain;
+			port=9207 ;
+			},
+		ID	
+			{
+			type=EWap;
+			confidence=ECertain;
+			port = 228;
+			},
+// -- end of remove --
+		ID
+			{
+			type=EIana;
+			confidence=ECertain;
+			text="text/vCalendar";
+			},
+		ID
+			{
+			type=EIana;
+			confidence=ECertain;
+			text="text/calendar";		// rfc2445
+			},
+		ID
+			{
+			type=EIana;
+			confidence=ECertain;
+			text="text/x-vCalendar";	// commonly used
+			}
+		};
+	}
+
+// end of file

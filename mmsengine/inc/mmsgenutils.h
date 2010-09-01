@@ -50,7 +50,7 @@ const TInt KMmsNumberOfDigitsToMatch = 7;
 // CLASS DECLARATION
 
 class CContactMatcher;
-
+class CVPbkContactStoreUriArray;
 class MVPbkContactLink;
 class CVPbkContactLinkArray;
 

@@ -1,0 +1,8 @@
+EXPORTS
+	_Z14NewPostcardUiLR8CBaseMtmR17CRegisteredMtmDll @ 1 NONAME
+	_Z18NewPostcardUiDataLR17CRegisteredMtmDll @ 2 NONAME
+	_ZTI11CPostcardUi @ 3 NONAME ; #<TI>#
+	_ZTV11CPostcardUi @ 4 NONAME ; #<VT>#
+	_ZTI15CPostcardUiData @ 5 NONAME ; #<TI>#
+	_ZTV15CPostcardUiData @ 6 NONAME ; #<VT>#
+

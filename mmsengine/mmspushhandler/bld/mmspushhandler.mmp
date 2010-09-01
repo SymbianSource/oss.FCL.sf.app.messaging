@@ -19,7 +19,7 @@
 
 #include <platform_paths.hrh>
 
-TARGET          MmsPushHandler.dll
+TARGET          mmspushhandler.dll
 TARGETTYPE      PLUGIN
 
 // uid2 specifies an ECOM dll, uid3 specifies a unique identifier for dll
@@ -33,13 +33,16 @@ SOURCEPATH      ../src
 SOURCE          CMmsPushHandler.cpp
 
 START RESOURCE 101F4693.rss
-TARGET         MmsPushHandler.rsc
+TARGET         mmspushhandler.rsc
 END
 
 
 // INCLUDES
 SYSTEMINCLUDE   ../../../inc
 APP_LAYER_SYSTEMINCLUDE
+SYSTEMINCLUDE   /epoc32/include/push
+SYSTEMINCLUDE   /epoc32/include/ecom
+SYSTEMINCLUDE   /epoc32/include/libc
 
 
 // Nokia CF specifc non-public
@@ -49,7 +52,7 @@ USERINCLUDE     ../../inc
 LIBRARY         euser.lib
 LIBRARY         ecom.lib
 LIBRARY         msgs.lib
-LIBRARY         WapPushUtils.lib
+LIBRARY         wappushutils.lib
 LIBRARY         mmsgenutils.lib			
 LIBRARY         efsrv.lib
 LIBRARY		estor.lib

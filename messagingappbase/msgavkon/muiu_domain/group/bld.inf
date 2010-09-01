@@ -1,0 +1,80 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*	 This file provides the information required for building the
+*    	 whole of a muiu library.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+
+
+// MUIU Domain API, General
+//../inc/MessagingDomainCRKeys.h      APP_LAYER_PLATFORM_EXPORT_PATH( MessagingDomainCRKeys.h )
+//../inc/MtmExtendedCapabilities.hrh  APP_LAYER_PLATFORM_EXPORT_PATH( MtmExtendedCapabilities.hrh )
+//../inc/Messaging.loc                APP_LAYER_PLATFORM_EXPORT_PATH( Messaging.loc )
+
+// FactorySettings
+//../FactorySettings/inc/MsvFactorySettings.h APP_LAYER_PLATFORM_EXPORT_PATH( MsvFactorySettings.h )
+
+// FolderSelectionDialog
+//../FolderSelectionDialog/inc/MsgFolderSelectionDialog.h APP_LAYER_PLATFORM_EXPORT_PATH( MsgFolderSelectionDialog.h )
+
+// Launcher
+//../Launcher/inc/MuiuMsgEditorLauncher.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsgEditorLauncher.h )
+//../Launcher/inc/MuiuMsgEditorServerWatchingOperation.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsgEditorServerWatchingOperation.h )
+//../Launcher/inc/MuiuMsgEditorService.rh APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsgEditorService.rh )
+//../Launcher/inc/MuiuMsgEditorServiceConst.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsgEditorServiceConst.h )
+//../Launcher/inc/MuiuMsgEditorServiceSession.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsgEditorServiceSession.h )
+//../Launcher/inc/MuiuMsgEditorWatchingOperation.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsgEditorWatchingOperation.h )
+//../Launcher/inc/MuiuMsgEmbeddedEditorWatchingOperation.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsgEmbeddedEditorWatchingOperation.h )
+
+// MessageInfo
+//../MessageInfo/inc/Muiumsginfo.h APP_LAYER_PLATFORM_EXPORT_PATH( Muiumsginfo.h )
+//../MessageInfo/inc/Muiumsginfo.hrh APP_LAYER_PLATFORM_EXPORT_PATH( Muiumsginfo.hrh )
+
+// MessageIterator
+//../MessageIterator/inc/MuiuMessageIterator.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMessageIterator.h )
+
+// MsgArrays
+//../MsgArrays/inc/MsgArrays.h APP_LAYER_PLATFORM_EXPORT_PATH( MsgArrays.h )
+
+// MtmStore
+//../MtmStore/inc/MTMRegistryObserver.h APP_LAYER_PLATFORM_EXPORT_PATH( MTMRegistryObserver.h )
+//../MtmStore/inc/MTMStore.h APP_LAYER_PLATFORM_EXPORT_PATH( MTMStore.h )
+
+// OperationWait
+//../OperationWait/inc/MuiuOperationWait.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuOperationWait.h )
+
+// ReporterOperation
+//../ReporterOperation/inc/MsvPrgReporter.h APP_LAYER_PLATFORM_EXPORT_PATH( MsvPrgReporter.h )
+//../ReporterOperation/inc/MuiuMsvProgressReporterOperation.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsvProgressReporterOperation.h )
+//../ReporterOperation/inc/MuiuMsvRemoteOperationProgress.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsvRemoteOperationProgress.h )
+//../ReporterOperation/inc/MuiuMsvSingleOpWatcher.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsvSingleOpWatcher.h )
+//../ReporterOperation/inc/opprgdlg.hrh APP_LAYER_PLATFORM_EXPORT_PATH( opprgdlg.hrh )
+
+// ServicesDomain
+//../ServicesDomain/inc/MuiuMsvUiServiceUtilities.h APP_LAYER_PLATFORM_EXPORT_PATH( MuiuMsvUiServiceUtilities.h )
+
+PRJ_MMPFILES
+./muiu_domain.mmp
+
+// End of File

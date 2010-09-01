@@ -1,0 +1,61 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: mce  declaration
+*
+*/
+
+
+
+#ifndef __MCE_HLP_HRH__
+#define __MCE_HLP_HRH__
+
+
+_LIT(KMCE_HLP_MESSAGING,"MCE_HLP_MESSAGING"); //The main state of the Messaging centre
+_LIT(KMCE_HLP_SIM,"MCE_HLP_SIM"); //SIM messages view
+_LIT(KMCE_HLP_SETTINGS,"MCE_HLP_SETTINGS"); //Settings group
+_LIT(KMCE_HLP_SETTINGS_SMS,"MCE_HLP_SETTINGS_SMS"); //SMS settings
+_LIT(KSMS_HLP_SETTINGS_SCENTRES,"SMS_HLP_SETTINGS_SCENTRES"); //SMS Message centre settings
+
+_LIT(KMCE_HLP_SETTINGS_SMAIL,"MCE_HLP_SETTINGS_SMAIL"); //Sync mail settings
+
+
+_LIT(KMCE_HLP_SETT_MAIL_CONN,"MCE_HLP_SETT_MAIL_CONN"); //Mail connection settings
+
+
+
+_LIT(KMCE_HLP_SETTINGS_MMS,"MCE_HLP_SETTINGS_MMS"); //MMS settings
+_LIT(KWPUSH_HLP_SETTINGS,"WPUSH_HLP_SETTINGS"); //Settings view
+_LIT(KMCE_HLP_SETTINGS_CB,"MCE_HLP_SETTINGS_CB"); //CBS settings 
+_LIT(KMCE_HLP_SETTINGS_GEN,"MCE_HLP_SETTINGS_GEN"); //General messaging settings
+_LIT(KMCE_HLP_INBOX,"MCE_HLP_INBOX"); //Messaging centre Inbox
+
+_LIT(KMCE_HLP_DOCUMENTS,"MCE_HLP_DOCUMENTS"); //Documents folder in Messaging centre
+_LIT(KMCE_HLP_TEMPLATES,"MCE_HLP_TEMPLATES"); //Templates folder in Messaging centre
+_LIT(KMCE_HLP_FOLDER,"MCE_HLP_FOLDER"); //Users own folders in Messaging centre
+
+
+
+_LIT(KMCE_HLP_DRAFTS,"MCE_HLP_DRAFTS"); //Drafts folders in Messaging centre
+_LIT(KMCE_HLP_SENT_ITEMS,"MCE_HLP_SENT_ITEMS"); //Sent items folder in Messaging centre
+_LIT(KMCE_HLP_OUTBOX,"MCE_HLP_OUTBOX"); //Outbox in Messaging centre
+
+_LIT(KMCE_HLP_DELIVERY_REPORTS,"MCE_HLP_DELIVERY_REPORTS"); //Delivery reports folder in Messaging centre
+_LIT(KMCE_HLP_MMS_NOTIFICATIONS,"MCE_HLP_MMS_NOTIFICATIONS"); //MMS notifications view
+_LIT(KSMS_HLP_SETTINGS_SMS_EMAIL,"SMS_HLP_SETTINGS_SMS_EMAIL"); //SMS E-mail settings
+
+_LIT(KES_HLP_EMAIL_SETTING,"ES_HLP_EMAIL_SETTING"); //Default mail setting
+_LIT(KES_HLP_SMTP_MAILBOX,"ES_HLP_SMTP_MAILBOX"); //Mail settings
+_LIT(KES_HLP_THIRDPARTY_MAILBOX,"ES_HLP_THIRDPARTY_MAILBOX"); //3rd party mailbox settings
+
+#endif

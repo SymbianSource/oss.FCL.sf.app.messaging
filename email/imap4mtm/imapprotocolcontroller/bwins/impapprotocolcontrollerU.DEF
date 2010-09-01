@@ -32,4 +32,5 @@ EXPORTS
 	?WaitForBackground@CImapProtocolController@@QAEXAAVTRequestStatus@@@Z @ 31 NONAME ; void CImapProtocolController::WaitForBackground(class TRequestStatus &)
 	?GetAccessPointIdForConnection@CImapProtocolController@@QBEHAAK@Z @ 32 NONAME ; int CImapProtocolController::GetAccessPointIdForConnection(unsigned long &) const
 	?UpdateFlagL@CImapProtocolController@@QAEXAAVTRequestStatus@@@Z @ 33 NONAME ; void CImapProtocolController::UpdateFlagL(class TRequestStatus &)
+	?UpdateEntriesFlagL@CImapProtocolController@@QAEXAAVTRequestStatus@@ABVCMsvEntrySelection@@H@Z @ 34 NONAME ; void CImapProtocolController::UpdateEntriesFlagL(class TRequestStatus &, class CMsvEntrySelection const &, int)
 

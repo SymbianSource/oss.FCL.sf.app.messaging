@@ -43,6 +43,12 @@ public:
 						 			  CMsvServerEntry& aServerEntry,
 						 			  CImapSettings& aImapSettings
 						 			  );
+	static CImapUpdateFlagOperation* NewL(CImapSyncManager& aSyncManager,
+	                                      CMsvServerEntry& aServerEntry,
+	                                      CImapSettings& aImapSettings,
+	                                      const CMsvEntrySelection& aSourceSel,
+	                                      TBool aFlagChanged
+	                                      );
 	virtual void StartOperation(TRequestStatus& aStatus, CImapSession& aSession);
 	
 ////////////	virtual void StartOperation(TRequestStatus& aStatus);//
@@ -56,6 +62,7 @@ private:
 						 CImapSettings& aImapSettings
 						 );
 	void ConstructL();
+	void ConstructL(const CMsvEntrySelection& aSourceSel,TBool aFlagChanged);
 
 	TBool DoRunLoopL();
 	void DoCancel();
@@ -67,6 +74,13 @@ private:
 	RArray<TUint> iMessageUids;
 	
 	RArrayMessageFlagInfo iFlagInfoResponseArray;
+	
+	CMsvEntrySelection* iSourceSel;
+	TBool iMarkFlag;
+	TBool iEntrySelection;
+	TInt iProgressMsgsToDo;
+	TInt iProgressMsgsDone;
+
 	};
 
 #endif	// __CIMAPUPDATEFLAGOPERATION_H__

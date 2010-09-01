@@ -1,0 +1,309 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+// ========== RESOURCE IDENTIFIER ==========================
+
+NAME    MEAU
+
+// ========== INCLUDE FILES ================================
+
+#include <bldvariant.hrh>           // for feature flags
+#include <pathconfiguration.hrh>
+
+#include <eikon.rh>
+#include <eikon.rsg>
+#include <avkon.rsg>
+#include <avkon.rh>
+
+#include <CommonDialogs.rh>
+#include <CommonDialogs.hrh>
+
+#include <avkon.loc>
+#include <messaging.loc>
+#include "MsgEditorAppUi.hrh"
+#include <msgeditorappui.loc>       // localised UI strings
+#include <AiwCommon.rh>
+#include <AiwGenericParam.hrh>
+
+// ========== CONSTANTS ====================================
+
+// ========== MACROS =======================================
+
+// ========== RESOURCE DEFINITIONS =========================
+
+RESOURCE RSS_SIGNATURE {}           // Resource file signature
+
+// ---------------------------------------------------------------------------
+// Attachments dialog buttons.
+// ---------------------------------------------------------------------------
+RESOURCE CBA r_meb_softkeys_options_open_back
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=EAknSoftkeyOpen; txt = qtn_msk_open;}
+        };
+    }
+
+// ---------------------------------------------------------------------------
+// Attachments dialog.
+// ---------------------------------------------------------------------------
+RESOURCE DIALOG r_meb_view_attachment_dialog
+    {
+    flags =
+        EEikDialogFlagNoDrag | 
+        EEikDialogFlagFillAppClientRect | 
+        EEikDialogFlagNoTitleBar | 
+        EEikDialogFlagCbaButtons | 
+        EEikDialogFlagWait;
+        
+    buttons = r_meb_softkeys_options_open_back;
+
+    items =
+        {
+        DLG_LINE
+            {
+            type      = EMsgAttachmentListBox;
+            id        = EMsgAttachmentListBoxId;
+            itemflags = EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+            control   = LISTBOX
+                {
+                flags    = 0;
+                height   = 3;
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------------------------
+// Menu bar for attachments dialog.
+// ---------------------------------------------------------------------------
+RESOURCE MENU_BAR r_meb_attachments_menubar
+    {
+    titles=
+        {
+        MENU_TITLE { menu_pane = r_meb_attachments_menupane; txt = ""; }
+        };
+    }
+
+// ---------------------------------------------------------------------------
+// Menu pane for attachments dialog. Has one dummy menu item
+// which is deleted when application specific menu items are added.
+// ---------------------------------------------------------------------------
+RESOURCE MENU_PANE r_meb_attachments_menupane
+    {
+    items =
+        {
+        MENU_ITEM { command = 0; txt = ""; }
+        };
+    }
+
+// ---------------------------------------------------------------------------
+//
+// ---------------------------------------------------------------------------
+RESOURCE DIALOG r_meb_callback_query
+{   
+    flags   = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+    items =
+        {
+        DLG_LINE
+            {
+            type    = EAknCtQuery;
+            id      = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationLayout;
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------------------------
+//
+// ---------------------------------------------------------------------------
+RESOURCE DIALOG r_meb_wait_note
+    {
+    flags   = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+        {
+        DLG_LINE
+            {
+            type    = EAknCtNote;
+            id      = EMsgWaitNoteId;
+            control = AVKON_NOTE
+                {
+                layout         = EWaitLayout;
+                //singular_label = "";
+                //plural_label   = "";
+                animation      = R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }
+
+
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_meb_checknames_query
+    {
+    items =
+        {
+        AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+            {
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSingleGraphicPopupMenuListBox;
+                listbox = AVKON_MULTISELECTION_LIST_QUERY_LIST
+                    {
+                    flags = EAknListBoxStylusMultiselectionList;
+                    array_id = r_meb_checknames_empty_array;
+                    };
+                heading = qtn_sms_select_recipient;
+                };
+            }
+        };
+    }
+
+
+RESOURCE ARRAY r_meb_checknames_empty_array
+    {
+    items=
+        {
+        LBUF { txt="1\t"; }
+        };
+    }
+
+//
+// "Close" list query
+//
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_meb_close_query
+    {
+    flags = EGeneralQueryFlags;
+    softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+    items =
+        {
+        AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+            {
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = AVKON_LIST_QUERY_LIST
+                    {
+                    array_id = r_meb_close_query_array;
+                    };
+                heading = qtn_msg_qry_close_title;
+                };
+            }
+        };
+    }
+
+RESOURCE ARRAY r_meb_close_query_array
+    {
+    items=
+        {
+        LBUF { txt = qtn_msg_qry_save_to_drafts; },
+        LBUF { txt = qtn_msg_qry_delete_message; }
+        };
+    }
+
+//----------------------------------------------------
+//   
+//    r_meb_memory_selection_locations
+//
+//----------------------------------------------------
+// 
+RESOURCE MEMORYSELECTIONDIALOG r_meb_memory_selection_dialog
+    {
+    locations =
+        {
+        LOCATION { root_path = text_phone_memory_root_path; },
+        LOCATION { root_path = text_memory_card_root_path; }
+        };
+    }
+
+
+// ---------------------------------------------------------------------------
+// UI Strings
+// ---------------------------------------------------------------------------
+
+RESOURCE TBUF r_qtn_stat_msg_number             { buf = qtn_stat_msg_number; }
+RESOURCE TBUF r_qtn_mail_popup_text_sel_temp    { buf = qtn_mail_popup_text_sel_temp; }
+RESOURCE TBUF r_qtn_nmake_fetch_memo_prmpt      { buf = qtn_nmake_fetch_memo_prmpt; }
+RESOURCE TBUF r_qtn_mms_no_name_for_file        { buf = qtn_mms_no_name_for_file; }
+
+// Information note when (unsupported) attachment cannot be opened.
+RESOURCE TBUF r_qtn_mms_info_cannot_open        { buf = qtn_mms_info_cannot_open; }
+
+RESOURCE TBUF r_qtn_sms_quest_call              { buf = qtn_sms_quest_call; }
+
+RESOURCE TBUF r_qtn_mail_wait_insert_attachment { buf = qtn_mail_wait_insert_attachment; }
+
+// ---------------------------------------------------------------------------
+
+RESOURCE TBUF r_meb_n_in_rebuilding_index  { buf = "Rebuilding index..."; }
+
+#ifdef RD_SCALABLE_UI_V2
+// Popup note shown when scrolling to different message part.
+RESOURCE TBUF r_qtn_msg_page_number_popup   { buf = qtn_msg_page_number_popup; }
+#endif // RD_SCALABLE_UI_V2
+
+// ---------------------------------------------------------------------------
+
+//
+// Reply subject prefix
+// - from Messaging.loc
+//
+RESOURCE TBUF r_msg_reply_prefix   { buf = qtn_mail_re; }
+
+//
+// Forward subject prefix
+// - from Messaging.loc
+//
+RESOURCE TBUF r_msg_forward_prefix { buf = qtn_mail_fwd; }
+
+RESOURCE AIW_INTEREST r_checknames_fetch_interest
+    {
+    items=
+        {
+        AIW_CRITERIA_ITEM 
+            { 
+            id = KAiwCmdSelect;  // serviceCmd used here also as ID
+            serviceCmd   = KAiwCmdSelect;
+            contentType  = EGenericParamContactItemStr;
+            serviceClass = KAiwClassBase; 
+            maxProviders = 1;
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//    r_msg_file_saved_to
+//
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_msg_file_saved_to
+    {
+    buf = qtn_fldr_file_saved_to;
+    }
+
+RESOURCE TBUF r_qtn_msg_timestamp   { buf = qtn_msg_timestamp; }
+RESOURCE TBUF r_qtn_msg_icf_prompt_text_message  {  buf = qtn_msg_icf_prompt_text_message;  }
+// End of File

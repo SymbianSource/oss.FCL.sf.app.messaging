@@ -1,0 +1,62 @@
+/*
+* Copyright (c) 2002-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains declarations for resources of smum.
+*     The file can be included in C++ or resource file.
+*
+*/
+
+
+
+// INCLUDES
+
+#include <mtmuidef.hrh>                 // for KMtmFirstFreeMtmUiFunctionId
+
+#define KMtmUiFunctionSimDialog  ( KMtmFirstFreeMtmUiFunctionId + 1 )
+
+enum TSmsMtmUiSimDialogButton
+    {
+    ESmsMtmUiCommandIdMove = 1500,
+    ESmsMtmUiCommandIdCopy,
+    ESmsMtmUiCommandIdDelete,
+    ESmsMtmUiCommandIdClose,
+    ESmsMtmUiCommandIdEdit,
+    ESmsMtmUiCommandIdEditMark,
+    ESmsMtmUiCommandIdEditUnmark,
+    ESmsMtmUiCommandIdEditMarkAll,
+    ESmsMtmUiCommandIdEditUnmarkAll,
+    ESmsMtmUiSimDialogWaitNote,
+    ESmsMtmUiSimDialogProgressNote
+
+    };
+
+enum TSmsMtmUiControlId
+    {
+    EMsgControlIdSimMessageListBox = 1
+    };
+
+enum
+    {
+    // settings related
+    ESmsSettingsChoiceMenuOpen = 1,
+    ESmsSettingsChoiceMenuEdit,
+    ESmsSettingsChoiceMenuChange,
+    ESmsSettingsChoiceMenuChangeMSK,   
+    ESmsSettingsChoiceMenuNew,
+    ESmsSettingsChoiceMenuDelete,
+    ESmsSettingsChoiceMenuExit,
+    ESmsSettingsListBoxId,
+    ESmsSCListId,
+    ESmsSCAddEditId
+    };

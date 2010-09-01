@@ -66,6 +66,40 @@ void CImapUpdateFlagOperation::ConstructL()
 	CActiveScheduler::Add(this);
 	}
 
+// NewL for Selection
+CImapUpdateFlagOperation* CImapUpdateFlagOperation::NewL(CImapSyncManager& aSyncManager,
+                                                         CMsvServerEntry& aServerEntry,
+                                                         CImapSettings& aImapSettings, 
+                                                         const CMsvEntrySelection& aSourceSel , TBool aFlagChanged)
+
+    {
+    
+    CImapUpdateFlagOperation* self = new (ELeave) CImapUpdateFlagOperation(aSyncManager,
+                                                                     aServerEntry,
+                                                                     aImapSettings);
+    CleanupStack::PushL(self);
+    self->ConstructL(aSourceSel,aFlagChanged);
+    CleanupStack::Pop(self);
+    return self;
+    }
+//// ConstructL for Selection   
+void CImapUpdateFlagOperation::ConstructL(const CMsvEntrySelection& aSourceSel, TBool aFlagChanged)
+    {
+  
+    iSourceSel=new (ELeave) CMsvEntrySelection;
+    CheckSelectionL(aSourceSel, iSourceSel, ETrue, EFalse, EFalse, ETrue);
+
+    // Initialise the progress counters 
+    iProgressMsgsToDo=iSourceSel->Count();
+    iProgressMsgsDone=0;
+    iMarkFlag = aFlagChanged;
+    iEntrySelection = ETrue;
+    // Add to the active scheduler
+    CActiveScheduler::Add(this);
+    }
+
+
+
 void CImapUpdateFlagOperation::StartOperation(TRequestStatus& aStatus, CImapSession& aSession)
 //void CImapUpdateFlagOperation::StartOperation(TRequestStatus& aStatus)
 	{
@@ -89,37 +123,79 @@ TBool CImapUpdateFlagOperation::DoRunLoopL()
 		{
 	
 	case EUpdateFlag:
-		{		
-		TMsvEmailEntry entry = iServerEntry.Entry();
-		TUint id = entry.UID();
-		iMessageUids.AppendL(id);
-		if(entry.Unread())
-			{
-			entry.SetSeenIMAP4Flag(EFalse);
-			}
-		else
-			{
-			entry.SetSeenIMAP4Flag(ETrue);	
-			}
-				
-				
-		User::LeaveIfError(iServerEntry.ChangeEntry(entry));
-
-		HBufC8* uidSeq = CImapSession::CreateSequenceSetLC(iMessageUids);
-
-		// finished with the UID array. Clear it.
-		iMessageUids.Reset();
-		if(entry.SeenIMAP4Flag())
-			{
-			// issue the store command
-			iSession->StoreL(iStatus, uidSeq->Des(), KImapAddFlags, KImapFlagSeen, ETrue, iFlagInfoResponseArray);
+		{
+		HBufC8* uidSeq = NULL;
+        if(!iEntrySelection) //Entry iMarkFlag is Flase
+            {
+            TMsvEmailEntry entry = iServerEntry.Entry();
+            TUint id = entry.UID();
+            iMessageUids.AppendL(id);
+            if(entry.Unread())
+                {
+                entry.SetSeenIMAP4Flag(EFalse);
+                }
+            else
+                {
+                entry.SetSeenIMAP4Flag(ETrue);	
+                }
+                    
+                    
+            User::LeaveIfError(iServerEntry.ChangeEntry(entry));
+    
+            uidSeq = CImapSession::CreateSequenceSetLC(iMessageUids);
+    
+            // finished with the UID array. Clear it.
+            iMessageUids.Reset();
+            if(entry.SeenIMAP4Flag())
+                {
+                // issue the store command
+                iSession->StoreL(iStatus, uidSeq->Des(), KImapAddFlags, KImapFlagSeen, ETrue, iFlagInfoResponseArray);
+                
+                }
+            else
+                {
+                // issue the store command
+                iSession->StoreL(iStatus, uidSeq->Des(), KStoreFlagsClearCommand, KImapFlagSeen, ETrue, iFlagInfoResponseArray);
+                }
+            }
+        else  //Selection iMarkFlag is Trure
+            {
+            TMsvEntry *aNewEntry1;
 			
-			}
-		else
-			{
-			// issue the store command
-			iSession->StoreL(iStatus, uidSeq->Des(), KStoreFlagsClearCommand, KImapFlagSeen, ETrue, iFlagInfoResponseArray);
-			}
+			TInt  count = iSourceSel->Count();
+			while (count--)
+				{
+				iServerEntry.GetEntryFromId(iSourceSel->At(count), aNewEntry1);
+				TMsvEmailEntry entry(*aNewEntry1);
+				iMessageUids.AppendL(entry.UID());
+					
+				if(iMarkFlag) // True  means  Unread
+					 {
+					 entry.SetSeenIMAP4Flag(EFalse);
+					 }
+				 else
+					 {
+					 entry.SetSeenIMAP4Flag(ETrue);  
+					 }
+				SetEntryL((*iSourceSel)[count]);
+				User::LeaveIfError(iServerEntry.ChangeEntry(entry));
+				}// end of while
+
+			uidSeq = CImapSession::CreateSequenceSetLC(iMessageUids);
+	
+			// finished with the UID array. Clear it.
+			iMessageUids.Reset();
+			if(!iMarkFlag) //read
+				{
+				// issue the store command
+				iSession->StoreL(iStatus, uidSeq->Des(), KImapAddFlags, KImapFlagSeen, ETrue, iFlagInfoResponseArray);
+				}
+			else   //Unread
+				{
+				// issue the store command
+				iSession->StoreL(iStatus, uidSeq->Des(), KStoreFlagsClearCommand, KImapFlagSeen, ETrue, iFlagInfoResponseArray);
+				}
+             } //End of else (Selection)
 	
 		iProgressState = TImap4GenericProgress::EBusy;
 		CleanupStack::PopAndDestroy(uidSeq);

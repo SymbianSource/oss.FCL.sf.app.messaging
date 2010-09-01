@@ -528,6 +528,7 @@ void CImapBodyStructureBuilder::ParseBodyTypeMessageRfc822L()
 	{
 	// body-fields SP SP body SP body-fld-lines
 	ParseBodyFieldsL();
+	//Sometime RFCb22  message has empty evvelopel, in that case we are traping this and  processed.
     TRAPD(err, ParseEnvelopeL());
    
     // Expect a body substructure next.

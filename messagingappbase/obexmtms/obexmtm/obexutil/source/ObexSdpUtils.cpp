@@ -185,9 +185,8 @@ CObexSdpUtils::~CObexSdpUtils()
 			delete iSdpAgent;	
 		
 		}
-	
-	if(iAttributeArray)
-	    iAttributeArray->ResetAndDestroy();
+
+	iAttributeArray->ResetAndDestroy();
 	delete iAttributeArray;
 	}
 
@@ -306,7 +305,7 @@ void CObexSdpUtils::AttributeRequestComplete(TSdpServRecordHandle aHandle, TInt 
 		    || (iExpectedType==EAnythingUntilNextExpectedValue) //we should have got whatever we expected next!
 		    || (iExpectedType==EUint) //we should always get the Uint we are looking for
 			|| (iExpectedType==EUUID) //we should always get the UUID we are looking for 
-			|| (aError)) //an error has occurred, note that not finding an attribute does NOT result in KErrNotFound
+			|| (aError)) //an error has occured, note that not finding an attribute does NOT result in KErrNotFound
 			{
 			// following is an exception to the rules above...
 			if (iCurrentAttributeId==KBluetoothProfileDescriptorListAttributeId) //it OK to not find what we expect in for attribute because attribute is not mandatory
@@ -384,12 +383,12 @@ MSdpElementBuilder* CObexSdpUtils::BuildUUIDL(const TUUID& aUUID)
 		{
 		if (aUUID != TUUID(iExpectedValue))
 			{
-			// Haven't got what we expected!
+			// Havn't got what we expected!
 			iNotThisSdpRecord = ETrue;
 			}
 		else if (aUUID==TUUID(KObexObjectPushUUIDValue) && iCurrentAttributeId==KBluetoothProfileDescriptorListAttributeId)
 			{
-			// Remote device complies fully with obex object push profile
+			// remote device complies fully with obex object push profile
 			iFullComplianceWithObexObjectPush = ETrue;;
 			}
 		}
@@ -445,7 +444,7 @@ MSdpElementBuilder* CObexSdpUtils::BuildUintL(const TDesC8& aUint)
 		{
 		if (uint != iExpectedValue)
 			{
-			// haven't got what we expected!
+			// Havn't got what we expected!
 			iNotThisSdpRecord = ETrue;
 			}
 		}

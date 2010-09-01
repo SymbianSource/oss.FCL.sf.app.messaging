@@ -1,0 +1,360 @@
+;
+; Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+; All rights reserved.
+; This component and the accompanying materials are made available
+; under the terms of "Eclipse Public License v1.0"
+; which accompanies this distribution, and is available
+; at the URL "http://www.eclipse.org/legal/epl-v10.html".
+;
+; Initial Contributors:
+; Nokia Corporation - initial contribution.
+;
+; Contributors:
+;
+; Description:  Messaging.pkg
+; Note: Need to build mceshutter application (\mce\internal\mceshutter) before creating sis 
+
+;Language - standard language definitions
+&EN
+
+; standard SIS file header
+#{"messaging"},(0x100058C5),1,57,0, TYPE = SA,RU
+
+;Supports Series 60 v 3.0
+[0x101F7961], 0, 0, 0, {"Series60ProductID"}
+
+;Localised Vendor name
+%{"Nokia"}
+
+;Unique Vendor name
+:"Nokia"
+
+;uninstall-mce
+"\epoc32\release\armv5\urel\mceshutter.exe" 		- "c:\sys\bin\mceshutter.exe" , FR,RI,RW
+
+;smsviewer
+"\epoc32\release\armv5\urel\Smsviewer.exe" 		- "c:\sys\bin\Smsviewer.exe"
+"\epoc32\data\z\private\10003a3f\apps\smsviewer_reg.rsc"-"c:\private\10003a3f\import\apps\smsviewer_reg.rsc"
+"\epoc32\data\z\resource\apps\SmsViewer.rsc"- "c:\resource\apps\SmsViewer.rsc"
+"\epoc32\data\z\resource\apps\smsviewer_aif.mif" 		- "c:\resource\apps\smsviewer_aif.mif"
+"\epoc32\data\z\resource\apps\smsviewer_aif.mbm" 		- "c:\resource\apps\smsviewer_aif.mbm"
+
+"\epoc32\release\armv5\urel\SmsStrict.Dll" 		- "c:\sys\bin\SmsStrict.Dll"
+"\epoc32\data\Z\Resource\Plugins\SmsStrict.rsc"- "c:\resource\plugins\SmsStrict.rsc"
+"\epoc32\release\armv5\urel\smum.dll" 		- "c:\sys\bin\smum.dll"
+"\epoc32\data\z\resource\messaging\smum.rsc"- "c:\resource\messaging\smum.rsc"
+"\epoc32\data\z\resource\messaging\mtm\Sms.rsc"- "c:\resource\messaging\mtm\Sms.rsc"
+
+;msgeditor
+"\epoc32\release\armv5\urel\MsgEditorModel.dll" 		- "c:\sys\bin\MsgEditorModel.dll"
+"\epoc32\release\armv5\urel\MsgEditorAppUi.dll" 		- "c:\sys\bin\MsgEditorAppUi.dll"
+"\epoc32\data\z\resource\MsgEditorAppUi.rsc"- "c:\resource\MsgEditorAppUi.rsc"
+"\epoc32\release\armv5\urel\MsgEditorView.dll" 		- "c:\sys\bin\MsgEditorView.dll"
+"\epoc32\release\armv5\urel\msgeditorutils.dll" 		- "c:\sys\bin\msgeditorutils.dll"
+"\epoc32\data\z\resource\msgeditorutils.rsc"- "c:\resource\msgeditorutils.rsc"
+"\epoc32\data\z\resource\apps\msgeditor.mif" 		- "c:\resource\apps\msgeditor.mif"
+"\epoc32\data\z\resource\apps\msgeditor_ah.mif" 		- "c:\resource\apps\msgeditor_ah.mif"
+
+"\epoc32\release\armv5\urel\MsgCommonUtils.dll" 		- "c:\sys\bin\MsgCommonUtils.dll"
+"\epoc32\data\z\resource\msgcommonutils.rsc"- "c:\resource\msgcommonutils.rsc"
+
+;sendui
+"\epoc32\release\armv5\urel\senduilauncher.exe"-"c:\sys\bin\senduilauncher.exe"
+"\epoc32\data\z\private\10003a3f\apps\senduilauncher_reg.rsc"-"c:\private\10003a3f\import\apps\senduilauncher_reg.rsc"
+"\epoc32\data\Z\resource\apps\senduilauncher.rsc"- "c:\resource\senduilauncher.rsc"
+
+"\epoc32\release\armv5\urel\SendUiServiceResolver.exe"-"c:\sys\bin\SendUiServiceResolver.exe"
+"\epoc32\data\z\private\10003a3f\apps\SendUiServiceResolver_reg.rsc"-"c:\private\10003a3f\import\apps\SendUiServiceResolver_reg.rsc"
+"\epoc32\data\z\resource\senduiserviceresolver.rsc"- "c:\resource\senduiserviceresolver.rsc"
+
+"\epoc32\release\armv5\urel\sendui.dll" 		- "c:\sys\bin\sendui.dll"
+"\epoc32\data\z\resource\sendnorm.rsc"- "c:\resource\sendnorm.rsc"
+"\epoc32\release\armv5\urel\SenduiDataUtils.dll" 		- "c:\sys\bin\SenduiDataUtils.dll"
+"\epoc32\release\armv5\urel\SendUiWatcher.dll" 		- "c:\sys\bin\SendUiWatcher.dll"
+"\epoc32\data\Z\Resource\Plugins\SendUiWatcher.rsc"- "c:\resource\plugins\SendUiWatcher.rsc"
+"\epoc32\release\armv5\urel\DrmLinkSender.dll" 		- "c:\sys\bin\DrmLinkSender.dll"
+"\epoc32\data\z\resource\DrmLinkSenderUi.rsc"- "c:\resource\DrmLinkSenderUi.rsc"
+"\epoc32\data\Z\Resource\Plugins\DrmLinkSender.rsc"- "c:\resource\plugins\DrmLinkSender.rsc"
+
+;MCE
+"\epoc32\release\armv5\urel\mce.exe"-"c:\sys\bin\mce.exe"
+"\epoc32\data\Z\Resource\apps\mce.rsc"-"c:\resource\apps\mce.rsc"
+"\epoc32\data\z\private\10003a3f\apps\mce_reg.rsc"-"c:\private\10003a3f\import\apps\mce_reg.rsc"
+"\epoc32\data\Z\resource\apps\mce_aif.mif"-"c:\resource\apps\mce_aif.mif"
+
+;MCE dependent dlls
+
+"\epoc32\release\armv5\urel\MceLogEng.dll"-"c:\sys\bin\MceLogEng.dll"
+"\epoc32\data\Z\Resource\apps\MceLogEng.rsc"-"c:\resource\apps\MceLogEng.rsc"
+
+"\epoc32\release\armv5\urel\mcesettings.dll"-"c:\sys\bin\mcesettings.dll"
+"\epoc32\data\z\resource\MceSettings.rsc"- "c:\resource\MceSettings.rsc"
+"\epoc32\data\Z\resource\apps\mceextraicons.mif"-"c:\resource\apps\mceextraicons.mif"
+"\epoc32\data\Z\resource\apps\mcesettingsgspluginicons.mif"-"c:\resource\apps\mcesettingsgspluginicons.mif"
+"\epoc32\data\z\resource\MceSettingsEmailSel.rsc"- "c:\resource\MceSettingsEmailSel.rsc"
+"\epoc32\data\z\resource\apps\mceextraitems.rsc"- "c:\resource\apps\mceextraitems.rsc"
+
+"\epoc32\release\armv5\urel\ImumUtils.dll"-"c:\sys\bin\ImumUtils.dll"
+"\epoc32\data\z\resource\ImumUtils.rsc"- "c:\resource\ImumUtils.rsc"
+
+;BIUM
+"\epoc32\release\armv5\urel\BIUM.dll"-"c:\sys\bin\BIUM.dll"
+"\epoc32\data\z\resource\messaging\mtm\BioMtm.rsc"- "c:\resource\messaging\mtm\BioMtm.rsc"
+"\epoc32\data\z\resource\messaging\BIUM.rsc"- "c:\resource\messaging\BIUM.rsc"
+"\epoc32\data\Z\resource\messaging\bif\wvbif_sms_no.rsc"- "c:\resource\messaging\bif\wvbif_sms_no.rsc"
+"\epoc32\data\Z\resource\messaging\bif\CliLogobif.rsc"- "c:\resource\messaging\bif\CliLogobif.rsc"
+"\epoc32\data\Z\resource\messaging\bif\iacbif_sms_no.rsc"- "c:\resource\messaging\bif\iacbif_sms_no.rsc"
+"\epoc32\data\Z\resource\messaging\bif\ENotifBif_sms_no.rsc"- "c:\resource\messaging\bif\ENotifBif_sms_no.rsc"
+"\epoc32\data\Z\resource\messaging\bif\Dmcpbif.rsc"- "c:\resource\messaging\bif\Dmcpbif.rsc"
+
+
+;BVA
+"\epoc32\release\armv5\urel\bva.exe"-"c:\sys\bin\bva.exe"
+"\epoc32\data\z\private\10003a3f\apps\bva_reg.rsc"-"c:\private\10003a3f\import\apps\bva_reg.rsc"
+"\epoc32\data\Z\Resource\apps\bva.rsc"-"c:\resource\apps\bva.rsc"
+"\epoc32\data\z\resource\apps\bva_aif.mif" 		- "c:\resource\apps\bva_aif.mif"
+
+"\epoc32\release\armv5\urel\WMLBC.dll"-"c:\sys\bin\WMLBC.dll"
+"\epoc32\data\z\resource\WMLBC.rsc"- "c:\resource\WMLBC.rsc"
+"\epoc32\data\Z\resource\messaging\bif\WMLBif.rsc"- "c:\resource\messaging\bif\WMLBif.rsc"
+
+"\epoc32\release\armv5\urel\VCardbc.dll"-"c:\sys\bin\VCardbc.dll"
+"\epoc32\data\z\resource\VCardBC.rsc"- "c:\resource\VCardBC.rsc"
+"\epoc32\data\Z\resource\messaging\bif\vcardbif_sms.rsc"- "c:\resource\messaging\bif\vcardbif_sms.rsc"
+"\epoc32\data\Z\resource\messaging\bif\cbcbif_sms.rsc"- "c:\resource\messaging\bif\cbcbif_sms.rsc"
+
+"\epoc32\release\armv5\urel\VCalbc.dll"-"c:\sys\bin\VCalbc.dll"
+"\epoc32\data\z\resource\VCalBC.rsc"- "c:\resource\VCalBC.rsc"
+"\epoc32\data\Z\resource\messaging\bif\vcalbif_sms.rsc"- "c:\resource\messaging\bif\vcalbif_sms.rsc"
+
+"\epoc32\release\armv5\urel\RingBC.dll"-"c:\sys\bin\RingBC.dll"
+"\epoc32\data\z\resource\RingBC.rsc"- "c:\resource\RingBC.rsc"
+"\epoc32\data\z\resource\apps\ringbc.mif" 		- "c:\resource\apps\ringbc.mif"
+"\epoc32\data\Z\resource\messaging\bif\RingBif.rsc"- "c:\resource\messaging\bif\RingBif.rsc"
+
+
+"\epoc32\release\armv5\urel\OpLogoBC.dll"-"c:\sys\bin\OpLogoBC.dll"
+"\epoc32\data\z\resource\OpLogoBC.rsc"- "c:\resource\OpLogoBC.rsc"
+"\epoc32\data\Z\resource\messaging\bif\OpLogoBif.rsc"- "c:\resource\messaging\bif\OpLogoBif.rsc"
+
+"\epoc32\release\armv5\urel\gmsModel.dll"-"c:\sys\bin\gmsModel.dll"
+"\epoc32\data\Z\resource\messaging\bif\gmsBif.rsc"- "c:\resource\messaging\bif\gmsBif.rsc"
+
+"\epoc32\release\armv5\urel\vrec.DLL" 		- "c:\sys\bin\vrec.DLL"
+"\epoc32\data\Z\Resource\Plugins\vrec.rsc"- "c:\resource\plugins\vrec.rsc"
+"\epoc32\release\armv5\urel\richBio.dll"-"c:\sys\bin\richBio.dll"
+
+
+;audiomessaging
+"\epoc32\release\armv5\urel\audiomessage.exe" 		- "c:\sys\bin\audiomessage.exe"
+"\epoc32\data\z\private\10003a3f\apps\audiomessage_reg.rsc"-"c:\private\10003a3f\import\apps\audiomessage_reg.rsc"
+"\epoc32\data\z\resource\apps\audiomessage.rsc"- "c:\resource\apps\audiomessage.rsc"
+"\epoc32\data\z\resource\apps\audiomessage.mif" 		- "c:\resource\apps\audiomessage.mif"
+"\epoc32\data\z\resource\apps\audiomessage_aif.mif" 		- "c:\resource\apps\audiomessage_aif.mif"
+
+"\epoc32\release\armv5\urel\audiomessageui.dll" 		- "c:\sys\bin\audiomessageui.dll"
+"\epoc32\data\z\resource\messaging\mtm\audiomessageregistry.rsc"- "c:\resource\messaging\mtm\audiomessageregistry.rsc"
+"\epoc32\data\z\resource\messaging\audiomessagemtm.rsc"- "c:\resource\messaging\audiomessagemtm.rsc"
+
+;postcard
+"\epoc32\release\armv5\urel\Postcard.exe" 		- "c:\sys\bin\Postcard.exe"
+"\epoc32\data\z\private\10003a3f\apps\postcard_reg.rsc"-"c:\private\10003a3f\import\apps\postcard_reg.rsc"
+"\epoc32\data\z\resource\apps\Postcard.rsc"- "c:\resource\apps\Postcard.rsc"
+"\epoc32\data\z\resource\apps\postcard.mif" 		- "c:\resource\apps\postcard.mif"
+"\epoc32\data\z\resource\apps\postcard_aif.mif" 		- "c:\resource\apps\postcard_aif.mif"
+
+"\epoc32\release\armv5\urel\postcardui.dll" 		- "c:\sys\bin\postcardui.dll"
+"\epoc32\data\z\resource\messaging\mtm\Poca.rsc"- "c:\resource\messaging\mtm\Poca.rsc"
+"\epoc32\data\z\resource\messaging\PostcardUi.rsc"- "c:\resource\messaging\PostcardUi.rsc"
+
+;unieditor
+"\epoc32\release\armv5\urel\unieditor.exe" 		- "c:\sys\bin\unieditor.exe"
+"\epoc32\data\z\private\10003a3f\apps\unieditor_reg.rsc"-"c:\private\10003a3f\import\apps\unieditor_reg.rsc"
+"\epoc32\data\z\resource\apps\unieditor.rsc"- "c:\resource\apps\unieditor.rsc"
+"\epoc32\data\z\resource\apps\unieditor_aif.mif" 		- "c:\resource\apps\unieditor_aif.mif"
+
+"\epoc32\release\armv5\urel\UniMtms.dll" 		- "c:\sys\bin\UniMtms.dll"
+"\epoc32\data\z\resource\messaging\mtm\uni.rsc"- "c:\resource\messaging\mtm\uni.rsc"
+"\epoc32\data\z\resource\messaging\UniMtms.rsc"- "c:\resource\messaging\UniMtms.rsc"
+
+"\epoc32\release\armv5\urel\unipluginapi.dll" 		- "c:\sys\bin\unipluginapi.dll"
+"\epoc32\release\armv5\urel\VideoConversionApi.dll" 		- "c:\sys\bin\VideoConversionApi.dll"
+
+"\epoc32\release\armv5\urel\unidatamodel.dll" 		- "c:\sys\bin\unidatamodel.dll"
+"\epoc32\data\z\resource\UniDataModel.rsc"- "c:\resource\UniDataModel.rsc"
+
+"\epoc32\release\armv5\urel\uniutils.dll" 		- "c:\sys\bin\uniutils.dll"
+"\epoc32\data\z\resource\uniutils.rsc"- "c:\resource\uniutils.rsc"
+"\epoc32\data\z\resource\apps\uniutils.mif" 		- "c:\resource\apps\uniutils.mif"
+"\epoc32\data\z\resource\apps\uniutils.mbm" 		- "c:\resource\apps\uniutils.mbm"
+
+;mmsengine
+"\epoc32\release\armv5\urel\mmssettings.dll" 		- "c:\sys\bin\mmssettings.dll"
+"\epoc32\data\z\resource\MmsSettings.rsc"- "c:\resource\MmsSettings.rsc"
+"\epoc32\release\armv5\urel\mmsserversettings.dll" 		- "c:\sys\bin\mmsserversettings.dll"
+"\epoc32\release\armv5\urel\mmsconninit.dll" 		- "c:\sys\bin\mmsconninit.dll"
+"\epoc32\release\armv5\urel\mmsappadapter.dll" 		- "c:\sys\bin\mmsappadapter.dll"
+"\epoc32\release\armv5\urel\mmscli.dll" 		- "c:\sys\bin\mmscli.dll"
+"\epoc32\release\armv5\urel\mmscodec.dll" 		- "c:\sys\bin\mmscodec.dll"
+"\epoc32\release\armv5\urel\mmscodecclient.dll" 		- "c:\sys\bin\mmscodecclient.dll"
+"\epoc32\release\armv5\urel\mmsmessage.dll" 		- "c:\sys\bin\mmsmessage.dll"
+"\epoc32\release\armv5\urel\MmsPushHandler.dll" 		- "c:\sys\bin\MmsPushHandler.dll"
+"\epoc32\data\Z\Resource\Plugins\MmsPushHandler.rsc"- "c:\resource\plugins\MmsPushHandler.rsc"
+"\epoc32\release\armv5\urel\mmssrv.dll" 		- "c:\sys\bin\mmssrv.dll"
+"\epoc32\release\armv5\urel\mmstransport.dll" 		- "c:\sys\bin\mmstransport.dll"
+"\epoc32\release\armv5\urel\mmswatcher.dll" 		- "c:\sys\bin\mmswatcher.dll"
+"\epoc32\data\Z\Resource\Plugins\mmswatcher.rsc"- "c:\resource\plugins\mmswatcher.rsc"
+"\epoc32\release\armv5\urel\MmsGenUtils.dll "-"c:\sys\bin\MmsGenUtils.dll "
+"\epoc32\data\Z\private\100058DB\backup_registration.xml"-"c:\private\100058DB\backup_registration.xml"
+
+;mmsviewer
+"\epoc32\release\armv5\urel\mmsviewer.exe" 		- "c:\sys\bin\mmsviewer.exe"
+"\epoc32\data\z\private\10003a3f\apps\mmsviewer_reg.rsc"-"c:\private\10003a3f\import\apps\mmsviewer_reg.rsc"
+"\epoc32\data\z\resource\apps\MmsViewer.rsc"- "c:\resource\apps\MmsViewer.rsc"
+"\epoc32\data\z\resource\apps\mmsui.mif" 		- "c:\resource\apps\mmsui.mif"
+"\epoc32\data\z\resource\apps\mmsviewer_aif.mif" 		- "c:\resource\apps\mmsviewer_aif.mif"
+
+"\epoc32\release\armv5\urel\mmsui.dll" 		- "c:\sys\bin\mmsui.dll"
+"\epoc32\data\z\resource\messaging\mtm\mms.rsc"- "c:\resource\messaging\mtm\mms.rsc"
+"\epoc32\data\z\resource\messaging\mmsui.rsc"- "c:\resource\messaging\mmsui.rsc"
+
+;notui
+"\epoc32\release\armv5\urel\notui.dll" 		- "c:\sys\bin\notui.dll"
+"\epoc32\data\z\resource\messaging\mtm\not.rsc"- "c:\resource\messaging\mtm\not.rsc"
+"\epoc32\data\z\resource\messaging\NotUi.rsc"- "c:\resource\messaging\NotUi.rsc"
+
+;notviewer
+"\epoc32\release\armv5\urel\notviewer.exe" 		- "c:\sys\bin\notviewer.exe"
+"\epoc32\data\z\private\10003a3f\apps\NotViewer_reg.rsc"-"c:\private\10003a3f\import\apps\NotViewer_reg.rsc"
+"\epoc32\data\z\resource\apps\NotViewer.rsc"- "c:\resource\apps\NotViewer.rsc"
+"\epoc32\data\z\resource\apps\notviewer_aif.mif" 		- "c:\resource\apps\notviewer_aif.mif"
+
+;smilplayer
+"\epoc32\release\armv5\urel\smilplayer.dll" 		- "c:\sys\bin\smilplayer.dll"
+"\epoc32\data\z\resource\SmilPlayer.rsc"- "c:\resource\SmilPlayer.rsc"
+"\epoc32\data\z\resource\apps\smilplayer.mif" 		- "c:\resource\apps\smilplayer.mif"
+
+"\epoc32\release\armv5\urel\msgeditormediacontrol.dll" 		- "c:\sys\bin\msgeditormediacontrol.dll"
+"\epoc32\release\armv5\urel\msgmedia.dll" 		- "c:\sys\bin\msgmedia.dll"
+"\epoc32\data\z\resource\MsgMimeToMediaMapping.rsc"- "c:\resource\MsgMimeToMediaMapping.rsc"
+
+;smilengine
+"\epoc32\release\armv5\urel\smileng.dll" 		- "c:\sys\bin\smileng.dll"
+"\epoc32\release\armv5\urel\smiltran.dll" 		- "c:\sys\bin\smiltran.dll"
+"\epoc32\release\armv5\urel\smilmediarenderer.dll" 		- "c:\sys\bin\smilmediarenderer.dll"
+"\epoc32\release\armv5\urel\xhtmlparser.dll" 		- "c:\sys\bin\xhtmlparser.dll"
+
+;plugin dlls
+"\epoc32\release\armv5\urel\MceSettingsGSPlugin.dll" 		- "c:\sys\bin\MceSettingsGSPlugin.dll"
+"\epoc32\data\z\resource\mcesettingsgspluginrsc.rsc" 		- "c:\resource\mcesettingsgspluginrsc.rsc"
+"\epoc32\data\Z\Resource\Plugins\mcesettingsgsplugin.rsc"- "c:\resource\plugins\mcesettingsgsplugin.rsc"
+
+"\epoc32\release\armv5\urel\MsgIndicatorPlugin.dll" 		- "c:\sys\bin\MsgIndicatorPlugin.dll"
+"\epoc32\data\z\resource\msgindicator.rsc"- "c:\resource\msgindicator.rsc"
+"\epoc32\data\Z\Resource\Plugins\MsgIndicatorPlugin.rsc"- "c:\resource\plugins\MsgIndicatorPlugin.rsc"
+
+"\epoc32\release\armv5\urel\smsdetailsplugin.dll" 		- "c:\sys\bin\smsdetailsplugin.dll"
+"\epoc32\data\z\resource\smsdetailsplugindata.rsc"- "c:\resource\smsdetailsplugindata.rsc"
+"\epoc32\data\Z\Resource\Plugins\smsdetailsplugin.rsc"- "c:\resource\plugins\smsdetailsplugin.rsc"
+
+"\epoc32\release\armv5\urel\Unimmsplugin.dll" 		- "c:\sys\bin\Unimmsplugin.dll"
+"\epoc32\data\z\resource\UniMmsPluginD.rsc"- "c:\resource\UniMmsPluginD.rsc"
+"\epoc32\data\Z\Resource\Plugins\UniMmsPlugin.rsc"- "c:\resource\plugins\UniMmsPlugin.rsc"
+
+"\epoc32\release\armv5\urel\UniSmsPlugin.dll" 		- "c:\sys\bin\UniSmsPlugin.dll"
+"\epoc32\data\z\resource\UniSmsPluginD.rsc"- "c:\resource\UniSmsPluginD.rsc"
+"\epoc32\data\Z\Resource\Plugins\UniSmsPlugin.rsc"- "c:\resource\plugins\UniSmsPlugin.rsc"
+
+"\epoc32\release\armv5\urel\GenericMtmPlugin.dll" 		- "c:\sys\bin\GenericMtmPlugin.dll"
+"\epoc32\data\Z\Resource\Plugins\GenericMtmPlugin.rsc"- "c:\resource\plugins\GenericMtmPlugin.rsc"
+
+;msgavkon
+"\epoc32\release\armv5\urel\muiu.dll" 		- "c:\sys\bin\muiu.dll"
+"\epoc32\data\z\resource\muiu.rsc"- "c:\resource\muiu.rsc"
+"\epoc32\data\z\resource\apps\muiu.mif" 		- "c:\resource\apps\muiu.mif"
+"\epoc32\data\z\resource\apps\muiu.mbm" 		- "c:\resource\apps\muiu.mbm"
+
+"\epoc32\release\armv5\urel\muiu_internal.dll" 		- "c:\sys\bin\muiu_internal.dll"
+"\epoc32\data\z\resource\muiu_internal.rsc"- "c:\resource\muiu_internal.rsc"
+
+"\epoc32\release\armv5\urel\MsgNotifiers.dll" 		- "c:\sys\bin\MsgNotifiers.dll"
+"\epoc32\data\z\resource\MsgNotifiers.rsc"- "c:\resource\MsgNotifiers.rsc"
+
+"\epoc32\release\armv5\urel\MsgNotifierswrapper.dll" 		- "c:\sys\bin\MsgNotifierswrapper.dll"
+"\epoc32\data\Z\Resource\Plugins\MsgNotifiersWrapper.rsc" 		- "c:\resource\plugins\MsgNotifiersWrapper.rsc"
+
+"\epoc32\data\Z\private\100058CD\backup_registration.xml"-"c:\private\100058CD\backup_registration.xml"
+
+;msgerrorwatcher
+"\epoc32\release\armv5\urel\MsgErrorWatcher.dll" 		- "c:\sys\bin\MsgErrorWatcher.dll"
+"\epoc32\data\z\resource\MsgErrorWatcherData.rsc"- "c:\resource\MsgErrorWatcherData.rsc"
+"\epoc32\data\Z\Resource\Plugins\MsgErrorWatcher.rsc"- "c:\resource\plugins\MsgErrorWatcher.rsc"
+
+;scheme plugin
+"\epoc32\release\armv5\urel\SchemePlugin.dll" 		- "c:\sys\bin\SchemePlugin.dll"
+"\epoc32\data\Z\Resource\Plugins\SchemePlugin.rsc"- "c:\resource\plugins\SchemePlugin.rsc"
+
+;msgbranched //do we need this?
+"\epoc32\data\z\private\101F7989\sms\smsu.rsc"- "c:\ private\101F7989\sms\smsu.rsc"
+"\epoc32\data\z\resource\messaging\imcm.rsc"- "c:\resource\messaging\imcm.rsc"
+"\epoc32\data\z\resource\messaging\msgs.rsc"- "c:\resource\messaging\msgs.rsc"
+
+
+;//language test
+"\epoc32\data\z\resource\apps\SmsViewer.r01"- "c:\resource\apps\SmsViewer.r01"
+"\epoc32\data\z\resource\apps\SmsViewer.r02"- "c:\resource\apps\SmsViewer.r02"
+"\epoc32\data\z\resource\apps\SmsViewer.r03"- "c:\resource\apps\SmsViewer.r03"
+"\epoc32\data\z\resource\apps\SmsViewer.r04"- "c:\resource\apps\SmsViewer.r04"
+"\epoc32\data\z\resource\apps\SmsViewer.r05"-"c:\resource\apps\SmsViewer.r05"
+"\epoc32\data\z\resource\apps\SmsViewer.r06"-"c:\resource\apps\SmsViewer.r06"
+"\epoc32\data\z\resource\apps\SmsViewer.r07"-"c:\resource\apps\SmsViewer.r07"
+"\epoc32\data\z\resource\apps\SmsViewer.r08"-"c:\resource\apps\SmsViewer.r08"
+"\epoc32\data\z\resource\apps\SmsViewer.r09"-"c:\resource\apps\SmsViewer.r09"
+"\epoc32\data\z\resource\apps\SmsViewer.r10"-"c:\resource\apps\SmsViewer.r10"
+"\epoc32\data\z\resource\apps\SmsViewer.r102"-"c:\resource\apps\SmsViewer.r102"
+"\epoc32\data\z\resource\apps\SmsViewer.r103"-"c:\resource\apps\SmsViewer.r103"
+"\epoc32\data\z\resource\apps\SmsViewer.r129"-"c:\resource\apps\SmsViewer.r129"
+"\epoc32\data\z\resource\apps\SmsViewer.r13"-"c:\resource\apps\SmsViewer.r13"
+"\epoc32\data\z\resource\apps\SmsViewer.r14"-"c:\resource\apps\SmsViewer.r14"
+"\epoc32\data\z\resource\apps\SmsViewer.r15"-"c:\resource\apps\SmsViewer.r15"
+"\epoc32\data\z\resource\apps\SmsViewer.r157"-"c:\resource\apps\SmsViewer.r157"
+"\epoc32\data\z\resource\apps\SmsViewer.r158"-"c:\resource\apps\SmsViewer.r158"
+"\epoc32\data\z\resource\apps\SmsViewer.r159"-"c:\resource\apps\SmsViewer.r159"
+"\epoc32\data\z\resource\apps\SmsViewer.r16"-"c:\resource\apps\SmsViewer.r16"
+"\epoc32\data\z\resource\apps\SmsViewer.r160"-"c:\resource\apps\SmsViewer.r160"
+"\epoc32\data\z\resource\apps\SmsViewer.r161"-"c:\resource\apps\SmsViewer.r161"
+"\epoc32\data\z\resource\apps\SmsViewer.r17"-"c:\resource\apps\SmsViewer.r17"
+"\epoc32\data\z\resource\apps\SmsViewer.r18"-"c:\resource\apps\SmsViewer.r18"
+"\epoc32\data\z\resource\apps\SmsViewer.r25"-"c:\resource\apps\SmsViewer.r25"
+"\epoc32\data\z\resource\apps\SmsViewer.r26"-"c:\resource\apps\SmsViewer.r26"
+"\epoc32\data\z\resource\apps\SmsViewer.r27"-"c:\resource\apps\SmsViewer.r27"
+"\epoc32\data\z\resource\apps\SmsViewer.r28"-"c:\resource\apps\SmsViewer.r28"
+"\epoc32\data\z\resource\apps\SmsViewer.r29"-"c:\resource\apps\SmsViewer.r29"
+"\epoc32\data\z\resource\apps\SmsViewer.r30"-"c:\resource\apps\SmsViewer.r30"
+"\epoc32\data\z\resource\apps\SmsViewer.r31"-"c:\resource\apps\SmsViewer.r31"
+"\epoc32\data\z\resource\apps\SmsViewer.r32"-"c:\resource\apps\SmsViewer.r32"
+"\epoc32\data\z\resource\apps\SmsViewer.r326"-"c:\resource\apps\SmsViewer.r326"
+"\epoc32\data\z\resource\apps\SmsViewer.r327"-"c:\resource\apps\SmsViewer.r327"
+"\epoc32\data\z\resource\apps\SmsViewer.r33"-"c:\resource\apps\SmsViewer.r33"
+"\epoc32\data\z\resource\apps\SmsViewer.r37"-"c:\resource\apps\SmsViewer.r37"
+"\epoc32\data\z\resource\apps\SmsViewer.r39"-"c:\resource\apps\SmsViewer.r39"
+"\epoc32\data\z\resource\apps\SmsViewer.r42"-"c:\resource\apps\SmsViewer.r42"
+"\epoc32\data\z\resource\apps\SmsViewer.r44"-"c:\resource\apps\SmsViewer.r44"
+"\epoc32\data\z\resource\apps\SmsViewer.r45"-"c:\resource\apps\SmsViewer.r45"
+"\epoc32\data\z\resource\apps\SmsViewer.r49"-"c:\resource\apps\SmsViewer.r49"
+"\epoc32\data\z\resource\apps\SmsViewer.r50"-"c:\resource\apps\SmsViewer.r50"
+"\epoc32\data\z\resource\apps\SmsViewer.r51"-"c:\resource\apps\SmsViewer.r51"
+"\epoc32\data\z\resource\apps\SmsViewer.r54"-"c:\resource\apps\SmsViewer.r54"
+"\epoc32\data\z\resource\apps\SmsViewer.r57"-"c:\resource\apps\SmsViewer.r57"
+"\epoc32\data\z\resource\apps\SmsViewer.r59"-"c:\resource\apps\SmsViewer.r59"
+"\epoc32\data\z\resource\apps\SmsViewer.r65"-"c:\resource\apps\SmsViewer.r65"
+"\epoc32\data\z\resource\apps\SmsViewer.r67"-"c:\resource\apps\SmsViewer.r67"
+"\epoc32\data\z\resource\apps\SmsViewer.r68"-"c:\resource\apps\SmsViewer.r68"
+"\epoc32\data\z\resource\apps\SmsViewer.r70"-"c:\resource\apps\SmsViewer.r70"
+"\epoc32\data\z\resource\apps\SmsViewer.r76"-"c:\resource\apps\SmsViewer.r76"
+"\epoc32\data\z\resource\apps\SmsViewer.r78"-"c:\resource\apps\SmsViewer.r78"
+"\epoc32\data\z\resource\apps\SmsViewer.r79"-"c:\resource\apps\SmsViewer.r79"
+"\epoc32\data\z\resource\apps\SmsViewer.r83"-"c:\resource\apps\SmsViewer.r83"
+"\epoc32\data\z\resource\apps\SmsViewer.r93"-"c:\resource\apps\SmsViewer.r93"
+"\epoc32\data\z\resource\apps\SmsViewer.r94"-"c:\resource\apps\SmsViewer.r94"
+"\epoc32\data\z\resource\apps\SmsViewer.r96"-"c:\resource\apps\SmsViewer.r96"

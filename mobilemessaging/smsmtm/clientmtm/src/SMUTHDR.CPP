@@ -1005,7 +1005,7 @@ void CSmsHeader::GetRecipientL(TDesC16& aRecipientStrList)
 			while(startPos != KErrNotFound )
 				{
 				TPtrC16 str2 = str1.Left(startPos);
-				smsNumberData.AppendL(str2);
+				smsNumberData.Append(str2);
 				
 				startPos++;
 				str1.Set(str1.Mid(startPos, str1.Length()- startPos));

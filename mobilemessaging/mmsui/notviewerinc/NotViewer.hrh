@@ -1,0 +1,80 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     contains common definitions for menu id:s
+*
+*/
+
+
+
+#ifndef __NOTVIEWER_HRH__
+#define __NOTVIEWER_HRH__
+
+#include <MsgEditor.hrh>            // EMsgFirstFreeComponentSpecificCommand
+
+enum TNotViewerMenuCommands // Menu IDs
+	{
+    ENotViewerRetrieve = EMsgFirstFreeComponentSpecificCommand,
+	ENotViewerForward,
+	ENotViewerSend,
+	ENotViewerAddRecipient,
+	ENotViewerCheckNames,
+	ENotViewerReplyMenu,
+	ENotViewerReplyViaMessage,
+    // audio: run time variated
+    ENotViewerReplyViaAudio,
+	ENotViewerReplyViaMail,
+	ENotViewerDelete,
+	ENotViewerMessageDetails,
+    ENotViewerSubmenuZoomCommands,
+	ENotViewerToolbarRetrieve,
+	ENotViewerToolbarReply,
+	ENotViewerToolbarDelete,
+	ENotViewerToolbarSend,
+	ENotViewerToolbarAdd,
+	ENotViewerFirstFreeCmdId // SendAs
+	};
+
+enum TNotViewerFlags
+	{
+	ENotViewerFlagsHelp			= 1,		// Is help supported
+	ENotViewerAutoFind			= 2,		// Is autofind supported
+	ENotViewerIsNotFirstItem	= 4,
+	ENotViewerIsNotification	= 8,		// Do we have notif or Fr open
+    // KFeatureIdMmsNonDestructiveForward has been deprecated
+    // Check of TMsvEntry::iMtmData2 & KMmsStoredInMMBox replaces it. 
+    // MMSEngine sets KMmsStoredInMMBox for received notifications
+	// ENotViewerMultipleForwardSupported = 16, // Does forward delete the msg from server
+	ENotViewerDeleteBoth		= 16,		// Have we selected delete both
+	ENotViewerOffline			= 32,		// Is phone offline now
+	ENotViewerAudioMessaging    = 0x100,	// Is audio messaging supported
+	ENotViewerRestrictedReply   = 0x200		// Locked to MMS. No other reply types are possible
+	};
+
+enum TNotViewerExceptions	// Panics
+	{
+	ENotViewerOperationNotFinished
+	};
+
+enum TNotViewerStatus
+	{
+	ENotViewerStatusNull		= 0,
+	ENotViewerStatusFailed		= 1,
+	ENotViewerStatusExpired		= 2,
+	ENotViewerStatusForwarding	= 3,
+	ENotViewerStatusForwarded	= 4,
+	ENotViewerStatusWaiting		= 5
+	};
+
+#endif // __NOTVIEWER_HRH__

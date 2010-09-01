@@ -1,0 +1,4 @@
+EXPORTS
+	?NewAudioMessageUiL@@YAPAVCBaseMtmUi@@AAVCBaseMtm@@AAVCRegisteredMtmDll@@@Z @ 1 NONAME ; class CBaseMtmUi * NewAudioMessageUiL(class CBaseMtm &, class CRegisteredMtmDll &)
+	?NewAudiomessageUiDataL@@YAPAVCBaseMtmUiData@@AAVCRegisteredMtmDll@@@Z @ 2 NONAME ; class CBaseMtmUiData * NewAudiomessageUiDataL(class CRegisteredMtmDll &)
+

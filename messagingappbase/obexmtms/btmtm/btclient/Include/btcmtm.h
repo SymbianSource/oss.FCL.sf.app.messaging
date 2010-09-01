@@ -83,7 +83,7 @@ public:
 	 * Starts an asynchronous function as an active object. Only works for EBtcCmdSend.
 	 *
 	 * @param aFunctionId Identifier of the function to be invoked. Only supports EBtcCmdSend.
-	 * @param aSelection Selection of message entries for the requested function to operate on.
+	 * @param aSelection Selction of message entries for the requested function to operate on.
 	 * @param aParameter Buffer containing input and output parameters.
 	 * @param aCompletionStatus Canonical TRequestStatus used for control of the active object.
 	 * @return Pointer to a new asynchronously completing CMsvOperation. If failed, this is a completed operation with 

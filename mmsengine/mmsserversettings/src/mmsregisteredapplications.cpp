@@ -369,7 +369,7 @@ TBool CMmsRegisteredApplications::Registered( const TDesC& aApplicationId, TInt&
     {
     aIndex = -1; 
     TInt count = iAppIdArray->MdcaCount();
-    for( TInt i = 0; i < count && aIndex == -1; ++i )
+    for( TInt i = 0; i < count && aIndex == -1; i++ )
         {
         TPtrC16 ptr = iAppIdArray->MdcaPoint( i );
         if ( ptr.Compare( aApplicationId ) == 0 )

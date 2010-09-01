@@ -1,0 +1,71 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*	 This file provides the information required for building the
+*    whole of a Mce application.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+// specify the platforms your component needs to be built for here
+// defaults to WINS MARM so you can ignore this if you just build these
+DEFAULT
+
+// Help exports
+#include "../help/group/bld.inf"
+
+PRJ_EXPORTS
+// Specify the source file followed by its destination here
+// copy will be used to copy the source file to its destination
+// If there's no destination then the source file will be copied
+// to the same name in /epoc32/include
+../rom/mce.iby CORE_APP_LAYER_IBY_EXPORT_PATH(mce.iby)
+../rom/mceResources.iby LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(mceResources.iby)
+../loc/mce.loc APP_LAYER_LOC_EXPORT_PATH(mce.loc)
+../loc/MceLogEng.loc APP_LAYER_LOC_EXPORT_PATH(MceLogEng.loc)
+../sis/Mce_stub.SIS   /epoc32/data/z/system/install/mce_stub.sis
+
+PRJ_EXTENSIONS
+
+#ifdef __SCALABLE_ICONS
+	START EXTENSION s60/mifconv
+	OPTION TARGETFILE MCE_AIF.MIF
+	OPTION SOURCES -c8,8 qgn_menu_mce	
+	END
+#else
+	START EXTENSION s60/mifconv
+	OPTION TARGETFILE MCE_AIF.MBM
+	OPTION SOURCEFILE mce_IconList1.txt
+	END
+#endif
+
+
+PRJ_MMPFILES
+// Specify the .mmp files required for building the important component
+// releasables. Note that you should specify any .mmp files for test
+// programs further down the file.
+//
+// Specify "tidy" if the component you need to build doesn't need to be
+// released to the rest of the company
+// specify "ignore" if the MMP file exists but should be
+// ignored.
+
+../group/MceLogEng.mmp
+../group/mce.mmp
+
+// End of File

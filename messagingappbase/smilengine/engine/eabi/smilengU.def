@@ -1,0 +1,110 @@
+EXPORTS
+	_ZN11CSmilParser10ParseColorERK7TDesC16Ri @ 1 NONAME
+	_ZN11CSmilParser19SetMaxDownUpScalingEff @ 2 NONAME
+	_ZN11CSmilParser4NewLEP11MSmilPlayer @ 3 NONAME
+	_ZN11CSmilParser6ParseLEPK14CMDXMLDocumentRK7TDesC16 @ 4 NONAME
+	_ZN11CSmilParser6ParseLERK7TDesC16S2_ @ 5 NONAME
+	_ZN17CSmilPresentation10MoveFocusLEii @ 6 NONAME
+	_ZN17CSmilPresentation10NextSlideLEv @ 7 NONAME
+	_ZN17CSmilPresentation11CurrentTimeEv @ 8 NONAME
+	_ZN17CSmilPresentation11SetBaseUrlLERK7TDesC16 @ 9 NONAME
+	_ZN17CSmilPresentation12CancelFocusLEv @ 10 NONAME
+	_ZN17CSmilPresentation12SubmitEventLERK7TDesC16P11CSmilObject @ 11 NONAME
+	_ZN17CSmilPresentation12SubmitEventLERK7TDesC16S2_ @ 12 NONAME
+	_ZN17CSmilPresentation13MouseClickedLERK6TPoint @ 13 NONAME
+	_ZN17CSmilPresentation14PreviousSlideLEv @ 14 NONAME
+	_ZN17CSmilPresentation15HandleKeyEventLERK9TKeyEvent10TEventCode @ 15 NONAME
+	_ZN17CSmilPresentation16ActivateFocusedLEv @ 16 NONAME
+	_ZN17CSmilPresentation16GetScalingFactorEv @ 17 NONAME
+	_ZN17CSmilPresentation19HandlePointerEventLERK13TPointerEvent @ 18 NONAME
+	_ZN17CSmilPresentation4DrawER16CGraphicsContextRK5TRect @ 19 NONAME
+	_ZN17CSmilPresentation5PauseEv @ 20 NONAME
+	_ZN17CSmilPresentation5PlayLEv @ 21 NONAME
+	_ZN17CSmilPresentation5SeekLE9TSmilTime @ 22 NONAME
+	_ZN17CSmilPresentation5StateEv @ 23 NONAME
+	_ZN17CSmilPresentation5StopLEv @ 24 NONAME
+	_ZN17CSmilPresentation6ResumeEv @ 25 NONAME
+	_ZN17CSmilPresentation9SetVolumeEi @ 26 NONAME
+	_ZN19CConformanceChecker4NewLEv @ 27 NONAME
+	_ZN19CConformanceChecker5CheckEP14CMDXMLDocument15TMmsSmilVersioni @ 28 NONAME
+	_ZN21CSmilTransitionFilter10ConstructLEP10MSmilMedia @ 29 NONAME
+	_ZN21CSmilTransitionFilter16TransitionEndingEv @ 30 NONAME
+	_ZN21CSmilTransitionFilter19TransitionStartingLEv @ 31 NONAME
+	_ZN21CSmilTransitionFilter9ActivateLERK9TSmilTime @ 32 NONAME
+	_ZN21CSmilTransitionFilterC2Ev @ 33 NONAME
+	_ZN21CSmilTransitionFilterD0Ev @ 34 NONAME
+	_ZN21CSmilTransitionFilterD1Ev @ 35 NONAME
+	_ZN21CSmilTransitionFilterD2Ev @ 36 NONAME
+	_ZN9TSmilTime16FromMicroSecondsE25TTimeIntervalMicroSeconds @ 37 NONAME
+	_ZN9TSmilTime16FromMicroSecondsEi @ 38 NONAME
+	_ZN9TSmilTime7ToLocalEP11CSmilObjectS_ @ 39 NONAME
+	_ZN9TSmilTimeC1ERK7TDesC16 @ 40 NONAME
+	_ZN9TSmilTimeC1Ei @ 41 NONAME
+	_ZN9TSmilTimeC1Ev @ 42 NONAME
+	_ZN9TSmilTimeC2ERK7TDesC16 @ 43 NONAME
+	_ZN9TSmilTimeC2Ei @ 44 NONAME
+	_ZN9TSmilTimeC2Ev @ 45 NONAME
+	_ZN9TSmilTimeaSERKS_ @ 46 NONAME
+	_ZN9TSmilTimeaSEi @ 47 NONAME
+	_ZN9TSmilTimeppEi @ 48 NONAME
+	_ZNK11CSmilAnchor4HrefEv @ 49 NONAME
+	_ZNK11CSmilObject6AnchorEv @ 50 NONAME
+	_ZNK17CSmilPresentation10SlideCountEv @ 51 NONAME
+	_ZNK17CSmilPresentation12CurrentSlideEv @ 52 NONAME
+	_ZNK17CSmilPresentation13FocusedObjectEv @ 53 NONAME
+	_ZNK17CSmilPresentation13IsInteractiveEv @ 54 NONAME
+	_ZNK17CSmilPresentation13IsTransparentEv @ 55 NONAME
+	_ZNK17CSmilPresentation7BaseUrlEv @ 56 NONAME
+	_ZNK17CSmilPresentation8DurationEv @ 57 NONAME
+	_ZNK21CSmilTransitionFilter5MediaEv @ 58 NONAME
+	_ZNK9TSmilTime14ToMicroSecondsEv @ 59 NONAME
+	_ZNK9TSmilTimeeqERKS_ @ 60 NONAME
+	_ZNK9TSmilTimegeERKS_ @ 61 NONAME
+	_ZNK9TSmilTimegtERKS_ @ 62 NONAME
+	_ZNK9TSmilTimeleERKS_ @ 63 NONAME
+	_ZNK9TSmilTimeltERKS_ @ 64 NONAME
+	_ZNK9TSmilTimemiERKS_ @ 65 NONAME
+	_ZNK9TSmilTimemlERKS_ @ 66 NONAME
+	_ZNK9TSmilTimemlEf @ 67 NONAME
+	_ZNK9TSmilTimeneERKS_ @ 68 NONAME
+	_ZNK9TSmilTimeplERKS_ @ 69 NONAME
+	_ZTI10CSmilMedia @ 70 NONAME ; #<TI>#
+	_ZTI11CSmilAnchor @ 71 NONAME ; #<TI>#
+	_ZTI11CSmilObject @ 72 NONAME ; #<TI>#
+	_ZTI11CSmilParser @ 73 NONAME ; #<TI>#
+	_ZTI11CSmilRegion @ 74 NONAME ; #<TI>#
+	_ZTI13CSmilParallel @ 75 NONAME ; #<TI>#
+	_ZTI13CSmilPrefetch @ 76 NONAME ; #<TI>#
+	_ZTI13CSmilSequence @ 77 NONAME ; #<TI>#
+	_ZTI13TSmilTimeList @ 78 NONAME ; #<TI>#
+	_ZTI14CSmilExclusive @ 79 NONAME ; #<TI>#
+	_ZTI14TSmilCondition @ 80 NONAME ; #<TI>#
+	_ZTI15CSmilRootRegion @ 81 NONAME ; #<TI>#
+	_ZTI17CSmilPresentation @ 82 NONAME ; #<TI>#
+	_ZTI18CSmilTimeContainer @ 83 NONAME ; #<TI>#
+	_ZTI19CConformanceChecker @ 84 NONAME ; #<TI>#
+	_ZTI21CSmilTransitionFilter @ 85 NONAME ; #<TI>#
+	_ZTI6CSmilA @ 86 NONAME ; #<TI>#
+	_ZTI9CSmilArea @ 87 NONAME ; #<TI>#
+	_ZTV10CSmilMedia @ 88 NONAME ; #<VT>#
+	_ZTV11CSmilAnchor @ 89 NONAME ; #<VT>#
+	_ZTV11CSmilObject @ 90 NONAME ; #<VT>#
+	_ZTV11CSmilParser @ 91 NONAME ; #<VT>#
+	_ZTV11CSmilRegion @ 92 NONAME ; #<VT>#
+	_ZTV13CSmilParallel @ 93 NONAME ; #<VT>#
+	_ZTV13CSmilPrefetch @ 94 NONAME ; #<VT>#
+	_ZTV13CSmilSequence @ 95 NONAME ; #<VT>#
+	_ZTV13TSmilTimeList @ 96 NONAME ; #<VT>#
+	_ZTV14CSmilExclusive @ 97 NONAME ; #<VT>#
+	_ZTV14TSmilCondition @ 98 NONAME ; #<VT>#
+	_ZTV15CSmilRootRegion @ 99 NONAME ; #<VT>#
+	_ZTV17CSmilPresentation @ 100 NONAME ; #<VT>#
+	_ZTV18CSmilTimeContainer @ 101 NONAME ; #<VT>#
+	_ZTV19CConformanceChecker @ 102 NONAME ; #<VT>#
+	_ZTV21CSmilTransitionFilter @ 103 NONAME ; #<VT>#
+	_ZTV6CSmilA @ 104 NONAME ; #<VT>#
+	_ZTV9CSmilArea @ 105 NONAME ; #<VT>#
+	_ZThn4_N21CSmilTransitionFilter9ActivateLERK9TSmilTime @ 106 NONAME ; #<thunk>#
+	_ZNK17CSmilPresentation14RootRegionRectEv @ 107 NONAME
+	_ZN17CSmilPresentation4NewLEP11MSmilPlayer @ 108 NONAME
+

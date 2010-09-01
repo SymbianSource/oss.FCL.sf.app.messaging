@@ -1,0 +1,45 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*       Unified Editor UID's
+*
+*/
+
+
+
+#ifndef __UNIEDITORUIDS_HRH
+#define __UNIEDITORUIDS_HRH
+
+// SendUi Sending Service plugin interface
+#define KUidUniMessageType          0x102072D5
+#define KUidUniMtm                  0x102072D6
+#define KUidUni_reserved_3          0x102072D7
+#define KUidUniEditorApplication    0x102072D8
+#define KUidUniEditorPluginApi      0x102072D9
+#define KUidUniEditorSmsPlugin      0x102072DA
+#define KUidUniEditorMmsPlugin      0x102072DB
+#define KUidUniEditorPluginApiDll   0x102072DC
+#define KUidUniDataModel            0x102072DD
+#define KUidUni_reserved_10         0x102072DE
+#define KUidUni_reserved_11         0x102072DF
+#define KUidUni_reserved_12         0x102072E0
+#define KUidUni_reserved_13         0x102072E1
+#define KUidUni_reserved_14         0x102072E2
+#define KUidUni_reserved_15         0x102072E3
+#define KUidUni_reserved_16         0x102072E4
+#define KUidUni_reserved_17         0x102072E5
+
+#endif // __UNIEDITORUIDS_HRH
+
+// End of File

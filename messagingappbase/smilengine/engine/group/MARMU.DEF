@@ -1,0 +1,66 @@
+EXPORTS
+	__pp__9TSmilTimei @ 1 NONAME R3UNUSED ; TSmilTime::operator++(int)
+	ActivateL__21CSmilTransitionFilterRC9TSmilTime @ 2 NONAME R3UNUSED ; CSmilTransitionFilter::ActivateL(TSmilTime const &)
+	Anchor__C11CSmilObject @ 3 NONAME R3UNUSED ; CSmilObject::Anchor(void) const
+	BaseUrl__C17CSmilPresentation @ 4 NONAME R3UNUSED ; CSmilPresentation::BaseUrl(void) const
+	CancelFocusL__17CSmilPresentation @ 5 NONAME R3UNUSED ; CSmilPresentation::CancelFocusL(void)
+	Check__19CConformanceCheckerP14CMDXMLDocument15TMmsSmilVersioni @ 6 NONAME ; CConformanceChecker::Check(CMDXMLDocument *, TMmsSmilVersion, int)
+	ConstructL__21CSmilTransitionFilterP10MSmilMedia @ 7 NONAME R3UNUSED ; CSmilTransitionFilter::ConstructL(MSmilMedia *)
+	CurrentSlide__C17CSmilPresentation @ 8 NONAME R3UNUSED ; CSmilPresentation::CurrentSlide(void) const
+	CurrentTime__17CSmilPresentation @ 9 NONAME R3UNUSED ; CSmilPresentation::CurrentTime(void)
+	Draw__17CSmilPresentationR16CGraphicsContextRC5TRect @ 10 NONAME R3UNUSED ; CSmilPresentation::Draw(CGraphicsContext &, TRect const &)
+	Duration__C17CSmilPresentation @ 11 NONAME R3UNUSED ; CSmilPresentation::Duration(void) const
+	FocusedObject__C17CSmilPresentation @ 12 NONAME R3UNUSED ; CSmilPresentation::FocusedObject(void) const
+	FromMicroSeconds__9TSmilTimeG25TTimeIntervalMicroSeconds @ 13 NONAME ; TSmilTime::FromMicroSeconds(TTimeIntervalMicroSeconds)
+	FromMicroSeconds__9TSmilTimei @ 14 NONAME R3UNUSED ; TSmilTime::FromMicroSeconds(int)
+	GetScalingFactor__17CSmilPresentation @ 15 NONAME R3UNUSED ; CSmilPresentation::GetScalingFactor(void)
+	HandleKeyEventL__17CSmilPresentationRC9TKeyEvent10TEventCode @ 16 NONAME R3UNUSED ; CSmilPresentation::HandleKeyEventL(TKeyEvent const &, TEventCode)
+	HandlePointerEventL__17CSmilPresentationRC13TPointerEvent @ 17 NONAME R3UNUSED ; CSmilPresentation::HandlePointerEventL(TPointerEvent const &)
+	Href__C11CSmilAnchor @ 18 NONAME R3UNUSED ; CSmilAnchor::Href(void) const
+	IsInteractive__C17CSmilPresentation @ 19 NONAME R3UNUSED ; CSmilPresentation::IsInteractive(void) const
+	IsTransparent__C17CSmilPresentation @ 20 NONAME R3UNUSED ; CSmilPresentation::IsTransparent(void) const
+	Media__C21CSmilTransitionFilter @ 21 NONAME R3UNUSED ; CSmilTransitionFilter::Media(void) const
+	MouseClickedL__17CSmilPresentationRC6TPoint @ 22 NONAME R3UNUSED ; CSmilPresentation::MouseClickedL(TPoint const &)
+	MoveFocusL__17CSmilPresentationii @ 23 NONAME R3UNUSED ; CSmilPresentation::MoveFocusL(int, int)
+	NewL__11CSmilParserP11MSmilPlayer @ 24 NONAME R3UNUSED ; CSmilParser::NewL(MSmilPlayer *)
+	NewL__19CConformanceChecker @ 25 NONAME R3UNUSED ; CConformanceChecker::NewL(void)
+	NextSlideL__17CSmilPresentation @ 26 NONAME R3UNUSED ; CSmilPresentation::NextSlideL(void)
+	ParseColor__11CSmilParserRC7TDesC16Ri @ 27 NONAME R3UNUSED ; CSmilParser::ParseColor(TDesC16 const &, int &)
+	ParseL__11CSmilParserPC14CMDXMLDocumentRC7TDesC16 @ 28 NONAME R3UNUSED ; CSmilParser::ParseL(CMDXMLDocument const *, TDesC16 const &)
+	ParseL__11CSmilParserRC7TDesC16T1 @ 29 NONAME R3UNUSED ; CSmilParser::ParseL(TDesC16 const &, TDesC16 const &)
+	Pause__17CSmilPresentation @ 30 NONAME R3UNUSED ; CSmilPresentation::Pause(void)
+	PlayL__17CSmilPresentation @ 31 NONAME R3UNUSED ; CSmilPresentation::PlayL(void)
+	PreviousSlideL__17CSmilPresentation @ 32 NONAME R3UNUSED ; CSmilPresentation::PreviousSlideL(void)
+	Resume__17CSmilPresentation @ 33 NONAME R3UNUSED ; CSmilPresentation::Resume(void)
+	SeekL__17CSmilPresentationG9TSmilTime @ 34 NONAME R3UNUSED ; CSmilPresentation::SeekL(TSmilTime)
+	SetBaseUrlL__17CSmilPresentationRC7TDesC16 @ 35 NONAME R3UNUSED ; CSmilPresentation::SetBaseUrlL(TDesC16 const &)
+	SetMaxDownUpScaling__11CSmilParserff @ 36 NONAME ; CSmilParser::SetMaxDownUpScaling(float, float)
+	SetVolume__17CSmilPresentationi @ 37 NONAME R3UNUSED ; CSmilPresentation::SetVolume(int)
+	SlideCount__C17CSmilPresentation @ 38 NONAME R3UNUSED ; CSmilPresentation::SlideCount(void) const
+	State__17CSmilPresentation @ 39 NONAME R3UNUSED ; CSmilPresentation::State(void)
+	StopL__17CSmilPresentation @ 40 NONAME R3UNUSED ; CSmilPresentation::StopL(void)
+	SubmitEventL__17CSmilPresentationRC7TDesC16P11CSmilObject @ 41 NONAME R3UNUSED ; CSmilPresentation::SubmitEventL(TDesC16 const &, CSmilObject *)
+	SubmitEventL__17CSmilPresentationRC7TDesC16T1 @ 42 NONAME R3UNUSED ; CSmilPresentation::SubmitEventL(TDesC16 const &, TDesC16 const &)
+	ToLocal__9TSmilTimeP11CSmilObjectT0 @ 43 NONAME R3UNUSED ; TSmilTime::ToLocal(CSmilObject *, TSmilTime)
+	ToMicroSeconds__C9TSmilTime @ 44 NONAME R3UNUSED ; TSmilTime::ToMicroSeconds(void) const
+	TransitionEnding__21CSmilTransitionFilter @ 45 NONAME R3UNUSED ; CSmilTransitionFilter::TransitionEnding(void)
+	TransitionStartingL__21CSmilTransitionFilter @ 46 NONAME R3UNUSED ; CSmilTransitionFilter::TransitionStartingL(void)
+	"_._21CSmilTransitionFilter" @ 47 NONAME R3UNUSED ; CSmilTransitionFilter::~CSmilTransitionFilter(void)
+	__21CSmilTransitionFilter @ 48 NONAME R3UNUSED ; CSmilTransitionFilter::CSmilTransitionFilter(void)
+	__9TSmilTime @ 49 NONAME R3UNUSED ; TSmilTime::TSmilTime(void)
+	__9TSmilTimeRC7TDesC16 @ 50 NONAME R3UNUSED ; TSmilTime::TSmilTime(TDesC16 const &)
+	__9TSmilTimei @ 51 NONAME R3UNUSED ; TSmilTime::TSmilTime(int)
+	__as__9TSmilTimeRC9TSmilTime @ 52 NONAME R3UNUSED ; TSmilTime::operator=(TSmilTime const &)
+	__as__9TSmilTimei @ 53 NONAME R3UNUSED ; TSmilTime::operator=(int)
+	__eq__C9TSmilTimeRC9TSmilTime @ 54 NONAME R3UNUSED ; TSmilTime::operator==(TSmilTime const &) const
+	__ge__C9TSmilTimeRC9TSmilTime @ 55 NONAME R3UNUSED ; TSmilTime::operator>=(TSmilTime const &) const
+	__gt__C9TSmilTimeRC9TSmilTime @ 56 NONAME R3UNUSED ; TSmilTime::operator>(TSmilTime const &) const
+	__le__C9TSmilTimeRC9TSmilTime @ 57 NONAME R3UNUSED ; TSmilTime::operator<=(TSmilTime const &) const
+	__lt__C9TSmilTimeRC9TSmilTime @ 58 NONAME R3UNUSED ; TSmilTime::operator<(TSmilTime const &) const
+	__mi__C9TSmilTimeRC9TSmilTime @ 59 NONAME R3UNUSED ; TSmilTime::operator-(TSmilTime const &) const
+	__ml__C9TSmilTimeRC9TSmilTime @ 60 NONAME R3UNUSED ; TSmilTime::operator*(TSmilTime const &) const
+	__ml__C9TSmilTimef @ 61 NONAME ; TSmilTime::operator*(float) const
+	__ne__C9TSmilTimeRC9TSmilTime @ 62 NONAME R3UNUSED ; TSmilTime::operator!=(TSmilTime const &) const
+	__pl__C9TSmilTimeRC9TSmilTime @ 63 NONAME R3UNUSED ; TSmilTime::operator+(TSmilTime const &) const
+	ActivateFocusedL__17CSmilPresentation @ 64 NONAME R3UNUSED ; CSmilPresentation::ActivateFocusedL(void)
+

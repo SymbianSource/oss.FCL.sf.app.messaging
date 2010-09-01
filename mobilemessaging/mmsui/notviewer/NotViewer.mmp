@@ -1,0 +1,104 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is project specification file for the MMS Notification Viewer.
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+//...LOGGING...
+MACRO           USE_LOGGER
+LIBRARY         flogger.lib
+//...LOGGING...
+
+TARGET          notviewer.exe
+EPOCSTACKSIZE   0x5000
+TARGETTYPE      exe
+UID             0x100039CE 0x101F86A0
+
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_APPLICATION NETWORKCONTROL
+VERSION 	10.0
+PAGED
+
+APP_LAYER_SYSTEMINCLUDE
+
+START RESOURCE  NotViewer.rss
+HEADER
+TARGETPATH      APP_RESOURCE_DIR
+LANGUAGE_IDS
+END
+
+START RESOURCE  ../notviewer/NotViewer_reg.rss
+DEPENDS notviewer.rsg
+TARGETPATH      /private/10003a3f/apps // Don't change the UID!
+END
+
+SOURCEPATH      ../notviewersrc
+
+SOURCE          NotViewerDocument.cpp
+SOURCE          NotViewerApp.cpp
+SOURCE          NotViewerAppUi.cpp
+SOURCE          NotViewerAppServer.cpp
+
+USERINCLUDE     ../notviewerinc
+USERINCLUDE     ../mtminc
+USERINCLUDE     ../notmtminc
+USERINCLUDE     ../settingsinc
+
+SYSTEMINCLUDE   ../../../inc
+SYSTEMINCLUDE   /epoc32/include/mda/common
+
+LIBRARY         euser.lib
+LIBRARY         apparc.lib
+LIBRARY         cone.lib
+LIBRARY         eikcoctl.lib
+LIBRARY         eikcore.lib
+LIBRARY         msgeditormodel.lib              // Messaging Editor Model base DLL
+LIBRARY         msgeditorappui.lib              // Messaging Editor AppUi base DLL
+LIBRARY         msgeditorview.lib               // Messaging Editor View base DLL
+LIBRARY         mmsgenutils.lib                 // ClientMTM general utilities
+LIBRARY         avkon.lib                       //
+LIBRARY         aknlayout.lib					// Layout stuff
+LIBRARY         aknlayout2scalable.lib
+LIBRARY         aknicon.lib                     // AknIconUtils
+LIBRARY         fbscli.lib                      // CFbsBitmap
+LIBRARY         bitgdi.lib                      // FbsBitmapdevice
+LIBRARY         aknskins.lib                    // AknsUtils
+LIBRARY         msgs.lib                        //
+LIBRARY         muiu.lib                        // Select Folder dialog
+LIBRARY         muiu_internal.lib
+LIBRARY         uniutils.lib                    // CUniAddressHandler
+LIBRARY         commonui.lib                    // FindItem
+LIBRARY         commonengine.lib                // SharedData
+LIBRARY         etext.lib                       // CTextPlain
+LIBRARY         bafl.lib                        // CDesC16ArrayFlat
+LIBRARY         sendui.lib                      // SendUI
+LIBRARY         featmgr.lib                     // Feature Manager
+LIBRARY         hlplch.lib                      // HlpLauncher
+LIBRARY         notui.lib                       // NotUi stuff (Check Settings etc)
+LIBRARY         efsrv.lib                       // FileServer
+LIBRARY         mmssettings.lib
+LIBRARY         mmsserversettings.lib
+LIBRARY         gdi.lib                         // CFont
+LIBRARY         centralrepository.lib
+LIBRARY         cenrepnotifhandler.lib
+LIBRARY         msgcommonutils.lib              // CMsgVoipExtension
+LIBRARY         egul.lib
+
+// End of file

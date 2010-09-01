@@ -1563,7 +1563,7 @@ void CMmsClientMtm::AddAttachmentL( RFile& aFile, const TDesC8& aMimeType,
             CleanupStack::PopAndDestroy( store ); // store
             // We must close the file handle because the attachment manager will also
             // close the handle.
-            // The open file handle is always closed unless the function leaves
+            // The open file handle is always closed unless the funtion leaves
             aFile.Close();
             TRequestStatus* status = &aStatus;
             aStatus = KRequestPending;
@@ -2048,7 +2048,7 @@ CMsvOperation* CMmsClientMtm::InvokeAsyncFunctionL(
             j++;
             }
 
-        for ( i = aSelection.Count() - 1; i >=j;  --i )
+        for ( i = aSelection.Count() - 1; i >=j;  i-- )
             {
             TRAP( error, 
                 {
@@ -2133,7 +2133,7 @@ CMsvEntrySelection* CMmsClientMtm::ListNotificationsInInboxL()
     CleanupStack::PushL( notifications );
 
     // Count only notifications that are free for a new operation
-    for ( TInt i = notifications->Count() - 1 ; i >= 0; --i ) 
+    for ( TInt i = notifications->Count() - 1 ; i >= 0; i-- ) 
         {
         TMsvId notifId = notifications->At( i );
         cEntry->SetEntryL( notifId );
@@ -2250,7 +2250,7 @@ void CMmsClientMtm::ConstructL()
 
     iMmsHeaders = CMmsHeaders::NewL( iMmsSettings->MmsVersion() );
 
-    // Address alias separators no longer read from resource.
+    // Address alias separators no longer read from resoure.
     // Standard MIME separators < and > always used.
     
     iAttributes  = new(ELeave) CDesCArrayFlat( KMmsAttributeArrayGranularity );
@@ -2395,7 +2395,7 @@ void CMmsClientMtm::BuildAddresseeListL(
 
     TInt size;
     size = aArray.Count();
-    for ( TInt i=0; i < size; ++i )
+    for ( TInt i=0; i < size; i++ )
         {
         iAddresseeList->AppendL( aValue, aArray[i] );
         }
@@ -2453,7 +2453,7 @@ CMsvEntrySelection* CMmsClientMtm::ListMmsFolderNotificationsL()
     // There may be delivery reports or binary notifications besides
     // the normal notifications
 
-    for ( TInt i = notifications->Count() - 1; i >= 0; --i ) 
+    for ( TInt i = notifications->Count() - 1; i >= 0; i-- ) 
         {
         cEntry->SetEntryL( notifications->At( i ));
         
@@ -2501,7 +2501,7 @@ CMsvEntrySelection* CMmsClientMtm::ListInboxNotificationsL()
     
         // The readOnly flag has to be set on for notifications in inbox
         // in order to schedule notifications.
-        for ( TInt j = notificationsInInbox->Count() - 1; j >= 0; --j )
+        for ( TInt j = notificationsInInbox->Count() - 1; j >= 0; j-- )
             {
             cEntry->SetEntryL( notificationsInInbox->At( j ) );
             TMsvEntry entry = cEntry->Entry();
@@ -2766,7 +2766,7 @@ void CMmsClientMtm::StoreAttributesL( CMsvStore& aStore )
     writeStream.WriteInt32L( iAttributes->MdcaCount() );
     
     TInt i;
-    for ( i = 0; i < iAttributes->MdcaCount(); ++i )
+    for ( i = 0; i < iAttributes->MdcaCount(); i++ )
         {
         writeStream << (*iAttributes)[i];
         }
@@ -2798,7 +2798,7 @@ void CMmsClientMtm::RestoreAttributesL( CMsvStore& aStore )
     TInt i;
     HBufC* desBuffer;
     
-    for ( i = 0; i < count; ++i )
+    for ( i = 0; i < count; i++ )
         {
         desBuffer = HBufC::NewLC( readStream, KMaxTInt );
         iAttributes->AppendL( *desBuffer );

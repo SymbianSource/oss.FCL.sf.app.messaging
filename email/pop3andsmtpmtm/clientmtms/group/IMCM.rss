@@ -16,8 +16,6 @@
 //
 
 #include "imcm.rls"
-#include <imcm.loc>
-#include <imcm_default_charset.loc>
 
 #define PARABREAK	8233
 #define TABCHAR		9
@@ -39,12 +37,12 @@ STRUCT INT8
 
 RESOURCE LBUF forward_formatting_string
 	{
-	buffer=qtn_mail_fwd"%S";
+	buffer=STRING_forward_formatting_string1;
 	}
 
 RESOURCE LBUF reply_formatting_string
 	{
-	buffer=qtn_mail_re"%S";
+	buffer=STRING_reply_formatting_string1;
 	}
 
 RESOURCE LBUF receipt_formatting_string
@@ -54,17 +52,17 @@ RESOURCE LBUF receipt_formatting_string
 
 RESOURCE LBUF email_address_formatting_string
 	{
-	buffer="%S <%S>";//STRING_email_address_formatting_string1;
+	buffer=STRING_email_address_formatting_string1;
 	}        
 
 // Headers used in Body for Forwarded/Replyed message
 
 RESOURCE LBUF forward_body_header
 	{
-	buffer=<PARABREAK><PARABREAK>qtn_mail_forward_separator<PARABREAK>
-			qtn_mail_copy_subject" %S"<PARABREAK>
-			qtn_mail_copy_sender" %S"<PARABREAK>
-			qtn_mail_copy_date" %S"<PARABREAK>;
+	buffer=STRING_forward_body_header1
+			STRING_forward_body_header2
+			STRING_forward_body_header3
+			STRING_forward_body_header4;
 	}
 
 RESOURCE LBUF forward_body_header_toonly
@@ -97,10 +95,10 @@ RESOURCE LBUF forward_body_header_tocc
 
 RESOURCE LBUF reply_body_header
 	{
-	buffer=<PARABREAK><PARABREAK>qtn_mail_reply_separator<PARABREAK>
-			qtn_mail_copy_subject" %S"<PARABREAK>
-			qtn_mail_copy_sender" %S"<PARABREAK>
-			qtn_mail_copy_date" %S"<PARABREAK>;
+	buffer=STRING_reply_body_header1
+			STRING_reply_body_header2
+			STRING_reply_body_header3
+			STRING_reply_body_header4;
 	}
 
 RESOURCE LBUF reply_body_header_toonly
@@ -176,29 +174,28 @@ RESOURCE LBUF default_vcard_name
 	}
 
 // List of available character sets in Charconv.h
-// at some point flags should be removed and only qtn_default_charset be used for all builds.
 RESOURCE L8BUF default_system_charset
-    {
-    buffer = qtn_default_email_charset;
-    }
+	{
+	buffer=STRING_default_system_charset;
+	}
 
 // If this value is set to 1, 8 bit body text data and character set information will be stored
 // when downloaded via IMPS and POPS.  The body text will be decoded to the correct character set
 // when opened.  If this value is set to 0, the body text is decoded and stored when downloading.
 RESOURCE INT8 store_8bit_body_text
 	{
-	value = 1;
+	value = 0;
 	}
 
 // Used for localised date time formatting for email forward and reply body headers
 RESOURCE LBUF body_header_datetime_format
 	{
-	buffer="%D%M%Y%/0%1%/1%2%/2%3%/3 %-B%:0%J%:1%T%:3%+B"; //STRING_body_header_datetime_format;
+	buffer=STRING_body_header_datetime_format;
 	}
 
 RESOURCE LBUF partial_download_footer_message
 	{
-	buffer=qtn_mail_rest_of_mail_not_fetched;
+	buffer=STRING_partial_download_footer_message;
 	}
 
 // If this value is set to 1,body text data  will be stored when downloaded via IMPS and POPS using chunk storage option.  

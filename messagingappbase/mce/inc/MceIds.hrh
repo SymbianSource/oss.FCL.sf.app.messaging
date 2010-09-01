@@ -1,0 +1,52 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains declarations for resources of Mce.
+*     The file can be included in C++ or resource file.
+*
+*/
+
+
+
+#ifndef MCEIDS_HRH
+#define MCEIDS_HRH
+
+//  CONSTANTS
+// predefined entry ids (continues from /msg/msgsinc/msvstd.hrh)
+#define KMceDocumentsEntryIdValue    0x1008
+#define KMceTemplatesEntryIdValue    0x1009
+
+
+// extra items in Mce "Write message", "Delivery reports"
+#define KMceWriteMessageListIdValue 0x5
+#define KMceDeliveryReportsListIdValue 0x6
+#define KMceNoMailboxesListIdValue 0x7
+#define KMceExtraItemPlaceHolderValue 0x8
+#define KMceHideInBackgroundValue 0x9
+
+// view items
+#define KMceMainViewListViewIdValue     0x01
+#define KMceMessageListViewIdValue      0x02
+#define KMceDeliveryReportViewIdValue   0x03
+
+// mce app uid
+#define KMceApplicationUidValue         0x100058C5
+
+// Special handling for Mail for exchange
+#define KMceMtmMailForExchangeValue      0x102826F8 
+#define KMceInboxView                   0x00
+#define KMceConversationview            0x01
+#endif
+
+// End of File

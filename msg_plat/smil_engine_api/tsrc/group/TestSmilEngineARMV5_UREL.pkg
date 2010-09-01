@@ -1,0 +1,58 @@
+;
+; Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+; All rights reserved.
+; This component and the accompanying materials are made available
+; under the terms of "Eclipse Public License v1.0"
+; which accompanies this distribution, and is available
+; at the URL "http://www.eclipse.org/legal/epl-v10.html".
+;
+; Initial Contributors:
+; Nokia Corporation - initial contribution.
+;
+; Contributors:
+;
+; Description:  TestSmilEngineARMV5_UREL.pkg;
+
+;*Languages
+&EN
+;
+;*Standard SIS file header. This section specifies the package name,
+;application UID, and version/build numbers. Add the package TYPE here if needed.
+#{"TestSmilEngine"},(0x101FB4E5),1,0,1;
+;
+
+;*Unique (Non-Localised) Vendor name
+;This is used in combination with signing to prevent the unauthroized
+;upgrade ofa a package by someone other than the rightful vendor.
+:"Nokia"
+
+;*Localized Vendor Name
+;This specifies the localised vendor name(s) correspodning to language(s).
+%{"Nokia Test EN"}
+
+;*Files To Copy...<src> <destination>
+;The destination files should be a full path. If you use a '!' character
+;instead of a drive letter, ther user should be given the choice of the drive
+;to install the file to (on supported Symbian devices).
+"\epoc32\release\armv5\urel\TestSmilEngine.dll" -"c:\sys\bin\TestSmilEngine.dll"
+"..\conf\Combiner_SmilPresenApiTest.cfg"-"c:\TestFramework\Combiner_SmilPresenApiTest.cfg"
+"..\conf\ui_SmilEngineAPITest.cfg"-"c:\TestFramework\ui_SmilEngineAPITest.cfg"
+"..\conf\ui_SmiPresenAPITest.cfg"-"c:\TestFramework\ui_SmiPresenAPITest.cfg"
+"..\init\TestFramework.ini"-"c:\TestFramework\TestFramework.ini"
+"..\data\MMC\TestSmilEngine\pres.smil"-"e:\testing\data\TestSmilEngine\pres.smil"
+"..\data\MMC\TestSmilEngine\SimpleXHTML.html"-"e:\testing\data\TestSmilEngine\SimpleXHTML.html"
+"..\data\MMC\TestSmilEngine\3gpp002.smil"-"e:\testing\data\TestSmilEngine\3gpp002.smil"
+"..\data\MMC\TestSmilEngine\EAllowAllAttributes1_video.smil"-"e:\testing\data\TestSmilEngine\EAllowAllAttributes1_video.smil"
+"..\data\MMC\TestSmilEngine\EAllowAllAttributes2_video.smil"-"e:\testing\data\TestSmilEngine\EAllowAllAttributes2_video.smil"
+"..\data\MMC\TestSmilEngine\EAllowAllAttributes3_video.smil"-"e:\testing\data\TestSmilEngine\EAllowAllAttributes3_video.smil"
+"..\data\MMC\TestSmilEngine\EAllowAllAttributes4_video.smil"-"e:\testing\data\TestSmilEngine\EAllowAllAttributes4_video.smil"
+"..\data\MMC\TestSmilEngine\EAllowAllAttributes5_video.smil"-"e:\testing\data\TestSmilEngine\EAllowAllAttributes5_video.smil"
+"..\data\MMC\TestSmilEngine\EAllowAllAttributes_video.smil"-"e:\testing\data\TestSmilEngine\EAllowAllAttributes_video.smil"
+"..\data\MMC\TestSmilEngine\3gpp003.smil"-"e:\testing\data\TestSmilEngine\3gpp003.smil"
+"..\data\MMC\TestSmilEngine\UI_pres.smil"-"e:\testing\data\TestSmilEngine\UI_pres.smil"
+"..\data\MMC\TestSmilEngine\Cute__1_.jpg"-"e:\testing\data\TestSmilEngine\Cute__1_.jpg"
+"..\data\MMC\TestSmilEngine\dsc_0157.jpg"-"e:\testing\data\TestSmilEngine\dsc_0157.jpg"
+"..\data\MMC\TestSmilEngine\nikon_d6.jpg"-"e:\testing\data\TestSmilEngine\nikon_d6.jpg"
+"..\data\MMC\TestSmilEngine\pic_002.jpg"-"e:\testing\data\TestSmilEngine\pic_002.jpg"
+"..\data\MMC\TestSmilEngine\Picture2.jpg"-"e:\testing\data\TestSmilEngine\Picture2.jpg"
+

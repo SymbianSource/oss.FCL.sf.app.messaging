@@ -1,0 +1,163 @@
+/*
+* Copyright (c) 2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME    NCN
+
+//  INCLUDES
+#include <eikon.rh>
+#include <avkon.rh>
+#include <EIKCORE.rsg>
+#include <EIKCTL.rsg>
+#include <ncn.loc>
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF16 { buf=""; }
+
+//  RESOURCE DEFINITIONS
+
+RESOURCE TBUF40 r_ncn_delivered_note_text  { buf = qtn_sms_conf_delivered; }
+
+RESOURCE TBUF r_qtn_notif_new_audio_message_prompt_group { buf = qtn_notif_new_audio_message_prompt_group; }
+RESOURCE TBUF r_qtn_notif_new_audio_messages_prompt_group { buf = qtn_notif_new_audio_messages_prompt_group; }
+RESOURCE TBUF r_qtn_notif_new_mail_prompt_group { buf = qtn_notif_new_mail_prompt_group; }
+RESOURCE TBUF r_ncn_vmi_singular_grouped { buf = qtn_notif_voice_message_group; }
+RESOURCE TBUF r_ncn_vmi_plural_grouped { buf = qtn_notif_voice_messages_group; }
+RESOURCE TBUF r_ncn_vmi_on_line1_singular_grouped { buf = qtn_notif_voice_message_group_l1; }
+RESOURCE TBUF r_ncn_vmi_on_line1_plural_grouped { buf = qtn_notif_voice_messages_group_l1; }
+RESOURCE TBUF r_ncn_vmi_on_line2_singular_grouped { buf = qtn_notif_voice_message_group_l2; }
+RESOURCE TBUF r_ncn_vmi_on_line2_plural_grouped { buf = qtn_notif_voice_messages_group_l2; }
+RESOURCE TBUF r_ncn_vmi_on_line1_unk_amount_grouped { buf = qtn_notif_voice_mails_unk_amount_group_on_line1; }
+RESOURCE TBUF r_ncn_vmi_on_line2_unk_amount_grouped { buf = qtn_notif_voice_mails_unk_amount_group_on_line2; }
+RESOURCE TBUF r_ncn_vmi_unk_amount_grouped { buf = qtn_notif_voice_mails_unk_amount_group; }
+
+RESOURCE AVKON_NOTE r_ncn_audio_message_note
+    {
+    layout = ENotificationWithGraphicsLayout;
+    singular_label = qtn_notif_new_audio_message_prompt;
+    plural_label = qtn_notif_new_audio_messages_prompt;
+    flags = EAknNoteLeftSoftkeyWhenTapped;
+    }
+
+RESOURCE AVKON_NOTE r_ncn_email_note
+    {
+    layout = ENotificationWithGraphicsLayout;
+    singular_label = qtn_notif_new_mail_prompt;
+    plural_label = qtn_notif_new_mail_prompt;
+    flags = EAknNoteLeftSoftkeyWhenTapped;
+    }
+
+RESOURCE AVKON_NOTE r_ncn_voice_mail_note    
+    {
+    layout = ENotificationWithGraphicsLayout;
+    singular_label = text_voice_message_waiting;
+    plural_label = text_voice_messages_waiting;
+    flags = EAknNoteLeftSoftkeyWhenTapped;
+    }
+
+RESOURCE AVKON_NOTE r_ncn_voice_mail_on_line1_note
+    {
+    layout = ENotificationWithGraphicsLayout;
+    singular_label = text_voice_mail_waiting_on_l1;
+    plural_label = qtn_voice_mails_waiting_on_l1;
+    flags = EAknNoteLeftSoftkeyWhenTapped;
+    }
+
+RESOURCE AVKON_NOTE r_ncn_voice_mail_on_line2_note
+    {
+    layout = ENotificationWithGraphicsLayout;
+    singular_label = text_voice_mail_waiting_on_l2;
+    plural_label = qtn_voice_mails_waiting_on_l2;
+    flags = EAknNoteLeftSoftkeyWhenTapped;
+    }
+
+RESOURCE AVKON_GROUPED_NOTE_TEXTS r_ncn_audio_message_grouped
+    {
+    singular_label = r_qtn_notif_new_audio_message_prompt_group;
+    plural_label = r_qtn_notif_new_audio_messages_prompt_group;
+    }
+        
+RESOURCE AVKON_GROUPED_NOTE_TEXTS r_ncn_email_grouped
+    {
+    singular_label = r_qtn_notif_new_mail_prompt_group;
+    plural_label = r_qtn_notif_new_mail_prompt_group;
+    }
+
+RESOURCE AVKON_GROUPED_NOTE_TEXTS r_ncn_voice_mail_grouped
+    {
+    singular_label = r_ncn_vmi_singular_grouped;
+    plural_label = r_ncn_vmi_plural_grouped;
+    }
+    
+RESOURCE AVKON_GROUPED_NOTE_TEXTS r_ncn_voice_mail_on_line1_grouped
+    {
+    singular_label = r_ncn_vmi_on_line1_singular_grouped;
+    plural_label = r_ncn_vmi_on_line1_plural_grouped;
+    }
+    
+RESOURCE AVKON_GROUPED_NOTE_TEXTS r_ncn_voice_mail_on_line2_grouped
+    {
+    singular_label = r_ncn_vmi_on_line2_singular_grouped;
+    plural_label = r_ncn_vmi_on_line2_plural_grouped;
+    }
+
+RESOURCE AVKON_NOTE r_ncn_voice_mails_unk_amount    
+    {
+    layout = ENotificationWithGraphicsLayout;
+    singular_label = qtn_notif_voice_mails_unk_amount_ungroup;
+    plural_label = qtn_notif_voice_mails_unk_amount_ungroup;
+    flags = EAknNoteLeftSoftkeyWhenTapped;
+    }
+
+RESOURCE AVKON_GROUPED_NOTE_TEXTS r_ncn_voice_mails_unk_amount_grouped
+    {
+    singular_label = r_ncn_vmi_unk_amount_grouped;
+    plural_label = r_ncn_vmi_unk_amount_grouped;
+    }
+
+RESOURCE AVKON_NOTE r_ncn_voice_mails_unk_amount_on_line1
+    {
+    layout = ENotificationWithGraphicsLayout;
+    singular_label = qtn_notif_voice_mails_unk_amount_ungroup_on_line1;
+    plural_label = qtn_notif_voice_mails_unk_amount_ungroup_on_line1;
+    flags = EAknNoteLeftSoftkeyWhenTapped;
+    }
+    
+RESOURCE AVKON_GROUPED_NOTE_TEXTS r_ncn_voice_mails_unk_amount_on_line1_grouped
+    {
+    singular_label = r_ncn_vmi_on_line1_unk_amount_grouped;
+    plural_label = r_ncn_vmi_on_line1_unk_amount_grouped;
+    }
+
+RESOURCE AVKON_NOTE r_ncn_voice_mails_unk_amount_on_line2    
+    {
+    layout = ENotificationWithGraphicsLayout;
+    singular_label = qtn_notif_voice_mails_unk_amount_ungroup_on_line2;
+    plural_label = qtn_notif_voice_mails_unk_amount_ungroup_on_line2;
+    flags = EAknNoteLeftSoftkeyWhenTapped;
+    }
+    
+RESOURCE AVKON_GROUPED_NOTE_TEXTS r_ncn_voice_mails_unk_amount_on_line2_grouped
+    {
+    singular_label = r_ncn_vmi_on_line2_unk_amount_grouped;
+    plural_label = r_ncn_vmi_on_line2_unk_amount_grouped;
+    }
+
+// End of File

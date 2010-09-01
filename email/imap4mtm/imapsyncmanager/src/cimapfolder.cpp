@@ -249,7 +249,7 @@ void CImapFolder::DoRunL()
 		for(TInt localloop = 0; localloop < localcount; ++localloop)
 			{
 			TMsvId localid = (*iFolderIndex)[localloop].iUid;
-			iMatchingMessageIds.AppendL(localid);
+			iMatchingMessageIds.Append(localid);
 			}
 			
 		iMessageFlagInfoArray.Reset();
@@ -756,7 +756,7 @@ void CImapFolder::CheckMessagesInRangeL(TInt aSyncThreshold)
 			{
 			// Saved the index position of the message to be deleted from the local view
 			__LOG_FORMAT((iSavedSession->LogId(), "ImapFolder: Local message (%d) marked for deleting, loop = %d", (*iFolderIndex)[localloop].iMsvId, localloop));
-			iDeletedMessageIds.AppendL(localloop);
+			iDeletedMessageIds.Append(localloop);
 			}
 		else
 			{
@@ -789,7 +789,7 @@ void CImapFolder::CheckForMissingMessagesUidsL()
 
 		if(iFolderIndex->FindMsg(remoteUid) == 0)
 			{
-			iMissingMessageIds.AppendL(remoteUid);
+			iMissingMessageIds.Append(remoteUid);
 			}
 		}
 	}
@@ -1748,9 +1748,9 @@ EXPORT_C void CImapFolder::SyncDeletesL(TRequestStatus& aStatus, CImapSession& a
 			
 			// Append to the delete list
 			TInt64 uid=(TUint)((TMsvEmailEntry)iServerEntry.Entry()).UID();
-			deletingMessageIds.AppendL(uid);
+			deletingMessageIds.Append(uid);
 			// index of local message in iFolderIndex to be deleted
-			iDeletedMessageIds.AppendL(pos);
+			iDeletedMessageIds.Append(pos);
 			++deleted;
 			}
 

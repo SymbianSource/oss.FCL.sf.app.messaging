@@ -1,0 +1,136 @@
+/*
+* Copyright (c) 2005-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is project specification file for the Postcard application.
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+//...LOGGING...
+//MACRO           USE_LOGGER         // HW debugging support
+//LIBRARY         Flogger.lib        // RFileLogger, debug logging
+//...LOGGING...
+
+
+TARGET          postcard.exe
+EPOCSTACKSIZE   0x5000
+TARGETTYPE      exe
+UID             0x100039CE 0x10207247
+
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_APPLICATION
+VERSION 	10.0
+PAGED
+
+USERINCLUDE     ../postcarduiinc
+USERINCLUDE     ../postcardinc
+
+SYSTEMINCLUDE   ../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+START RESOURCE  Postcard.rss
+HEADER
+TARGETPATH      APP_RESOURCE_DIR
+LANGUAGE_IDS
+END
+
+
+START RESOURCE  ../postcard/Postcard_reg.rss
+DEPENDS postcard.rsg
+TARGETPATH      /private/10003a3f/apps // Don't change the UID!
+END
+
+SOURCEPATH      ../postcardsrc
+
+SOURCE          PostcardLaf.cpp
+SOURCE          PostcardAppServer.cpp
+SOURCE          PostcardController.cpp
+SOURCE          PostcardDocument.cpp
+SOURCE          PostcardOperation.cpp
+SOURCE          PostcardOperationInsertImage.cpp
+SOURCE          PostcardOperationSave.cpp
+SOURCE          PostcardTextDialog.cpp
+SOURCE          PostcardTextDialogCustomDraw.cpp
+SOURCE          PostcardAddressForm.cpp
+SOURCE          PostcardUtils.cpp
+SOURCE          PostcardAppUi.cpp
+SOURCE          PostcardApp.cpp
+SOURCE          PostcardOperationOpen.cpp
+SOURCE          PostcardRecipientWrapper.cpp
+SOURCE          PostcardContact.cpp
+SOURCE          PostcardCenRep.cpp
+
+LIBRARY         euser.lib
+LIBRARY         efsrv.lib                       // RFile 
+LIBRARY         estor.lib                       // Stream stores
+LIBRARY         etext.lib                       // CPlainText
+LIBRARY         bafl.lib                        // Command line parsing etc.
+LIBRARY         apparc.lib
+LIBRARY         cone.lib
+LIBRARY         eikcoctl.lib
+LIBRARY         eikcore.lib
+LIBRARY         eikdlg.lib
+LIBRARY         msgeditorappui.lib              // Messaging Editor AppUi base DLL
+LIBRARY         msgeditormodel.lib              // Messaging Editor Model base DLL
+LIBRARY         avkon.lib
+LIBRARY         aknskins.lib                    // Akn Skin stuff
+LIBRARY         aknicon.lib                     // AknIconUtils
+LIBRARY         aknlayout.lib
+LIBRARY         aknlayout2.lib
+LIBRARY         msgs.lib
+LIBRARY         muiu.lib
+LIBRARY         muiu_internal.lib
+LIBRARY         mtur.lib                        // CBaseMtmUi (Setpreferences)
+LIBRARY         apmime.lib                      // TDatatype
+LIBRARY         commonengine.lib                // Series 60 Common Component (Stringloader)
+LIBRARY         commonui.lib                    // for CErrorUi at least
+LIBRARY         mmsgenutils.lib                 // TMmsGenUtils methods
+LIBRARY         featmgr.lib
+LIBRARY         hlplch.lib                      // HlpLauncher
+LIBRARY         fbscli.lib                      // CFbsBitmap
+LIBRARY         egul.lib
+LIBRARY         msgmedia.lib
+LIBRARY         uniutils.lib
+LIBRARY         numberconversion.lib            // For NumberConversion
+LIBRARY         bcardeng.lib                    // For converting Contact to VCard
+LIBRARY         charconv.lib
+LIBRARY         bitgdi.lib                      // FbsBitmapdevice
+LIBRARY         npdlib.lib                      // Notepad library
+LIBRARY         form.lib                        // CTextView
+LIBRARY         eikctl.lib                      // CRichText 
+LIBRARY         cntmodel.lib                    // CContactCard
+LIBRARY         versit.lib                      // VCard stuff
+LIBRARY         vcard.lib
+LIBRARY         aknnotify.lib                   // For GlobalMsgQuery
+LIBRARY         gdi.lib                         // CFont
+LIBRARY         ihl.lib                         // Image Handler Library
+LIBRARY         centralrepository.lib
+LIBRARY         aknlayout2scalable.lib
+LIBRARY         servicehandler.lib              // AIW service handler
+LIBRARY         vpbkeng.lib
+LIBRARY         msgcommonutils.lib              // CContactMatcher
+LIBRARY         pbk2presentation.lib            // CPbk2StoreConfiguration
+LIBRARY         ws32.lib //zoom
+
+SOURCEPATH      ../postcard
+
+DOCUMENT        Postcard.rss
+DOCUMENT        Postcard_reg.rss
+
+// End of file
+

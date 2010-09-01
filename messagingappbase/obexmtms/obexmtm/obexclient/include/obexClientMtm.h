@@ -274,7 +274,7 @@ protected:
 	IMPORT_C void ConstructL();
 	
 	
-	// Initialises header information (must be overridden in derived class)
+	// Initialises header information (must be overidden in derived class)
 	virtual void InitialiseHeaderL() = 0;
 	
 	/**

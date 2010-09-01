@@ -165,7 +165,7 @@ void CBtServerSendOperation::PostConnectOperations()
 	// If the connection attempt has failed and we are not going to retry the connection,
 	// make sure that the link is allowed to go into low power modes.
 
-	const TDesC8* progressDes = NULL;
+	const TDesC8* progressDes;
  	TRAPD(error, progressDes = &ProgressL());
 
 	if (error == KErrNone)

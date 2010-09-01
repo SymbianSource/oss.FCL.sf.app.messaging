@@ -111,7 +111,9 @@ void CMmsClientMtmApiTest::ConstructL()
                           
     iSession = CMsvSession::OpenSyncL(*this);
     iMtmRegistry = CClientMtmRegistry::NewL(*iSession);
+    CleanupStack::PushL(iMtmRegistry);
     iClientMtm = (CMmsClientMtm *) iMtmRegistry-> NewMtmL(KUidMsgTypeMultimedia); 
+    CleanupStack::Pop(iMtmRegistry);
     SendTestClassVersion();
     }
 

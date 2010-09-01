@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<api id="da059ab4b664c56e3376dd46f7ca9171" dataversion="2.0">
+  <name>Messaging Center Ui Utilities API</name>
+  <description>Includes different kind of helper classes for the messaging. For example progress dialog for messaging operations, creating and deleting MTM UI data objects etc.</description>
+  <type>c++</type>
+  <collection>messagingappbase</collection>
+  <libs>
+    <lib name="muiu.lib" />
+  </libs>
+  <release category="platform"/>
+  <attributes>
+     <!-- This indicates wether the api provedes separate html documentation -->
+     <!-- or is the additional documentation generated from headers. -->
+     <!-- If you are unsuere then the value is "no" -->
+     <htmldocprovided>no</htmldocprovided>
+     <adaptation>no</adaptation>
+  </attributes>
+</api>

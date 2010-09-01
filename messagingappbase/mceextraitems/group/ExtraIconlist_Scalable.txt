@@ -1,0 +1,5 @@
+/c8,8 qgn_menu_mce.svg
+/c8,8 qgn_menu_smsvo.svg
+/c8,8 qgn_menu_wml.svg
+/c8,8 qgn_prop_im_ibox.svg
+/c8,8 qgn_prop_im_ibox_new.svg

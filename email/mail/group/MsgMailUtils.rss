@@ -1,0 +1,137 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*     This file contains all the resources for the module.
+*
+*/
+
+
+//  RESOURCE IDENTIFIER
+NAME    CAMU // From Mail Utils
+
+//  INCLUDES
+
+#include <avkon.loc>
+#include <eikon.rh>
+#include <avkon.rh>
+#include <avkon.rsg>
+#include <msgmaileditor.loc>
+
+
+//  RESOURCE DEFINITIONS 
+
+//----------------------------------------------------
+//   Standard resource signature.
+//----------------------------------------------------
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF r_text_mail_utils_replyatta_begin 
+    {buf = qtn_mail_replyatta_begin; }
+
+RESOURCE TBUF r_text_mail_utils_replyatta_end 
+    {buf = qtn_mail_replyatta_end; }
+
+RESOURCE TBUF r_text_mail_utils_replyatta_attach 
+    {buf = qtn_mail_replyatta_attach; }
+
+RESOURCE TBUF r_text_mail_out_of_memory 
+    {buf = qtn_memlo_not_enough_memory; }
+
+RESOURCE TBUF r_mail_replyatta 
+    {buf = qtn_mail_replyatta_begin"%U"qtn_mail_replyatta_end;}
+
+RESOURCE TBUF r_mail_address_format_string 
+    {buf = "%0U <%1U>";}
+
+// Characters that are not allowed in email address
+RESOURCE ARRAY r_mail_banned_chars
+{
+    items = 
+    {
+        LBUF {txt = "<";},
+        LBUF {txt = ">";},
+        LBUF {txt = ";";}
+    };
+}
+
+// -----------------------------------------------------------------------------
+// r_mail_quest_large_atta_fwd
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_mail_quest_large_atta_fwd
+    {
+    buf = qtn_mail_quest_large_atta_fwd;
+    }
+
+// ------------------------------------------------------------------------------   
+//    R_MAIL_YES_NO_QUERY_DLG
+//    General Confirmation query.
+// ------------------------------------------------------------------------------
+RESOURCE DIALOG r_mail_yes_no_query_dlg
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY 
+                { 
+                    layout = EConfirmationLayout;
+                    label = "";
+                    animation = R_QGN_NOTE_QUERY_ANIM;
+                };
+            }
+        };
+    }    
+// -----------------------------------------------------------------------------
+// r_mail_quest_fetch_atta_fwd
+// -----------------------------------------------------------------------------
+//    
+RESOURCE TBUF r_mail_quest_fetch_atta_fwd
+    {
+    buf = qtn_mail_quest_fetch_atta_fwd;
+    }    
+
+// -----------------------------------------------------------------------------
+// r_mail_quest_fetch_atta_fwd
+// -----------------------------------------------------------------------------
+//     
+RESOURCE TBUF r_mail_quest_fetch_attachment
+    {
+    buf = qtn_mail_quest_fetch_attachment;
+    }   
+    
+// ------------------------------------------------------------------------------   
+//    R_MAIL_LARGE_ATTA_QUERY
+//
+//    Confirmation query displayed when large 
+//    attachment will be fetched
+// ------------------------------------------------------------------------------
+RESOURCE TBUF r_mail_large_atta_query
+    { 
+    buf = qtn_mail_quest_large_atta_size; 
+    }
+
+// -----------------------------------------------------------------------------
+// r_qtn_mail_info_html_attach
+// -----------------------------------------------------------------------------
+//    
+RESOURCE TBUF r_qtn_mail_info_html_attach
+    {
+    buf = qtn_mail_info_html_attach;
+    }    
+// End of File

@@ -130,6 +130,8 @@ Mask used to obtain the mesasge indication type from the SMS data.
 
 private:
 	static void CompareEntryL(const TMsvEntry& aEntry, TUid aMtm, TMsvId& aFirstId, CMsvEntrySelection* aServiceIds);
+	static void GetName(CContactItemField& aField, TUid aFieldType, TDes& aName);
+	static void DoGetDetailsL(RFs& aFs, const TDesC& aFromAddress, TDes& aDetails, TInt aMaxLength);
 	static void Replace(const TDesC& aOld, const TDesC& aNew, TDes& aString);
 
 	static TBool DoGetDescriptionL(const CSmsMessage& aMessage, TDes& aDescription, TInt aMaxLength);

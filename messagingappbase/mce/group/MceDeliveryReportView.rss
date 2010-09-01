@@ -1,0 +1,259 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     Mce 'Delivery Report' view menu items.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+
+//  INCLUDES
+
+#include <avkon.hrh>
+#include "MceCommands.hrh"       // UID enumeration.
+#include <mcelogeng.loc>         // Localization
+
+#include <bldvariant.hrh>
+
+#include <avkon.loc>
+
+//  RESOURCE DEFINITIONS
+
+/////////////////////////////////////////////////////
+/// Text strings.
+/////////////////////////////////////////////////////
+
+/**
+ * Delivery Reports view texts.
+ */
+RESOURCE TBUF r_mce_delivery_report_no_log_text
+    {
+    buf = qtn_mce_dr_log_no_reports;
+    }
+
+/**
+ * Delivery Reports view texts.
+ */
+RESOURCE TBUF r_mce_delivery_report_no_reports_text
+    {
+    buf = qtn_mce_dr_sent_log_no_reports;
+    }
+
+/**
+ * Delivery Reports view texts.
+ */
+RESOURCE TBUF r_mce_delivery_report_date_string_text
+    {
+    buf = qtn_date_usual_with_zero;
+    }
+
+/**
+ * Delivery Reports view texts.
+ */
+RESOURCE TBUF r_mce_delivery_report_time_string_text
+    {
+    buf = qtn_time_usual_with_zero;
+    }
+
+/**
+ * Delivery Reports view texts.
+ */
+RESOURCE TBUF r_mce_delivery_report_no_log_lbx_text
+    {
+    buf = qtn_mce_sent_dr_no_reports;
+    }
+
+/**
+ * Query dialog text
+ */
+RESOURCE TBUF r_mce_delivery_report_call_to_text
+    {
+    buf = qtn_mce_call_to;
+    }
+
+/////////////////////////////////////////////////////
+/// Popup note.
+/////////////////////////////////////////////////////
+
+/**
+ * Note displayed if there's no reports due to Log app
+ */
+RESOURCE DIALOG r_mce_dr_no_log_note
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtNote;
+            id = EGeneralNote;
+            control = AVKON_NOTE
+                {
+                layout = EGeneralLayout;
+                singular_label = qtn_mce_dr_log_no_reports;
+                animation = R_QGN_NOTE_INFO_ANIM;
+                };
+            }
+        };
+    }
+
+/////////////////////////////////////////////////////
+/// Call to query
+/////////////////////////////////////////////////////
+RESOURCE DIALOG r_call_to_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationLayout;
+                };
+            }
+        };
+    }
+
+
+/////////////////////////////////////////////////////
+/// Menu definitions.
+/////////////////////////////////////////////////////
+
+/**
+ * Logs 'Delivery Report' view system menu items.
+ */
+RESOURCE MENU_PANE r_mce_delivery_report_system_menu
+    {
+    items=
+        {
+        MENU_ITEM
+            {
+            command = EMceClearDrList;
+            txt = qtn_mce_reports_clear;
+            },
+        MENU_ITEM
+            {
+            command = EAknCmdHelp;
+            txt = qtn_options_help;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdExit;
+            txt = qtn_mce_exit;
+            }
+        };
+    }
+
+/**
+ * Logs 'Delivery Report' view menubar.
+ */
+RESOURCE MENU_BAR r_mce_delivery_report_menubar
+    {
+    titles =
+        {
+        // System menu
+        MENU_TITLE
+            {
+            menu_pane = r_mce_delivery_report_system_menu;
+            txt="";
+            }
+        };
+    }
+
+/**
+ * 'Delivery Report' OK options list
+ */
+RESOURCE MENU_PANE r_mce_delivery_report_ok_menu
+    {
+    items =
+        {
+        MENU_ITEM
+            {
+            command = EMceCmdCall;
+            txt = qtn_mce_call;
+            }
+        };
+    }
+
+/**
+ *  'Delivery Report' OK options list menu bar.
+ */
+RESOURCE MENU_BAR r_mce_delivery_report_ok_menubar
+    {
+    titles =
+        {
+        MENU_TITLE
+            {
+            menu_pane = r_mce_delivery_report_ok_menu;
+            txt="";
+            }
+        };
+    }
+
+
+/**
+ * Mce 'Delivery Report' view definition.
+ */
+RESOURCE AVKON_VIEW r_mce_delivery_report_view
+    {
+    menubar=r_mce_delivery_report_menubar;
+    cba = r_mce_softkeys_options_back_options;
+    }
+
+/**
+ *  Clear list query's definition
+ */
+RESOURCE DIALOG r_mce_clear_list_confirmation_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO__YES;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                layout = EConfirmationLayout;
+                label = qtn_mce_reports_clear_query;
+                };
+            }
+        };
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_softkeys_options_back_options
+//
+//----------------------------------------------------
+//
+RESOURCE CBA r_mce_softkeys_options_back_options
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=EAknSoftkeyContextOptions; txt = text_softkey_option;}
+        };
+    }
+
+// End of File

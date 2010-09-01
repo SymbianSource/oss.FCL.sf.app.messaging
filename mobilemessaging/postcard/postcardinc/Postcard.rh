@@ -1,0 +1,38 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   defines the structure for postcard address configuration
+*
+*/
+
+
+
+// Service struct for messaging editors/viewer
+// Set the mtm id that your application supports in mtm_id
+// Set either KMsgServiceView or KMsgServiceEdit in type
+// (defined in MuiuMsgEditorServiceConst.h)
+
+//#include <MuiuMsgEditorServiceConst.h>
+
+STRUCT POSTCARD_ADDRESS_FIELD
+	{
+	WORD length = 0;
+	BYTE mandatory = 0;
+	}
+	
+STRUCT POSTCARD_ADDRESS_FIELDS
+	{
+	POSTCARD_ADDRESS_FIELD fields[];
+	}
+
+

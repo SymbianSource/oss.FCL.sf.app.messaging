@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<api id="f72bc3a4b31c223e8775391f0512f581" dataversion="2.0">
+  <name>SMIL Player Launch API</name>
+  <description>SMIL Player interface</description>
+  <type>c++</type>
+  <collection>mobilemessaging</collection>
+  <libs>
+    <lib name="smilplayer.lib" />
+  </libs>
+  <release category="platform"/>
+  <attributes>
+     <!-- This indicates wether the api provedes separate html documentation -->
+     <!-- or is the additional documentation generated from headers. -->
+     <!-- If you are unsuere then the value is "no" -->
+     <htmldocprovided>no</htmldocprovided>
+     <adaptation>no</adaptation>
+  </attributes>
+</api>

@@ -1,0 +1,63 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  10003F32.rss*
+*/
+
+// 10003F32.rss
+/*
+* ==============================================================================
+*  Name        : 10003F32.rss
+*  Part of     : NcnList / SmsClass0Notify
+*  Description : Resource file defining the SmsClass0Notify Notifier plugin.
+*  Version     : 
+*
+*  Copyright © 2002 Nokia Corporation.
+*  This material, including documentation and any related 
+*  computer programs, is protected by copyright controlled by 
+*  Nokia Corporation. All rights are reserved. Copying, 
+*  including reproducing, storing, adapting or translating, any 
+*  or all of this material requires the prior written consent of 
+*  Nokia Corporation. This material also contains confidential 
+*  information which may not be disclosed to others without the 
+*  prior written consent of Nokia Corporation.
+* ==============================================================================
+*/
+
+#include <RegistryInfoV2.rh>
+#include "Uikon.hrh"
+
+RESOURCE REGISTRY_INFO theInfo
+{
+        resource_format_version = RESOURCE_FORMAT_VERSION_2;
+	dll_uid = 0x10003F32;
+	interfaces =
+	{
+	INTERFACE_INFO
+		{
+		interface_uid = KUikonUidPluginInterfaceNotifiers;
+		implementations =
+				{
+				IMPLEMENTATION_INFO
+					{
+					implementation_uid = 0x101F87A5;
+					version_no = 1;
+					display_name = "SmsClass0Notify";
+					default_data = "";
+					opaque_data	 = "";
+                                        rom_only = 0;					
+					}
+				};
+		}
+	};
+}

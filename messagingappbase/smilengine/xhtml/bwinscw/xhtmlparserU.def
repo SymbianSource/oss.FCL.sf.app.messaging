@@ -1,0 +1,12 @@
+EXPORTS
+	?CreateDomL@CXhtmlParser@@QAEXAAVRFile@@@Z @ 1 NONAME ; void CXhtmlParser::CreateDomL(class RFile &)
+	?CreateDomL@CXhtmlParser@@QAEXAAVRFs@@ABVTDesC16@@@Z @ 2 NONAME ; void CXhtmlParser::CreateDomL(class RFs &, class TDesC16 const &)
+	?HyperLink@CXhtmlParser@@QAEHHAAH0AAVTPtrC16@@@Z @ 3 NONAME ; int CXhtmlParser::HyperLink(int, int &, int &, class TPtrC16 &)
+	?HyperLinkCount@CXhtmlParser@@QAEHXZ @ 4 NONAME ; int CXhtmlParser::HyperLinkCount(void)
+	?NewL@CXhtmlParser@@SAPAV1@PAVMXhtmlParserObserver@@@Z @ 5 NONAME ; class CXhtmlParser * CXhtmlParser::NewL(class MXhtmlParserObserver *)
+	?ParseL@CXhtmlParser@@QAEXAAVCRichText@@@Z @ 6 NONAME ; void CXhtmlParser::ParseL(class CRichText &)
+	?SetDefaultTextColor@CXhtmlParser@@QAEXVTRgb@@@Z @ 7 NONAME ; void CXhtmlParser::SetDefaultTextColor(class TRgb)
+	?SetFonts@CXhtmlParser@@QAEXPBVCFont@@000@Z @ 8 NONAME ; void CXhtmlParser::SetFonts(class CFont const *, class CFont const *, class CFont const *, class CFont const *)
+	?SetMode@CXhtmlParser@@QAEXHH@Z @ 9 NONAME ; void CXhtmlParser::SetMode(int, int)
+	?Cancel@CXhtmlParser@@QAEXXZ @ 10 NONAME ; void CXhtmlParser::Cancel(void)
+

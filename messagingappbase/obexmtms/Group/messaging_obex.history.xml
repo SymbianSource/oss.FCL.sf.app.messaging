@@ -3,11 +3,7 @@
   <purpose>
     Message Type Module (MTM) plugins to Messaging Framework supporting OBEX over Bluetooth and Infrafred, client / server MTM implementation for each carrier with supporting utilities.
   </purpose>
-	
- <defect number="DEF144349" title="convert SFL to EPL " revision="011">
-    Converting SFL licence to EPL license.
-  </defect>
-  
+
   <deliverystep number="1462" name="Splitting mixed header files for Messaging" osproject="SymTB92" revision="010">
    <preq number="2510" title=" Splitting mixed header files for Messaging">
     Mixed header files will now contain only published All or published Partner or internal

@@ -1,0 +1,50 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  UniEditor.iby*
+*/
+
+#ifndef __UNIEDITOR_IBY__
+#define __UNIEDITOR_IBY__
+
+// App
+S60_APP_EXE(UniEditor)          // unieditor.exe
+S60_UPGRADABLE_APP_REG_RSC(UniEditor)      // unieditor_reg
+S60_APP_AIF_ICONS(UniEditor)    // unieditor_mif
+// Stub sis files
+data=\epoc32\data\z\system\install\stub_unieditor.sis					\system\install\stub_unieditor.sis
+
+// MmsPlugin
+ECOM_PLUGIN( UniMmsPlugin.dll, UniMmsPlugin.rsc )    // MmsPlugin
+
+// Model
+file=ABI_DIR\BUILD_DIR\UniDataModel.dll		SHARED_LIB_DIR\UniDataModel.dll
+
+// MTMs
+file=ABI_DIR\BUILD_DIR\UniMtms.dll		    SHARED_LIB_DIR\UniMtms.dll
+
+// UniPluginApi
+file=ABI_DIR\BUILD_DIR\UniPluginApi.dll		SHARED_LIB_DIR\UniPluginApi.dll
+
+// VideoConversionApi
+file=ABI_DIR\BUILD_DIR\VideoConversionApi.dll		SHARED_LIB_DIR\VideoConversionApi.dll
+
+// SmsPlugin
+ECOM_PLUGIN( UniSmsPlugin.dll, UniSmsPlugin.rsc )            // SmsPlugin
+
+// UniUtils
+file=ABI_DIR\BUILD_DIR\UniUtils.dll		    SHARED_LIB_DIR\UniUtils.dll
+
+SCALABLE_IMAGE(APP_BITMAP_DIR,APP_BITMAP_DIR, uniutils)
+
+#endif   // __UNIEDITOR_IBY__

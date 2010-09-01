@@ -1,0 +1,84 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   This is project specification file for handling UIP taps in MCE
+*
+*/
+
+
+
+CAPABILITY CAP_ECOM_PLUGIN
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+// Build target
+TARGET          msgindicatorplugin.dll
+TARGETTYPE      PLUGIN
+UID             0x10009D8D 0x10275096
+VENDORID        VID_DEFAULT
+VERSION 	10.0
+PAGED
+
+// Source files location
+SOURCEPATH      ../src
+SOURCE          msgindicatorpluginimplementation.cpp
+SOURCE          dllmain.cpp
+SOURCE          MsgWaitingObserver.cpp
+
+
+// Resources
+START RESOURCE  ../rss/10275096.rss
+TARGET			msgindicatorplugin.rsc
+TARGETPATH      ECOM_RESOURCE_DIR
+END
+
+START RESOURCE  ../rss/msgindicator.rss
+HEADER
+TARGETPATH RESOURCE_FILES_DIR
+LANGUAGE_IDS
+END
+
+
+// Include paths
+USERINCLUDE     ../rss
+USERINCLUDE     ../inc
+USERINCLUDE     ../group
+USERINCLUDE     ../../inc
+USERINCLUDE     ../../group
+
+APP_LAYER_SYSTEMINCLUDE
+SYSTEMINCLUDE   /epoc32/include/ecom // ecom
+SYSTEMINCLUDE   ../../../../inc // msg internal
+                
+// Dependencies to system components
+LIBRARY     eikcore.lib
+LIBRARY     cone.lib
+LIBRARY     euser.lib
+LIBRARY     ecom.lib
+LIBRARY     avkon.lib
+LIBRARY     commonengine.lib        // stringloader
+LIBRARY     bafl.lib                // baflutils
+LIBRARY     efsrv.lib               // TParsePtrC
+LIBRARY     centralrepository.lib
+LIBRARY     vmbx.lib                // RVmbxNumber
+LIBRARY     muiu_internal.lib       // MsvUiServiceUtilitiesInternal
+LIBRARY     flogger.lib
+LIBRARY     etel.lib
+LIBRARY     etelmm.lib            // RMobilePhone
+LIBRARY     sssettings.lib
+LIBRARY     apgrfx.lib
+LIBRARY     apparc.lib
+
+// End of File
+

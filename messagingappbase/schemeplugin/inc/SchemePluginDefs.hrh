@@ -1,0 +1,47 @@
+/*
+* Copyright (c) 2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*      Constants used both in code and resources of Scheme Handler Plugin.   
+*
+*/
+
+
+
+#ifndef SCHEME_PLUGIN_DEFS_HRH
+#define SCHEME_PLUGIN_DEFS_HRH
+
+// ***************************************************************************
+// **  THIS FILE IS INCLUDED IN RESOURCES (.rss) AND PROJECT FILES (.mmp).  **
+// **                     ONLY MACROS ARE ALLOWED.                          **
+// ***************************************************************************
+
+// MACROS
+
+/// Scheme dispatcher UID value.
+#define SCHEME_PLUGIN_UID			   0x101F869A
+#define SCHEME_PLUGIN_UID_RSS_NAME                 101F869A.rss
+
+/// Scheme App UID value.
+#define SCHEME_APP_UID									0x101f8532
+
+/// Scheme handler interface definition Uid
+#define 	SCHEME_INTERFACE_DEF		   0x101f8534
+
+/// Scheme handler interface implementation Uids
+#define		SCHEME_MMS_TO_IMP		   0x101F869B
+#define		SCHEME_MMS_IMP		    	   0x101F869C
+#define		SCHEME_SMS_IMP		    	   0x101F869D
+#define		SCHEME_LOCALAPP_IMP		   0x101F86E0
+
+#endif /* def SCHEME_PLUGIN_DEFS_HRH */

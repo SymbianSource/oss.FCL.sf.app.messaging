@@ -1,0 +1,203 @@
+/*
+* Copyright (c) 2005-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Resource headers for project audiomessage
+*
+*/
+
+
+
+#ifndef __AUDIOMESSAGE_HRH
+#define __AUDIOMESSAGE_HRH
+
+/** for BaseEditor definitions */
+#include <MsgEditor.hrh>
+
+enum TMmsEditorCommandIds
+    {
+    EAmsCmdDoNothing = 1, 
+    EAmsEditorCmdSend,
+    EAmsEditorCmdAddRecipient,
+    EAmsEditorCmdSaveAudio,
+	EAmsEditorCmdPlayAudio,
+   	EAmsEditorSubmenuInsertAudioCommands,
+    EAmsEditorSubmenuReplaceAudioCommands,
+    EAmsEditorCmdMessageInfo,
+    EAmsEditorCmdChangePriority,
+    EAmsViewerCmdRemoveAudio,
+   	EAmsViewerCmdSubmenuReply,
+    EAmsViewerCmdForward,
+    EAmsViewerCmdSaveAudio,
+    EAmsViewerCmdDeliveryStatus,
+    EAmsViewerCmdMoveToFolder,
+    EAmsSubmenuZoomCommands,
+	/** reply submenu */
+    EAmsViewerCmdReplyToSender,
+    EAmsViewerCmdReplyToAll,
+    EAmsViewerCmdReplyViaSMS,
+    EAmsViewerCmdReplyViaMMS,
+    EAmsViewerCmdReplyViaMessage,
+	/** insert submenu */
+   	EAmsEditorCmdFromGallery,
+   	EAmsEditorCmdReRecordAudio,
+   	EAmsEditorCmdRecordAudio,
+   	EAmsEditorCmdFromGallery2,
+	/** progress dlg */
+    EVoiceProgressNoteId,
+    EAmsSoftkeyPause,
+    EAmsSoftkeyStop,
+    EAmsSoftkeyContinue,
+    EAmsSoftkeyToLoudspeaker,
+    EAmsSoftkeyToEarpiece,
+    EAmsSoftkeyAdd,
+    EAmsSoftkeyRecord,
+    EAmsSoftkeyPlay,
+    EAmsFileEnd,
+    
+    //Text zooming
+    EAmsDispSizeAutomatic,
+    EAmsDispSizeLarge,
+    EAmsDispSizeNormal,
+    EAmsDispSizeSmall,
+    
+    //Permantent touch toolbar
+    EAmsViewerToolbarReply,       
+    EAmsViewerToolbarForward,       
+    EAmsViewerToolbarDelete, 
+    EAmsEditorToolbarSend,
+    EAmsEditorToolbarRecord,
+    EAmsEditorToolbarAddRecipient
+    };
+
+enum TAmsEditorNoteIds
+    {
+    EAmsWaitNoteId = 1
+    };
+    
+enum TAmsViewerReplyViaIds
+	{
+	EReplyToSender,
+	EReplyToAll,
+	EReplyViaSMS,
+	EReplyViaMMS,
+	EReplyViaMessage	
+	};    
+
+
+enum TAmsUiMessageType
+    {
+    EAmsReadOnly = 0,
+    EAmsNewMessage,
+    EAmsOpenFromDraft,
+    EAmsReply,
+    EAmsForward,
+    EAmsSendAs,
+    EAmsSent,
+    EAmsEdit,
+    EAmsInbox
+    };
+    
+enum TAmsSenderType
+    {
+    ESenderTypePhoneNumber,
+    ESenderTypeMailAddress,
+    ESenderTypeNone
+    };
+
+/** for icon status */
+enum TAmsRecordIconStatus
+	{
+	EAudioInsert =0,
+	EAudioInserted,
+	EAudioCorrupted	
+	};
+
+/** attachments status */
+enum TAmsInsertedStatus
+{
+	EAmsNone=0,
+	EAmsRecorded,
+	EAmsFetched,
+	EAmsInsideMessage,
+	EAmsSmilAdded
+};
+
+/** mode of application */
+enum TAmsAppStatus
+{
+	EAmsEditor=0,
+	EAmsViewer
+};
+
+enum TAmsClipStatus
+{
+	EAmsClipNone=0,
+	EAmsClipFromGallery,
+	EAmsClipFromRecorder,
+	EAmsClipAttachment,
+	EAmsClipCorrupted
+};
+
+
+/** panics of application */
+enum TAmsEditorPanic
+    {
+    EAmsNullPointer = 0,
+    EAmsNoMessage,
+    EAmsUnsupportedCommand,
+    EAmsUnknownMenuOption,
+    EAmsIllegalAddress,
+    EAmsSendWithoutRecipients,
+    EAmsEntryNotInDraftFolder,
+    EAmsIllegalMediaObject,
+    EAmsIllegalMsgSize,
+    EAmsIllegalMsgSizeLimit,
+    EAmsIllegalSendingOptions,
+    EAmsIllegalArgument,
+    EAmsIllegalMessageType,
+    EAmsCannotInsert
+    };
+
+enum TAmsOperationType
+    {
+    EAmsOperationInsert,
+    EAmsOperationLaunch,
+    EAmsOperationSave,
+    EAmsOperationSend,
+    EAmsOperationRemove,
+    EAmsOperationSetDuration,
+    EAmsOperationSendReadReport   
+    };
+
+enum TAmsOperationEvent
+	{
+	EAmsOperationProcessing,
+	EAmsOperationComplete,
+    EAmsOperationError
+	};
+
+enum TAmsOperationErrors
+    {
+    EAmsExit = 1,
+    EAmsSendUiUnsupported,
+    EAmsSendUiCorrupted,
+    EAmsProtectedObject,
+    EAmsInsertTooBig,
+    EAmsInsertNotSupported,
+    EAmsMultipleFiles
+    
+    };
+
+   
+#endif  // __AUDIOMESSAGE_HRH
+

@@ -1,0 +1,50 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   File that exports the files belonging to 
+:                Messaging Center Ui Utilities API
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+
+../inc/opprgdlg.hrh     APP_LAYER_PLATFORM_EXPORT_PATH(opprgdlg.hrh)
+../inc/muiumsginfo.hrh     APP_LAYER_PLATFORM_EXPORT_PATH(Muiumsginfo.hrh)
+../inc/MuiuMsgEditorService.rh     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsgEditorService.rh)
+../inc/MsgFolderSelectionDialog.h     APP_LAYER_PLATFORM_EXPORT_PATH(MsgFolderSelectionDialog.h)
+../inc/MuiuMsgEditorServerWatchingOperation.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsgEditorServerWatchingOperation.h)
+../inc/MuiuMsvRemoteOperationProgress.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsvRemoteOperationProgress.h)
+../inc/MuiuMessageIterator.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMessageIterator.h)
+../inc/mtmstore.h     APP_LAYER_PLATFORM_EXPORT_PATH(MTMStore.h)
+../inc/msvprgreporter.h     APP_LAYER_PLATFORM_EXPORT_PATH(MsvPrgReporter.h)
+../inc/MuiuMsvProgressReporterOperation.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsvProgressReporterOperation.h)
+../inc/MuiuOperationWait.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuOperationWait.h)
+../inc/MuiuMsvUiServiceUtilities.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsvUiServiceUtilities.h)
+../inc/msgarrays.h     APP_LAYER_PLATFORM_EXPORT_PATH(MsgArrays.h)
+../inc/MuiuMsgEmbeddedEditorWatchingOperation.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsgEmbeddedEditorWatchingOperation.h)
+../inc/MtmExtendedCapabilities.hrh     APP_LAYER_PLATFORM_EXPORT_PATH(MtmExtendedCapabilities.hrh)
+../inc/MuiuMsvSingleOpWatcher.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsvSingleOpWatcher.h)
+../inc/MuiuMsgEditorServiceConst.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsgEditorServiceConst.h)
+../inc/MsvFactorySettings.h     APP_LAYER_PLATFORM_EXPORT_PATH(MsvFactorySettings.h)
+../loc/Messaging.loc     APP_LAYER_LOC_EXPORT_PATH(Messaging.loc)
+../inc/MessagingDomainCRKeys.h     APP_LAYER_PLATFORM_EXPORT_PATH(MessagingDomainCRKeys.h)
+../inc/MuiuMsgEditorServiceSession.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsgEditorServiceSession.h)
+../inc/muiumsginfo.h     APP_LAYER_PLATFORM_EXPORT_PATH(Muiumsginfo.h)
+../inc/MuiuMsgEditorLauncher.h     APP_LAYER_PLATFORM_EXPORT_PATH(MuiuMsgEditorLauncher.h)

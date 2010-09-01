@@ -14,7 +14,6 @@
 // bld.inf
 //
 
-#include <platform_paths.hrh>
 PRJ_EXPORTS
 
 ../inc/MIUTHDR.H 	SYMBIAN_APP_LAYER_PUBLIC_EXPORT_PATH(miuthdr.h)
@@ -65,13 +64,6 @@ PRJ_EXPORTS
 #endif
 
 
-//IBY exports
-../rom/gtemailmtmResources.iby  LANGUAGE_OS_LAYER_IBY_EXPORT_PATH(gtemailmtmResources.iby)
-../rom/gtemailmtm.hby  CORE_OS_LAYER_IBY_EXPORT_PATH(gtemailmtm.hby)
-
-// export localised loc file
-../loc/imcm.loc  OS_LAYER_LOC_EXPORT_PATH(imcm.loc)
-../loc/imcm_default_charset.loc  OS_LAYER_LOC_EXPORT_PATH(imcm_default_charset.loc)
 PRJ_MMPFILES
 
 IMCM.mmp

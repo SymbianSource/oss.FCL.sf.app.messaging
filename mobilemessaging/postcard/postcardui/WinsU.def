@@ -1,0 +1,5 @@
+EXPORTS
+; NEW:
+	?NewPostcardUiL@@YAPAVCBaseMtmUi@@AAVCBaseMtm@@AAVCRegisteredMtmDll@@@Z @ 1 NONAME ; class CBaseMtmUi * NewPostcardUiL(class CBaseMtm &, class CRegisteredMtmDll &)
+	?NewPostcardUiDataL@@YAPAVCBaseMtmUiData@@AAVCRegisteredMtmDll@@@Z @ 2 NONAME ; class CBaseMtmUiData * NewPostcardUiDataL(class CRegisteredMtmDll &)
+

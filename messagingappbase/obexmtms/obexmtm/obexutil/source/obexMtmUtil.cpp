@@ -36,7 +36,7 @@ static const TInt KObexArrayGranularity = 4;
 
 //
 //
-//  Class for externalising a set of filenames to the same message entry store. Rolls back if not explicitly committed.
+//  Class for externalising a set of filenames to the same message entry store. Rolls back if not explicitely committed.
 //
 
 // Static functions that do the whole process in one go:
@@ -84,7 +84,7 @@ EXPORT_C  void CObexMtmFileNameExternaliser::Internalise1FileNameL(CMsvEntry* aE
 * Static function to read in one filename from the store.
 *
 * @param aEntry entry to read the filename from
-* @param aFileName Descriptor to receive the new filename. Any existing data will be overwritten. MUST be long enough to contain the name.
+* @param aFileName Descriptor to recieve the new filename. Any existing data will be overwritten. MUST be long enough to contain the name.
 * @leave KErrXXX system wide error codes.
 */	
 	{
@@ -165,8 +165,7 @@ CObexMtmFileNameExternaliser::~CObexMtmFileNameExternaliser()
 	if(! iHaveCommitted)
 		{
 		iMessageWriteStream.Close();  
-		if(iMessageStore)
-		    iMessageStore->Revert();  // Don't commit. Should have been called explicitly using CommitStoreL().
+		iMessageStore->Revert();  // Don't commit. Should have been called explicitly using CommitStoreL().
 		}
 	delete iMessageStore;
 	delete iEntry;

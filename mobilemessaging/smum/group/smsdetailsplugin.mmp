@@ -1,0 +1,74 @@
+/*
+* Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Project specification file for the SMS Details Ecom Plugin.
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+// --- LOGGING ---					 
+//MACRO           USE_LOGGER         // HW debugging support
+//MACRO           USE_RDEBUG         // Use Rdebug instead of RFileLogger
+//LIBRARY         Flogger.lib        // RFileLogger, debug logging
+// --- LOGGING ---
+
+TARGET          smsdetailsplugin.dll
+TARGETTYPE      PLUGIN
+UID             0x10009D8D 0x102828A8
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_ECOM_PLUGIN
+VERSION 	10.0
+PAGED
+
+// ECom resource file
+START RESOURCE  102828A8.rss
+TARGET          smsdetailsplugin.rsc 
+END	
+
+START RESOURCE  smsdetailsplugindata.rss
+TARGETPATH      RESOURCE_FILES_DIR
+HEADER
+LANGUAGE_IDS
+END
+
+
+USERINCLUDE     ../inc
+
+SYSTEMINCLUDE   ../../../inc
+APP_LAYER_SYSTEMINCLUDE
+SYSTEMINCLUDE   /epoc32/include/ecom
+
+SOURCEPATH      ../src
+SOURCE          smsdetailsplugin.cpp
+
+LIBRARY         euser.lib
+LIBRARY         efsrv.lib
+LIBRARY         ecom.lib
+LIBRARY         bafl.lib
+LIBRARY         centralrepository.lib
+LIBRARY         msgs.lib
+LIBRARY         mtur.lib
+LIBRARY         smcm.lib
+LIBRARY         gsmu.lib
+
+LIBRARY         vpbkeng.lib
+LIBRARY         msgcommonutils.lib      // CContactMatcher
+
+LIBRARY         commonengine.lib                 // stringloader
+LIBRARY         pbk2presentation.lib
+
+//  End of File

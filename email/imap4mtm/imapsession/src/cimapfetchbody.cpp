@@ -66,8 +66,7 @@ CImapFetchBody::CImapFetchBody(CImapFolderInfo* aSelectedFolderData, TInt aLogId
 	iImapMailStore(aImapMailStore),
 	iParent(aParent),
 	iFetchBodyResponse(aFetchBodyResponse),
-	iSendFetch(ETrue),
-	iCancelled(EFalse)
+	iSendFetch(ETrue)
 	{
 	}
 	
@@ -87,7 +86,7 @@ Overrides CImapCommand::Cancel() by cancelling any outstanding mail store operat
 void CImapFetchBody::Cancel()
 	{
 	__LOG_TEXT(iLogId, "CImapFetchBody::Cancel()"); // Overrides CImapCommand::Cancel()
-	iCancelled = ETrue;
+	
 	iImapMailStore.CancelRequest(*this);
 	CImapCommand::Cancel();
 	}
@@ -227,10 +226,6 @@ void CImapFetchBody::SendMessageL(TInt aTagId, MOutputStream& aStream)
 	{	
 	iOutStream=&aStream;
 	
-	if(iCancelled)
-	{
-	   return; 
-	}
 #if (defined SYMBIAN_EMAIL_CAPABILITY_SUPPORT)		
 	// check for BINARY capability
 	const CImapCapabilityInfo& capabilityInfo = iParent.CapabilityInfo();

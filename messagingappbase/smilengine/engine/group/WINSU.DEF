@@ -1,0 +1,67 @@
+EXPORTS
+	??0CSmilTransitionFilter@@IAE@XZ @ 1 NONAME ; protected: __thiscall CSmilTransitionFilter::CSmilTransitionFilter(void)
+	??0TSmilTime@@QAE@ABVTDesC16@@@Z @ 2 NONAME ; public: __thiscall TSmilTime::TSmilTime(class TDesC16 const &)
+	??0TSmilTime@@QAE@H@Z @ 3 NONAME ; public: __thiscall TSmilTime::TSmilTime(int)
+	??0TSmilTime@@QAE@XZ @ 4 NONAME ; public: __thiscall TSmilTime::TSmilTime(void)
+	??1CSmilTransitionFilter@@UAE@XZ @ 5 NONAME ; public: virtual __thiscall CSmilTransitionFilter::~CSmilTransitionFilter(void)
+	??4TSmilTime@@QAEAAV0@ABV0@@Z @ 6 NONAME ; public: class TSmilTime & __thiscall TSmilTime::operator=(class TSmilTime const &)
+	??4TSmilTime@@QAEAAV0@H@Z @ 7 NONAME ; public: class TSmilTime & __thiscall TSmilTime::operator=(int)
+	??8TSmilTime@@QBEHABV0@@Z @ 8 NONAME ; public: int __thiscall TSmilTime::operator==(class TSmilTime const &)const 
+	??9TSmilTime@@QBEHABV0@@Z @ 9 NONAME ; public: int __thiscall TSmilTime::operator!=(class TSmilTime const &)const 
+	??DTSmilTime@@QBE?AV0@ABV0@@Z @ 10 NONAME ; public: class TSmilTime  __thiscall TSmilTime::operator*(class TSmilTime const &)const 
+	??DTSmilTime@@QBE?AV0@M@Z @ 11 NONAME ; public: class TSmilTime  __thiscall TSmilTime::operator*(float)const 
+	??ETSmilTime@@QAEABV0@H@Z @ 12 NONAME ; public: class TSmilTime const & __thiscall TSmilTime::operator++(int)
+	??GTSmilTime@@QBE?AV0@ABV0@@Z @ 13 NONAME ; public: class TSmilTime  __thiscall TSmilTime::operator-(class TSmilTime const &)const 
+	??HTSmilTime@@QBE?AV0@ABV0@@Z @ 14 NONAME ; public: class TSmilTime  __thiscall TSmilTime::operator+(class TSmilTime const &)const 
+	??MTSmilTime@@QBEHABV0@@Z @ 15 NONAME ; public: int __thiscall TSmilTime::operator<(class TSmilTime const &)const 
+	??NTSmilTime@@QBEHABV0@@Z @ 16 NONAME ; public: int __thiscall TSmilTime::operator<=(class TSmilTime const &)const 
+	??OTSmilTime@@QBEHABV0@@Z @ 17 NONAME ; public: int __thiscall TSmilTime::operator>(class TSmilTime const &)const 
+	??PTSmilTime@@QBEHABV0@@Z @ 18 NONAME ; public: int __thiscall TSmilTime::operator>=(class TSmilTime const &)const 
+	?ActivateFocusedL@CSmilPresentation@@QAEXXZ @ 19 NONAME ; public: void __thiscall CSmilPresentation::ActivateFocusedL(void)
+	?ActivateL@CSmilTransitionFilter@@UAEXABVTSmilTime@@@Z @ 20 NONAME ; public: virtual void __thiscall CSmilTransitionFilter::ActivateL(class TSmilTime const &)
+	?Anchor@CSmilObject@@QBEPAVCSmilAnchor@@XZ @ 21 NONAME ; public: class CSmilAnchor * __thiscall CSmilObject::Anchor(void)const 
+	?BaseUrl@CSmilPresentation@@QBE?AVTPtrC16@@XZ @ 22 NONAME ; public: class TPtrC16  __thiscall CSmilPresentation::BaseUrl(void)const 
+	?CancelFocusL@CSmilPresentation@@QAEXXZ @ 23 NONAME ; public: void __thiscall CSmilPresentation::CancelFocusL(void)
+	?Check@CConformanceChecker@@QAEHPAVCMDXMLDocument@@W4TMmsSmilVersion@@H@Z @ 24 NONAME ; public: int __thiscall CConformanceChecker::Check(class CMDXMLDocument *,enum TMmsSmilVersion,int)
+	?ConstructL@CSmilTransitionFilter@@UAEXPAVMSmilMedia@@@Z @ 25 NONAME ; public: virtual void __thiscall CSmilTransitionFilter::ConstructL(class MSmilMedia *)
+	?CurrentSlide@CSmilPresentation@@QBEHXZ @ 26 NONAME ; public: int __thiscall CSmilPresentation::CurrentSlide(void)const 
+	?CurrentTime@CSmilPresentation@@QAE?AVTSmilTime@@XZ @ 27 NONAME ; public: class TSmilTime  __thiscall CSmilPresentation::CurrentTime(void)
+	?Draw@CSmilPresentation@@QAEXAAVCGraphicsContext@@ABVTRect@@@Z @ 28 NONAME ; public: void __thiscall CSmilPresentation::Draw(class CGraphicsContext &,class TRect const &)
+	?Duration@CSmilPresentation@@QBE?AVTSmilTime@@XZ @ 29 NONAME ; public: class TSmilTime  __thiscall CSmilPresentation::Duration(void)const 
+	?FocusedObject@CSmilPresentation@@QBEPAVCSmilObject@@XZ @ 30 NONAME ; public: class CSmilObject * __thiscall CSmilPresentation::FocusedObject(void)const 
+	?FromMicroSeconds@TSmilTime@@SA?AV1@H@Z @ 31 NONAME ; public: static class TSmilTime  __cdecl TSmilTime::FromMicroSeconds(int)
+	?FromMicroSeconds@TSmilTime@@SA?AV1@VTTimeIntervalMicroSeconds@@@Z @ 32 NONAME ; public: static class TSmilTime  __cdecl TSmilTime::FromMicroSeconds(class TTimeIntervalMicroSeconds)
+	?GetScalingFactor@CSmilPresentation@@QAEMXZ @ 33 NONAME ; public: float __thiscall CSmilPresentation::GetScalingFactor(void)
+	?HandleKeyEventL@CSmilPresentation@@QAE?AW4TKeyResponse@@ABUTKeyEvent@@W4TEventCode@@@Z @ 34 NONAME ; public: enum TKeyResponse  __thiscall CSmilPresentation::HandleKeyEventL(struct TKeyEvent const &,enum TEventCode)
+	?HandlePointerEventL@CSmilPresentation@@QAEXABUTPointerEvent@@@Z @ 35 NONAME ; public: void __thiscall CSmilPresentation::HandlePointerEventL(struct TPointerEvent const &)
+	?Href@CSmilAnchor@@QBE?AVTPtrC16@@XZ @ 36 NONAME ; public: class TPtrC16  __thiscall CSmilAnchor::Href(void)const 
+	?IsInteractive@CSmilPresentation@@QBEHXZ @ 37 NONAME ; public: int __thiscall CSmilPresentation::IsInteractive(void)const 
+	?IsTransparent@CSmilPresentation@@QBEHXZ @ 38 NONAME ; public: int __thiscall CSmilPresentation::IsTransparent(void)const 
+	?Media@CSmilTransitionFilter@@QBEPAVMSmilMedia@@XZ @ 39 NONAME ; public: class MSmilMedia * __thiscall CSmilTransitionFilter::Media(void)const 
+	?MouseClickedL@CSmilPresentation@@QAEXABVTPoint@@@Z @ 40 NONAME ; public: void __thiscall CSmilPresentation::MouseClickedL(class TPoint const &)
+	?MoveFocusL@CSmilPresentation@@QAEXHH@Z @ 41 NONAME ; public: void __thiscall CSmilPresentation::MoveFocusL(int,int)
+	?NewL@CConformanceChecker@@SAPAV1@XZ @ 42 NONAME ; public: static class CConformanceChecker * __cdecl CConformanceChecker::NewL(void)
+	?NewL@CSmilParser@@SAPAV1@PAVMSmilPlayer@@@Z @ 43 NONAME ; public: static class CSmilParser * __cdecl CSmilParser::NewL(class MSmilPlayer *)
+	?NewL@CSmilPresentation@@SAPAV1@PAVMSmilPlayer@@@Z @ 44 NONAME ; public: static class CSmilPresentation * __cdecl CSmilPresentation::NewL(class MSmilPlayer *)
+	?NextSlideL@CSmilPresentation@@QAEHXZ @ 45 NONAME ; public: int __thiscall CSmilPresentation::NextSlideL(void)
+	?ParseColor@CSmilParser@@SA?AVTRgb@@ABVTDesC16@@AAH@Z @ 46 NONAME ; public: static class TRgb  __cdecl CSmilParser::ParseColor(class TDesC16 const &,int &)
+	?ParseL@CSmilParser@@QAEPAVCSmilPresentation@@ABVTDesC16@@0@Z @ 47 NONAME ; public: class CSmilPresentation * __thiscall CSmilParser::ParseL(class TDesC16 const &,class TDesC16 const &)
+	?ParseL@CSmilParser@@QAEPAVCSmilPresentation@@PBVCMDXMLDocument@@ABVTDesC16@@@Z @ 48 NONAME ; public: class CSmilPresentation * __thiscall CSmilParser::ParseL(class CMDXMLDocument const *,class TDesC16 const &)
+	?Pause@CSmilPresentation@@QAEXXZ @ 49 NONAME ; public: void __thiscall CSmilPresentation::Pause(void)
+	?PlayL@CSmilPresentation@@QAEXXZ @ 50 NONAME ; public: void __thiscall CSmilPresentation::PlayL(void)
+	?PreviousSlideL@CSmilPresentation@@QAEHXZ @ 51 NONAME ; public: int __thiscall CSmilPresentation::PreviousSlideL(void)
+	?Resume@CSmilPresentation@@QAEXXZ @ 52 NONAME ; public: void __thiscall CSmilPresentation::Resume(void)
+	?SeekL@CSmilPresentation@@QAEHVTSmilTime@@@Z @ 53 NONAME ; public: int __thiscall CSmilPresentation::SeekL(class TSmilTime)
+	?SetBaseUrlL@CSmilPresentation@@QAEXABVTDesC16@@@Z @ 54 NONAME ; public: void __thiscall CSmilPresentation::SetBaseUrlL(class TDesC16 const &)
+	?SetMaxDownUpScaling@CSmilParser@@QAEXMM@Z @ 55 NONAME ; public: void __thiscall CSmilParser::SetMaxDownUpScaling(float,float)
+	?SetVolume@CSmilPresentation@@QAEXH@Z @ 56 NONAME ; public: void __thiscall CSmilPresentation::SetVolume(int)
+	?SlideCount@CSmilPresentation@@QBEHXZ @ 57 NONAME ; public: int __thiscall CSmilPresentation::SlideCount(void)const 
+	?State@CSmilPresentation@@QAE?AW4TPresentationState@1@XZ @ 58 NONAME ; public: enum CSmilPresentation::TPresentationState  __thiscall CSmilPresentation::State(void)
+	?StopL@CSmilPresentation@@QAEXXZ @ 59 NONAME ; public: void __thiscall CSmilPresentation::StopL(void)
+	?SubmitEventL@CSmilPresentation@@QAEXABVTDesC16@@0@Z @ 60 NONAME ; public: void __thiscall CSmilPresentation::SubmitEventL(class TDesC16 const &,class TDesC16 const &)
+	?SubmitEventL@CSmilPresentation@@QAEXABVTDesC16@@PAVCSmilObject@@@Z @ 61 NONAME ; public: void __thiscall CSmilPresentation::SubmitEventL(class TDesC16 const &,class CSmilObject *)
+	?ToLocal@TSmilTime@@SA?AV1@PAVCSmilObject@@V1@@Z @ 62 NONAME ; public: static class TSmilTime  __cdecl TSmilTime::ToLocal(class CSmilObject *,class TSmilTime)
+	?ToMicroSeconds@TSmilTime@@QBE?AVTTimeIntervalMicroSeconds@@XZ @ 63 NONAME ; public: class TTimeIntervalMicroSeconds  __thiscall TSmilTime::ToMicroSeconds(void)const 
+	?TransitionEnding@CSmilTransitionFilter@@MAEXXZ @ 64 NONAME ; protected: virtual void __thiscall CSmilTransitionFilter::TransitionEnding(void)
+	?TransitionStartingL@CSmilTransitionFilter@@MAEXXZ @ 65 NONAME ; protected: virtual void __thiscall CSmilTransitionFilter::TransitionStartingL(void)
+

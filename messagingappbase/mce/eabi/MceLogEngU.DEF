@@ -1,0 +1,29 @@
+EXPORTS
+	_ZN13CMceLogEngine12ClearDrListLEv @ 1 NONAME
+	_ZN13CMceLogEngine14ForegroundLostEv @ 2 NONAME
+	_ZN13CMceLogEngine17ForegroundGainedLEv @ 3 NONAME
+	_ZN13CMceLogEngine17IsNumberAvailableEi @ 4 NONAME
+	_ZN13CMceLogEngine18GetStandardStringsER6TDes16S1_ @ 5 NONAME
+	_ZN13CMceLogEngine20SetContainerObserverEP18MMceLogEngObserver @ 6 NONAME
+	_ZN13CMceLogEngine23RemoveContainerObserverEv @ 7 NONAME
+	_ZN13CMceLogEngine4NewLEv @ 8 NONAME
+	_ZN13CMceLogEngine5EventEi @ 9 NONAME
+	_ZN13CMceLogEngine9PurgeDataEPK9CLogEventP13CArrayFixFlatIiE @ 10 NONAME
+	_ZN19CPhoneNumberMatcher10GetFieldIdEv @ 11 NONAME
+	_ZN19CPhoneNumberMatcher11MatchCountLERK7TDesC16 @ 12 NONAME
+	_ZN19CPhoneNumberMatcher12GetContactIdERl @ 13 NONAME
+	_ZN19CPhoneNumberMatcher13GetUniqueNameEv @ 14 NONAME
+	_ZN19CPhoneNumberMatcher4NewLER3RFs @ 15 NONAME
+	_ZN19CPhoneNumberMatcherD0Ev @ 16 NONAME
+	_ZN19CPhoneNumberMatcherD1Ev @ 17 NONAME
+	_ZN19CPhoneNumberMatcherD2Ev @ 18 NONAME
+	_ZNK13CMceLogEngine5CountEv @ 19 NONAME
+	_ZTI13CMceLogEngine @ 20 NONAME ; #<TI>#
+	_ZTI17CMceLogPbkMatcher @ 21 NONAME ; #<TI>#
+	_ZTI19CMceLogEngineReader @ 22 NONAME ; #<TI>#
+	_ZTI19CPhoneNumberMatcher @ 23 NONAME ; #<TI>#
+	_ZTV13CMceLogEngine @ 24 NONAME ; #<VT>#
+	_ZTV17CMceLogPbkMatcher @ 25 NONAME ; #<VT>#
+	_ZTV19CMceLogEngineReader @ 26 NONAME ; #<VT>#
+	_ZTV19CPhoneNumberMatcher @ 27 NONAME ; #<VT>#
+

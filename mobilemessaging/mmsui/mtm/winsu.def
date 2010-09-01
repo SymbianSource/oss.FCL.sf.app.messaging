@@ -1,0 +1,6 @@
+EXPORTS
+	?NewMmsMtmUiL@@YAPAVCBaseMtmUi@@AAVCBaseMtm@@AAVCRegisteredMtmDll@@@Z @ 1 NONAME ; class CBaseMtmUi * __cdecl NewMmsMtmUiL(class CBaseMtm &,class CRegisteredMtmDll &)
+	?NewMmsMtmUiDataL@@YAPAVCBaseMtmUiData@@AAVCRegisteredMtmDll@@@Z @ 2 NONAME ; class CBaseMtmUiData * __cdecl NewMmsMtmUiDataL(class CRegisteredMtmDll &)
+	?NewL@CMmsMtmDeliveryDialogLauncher@@SAPAV1@VTMmsMsvEntry@@PAVCMmsClientMtm@@@Z @ 3 NONAME ; class CMmsMtmDeliveryDialogLauncher * CMmsMtmDeliveryDialogLauncher::NewL(class TMmsMsvEntry, class CMmsClientMtm *)
+	?StartDialogL@CMmsMtmDeliveryDialogLauncher@@QAEHXZ @ 4 NONAME ; int CMmsMtmDeliveryDialogLauncher::StartDialogL(void)
+

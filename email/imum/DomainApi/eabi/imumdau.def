@@ -1,0 +1,4 @@
+EXPORTS
+	_Z16CreateDomainApiLP11CMsvSession @ 1 NONAME
+	_Z17CreateDomainApiLCP11CMsvSession @ 2 NONAME
+

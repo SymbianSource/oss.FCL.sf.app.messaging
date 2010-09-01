@@ -1,0 +1,1476 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Resource definitions for module MsgMailEditor
+*
+*/
+
+
+//  RESOURCE IDENTIFIER
+NAME    CAME // From Mail Editor
+
+//  INCLUDES
+
+#include <eikon.rh>
+#include <eikon.hrh>
+#include <appinfo.rh>
+#include <data_caging_paths_strings.hrh>
+#include <AvkonIcons.hrh> // Avkon icon files
+#include "msgmaileditor.hrh"
+#include <msgmaileditor.loc>
+#include <avkon.rsg>
+#include <avkon.rh>
+#include <avkon.mbg>
+#include <avkon.loc>
+#include <drmcommon.loc>
+#include <messaging.loc>
+#include <muiu.mbg>
+
+#include <MsgEditor.rh>
+#include <MsgEditorAppUi.hrh>
+#include <MsgEditor.hrh>
+#include <messaging.loc>
+
+//  RESOURCE DEFINITIONS 
+
+//------------------------------------------------------------------------------
+//   Standard resource signature.
+//------------------------------------------------------------------------------
+RESOURCE RSS_SIGNATURE { }
+
+//------------------------------------------------------------------------------
+//   Application caption and default filename.
+//------------------------------------------------------------------------------
+RESOURCE TBUF { buf="Mail Editor"; }
+
+//------------------------------------------------------------------------------
+//   Constants
+//------------------------------------------------------------------------------
+#define MUIU_ICON_FILE          BITMAP_DIR"\\muiu.mif"
+#define MAIL_EDITOR_ICON_FILE   APP_BITMAP_DIR"\\MsgMailEditor_aif.mif"
+
+//------------------------------------------------------------------------------
+//   Mail Editor application info
+//------------------------------------------------------------------------------
+RESOURCE EIK_APP_INFO
+    {	
+    menubar = r_msgmaileditor_menubar; // application specific menubar
+    cba     = r_maileditor_options_close; // softkeys
+    custom_app_info_extension = r_msgmaileditor_app_info_extension;
+    }
+
+//------------------------------------------------------------------------------
+//   Application resource info extension
+//------------------------------------------------------------------------------
+RESOURCE EIK_APP_INFO_EXT r_msgmaileditor_app_info_extension
+    {
+    popup_toolbar = r_maileditor_toolbar;
+    }
+    
+//------------------------------------------------------------------------------
+//   Application caption and default filename.
+//------------------------------------------------------------------------------
+RESOURCE LOCALISABLE_APP_INFO r_msgmaileditor_localisable_app_info
+    {
+    short_caption = qtn_mail_title_mail;
+    caption_and_icon = CAPTION_AND_ICON_INFO
+        {
+        caption = qtn_mail_title_mail;
+        number_of_icons = 1;
+        icon_file = MAIL_EDITOR_ICON_FILE;
+        };
+    }
+
+//------------------------------------------------------------------------------
+//   r_maileditor_app_toolbar.
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_TOOLBAR r_maileditor_toolbar
+	{
+    flags = KAknToolbarFixed;
+    items =
+        {
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EMsgMailEditorCmdSend;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText;
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_msg_tb_tooltip_send;
+					    bmpfile = MUIU_ICON_FILE;
+					    bmpid=EMbmMuiuQgn_indi_tb_msg_send;
+					    bmpmask=EMbmMuiuQgn_indi_tb_msg_send_mask;                        
+//					    bmpid=EMbmMuiuQgn_indi_tb_send_msg;
+//					    bmpmask=EMbmMuiuQgn_indi_tb_send_msg_mask;                             }  
+                        }  
+                    };            
+                };
+            },
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EMsgMailEditorCmdAddRecipient;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText;
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_msg_tb_tooltip_add_recipient;
+					    bmpfile = MUIU_ICON_FILE;
+					    bmpid=EMbmMuiuQgn_indi_tb_add_recipient;
+					    bmpmask=EMbmMuiuQgn_indi_tb_add_recipient_mask;                        
+                        }  
+                    };            
+                };
+            },  
+        TBAR_CTRL
+            {
+            type = EAknCtToolbarExtension;
+            id = EMsgMailEditorCmdExpandInsert;
+            control = AVKON_TOOLBAR_EXTENSION
+                {
+                helptxt = qtn_msg_tb_tooltip_insert;
+                bmpFile = MUIU_ICON_FILE;
+                bmpId = EMbmMuiuQgn_indi_tb_expand_insert;
+                bmpMask = EMbmMuiuQgn_indi_tb_expand_insert_mask;
+                items =
+                    {
+				    TBAR_CTRL
+				        {
+				        type = EAknCtButton;
+				        id = EMsgMailEditorCmdInsertImage;
+				        control = AVKON_BUTTON
+				        	{
+				            flags = KAknButtonRequestExitOnButtonUpEvent;
+				            states =
+				                {
+				                AVKON_BUTTON_STATE
+				                    {
+                                    txt = qtn_msg_insert_tb_image;
+                                    helptxt = qtn_msg_insert_tb_tooltip_image;
+								    bmpfile = MUIU_ICON_FILE;
+								    bmpid=EMbmMuiuQgn_indi_mce_tb_image;
+								    bmpmask=EMbmMuiuQgn_indi_mce_tb_image_mask;                        
+				                    }  
+				                };            
+				            };
+				        },
+				    TBAR_CTRL
+				        {
+				        type = EAknCtButton;
+				        id = EMsgMailEditorCmdInsertVideo;
+				        control = AVKON_BUTTON
+				            {
+				            flags = KAknButtonRequestExitOnButtonUpEvent;
+				            states =
+				                {
+				                AVKON_BUTTON_STATE
+				                    {
+                                    txt = qtn_msg_insert_tb_video;
+                                    helptxt = qtn_msg_insert_tb_tooltip_video;
+								    bmpfile = MUIU_ICON_FILE;
+								    bmpid=EMbmMuiuQgn_indi_mce_tb_video;
+								    bmpmask=EMbmMuiuQgn_indi_mce_tb_video_mask;                        
+				                    }  
+				                };            
+				            };
+				        },                                    
+				    TBAR_CTRL
+				        {
+				        type = EAknCtButton;
+				        id = EMsgMailEditorCmdInsertAudio;
+				        control = AVKON_BUTTON
+				            {
+				            flags = KAknButtonRequestExitOnButtonUpEvent;
+				            states =
+				                {
+				                AVKON_BUTTON_STATE
+				                    {
+                                    txt = qtn_msg_insert_tb_sound;
+                                    helptxt = qtn_msg_insert_tb_tooltip_sound;
+								    bmpfile = MUIU_ICON_FILE;
+								    bmpid=EMbmMuiuQgn_indi_mce_tb_audio;
+								    bmpmask=EMbmMuiuQgn_indi_mce_tb_audio_mask;                        
+				                    }  
+				                };            
+				            };
+				        },
+				    TBAR_CTRL
+				        {
+				        type = EAknCtButton;
+				        id = EMsgMailEditorCmdInsertTemplate;
+				        control = AVKON_BUTTON
+				            {
+				            flags = KAknButtonRequestExitOnButtonUpEvent;
+				            states =
+				                {
+				                AVKON_BUTTON_STATE
+				                    {
+                                    txt = qtn_msg_insert_tb_template;
+                                    helptxt = qtn_msg_insert_tb_tooltip_template;
+								    bmpfile = MUIU_ICON_FILE;
+								    bmpid=EMbmMuiuQgn_indi_tb_template;
+								    bmpmask=EMbmMuiuQgn_indi_tb_template_mask;                        
+				                    }  
+				                };            
+				            };
+				        },
+				    TBAR_CTRL
+				        {
+				        type = EAknCtButton;
+				        id = EMsgMailEditorCmdInsertNote;
+				        control = AVKON_BUTTON
+				            {
+				            flags = KAknButtonRequestExitOnButtonUpEvent;
+				            states =
+				                {
+				                AVKON_BUTTON_STATE
+				                    {
+                                    txt = qtn_msg_insert_tb_note;
+                                    helptxt = qtn_msg_insert_tb_tooltip_note_att;
+								    bmpfile = MUIU_ICON_FILE;
+								    bmpid=EMbmMuiuQgn_indi_tb_note;
+								    bmpmask=EMbmMuiuQgn_indi_tb_note_mask;                        
+				                    }  
+				                };            
+				            };
+				        },  
+#ifdef EMAIL_PRESENTATION_SUPPORT
+				    TBAR_CTRL
+				        {
+				        type = EAknCtButton;
+				        id = EMsgMailEditorCmdInsertPresentation;
+				        control = AVKON_BUTTON
+				            {
+				            flags = KAknButtonRequestExitOnButtonUpEvent;
+				            states =
+				                {
+				                AVKON_BUTTON_STATE
+				                    {
+                                    txt = qtn_msg_insert_tb_presentation;
+                                    helptxt = qtn_msg_insert_tb_tooltip_presentation;
+								    bmpfile = MUIU_ICON_FILE;
+								    bmpid=EMbmMuiuQgn_indi_mce_tb_pres;
+								    bmpmask=EMbmMuiuQgn_indi_mce_tb_pres_mask;                        
+				                    }  
+				                };            
+				            };
+				        },
+#endif //EMAIL_PRESENTATION_SUPPORT
+				    TBAR_CTRL
+				        {
+				        type = EAknCtButton;
+				        id = EMsgMailEditorCmdInsertOther;
+				        control = AVKON_BUTTON
+				            {
+				            flags = KAknButtonRequestExitOnButtonUpEvent;
+				            states =
+				                {
+				                AVKON_BUTTON_STATE
+				                    {
+                                    txt = qtn_msg_insert_tb_other;
+                                    helptxt = qtn_msg_insert_tb_tooltip_other;
+								    bmpfile = MUIU_ICON_FILE;
+								    bmpid=EMbmMuiuQgn_indi_mce_tb_other;
+								    bmpmask=EMbmMuiuQgn_indi_mce_tb_other_mask;                        
+				                    }  
+				                };            
+				            };
+				        }
+				  	}; // eof extension items
+                }; // eof AVKON_TOOLBAR_EXTENSION control
+           }
+        };
+	}
+
+//------------------------------------------------------------------------------
+//   Selection list for Insert in MailEditor
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_maileditor_insert_selectionlist
+	{
+	flags = EGeneralQueryFlags;
+	softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+	items =
+		{
+		AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+			{
+			control = AVKON_LIST_QUERY_CONTROL
+				{
+				listtype = EAknCtSinglePopupMenuListBox;
+				listbox = AVKON_LIST_QUERY_LIST
+					{
+					array_id = r_maileditor_insert_selectionlist_items;
+					};
+				heading = qtn_msg_insert_title;
+				};
+			}
+		};
+	}
+
+RESOURCE ARRAY r_maileditor_insert_selectionlist_items
+    {
+    items =
+        {
+        LBUF { txt = qtn_msg_insert_qry_image; },
+        LBUF { txt = qtn_msg_insert_qry_video; },
+        LBUF { txt = qtn_msg_insert_qry_sound; },
+        LBUF { txt = qtn_msg_insert_qry_note; },
+        LBUF { txt = qtn_msg_insert_qry_template; },
+#ifdef EMAIL_PRESENTATION_SUPPORT
+        LBUF { txt = qtn_msg_insert_qry_presentation; },
+#endif //EMAIL_PRESENTATION_SUPPORT
+        LBUF { txt = qtn_msg_insert_qry_other_files; }
+        };
+    }
+
+
+
+
+
+//------------------------------------------------------------------------------
+//   Selection list for Insert in AttachmentView
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_maileditor_attachmentview_insert_selectionlist
+	{
+	flags = EGeneralQueryFlags;
+	softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+	items =
+		{
+		AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+			{
+			control = AVKON_LIST_QUERY_CONTROL
+				{
+				listtype = EAknCtSinglePopupMenuListBox;
+				listbox = AVKON_LIST_QUERY_LIST
+					{
+					array_id = r_maileditor_attachmentview_insert_selectionlist_items;
+					};
+				heading = qtn_msg_insert_title;
+				};
+			}
+		};
+	}
+
+RESOURCE ARRAY r_maileditor_attachmentview_insert_selectionlist_items
+    {
+    items =
+        {
+        LBUF { txt = qtn_msg_insert_qry_image; },
+        LBUF { txt = qtn_msg_insert_qry_video; },
+        LBUF { txt = qtn_msg_insert_qry_sound; },
+#ifdef EMAIL_PRESENTATION_SUPPORT
+        LBUF { txt = qtn_msg_insert_qry_presentation; },
+#endif //EMAIL_PRESENTATION_SUPPORT
+        LBUF { txt = qtn_msg_insert_qry_other_files; }
+        };
+    }
+
+
+//------------------------------------------------------------------------------
+//    r_maileditor_toolbar_choicelist
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_maileditor_toolbar_choicelist
+    {
+    flags = EGeneralQueryFlags;
+    softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+    items =
+        {
+        AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+            {
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = AVKON_LIST_QUERY_LIST
+                    {
+                    array_id = r_maileditor_toolbar_choicelist_items;
+                    };
+                heading = qtn_msg_insert_others_title;
+                };
+            }
+        };
+    }
+
+//------------------------------------------------------------------------------
+//    r_maileditor_toolbar_choicelist_items
+//------------------------------------------------------------------------------
+//
+RESOURCE ARRAY r_maileditor_toolbar_choicelist_items
+    {
+    items =
+        {
+        LBUF { txt = qtn_msg_insert_note; },
+        LBUF { txt = qtn_msg_insert_other_files; }
+        };
+    }
+
+
+#ifdef RD_SCALABLE_UI_V2    
+//------------------------------------------------------------------------------
+//    r_maileditor_toolbar_touch_choicelist
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_maileditor_toolbar_touch_choicelist
+    {
+    flags = EGeneralQueryFlags;
+    softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+    items =
+        {
+        AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+            {
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = AVKON_LIST_QUERY_LIST
+                    {
+                    array_id = r_maileditor_toolbar_choicelist_touch_items;
+                    };
+                heading = qtn_msg_insert_others_title;
+                };
+            }
+        };
+    }
+    
+ //------------------------------------------------------------------------------
+//    r_maileditor_toolbar_choicelist_touch_items
+//------------------------------------------------------------------------------
+//
+RESOURCE ARRAY r_maileditor_toolbar_choicelist_touch_items
+    {
+    items =
+        {
+        //Do not change order unless you also modify DoShowToolBarOtherL()!!        
+        LBUF { txt = qtn_msg_insert_text; }, 
+        LBUF { txt = qtn_msg_insert_note_as_text; }, 
+        LBUF { txt = qtn_msg_insert_note_as_att; },
+#ifdef EMAIL_PRESENTATION_SUPPORT
+        LBUF { txt = qtn_msg_insert_presentation; },
+#endif //EMAIL_PRESENTATION_SUPPORT
+        LBUF { txt = qtn_msg_insert_other_files; } 
+        
+        };
+    }
+
+#endif //RD_SCALABLE_UI_V2
+
+//------------------------------------------------------------------------------
+//    r_maileditor_toolbar_text_choicelist
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_maileditor_toolbar_text_choicelist
+    {
+    flags = EGeneralQueryFlags;
+    softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+    items =
+        {
+        AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+            {
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = AVKON_LIST_QUERY_LIST
+                    {
+                    array_id = r_maileditor_toolbar_text_choicelist_items;
+                    };
+                heading = qtn_msg_insert_phrase_title;
+                };
+            }
+        };
+    }
+
+//------------------------------------------------------------------------------
+//    r_maileditor_toolbar_choicelist_items
+//------------------------------------------------------------------------------
+//
+RESOURCE ARRAY r_maileditor_toolbar_text_choicelist_items
+    {
+    items =
+        {
+        LBUF { txt = qtn_msg_insert_text; },
+        LBUF { txt = qtn_msg_insert_note; }
+        };
+    }
+
+
+//------------------------------------------------------------------------------
+//    r_maileditor_options_close
+//------------------------------------------------------------------------------
+//
+RESOURCE CBA r_maileditor_options_close
+    {
+    buttons =
+        {
+        CBA_BUTTON { id = EAknSoftkeyOptions;   txt = text_softkey_option; },
+        CBA_BUTTON { id = EAknSoftkeyClose;     txt = text_softkey_close; },
+        CBA_BUTTON { id = EAknSoftkeyContextOptions; txt=text_softkey_option;}
+        };
+    }
+
+//------------------------------------------------------------------------------
+//    r_maileditor_options_back_change
+//------------------------------------------------------------------------------
+//
+RESOURCE CBA r_maileditor_options_back_change
+    {
+    buttons =
+        {
+        CBA_BUTTON { id = EAknSoftkeyOptions;   txt = text_softkey_option; },
+        CBA_BUTTON { id = EAknSoftkeyBack;     txt = text_softkey_back; },
+        CBA_BUTTON { id = EMsgMailSendOptionsChange; txt=qtn_msk_change;}
+        };
+    }
+
+
+//------------------------------------------------------------------------------
+//    Title text for attachments dialog
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_title_attachments { buf = qtn_mail_title_attachments; }
+
+//------------------------------------------------------------------------------ 
+//    r_send_options_title_text
+//    
+//    Title text for send options dialog
+//------------------------------------------------------------------------------
+//
+RESOURCE TITLE_PANE r_send_options_title_text
+    {
+    txt = qtn_mail_title_sending_options;
+    }
+
+//------------------------------------------------------------------------------
+//    r_msgmaileditor_menubar
+//    Application specific menubar.
+//------------------------------------------------------------------------------
+//
+RESOURCE MENU_BAR r_msgmaileditor_menubar
+{
+    titles =
+    {
+        MENU_TITLE { menu_pane = r_msgmaileditor_options_menu3; },
+        MENU_TITLE { menu_pane = r_msgmaileditor_options_menu2; },
+        MENU_TITLE  { menu_pane = r_msgmaileditor_options_menu1; } 
+    };
+}
+
+//------------------------------------------------------------------------------
+//    r_msgmaileditor_options_menu1
+//------------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmaileditor_options_menu1
+{
+    items =
+    {
+        MENU_ITEM { command = EMsgMailEditorCmdSend; txt=qtn_msg_om_send; },
+        MENU_ITEM { command = EMsgMailEditorCmdAddRecipient; 
+            txt=qtn_msg_om_add_recipient; },
+        MENU_ITEM { command = EMsgMailEditorCmdInsertMenu;
+            txt=qtn_mail_om_insert;
+            flags = EEikMenuItemDimmed; },
+        MENU_ITEM { command = EMsgMailEditorCmdInsertSubMenu;
+            txt=qtn_mail_om_insert; 
+            cascade=r_msgmaileditor_insert_menu;
+            flags = EEikMenuItemDimmed; },
+	MENU_ITEM { command = EMsgMailEditorCmdAddHeaders;
+	    txt=qtn_msg_om_change_headers;}
+    };
+}
+
+//------------------------------------------------------------------------------
+//    r_msgmaileditor_options_menu2
+//------------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmaileditor_options_menu2
+{
+    items =
+    {
+        MENU_ITEM { command = EMsgMailEditorCmdAttachments; 
+            txt = qtn_mail_om_attachments; },                
+        MENU_ITEM { command = EMsgMailEditorCmdSendingOptions; 
+            txt = qtn_mail_om_sending_options; }
+    };	
+}
+
+//------------------------------------------------------------------------------
+//    r_msgmaileditor_options_menu3
+//------------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmaileditor_options_menu3
+{
+    items = 
+    {
+        MENU_ITEM { command = EMsgMailEditorCmdMessageInfo; 
+            txt=qtn_msg_om_message_info; },
+        MENU_ITEM   { command = EMsgMailEditorSubmenuZoomCommands;  
+                        txt = qtn_options_text_size;
+                        cascade = r_msgmaileditor_zoom_submenu;
+                    },
+	    MENU_ITEM { command = EAknCmdHelp; txt=qtn_options_help; },                                   
+
+        MENU_ITEM { command = EAknCmdExit; txt=qtn_options_exit; }
+    };
+}
+
+//------------------------------------------------------------------------------
+//    r_msgmaileditor_insert_menu
+//------------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmaileditor_insert_menu
+{
+    items=
+    {
+        MENU_ITEM { command = EMsgMailEditorCmdInsertImage; 
+            txt = qtn_mail_sm_insert_image; },              // Image
+        MENU_ITEM { command = EMsgMailEditorCmdInsertAudio; 
+            txt = qtn_mail_sm_insert_audio; },              // Audio 
+        MENU_ITEM { command = EMsgMailEditorCmdInsertVideo; 
+            txt = qtn_mail_sm_insert_video; },              // Video
+	    MENU_ITEM { command = EMsgMailEditorCmdInsertNote; 
+            txt = qtn_mail_sm_insert_note; },               // Note
+        MENU_ITEM { command = EMsgMailEditorCmdInsertOther; 
+            txt = qtn_mail_sm_insert_other; },               // Other
+        MENU_ITEM { command = EMsgMailEditorCmdInsertTemplate; 
+            txt = qtn_mail_sm_insert_template_text;
+            flags = EEikMenuItemDimmed;  }   // Template text
+    };
+}
+
+//------------------------------------------------------------------------------
+//    r_msgmaileditor_context_menubar
+//------------------------------------------------------------------------------
+//
+RESOURCE MENU_BAR r_msgmaileditor_context_menubar
+{
+    titles=
+    {
+        MENU_TITLE { menu_pane = r_msgmaileditor_context_menupane; }
+    };
+}
+
+//------------------------------------------------------------------------------
+//    r_msgmaileditor_context_menupane
+//------------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmaileditor_context_menupane
+{
+    items=
+    {
+        MENU_ITEM { command=EMsgMailEditorCmdSend; txt = qtn_msg_om_send; },
+        MENU_ITEM { command = EMsgMailEditorCmdInsertMenu;
+            txt=qtn_mail_om_insert;
+            flags = EEikMenuItemDimmed; },
+        MENU_ITEM { command = EMsgMailEditorCmdInsertSubMenu;
+            txt=qtn_mail_om_insert; 
+            cascade=r_msgmaileditor_insert_menu;
+            flags = EEikMenuItemDimmed; },
+        MENU_ITEM { command=EMsgMailEditorCmdAddRecipient; 
+            txt = qtn_msg_om_add_recipient; }
+    };
+}
+
+//------------------------------------------------------------------------------   
+//    R_MAIL_EDITOR_TO
+//    'To' field in mail editor's scrollable form.
+//------------------------------------------------------------------------------
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mail_editor_to
+    {
+    prompt = qtn_msg_to;       // To
+    id = EMsgComponentIdTo;
+    distance = 0;    
+    default_case = EAknEditorLowerCase;
+    allowed_case_modes = EAknEditorAllCaseModes;
+    default_input_mode = EAknEditorTextInputMode;
+    allowed_input_modes = EAknEditorTextInputMode | 
+        EAknEditorNumericInputMode;
+	numeric_keymap = EAknEditorStandardNumberModeKeymap;
+    avkon_flags = EAknEditorFlagNoT9 | EAknEditorFlagUseSCTNumericCharmap;
+    }
+
+//------------------------------------------------------------------------------     
+//    R_MAIL_EDITOR_CC
+//    'Cc' field in mail editor's scrollable form.
+//------------------------------------------------------------------------------ 
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mail_editor_cc
+    {
+    prompt = qtn_msg_cc;       // Cc
+    id = EMsgComponentIdCc;
+    distance = 0;   
+    default_case = EAknEditorLowerCase;
+    allowed_case_modes = EAknEditorAllCaseModes;
+    default_input_mode = EAknEditorTextInputMode;
+    allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode;
+    numeric_keymap = EAknEditorStandardNumberModeKeymap;
+	avkon_flags = EAknEditorFlagNoT9 | EAknEditorFlagUseSCTNumericCharmap;
+    }
+
+//------------------------------------------------------------------------------     
+//    R_MAIL_EDITOR_BCC
+//    'Bcc' field in mail editor's scrollable form.
+//------------------------------------------------------------------------------ 
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mail_editor_bcc
+    {
+    prompt = qtn_msg_bcc;       // Bcc
+    id = EMsgComponentIdBcc;
+    distance = 0;   
+    default_case = EAknEditorLowerCase;
+    allowed_case_modes = EAknEditorAllCaseModes;
+    default_input_mode = EAknEditorTextInputMode;
+    allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode;
+    numeric_keymap = EAknEditorStandardNumberModeKeymap;
+	avkon_flags = EAknEditorFlagNoT9 | EAknEditorFlagUseSCTNumericCharmap;
+    }
+
+//------------------------------------------------------------------------------     
+//    R_MAIL_EDITOR_REPLYTO
+//------------------------------------------------------------------------------ 
+//
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mail_editor_replyto
+    {
+    prompt = qtn_msg_replyto;  // Reply-to
+    id = EMailEditorControlReplyTo;
+    distance = 0;    
+    }
+
+//------------------------------------------------------------------------------     
+//    R_MAIL_EDITOR_SUBJECT
+//    'Subject' field in mail editor's scrollable form.
+//------------------------------------------------------------------------------ 
+//
+RESOURCE MSG_EDITOR_EXPANDABLE_CONTROL r_mail_editor_subject
+    {
+    prompt = qtn_msg_subject;  // Subject
+    id = EMsgComponentIdSubject;
+    distance = 0;
+    maxchars = 950;
+    default_case = EAknEditorTextCase; 
+    allowed_case_modes = EAknEditorAllCaseModes;
+    default_input_mode = EAknEditorTextInputMode;
+    allowed_input_modes = EAknEditorTextInputMode | EAknEditorNumericInputMode;
+	avkon_flags = EAknEditorFlagUseSCTNumericCharmap;
+    } 
+
+//------------------------------------------------------------------------------     
+//    R_MAIL_EDITOR_SEND_OPTIONS
+//    Send Options setting dialog.
+//------------------------------------------------------------------------------ 
+//
+RESOURCE DIALOG r_mail_editor_send_options
+    {
+    flags = EEikDialogFlagWait | 
+        EEikDialogFlagNotifyEsc | 
+        EEikDialogFlagCbaButtons| 
+        EEikDialogFlagNoDrag | 
+        EEikDialogFlagNoTitleBar | 
+        EEikDialogFlagNoShadow 
+        | EEikDialogFlagNoBorder | EEikDialogFlagFillAppClientRect;
+    buttons=r_maileditor_options_back_change;
+    items=
+        {
+        DLG_LINE
+            {
+            id=EMsgMailSendingProfile;
+            type=EAknCtSettingListBox;      
+            itemflags=EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+            control=LISTBOX 
+                {
+
+                height   = 8;
+                
+                };
+            }
+        };
+    }
+
+//------------------------------------------------------------------------------   
+//    r_send_options_menubar
+//    menubar for Send Options 
+//------------------------------------------------------------------------------
+//
+RESOURCE MENU_BAR r_send_options_menubar
+    {
+    titles=
+        { 
+        MENU_TITLE { menu_pane=r_send_options_menu; txt=""; }
+        };
+    }
+ 
+//-------------------------------------------------------------------------------   
+//    r_send_options_menu
+//    menu items for Send Options 
+//-------------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_send_options_menu
+    {
+    items=
+        {
+        MENU_ITEM 
+            { 
+            command = EMsgMailSendOptionsChange; 
+            txt=qtn_mail_om_change; 
+            },
+            
+        MENU_ITEM { command = EAknCmdHelp; txt=qtn_options_help; },
+
+        MENU_ITEM 
+            { 
+            command = EMsgMailEditorSendOptionsCmdExit; 
+            txt=qtn_options_exit; 
+            }
+        };
+    }
+
+//------------------------------------------------------------------------------   
+//    r_attachments_menu
+//    menu items for Attachments dialog 
+//------------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_attachments_menu
+    {
+    items=
+        {
+            MENU_ITEM { command = EMsgViewAttachmentCmdOpen; 
+                txt=qtn_mail_om_open; },
+            MENU_ITEM { command = EMsgMailEditorCmdInsertMenu;
+                txt=qtn_mail_om_insert;
+                flags = EEikMenuItemDimmed; },
+            MENU_ITEM { command = EMsgMailEditorCmdInsertSubMenu;
+                txt=qtn_mail_om_insert; 
+                cascade=r_msgmaileditor_insert_menu;
+                flags = EEikMenuItemDimmed; },
+            MENU_ITEM { command = EMsgViewAttachmentCmdRemove; 
+                txt=qtn_mail_om_remove; },
+        	MENU_ITEM { command = EAknCmdHelp; txt=qtn_options_help; },
+
+            MENU_ITEM { command = EMsgMailEditorAttachmentsCmdExit; 
+                txt=qtn_options_exit; }
+        };
+    }
+
+//------------------------------------------------------------------------------
+//   r_mail_editor_saved_draft_note_text.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_mail_editor_saved_draft_note_text
+    { buf = qtn_mail_info_msg_saved_drafts; }
+
+//------------------------------------------------------------------------------
+//   r_mail_editor_added_attach_text.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_mail_editor_added_attach_text
+    { buf = qtn_mail_conf_added_attach; }
+
+//------------------------------------------------------------------------------
+//    r_mail_settings_encode_false_note
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_mail_settings_encode_false_note
+    { buf = qtn_mail_settings_encode_false_not; }
+
+//------------------------------------------------------------------------------
+//   r_mail_editor_delete_message.
+//------------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_mail_editor_delete_message
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY 
+                { 
+                    layout = EConfirmationLayout;
+                    label = qtn_mail_quest_delete_msg;
+                    animation = R_QGN_NOTE_QUERY_ANIM;
+                };
+            }
+        };
+    }
+
+
+//------------------------------------------------------------------------------
+//   r_replyto_addr_edwin.
+//------------------------------------------------------------------------------
+//
+RESOURCE EDWIN r_replyto_addr_edwin 
+    {
+    flags = 
+        EEikEdwinAutoSelection | 
+        EEikEdwinNoLineOrParaBreaks;
+    width = 9;
+    lines = 5;
+    maxlength = 100; // KStringLength
+    default_case = EAknEditorLowerCase;
+    allowed_case_modes = EAknEditorAllCaseModes;
+    
+    default_input_mode = EAknEditorTextInputMode;
+    allowed_input_modes = 
+        EAknEditorTextInputMode | 
+        EAknEditorNumericInputMode;
+    
+    avkon_flags = 
+        EAknEditorFlagNoT9 | 
+        EAknEditorFlagLatinInputModesOnly |
+        EAknEditorFlagUseSCTNumericCharmap;
+    
+    }
+
+//------------------------------------------------------------------------------
+//   r_mail_remote_listbox.
+//------------------------------------------------------------------------------
+//
+RESOURCE LISTBOX r_mail_remote_listbox 
+    {
+    flags = EAknListBoxMarkableList;
+    }
+
+//------------------------------------------------------------------------------
+//   r_mail_remote_mbox_setting.
+//   Note: In addition to "mailbox in use" this same resource is used also 
+//   for other Sending option settings, label is changed dynamically.
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_mail_remote_mbox_setting
+    { 
+    label= qtn_mail_settings_rm_in_use;
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    type =  EAknSetListBox;
+    editor_resource_id= r_mail_remote_listbox;
+    }
+ 
+//------------------------------------------------------------------------------
+//   r_mail_send_setting_page.
+//------------------------------------------------------------------------------
+//    
+RESOURCE AVKON_SETTING_PAGE r_mail_send_setting_page
+    { 
+    label= qtn_mail_settings_send_msg;
+    softkey_resource = R_AVKON_SOFTKEYS_POPUP_SETTING_ITEM;
+    type =  EAknSetListBox;
+    editor_resource_id= r_mail_remote_listbox;
+    }    
+
+//------------------------------------------------------------------------------
+//   r_mail_priority_setting.
+//------------------------------------------------------------------------------
+//    
+RESOURCE AVKON_SETTING_PAGE r_mail_priority_setting
+    { 
+    label= qtn_mail_settings_priority;
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    type =  EAknSetListBox;
+    editor_resource_id= r_mail_remote_listbox;
+    }     
+
+//------------------------------------------------------------------------------
+//   r_mail_encode_setting.
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_mail_encode_setting
+    { 
+    label= qtn_mail_settings_encode;
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    type =  EAknSetListBox;
+    editor_resource_id= r_mail_remote_listbox;
+    } 
+  
+//------------------------------------------------------------------------------
+//   r_mail_reply_to_setting.
+//------------------------------------------------------------------------------
+//    
+RESOURCE AVKON_SETTING_PAGE r_mail_reply_to_setting
+    { 
+    label= qtn_mail_settings_replyto;
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    type =  EEikCtEdwin;
+    editor_resource_id= r_replyto_addr_edwin;
+    }     
+
+//------------------------------------------------------------------------------
+
+//   r_mail_remote_mbox_setting_empty_list.
+//   Empty list. Note: In addition to "mailbox in use" this same resource is
+//   used also for other Sending option settings, label is changed dynamically.
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_mail_remote_mbox_setting_empty_list
+    { 
+    label= qtn_mail_settings_rm_in_use;
+    softkey_resource = R_AVKON_SOFTKEYS_CANCEL;
+    type =  EAknSetListBox;
+    editor_resource_id= r_mail_remote_listbox;
+    }
+
+//------------------------------------------------------------------------------
+//   r_mail_editor_mailbox_in_use_text.
+//------------------------------------------------------------------------------
+// 
+RESOURCE TBUF r_mail_editor_mailbox_in_use_text 
+    { 
+    buf = qtn_mail_info_this_mailbox; 
+    }
+
+//------------------------------------------------------------------------------
+//   r_text_no_rmbox.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_text_no_rmbox {buf = qtn_selec_set_pane_empty;}
+
+//------------------------------------------------------------------------------
+//   r_text_shed_now.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_text_shed_now { 
+    buf = qtn_mail_setting_immediately;}
+
+//------------------------------------------------------------------------------
+//   r_text_shed_next.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_text_shed_next {
+    buf = qtn_mail_setting_next_connect;}
+
+//-------------------------------------------------------------------------------   
+//    R_MAIL_EDITOR_MESSAGE_DELETED
+//    Note displayed after deleting message
+//-------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_mail_editor_message_deleted_text
+    { buf = qtn_mail_info_message_deleted; }
+
+//------------------------------------------------------------------------------
+//   r_text_sending_mail.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_text_sending_mail {buf = qtn_mail_wait_start_send_msg; }
+
+//------------------------------------------------------------------------------
+//   r_text_sending_mail_nextcon.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_text_sending_mail_nextcon 
+    {
+    buf = qtn_mail_wait_send_dur_nextcon; 
+    }
+
+//------------------------------------------------------------------------------
+//   r_mail_editor_incorrect_address.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_mail_editor_incorrect_address 
+    {
+    buf = qtn_mail_info_incorrect_addr; 
+    }
+    
+//------------------------------------------------------------------------------
+//   qtn_mce_error_missing_character.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_qtn_mce_error_missing_character 
+    {
+    buf = qtn_mce_error_missing_character; 
+    }    
+    
+//------------------------------------------------------------------------------
+//   r_mail_editor_incorrect_address_no_alias.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_mail_editor_incorrect_address_no_alias 
+    { buf = qtn_mail_info_recipien_no_alias; }
+
+//------------------------------------------------------------------------------
+//   r_wait_send_note.
+//------------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_wait_send_note
+    {
+    flags = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+        {
+        DLG_LINE
+            { 
+            type = EAknCtNote;
+            id = EGeneralNote;
+            control = AVKON_NOTE
+                {
+                layout = EWaitLayout;
+                imagefile = AVKON_ICON_FILE;
+                imageid = EMbmAvkonQgn_note_mail;
+                imagemask = EMbmAvkonQgn_note_mail_mask;
+                animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }
+
+//------------------------------------------------------------------------------
+//   r_wait_save_new_note.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_wait_save_new_note { buf = qtn_wait_saving_message_new; }
+
+//------------------------------------------------------------------------------
+//   r_wait_save_note.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_wait_save_note { buf = qtn_wait_saving_message; }
+  
+//------------------------------------------------------------------------------
+//   r_wait_opening.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_wait_opening { buf = qtn_mail_wait_opening_editor; }
+
+//------------------------------------------------------------------------------
+//   r_wait_inserting_attachment.
+//------------------------------------------------------------------------------
+//
+RESOURCE TBUF r_wait_inserting_attachment { buf = qtn_gen_note_inserting; }
+
+
+RESOURCE AVKON_SETTING_ITEM_LIST r_service_settings_list
+    {
+    title = "";
+    initial_number = 0;
+    items = 
+    	{
+    	AVKON_SETTING_ITEM
+            {
+            identifier = ESettingMailboxInUse;
+            name = qtn_mail_settings_rm_in_use;
+            setting_page_resource = r_mail_remote_mbox_setting;
+            },
+
+    	AVKON_SETTING_ITEM
+            {
+            identifier = ESettingPriority;
+            name = qtn_mail_settings_priority;
+            setting_page_resource = r_mail_priority_setting;
+            },
+            
+    	AVKON_SETTING_ITEM
+            {
+            identifier = ESettingSendMessage;
+            name = qtn_mail_settings_send_msg;
+            setting_page_resource = r_mail_send_setting_page;
+            },
+            
+    	AVKON_SETTING_ITEM
+            {
+            identifier = ESettingReplyTo;
+            name = qtn_mail_settings_replyto;
+            empty_item_text = qtn_mail_settings_replyto_none;
+            setting_page_resource = r_mail_reply_to_setting;
+            },     
+            
+    	AVKON_SETTING_ITEM
+            {
+            identifier = ESettingEncoding;
+            name = qtn_mail_settings_encode;
+            setting_page_resource = r_mail_encode_setting;
+            }                   
+    	};
+    }
+
+//------------------------------------------------------------------------------
+//   r_mail_mailbox_missing.
+//------------------------------------------------------------------------------
+RESOURCE TBUF r_mail_mailbox_missing
+    {
+    buf = qtn_mail_info_cannot_send_rm_missing;
+    }
+
+//------------------------------------------------------------------------------
+//   r_mail_remove_attachment.
+//------------------------------------------------------------------------------
+RESOURCE TBUF r_mail_remove_attachment
+    {
+    buf = qtn_query_common_conf_remove;
+    }
+//------------------------------------------------------------------------------
+//   r_mail_address_query.
+//------------------------------------------------------------------------------
+RESOURCE DIALOG r_mail_address_query
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control= AVKON_DATA_QUERY 
+                { 
+                    layout = EDataLayout;
+                    label = qtn_mail_prmpt_add_mail_address;
+                    control = EDWIN
+                        {
+                        maxlength=100;
+                        default_case = EAknEditorLowerCase;
+                        allowed_case_modes = EAknEditorAllCaseModes;
+                        default_input_mode = EAknEditorTextInputMode;
+                        allowed_input_modes = 
+                            EAknEditorTextInputMode | 
+                            EAknEditorNumericInputMode;
+                        avkon_flags = EAknEditorFlagNoT9;
+                        special_character_table = 
+                            R_AVKON_EMAIL_ADDR_SPECIAL_CHARACTER_TABLE_DIALOG;
+                        };
+                };
+            }
+        };
+    }
+//------------------------------------------------------------------------------
+//   r_mail_invalid_attachment.
+//------------------------------------------------------------------------------
+RESOURCE TBUF r_mail_invalid_attachment
+    {
+    buf = qtn_mail_info_invalid_attach;
+    }
+
+RESOURCE TBUF r_mail_one_invalid_attachment
+    {
+    buf = qtn_mail_info_one_file_err;
+    }
+
+RESOURCE TBUF r_mail_few_invalid_attachments
+    {
+    buf = qtn_mail_info_few_files_err;
+    }
+
+RESOURCE TBUF r_mail_all_invalid_attachments
+    {
+    buf = qtn_mail_info_all_invalid;
+    }
+
+RESOURCE TBUF r_qtn_mail_close_nosave
+    {
+    buf = qtn_mail_close_nosave;
+    }
+
+// DRM strings
+RESOURCE TBUF r_qtn_mail_send_wo_rights_sd_1
+    {
+    buf = qtn_drm_send_wo_rights_sd_1;
+    }
+
+RESOURCE TBUF r_qtn_mail_send_forbid
+    {
+    buf = qtn_drm_send_forbid;
+    }
+RESOURCE TBUF r_qtn_mail_send_forbid_1
+    {
+    buf = qtn_drm_info_send_forbid_one;
+    }
+    
+RESOURCE LISTBOX r_additional_headers_dlg_listbox 
+    {
+    flags = EEikListBoxMultipleSelection;
+    }
+
+RESOURCE TBUF r_qtn_msg_om_change_headers
+    {
+    buf = qtn_msg_om_change_headers;
+    }
+
+RESOURCE TBUF r_qtn_msg_qry_header_remove
+    {
+    buf = qtn_msg_qry_header_remove;
+    }
+
+RESOURCE TBUF r_qtn_msg_qry_headers_remove
+    {
+    buf = qtn_msg_qry_headers_remove;
+    }
+
+RESOURCE TBUF r_text_softkey_option
+    {
+    buf = text_softkey_option;
+    }
+
+RESOURCE TBUF r_qtn_msk_attachment
+    {
+    buf = qtn_msk_attachment;
+    }     
+
+//------------------------------------------------------------------------------
+//   priority values.
+//------------------------------------------------------------------------------
+RESOURCE TBUF r_qtn_mail_setting_priority_high
+    {
+    buf = qtn_mail_setting_priority_high;
+    }
+
+RESOURCE TBUF r_qtn_mail_setting_priority_normal
+    {
+    buf = qtn_mail_setting_priority_normal;
+    }
+
+RESOURCE TBUF r_qtn_mail_setting_priority_low
+    {
+    buf = qtn_mail_setting_priority_low;
+    }  
+
+//------------------------------------------------------------------------------
+//   r_qtn_mbxs_sett_defenc_automatic.
+//------------------------------------------------------------------------------
+RESOURCE TBUF r_qtn_mbxs_sett_defenc_automatic
+    {
+    buf = qtn_mbxs_sett_defenc_automatic;
+    }
+
+//------------------------------------------------------------------------------
+//   r_mail_softkeys_ok_cancel.
+//------------------------------------------------------------------------------
+RESOURCE CBA r_mail_softkeys_ok_cancel
+    {
+    buttons =
+        {
+        // replace EAknSoftkeyOk with EAknSoftkeySelect to prevent list box 
+        // "force selection"
+        CBA_BUTTON {id=EAknSoftkeySelect; txt=text_softkey_ok;},
+        CBA_BUTTON {id=EAknSoftkeyCancel; txt= text_softkey_cancel;},
+        CBA_BUTTON {id=EAknSoftkeyMark; txt=text_softkey_mark;}
+        };
+    }
+        
+//------------------------------------------------------------------------------
+//   r_additional_headers_list_query.
+//------------------------------------------------------------------------------
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_additional_headers_list_query
+   {
+   softkeys = r_mail_softkeys_ok_cancel;
+
+   items =
+		{
+		AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE
+			{
+			control = AVKON_LIST_QUERY_CONTROL
+				{
+				listtype = EAknCtSingleGraphicPopupMenuListBox;
+				
+				listbox = AVKON_MULTISELECTION_LIST_QUERY_LIST
+					{
+					flags = EAknListBoxStylusMultiselectionList;
+					};
+				heading = qtn_msg_prompt_headers;
+				};
+			}
+		};
+	}
+
+//------------------------------------------------------------------------------
+//   r_qtn_msg_headers_cc.
+//------------------------------------------------------------------------------	
+RESOURCE TBUF r_qtn_msg_headers_cc
+    {
+    buf = "1\t"qtn_msg_headers_cc;
+    }
+//------------------------------------------------------------------------------
+//   r_qtn_msg_headers_bcc.
+//------------------------------------------------------------------------------
+RESOURCE TBUF r_qtn_msg_headers_bcc
+    {
+    buf = "1\t"qtn_msg_headers_bcc;
+    }
+//------------------------------------------------------------------------------
+//   r_qtn_msg_headers_subject.
+//------------------------------------------------------------------------------
+RESOURCE TBUF r_qtn_msg_headers_subject
+    {
+    buf = "1\t"qtn_msg_headers_subject;
+    }	
+
+//------------------------------------------------------------------------------
+//   r_qtn_memlo_not_enough_memory.
+//------------------------------------------------------------------------------
+RESOURCE TBUF r_qtn_memlo_not_enough_memory
+    {
+    buf = qtn_memlo_not_enough_memory;
+    }	
+
+//----------------------------------------------------
+//
+//    r_mail_confirm_not_enough_memory
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_mail_confirm_not_enough_memory
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_OK_EMPTY;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationQueryLayout;
+                label = qtn_memlo_not_enough_memory;
+                };
+            }
+        };
+    }
+//----------------------------------------------------
+//
+//    r_msgmaileditor_zoom_submenu
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmaileditor_zoom_submenu
+    {
+    items=
+        {
+        
+        MENU_ITEM   { command = EMsgDispSizeAutomatic; 
+                    txt = qtn_options_auto;
+                    flags = EEikMenuItemRadioStart;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeLarge; 
+                    txt = qtn_options_large;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeNormal; 
+                    txt = qtn_options_normal;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeSmall;
+                    txt = qtn_options_small;
+                    flags = EEikMenuItemRadioEnd;
+                    }
+        }; 
+    }
+// End of File

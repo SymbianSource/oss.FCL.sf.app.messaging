@@ -1,0 +1,79 @@
+/*
+* Copyright (c) 2002 - 2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   PluginBioControlAPITest.mmp
+*
+*/
+
+
+
+#if defined(__S60_)
+		#include <data_caging_paths.hrh>
+        // To get the OS_LAYER_SYSTEMINCLUDE-definition
+        #include <platform_paths.hrh>
+#endif
+
+TARGET          PluginBioControlAPITest.dll
+TARGETTYPE      dll
+UID             0x1000008D 0x101FB4E2
+
+CAPABILITY      ALL -TCB
+
+// VENDORID     0x00000000
+
+// SECUREID     0x00000000
+
+//TARGETPATH
+DEFFILE         PluginBioControlAPITest.def
+
+USERINCLUDE     ../inc
+APP_LAYER_SYSTEMINCLUDE 
+
+SOURCEPATH      ../src
+
+SOURCE          PluginBioControlAPITest.cpp
+SOURCE          PluginBioControlAPITestBlocks.cpp 
+SOURCE          MsgBioCtrlTest.cpp 
+SOURCE			EdwinTestControl.cpp
+
+START RESOURCE  ../group/PluginBioControlAPITest.rss
+HEADER
+TARGETPATH 		resource
+LANG 			SC
+END  			//RESOURCE
+
+LIBRARY         euser.lib
+LIBRARY         stiftestinterface.lib
+LIBRARY         stiftestengine.lib
+LIBRARY			richBio.lib
+LIBRARY			MsgEditorUtils.lib
+LIBRARY			msgs.lib
+LIBRARY         commonengine.lib // StringLoader
+LIBRARY         cone.lib 
+LIBRARY         ws32.lib 
+LIBRARY         avkon.lib 
+LIBRARY         eikcoctl.lib 
+LIBRARY         eikctl.lib 
+LIBRARY         bafl.lib 
+LIBRARY         apgrfx.lib 
+LIBRARY         aknskins.lib 
+LIBRARY         aknskinsrv.lib 
+LIBRARY         aknswallpaperutils.lib 
+LIBRARY         eikcore.lib 
+LIBRARY         efsrv.lib
+
+
+LANG            SC
+
+
+// End of File

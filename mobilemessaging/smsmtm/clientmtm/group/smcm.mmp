@@ -45,7 +45,7 @@ USERINCLUDE		../../../../../../mw/messagingmw/messagingfw/msgsrvnstore/server/in
 APP_LAYER_SYSTEMINCLUDE_SYMBIAN
 
 LIBRARY       euser.lib estor.lib bafl.lib etext.lib 
-LIBRARY	      gsmu.lib msgs.lib biodb.lib efsrv.lib
+LIBRARY	      gsmu.lib msgs.lib cntmodel.lib biodb.lib efsrv.lib
 LIBRARY		commsdat.lib
 LIBRARY		etelmm.lib
 

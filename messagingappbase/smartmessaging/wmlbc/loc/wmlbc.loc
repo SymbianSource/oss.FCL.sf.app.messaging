@@ -1,0 +1,62 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Localization strings for project WMLBC
+*
+*/
+
+
+
+
+// LOCALISATION STRINGS
+
+//-----------------------------------------------------------------
+// TITLE
+//-----------------------------------------------------------------
+
+//d:Title pane text when message contains one bookmark.
+//l:title_pane_t2/opt12
+//
+#define qtn_sm_title_one_bookmark "WAP bookmark "
+
+//d:Name of the message type
+//l:list_double_large_graphic_pane_t1
+//
+#define qtn_mce_inbox_type_smart_conf "Configuration message"
+
+//d:Information note text after bookmark is copied to database
+//l:popup_note_window
+//
+#define qtn_sm_note_bookmark_copied "Bookmark copied "
+     
+//d:Options menu item for adding a bookmark into bookmarks database.
+//l:list_single_pane_t1_cp2
+//
+#define qtn_sm_add_bookmarks "Add to bookmarks"        
+
+//d:Label for bookmark title
+//l:popup_query_data_window
+//
+#define qtn_sm_bm_title "Title "
+
+//d:Label for bookmark address (URL)
+//l:popup_query_data_window
+//
+#define qtn_sm_bm_address "Address "
+
+//d:This is the default name for new bookmark. 
+//d:It appears in the bookmark name text query
+//d:as the default value.
+//l:query_popup_data_pane_t1/opt4
+//
+#define qtn_sm_bookmark_name "New bookmark"

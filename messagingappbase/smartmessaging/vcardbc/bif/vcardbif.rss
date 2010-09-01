@@ -1,0 +1,85 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is the source for the BIF file. The BIF is a configuration file
+*     for Bio Controls.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+
+NAME    VCDG
+
+//  INCLUDES
+#include <biftool2.rh>
+#include <vcardbc.loc>
+
+//  CONSTANTS
+//  MACROS
+
+//  RESOURCE DEFINITIONS
+
+RESOURCE BIO_INFO_FILE
+    {
+    message_type_uid    = 0x10005534;
+	message_parser_name = "gfp.dll";
+	message_appctrl_name = "vcardbc.dll";       // vCard Bio Control
+    message_app_uid     = KUidUseDefaultApp;
+    
+    file_extension      = ".vcf";
+    description         = qtn_mce_inbox_type_smart_cbc;
+    icons_filename      = "none";
+    icon_zoom_levels    = {1};
+
+    ids=
+        {
+// -- remove after iby variation done
+        ID
+            {
+            type = EWap;
+            confidence = ECertain;
+            port = 9204;
+            },
+        ID
+            {
+            type = EWap;
+            confidence = ECertain;
+            port = 226;
+            },
+        ID
+            {
+            type = EWapSecure;
+            confidence = ECertain;
+            port = 9206;
+            },
+// -- end of remove --
+        ID
+            {
+            type = EIana;
+            confidence = EPossible;
+            text = "text/directory ";
+            },
+        ID
+            {
+            type = EIana;
+            confidence = EPossible;
+            text = "text/X-vCard";
+            }
+
+        };
+    }
+
+// end of file

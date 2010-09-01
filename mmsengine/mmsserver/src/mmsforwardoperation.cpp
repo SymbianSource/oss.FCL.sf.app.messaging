@@ -27,6 +27,7 @@
 #include    <in_sock.h>
 #include    <commdbconnpref.h>
 #include    <featmgr.h>
+#include    <AknGlobalNote.h>
 
 // the rest are local includes, needed always
 #include    "mmsconst.h"
@@ -67,7 +68,7 @@ CMmsForwardOperation::CMmsForwardOperation( RFs& aFs ):
     CMmsBaseOperation( aFs )
     {
     //
-    // members that get initial value 0, need not be initialized here
+    // members that get initial value 0, need not be intialized here
     //
     }
 
@@ -305,7 +306,7 @@ void CMmsForwardOperation::UpdateEntryStatusL()
         }
 
     //
-    // If notification has been successfully updated, clear the relatedId link
+    // If notification has been succesfully updated, clear the relatedId link
     //
     #ifndef _NO_MMSS_LOGGING_
     TMmsLogger::Log( _L( "0" ) );

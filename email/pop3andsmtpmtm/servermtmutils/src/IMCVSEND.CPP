@@ -2222,7 +2222,7 @@ TBool CImSendRichText::InitialiseL( CMsvServerEntry& aServerEntry,  TImCodec& an
 	iIsNewChunk = ETrue;
 
 	iCurrentChunk.Close();
-	iCurrentChunk.CreateL(KChunkSize);	
+	iCurrentChunk.Create(KChunkSize);	
 	
 	if (aServerEntry.HasStoreL())
 		{
@@ -2303,7 +2303,7 @@ void CImSendRichText::ExtractLineFromChunkL(TDes16& aOutputLine)
 		TInt currentChunkLength = iCurrentChunk.Length();
 		
 		// Resize iCurrentChunk as per data left for send operation.
-		iCurrentChunk.ReAllocL(KChunkSize + currentChunkLength);		
+		iCurrentChunk.ReAlloc(KChunkSize + currentChunkLength);		
 		iCurrentChunk.SetMax();
 		
 		TPtr16 restoredChunkPtr =  iCurrentChunk.MidTPtr(currentChunkLength);

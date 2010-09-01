@@ -42,7 +42,7 @@ void ObexPasswordExternaliser::SetPasswordFromServiceEntryL(CMsvEntry& aServiceE
 * @leave KErrXXX system-wide error codes
 */
 	{
- 	CMsvStore* serviceEntryStore = aServiceEntry.EditStoreL();
+	CMsvStore* serviceEntryStore = aServiceEntry.EditStoreL();
 	CleanupStack::PushL(serviceEntryStore);
 
 	if (!aPassword.Length())

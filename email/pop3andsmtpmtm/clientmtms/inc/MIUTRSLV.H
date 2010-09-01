@@ -130,7 +130,6 @@ public:
 private:
 	void DoRunL();
 	void DoComplete(TInt& );
-	void DoCancel();
 
 	void CheckCurrentEntryL();
 	inline TBool CheckContentDetailsL(const TDesC& aContentLocation, const TDesC& aContentId);
@@ -211,7 +210,6 @@ private:
 
 	void DoRunL();
 	void DoComplete(TInt& );
-	void DoCancel();
 	inline void SetStartParameterL();
 private:
 	CMsvEntry& iCurrentEntry;

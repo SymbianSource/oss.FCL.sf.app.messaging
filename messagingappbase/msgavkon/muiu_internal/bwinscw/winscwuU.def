@@ -1,0 +1,52 @@
+EXPORTS
+	?Reserve@CMuiuLock@@QAEHXZ @ 1 NONAME ; int CMuiuLock::Reserve(void)
+	?NewL@CMuiuLock@@SAPAV1@VTUid@@@Z @ 2 NONAME ; class CMuiuLock * CMuiuLock::NewL(class TUid)
+	?IsVoipSupported@CMuiuContactService@@QBEHXZ @ 3 NONAME ; int CMuiuContactService::IsVoipSupported(void) const
+	?CallToSenderQueryL@MsvUiServiceUtilitiesInternal@@SAHABVTDesC16@@0H@Z @ 4 NONAME ; int MsvUiServiceUtilitiesInternal::CallToSenderQueryL(class TDesC16 const &, class TDesC16 const &, int)
+	?Release@CMuiuLock@@QAEXXZ @ 5 NONAME ; void CMuiuLock::Release(void)
+	??1CMsgOperationWait@@UAE@XZ @ 6 NONAME ; CMsgOperationWait::~CMsgOperationWait(void)
+	??4TMuiuFlags@@QAEAAV0@ABV0@@Z @ 7 NONAME ; class TMuiuFlags & TMuiuFlags::operator=(class TMuiuFlags const &)
+	?NewL@CMuiuSettingsArray@@SAPAV1@H@Z @ 8 NONAME ; class CMuiuSettingsArray * CMuiuSettingsArray::NewL(int)
+	?NewLC@CMuiuFlags@@SAPAV1@PBV?$RArray@I@@PBV?$RArray@UTMuiuLocalFeatureItem@@@@PBV?$RArray@H@@@Z @ 9 NONAME ; class CMuiuFlags * CMuiuFlags::NewLC(class RArray<unsigned int> const *, class RArray<struct TMuiuLocalFeatureItem> const *, class RArray<int> const *)
+	?MmcDriveInfoL@MsvUiServiceUtilitiesInternal@@SAHAAVCMsvSession@@@Z @ 10 NONAME ; int MsvUiServiceUtilitiesInternal::MmcDriveInfoL(class CMsvSession &)
+	?CallL@CMuiuContactService@@QAEHABVTDesC16@@@Z @ 11 NONAME ; int CMuiuContactService::CallL(class TDesC16 const &)
+	?GetMailboxServiceId@MuiuEmailTools@@SAHAAVCMsvSession@@AAVTMsvEntry@@JH@Z @ 12 NONAME ; int MuiuEmailTools::GetMailboxServiceId(class CMsvSession &, class TMsvEntry &, long, int)
+	?InternetCallToSenderQueryL@MsvUiServiceUtilitiesInternal@@SAHABVTDesC16@@0H@Z @ 13 NONAME ; int MsvUiServiceUtilitiesInternal::InternetCallToSenderQueryL(class TDesC16 const &, class TDesC16 const &, int)
+	?CallServiceL@MsvUiServiceUtilitiesInternal@@SAHABVTDesC16@@00PAVCEikonEnv@@@Z @ 14 NONAME ; int MsvUiServiceUtilitiesInternal::CallServiceL(class TDesC16 const &, class TDesC16 const &, class TDesC16 const &, class CEikonEnv *)
+	?ComparePhoneNumberL@MsvUiServiceUtilitiesInternal@@SAHABVTDesC16@@0H@Z @ 15 NONAME ; int MsvUiServiceUtilitiesInternal::ComparePhoneNumberL(class TDesC16 const &, class TDesC16 const &, int)
+	?IsContactFound@CMuiuContactService@@QBEHXZ @ 16 NONAME ; int CMuiuContactService::IsContactFound(void) const
+	?DefaultSendingMailboxL@MuiuEmailTools@@SAJAAVCMsvSession@@AAVTUid@@@Z @ 17 NONAME ; long MuiuEmailTools::DefaultSendingMailboxL(class CMsvSession &, class TUid &)
+	?MdcaCount@CMuiuSettingsArray@@UBEHXZ @ 18 NONAME ; int CMuiuSettingsArray::MdcaCount(void) const
+	?ResolveAddressTypeL@MsvUiServiceUtilitiesInternal@@SA?AW4TMuiuAddressType@@ABVTDesC16@@W4TPhoneNumberType@CommonPhoneParser@@@Z @ 19 NONAME ; enum TMuiuAddressType MsvUiServiceUtilitiesInternal::ResolveAddressTypeL(class TDesC16 const &, enum CommonPhoneParser::TPhoneNumberType)
+	?CallL@CMuiuContactService@@QAEHXZ @ 20 NONAME ; int CMuiuContactService::CallL(void)
+	?Start@CMsgOperationWait@@QAEXXZ @ 21 NONAME ; void CMsgOperationWait::Start(void)
+	?SetDefaultSendingMailboxL@MuiuEmailTools@@SAXJ@Z @ 22 NONAME ; void MuiuEmailTools::SetDefaultSendingMailboxL(long)
+	??0TMuiuFlags@@QAE@_K@Z @ 23 NONAME ; TMuiuFlags::TMuiuFlags(unsigned long long)
+	?ConvertUtcToLocalTime@MsvUiServiceUtilitiesInternal@@SAXAAVTTime@@@Z @ 24 NONAME ; void MsvUiServiceUtilitiesInternal::ConvertUtcToLocalTime(class TTime &)
+	?NewL@CMuiuContactService@@SAPAV1@AAVCEikonEnv@@PAVCMsgVoIPExtension@@@Z @ 25 NONAME ; class CMuiuContactService * CMuiuContactService::NewL(class CEikonEnv &, class CMsgVoIPExtension *)
+	??0CMuiuSettingsArray@@IAE@XZ @ 26 NONAME ; CMuiuSettingsArray::CMuiuSettingsArray(void)
+	?FoundContactAddressL@CMuiuContactService@@QBE?AVTPtrC16@@XZ @ 27 NONAME ; class TPtrC16 CMuiuContactService::FoundContactAddressL(void) const
+	??1CMuiuSettingsArray@@UAE@XZ @ 28 NONAME ; CMuiuSettingsArray::~CMuiuSettingsArray(void)
+	?PreferredCallTypeL@CMuiuContactService@@QBE?AW4TMuiuPreferredCallType@1@XZ @ 29 NONAME ; enum CMuiuContactService::TMuiuPreferredCallType CMuiuContactService::PreferredCallTypeL(void) const
+	?DefaultServiceForMTML@MsvUiServiceUtilitiesInternal@@SAJAAVCMsvSession@@VTUid@@H@Z @ 30 NONAME ; long MsvUiServiceUtilitiesInternal::DefaultServiceForMTML(class CMsvSession &, class TUid, int)
+	?ConstructL@CMuiuSettingsArray@@IAEXH@Z @ 31 NONAME ; void CMuiuSettingsArray::ConstructL(int)
+	?EditItemL@CMuiuSettingsArray@@QAEHHH@Z @ 32 NONAME ; int CMuiuSettingsArray::EditItemL(int, int)
+	?OtherEmailMTMExistL@MsvUiServiceUtilitiesInternal@@SAHAAVCMsvSession@@H@Z @ 33 NONAME ; int MsvUiServiceUtilitiesInternal::OtherEmailMTMExistL(class CMsvSession &, int)
+	?NewL@CMuiuFlags@@SAPAV1@PBV?$RArray@I@@PBV?$RArray@UTMuiuLocalFeatureItem@@@@PBV?$RArray@H@@@Z @ 34 NONAME ; class CMuiuFlags * CMuiuFlags::NewL(class RArray<unsigned int> const *, class RArray<struct TMuiuLocalFeatureItem> const *, class RArray<int> const *)
+	?InternetCallServiceL@MsvUiServiceUtilitiesInternal@@SAHABVTDesC16@@00PAVCEikonEnv@@@Z @ 35 NONAME ; int MsvUiServiceUtilitiesInternal::InternetCallServiceL(class TDesC16 const &, class TDesC16 const &, class TDesC16 const &, class CEikonEnv *)
+	??4TMuiuFlags@@QAEAAV0@_K@Z @ 36 NONAME ; class TMuiuFlags & TMuiuFlags::operator=(unsigned long long)
+	?ChangeMessageStoreToPhoneL@MsvUiServiceUtilitiesInternal@@SAXAAVCMsvSession@@@Z @ 37 NONAME ; void MsvUiServiceUtilitiesInternal::ChangeMessageStoreToPhoneL(class CMsvSession &)
+	?InternetOrVoiceCallServiceL@MsvUiServiceUtilitiesInternal@@SAHABVCMsgVoIPExtension@@ABVTDesC16@@11HPAVCEikonEnv@@@Z @ 38 NONAME ; int MsvUiServiceUtilitiesInternal::InternetOrVoiceCallServiceL(class CMsgVoIPExtension const &, class TDesC16 const &, class TDesC16 const &, class TDesC16 const &, int, class CEikonEnv *)
+	?IsPhoneOfflineL@MsvUiServiceUtilitiesInternal@@SAHXZ @ 39 NONAME ; int MsvUiServiceUtilitiesInternal::IsPhoneOfflineL(void)
+	?SetAddress@CMuiuContactService@@QAEXABVTDesC16@@@Z @ 40 NONAME ; void CMuiuContactService::SetAddress(class TDesC16 const &)
+	?MdcaPoint@CMuiuSettingsArray@@UBE?AVTPtrC16@@H@Z @ 41 NONAME ; class TPtrC16 CMuiuSettingsArray::MdcaPoint(int) const
+	?FoundContactNameL@CMuiuContactService@@QBE?AVTPtrC16@@XZ @ 42 NONAME ; class TPtrC16 CMuiuContactService::FoundContactNameL(void) const
+	?IsMailMtm@MuiuEmailTools@@SAHABVTUid@@H@Z @ 43 NONAME ; int MuiuEmailTools::IsMailMtm(class TUid const &, int)
+	?CallL@CMuiuContactService@@QAEHPAVCItemFinder@@@Z @ 44 NONAME ; int CMuiuContactService::CallL(class CItemFinder *)
+	?SetName@CMuiuContactService@@QAEXABVTDesC16@@@Z @ 45 NONAME ; void CMuiuContactService::SetName(class TDesC16 const &)
+	??1CMuiuContactService@@UAE@XZ @ 46 NONAME ; CMuiuContactService::~CMuiuContactService(void)
+	?NewLC@CMsgOperationWait@@SAPAV1@H@Z @ 47 NONAME ; class CMsgOperationWait * CMsgOperationWait::NewLC(int)
+	??1CMuiuFlags@@UAE@XZ @ 48 NONAME ; CMuiuFlags::~CMuiuFlags(void)
+	?SetDefaultServiceForMTML@MsvUiServiceUtilitiesInternal@@SAXAAVCMsvSession@@VTUid@@J@Z @ 49 NONAME ; void MsvUiServiceUtilitiesInternal::SetDefaultServiceForMTML(class CMsvSession &, class TUid, long)
+	?InternetOrVoiceCallServiceL@MsvUiServiceUtilitiesInternal@@SAHAAVCEikonEnv@@ABVCMsgVoIPExtension@@ABVTDesC16@@2W4TMuiuAddressType@@23H@Z @ 50 NONAME ; int MsvUiServiceUtilitiesInternal::InternetOrVoiceCallServiceL(class CEikonEnv &, class CMsgVoIPExtension const &, class TDesC16 const &, class TDesC16 const &, enum TMuiuAddressType, class TDesC16 const &, enum TMuiuAddressType, int)
+

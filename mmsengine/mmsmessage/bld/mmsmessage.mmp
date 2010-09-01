@@ -42,7 +42,7 @@ SOURCE          mmsdeleteresultarray.cpp
 SOURCE          mmscliententry.cpp
 SOURCE          mmsserverentry.cpp
 SOURCE          mmsdrm.cpp
-//SOURCE          mmsownnumber.cpp
+SOURCE          mmsownnumber.cpp
 
 USERINCLUDE     ../inc
 USERINCLUDE     ../../inc
@@ -63,7 +63,7 @@ LIBRARY         mmsgenutils.lib
 LIBRARY         mmsserversettings.lib
 LIBRARY         charconv.lib
 LIBRARY         centralrepository.lib
-//LIBRARY         VPbkEng.lib
+LIBRARY         vpbkeng.lib
 
 LIBRARY         caf.lib
 LIBRARY         cafutils.lib

@@ -115,7 +115,7 @@ TMsvId CMmsMessageStoreUtils::CreateServiceEntryL()
     // Concentrate on service entries
     //
     TMsvEntry tEntry;
-    for( TInt index = count-1; index >= 0; --index )
+    for( TInt index = count-1; index >= 0; index-- )
         {
         iMmsEntry->SetEntryL( selection->At( index ) );
         tEntry = iMmsEntry->Entry();
@@ -144,7 +144,7 @@ TMsvId CMmsMessageStoreUtils::CreateServiceEntryL()
         } 
     else // At least one service found
         {
-        for( TInt index = 1; index < count; ++index )
+        for( TInt index = 1; index < count; index++ )
             {
             // More than 1 service found -> delete them
             // The error must be ignored because there is nothing we can do
@@ -189,7 +189,7 @@ TMsvId CMmsMessageStoreUtils::CreateFolderEntryL( const TDesC& aFolderName )
     // Concentrate on folders that have name 'aFolderName'
     //
     TMsvEntry tEntry;
-    for( TInt index = count-1; index >= 0; --index )
+    for( TInt index = count-1; index >= 0; index-- )
         {
         iMmsEntry->SetEntryL( selection->At( index ) );
         tEntry = iMmsEntry->Entry();
@@ -292,7 +292,7 @@ TMsvId CMmsMessageStoreUtils::FolderEntryL( TMsvId aParentFolder, const TDesC& a
 
     // If selection contains folders, check if the folder is found.
     TInt count = selection->Count();
-    for ( TInt i = 0; i < count && folderId == KMsvNullIndexEntryId; ++i )
+    for ( TInt i = 0; i < count && folderId == KMsvNullIndexEntryId; i++ )
         {
         iMmsEntry->SetEntryL( selection->At( i ) );
         // must be exact match

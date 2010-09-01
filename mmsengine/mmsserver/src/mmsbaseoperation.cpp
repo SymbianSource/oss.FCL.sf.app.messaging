@@ -19,6 +19,9 @@
 
 
 // INCLUDE FILES
+#ifdef SYMBIAN_ENABLE_SPLIT_HEADERS
+#include <logengdurations.h>
+#endif
 #include    <msventry.h>
 #include    <logcli.h>
 #include    <logview.h>
@@ -27,7 +30,7 @@
 // Internet error when switching to offline mode
 #include    <inet6err.h>
 #include    <CoreApplicationUIsSDKCRKeys.h>
-#include    <e32property.h> // PubSub
+#include    <e32property.h> // pubsub
 #include    <connect/sbdefs.h>
 #include    <apgcli.h>  // RApaLsSession
 #include    <fileprotectionresolver.h>
@@ -699,7 +702,7 @@ void CMmsBaseOperation::DoCancel()
 void CMmsBaseOperation::SelectNextState()
     {
 
-    // If appropriate, the functions called within the switch statement
+    // If appropiate, the functions called within the switch statement
     // will make us active again. If all is done, the asynchronous request
     // will complete
 

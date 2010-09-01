@@ -1,0 +1,1133 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  This file contains all the resources for the MsgMailViewer.
+*
+*/
+
+
+//  RESOURCE IDENTIFIER
+NAME    MAVW // MAilVieWer, 4 letter ID
+
+//  INCLUDES
+#include <appinfo.rh>
+#include <drmcommon.loc>
+#include <messaging.loc>
+#include <data_caging_paths_strings.hrh>
+#include <eikon.rh>
+#include <eikon.hrh>
+#include "msgmailviewer.hrh"
+#include <msgmaileditor.loc>
+#include <msgmailviewer.loc>
+#include "eikon.rsg"
+#include <avkon.loc>
+#include <avkon.rsg>
+#include <avkon.rh>
+#include <avkon.mbg>
+#include <MsgEditor.rh>
+#include "MsgMailViewer.rh"
+#include <MsgEditorAppUi.hrh>
+#include <finditem.hrh>
+#include <AiwCommon.rh>
+#include <AiwGenericParam.hrh>
+#include <MsgEditor.hrh>   
+
+#include <AvkonIcons.hrh> // Avkon icon files
+#include <muiu.mbg>
+
+//  RESOURCE DEFINITIONS 
+
+// -----------------------------------------------------------------------------
+//   Standard resource signature.
+// -----------------------------------------------------------------------------
+RESOURCE RSS_SIGNATURE { }
+
+// -----------------------------------------------------------------------------
+//   Application caption and default filename.
+// -----------------------------------------------------------------------------
+RESOURCE TBUF { buf=""; }
+    
+//------------------------------------------------------------------------------
+//   Constants
+//------------------------------------------------------------------------------
+#define MUIU_ICON_FILE          BITMAP_DIR"\\muiu.mif"
+
+// -----------------------------------------------------------------------------
+//   Mail Editor application info
+// -----------------------------------------------------------------------------
+RESOURCE EIK_APP_INFO
+{
+    menubar=r_msgmailviewer_menubar;
+    cba=r_msgmailviewer_softkeys_options_back_contextoptions;
+    custom_app_info_extension = r_msgmailviewer_app_info_extension;
+}
+
+//------------------------------------------------------------------------------
+//   Application resource info extension
+//------------------------------------------------------------------------------
+RESOURCE EIK_APP_INFO_EXT r_msgmailviewer_app_info_extension
+    {
+    popup_toolbar = r_mailviewer_toolbar;
+    }
+
+// -----------------------------------------------------------------------------
+//   Mail Viewer cba (to be used when msk ready)
+// -----------------------------------------------------------------------------
+RESOURCE CBA r_msgmailviewer_softkeys_options_back_contextoptions
+    {
+    flags = 0;
+    buttons = 
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt=text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt= text_softkey_back;},
+        CBA_BUTTON {id=EAknSoftkeyContextOptions; txt=text_softkey_option;}
+        };
+    }
+
+
+// ----------------------------------------------------------------------------
+//   Application caption and default filename.
+// ----------------------------------------------------------------------------
+RESOURCE LOCALISABLE_APP_INFO r_msgmailviewer_localisable_app_info
+    {
+    short_caption = qtn_mail_title_mail;
+    caption_and_icon = 
+    CAPTION_AND_ICON_INFO
+        {
+        caption = qtn_mail_title_mail;
+        number_of_icons = 1;
+         // Use Same icons than Mail Editor
+        icon_file = APP_BITMAP_DIR"\\MsgMailEditor_aif.mif";
+        };
+    }
+
+//------------------------------------------------------------------------------
+//   r_mailviewer_toolbar.
+//------------------------------------------------------------------------------
+//
+RESOURCE AVKON_TOOLBAR r_mailviewer_toolbar 
+	{
+	flags = KAknToolbarFixed;
+    items =
+        {
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EMsgMailViewerCmdReplySender;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText;
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_mce_mail_tb_tooltip_reply;
+					    bmpfile = MUIU_ICON_FILE;
+					    bmpid=EMbmMuiuQgn_indi_tb_email_reply;
+					    bmpmask=EMbmMuiuQgn_indi_tb_email_reply_mask;                        
+					    }  
+                    };            
+                };
+            },
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EMsgMailViewerCmdForward;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText;
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_mce_mail_tb_tooltip_forward;
+					    bmpfile = MUIU_ICON_FILE;
+					    bmpid=EMbmMuiuQgn_indi_tb_email_forward;
+					    bmpmask=EMbmMuiuQgn_indi_tb_email_forward_mask;                        
+                        }  
+                    };            
+                };
+            },  
+        TBAR_CTRL
+            {
+            type = EAknCtButton;
+            id = EMsgMailViewerCmdDelete;
+            control = AVKON_BUTTON
+                {
+                flags = KAknButtonSizeFitText;
+                states =
+                    {
+                    AVKON_BUTTON_STATE
+                        {
+                        helptxt = qtn_mce_mail_tb_tooltip_delete;
+					    bmpfile = MUIU_ICON_FILE;
+					    bmpid=EMbmMuiuQgn_indi_mg_tb_delete;
+					    bmpmask=EMbmMuiuQgn_indi_mg_tb_delete_mask;
+                        }  
+                    };            
+                };
+            }            
+      	};
+	}
+
+// -----------------------------------------------------------------------------
+//    Title text for attachments dialog
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_viewer_title_attachments { buf = qtn_mail_title_attachments; }
+
+// -----------------------------------------------------------------------------
+//    r_msgmailviewer_menubar
+//    Application specific menubar
+// -----------------------------------------------------------------------------
+//
+RESOURCE MENU_BAR r_msgmailviewer_menubar
+    {
+    titles=
+        {             
+        MENU_TITLE { menu_pane=r_msgmailviewer_options_menu2; },
+        MENU_TITLE { menu_pane=r_msgmailviewer_call_menu; },
+        MENU_TITLE { menu_pane=r_msgmailviewer_options_menu1; }
+        };
+    }
+
+// -----------------------------------------------------------------------------
+//    r_msgmailviewer_call_interest
+// -----------------------------------------------------------------------------
+//
+RESOURCE AIW_INTEREST r_msgmailviewer_call_interest
+    {
+    items=
+        {
+        AIW_CRITERIA_ITEM 
+            { 
+            id = KAiwCmdCall;  // serviceCmd used here also as ID
+            serviceCmd = KAiwCmdCall;
+            contentType = "*";
+            serviceClass = KAiwClassMenu;
+            defaultProvider = 0x101F868E; // Call UI
+            maxProviders    = 1;
+            }
+        };
+    }
+    
+// ----------------------------------------------------------------------------
+//    r_msgmailviewer_options_menu1
+//    Menu items in Options menu
+// ----------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmailviewer_options_menu1
+    {
+    items=
+        {
+        MENU_ITEM 
+            { 
+            command = EMsgMailViewerCmdReply; 
+            txt=qtn_mail_om_reply; 
+            cascade=r_msgmailviewer_reply_menu;
+            flags=EEikMenuItemDimmed;
+            },
+        MENU_ITEM 
+            { 
+            command = EMsgMailViewerCmdReplySender; 
+            txt=qtn_mail_om_reply;
+            flags=EEikMenuItemDimmed; 
+            },             
+        MENU_ITEM
+            {
+            command = EMsgMailViewerCmdForward; 
+        	txt=qtn_mail_om_forward;
+        	},
+        MENU_ITEM
+            { 
+            command = EMsgMailViewerCmdDelete; 
+        	txt=qtn_msg_om_delete;
+        	}
+        };
+    }
+
+// ----------------------------------------------------------------------------
+//    r_msgmailviewer_options_menu2
+//    Menu items in Options menu
+// ----------------------------------------------------------------------------
+//    
+RESOURCE MENU_PANE r_msgmailviewer_options_menu2
+    {
+    items=
+        {
+        MENU_ITEM
+            {
+            command = EFindItemMenuPlaceHolder;
+            txt = ""; 
+            flags = EEikMenuItemDimmed;
+            },
+		MENU_ITEM
+		    {
+		    command = EMsgMailViewerCmdRetrieve; 
+			txt = qtn_mail_om_retrieve;
+			},
+        MENU_ITEM
+            {
+            command = EMsgMailViewerCmdAttachments; 
+        	txt = qtn_mail_om_attachments;
+        	},
+        MENU_ITEM
+            {
+            command = EMsgMailViewerCmdMessageInfo; 
+        	txt = qtn_msg_om_message_info;
+        	},
+        MENU_ITEM
+            {
+            command = EMsgMailViewerCmdMove; 
+        	txt = qtn_mail_om_move_to_folder;
+            flags = EEikMenuItemDimmed;
+            },
+        MENU_ITEM
+            {
+            command = EMsgMailViewerCmdCopy; 
+            txt = qtn_mail_om_copy_to_folder;
+            flags = EEikMenuItemDimmed; },
+		MENU_ITEM
+		    {
+		    command = EMsgMailViewerCmdCharSet; 
+			txt = qtn_chi_mail_om_charset;
+            cascade = r_msgmailviewer_charset_menu; 
+            flags = EEikMenuItemDimmed;
+            },
+        MENU_ITEM
+            {
+            command = EMsgMailViewerEncode; 
+        	txt = qtn_mail_settings_encode; 
+        	flags = EEikMenuItemDimmed;
+        	},
+        MENU_ITEM
+            {
+            command = EMsgMailViewerSubmenuZoomCommands;  
+            txt = qtn_options_text_size;
+            cascade = r_msgmailviewer_zoom_submenu;
+            },
+    	MENU_ITEM
+    	    {
+    	    command = EAknCmdHelp;
+            txt = qtn_options_help;
+            },
+        MENU_ITEM
+            {
+            command = EAknCmdExit;
+            txt = qtn_options_exit;
+            }
+        };
+    }    
+    
+RESOURCE MENU_PANE r_msgmailviewer_call_menu
+    {
+    items=
+        {         			
+        // This menu item will be replaced by AIW.
+        MENU_ITEM 
+            { 
+            command = KAiwCmdCall; // The same ID than in interest.
+            txt = ""; // Will be replaced by AIW (plugin).
+            cascade = AIW_INTELLIGENT_CASCADE_ID;
+            }                    			
+        };
+    }
+
+
+// -----------------------------------------------------------------------------
+//   
+//    r_msgmailviewer_reply_menu
+//    Menu items in Reply submenu
+//
+// -----------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmailviewer_reply_menu
+    {
+    items=
+        {
+        MENU_ITEM { command = EMsgMailViewerCmdReplySender; 
+        			txt=qtn_mail_sm_reply_to_sender; },
+        MENU_ITEM { command = EMsgMailViewerCmdReplyAll; 
+        			txt=qtn_mail_sm_reply_to_all; },
+        MENU_ITEM { command = EMsgMailViewerCmdReplyViaUnified; 
+        			txt=qtn_mms_sm_via_message; 
+        			flags=EEikMenuItemDimmed;},
+        MENU_ITEM { command = EMsgMailViewerCmdReplyViaAudio; 
+        			txt=qtn_msg_reply_via_audio_message; 
+        			flags=EEikMenuItemDimmed;}        			
+        };
+    }
+
+// -----------------------------------------------------------------------------
+//   
+//    r_msgmailviewer_charset_menu
+//    Menu items are added dynamically
+//
+// -----------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmailviewer_charset_menu
+    {
+    items=
+        {
+        // Items are added dynamically
+        };
+    }
+
+// -----------------------------------------------------------------------------
+//   
+//    r_msgmailviewer_context_menubar
+//    Menubar for context menu
+//
+// -----------------------------------------------------------------------------
+//
+RESOURCE MENU_BAR r_msgmailviewer_context_menubar
+{
+    titles=
+    {
+        MENU_TITLE { menu_pane=r_msgmailviewer_finditem_menu; },
+        MENU_TITLE { menu_pane=r_msgmailviewer_call_menu; },
+        MENU_TITLE { menu_pane = r_msgmailviewer_context_menupane; }
+        
+    };
+}
+
+
+RESOURCE MENU_PANE r_msgmailviewer_finditem_menu
+    {
+    items=
+        {
+        // This menu item will be replaced by AIW.
+        MENU_ITEM
+            {
+            command = EFindItemContextMenuPlaceHolder;
+            txt="";
+            }
+
+        };
+    }
+
+// ----------------------------------------------------------------------------- 
+//    r_msgmailviewer_context_menupane
+//    Menupane for context menu
+// -----------------------------------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmailviewer_context_menupane
+{
+    items=
+    {
+        
+        MENU_ITEM 
+            { 
+            command = EMsgMailViewerCmdReplySender; 
+            txt=qtn_mail_om_reply;
+            }, 
+        MENU_ITEM 
+            { 
+            command=EMsgMailViewerCmdDelete; 
+            txt = qtn_msg_om_delete; 
+            }
+       
+    };
+}
+
+// ------------------------------------------------------------------------------   
+//    R_MAIL_VIEWER_FROM
+//
+//    'From' field in mail viewer's scrollable form.
+// ------------------------------------------------------------------------------
+
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mail_viewer_from
+{
+    prompt = qtn_msg_from;
+    id = EMsgComponentIdFrom;
+    distance = 0;
+}
+
+
+// ------------------------------------------------------------------------------   
+//    R_MAIL_VIEWER_TO
+//
+//    'To' field in mail viewer's scollable form.
+// ------------------------------------------------------------------------------
+
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mail_viewer_to
+    {
+    prompt = qtn_msg_to;
+    id = EMsgComponentIdTo;
+    distance = 0;    
+    }
+
+
+// ------------------------------------------------------------------------------   
+//    R_MAIL_VIEWER_BCC
+//
+//    'Bcc' field in mail viewer's scollable form.
+// ------------------------------------------------------------------------------
+
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mail_viewer_bcc
+    {
+    prompt = qtn_msg_bcc;
+    id = EMsgComponentIdBcc;
+    distance = 0;    
+    }
+    
+// ------------------------------------------------------------------------------     
+//    R_MAIL_VIEWER_CC
+//
+//    'Cc' field in mail viewer's scrollable form.
+// ------------------------------------------------------------------------------ 
+
+
+RESOURCE MSG_EDITOR_ADDRESS_CONTROL r_mail_viewer_cc
+    {
+    prompt = qtn_msg_cc;
+    id = EMsgComponentIdCc;
+    distance = 0;   
+    maxchars = 998;
+    }
+
+// ------------------------------------------------------------------------------     
+//    R_MAIL_VIEWER_SUBJECT
+//
+//    'Subject' field in mail viewer's scrollable form.
+// ------------------------------------------------------------------------------ 
+
+RESOURCE MSG_EDITOR_EXPANDABLE_CONTROL r_mail_viewer_subject
+    {
+    prompt = qtn_msg_subject;
+    id = EMsgComponentIdSubject;
+    distance = 0;
+    maxchars = 998;
+    } 
+
+// ------------------------------------------------------------------------------ 
+//   R_MAIL_VIEWER_DELETE_LOCAL_SERVER
+//
+//   Items in delete confirmation dialog
+// ------------------------------------------------------------------------------ 
+RESOURCE ARRAY r_mail_viewer_delete_local_server
+    {
+    items = 
+        {
+        LBUF { txt = qtn_mce_pop_up_locally; },
+        LBUF { txt = qtn_mce_pop_up_server; }
+        };
+    }
+
+// ------------------------------------------------------------------------------ 
+//    R_MAIL_VIEWER_CONFIRM_DELETE
+//    
+//    Delete confirmation dialog
+// ------------------------------------------------------------------------------ 
+RESOURCE DIALOG r_mail_viewer_confirm_delete
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    items =
+        {   
+        DLG_LINE
+            {
+            type=EAknCtListQueryControl;
+            id=EListQueryControl;
+            control=AVKON_LIST_QUERY_CONTROL 
+                { 
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = LISTBOX
+                    {
+                    flags = EAknListBoxMenuList;
+                    //height = 3;
+                    //width = 3;
+                    array_id=r_mail_viewer_delete_local_server;
+                    };
+                heading=qtn_mce_pop_up_delete;
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------------------------
+// Attachments dialog buttons.
+// Attachments dialog. Only temporary solution before base MagEditorAppUi.rss
+// is changed!
+// ---------------------------------------------------------------------------
+RESOURCE CBA r_mail_viewer_softkeys_options_open_back
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=EAknSoftkeyOpen; txt = qtn_msk_open;}
+        };
+    }
+
+
+// ---------------------------------------------------------------------------
+//
+// r_mail_viewer_attachment_dialog
+// Attachments dialog. Only temporary solution before base MagEditorAppUi.rss
+// is changed!
+//
+// ---------------------------------------------------------------------------   
+RESOURCE DIALOG r_mail_viewer_attachment_dialog
+{
+    flags =
+        EEikDialogFlagNoDrag
+        | EEikDialogFlagFillAppClientRect
+        | EEikDialogFlagNoTitleBar
+        | EEikDialogFlagCbaButtons
+        ;
+    buttons = r_mail_viewer_softkeys_options_open_back;
+
+    items =
+    {
+        DLG_LINE
+        {
+            type      = EMsgAttachmentListBox;
+            id        = EMsgAttachmentListBoxId;
+            itemflags = EEikDlgItemTakesEnterKey | EEikDlgItemOfferAllHotKeys;
+            control   = LISTBOX
+            {
+                flags    = 0;
+                height   = 3;
+            };
+        }
+    };
+
+}
+
+
+// ------------------------------------------------------------------------------   
+//    r_attachments_menu
+//
+//    menu items for Attachments dialog 
+// ------------------------------------------------------------------------------
+RESOURCE MENU_PANE r_viewer_attachments_menu
+{
+    items=
+    {
+        MENU_ITEM { command = EMsgViewAttachmentCmdOpen; 
+            txt=qtn_mail_om_open;
+            flags=EEikMenuItemDimmed; },
+        MENU_ITEM { command = EMsgViewAttachmentCmdFetch; 
+            txt=qtn_mail_om_fetch;
+            flags=EEikMenuItemDimmed; },
+        MENU_ITEM { command = EMsgViewAttachmentCmdSave; 
+            txt=qtn_mail_om_save;
+            flags=EEikMenuItemDimmed; },
+        MENU_ITEM { command = EMsgViewAttachmentCmdRemove; 
+            txt=qtn_mail_om_remove;
+            flags=EEikMenuItemDimmed; },
+        
+        MENU_ITEM { command = EAknCmdHelp; txt=qtn_options_help; },
+        MENU_ITEM { command = EMsgMailViewerCmdAttachmentCmdExit; 
+            txt=qtn_options_exit; }
+    };
+}
+
+
+// -----------------------------------------------------------------------------
+//    r_viewer_wait_open_note
+// Shown when viewer is opened
+// -----------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_viewer_wait_open_note
+    {
+    flags = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+        {
+        DLG_LINE
+            { 
+            type = EAknCtNote;
+            id = EGeneralNote;
+            control = AVKON_NOTE
+                {
+                layout = EWaitLayout;
+                singular_label = qtn_mail_wait_opening_editor;
+                animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }
+    
+
+// -----------------------------------------------------------------------------
+//    r_viewer_wait_open_dialog_note
+// Shown when trying to forward messages and attachment loading is running.
+// -----------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_viewer_wait_open_dialog_note
+    {
+    flags = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_CANCEL;
+    items =
+        {
+        DLG_LINE
+            { 
+            type = EAknCtNote;
+            id = EGeneralNote;
+            control = AVKON_NOTE
+                {
+                layout = EWaitLayout;
+                singular_label = qtn_mail_wait_opening_editor;
+                animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }    
+
+
+// -----------------------------------------------------------------------------
+//    r_mail_quest_delete_msg
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_mail_quest_delete_msg
+    {
+    buf = qtn_mail_quest_delete_msg;
+    }
+
+// -----------------------------------------------------------------------------
+//    r_mail_viewer_remove_attachment
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_mail_viewer_remove_attachment
+    {
+    buf = qtn_query_common_conf_remove;
+    }
+
+// -----------------------------------------------------------------------------
+//    r_viewer_wait_opening
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_viewer_wait_opening { buf = qtn_mail_wait_opening_editor; }
+
+// China
+RESOURCE TBUF r_qtn_chi_mail_sm_gb2312 { buf = qtn_chi_mail_sm_gb2312; }
+RESOURCE TBUF r_qtn_chi_mail_sm_big5 { buf = qtn_chi_mail_sm_big5; }
+
+// Japanise
+RESOURCE TBUF r_qtn_jpn_mail_om_charset { buf = qtn_jpn_mail_om_charset; }
+RESOURCE TBUF r_qtn_jpn_mail_sm_charset_iso2022jp 
+    { 
+    buf = qtn_jpn_mail_sm_charset_iso2022jp; 
+    }
+RESOURCE TBUF r_qtn_jpn_mail_sm_charset_eucjp 
+    { 
+    buf = qtn_jpn_mail_sm_charset_eucjp; 
+    }
+RESOURCE TBUF r_qtn_jpn_mail_sm_charset_shiftjis 
+    { 
+    buf = qtn_jpn_mail_sm_charset_shiftjis; 
+    }
+
+// -----------------------------------------------------------------------------
+//    r_qtn_mail_wait_fecth_all
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_qtn_mail_wait_fetch_att
+    { 
+    buf=qtn_mail_wait_fetch_att; 
+    }
+    
+// -----------------------------------------------------------------------------
+//    r_qtn_msg_mail_re
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_qtn_msg_mail_re
+    {
+    buf = qtn_msg_mail_re;
+    }
+    
+// -----------------------------------------------------------------------------
+//    r_qtn_msk_attachment
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_qtn_msk_attachment
+    {
+    buf = qtn_msk_attachment;
+    }
+
+// -----------------------------------------------------------------------------
+//    r_qtn_msk_fetch
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_qtn_msk_fetch
+    {
+    buf = qtn_msk_fetch;
+    }    
+
+// -----------------------------------------------------------------------------
+//    r_text_softkey_option
+// -----------------------------------------------------------------------------
+//    
+RESOURCE TBUF r_text_softkey_option
+    {
+    buf = text_softkey_option;
+    }     
+
+// Array containing HTML macroes and Unicode characters they represent
+RESOURCE ARRAY r_mail_html_macro
+{
+    items=
+    {
+        STRING_PAIR{macro="nbsp";   text= <0x00A0>; },
+        STRING_PAIR{macro="iexcl";   text= <0x00A1>; },
+        STRING_PAIR{macro="cent";   text= <0x00A2>; },
+        STRING_PAIR{macro="pound";   text= <0x00A3>; },
+        STRING_PAIR{macro="curren";   text= <0x00A4>; },
+        STRING_PAIR{macro="yen";   text= <0x00A5>; },
+        STRING_PAIR{macro="brvbar";   text= <0x00A6>; },
+        STRING_PAIR{macro="sect";   text= <0x00A7>; },
+        STRING_PAIR{macro="uml";   text= <0x00A8>; },
+        STRING_PAIR{macro="copy";   text= <0x00A9>; },
+        STRING_PAIR{macro="ordf";   text= <0x00AA>; },
+        STRING_PAIR{macro="laquo";   text= <0x00AB>; },
+        STRING_PAIR{macro="not";   text= <0x00AC>; },
+        STRING_PAIR{macro="shy";   text= <0x00AD>; },
+        STRING_PAIR{macro="reg";   text= <0x00AE>; },
+        STRING_PAIR{macro="macr";   text= <0x00AF>; },
+        STRING_PAIR{macro="deg";   text= <0x00B0>; },
+        STRING_PAIR{macro="plusmn";   text= <0x00B1>; },
+        STRING_PAIR{macro="sup2";   text= <0x00B2>; },
+        STRING_PAIR{macro="sup3";   text= <0x00B3>; },
+        STRING_PAIR{macro="acute";   text= <0x00B4>; },
+        STRING_PAIR{macro="micro";   text= <0x00B5>; },
+        STRING_PAIR{macro="para";   text= <0x00B6>; },
+        STRING_PAIR{macro="middot";   text= <0x00B7>; },
+        STRING_PAIR{macro="cedil";   text= <0x00B8>; },
+        STRING_PAIR{macro="sup1";   text= <0x00B9>; },
+        STRING_PAIR{macro="ordm";   text= <0x00BA>; },
+        STRING_PAIR{macro="raquo";   text= <0x00BB>; },
+        STRING_PAIR{macro="frac14";   text= <0x00BC>; },
+        STRING_PAIR{macro="frac12";   text= <0x00BD>; },
+        STRING_PAIR{macro="frac34";   text= <0x00BE>; },
+        STRING_PAIR{macro="iquest";   text= <0x00BF>; },
+        STRING_PAIR{macro="Agrave";   text= <0x00C0>; },
+        STRING_PAIR{macro="Aacute";   text= <0x00C1>; },
+        STRING_PAIR{macro="Acirc";   text= <0x00C2>; },
+        STRING_PAIR{macro="Atilde";   text= <0x00C3>; },
+        STRING_PAIR{macro="Auml";   text= <0x00C4>; },
+        STRING_PAIR{macro="Aring";   text= <0x00C5>; },
+        STRING_PAIR{macro="AElig";   text= <0x00C6>; },
+        STRING_PAIR{macro="Ccedil";   text= <0x00C7>; },
+        STRING_PAIR{macro="Egrave";   text= <0x00C8>; },
+        STRING_PAIR{macro="Eacute";   text=<0x00C9>; },
+        STRING_PAIR{macro="Ecirc";   text=<0x00CA>; },
+        STRING_PAIR{macro="Euml";   text=<0x00CB>; },
+        STRING_PAIR{macro="Igrave";   text=<0x00CC>; },
+        STRING_PAIR{macro="Iacute";   text=<0x00CD>; },
+        STRING_PAIR{macro="Icirc";   text=<0x00CE>; },
+        STRING_PAIR{macro="Iuml";   text=<0x00CF>; },
+        STRING_PAIR{macro="ETH";   text=<0x00D0>; },
+        STRING_PAIR{macro="Ntilde";   text=<0x00D1>; },
+        STRING_PAIR{macro="Ograve";   text=<0x00D2>; },
+        STRING_PAIR{macro="Oacute";   text=<0x00D3>; },
+        STRING_PAIR{macro="Ocirc";   text=<0x00D4>; },
+        STRING_PAIR{macro="Otilde";   text=<0x00D5>; },
+        STRING_PAIR{macro="Ouml";   text=<0x00D6>; },
+        STRING_PAIR{macro="times";   text=<0x00D7>; },
+        STRING_PAIR{macro="Oslash";   text=<0x00D8>; },
+        STRING_PAIR{macro="Ugrave";   text=<0x00D9>; },
+        STRING_PAIR{macro="Uacute";   text=<0x00DA>; },
+        STRING_PAIR{macro="Ucirc";   text=<0x00DB>; },
+        STRING_PAIR{macro="Uuml";   text=<0x00DC>; },
+        STRING_PAIR{macro="Yacute";   text=<0x00DD>; },
+        STRING_PAIR{macro="THORN";   text=<0x00DE>; },
+        STRING_PAIR{macro="szlig";   text=<0x00DF>; },
+        STRING_PAIR{macro="agrave";   text=<0x00E0>; },
+        STRING_PAIR{macro="aacute";   text=<0x00E1>; },
+        STRING_PAIR{macro="acirc";   text=<0x00E2>; },
+        STRING_PAIR{macro="atilde";   text=<0x00E3>; },
+        STRING_PAIR{macro="auml";   text=<0x00E4>; },
+        STRING_PAIR{macro="aring";   text=<0x00E5>; },
+        STRING_PAIR{macro="aelig";   text=<0x00E6>; },
+        STRING_PAIR{macro="ccedil";   text=<0x00E7>; },
+        STRING_PAIR{macro="egrave";   text=<0x00E8>; },
+        STRING_PAIR{macro="eacute";   text=<0x00E9>; },
+        STRING_PAIR{macro="ecirc";   text=<0x00EA>; },
+        STRING_PAIR{macro="euml";   text=<0x00EB>; },
+        STRING_PAIR{macro="igrave";   text=<0x00EC>; },
+        STRING_PAIR{macro="iacute";   text=<0x00ED>; },
+        STRING_PAIR{macro="icirc";   text=<0x00EE>; },
+        STRING_PAIR{macro="iuml";   text=<0x00EF>; },
+        STRING_PAIR{macro="eth";   text=<0x00F0>; },
+        STRING_PAIR{macro="ntilde";   text=<0x00F1>; },
+        STRING_PAIR{macro="ograve";   text=<0x00F2>; },
+        STRING_PAIR{macro="oacute";   text=<0x00F3>; },
+        STRING_PAIR{macro="ocirc";   text=<0x00F4>; },
+        STRING_PAIR{macro="otilde";   text=<0x00F5>; },
+        STRING_PAIR{macro="ouml";   text=<0x00F6>; },
+        STRING_PAIR{macro="divide";   text=<0x00F7>; },
+        STRING_PAIR{macro="oslash";   text=<0x00F8>; },
+        STRING_PAIR{macro="ugrave";   text=<0x00F9>; },
+        STRING_PAIR{macro="uacute";   text=<0x00FA>; },
+        STRING_PAIR{macro="ucirc";   text=<0x00FB>; },
+        STRING_PAIR{macro="uuml";   text=<0x00FC>; },
+        STRING_PAIR{macro="yacute";   text=<0x00FD>; },
+        STRING_PAIR{macro="thorn";   text=<0x00FE>; },
+        STRING_PAIR{macro="yuml";   text=<0x00FF>; },
+        STRING_PAIR{macro="fnof";   text=<0x0192>; },
+        STRING_PAIR{macro="Alpha";   text=<0x0391>; },
+        STRING_PAIR{macro="Beta";   text=<0x0392>; },
+        STRING_PAIR{macro="Gamma";   text=<0x0393>; },
+        STRING_PAIR{macro="Delta";   text=<0x0394>; },
+        STRING_PAIR{macro="Epsilon";   text=<0x0395>; },
+        STRING_PAIR{macro="Zeta";   text=<0x0396>; },
+        STRING_PAIR{macro="Eta";   text=<0x0397>; },
+        STRING_PAIR{macro="Theta";   text=<0x0398>; },
+        STRING_PAIR{macro="Iota";   text=<0x0399>; },
+        STRING_PAIR{macro="Kappa";   text=<0x039A>; },
+        STRING_PAIR{macro="Lambda";   text=<0x039B>; },
+        STRING_PAIR{macro="Mu";   text=<0x039C>; },
+        STRING_PAIR{macro="Nu";   text=<0x039D>; },
+        STRING_PAIR{macro="Xi";   text=<0x039E>; },
+        STRING_PAIR{macro="Omicron";   text=<0x039F>; },
+        STRING_PAIR{macro="Pi";   text=<0x03A0>; },
+        STRING_PAIR{macro="Rho";   text=<0x03A1>; },
+        STRING_PAIR{macro="Sigma";   text=<0x03A3>; },
+        STRING_PAIR{macro="Tau";   text=<0x03A4>; },
+        STRING_PAIR{macro="Upsilon";   text=<0x03A5>; },
+        STRING_PAIR{macro="Phi";   text=<0x03A6>; },
+        STRING_PAIR{macro="Chi";   text=<0x03A7>; },
+        STRING_PAIR{macro="Psi";   text=<0x03A8>; },
+        STRING_PAIR{macro="Omega";   text=<0x03A9>; },
+        STRING_PAIR{macro="alpha";   text=<0x03B1>; },
+        STRING_PAIR{macro="beta";   text=<0x03B2>; },
+        STRING_PAIR{macro="gamma";   text=<0x03B3>; },
+        STRING_PAIR{macro="delta";   text=<0x03B4>; },
+        STRING_PAIR{macro="epsilon";   text=<0x03B5>; },
+        STRING_PAIR{macro="zeta";   text=<0x03B6>; },
+        STRING_PAIR{macro="eta";   text=<0x03B7>; },
+        STRING_PAIR{macro="theta";   text=<0x03B8>; },
+        STRING_PAIR{macro="iota";   text=<0x03B9>; },
+        STRING_PAIR{macro="kappa";   text=<0x03BA>; },
+        STRING_PAIR{macro="lambda";   text=<0x03BB>; },
+        STRING_PAIR{macro="mu";   text=<0x03BC>; },
+        STRING_PAIR{macro="nu";   text=<0x03BD>; },
+        STRING_PAIR{macro="xi";   text=<0x03BE>; },
+        STRING_PAIR{macro="omicron";   text=<0x03BF>; },
+        STRING_PAIR{macro="pi";   text=<0x03C0>; },
+        STRING_PAIR{macro="rho";   text=<0x03C1>; },
+        STRING_PAIR{macro="sigmaf";   text=<0x03C2>; },
+        STRING_PAIR{macro="sigma";   text=<0x03C3>; },
+        STRING_PAIR{macro="tau";   text=<0x03C4>; },
+        STRING_PAIR{macro="upsilon";   text=<0x03C5>; },
+        STRING_PAIR{macro="phi";   text=<0x03C6>; },
+        STRING_PAIR{macro="chi";   text=<0x03C7>; },
+        STRING_PAIR{macro="psi";   text=<0x03C8>; },
+        STRING_PAIR{macro="omega";   text=<0x03C9>; },
+        STRING_PAIR{macro="thetasym";   text=<0x03D1>; },
+        STRING_PAIR{macro="upsih";   text=<0x03D2>; },
+        STRING_PAIR{macro="piv";   text=<0x03D6>; },
+        STRING_PAIR{macro="bull";   text=<0x2022>; },
+        STRING_PAIR{macro="hellip";   text=<0x2026>; },
+        STRING_PAIR{macro="prime";   text=<0x2032>; },
+        STRING_PAIR{macro="Prime";   text=<0x2033>; },
+        STRING_PAIR{macro="oline";   text=<0x203E>; },
+        STRING_PAIR{macro="frasl";   text=<0x2044>; },
+        STRING_PAIR{macro="weierp";   text=<0x2118>; },
+        STRING_PAIR{macro="image";   text=<0x2111>; },
+        STRING_PAIR{macro="real";   text=<0x211C>; },
+        STRING_PAIR{macro="trade";   text=<0x2122>; },
+        STRING_PAIR{macro="alefsym";   text=<0x2135>; },
+        STRING_PAIR{macro="larr";   text=<0x2190>; },
+        STRING_PAIR{macro="uarr";   text=<0x2191>; },
+        STRING_PAIR{macro="rarr";   text=<0x2192>; },
+        STRING_PAIR{macro="darr";   text=<0x2193>; },
+        STRING_PAIR{macro="harr";   text=<0x2194>; },
+        STRING_PAIR{macro="crarr";   text=<0x21B5>; },
+        STRING_PAIR{macro="lArr";   text=<0x21D0>; },
+        STRING_PAIR{macro="uArr";   text=<0x21D1>; },
+        STRING_PAIR{macro="rArr";   text=<0x21D2>; },
+        STRING_PAIR{macro="dArr";   text=<0x21D3>; },
+        STRING_PAIR{macro="hArr";   text=<0x21D4>; },
+        STRING_PAIR{macro="forall";   text=<0x2200>; },
+        STRING_PAIR{macro="part";   text=<0x2202>; },
+        STRING_PAIR{macro="exist";   text=<0x2203>; },
+        STRING_PAIR{macro="empty";   text=<0x2205>; },
+        STRING_PAIR{macro="nabla";   text=<0x2207>; },
+        STRING_PAIR{macro="isin";   text=<0x2208>; },
+        STRING_PAIR{macro="notin";   text=<0x2209>; },
+        STRING_PAIR{macro="ni";   text=<0x220B>; },
+        STRING_PAIR{macro="prod";   text=<0x220F>; },
+        STRING_PAIR{macro="sum";   text=<0x2211>; },
+        STRING_PAIR{macro="minus";   text=<0x2212>; },
+        STRING_PAIR{macro="lowast";   text=<0x2217>; },
+        STRING_PAIR{macro="radic";   text=<0x221A>; },
+        STRING_PAIR{macro="prop";   text=<0x221D>; },
+        STRING_PAIR{macro="infin";   text=<0x221E>; },
+        STRING_PAIR{macro="ang";   text=<0x2220>; },
+        STRING_PAIR{macro="and";   text=<0x2227>; },
+        STRING_PAIR{macro="or";   text=<0x2228>; },
+        STRING_PAIR{macro="cap";   text=<0x2229>; },
+        STRING_PAIR{macro="cup";   text=<0x222A>; },
+        STRING_PAIR{macro="int";   text=<0x222B>; },
+        STRING_PAIR{macro="there4";   text=<0x2234>; },
+        STRING_PAIR{macro="sim";   text=<0x223C>; },
+        STRING_PAIR{macro="cong";   text=<0x2245>; },
+        STRING_PAIR{macro="asymp";   text=<0x2248>; },
+        STRING_PAIR{macro="ne";   text=<0x2260>; },
+        STRING_PAIR{macro="equiv";   text=<0x2261>; },
+        STRING_PAIR{macro="le";   text=<0x2264>; },
+        STRING_PAIR{macro="ge";   text=<0x2265>; },
+        STRING_PAIR{macro="sub";   text=<0x2282>; },
+        STRING_PAIR{macro="sup";   text=<0x2283>; },
+        STRING_PAIR{macro="nsub";   text=<0x2284>; },
+        STRING_PAIR{macro="sube";   text=<0x2286>; },
+        STRING_PAIR{macro="supe";   text=<0x2287>; },
+        STRING_PAIR{macro="oplus";   text=<0x2295>; },
+        STRING_PAIR{macro="otimes";   text=<0x2297>; },
+        STRING_PAIR{macro="perp";   text=<0x22A5>; },
+        STRING_PAIR{macro="sdot";   text=<0x22C5>; },
+        STRING_PAIR{macro="lceil";   text=<0x2308>; },
+        STRING_PAIR{macro="rceil";   text=<0x2309>; },
+        STRING_PAIR{macro="lfloor";   text=<0x230A>; },
+        STRING_PAIR{macro="rfloor";   text=<0x230B>; },
+        STRING_PAIR{macro="lang";   text=<0x2329>; },
+        STRING_PAIR{macro="rang";   text=<0x232A>; },
+        STRING_PAIR{macro="loz";   text=<0x25CA>; },
+        STRING_PAIR{macro="spades";   text=<0x2660>; },
+        STRING_PAIR{macro="clubs";   text=<0x2663>; },
+        STRING_PAIR{macro="hearts";   text=<0x2665>; },
+        STRING_PAIR{macro="diams";   text=<0x2666>; },
+        STRING_PAIR{macro="quot";   text=<0x0022>; },
+        STRING_PAIR{macro="amp";   text=<0x0026>; },
+        STRING_PAIR{macro="lt";   text=<0x003C>; },
+        STRING_PAIR{macro="gt";   text=<0x003E>; },
+        STRING_PAIR{macro="apos";   text=<0x0027>; },
+        STRING_PAIR{macro="OElig";   text=<0x0152>; },
+        STRING_PAIR{macro="oelig";   text=<0x0153>; },
+        STRING_PAIR{macro="Scaron";   text=<0x0160>; },
+        STRING_PAIR{macro="scaron";   text=<0x0161>; },
+        STRING_PAIR{macro="Yuml";   text=<0x0178>; },
+        STRING_PAIR{macro="circ";   text=<0x02C6>; },
+        STRING_PAIR{macro="tilde";   text=<0x02DC>; },
+        STRING_PAIR{macro="ensp";   text=<0x2002>; },
+        STRING_PAIR{macro="emsp";   text=<0x2003>; },
+        STRING_PAIR{macro="thinsp";   text=<0x2009>; },
+        STRING_PAIR{macro="zwnj";   text=<0x200C>; },
+        STRING_PAIR{macro="zwj";   text=<0x200D>; },
+        STRING_PAIR{macro="lrm";   text=<0x200E>; },
+        STRING_PAIR{macro="rlm";   text=<0x200F>; },
+        STRING_PAIR{macro="ndash";   text=<0x2013>; },
+        STRING_PAIR{macro="mdash";   text=<0x2014>; },
+        STRING_PAIR{macro="lsquo";   text=<0x2018>; },
+        STRING_PAIR{macro="rsquo";   text=<0x2019>; },
+        STRING_PAIR{macro="sbquo";   text=<0x201A>; },
+        STRING_PAIR{macro="ldquo";   text=<0x201C>; },
+        STRING_PAIR{macro="rdquo";   text=<0x201D>; },
+        STRING_PAIR{macro="bdquo";   text=<0x201E>; },
+        STRING_PAIR{macro="dagger";   text=<0x2020>; },
+        STRING_PAIR{macro="Dagger";   text=<0x2021>; },
+        STRING_PAIR{macro="permil";   text=<0x2030>; },
+        STRING_PAIR{macro="lsaquo";   text=<0x2039>; },
+        STRING_PAIR{macro="rsaquo";   text=<0x203A>; },
+        STRING_PAIR{macro="euro";   text=<0x20AC>; }
+    };
+}
+
+
+// Copied from MCE
+RESOURCE TBUF r_mce_move_messages                     
+    { 
+    buf = qtn_mce_move_move_to; 
+    }
+
+RESOURCE TBUF r_mce_copy_messages                     
+    { 
+    buf = qtn_mce_copy_copy_to; 
+    }
+RESOURCE AIW_INTEREST r_phonenumber_match_interest
+    {
+    items=
+        {
+        AIW_CRITERIA_ITEM 
+            { 
+            id = KAiwCmdSelect;  // serviceCmd used here also as ID
+            serviceCmd   = KAiwCmdSelect;
+            contentType  = EGenericParamContactItemStr;
+            serviceClass = KAiwClassBase; 
+            maxProviders = 1;
+            }
+        };
+    }
+
+//----------------------------------------------------
+//
+//    r_msgmailviewer_zoom_submenu
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_msgmailviewer_zoom_submenu
+    {
+    items=
+        {
+        
+        MENU_ITEM   { command = EMsgDispSizeAutomatic; 
+                    txt = qtn_options_auto;
+                    flags = EEikMenuItemRadioStart;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeLarge; 
+                    txt = qtn_options_large;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeNormal; 
+                    txt = qtn_options_normal;
+                    flags = EEikMenuItemRadioMiddle;
+                    }
+        ,
+        MENU_ITEM   { command = EMsgDispSizeSmall;
+                    txt = qtn_options_small;
+                    flags = EEikMenuItemRadioEnd;
+                    }
+        }; 
+    }
+    
+// -----------------------------------------------------------------------------
+//    r_msgmailviewer_no_matches_note
+// Shown when no matches are found when matching address to contacts.
+// -----------------------------------------------------------------------------
+//
+RESOURCE TBUF r_msgmailviewer_no_matches_note                     
+    { 
+    buf = qtn_phob_note_no_number; 
+    }
+
+// -----------------------------------------------------------------------------
+//    r_viewer_wait_matching_note
+// Wait note shown when matching address to contacts
+// -----------------------------------------------------------------------------
+//
+RESOURCE DIALOG r_viewer_wait_matching_note
+    {
+    flags = EAknWaitNoteFlags;
+    buttons = R_AVKON_SOFTKEYS_CANCEL;
+    items =
+        {
+        DLG_LINE
+            { 
+            type = EAknCtNote;
+            id = EGeneralNote;
+            control = AVKON_NOTE
+                {
+                layout = EWaitLayout;
+                singular_label = qtn_fdn_reading_memory;
+                animation = R_QGN_GRAF_WAIT_BAR_ANIM;
+                };
+            }
+        };
+    }         
+        
+// End of File

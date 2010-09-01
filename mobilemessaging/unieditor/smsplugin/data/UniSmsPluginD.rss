@@ -1,0 +1,155 @@
+/*
+* Copyright (c) 2002-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME UNIS
+
+//  INCLUDES
+#include <eikon.rh>
+#include <avkon.rsg>
+#include <avkon.rh>
+
+#include <unieditor.loc>
+
+#include <data_caging_paths_strings.hrh>
+
+// RESOURCES
+
+RESOURCE RSS_SIGNATURE { }
+
+// Default name for file save?
+RESOURCE TBUF { buf = "UniSms"; }
+
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_addsc_query - dialog
+//    A query to ask service centre 
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_addsc_query
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtMultilineQuery;
+            id=EMultilineFirstLine;
+            control = AVKON_DATA_QUERY
+                { 
+                    layout = EMultiDataFirstEdwin;
+                    label = qtn_sms_prmpt_enter_sc_name;                
+                    control = EDWIN
+                        {
+                        flags=0;
+                        width=5;
+                        lines=1;
+                        maxlength=50;
+                        };
+                };
+            },
+        DLG_LINE
+            {
+            type=EAknCtMultilineQuery;
+            id=EMultilineSecondLine;
+            control= AVKON_DATA_QUERY 
+                { 
+                    layout = EMultiDataSecondPhoneEd;
+                    label = qtn_sms_prmpt_enter_sc_number;
+                    control=EDWIN 
+                        {
+                        flags= EEikEdwinNoHorizScrolling; 
+                        width=16; 
+                        lines=1; 
+                        maxlength=21; // length of maximum allowed Sc number
+                        default_input_mode = EAknEditorNumericInputMode;
+                        allowed_input_modes = EAknEditorNumericInputMode;
+                        numeric_keymap = EAknEditorToFieldNumberModeKeymap;
+                        };
+                };
+            }
+        };
+    }
+
+RESOURCE TBUF r_qtn_info_invalid_number                 { buf = qtn_info_invalid_number; }
+
+// ---------------------------------------------------------
+//   
+//    r_addemailsc_query - dialog
+//    A query to ask service centre for email over sms
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_addemailsc_query
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtMultilineQuery;
+            id=EMultilineFirstLine;
+            control = AVKON_DATA_QUERY
+                { 
+                    layout = EMultiDataFirstEdwin;
+                    label = qtn_sms_prmpt_enter_gateway;                
+                    control = EDWIN
+                        {
+                        flags= EEikEdwinNoHorizScrolling; 
+                        width=16; 
+                        lines=1; 
+                        maxlength=21; // length of maximum allowed Sc number
+                        default_input_mode = EAknEditorNumericInputMode;
+                        allowed_input_modes = EAknEditorNumericInputMode;
+                        numeric_keymap = EAknEditorToFieldNumberModeKeymap;
+                        };
+                };
+            },
+        DLG_LINE
+            {
+            type=EAknCtMultilineQuery;
+            id=EMultilineSecondLine;
+            control= AVKON_DATA_QUERY 
+                { 
+                    layout = EMultiDataSecondPhoneEd;
+                    label = qtn_sms_prmt_enter_mail_scentre;
+                    control=EDWIN 
+                        {
+                        flags= EEikEdwinNoHorizScrolling; 
+                        width=16; 
+                        lines=1; 
+                        maxlength=21; // length of maximum allowed Gateway number
+                        default_input_mode = EAknEditorNumericInputMode;
+                        allowed_input_modes = EAknEditorNumericInputMode;
+                        numeric_keymap = EAknEditorToFieldNumberModeKeymap;
+                        };
+                };
+            }
+        };
+    }
+
+
+// End of File

@@ -515,7 +515,7 @@ void CSmsOutboxSend::SendNextHeaderL()
 		_LIT16(KComma, ",");
 		
 		RBuf16 buffer;
-		buffer.CreateL(size+num);
+		buffer.Create(size+num);
 		if(num > 0)
 			{
 			rcpt = numbers[0];
@@ -588,7 +588,6 @@ void CSmsOutboxSend::MoveEntryL()
 			iEntry.SetConnected(EFalse);
 			iEntry.SetFailed(EFalse);
 			iEntry.SetSendingState(KMsvSendStateSent);
-			iEntry.iDate.UniversalTime();
 
 			//Only update the message if it has changed
  			if (!(iEntry == iServerEntry.Entry()))

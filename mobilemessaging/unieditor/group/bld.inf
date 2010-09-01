@@ -1,0 +1,54 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*    BLD.INF file for all the modules in UniEditor directory.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+#include "../pluginapi/bld/bld.inf"
+#include "../smsplugin/bld/bld.inf"
+#include "../mmsplugin/bld/bld.inf"
+#include "../mtm/bld/bld.inf"
+#include "../model/bld/bld.inf"
+#include "../utils/bld/bld.inf"
+#include "../application/bld/bld.inf"
+#include "../videoconversionapi/bld/bld.inf"
+
+PRJ_PLATFORMS
+DEFAULT
+
+// Help exports
+#include "../help/group/bld.inf"
+
+PRJ_EXPORTS
+
+../inc/UniEditorConsts.h          |../../../inc/unieditorconsts.h
+../inc/UniEditorFeatures.h        |../../../inc/unieditorfeatures.h
+../inc/UniMsvEntry.h              |../../../inc/unimsventry.h
+../inc/UniMsvEntry.inl            |../../../inc/unimsventry.inl
+
+../rom/UniEditor.iby              CORE_APP_LAYER_IBY_EXPORT_PATH(UniEditor.iby)
+../rom/UniEditorResources.iby     LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(UniEditorResources.iby)
+
+../loc/UniEditor.loc              APP_LAYER_LOC_EXPORT_PATH(UniEditor.loc)
+
+PRJ_MMPFILES
+
+PRJ_TESTMMPFILES
+
+/* End of File */

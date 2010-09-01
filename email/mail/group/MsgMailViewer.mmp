@@ -1,0 +1,115 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  This is project specification file for the MsgMailViewer.
+*
+*/
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+TARGET      MsgMailViewer.exe
+EPOCSTACKSIZE 0x5000
+EPOCHEAPSIZE 0x1 0x800000 // As KBs. Latter about 8MB
+TARGETTYPE  exe
+UID         0x100039CE 0x101F4CE4
+
+VENDORID VID_DEFAULT
+CAPABILITY CAP_APPLICATION NetworkControl
+
+SOURCEPATH ../ViewerSrc
+SOURCE  MsgMailViewerApp.cpp 
+SOURCE  MsgMailViewerAppUi.cpp
+SOURCE  MsgMailViewerDocument.cpp
+SOURCE  MsgMailViewerAttachmentsDlg.cpp
+SOURCE  MsgMailViewerRemoveAttachment.cpp
+SOURCE  MsgMailViewerCharConv.cpp
+SOURCE  Msgmailcharactersethandler.cpp
+SOURCE  CMailViewManager.cpp
+SOURCE  CMailBaseControlAdapter.cpp
+SOURCE  CMailMsgBaseControlAdapter.cpp
+SOURCE  MsgMailViewerAppServer.cpp
+SOURCE  CMailForwardoperation.cpp
+SOURCE  cmailwaitoperation.cpp
+SOURCE  cmsgmailviewerfinditemhandler.cpp
+SOURCE  cmsgmailviewercontactmatcher.cpp
+SOURCE  cmsgmailviewercontactcaller.cpp
+SOURCE  cmsgmailviewerreplytomatcher.cpp
+SOURCEPATH ../UtilsSrc
+SOURCE  Maillog.cpp
+
+APP_LAYER_SYSTEMINCLUDE
+
+START RESOURCE ../group/MsgMailViewer.rss
+TARGETPATH      APP_RESOURCE_DIR
+HEADER
+LANGUAGE_IDS
+END
+
+START RESOURCE ../aif/MsgMailViewer_reg.rss
+DEPENDS msgmailviewer.rsg
+TARGETPATH /private/10003a3f/apps
+HEADER
+LANGUAGE_IDS
+END
+
+USERINCLUDE . ../inc ../ViewerSrc ../UtilsSrc
+
+SYSTEMINCLUDE   ../../../inc
+
+
+LIBRARY etext.lib ecom.lib WS32.lib
+LIBRARY euser.lib apparc.lib cone.lib eikcore.lib 
+LIBRARY eikcoctl.lib avkon.lib charconv.lib
+LIBRARY eikdlg.lib bafl.lib
+LIBRARY efsrv.lib apmime.lib
+LIBRARY AknSkins.lib CenRepNotifHandler.lib centralrepository.lib
+
+// Editor base
+LIBRARY msgeditorappui.lib msgeditorview.lib msgeditormodel.lib
+
+// Mail Utils
+LIBRARY msgmailutils.lib
+
+// Messaging
+LIBRARY msgs.lib
+LIBRARY imcm.lib
+LIBRARY muiu.lib
+LIBRARY muiu_internal.lib
+LIBRARY mtur.lib
+LIBRARY msgcommonutils.lib
+
+LIBRARY sendui.lib
+
+// Phonebook
+LIBRARY PbkEng.lib PbkView.lib  // cntmodel.lib
+LIBRARY VPbkEng.lib // pbk2
+
+// Common components
+LIBRARY commonui.lib
+LIBRARY FeatMgr.lib		// Feature Manager
+
+// Common Engine
+LIBRARY commonengine.lib
+
+// Help
+LIBRARY hlplch.lib 
+// AIW
+LIBRARY ServiceHandler.lib
+LIBRARY aiwdialdata.lib
+
+// Log
+DEBUGLIBRARY flogger.lib
+
+

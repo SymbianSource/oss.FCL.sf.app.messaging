@@ -1,0 +1,218 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the CMuiuSettingsArray.
+*
+*/
+
+
+
+//  CONSTANTS
+#define MuiuEdwinNumberMinValue   1
+#define MuiuEdwinNumberMaxValue   999
+#define MuiuPaswordNumLetters     32
+
+
+//  RESOURCE DEFINITIONS
+// ---------------------------------------------------------
+//
+//    r_muiu_settings_dialog_listbox
+//    For radiobutton settings lists
+//
+// ---------------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_muiu_settings_dialog_listbox
+    {
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    type =  EAknSetListBox;
+    editor_resource_id = r_muiu_setting_page_listbox;
+    menubar = R_AVKON_MENUPANE_EMPTY;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_setting_page_listbox
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE LISTBOX r_muiu_setting_page_listbox
+    {
+    flags = EEikListBoxMultipleSelection;
+    }
+    
+// ---------------------------------------------------------
+//
+//    r_muiu_settings_dialog_checklistbox
+//    For check box settings lists 
+//
+// ---------------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_muiu_settings_dialog_checklistbox
+    {
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__MARK;
+    type =  EAknSetListBox;
+    editor_resource_id = r_muiu_setting_page_checklistbox;
+    menubar = R_AVKON_MENUPANE_EMPTY;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_setting_page_checklistbox
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE LISTBOX r_muiu_setting_page_checklistbox
+    {
+    flags = EEikListBoxMultipleSelection;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_settings_dialog_text
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_muiu_settings_dialog_text
+    {
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    type = EEikCtEdwin;
+    editor_resource_id = r_muiu_setting_page_edwin_text;
+    menubar = R_AVKON_MENUPANE_EMPTY;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_setting_page_edwin
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE EDWIN r_muiu_setting_page_edwin_text
+    {
+    flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
+    width = 25;
+    lines = 6;
+    maxlength = 25;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_settings_dialog_number
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_muiu_settings_dialog_number
+    {
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    type = EAknCtIntegerEdwin;
+    editor_resource_id = r_muiu_setting_page_edwin_number;
+    menubar = R_AVKON_MENUPANE_EMPTY;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_setting_page_edwin_number
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE AVKON_INTEGER_EDWIN r_muiu_setting_page_edwin_number
+    {
+    min = MuiuEdwinNumberMinValue;
+    max = MuiuEdwinNumberMaxValue;
+    maxlength = 3;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_settings_dialog_sc_number
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_muiu_settings_dialog_sc_number
+    {
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    type = EEikCtEdwin;
+    editor_resource_id = r_muiu_setting_page_edwin_sc_number;
+    menubar = R_AVKON_MENUPANE_EMPTY;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_setting_page_edwin_sc_number
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE EDWIN r_muiu_setting_page_edwin_sc_number
+    {
+    flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
+    width = 25;
+    lines = 6;
+    maxlength = 21; // length of maximum allowed Sc number
+    default_input_mode = EAknEditorNumericInputMode;
+    allowed_input_modes = EAknEditorNumericInputMode;
+    numeric_keymap = EAknEditorToFieldNumberModeKeymap;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_settings_dialog_password
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_muiu_settings_dialog_password
+    {
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    menubar = R_AVKON_MENUPANE_EMPTY;
+    type = EEikCtSecretEd;
+    editor_resource_id = r_muiu_setting_page_password;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_setting_page_password
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE SECRETED r_muiu_setting_page_password
+    {
+    num_letters = MuiuPaswordNumLetters;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_settings_dialog_password_fill
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE NUMBER_INT16 r_muiu_settings_dialog_password_fill
+    {
+    value = '*';
+    }
+
+RESOURCE TBUF r_muiu_settings_dialog_compulsory_fill
+    {
+    buf = qtn_mce_settings_compulsory;
+    }
+
+// End of File

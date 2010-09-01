@@ -57,7 +57,7 @@ protected:
 
 private:
 	void DoRunL();
-	void DoCancel();
+
 	virtual void AddChildEntriesL() = 0;
 	virtual TBool IsRequiredEntryType(TUid aEntryType) const = 0;
 
