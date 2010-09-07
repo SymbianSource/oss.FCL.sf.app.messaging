@@ -75,5 +75,6 @@ LIBS += -lcsserverclientapi \
 	    -lxqsystemtoneservice \
         -lmsgerrorwatcher \
 	    -lgsmu \
-	    -lssmcmn
+	    -lssmcmn \
+	    -lhwrmvibraclient
         

@@ -247,14 +247,24 @@ void UniViewerHeaderContainer::setAddrGroupBoxHeading()
         (alias.isEmpty()) ? mHeaderGroupBox->setHeading(from) : mHeaderGroupBox->setHeading(alias);
     }
     else {
-        QString toAddrList = createAddressList(mViewFeeder->toAddressList());
-        QString ccAddrList = createAddressList(mViewFeeder->ccAddressList());
-
-        if (!ccAddrList.isEmpty()) {
-            toAddrList.append(ADDR_LIST_SEPARATOR);
-            toAddrList.append(ccAddrList);
+        ConvergedMessageAddressList addrList;
+        QString headingStr;
+        if ((addrList = mViewFeeder->toAddressList()).count()) {
+            headingStr.append(createAddressList(addrList));
         }
-        mHeaderGroupBox->setHeading(toAddrList);
+        if ((addrList = mViewFeeder->ccAddressList()).count()) {
+            if (!headingStr.isEmpty()) {
+                headingStr.append(ADDR_LIST_SEPARATOR);
+            }
+            headingStr.append(createAddressList(addrList));
+        }
+        if ((addrList = mViewFeeder->bccAddressList()).count()) {
+            if (!headingStr.isEmpty()) {
+                headingStr.append(ADDR_LIST_SEPARATOR);
+            }
+            headingStr.append(createAddressList(addrList));
+        }
+        mHeaderGroupBox->setHeading(headingStr);
     }
 }
 

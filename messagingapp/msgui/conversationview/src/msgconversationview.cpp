@@ -25,7 +25,6 @@
 #include <HbMessageBox>
 #include <HbNotificationDialog>
 #include <HbFrameBackground>
-#include <xqservicerequest.h>
 #include <HbStaticVkbHost>
 #include <HbStyleLoader>
 #include <xqaiwrequest.h>
@@ -536,12 +535,12 @@ void MsgConversationView::fetchContacts()
     if(!action)
         return;
 
-    QList<QVariant> args;
-    QString serviceName("com.nokia.services.phonebookservices");
-    QString operation("fetch(QString,QString,QString)");
+    QString service("phonebookservices");
+    QString interface("com.nokia.symbian.IContactsFetch");
+    QString operation("multiFetch(QString,QString)");
     XQAiwRequest* request;
     XQApplicationManager appManager;
-    request = appManager.create(serviceName, "Fetch", operation, true); //embedded
+    request = appManager.create(service, interface, operation, true); //embedded
     if ( request == NULL )
     {
         return;       
@@ -562,6 +561,7 @@ void MsgConversationView::fetchContacts()
     connect (request, SIGNAL(requestError(int,const QString&)), 
         this, SLOT(serviceRequestError(int,const QString&)));
 
+    QList<QVariant> args;
     args << QString(tr("Phonebook")); 
     args << KCntActionAll;
     args << KCntFilterDisplayAll;
@@ -582,13 +582,15 @@ void MsgConversationView::fetchImages()
     XQAiwRequest* request = NULL;
     XQApplicationManager appManager;
     request = appManager.create(service,interface, operation, true); // embedded
-    request->setSynchronous(true); // synchronous
+
     if(!request)
     {
         QDEBUG_WRITE("AIW-ERROR: NULL request");
         return;
     }
 
+    request->setSynchronous(true); // synchronous
+    
     connect(request, SIGNAL(requestOk(const QVariant&)),
         this, SLOT(imagesFetched(const QVariant&)));
     connect(request, SIGNAL(requestError(int,const QString&)),
@@ -982,7 +984,7 @@ void MsgConversationView::openItem(const QModelIndex & index)
     // For suspended message both short tap and long tap needs to show the same
     // context menu.....
     if(direction == ConvergedMessage::Outgoing 
-        	&&sendingState == ConvergedMessage::Suspended )
+        	&& ((sendingState == ConvergedMessage::Suspended) || (sendingState == ConvergedMessage::Failed)))
     {
         handleShortTap();
         return;
@@ -1111,7 +1113,6 @@ void MsgConversationView::launchUniEditor(const QVariantList& data)
     if(!data2.isNull())
         params << data2;
 
-    clearEditors();
     emit switchView(params);
 }
 
@@ -1494,6 +1495,10 @@ bool MsgConversationView::isSharedMessage(qint32 messageId)
     return shared;
 }
 
+//---------------------------------------------------------------
+// MsgConversationView::onAudioSelected
+// @see header file
+//---------------------------------------------------------------
 void MsgConversationView::onAudioSelected(QString& filePath)
 {
     QVariantList params;
@@ -1522,6 +1527,47 @@ void MsgConversationView::onAudioSelected(QString& filePath)
     params << dataArray;
     params << MsgBaseView::ADD_AUDIO;
     emit switchView(params);
+}
+
+//---------------------------------------------------------------
+// MsgConversationView::handleKeyEvent
+// @see header file
+//---------------------------------------------------------------
+bool MsgConversationView::handleKeyEvent(int key)
+{
+    bool eventHandled = false;
+    if (Qt::Key_Yes == key) {
+        //getting address of last sent/received msg.
+        const int rowCount = mMessageModel->rowCount();
+        QModelIndex index = mMessageModel->index(rowCount - 1, 0);
+        QString address = index.data(ConversationAddress).toString();
+
+        if (!address.isEmpty()) {
+            call(address);
+            eventHandled = true;
+        }
+    }
+    return eventHandled;
+}
+
+//---------------------------------------------------------------
+// MsgConversationView::call
+// @see header
+//---------------------------------------------------------------
+void MsgConversationView::call(const QString& address)
+{
+    QString service("phoneui");
+    QString interface("com.nokia.symbian.ICallDial");
+    QString operation("dial(QString)");
+
+    XQApplicationManager appManager;
+    QScopedPointer<XQAiwRequest> request(appManager.create(service, interface, operation, false));
+    if (request) {
+        QList<QVariant> args;
+        args << address;
+        request->setArguments(args);
+        request->send();
+    }
 }
 
 // EOF

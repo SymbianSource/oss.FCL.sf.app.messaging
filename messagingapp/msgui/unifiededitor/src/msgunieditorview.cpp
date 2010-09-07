@@ -1266,6 +1266,17 @@ int MsgUnifiedEditorView::saveContentToDrafts()
     return msgId;
 }
 
+bool MsgUnifiedEditorView::handleKeyEvent(int key)
+{
+    bool eventHandled = false;
+    if (Qt::Key_Yes == key && mSendAction->isEnabled()) {
+        eventHandled = true;
+        send();
+    }
+
+    return eventHandled;
+}
+
 void MsgUnifiedEditorView::resizeEvent( QGraphicsSceneResizeEvent * event )
 {
  Q_UNUSED(event)
@@ -1293,22 +1304,31 @@ int MsgUnifiedEditorView::createVCards(
     QContactManager* contactManager = new QContactManager("symbian");
     CntServicesContactList cntServicesContacts = qVariantValue<CntServicesContactList>(value);
     int cntCount = cntServicesContacts.count();
+    
+    QCRITICAL_WRITE_FORMAT("servicecontactlist count:",cntCount);
+    
     QList<QtMobility::QContact> contactList;
     for(int i = 0; i < cntCount; i++ )
-    {
+    {        
         contactList << contactManager->contact( cntServicesContacts.at(i).mContactId );
     }
     delete contactManager;
-
+   
     // get list of all versit-documents
     QVersitDocument::VersitType versitType(QVersitDocument::VCard21Type);
-    QVersitContactExporter* exporter = new QVersitContactExporter();
     
-    bool ret_val = exporter->exportContacts(contactList, versitType);
-    QList<QtMobility::QVersitDocument> documentList = exporter->documents();    
-
-    delete exporter;
-
+    QVersitContactExporter exporter;
+    bool ret_val = exporter.exportContacts(contactList, versitType);
+    
+    if(ret_val == false)
+        { 
+        QCRITICAL_WRITE("QVersitContactExporter::exportContacts returned false");
+        return KErrGeneral;
+        }  
+    
+    // process the documents
+	QList<QtMobility::QVersitDocument> documentList = exporter.documents();
+	
     // loop though and create a vcard for each contact
     QVersitWriter* writer = new QVersitWriter();
     for(int i = 0; i < cntCount; i++ )
@@ -1333,17 +1353,29 @@ int MsgUnifiedEditorView::createVCards(
                 // trap ignore so that, incase of multiselection, other vcards are still created
                 QByteArray bufArr;
                 TRAP_IGNORE(
-                CBufBase* contactbufbase = CBufFlat::NewL(contactsbuf.size());
-                CleanupStack::PushL(contactbufbase);
-                contactbufbase->InsertL( contactbufbase->Size(),
-                        *XQConversions::qStringToS60Desc8( contactsbuf.data() ) );
-                TPtr8 ptrbuf(contactbufbase->Ptr(0));
-                bufArr = XQConversions::s60Desc8ToQByteArray(ptrbuf);
-                CleanupStack::PopAndDestroy(contactbufbase);
-                );
-                file.write(bufArr);
-                file.close();
-                filelist << filepath;
+                        HBufC8* contactBuf8 = XQConversions::qStringToS60Desc8(contactsbuf.data());
+                        if(contactBuf8)
+                            {
+                            CleanupStack::PushL(contactBuf8);
+                            CBufBase* contactbufbase = CBufFlat::NewL(contactsbuf.size());
+                            CleanupStack::PushL(contactbufbase);
+                            
+                            contactbufbase->InsertL( contactbufbase->Size(), *contactBuf8);
+                            
+                            TPtr8 ptrbuf(contactbufbase->Ptr(0));
+                            bufArr = XQConversions::s60Desc8ToQByteArray(ptrbuf);
+                            
+                            CleanupStack::PopAndDestroy(contactbufbase);
+                            CleanupStack::PopAndDestroy(contactBuf8);
+                            
+                            // write to file
+                            file.write(bufArr);                                            
+                            filelist << filepath;
+                            }
+                ); // TRAP END
+                
+                //close file
+                file.close();                
             }
         }
     }
@@ -1436,25 +1468,26 @@ void MsgUnifiedEditorView::handleViewExtnActivated(HbListWidgetItem* item)
 //---------------------------------------------------------------
 void MsgUnifiedEditorView::fetchContacts()
 {
-    QList<QVariant> args;
-    QString serviceName("com.nokia.services.phonebookservices");
-    QString operation("fetch(QString,QString,QString)");
+    QString service("phonebookservices");
+    QString interface("com.nokia.symbian.IContactsFetch");
+    QString operation("multiFetch(QString,QString)");
     XQAiwRequest* request;
     XQApplicationManager appManager;
-    request = appManager.create(serviceName, "Fetch", operation, true); //embedded
+    request = appManager.create(service, interface, operation, true); //embedded
     if ( request == NULL )
     {
         QCRITICAL_WRITE("AIW-ERROR: NULL request");
-        return;       
+        return;
     }
 
     // Result handlers
-    connect (request, SIGNAL(requestOk(const QVariant&)), 
+    connect (request, SIGNAL(requestOk(const QVariant&)),
         this, SLOT(contactsFetched(const QVariant&)));
-    connect (request, SIGNAL(requestError(int,const QString&)), 
+    connect (request, SIGNAL(requestError(int,const QString&)),
         this, SLOT(serviceRequestError(int,const QString&)));
 
-    args << QString(tr("Phonebook")); 
+    QList<QVariant> args;
+    args << QString(tr("Phonebook"));
     args << KCntActionAll;
     args << KCntFilterDisplayAll;
 
@@ -1478,12 +1511,14 @@ void MsgUnifiedEditorView::fetchImages()
     XQAiwRequest* request = NULL;
     XQApplicationManager appManager;
     request = appManager.create(service,interface, operation, true);//embedded
-    request->setSynchronous(true); // synchronous
+  
     if(!request)
     {     
         QCRITICAL_WRITE("AIW-ERROR: NULL request");
         return;
     }
+    
+    request->setSynchronous(true); // synchronous
 
     connect(request, SIGNAL(requestOk(const QVariant&)),
         this, SLOT(imagesFetched(const QVariant&)));

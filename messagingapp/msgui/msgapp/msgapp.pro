@@ -101,5 +101,6 @@ LIBS += -lappengine \
         -lQtContacts \
         -lsettingsview \
         -lringbc \
+        -lafservice \
         -lunidatamodelloader 
 

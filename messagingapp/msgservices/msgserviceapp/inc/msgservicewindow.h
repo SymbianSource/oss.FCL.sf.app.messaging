@@ -43,6 +43,14 @@ public:
      */
     ~MsgServiceWindow();
     
+protected:
+
+    /**
+     * Key press event handler
+     * @see QGraphicsItem
+     */
+    void keyPressEvent(QKeyEvent *event);
+
 private:
     /**
      * View interface object

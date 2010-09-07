@@ -493,8 +493,11 @@ void UniViewerTextItem::openContactInfo()
     
     if(action)
     {
-        QList<QVariant> args;
+        //service stuff.
+        QString service("phonebookservices");
+        QString interface;
         QString operation;
+        QList<QVariant> args;
         
         QString data = action->data().toString();
         
@@ -510,16 +513,16 @@ void UniViewerTextItem::openContactInfo()
             if(contactId > 0)
                 {
                 //open contact card
-                operation = QString("open(int)");
+                interface = QString("com.nokia.symbian.IContactsView");
+                operation = QString("openContactCard(int)");
                 args << contactId;
                 }
             else
                 {
                 //save to contacts with phone number field prefilled.
-        
+                interface = QString("com.nokia.symbian.IContactsEdit");
                 operation = QString("editCreateNew(QString,QString)");
                 QString type = QContactPhoneNumber::DefinitionName;
-        
                 args << type;
                 args << data;
                 }
@@ -536,28 +539,23 @@ void UniViewerTextItem::openContactInfo()
             if(contactId > 0)
                 {
                 //open contact card
-                operation = QString("open(int)");
+                interface = QString("com.nokia.symbian.IContactsView");
+                operation = QString("openContactCard(int)");
                 args << contactId;
                 }
             else
                 {
                 //save to contacts with e-mail field prefilled.
-        
-                operation = QString("editCreateNew(QString,QString)");                
-                
+                interface = QString("com.nokia.symbian.IContactsEdit");
+                operation = QString("editCreateNew(QString,QString)");
                 QString type = QContactEmailAddress::DefinitionName;
-        
                 args << type;
                 args << data;
                 }
-        }
-        
-        //service stuff.
-        QString serviceName("com.nokia.services.phonebookservices");
-     
+        }        
         XQAiwRequest* request;
         XQApplicationManager appManager;
-        request = appManager.create(serviceName, "Fetch", operation, true); // embedded
+        request = appManager.create(service, interface, operation, true); // embedded
         if ( request == NULL )
             {
             return;       

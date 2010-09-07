@@ -34,7 +34,8 @@ HEADERS += inc/msgindicatorplugin.h \
 SOURCES += src/msgindicatorplugin.cpp \
 		   src/msgindicator.cpp \
 		   src/msgindicator_p.cpp
-		   
+
+TRANSLATIONS = messaging.ts		   
 
 symbian {
     TARGET.EPOCALLOWDLLDATA=1

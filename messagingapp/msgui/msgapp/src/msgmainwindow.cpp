@@ -23,6 +23,8 @@
 #include "msgsendserviceinterface.h"
 #include "conversationsengine.h"
 
+#include <QKeyEvent>
+
 
 //---------------------------------------------------------------
 // MsgMainWindow::MsgMainWindow
@@ -67,5 +69,25 @@ MsgMainWindow::~MsgMainWindow()
 MsgViewManager* MsgMainWindow::viewManager()
 {   
      return mViewManager; 
+}
+
+//---------------------------------------------------------------
+// MsgMainWindow::keyPressEvent
+// @see header
+//---------------------------------------------------------------
+void MsgMainWindow::keyPressEvent(QKeyEvent *event)
+{
+    bool eventHandled = false;
+    if (Qt::Key_Yes == event->key()) {
+        eventHandled = mViewManager->handleKeyEvent(event->key());
+    }
+
+    if (eventHandled) {
+        event->accept();
+    }
+    else {
+        HbMainWindow::keyPressEvent(event);
+    }
+
 }
 // End of file

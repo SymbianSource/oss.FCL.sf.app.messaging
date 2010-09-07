@@ -55,6 +55,8 @@ HEADERS += shareuiprivate.h
     
 SOURCES += shareui.cpp \
     	   shareuiprivate.cpp
+    	   
+TRANSLATIONS = share.ts
 
 LIBS += -lxqservice \
         -lxqserviceutil

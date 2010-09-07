@@ -29,6 +29,7 @@ class MsgStoreHandler;
 class XQSettingsManager;
 class XQPublishAndSubscribeUtils;
 class XQSystemToneService;
+class CHWRMVibra;
 
 /**
  * Structure to hold the details of a class 0 SMS
@@ -198,6 +199,11 @@ private:
      * Object to handle audio alert when new message is received
      */
     XQSystemToneService* mSts;
+    
+    /**
+     * Vibra alert on receiving a new message
+     */
+    CHWRMVibra *mVibra; // Owned.
     };
 
 

@@ -34,6 +34,7 @@
 
 // FORWARD DECLARATIONS
 class ShareUiPrivate;
+class QTranslator;
 
 /**
  * This class offers message creation and sending services.
@@ -69,7 +70,21 @@ private:
      * Owned
      */
     ShareUiPrivate* d_ptr;
+
+    /**
+     * Translator member variable
+     * Owned
+     */ 
+    QTranslator* mTranslator;
+    
+    /**
+     * Translator member variable
+     * Owned
+     */
+    QTranslator* mTranslator_comm;
+    
     Q_DECLARE_PRIVATE_D(d_ptr,ShareUi)
+
     };
 
 

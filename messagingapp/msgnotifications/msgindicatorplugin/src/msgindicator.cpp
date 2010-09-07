@@ -30,19 +30,20 @@
 #include <xqappmgr.h>
 #include <ccsdefs.h>
 
-
+#include <QTranslator>
+#include <QLocale>
+#include <hbapplication.h>
 //Localized Constants
 #define LOC_UNREAD_MESSAGES hbTrId("txt_messaging_list_ln")
 #define LOC_NEW_MESSAGES hbTrId("txt_common_opt_ln_new_messages")
-#define LOC_RECEIVED_FILES hbTrId("Received files")
-#define LOC_UNREAD_SINGLE_MESSAGE hbTrId("Unread Message")
-#define LOC_UNREAD_MULTIPLE_MESSAGES hbTrId("Unread Messages")
-#define LOC_FAILED_SINGLE_MESSAGE hbTrId("Failed Message")
-#define LOC_FAILED_MULTIPLE_MESSAGES hbTrId("Failed Messages")
-#define LOC_OUTGOING_SINGLE_MESSAGE hbTrId("Outgoing Message")
-#define LOC_OUTGOING_MULTIPLE_MESSAGES hbTrId("Outgoing Messages")
+#define LOC_RECEIVED_FILES hbTrId("txt_messaging_title_received_files")
+#define LOC_UNREAD_MULTIPLE_MESSAGES hbTrId("txt_messaging_list_ln_new_messages") // for unread messages
+#define LOC_FAILED_SINGLE_MESSAGE hbTrId("txt_messaging_list_failed_message")
+#define LOC_FAILED_MULTIPLE_MESSAGES hbTrId("txt_messaging_dpophead_ln_failed_messages")
+#define LOC_OUTGOING_SINGLE_MESSAGE hbTrId("txt_messaging_indimenu_list_outgoing_message")
+#define LOC_OUTGOING_MULTIPLE_MESSAGES hbTrId("txt_messaging_dpophead_ln_outgoing_messages")  
 #define STATUS_MONO_NEW_MESSAGE QString("qtg_status_new_message")
-#define LOC_BUSINESSCARD hbTrId("Business card")
+#define LOC_BUSINESSCARD hbTrId("txt_messaging_menu_business_card")
 #define LOC_MULTIMEDIA_MSG hbTrId("txt_messaging_list_indimenu_multimedia_message")
 /**
  * The number of indicators.
@@ -122,6 +123,16 @@ MsgIndicator::MsgIndicator(const QString &indicatorType) :
         InteractionActivated),
 		mIndicatorType(NULL)
 {
+    QString locale = QLocale::system().name();
+    QString path = "z:/resource/qt/translations/";
+        
+    mTranslator = new QTranslator();
+    mTranslator_comm = new QTranslator();
+    mTranslator->load(path + QString("messaging_") + locale);
+    mTranslator_comm->load(path + QString("common_") + locale);
+    qApp->installTranslator(mTranslator);
+    qApp->installTranslator(mTranslator_comm);
+    
     d_ptr = q_check_ptr(new MsgIndicatorPrivate(this));
 }
 
@@ -132,6 +143,8 @@ MsgIndicator::MsgIndicator(const QString &indicatorType) :
 MsgIndicator::~MsgIndicator()
 {
     delete d_ptr;
+    delete mTranslator;
+    delete mTranslator_comm;
 }
 
 // ----------------------------------------------------------------------------

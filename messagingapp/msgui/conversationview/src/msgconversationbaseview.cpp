@@ -284,4 +284,13 @@ void MsgConversationBaseView::setPSCVId(bool setId)
         mSettingsManager->writeItemValue(mCVIdkey, -1);
     }
 }
+
+//---------------------------------------------------------------
+// MsgConversationBaseView::handleKeyEvent
+//
+//---------------------------------------------------------------
+bool MsgConversationBaseView::handleKeyEvent(int key)
+{
+    return mConversationView->handleKeyEvent(key);
+}
 // EOF

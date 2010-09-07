@@ -37,7 +37,9 @@ LIBS += -lxqservice \
 	    -lgsmu \
 	    -lxqutils \
 	    -lcsserverclientapi \
-	    -lxqsystemtoneservice
+	    -lxqsystemtoneservice \
+	    -lxqsettingsmanager \
+	    -lhwrmvibraclient
 
 SERVICE.FILE = service_conf.xml
 SERVICE.OPTIONS = embeddable

@@ -19,7 +19,7 @@ TEMPLATE = subdirs
 CONFIG += symbian_test
 
 #Sub .pro files
-SUBDIRS += unittest_unidatamodelsmsplugin
+SUBDIRS += testunidatamodelsmsplugin
 
 # Platforms
 SYMBIAN_PLATFORMS = DEFAULT

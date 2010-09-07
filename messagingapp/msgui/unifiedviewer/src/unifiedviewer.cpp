@@ -27,6 +27,8 @@
 #include <centralrepository.h>
 #include <MmsEngineDomainCRKeys.h>
 #include <ccsdefs.h>
+#include <xqappmgr.h>
+#include <xqaiwrequest.h>
 
 // USER INCLUDES
 #include "uniscrollarea.h"
@@ -64,7 +66,7 @@ _LIT(KSelectMsgPropertyStmt, " SELECT message_id, msg_property, msg_processingst
 //----------------------------------------------------------------------------
 UnifiedViewer::UnifiedViewer(const qint32 messageId,
                              QGraphicsItem *parent) :
-    MsgBaseView(parent)
+    MsgBaseView(parent), mConversationID(-1)
 {
     QDEBUG_WRITE("UnifiedViewer contruction start");
 
@@ -160,12 +162,13 @@ void UnifiedViewer::clearContent()
 // UnifiedViewer::populateContent
 // @see header file
 //---------------------------------------------------------------
-void UnifiedViewer::populateContent(const qint32 messageId, bool update, int msgCount)
+void UnifiedViewer::populateContent(const qint32 messageId, bool update, int msgCount, qint64 conversationId)
 {
     QDEBUG_WRITE("UnifiedViewer populateContent Start");
 
     mMsgCount = msgCount;
     mMessageId = messageId;
+    mConversationID = conversationId;
 
     QDEBUG_WRITE("UnifiedViewer feeder->updateContent START");
 
@@ -195,6 +198,42 @@ void UnifiedViewer::populateContent(const qint32 messageId, bool update, int msg
     createToolBar();
 
     QDEBUG_WRITE("UnifiedViewer populateContent END");
+}
+
+//---------------------------------------------------------------
+// UnifiedViewer::handleKeyEvent
+// @see header file
+//---------------------------------------------------------------
+bool UnifiedViewer::handleKeyEvent(int key)
+{
+    bool eventHandled = false;
+    if (Qt::Key_Yes == key) {
+        bool incoming = mViewFeeder->isIncoming();
+        QString number;
+        if (incoming) {
+            QString alias;
+            mViewFeeder->fromAddressAndAlias(number, alias);
+        }
+        else if (!incoming && 1 == mViewFeeder->recipientCount()) {
+            ConvergedMessageAddressList addrList;
+            if ((addrList = mViewFeeder->toAddressList()).count()) {
+                number = addrList[0]->address();
+            }
+            else if((addrList = mViewFeeder->ccAddressList()).count()) {
+                number = addrList[0]->address();
+            }
+            else if ((addrList = mViewFeeder->bccAddressList()).count()) {
+                number = addrList[0]->address();
+            }
+        }
+
+        // Call
+        if (!number.isEmpty()) {
+            eventHandled = true;
+            call(number);
+        }
+    }
+    return eventHandled;
 }
 
 //---------------------------------------------------------------
@@ -298,6 +337,7 @@ void UnifiedViewer::onDialogDeleteMsg(int val)
         if (mMsgCount > 1) {
             param << MsgBaseView::CV;
             param << MsgBaseView::UNIVIEWER;
+            param << mConversationID;
         }
         else {
             param << MsgBaseView::CLV;
@@ -342,6 +382,26 @@ void UnifiedViewer::launchEditor(
     params << operation;
 
     emit switchView(params);
+}
+
+//---------------------------------------------------------------
+// UnifiedViewer::call
+// @see header file
+//---------------------------------------------------------------
+void UnifiedViewer::call(const QString &number)
+{
+    QString service("phoneui");
+    QString interface("com.nokia.symbian.ICallDial");
+    QString operation("dial(QString)");
+
+    XQApplicationManager appManager;
+    QScopedPointer<XQAiwRequest> request(appManager.create(service, interface, operation, false));
+    if (request) {
+        QList<QVariant> args;
+        args << number;
+        request->setArguments(args);
+        request->send();
+    }
 }
 
 //---------------------------------------------------------------

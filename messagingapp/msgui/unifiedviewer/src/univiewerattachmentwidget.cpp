@@ -35,7 +35,6 @@
 
 // LOCAL CONSTANTS
 #define LOC_OPEN hbTrId("txt_common_menu_open")
-#define LOC_SAVE hbTrId("txt_common_menu_save")
 #define LOC_SAVE_TO_CONTACTS hbTrId("txt_messaging_menu_save_to_contacts")
 
 const QString BG_FRAME_NORMAL("qtg_fr_list_normal");
@@ -181,14 +180,7 @@ void UniViewerAttachmentWidget::handleOpen()
     QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
 
-//----------------------------------------------------------------------------
-// UniViewerAttachmentWidget::handleSave
-// @see header file
-//----------------------------------------------------------------------------
-void UniViewerAttachmentWidget::handleSave()
-{
 
-}
 
 //----------------------------------------------------------------------------
 // UniViewerAttachmentWidget::handleShortTap
@@ -221,7 +213,7 @@ void UniViewerAttachmentWidget::handleLongTap(const QPointF &position)
     }
     else {
         menu->addAction(LOC_OPEN, this, SLOT(handleOpen()));
-        menu->addAction(LOC_SAVE, this, SLOT(handleSave()));
+        
     }
 
     menu->show();

@@ -88,10 +88,8 @@ private slots:
      */
     void handleOpen();
 
-    /**
-     * Handles saving of media.
-     */
-    void handleSave();
+    
+    
     
     /**
      * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture

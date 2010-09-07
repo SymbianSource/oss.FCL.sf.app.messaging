@@ -390,6 +390,20 @@ void MsgServiceViewManager::view(int msgId)
     }
 
 // ----------------------------------------------------------------------------
+// MsgServiceViewManager::handleKeyEvent
+// @see header
+// ----------------------------------------------------------------------------
+bool MsgServiceViewManager::handleKeyEvent(int key)
+{
+    MsgBaseView *baseView = static_cast<MsgBaseView *>(mMainWindow->currentView());
+    bool eventHandled = false;
+    if (baseView) {
+        eventHandled = baseView->handleKeyEvent(key);
+    }
+    return eventHandled;
+}
+
+// ----------------------------------------------------------------------------
 // MsgServiceViewManager::handleSmsMmsMsg
 // @see header
 // ----------------------------------------------------------------------------

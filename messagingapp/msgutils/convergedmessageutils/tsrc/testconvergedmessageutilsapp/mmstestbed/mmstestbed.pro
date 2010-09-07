@@ -11,29 +11,36 @@
 #
 # Contributors:
 #
-# Description: Project Definiton File for mmstestbed
+# Description:
 #
 
-QT += testlib
+#QT += testlib
 QT -= gui
-
-CONFIG += hb
-CONFIG += symbian_test
-CONFIG += qtestlib
 
 TEMPLATE = lib
 
+CONFIG += hb
+#CONFIG += qtestlib
+CONFIG += symbian_test
 TARGET = mmstestbed
 
 INCLUDEPATH += .
 INCLUDEPATH += inc
 INCLUDEPATH += ../../../inc
+
 INCLUDEPATH += ../../../../../../mmsengine/inc
-INCLUDEPATH += ../../../../../../mmsengine/mmscodec/inc
-INCLUDEPATH += ../../../../../../mmsengine/mmshttptransport/inc
-INCLUDEPATH += ../../../../../../mmsengine/mmsmessage/inc
-INCLUDEPATH += ../../../../../../mmsengine/mmsconninit/inc
 INCLUDEPATH += ../../../../../../mmsengine/mmsserver/inc
+INCLUDEPATH += ../../../../../../mmsengine/mmsmessage/inc
+INCLUDEPATH += ../../../../../../mmsengine/mmscodec/inc
+INCLUDEPATH += ../../../../../../inc
+INCLUDEPATH += ../../../../../../mmsengine/mmsengine/inc
+INCLUDEPATH += ../../../../../../../../mmsengine/inc
+INCLUDEPATH += ../../../../../../../../mmsengine/mmscodec/inc
+INCLUDEPATH += ../../../../../../../../mmsengine/mmshttptransport/inc
+INCLUDEPATH += ../../../../../../../../mmsengine/mmsmessage/inc
+INCLUDEPATH += ../../../../../../../../mmsengine/mmsconninit/inc
+#INCLUDEPATH += ../../../../mmsengine/mmscodec/inc
+INCLUDEPATH += ../../../../../../../../mmsengine/mmsserver/inc
 INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
 DEFINES += BUILD_MMSTESTBED_DLL
@@ -51,22 +58,22 @@ HEADERS += inc/mmstestbed.h \
 
 SYMBIAN_PLATFORMS = WINSCW ARMV5
 
+defBlock = \
+	"$${LITERAL_HASH}if defined(EABI)" \
+	"DEFFILE eabi/mmstestbedu.def" \
+	"$${LITERAL_HASH}else" \
+	"DEFFILE bwins/mmstestbedu.def" \
+	"$${LITERAL_HASH}endif"
+
+
 symbian {
     TARGET.UID3 =  0xE5c588a1
     TARGET.CAPABILITY = CAP_GENERAL_DLL
     TARGET.EPOCSTACKSIZE = 0x8000
     TARGET.EPOCHEAPSIZE = 0x1000 0x1F00000
-    TARGET.EPOCALLOWDLLDATA = 1 
+    TARGET.EPOCALLOWDLLDATA = 1
     VENDORID =  VID_DEFAULT
 	}
-
-#Def File rules
-defBlock = \
-"$${LITERAL_HASH}if defined(EABI)" \
-"DEFFILE eabi/mmstestbedu.def" \
-"$${LITERAL_HASH}else" \
-"DEFFILE bwins/mmstestbedu.def" \
-"$${LITERAL_HASH}endif"
 
 # Build.inf rules
 BLD_INF_RULES.prj_exports += \

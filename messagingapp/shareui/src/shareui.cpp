@@ -20,6 +20,9 @@
 #include "shareuiprivate.h"
 #include <QDir>
 
+#include <QTranslator>
+#include <QLocale>
+#include <hbapplication.h>
 /**
  * Default Constructor.
  * 
@@ -27,6 +30,16 @@
 
 ShareUi::ShareUi() : d_ptr(NULL)
     {    
+    QString locale = QLocale::system().name();
+    QString path = "z:/resource/qt/translations/";
+        
+    mTranslator = new QTranslator();
+    mTranslator_comm = new QTranslator();
+    
+    bool result = mTranslator->load(path + QString("share_") + locale);
+    result = mTranslator_comm->load(path + QString("common_") + locale);
+    qApp->installTranslator(mTranslator);
+    qApp->installTranslator(mTranslator_comm);
     }
 
 
@@ -39,7 +52,10 @@ ShareUi::~ShareUi()
     if(d_ptr)
         {
         delete d_ptr;
-        }
+        }    
+     delete mTranslator;
+     delete mTranslator_comm;
+     
     }
 
 /**

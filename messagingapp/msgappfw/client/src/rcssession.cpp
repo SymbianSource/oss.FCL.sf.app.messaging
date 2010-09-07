@@ -23,6 +23,8 @@
 // USER INCLUDES
 #include "ccsdebug.h"
 
+const TInt KCsServerRetryTimeout  = 100000;
+const TInt KCsServerRetryCount    = 5;
 // ----------------------------------------------------------------------------
 // StartServer
 // Starts the server. Used only when the server is implemented as a transient.
@@ -54,15 +56,10 @@ TInt StartServer()
 
     User::WaitForRequest(status);
 
-    if (status != KErrNone)
-    {
-        server.Close();
-        return status.Int();
-    }
-
+    err = (server.ExitType() == EExitPanic ) ? KErrGeneral : status.Int();
+    server.Close();
     PRINT ( _L("End RCsSession->StartServer") );
-
-    return KErrNone;
+    return err;
 }
 // ============================== MEMBER FUNCTIONS ============================
 
@@ -84,27 +81,31 @@ iNotifyRequestBufferPtr (0, 0){
 // ----------------------------------------------------------------------------
 TInt RCsSession::Connect()
 {
-    TInt err = CreateSession(KCsServerName, Version());
-
-    if (err != KErrNone)
+    TInt retry = KCsServerRetryCount;
+    FOREVER
     {
-        PRINT ( _L("conversation server not running. Trying to start") );
-
-        err = StartServer();
-
-        if (err != KErrNone)
-        {
-            PRINT ( _L("Conversation server startup failed") );
-            PRINT1 ( _L("End RCsSession::Connect. Error code = %d"), err );
-            return err;
-        }
-
-        PRINT ( _L("Conversation server startup successful") );
-
-        err = CreateSession(KCsServerName, Version());
+         TInt err = CreateSession(KCsServerName, Version());
+         if( err != KErrNotFound && err != KErrServerTerminated && err != KErrServerBusy )
+         {
+             return err;
+         }
+         if( --retry == 0 )
+         {
+             return err;
+         }
+         if( err == KErrServerBusy )
+         {
+             User::After(KCsServerRetryTimeout);
+         }
+         PRINT ( _L("conversation server not running. Trying to start") );
+         err = StartServer();
+         if( err != KErrNone && err != KErrAlreadyExists )
+         {
+             PRINT ( _L("Conversation server startup failed") );
+             return err;
+         }
+         PRINT ( _L("Conversation server startup successful") );
     }
-
-    return err;
 }
 
 // ----------------------------------------------------------------------------

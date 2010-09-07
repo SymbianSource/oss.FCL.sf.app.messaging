@@ -58,7 +58,30 @@ public:
     /**
      * Populates the content on the widget
      */
-    void populateContent(const qint32 messageId, bool update, int msgCount);
+    void populateContent(const qint32 messageId, bool update, int msgCount, qint64 conversationId=-1);
+
+    /**
+     * Event handler
+     * @param key Key code
+     * @return true if key event handled else false.
+     * @see MsgBaseView
+     */
+    bool handleKeyEvent(int key);
+
+public slots:
+
+    /**
+     * Clears the content on the widget
+     */
+    void clearContent();
+
+    // Used for internal testing will be removed
+    void handleFwdAction();
+
+    /**
+     * Handle delete
+     */
+    void handleDeleteAction();
 
 protected:
 
@@ -87,20 +110,11 @@ private:
      */
     void launchEditor(MsgBaseView::UniEditorOperation operation);
 
-public slots:
-
     /**
-     * Clears the content on the widget
+     * Launches the dialer interface.
+     * @args number Number to be called.
      */
-    void clearContent();
-
-    // Used for internal testing will be removed
-    void handleFwdAction();
-    
-    /**
-     * Handle delete 
-     */     
-    void handleDeleteAction();
+    void call(const QString &number);
 
 private slots:
     /**
@@ -144,6 +158,11 @@ private:
      * Owned
      */
     UniContentsWidget* mContentsWidget;
+    
+    /**
+     * Conversation ID
+     */
+    qint64 mConversationID;
 
     /**
      * Contact id
@@ -159,6 +178,7 @@ private:
      * Message count
      */
     int mMsgCount;
+
 };
 
 #endif

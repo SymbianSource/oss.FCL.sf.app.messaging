@@ -21,9 +21,8 @@
 #include "msgviewmanager.h"
 #include "msgbaseview.h"
 #include "msgmainwindow.h"
-#include <hbapplication.h>
-#include <hbactivitymanager.h>
 #include <QVariantHash>
+#include <afactivitystorage.h>
 
 const int INVALID_MSGID = -1;
 // Activity Names 
@@ -37,7 +36,7 @@ const QString EditorActivityName("MsgCreate");
 MsgActivityHandler::MsgActivityHandler(QObject* parent):
     QObject(parent)
 {
-  
+    mActivityStorage = new AfActivityStorage();
 }
 
 //-----------------------------------------------------------------------------
@@ -46,7 +45,10 @@ MsgActivityHandler::MsgActivityHandler(QObject* parent):
 //-----------------------------------------------------------------------------
 MsgActivityHandler::~MsgActivityHandler()
 {
-   
+   if (mActivityStorage) {
+       delete mActivityStorage;
+       mActivityStorage = NULL;
+   }
 }
 
 //-----------------------------------------------------------------------------
@@ -55,9 +57,6 @@ MsgActivityHandler::~MsgActivityHandler()
 //-----------------------------------------------------------------------------
 void MsgActivityHandler::saveActivity()
 {
-    HbActivityManager* activityManager = 
-                        qobject_cast<HbApplication*>(qApp)->activityManager();
-                        
      int currentView = mMainWindow->viewManager()->currentView();
      int msgId = INVALID_MSGID;
      if((currentView == MsgBaseView::CV) || (currentView== MsgBaseView::UNIEDITOR))
@@ -81,16 +80,14 @@ void MsgActivityHandler::saveActivity()
         stream << msgId;
 
         // add the activity to the activity manager
-        bool ok = activityManager->addActivity(EditorActivityName, 
-                serializedActivity, metadata);
+        mActivityStorage->saveActivity(EditorActivityName, serializedActivity, metadata);
         }
     else
         {    
         stream << ListViewActivityName;
 
         // add the activity to the activity manager
-        bool ok = activityManager->addActivity(ListViewActivityName, 
-                serializedActivity, metadata);
+        mActivityStorage->saveActivity(ListViewActivityName, serializedActivity, metadata);
         }
 }
 
@@ -119,10 +116,8 @@ int MsgActivityHandler::parseActivityData(const QVariant &activityData)
 //-----------------------------------------------------------------------------
 void MsgActivityHandler::clearActivities()
 {
-    HbActivityManager* activityManager = 
-                        qobject_cast<HbApplication*>(qApp)->activityManager();
-    activityManager->removeActivity(ListViewActivityName);   
-    activityManager->removeActivity(EditorActivityName);   
+    mActivityStorage->removeActivity(ListViewActivityName);
+    mActivityStorage->removeActivity(EditorActivityName);
 }
 
 //-----------------------------------------------------------------------------

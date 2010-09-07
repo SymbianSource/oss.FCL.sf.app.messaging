@@ -24,6 +24,7 @@
 
 class MsgMainWindow;
 class MsgViewManager;
+class AfActivityStorage;
 
 class MsgActivityHandler: public QObject
 {
@@ -71,7 +72,13 @@ private:
     /**
      * main window reference not owned.
      */
-    MsgMainWindow* mMainWindow;
+    MsgMainWindow *mMainWindow;
+
+    /**
+     * App Framework activity service.
+     * Own.
+     */
+    AfActivityStorage *mActivityStorage;
 };
 
 #endif /* MSGACTIVITYHANDLER_H_ */

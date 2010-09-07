@@ -34,6 +34,17 @@ class MsgBaseView : public HbView
     MsgBaseView(QGraphicsItem* parent=0):HbView(parent){}
     
     /**
+     * Handler for HW key events.
+     * @param key Key code.
+     * @return true if key event handled else false.
+     */
+    virtual bool handleKeyEvent(int key)
+    {
+        Q_UNUSED(key)
+        return false;
+    }
+
+    /**
      * enum defining view id(s).
      */
     enum viewId
@@ -75,7 +86,6 @@ class MsgBaseView : public HbView
      * Forceful close of conversation view
      */
     void closeOpenConversationView();
-
 };
 
 #endif //MSG_BASE_VIEW_H_

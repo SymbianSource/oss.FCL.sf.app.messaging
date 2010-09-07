@@ -32,9 +32,7 @@
 #include    "mmssettings.h"
 #include    "mmsheaders.h"
 #include    "mmsgenutils.h"
-#include    "mmsownnumber.h"
 
-// EXTERNAL DATA STRUCTURES
 
 // EXTERNAL FUNCTION PROTOTYPES  
 extern void gPanic( TMmsPanic aPanic );

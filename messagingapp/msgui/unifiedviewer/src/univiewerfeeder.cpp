@@ -202,41 +202,48 @@ void UniViewerFeeder::clearContent()
     return d_ptr->clearContent();
 }
 
+// ---------------------------------------------------------------------------
 // UniViewerFeeder::fromAddressAndAlias
 // @see header file
-//
+// ---------------------------------------------------------------------------
 void UniViewerFeeder::fromAddressAndAlias(QString& from, QString& alias)
 {
     return d_ptr->fromAddressAndAlias(from, alias);
 }
 
+// ---------------------------------------------------------------------------
 // UniViewerFeeder::isIncoming
 // @see header file
-//
+// ---------------------------------------------------------------------------
 bool UniViewerFeeder::isIncoming()
 {
     return d_ptr->isIncoming();
 }
 
+// ---------------------------------------------------------------------------
 // UniViewerFeeder::priority
 // @see header file
-//
+// ---------------------------------------------------------------------------
 int UniViewerFeeder::priority()
 {
     return d_ptr->priority();
 }
 
+// ---------------------------------------------------------------------------
 // UniViewerFeeder::subject
 // @see header file
-//
+// ---------------------------------------------------------------------------
 QString UniViewerFeeder::subject()
 {
     return d_ptr->subject();
 }
 
+// ---------------------------------------------------------------------------
+// UniViewerFeeder::sendingState
+// @see header file
+// ---------------------------------------------------------------------------
 int UniViewerFeeder::sendingState()
 {
-    
-    return d_ptr->sendingState();    
+    return d_ptr->sendingState();
 }
 // EOF

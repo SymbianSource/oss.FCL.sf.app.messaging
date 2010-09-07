@@ -448,22 +448,40 @@ void CMsgSimOperation::DoStartRunL()
             }
 
         QDEBUG_WRITE("CMsgSimOperation::DoStartRunL create name")
-        
-        TBuf<100> name(KSmscSimDefaultName); 
-        name.AppendNum(i);
-        
-        QDEBUG_WRITE("CMsgSimOperation::DoStartRunL name created")
-        
-        smsSettings->AddServiceCenterL(name, entry.iServiceCentre.iTelNumber);
-        
-        
-        QDEBUG_WRITE("CMsgSimOperation::DoStartRunL AddServiceCenterL completed")
+		
+		TBool duplicateFound(EFalse);
 
-        if ( i == 0 )
-            {
-            smsSettings->SetDefaultServiceCenter(i);
-            QDEBUG_WRITE("CMsgSimOperation::DoStartRunL SetDefaultServiceCenter completed")
+		numSCAddresses = smsSettings->ServiceCenterCount();
+        for ( TInt j = 0; j < numSCAddresses; j++ )
+			{
+			if ( entry.iServiceCentre.iTelNumber == smsSettings->GetServiceCenter( j ).Address() )
+				{
+                QDEBUG_WRITE_FORMAT("DoStartRunL - Duplicate. SMSC ", i)
+                QDEBUG_WRITE_FORMAT("DoStartRunL -    of Sms Settings SMSC ", j)
+                duplicateFound = ETrue;
+                break;
+				}
+             }
+        if(!duplicateFound)
+            {            
+			TBuf<KMaxNameLength> name;
+            name = entry.iText;        
+            if ( name == KNullDesC )
+                {        
+                name.Append(KSmscSimDefaultName); 
+                name.AppendNum(i);
+                }
+    
+            QDEBUG_WRITE("CMsgSimOperation::DoStartRunL name created")        
+            smsSettings->AddServiceCenterL(name, entry.iServiceCentre.iTelNumber);
+            QDEBUG_WRITE("CMsgSimOperation::DoStartRunL AddServiceCenterL completed")
             }
+        
+      	if (i==0)
+            {
+			smsSettings->SetDefaultServiceCenter(i);
+			QDEBUG_WRITE("CMsgSimOperation::DoStartRunL SetDefaultServiceCenter completed")
+			}      
         }
 
     // save settings

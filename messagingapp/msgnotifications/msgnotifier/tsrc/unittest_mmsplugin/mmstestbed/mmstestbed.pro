@@ -14,7 +14,7 @@
 # Description:
 #
 
-QT += testlib
+#QT += testlib
 QT -= gui
 
 TEMPLATE = lib

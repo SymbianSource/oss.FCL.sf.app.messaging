@@ -73,6 +73,14 @@ public:
      */
     int saveContentToDrafts();
 
+    /**
+     * Event handler
+     * @param key Key code
+     * @return true if key event handled else false.
+     * @see MsgBaseView
+     */
+    bool handleKeyEvent(int key);
+
 private slots:
 
     /**
@@ -416,6 +424,11 @@ private:
      * helper method to show long/short tap context menu.
      */
     void showContextMenu(HbAbstractViewItem* viewItem,const QPointF& point, int placement);
+
+    /**
+     * Launches Dialer Service 
+     */
+    void call(const QString& address);
 
 private:
 

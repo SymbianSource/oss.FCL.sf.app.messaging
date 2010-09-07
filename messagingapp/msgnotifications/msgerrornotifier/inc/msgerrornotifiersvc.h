@@ -21,9 +21,6 @@
 #include <xqserviceprovider.h>
 #include <qvariant.h>
 
-//Forward Declaration
-class XQSystemToneService;
-
 class MsgErrorNotifierSvc: public XQServiceProvider
 {
 
@@ -49,12 +46,6 @@ public slots:
      */
     void displayErrorNote(QVariantList displayParams);
 
-private:
-    
-    /**
-     * Object to handle audio alerts
-     */
-    XQSystemToneService* mSts;
 };
 
 #endif /* MSGERRORNOTIFIERSVC_H_ */

@@ -28,7 +28,7 @@
 
 // LOCAL CONSTANTS
 #define LOC_OPEN    hbTrId("txt_common_menu_open")
-#define LOC_SAVE    hbTrId("txt_common_menu_save")
+
 
 static const char VIDEO_MIMETYPE[] = "video";
 static const char AUDIO_ICON[] = "qtg_mono_audio";
@@ -138,7 +138,6 @@ void UniViewerAudioWidget::handleLongTap(const QPointF &position)
     HbMenu* menu = new HbMenu;
     menu->setAttribute(Qt::WA_DeleteOnClose);
     menu->addAction(LOC_OPEN, this, SLOT(handleOpen()));
-    menu->addAction(LOC_SAVE, this, SLOT(handleSave()));
     menu->setPreferredPos(position);
     menu->show();
 }
@@ -160,14 +159,7 @@ void UniViewerAudioWidget::handleOpen()
     QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
 
-//----------------------------------------------------------------------------
-// UniViewerAudioWidget::handleSave
-// @see header file
-//----------------------------------------------------------------------------
-void UniViewerAudioWidget::handleSave()
-{
 
-}
 
 //---------------------------------------------------------------
 // UniViewerAudioWidget::regrabGesture

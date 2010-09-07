@@ -19,7 +19,6 @@
 
 file=ABI_DIR\UREL\messaging101.exe                              SHARED_LIB_DIR\messaging101.exe
 data=DATAZ_\private\10003a3f\import\apps\messaging101_reg.rsc   private\10003a3f\import\apps\messaging101_reg.rsc
-data=DATAZ_\resource\apps\messaging101.mif                        resource\apps\messaging101.mif
 
 data=DATAZ_\system\install\msgapp_stub.sis					           system\install\msgapp_stub.sis
 

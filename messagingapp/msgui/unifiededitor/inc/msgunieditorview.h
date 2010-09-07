@@ -82,6 +82,14 @@ public:
      */
     int saveContentToDrafts();
     
+    /**
+     * Event handler
+     * @param key Key code
+     * @return true if key event handled else false.
+     * @see MsgBaseView
+     */
+    bool handleKeyEvent(int key);
+
 protected:
     /**
      * reimplemented from base class to provide proper geometry for scrolling.

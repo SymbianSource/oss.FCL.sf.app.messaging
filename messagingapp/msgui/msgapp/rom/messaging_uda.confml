@@ -10,7 +10,7 @@
 	</confml:feature>
 	<confml:data>
 		<confml:messaging_uda>
-			<confml:Enabled>true</confml:Enabled>
+			<confml:Enabled>false</confml:Enabled>
 		</confml:messaging_uda>
 	</confml:data>
 </confml:configuration>

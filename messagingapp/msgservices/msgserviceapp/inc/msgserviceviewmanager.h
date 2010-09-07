@@ -90,13 +90,18 @@ public:
      */
     void send(ConvergedMessage message);
 	
-	
-
     /**
      * Opens the viewer to view the message.
      * @param msgId message id of the message.
      */
     void view(int msgId);
+
+    /**
+     * Handles the HW key events.
+     * @param key key type.
+     * @return true if key event handled else false.
+     */
+    bool handleKeyEvent(int key);
 
 private:
     /*

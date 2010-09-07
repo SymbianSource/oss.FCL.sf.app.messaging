@@ -25,6 +25,8 @@
 #include "msgstorehandler.h"
 #include "msgserviceviewmanager.h"
 
+#include <QKeyEvent>
+
 // LOCALIZATION
 #define LOC_BUTTON_DELETE hbTrId("txt_common_button_delete")
 #define LOC_BUTTON_CANCEL hbTrId("txt_common_button_cancel")
@@ -91,8 +93,23 @@ MsgServiceWindow::~MsgServiceWindow()
         }
     }
 
+//---------------------------------------------------------------
+// MsgServiceWindow::keyPressEvent
+// @see header
+//---------------------------------------------------------------
+void MsgServiceWindow::keyPressEvent(QKeyEvent *event)
+{
+    bool eventHandled = false;
+    if (Qt::Key_Yes == event->key()) {
+        eventHandled = mViewManager->handleKeyEvent(event->key());
+    }
 
+    if (eventHandled) {
+        event->accept();
+    }
+    else {
+        HbMainWindow::keyPressEvent(event);
+    }
 
-    
-
-
+}
+// EOF

@@ -25,8 +25,7 @@ SOURCES += src/main.cpp \
            src/msgerrornotifiersvc.cpp
            
 LIBS += -lxqservice \
-	    -lxqserviceutil \
-	    -lxqsystemtoneservice
+	    -lxqserviceutil
 
 SERVICE.FILE = service_conf.xml
 SERVICE.OPTIONS = embeddable

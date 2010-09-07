@@ -32,7 +32,7 @@
 
 // LOCAL CONSTANTS
 #define LOC_OPEN    hbTrId("txt_common_menu_open")
-#define LOC_SAVE    hbTrId("txt_common_menu_save")
+
 
 static const char PIXMAP_ICON[] = "qtg_small_image";
 static const char CORRUPTED_PIXMAP_ICON[] = "qtg_large_corrupted";
@@ -170,13 +170,7 @@ void UniViewerPixmapWidget::handleOpen()
     QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
 
-//---------------------------------------------------------------
-// UniViewerPixmapWidget::handleSave
-// @see header file
-//---------------------------------------------------------------
-void UniViewerPixmapWidget::handleSave()
-{
-}
+
 
 //---------------------------------------------------------------
 // UniViewerPixmapWidget::regrabGesture
@@ -244,7 +238,7 @@ void UniViewerPixmapWidget::handleLongTap(const QPointF &position)
     HbMenu* menu = new HbMenu;
     menu->setAttribute(Qt::WA_DeleteOnClose);
     menu->addAction(LOC_OPEN, this, SLOT(handleOpen()));
-    menu->addAction(LOC_SAVE, this, SLOT(handleSave()));
+    
     menu->setPreferredPos(position);
     menu->show();
 }

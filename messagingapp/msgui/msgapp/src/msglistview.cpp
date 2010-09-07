@@ -381,12 +381,13 @@ void MsgListView::saveToContacts()
     args << data;
 
     //service stuff.
-    QString serviceName("com.nokia.services.phonebookservices");
+    QString service("phonebookservices");
+    QString interface("com.nokia.symbian.IContactsEdit");
     QString operation("editCreateNew(QString,QString)");
 
     XQAiwRequest* request;
     XQApplicationManager appManager;
-    request = appManager.create(serviceName, "Fetch", operation, true); // embedded
+    request = appManager.create(service, interface, operation, true); // embedded
     if ( request == NULL )
         {
         return;       
@@ -412,12 +413,13 @@ void MsgListView::contactInfo()
     args << contactId;
 
     //service stuff.
-    QString serviceName("com.nokia.services.phonebookservices");
-    QString operation("open(int)");
+    QString service("phonebookservices");
+    QString interface("com.nokia.symbian.IContactsView");
+    QString operation("openContactCard(int)");
 
     XQAiwRequest* request;
     XQApplicationManager appManager;
-    request = appManager.create(serviceName, "Fetch", operation, true); // embedded
+    request = appManager.create(service, interface, operation, true); // embedded
     if ( request == NULL )
         {
         return;       

@@ -683,11 +683,6 @@ void MsgViewManager::switchToUniEditor(const QVariantList& data)
 	    mUniViewer = NULL;
 	}
 
-    if (mConversationView)
-    {
-        //clearing content of cv.
-        mConversationView->clearContent();
-    }
 
     // reset conversation id published
     if(mPreviousView == MsgBaseView::CV && mConversationView)
@@ -766,7 +761,7 @@ void MsgViewManager::switchToUniViewer(const QVariantList& data)
             connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,
                 SLOT(switchView(const QVariantList&)));
         }
-        mUniViewer->populateContent(messageId, true, msgCount);
+        mUniViewer->populateContent(messageId, true, msgCount, mConversationId);
     }
 
     if(mPreviousView==MsgBaseView::CV && mConversationView)
@@ -926,7 +921,7 @@ void MsgViewManager::handleSmsMmsMsg(int msgId)
         connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,
             SLOT(switchView(const QVariantList&)));
     }
-    mUniViewer->populateContent(msgId, true, -1);
+    mUniViewer->populateContent(msgId, true, -1, mConversationId);
 
     mMainWindow->setCurrentView(mUniViewer,true,Hb::ViewSwitchSequential);
 }
@@ -1098,6 +1093,20 @@ int MsgViewManager::saveContentToDraft()
         }
     return msgId;
     }
+
+// ----------------------------------------------------------------------------
+// MsgViewManager::handleKeyEvent
+// @see header
+// ----------------------------------------------------------------------------
+bool MsgViewManager::handleKeyEvent(int key)
+{
+    MsgBaseView *baseView = static_cast<MsgBaseView *>(mMainWindow->currentView());
+    bool eventHandled = false;
+    if (baseView) {
+        eventHandled = baseView->handleKeyEvent(key);
+    }
+    return eventHandled;
+}
 
 // ----------------------------------------------------------------------------
 // MsgViewManager::saveContentToDraft

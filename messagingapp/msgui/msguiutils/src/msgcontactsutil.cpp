@@ -56,9 +56,9 @@ bool MsgContactsUtil::launchVCardViewer(const QString& filepath)
     //TODO: remove copyVcsFile after capabilities fix from Contacts
     QString newfilepath = copyVCardToTemp(filepath);
 
-    QString service("com.nokia.services.phonebookservices");
-    QString interface("Fetch");
-    QString operation("editCreateNew(QString)");
+    QString service("phonebookservices");
+    QString interface("com.nokia.symbian.IContactsEdit");
+    QString operation("editCreateNewFromVCard(QString)");
     XQApplicationManager appManager;
     XQAiwRequest* request = appManager.create(service, interface, operation, true); //embedded
     if(request)

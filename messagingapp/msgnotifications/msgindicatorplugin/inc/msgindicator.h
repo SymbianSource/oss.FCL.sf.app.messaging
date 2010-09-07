@@ -24,6 +24,7 @@
 
 #include "msginfodefs.h"
 class MsgIndicatorPrivate;
+class QTranslator;
 
 class ServiceRequestSenderTask : public QRunnable
 {
@@ -135,6 +136,18 @@ private:
      * Owned.
      */
     MsgIndicatorPrivate* d_ptr;
+   
+    /**
+     * Translator member variable
+     * Owned
+     */     
+    QTranslator* mTranslator;
+    
+    /**
+     * Translator member variable
+     * Owned
+     */     
+    QTranslator* mTranslator_comm;
    
     /**
      * Primary Text

@@ -32,6 +32,8 @@
 #include <xqsystemtoneservice.h>
 #include <xqconversions.h>
 #include <QThreadPool>
+#include <ProfileEngineInternalCRKeys.h>
+#include <hwrmvibra.h>
 
 //USER INCLUDES
 #include "msgnotifier.h"
@@ -40,6 +42,8 @@
 #include "msginfodefs.h"
 #include "conversationidpsconsts.h"
 #include "debugtraces.h"
+
+const XQCentralRepositorySettingsKey silenceModeKey(KCRUidProfileEngine.iUid, KProEngSilenceMode);
 
 // ----------------------------------------------------------------------------
 // MsgNotifierPrivate::MsgNotifierPrivate
@@ -89,6 +93,11 @@ MsgNotifierPrivate::~MsgNotifierPrivate()
         mSts = NULL;
         }
     
+    if(mVibra)
+        {
+        delete mVibra;
+        mVibra = NULL;
+        }
     QDEBUG_WRITE("MsgNotifierPrivate::~MsgNotifierPrivate : Exit")
 }
 
@@ -126,6 +135,8 @@ void MsgNotifierPrivate::initL()
                            "writing ret value",success)
     
     QT_TRYCATCH_LEAVING(mSts = new XQSystemToneService());
+    
+    mVibra = CHWRMVibra::NewL();
     
     QDEBUG_WRITE("MsgNotifierPrivate::initL : Exit")
 }
@@ -228,8 +239,19 @@ void MsgNotifierPrivate::processListEntry(
             notifData.mDescription = XQConversions::s60DescToQString(*descrp);
             }
         
-        //Play new message alert tone.
-        mSts->playTone(XQSystemToneService::SmsAlertTone);
+        QVariant silenceMode = mSettingsManager->readItemValue(silenceModeKey, XQSettingsManager::TypeInt);
+        int silent = silenceMode.toInt();
+        if(silent < 1)
+            {
+            //Play new message alert tone.
+            mSts->playTone(XQSystemToneService::SmsAlertTone);
+            }
+        // Execute the vibra effect.
+        if (mVibra) 
+            {
+            TInt err = KErrNone;
+            TRAP(err,mVibra->StartVibraL(1000));
+            }
         
         // check whether opened cv id and received 
         // cv id are same and show notification

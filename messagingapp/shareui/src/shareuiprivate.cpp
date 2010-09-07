@@ -39,20 +39,12 @@
 // USER INCLUDES
 #include "shareuiprivate.h"
 
-// Localized Constants
-//#define LOC_SEND_SELECTED_ITEM  hbTrId("txt_shareui_send_selected_item")
-//#define LOC_BUTTON_CANCEL       hbTrId("txt_shareui_button_cancel")
-//#define LOC_NO_SERVICES         hbTrId("txt_shareui_no_services")
-//#define LOC_NO_FILES            hbTrId("txt_shareui_no_files")
-//#define LOC_SERVICE_ERROR       hbTrId("txt_shareui_service_error")
-//#define LOC_PROTECTED_CONTENT   hbTrId("txt_shareui_protected_content")
-
-#define LOC_SEND_SELECTED_ITEM  hbTrId("Send selected item")
-#define LOC_BUTTON_CANCEL       hbTrId("Cancel")
-#define LOC_NO_SERVICES         hbTrId("No services found.")
-#define LOC_NO_FILES            hbTrId("No files found.")
-#define LOC_SERVICE_ERROR       hbTrId("Service error.")
-#define LOC_PROTECTED_CONTENT   hbTrId("Protected content.")
+#define LOC_TITLE_SHARING_METHODS  hbTrId("txt_share_title_sharing_methods")
+#define LOC_BUTTON_CANCEL       hbTrId("txt_common_button_cancel")
+#define LOC_NO_SERVICES         hbTrId("txt_shareui_no_services ")
+#define LOC_SERVICE_ERROR       hbTrId("txt_shareui_service_error")
+#define LOC_PROTECTED_CONTENT   hbTrId("txt_shareui_protected_content")
+#define LOC_NO_FILES            hbTrId("txt_shareui_no_files")
 
 const QString LIST_ITEM_TITLE("qtc_list_item_title_normal");
 
@@ -205,7 +197,7 @@ void ShareUiPrivate::initializeUi()
     mSharePopup = new HbDialog();
     // make it delete itself on close
     mSharePopup->setAttribute( Qt::WA_DeleteOnClose, true );
-    HbTextItem* heading = new HbTextItem(LOC_SEND_SELECTED_ITEM, mSharePopup);
+    HbTextItem* heading = new HbTextItem(LOC_TITLE_SHARING_METHODS, mSharePopup);
     QColor color = HbColorScheme::color( LIST_ITEM_TITLE );
     heading->setTextColor( color );
     heading->setAlignment(Qt::AlignCenter);

@@ -97,12 +97,12 @@ void MsgUnifiedEditorAddress::fetchContacts()
 {
     mLaunchBtn->blockSignals(true);
 
-    QList<QVariant> args;
-    QString serviceName("com.nokia.services.phonebookservices");
-    QString operation("fetch(QString,QString,QString)");
+    QString service("phonebookservices");
+    QString interface("com.nokia.symbian.IContactsFetch");
+    QString operation("multiFetch(QString,QString)");
     XQAiwRequest* request;
     XQApplicationManager appManager;
-    request = appManager.create(serviceName, "Fetch", operation, true); // embedded
+    request = appManager.create(service, interface, operation, true); // embedded
     if ( request == NULL )
         {
         return;
@@ -112,6 +112,7 @@ void MsgUnifiedEditorAddress::fetchContacts()
     connect (request, SIGNAL(requestOk(const QVariant&)), this, SLOT(handleOk(const QVariant&)));
     connect (request, SIGNAL(requestError(int,const QString&)), this, SLOT(handleError(int,const QString&)));
 
+    QList<QVariant> args;
     args << QString(tr("Phonebook"));
     args << KCntActionAll;
     args << KCntFilterDisplayAll;

@@ -53,9 +53,9 @@ _LIT(KUnixEpoch, "19700000:000000.000000");
 #define LOC_CLASS_INFORMATIONAL hbTrId("txt_messaging_list_informational")
 #define LOC_CLASS_PERSONAL hbTrId("txt_messaging_list_personal")
 #define LOC_MMS_RETRIEVAL_FAILED hbTrId("txt_messaging_dialog_mms_retrieval_failed")
-#define LOC_MMS_NOTIF_EXPIRED hbTrId("Message Expired !")   //TODO: localization
+#define LOC_MMS_NOTIF_EXPIRED hbTrId("txt_messaging_list_message_expired")  
 #define LOC_MMS_WAITING hbTrId("txt_wireframe_list_multimedia_message_waiting")
-#define LOC_MMS_RETRIEVING hbTrId("Retrieving message...")   //TODO: localization
+#define LOC_MMS_RETRIEVING hbTrId("txt_messaging_list_retrieving_message")   
 #define LOC_MMS_EXPIRY_DATE hbTrId("txt_messaging_list_expiry_date")
 
 // ================= MEMBER FUNCTIONS =======================

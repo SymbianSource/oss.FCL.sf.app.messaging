@@ -345,29 +345,30 @@ void MsgContactCardWidget::handleShortTap(const QPointF &position)
 //---------------------------------------------------------------
 void MsgContactCardWidget::openContactInfo()
 {
+    //service stuff.
+    QString service("phonebookservices");
+    QString interface;
     QString operation;
     QList<QVariant> args;
     if (KBluetoothMsgsConversationId != ConversationsEngine::instance()->getCurrentConversationId()) {
         int contactId = resolveContactId(mContactNumber);
         if (contactId > 0) {
             //open existing contact card
-            operation = QString("open(int)");
+            interface = QString("com.nokia.symbian.IContactsView");
+            operation = QString("openContactCard(int)");
             args << contactId;
         }
         else {
             //populate data and open unknown contact template
+            interface = QString("com.nokia.symbian.IContactsEdit");
             operation = QString("editCreateNew(QString,QString)");
             QString type = QContactPhoneNumber::DefinitionName;
-
             args << type;
             args << mAddress;
         }
-        //service stuff.
-        QString serviceName("com.nokia.services.phonebookservices");
-
         XQAiwRequest* request;
         XQApplicationManager appManager;
-        request = appManager.create(serviceName, "Fetch", operation, true); // embedded
+        request = appManager.create(service, interface, operation, true); // embedded
         if (request == NULL) {
             return;
         }
@@ -379,7 +380,7 @@ void MsgContactCardWidget::openContactInfo()
 
         //disbale subscritption for the CV events
         ConversationsEngine::instance()->disableRegisterationForCVEvents();
-                
+
         request->setArguments(args);
         request->send();
         delete request;

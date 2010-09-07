@@ -84,6 +84,14 @@ public:
      */
     qint64 conversationId();
 
+    /**
+     * Event handler
+     * @param key Key code
+     * @return true if key event handled else false.
+     * @see MsgBaseView
+     */
+    bool handleKeyEvent(int key);
+
 public slots:
     /**
      * Close the conversation view 

@@ -27,11 +27,16 @@
 #include <xqapplicationmanager.h>
 #include <xqaiwrequest.h>
 #include <xqsystemtoneservice.h>
+#include <XQSettingsManager>
+#include <ProfileEngineInternalCRKeys.h>
+#include <hwrmvibra.h>
 #include "flashmsgnotifier_p.h"
 
 #define LOC_NOTIFICATION_MSG_TITLE  hbTrId("txt_messaging_title_notification_message")
 #define LOC_BUTTON_SAVE       hbTrId("txt_common_menu_save")
 #define LOC_BUTTON_DELETE       hbTrId("txt_common_menu_delete")
+
+const XQCentralRepositorySettingsKey silenceModeKey(KCRUidProfileEngine.iUid, KProEngSilenceMode);
 
 //-------------------------------------------------------
 // FlashMsgNotifier::FlashMsgNotifier()
@@ -44,6 +49,8 @@ FlashMsgNotifier::FlashMsgNotifier(QObject *parent) :
     publishAll();
     mSts = new XQSystemToneService;
     d_ptr = q_check_ptr(new FlashMsgNotifierPrivate(this));
+    QT_TRYCATCH_LEAVING(mSettingsManager = new XQSettingsManager());
+    mVibra = CHWRMVibra::NewL();
 }
 
 //-------------------------------------------------------
@@ -54,6 +61,16 @@ FlashMsgNotifier::~FlashMsgNotifier()
 {
     delete d_ptr;
     delete mSts;
+    if(mSettingsManager)
+        {
+        delete mSettingsManager;
+        mSettingsManager = NULL;
+        }
+    if(mVibra)
+        {
+        delete mVibra;
+        mVibra = NULL;
+        }
 }
 
 //-------------------------------------------------------
@@ -120,7 +137,19 @@ void FlashMsgNotifier::displayFlashMsg(QByteArray displayParams)
     notificationDialog.setAction(actionQuit, HbDeviceMessageBox::RejectButtonRole);
 
     //Play audio alert when flash msg is shown
-    mSts->playTone(XQSystemToneService::SmsAlertTone);
+    QVariant silenceMode = mSettingsManager->readItemValue(silenceModeKey, XQSettingsManager::TypeInt);
+    int silent = silenceMode.toInt();
+    if(silent < 1)
+        {
+        //Play new message alert tone.
+        mSts->playTone(XQSystemToneService::SmsAlertTone);
+        }
+    // Execute the vibra effect.
+    if (mVibra) 
+        {
+        TInt err = KErrNone;
+        TRAP(err,mVibra->StartVibraL(1000));
+        }
 
     const QAction* result = notificationDialog.exec();
     // if accepted launch view else quit

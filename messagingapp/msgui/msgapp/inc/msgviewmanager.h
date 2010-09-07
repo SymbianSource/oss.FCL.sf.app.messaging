@@ -95,6 +95,14 @@ public:
 	 * Saves the content of editor or Cv to draft.
 	 */
     int saveContentToDraft();
+
+    /**
+     * Handles the HW key events.
+     * @param key key type.
+     * @return true if key event handled else false.
+     */
+    bool handleKeyEvent(int key);
+
 private:
     /**
      * swiches back to last view after service request is complete.

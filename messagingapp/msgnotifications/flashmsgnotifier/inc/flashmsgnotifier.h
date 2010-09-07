@@ -25,6 +25,8 @@
 
 class FlashMsgNotifierPrivate;
 class XQSystemToneService;
+class XQSettingsManager;
+class CHWRMVibra;
 
 /**
  * @class FlashMsgNotifier
@@ -84,6 +86,17 @@ private:
      * Address string
      */
     QString mAddress;
+      
+    /**
+     * Settings manager 
+     * Owned.
+     */
+    XQSettingsManager* mSettingsManager;
+    
+    /**
+     * Vibra alert on receiving a new message
+     */
+    CHWRMVibra *mVibra; // Owned.
 };
 
 #endif // MSGERRORNOTIFIER_H

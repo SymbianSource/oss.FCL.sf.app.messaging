@@ -53,6 +53,15 @@ public:
      * Returns view manager.
      */
     MsgViewManager* viewManager();
+
+protected:
+
+    /**
+     * Key press event handler
+     * @see QGraphicsItem
+     */
+    void keyPressEvent(QKeyEvent *event);
+
 private:
     MsgServiceInterface* mMsgSI;
     MsgSendServiceInterface* mMsgSendSI;
