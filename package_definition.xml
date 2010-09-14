@@ -60,7 +60,7 @@
    </component>
   </collection>
   <collection id="mobilemessaging" name="Mobile Messaging" level="plugin">
-   <component id="smsmtm" name="SMS MTM" purpose="optional" class="plugin">
+   <component id="smsmtm" name="SMS MTM" purpose="optional" class="plugin" filter="s60">
     <unit bldFile="mobilemessaging/smsmtm/group" mrp="mobilemessaging/smsmtm/group/messaging_sms.mrp"/>
    </component>
   </collection>
@@ -72,10 +72,10 @@
    <component id="msgmedia" filter="s60" name="Message Media">
       <unit base="messagingappbase/msgmedia"/>
    </component>
-   <component id="smilparser" name="SMIL Parser" introduced="7.0s" purpose="optional">
+   <component id="smilparser" name="SMIL Parser" introduced="7.0s" purpose="optional" filter="s60">
     <unit bldFile="messagingappbase/smilparser/GROUP" mrp="messagingappbase/smilparser/GROUP/messaging_gmxml.mrp"/>
    </component>
-   <component id="obexmtms" name="OBEX MTMs" introduced="7.0s" purpose="optional" class="plugin">
+   <component id="obexmtms" name="OBEX MTMs" introduced="7.0s" purpose="optional" class="plugin" filter="s60">
     <unit bldFile="messagingappbase/obexmtms/Group" mrp="messagingappbase/obexmtms/Group/messaging_obex.mrp"/>
    </component>
   </collection>
@@ -116,10 +116,10 @@
    <component id="mmscodecclient" filter="s60" name="MMS Codec Client">
     <unit bldFile="mmsengine/mmscodecclient/bld"/>
    </component>
-   <component id="mmssettings" name="MMS Settings" introduced="9.2" purpose="optional">
+   <component id="mmssettings" name="MMS Settings" introduced="9.2" purpose="optional" filter="s60">
     <unit bldFile="mmsengine/mmssettings/group" mrp="mmsengine/mmssettings/group/messaging_mmssettings.mrp"/>
    </component>
-   <component id="mmsconf" name="MMS Configuration" purpose="optional">
+   <component id="mmsconf" name="MMS Configuration" purpose="optional" filter="s60">
     <unit bldFile="mmsengine/mmsconf" mrp="mmsengine/mmsconf/messaging_mmssettings-config.mrp"/>
    </component>
    <component id="mmsengine_build" filter="s60" name="MMS Engine Build">
@@ -157,10 +157,10 @@
   </collection>
   <collection id="email" name="Email" level="plugin">
    <!-- use commonemail instead -->
-   <component id="pop3andsmtpmtm" name="POP3 and SMTP MTM" purpose="optional" class="plugin" deprecated="^3">
+   <component id="pop3andsmtpmtm" name="POP3 and SMTP MTM" purpose="optional" class="plugin" deprecated="^3" filter="s60">
     <unit bldFile="email/pop3andsmtpmtm/group" mrp="email/pop3andsmtpmtm/group/messaging_email.mrp"/>
    </component>
-   <component id="imap4mtm" name="IMAP4 MTM" introduced="9.2" purpose="optional" class="plugin" deprecated="^3">
+   <component id="imap4mtm" name="IMAP4 MTM" introduced="9.2" purpose="optional" class="plugin" deprecated="^3" filter="s60">
     <unit bldFile="email/imap4mtm/group" mrp="email/imap4mtm/group/messaging_email_imap.mrp"/>
    </component>
   </collection>

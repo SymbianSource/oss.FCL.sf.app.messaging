@@ -504,6 +504,65 @@ void CImap4ServerMtm::ChangeL( TMsvEntry aNewEntry, TRequestStatus& aStatus )
 
 
 /**
+ChangeEntriesL update the message read/Unread status in  Local and remote, 
+using the IMAP COPY command.
+
+@param aSelection The selection of message TMsvIds that are changed.
+@param aMark The selection marked as read  or unread.If 1 is Unread 0 for read.
+@param aStatus The request status to be completed when the operation has finished.
+*/
+
+TInt CImap4ServerMtm::ChangeEntriesL( const CMsvEntrySelection& aSelection, TInt aMark, TRequestStatus& aStatus ) 
+    {
+    __LOG_TEXT(KDefaultLog, "CImap4ServerMtm::ChangeEntriesL()");
+   
+    TMsvEntry* aNewEntry1 = new (ELeave) TMsvEntry;
+    CleanupStack::PushL(aNewEntry1);
+    
+    TBool flagChanged;
+    
+    if(aMark ==  0) 
+        flagChanged = EFalse; //Selection to update as Read.
+    else
+        flagChanged = ETrue; ////Selection to update as UnRead.
+    
+    TInt count  = aSelection.Count();
+    while(count--)
+        { 
+        iServerEntry->GetEntryFromId(aSelection[count],aNewEntry1);
+        TMsvEmailEntry entry(*aNewEntry1);
+        if(flagChanged)
+             {
+            entry.SetSeenIMAP4Flag(EFalse);
+             }
+         else
+             {
+             entry.SetSeenIMAP4Flag(ETrue);  
+             }
+        //Local Updation.
+        User::LeaveIfError(iServerEntry->SetEntry(entry.Id()));
+        User::LeaveIfError(iServerEntry->ChangeEntry(entry));
+        }
+     //if not offline
+     if (iImapProtocolController->Connected())
+        {
+        //to update read/unread flags at remote server
+        iImapProtocolController->UpdateEntriesFlagL(iStatus,aSelection,flagChanged);    
+        iState= EMtmStateUpdateFlag;
+        Queue(aStatus);
+        SetActive(); 
+        }
+    else
+        {
+        Queue(aStatus);
+        User::RequestComplete(iRequest, KErrNone);
+        }
+    CleanupStack::PopAndDestroy(1); //aNewEntry1
+	return KErrNone;
+    }
+
+
+/**
 Performs the IMAP specific MTM commands.
 
 @param aSelection A selection of messages. The use is dependant upon 

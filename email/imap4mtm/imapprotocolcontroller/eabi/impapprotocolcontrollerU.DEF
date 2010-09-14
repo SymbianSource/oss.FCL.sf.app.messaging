@@ -77,4 +77,5 @@ EXPORTS
 	_ZTVN4Meta13TMetaVarLen16I6RBuf16EE @ 76 NONAME ABSENT
 	_ZNK23CImapProtocolController29GetAccessPointIdForConnectionERm @ 77 NONAME
 	_ZN23CImapProtocolController11UpdateFlagLER14TRequestStatus @ 78 NONAME
+	_ZN23CImapProtocolController18UpdateEntriesFlagLER14TRequestStatusRK18CMsvEntrySelectioni @ 79 NONAME
 

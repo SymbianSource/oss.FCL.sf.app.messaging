@@ -137,6 +137,7 @@ private:
 	Log id of owning session
 	*/
 	TInt iLogId;
+	TInt iAttachmentLength;
 	};
 
 #endif // __CIMAPATOMPARSER_H__

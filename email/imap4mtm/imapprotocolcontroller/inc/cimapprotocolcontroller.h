@@ -115,6 +115,7 @@ public:
 	IMPORT_C TImap4CompoundProgress Progress();
 	IMPORT_C void CancelAndCleanup();
 	IMPORT_C void UpdateFlagL(TRequestStatus& aStatus);
+	IMPORT_C void UpdateEntriesFlagL(TRequestStatus& aStatus,const CMsvEntrySelection& aSourceSel, TBool aFlagChanged);
 
 	// mobility API from MImMobileServer
 	void PrepareForNewCarrier(TImMobilityAction aAction, TBool aIsSeamless);

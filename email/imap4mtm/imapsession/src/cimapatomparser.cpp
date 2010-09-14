@@ -125,6 +125,7 @@ CImapAtom* CImapAtomParser::PopL()
 // Add to the parsed buffer
 void CImapAtomParser::BufferAppendL(const TChar aChar)
 	{
+    ++iAttachmentLength;
 	// Check for internal programming error
 	__ASSERT_DEBUG(iBuffer != NULL, TImapServerPanic::ImapPanic(TImapServerPanic::EAtomParserBufferIsNull));
 	
@@ -337,6 +338,13 @@ TBool CImapAtomParser::ProcessLineL(const TDesC8& aLine)
 						// Note that the CRLF will already have been stripped out by CImapSession
 						// so we are treating a CR on its own as whitespace
 						{
+						// if white space is there in the attched file's name,it will add to the buffer.
+						if( iAttachmentLength < iLiteralLength)
+						    {
+                            BufferAppendL(octet);
+                            break;
+						    }
+						    
 						AddAtomL();
 					
 						// Either go back to looking for an atom, or a LF
@@ -445,6 +453,7 @@ TBool CImapAtomParser::ProcessLineL(const TDesC8& aLine)
 			// Skipping...
 			if (--iLiteralSkip==0)
 				{
+                    iAttachmentLength = 0;
 				// Is literal 0 bytes long?
 				if (iLiteralLength==0)
 					{
