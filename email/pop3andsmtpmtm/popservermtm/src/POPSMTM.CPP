@@ -1432,6 +1432,14 @@ void CImppServerMtm::DoRunL()
 			{	
 			CommandComplete( eCode );
 			}
+		else if(iState.iLastCurrentOperation == EPopConnectedAndIdle && iState.iCurrentOperation == EPopDisconnected && eCode != KErrNone)
+		    {
+            // Some email servers doesn’t wait for QUIT command, in such cases need to close RConnection
+            delete iSessionManager; 
+            iSessionManager = NULL;
+			
+            iPopProgress.iErrorCode = eCode;
+		    }
 		else
 			{
 			iPopProgress.iErrorCode = eCode;

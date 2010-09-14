@@ -39,22 +39,4 @@ inline CUniSlideLoader* CUniEditorLaunchOperation::DetachSlideLoader()
     return slideLoader;
     }
 
-// ---------------------------------------------------------
-// CUniEditorLaunchOperation::GetHeader
-// ---------------------------------------------------------
-//
-inline CUniEditorHeader* CUniEditorLaunchOperation::GetHeader()
-    {
-    return iHeader;
-    }
-
-// ---------------------------------------------------------
-// CUniEditorLaunchOperation::GetSlideLoader
-// ---------------------------------------------------------
-//
-inline CUniSlideLoader* CUniEditorLaunchOperation::GetSlideLoader()
-    {
-    return iSlideLoader;
-    }
-
 // End of file

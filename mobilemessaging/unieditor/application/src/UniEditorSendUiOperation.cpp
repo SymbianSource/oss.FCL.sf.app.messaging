@@ -235,6 +235,9 @@ void CUniEditorSendUiOperation::DoSendUiCheckL()
         if(obj->MediaInfo()->MimeType().CompareF( KMsgMimeImageJpeg )== 0)
             {
             iOptimizedFlow = ETrue;
+            iObserver.EditorOperationEvent( EUniEditorOperationSendUi,
+                                             EUniEditorOperationPartialComplete );   
+            iOptimizedFlow = EFalse;
             }
         }
         
@@ -477,7 +480,6 @@ void CUniEditorSendUiOperation::DoPrepareObjectL( CUniObject* aObject )
                 iImageOperation = CUniEditorProcessImageOperation::NewL( *this, iDocument, iFs );
                 }
                 
-            iImageOperation->SetOptimizedFlow(iOptimizedFlow);
             // Processes if needed:
             iImageOperation->Process( static_cast<CMsgImageInfo*>( aObject->MediaInfo() ),
                                       aObject->AttachmentId(),
@@ -581,7 +583,7 @@ void CUniEditorSendUiOperation::DoSendUiPrepareAttachmentsL()
 // ---------------------------------------------------------
 //
 void CUniEditorSendUiOperation::HandleOperationEvent( TUniEditorOperationType aOperation,
-                                                      TUniEditorOperationEvent aEvent )
+                                                      TUniEditorOperationEvent /*aEvent*/ )
     {
     TBool remove( EFalse );
     
@@ -590,17 +592,6 @@ void CUniEditorSendUiOperation::HandleOperationEvent( TUniEditorOperationType aO
     
     if ( aOperation == EUniEditorOperationProcessImage )
         {
-        if( aEvent == EUniEditorOperationPartialComplete)
-            {
-            if(iOptimizedFlow)
-                {           
-                iObserver.EditorOperationEvent( EUniEditorOperationSendUi,
-                                                EUniEditorOperationPartialComplete );
-                iOptimizedFlow = EFalse;                        
-                }
-            return;
-            }
-        iOptimizedFlow = EFalse;
         // Process image error handling
         CArrayFixFlat<TInt>* errors = iImageOperation->GetErrors();
         for ( TInt i = 0; i < errors->Count(); i++ )

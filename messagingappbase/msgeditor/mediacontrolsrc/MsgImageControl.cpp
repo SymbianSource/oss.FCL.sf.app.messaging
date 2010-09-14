@@ -153,26 +153,23 @@ void CMsgImageControl::LoadL( RFile& aFileHandle )
     	Min( sourceSize.iWidth, iMaxSize.iWidth - iFrame->FrameBorderSize().iWidth ),
 		Min( sourceSize.iHeight, iMaxSize.iHeight - iFrame->FrameBorderSize().iHeight ) );
 
+    // In case of KImageTypePNGUid and KImageTypeBMPUid 
+    // with and without IsAnimation, call CreateImageViewerL with
+    // Flags zero. This to avoid image corruption  when IsAnimation is flase and 
+    // Image resize happened based on control size.
+
+    TUint32 flagOptions = 0;
+    
     if ( !iSourceImage->IsAnimation() &&
-         ( iSourceImage->ImageType() == KImageTypeBMPUid || 
-           iSourceImage->ImageType() == KImageTypeGIFUid ||
-           iSourceImage->ImageType() == KImageTypePNGUid ) )
+           iSourceImage->ImageType() == KImageTypeGIFUid )
         {
-        iEngine = IHLViewerFactory::CreateImageViewerL( targetSize,
-                                                        *iSourceImage, 
-                                                        *iDestinationBitmap, 
-                                                        *this, 
-                                                        MIHLImageViewer::EOptionUseBilinearInterpolation);
-        }
-   else
-        {
-        iEngine = IHLViewerFactory::CreateImageViewerL( targetSize,
-                                                        *iSourceImage, 
-                                                        *iDestinationBitmap, 
-                                                        *this, 
-                                                        0 );
-        
-        }
+        	flagOptions |= MIHLImageViewer::EOptionUseBilinearInterpolation;
+      	}
+ 	  iEngine = IHLViewerFactory::CreateImageViewerL( targetSize,
+                                                    *iSourceImage, 
+                                                    *iDestinationBitmap, 
+                                                    *this, 
+                                                    flagOptions);                        	
     }
 
 // ---------------------------------------------------------

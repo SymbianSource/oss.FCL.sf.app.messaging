@@ -257,6 +257,11 @@ class CUniEditorAppUi :
         * From CEikAppUi 
         */
         void HandleCommandL( TInt aCommand );
+
+        /**
+        * From CAknAppUi 
+        */
+        void ProcessCommandL(TInt aCommand);
         
         /**
         * Performs the command.
@@ -1390,7 +1395,6 @@ class CUniEditorAppUi :
     	CAknStylusPopUpMenu* iEmbeddedObjectStylusPopup;
 		// sendui+jepg optimization changes
     	TBool  iOptimizedFlow;
-    	TBool iSingleJpegImageProcessing;
     };
 
 #include "UniEditorAppUi.inl"

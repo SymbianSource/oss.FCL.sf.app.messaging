@@ -145,6 +145,9 @@ void CMsgAttachmentControl::ConstructL()
     iEditor->SetReadOnly( ETrue );
     iEditor->AddFlagToUserFlags( CEikEdwin::EAvkonDisableCursor );
     
+	// To Dis-able Smiley support for attachment field.
+    iEditor->RemoveFlagFromUserFlags(CEikEdwin::EAvkonEnableSmileySupport);
+    
     iControlModeFlags |= EMsgControlModeForceFocusStop;
     
     SetPlainTextMode( ETrue );

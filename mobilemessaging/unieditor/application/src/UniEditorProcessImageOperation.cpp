@@ -98,8 +98,7 @@ CUniEditorProcessImageOperation::CUniEditorProcessImageOperation(
         CUniEditorDocument& aDocument,
         RFs& aFs ) :
     CUniEditorOperation( aObserver, aDocument, aFs, EUniEditorOperationProcessImage ),
-    iNewAttaId( KMsvNullIndexEntryId ),
-    iOptimizedFlow(EFalse)
+    iNewAttaId( KMsvNullIndexEntryId )
     {
     }
 
@@ -259,13 +258,6 @@ void CUniEditorProcessImageOperation::DoStartCheck()
 //
 void CUniEditorProcessImageOperation::DoStartProcessL()
     {
-    
-    if(iOptimizedFlow)
-        {
-         iObserver.EditorOperationEvent( EUniEditorOperationProcessImage,
-                                      EUniEditorOperationPartialComplete );   
-         iOptimizedFlow = EFalse;
-        }
     CreateEmptyAttachmentL();
     
     if ( !iImageProcessor )
@@ -654,13 +646,5 @@ CMsgImageInfo* CUniEditorProcessImageOperation::DetachImageInfo()
     iNewImageInfo = NULL;
     return tempInfo;
     }
-
-// ---------------------------------------------------------
-// CUniEditorProcessImageOperation::SetOptimizedFlow
-// ---------------------------------------------------------
-//
-void CUniEditorProcessImageOperation::SetOptimizedFlow(TBool aOptimizedFlow)
-    {
-    iOptimizedFlow =  aOptimizedFlow;
-    }
+    
 // End of file

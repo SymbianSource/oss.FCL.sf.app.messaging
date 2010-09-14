@@ -402,13 +402,9 @@ void CUniEditorLaunchOperation::DoHandleMessageL()
 //
 void CUniEditorLaunchOperation::DoPrepareHeaderL()
     {
-    if(!iHeader)
-        {
-	    // Header is always drawn and populated
-	    iHeader = CUniEditorHeader::NewL( iDocument.Mtm(), iDocument, iView, iFs );
-        }
-    if(!iOptimizedFlow)
-        CompleteSelf( KErrNone );
+    // Header is always drawn and populated
+    iHeader = CUniEditorHeader::NewL( iDocument.Mtm(), iDocument, iView, iFs );
+    CompleteSelf( KErrNone );
     }
 
 // ---------------------------------------------------------
@@ -417,28 +413,21 @@ void CUniEditorLaunchOperation::DoPrepareHeaderL()
 //
 void CUniEditorLaunchOperation::DoPrepareBodyL()
     {
-    if(!iSlideLoader)
-        {
-     	iSlideLoader = CUniSlideLoader::NewL(
-	        iControlObserver,
-	        *iDocument.DataModel(),
-	        iView,
-	        EUniControlEditorMode );
-        }
-    
+    iSlideLoader = CUniSlideLoader::NewL(
+        iControlObserver,
+        *iDocument.DataModel(),
+        iView,
+        EUniControlEditorMode );
+        
     if ( iDocument.DataModel()->SmilType() == EMmsSmil )
         {
-        if(!iOptimizedFlow)
+        if ( !iDocument.DataModel()->SmilModel().SlideCount() )
             {
-	        if ( !iDocument.DataModel()->SmilModel().SlideCount() )
-	            {
-	            iDocument.DataModel()->SmilModel().AddSlideL();
-	            }
-            
-	        iSlideLoader->LoadSlideL( *this, 0 );       
-        
-	        SetPending();
+            iDocument.DataModel()->SmilModel().AddSlideL();
             }
+            
+        iSlideLoader->LoadSlideL( *this, 0 );
+        SetPending();
         }
     else
         {
@@ -630,8 +619,6 @@ void CUniEditorLaunchOperation::HandleOperationEvent( TUniEditorOperationType aO
             iOptimizedFlow = iSendUiOperation->IsOptimizedFlagSet();
             if(iOptimizedFlow)
                 {
-                DoPrepareHeaderL();
-                DoPrepareBodyL();
                 iObserver.EditorOperationEvent(
                             EUniEditorOperationLaunch,
                             EUniEditorOperationComplete ); 
