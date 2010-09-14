@@ -85,9 +85,6 @@ private slots:
      */
     void handleOpen();
 
-    
-    
-    
     /**
      * Slot to regrab gesture after some delay (300 ms) to avoid multiple gesture
      * events back to back.  

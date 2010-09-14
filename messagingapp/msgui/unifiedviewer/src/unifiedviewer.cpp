@@ -29,6 +29,7 @@
 #include <ccsdefs.h>
 #include <xqappmgr.h>
 #include <xqaiwrequest.h>
+#include <sqldb.h>
 
 // USER INCLUDES
 #include "uniscrollarea.h"
@@ -64,14 +65,12 @@ _LIT(KSelectMsgPropertyStmt, " SELECT message_id, msg_property, msg_processingst
 // UnifiedViewer::UnifiedViewer
 // constructor
 //----------------------------------------------------------------------------
-UnifiedViewer::UnifiedViewer(const qint32 messageId,
-                             QGraphicsItem *parent) :
+UnifiedViewer::UnifiedViewer(const qint32 messageId, QGraphicsItem *parent) :
     MsgBaseView(parent), mConversationID(-1)
 {
     QDEBUG_WRITE("UnifiedViewer contruction start");
 
-    if (!HbStyleLoader::registerFilePath(":/layouts"))
-    {
+    if (!HbStyleLoader::registerFilePath(":/layouts")) {
         QDEBUG_WRITE("ERROR: UnifiedViewer -> HbStyleLoader::registerFilePath");
     }
 
@@ -81,13 +80,12 @@ UnifiedViewer::UnifiedViewer(const qint32 messageId,
     mScrollArea = new UniScrollArea(this);
     this->setWidget(mScrollArea);
 
-    mContentsWidget = new UniContentsWidget(mViewFeeder,this);
+    mContentsWidget = new UniContentsWidget(mViewFeeder, this);
 
-    connect(mContentsWidget,SIGNAL(sendMessage(const QString&,const QString&)),
-            this, SLOT(sendMessage(const QString&,const QString&)));
+    connect(mContentsWidget, SIGNAL(sendMessage(const QString&,const QString&)), this,
+        SLOT(sendMessage(const QString&,const QString&)));
 
-    connect(mScrollArea, SIGNAL(scrolledToNextSlide()),
-    mContentsWidget, SLOT(populateNextSlide()));
+    connect(mScrollArea, SIGNAL(scrolledToNextSlide()), mContentsWidget, SLOT(populateNextSlide()));
 
     mScrollArea->setContentWidget(mContentsWidget);
     mScrollArea->setHorizontalScrollBarPolicy(HbScrollArea::ScrollBarAlwaysOff);

@@ -18,15 +18,17 @@
 #ifndef UNIFIED_VIEWER_H
 #define UNIFIED_VIEWER_H
 
-#ifdef BUILD_UNI_VIEWER_DLL
-#define UNI_VIEWER_DLL Q_DECL_EXPORT
+#ifdef MSGUI_UNIT_TEST
+ #define UNI_VIEWER_DLL
 #else
-#define UNI_VIEWER_DLL Q_DECL_IMPORT
+ #ifdef BUILD_UNI_VIEWER_DLL
+  #define UNI_VIEWER_DLL Q_DECL_EXPORT
+ #else
+  #define UNI_VIEWER_DLL Q_DECL_IMPORT
+ #endif
 #endif
 
-#include <sqldb.h>
 #include "msgbaseview.h"
-
 #include "convergedmessage.h"
 
 class UniViewerFeeder;
@@ -58,7 +60,7 @@ public:
     /**
      * Populates the content on the widget
      */
-    void populateContent(const qint32 messageId, bool update, int msgCount, qint64 conversationId=-1);
+    void populateContent(const qint32 messageId, bool update, int msgCount, qint64 conversationId = -1);
 
     /**
      * Event handler
@@ -158,7 +160,7 @@ private:
      * Owned
      */
     UniContentsWidget* mContentsWidget;
-    
+
     /**
      * Conversation ID
      */
@@ -173,12 +175,18 @@ private:
      * Message id
      */
     qint32 mMessageId;
-	
+
     /**
      * Message count
      */
     int mMsgCount;
 
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestUnifiedViewer;
+#endif
 };
 
 #endif

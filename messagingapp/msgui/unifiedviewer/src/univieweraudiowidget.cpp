@@ -159,8 +159,6 @@ void UniViewerAudioWidget::handleOpen()
     QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
 
-
-
 //---------------------------------------------------------------
 // UniViewerAudioWidget::regrabGesture
 // @see header file

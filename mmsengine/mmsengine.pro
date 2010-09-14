@@ -46,8 +46,7 @@ symbian {
 #### loc file needed for rsc generation
     "./loc/MmsUi.loc                              APP_LAYER_LOC_EXPORT_PATH(mmsui.loc)" \
 #### Export confml and crml files ####
-    "./conf/mmsengine.confml                      APP_LAYER_CONFML(mmsengine.confml)" \
-    "./conf/CI_mmsengine.confml                   APP_LAYER_CONFML(CI_mmsengine.confml)" \
+    "./conf/mmsengine.confml                      APP_LAYER_CONFML(mmsengine.confml)" \    
     "./conf/mmsengine_100058DB.crml               APP_LAYER_CRML(mmsengine_100058db.crml)" \
     "./conf/mmsengine_101FB0D5.crml               APP_LAYER_CRML(mmsengine_101fb0d5.crml)" \
     "./conf/mmsengine_101FB0D5.crml               APP_LAYER_CRML(mmsengine_101fb0d9.crml)"    

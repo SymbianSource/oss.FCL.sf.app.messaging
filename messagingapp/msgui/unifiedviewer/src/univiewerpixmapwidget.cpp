@@ -170,8 +170,6 @@ void UniViewerPixmapWidget::handleOpen()
     QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
 
-
-
 //---------------------------------------------------------------
 // UniViewerPixmapWidget::regrabGesture
 // @see header file

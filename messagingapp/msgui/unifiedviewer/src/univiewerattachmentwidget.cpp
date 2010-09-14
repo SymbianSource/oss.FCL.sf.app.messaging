@@ -180,8 +180,6 @@ void UniViewerAttachmentWidget::handleOpen()
     QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
 
-
-
 //----------------------------------------------------------------------------
 // UniViewerAttachmentWidget::handleShortTap
 // @see header file

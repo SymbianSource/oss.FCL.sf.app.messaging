@@ -23,8 +23,7 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 symbian{
 		BLD_INF_RULES.prj_exports += \
     "$${LITERAL_HASH}include <platform_paths.hrh>" \
-    "messaging.confml APP_LAYER_CONFML(messaging.confml)" \
-    "CI_messaging.confml APP_LAYER_CONFML(CI_messaging.confml)" \
+    "messaging.confml APP_LAYER_CONFML(messaging.confml)" \    
 		"messaging_101F87EB.crml APP_LAYER_CRML(messaging_101F87EB.crml)" \
 		"messaging_101F87EC.crml APP_LAYER_CRML(messaging_101F87EC.crml)" \
 		"messaging_101F87ED.crml APP_LAYER_CRML(messaging_101F87ED.crml)" \

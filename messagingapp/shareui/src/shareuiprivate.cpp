@@ -23,6 +23,9 @@
 #include <QStringList>
 #include <QGraphicsLinearLayout>
 
+#include <QTranslator>
+#include <QLocale>
+#include <hbapplication.h>
 #include <HbAction>
 #include <HbDialog>
 #include <HbLabel>
@@ -56,6 +59,18 @@ ShareUiPrivate::ShareUiPrivate()
     mContentItemModel = 0;
     mContentListView = 0;
     mSharePopup = 0;
+    
+    QString locale = QLocale::system().name();
+    QString path = "z:/resource/qt/translations/";
+        
+    mTranslator = new QTranslator();
+    mTranslator_comm = new QTranslator();
+    
+    bool result = mTranslator->load(path + QString("share_") + locale);
+    result = mTranslator_comm->load(path + QString("common_") + locale);
+    qApp->installTranslator(mTranslator);
+    qApp->installTranslator(mTranslator_comm);
+    
     }
 
 /**
@@ -63,6 +78,8 @@ ShareUiPrivate::ShareUiPrivate()
  */
 ShareUiPrivate::~ShareUiPrivate()
     {
+    delete mTranslator;
+    delete mTranslator_comm;
     }
 
 /**

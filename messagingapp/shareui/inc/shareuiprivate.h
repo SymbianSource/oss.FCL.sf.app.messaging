@@ -35,6 +35,7 @@ class HbListView;
 class HbListViewItem;
 class HbTextItem;
 class HbIconItem;
+class QTranslator;
 
 #define SERVICE_INTERFACE "com.nokia.symbian.IFileShare"
 #define SHARE_OP "send(QVariant)"
@@ -226,6 +227,18 @@ private:
      * Application Manager.
      */
     XQApplicationManager mAppManager;
+    
+    /**
+     * Translator member variable
+     * Owned
+     */ 
+    QTranslator* mTranslator;
+    
+    /**
+     * Translator member variable
+     * Owned
+     */
+    QTranslator* mTranslator_comm;
     
     /**
      * Whether to launch the sending application as embedded or not.
