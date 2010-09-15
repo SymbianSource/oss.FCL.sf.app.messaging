@@ -4982,6 +4982,11 @@ void CMceUi::TabChangedL(TInt aIndex)
         {
         return;
         }
+    if( !MceViewActive( EMceDeliveryReportsViewActive ) &&
+            iMceListView->MarkingMode() )
+        {
+        return;
+        }
     TInt count = iTabsArray->Count();
     TMsvId newId = KMsvGlobalInBoxIndexEntryId;
     if ( aIndex < count )
@@ -6661,16 +6666,27 @@ void CMceUi::HideOrExit()
 // ----------------------------------------------------
 void CMceUi::ResetAndHide()
     {
-    // To close embedded MsgEditor
-    if ( IsEditorOpen() )
+    if( MceViewActive( EMceMessageViewActive ) && iMceListView
+            && iMceListView->MarkingMode() )
         {
-        CloseEditorApp();
-        }
+        iMceListView->SetMarkingModeOff();
+        iMceListView->SetMarkingMode( EFalse );
+        RemoveTabs();
+        delete iDecoratedTabGroup;
+        iDecoratedTabGroup = NULL;
+        delete iTabsArray;
+        iTabsArray = NULL;
+        SetCustomControl(1);    // Disable bring-to-foreground on view activation
+        TRAP_IGNORE( CAknViewAppUi::CreateActivateViewEventL( \
+            KMessagingCentreMainViewUid, \
+            TUid::Uid(KMceHideInBackground), \
+            KNullDesC8 ) ) ;
+        }    
     // Messaging was not exiting properly when "exit" is pressed from settings dialog.
     // iMceUiFlags.MceFlag( EMceUiFlagsSettingsDialogOpen ) will be true 
     // when we exit from any of the settings Dialog. 
     // Closing of Settings dialogs will be taken care by AVKON. 
-	if (!(MceViewActive( EMceMainViewActive) && IsForeground()) || 
+    else if (!(MceViewActive( EMceMainViewActive) && IsForeground()) ||  
 	      iMceUiFlags.MceFlag( EMceUiFlagsSettingsDialogOpen ) || iSimDialogOpen )
         {
         SetCustomControl(1);    // Disable bring-to-foreground on view activation

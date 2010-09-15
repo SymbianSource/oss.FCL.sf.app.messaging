@@ -483,6 +483,12 @@ void CMceMessageListView::DoActivateL(
         iDateTimeNotifier->Start();            
         }
      
+    // if we are in marking mode then "press" rsk
+    // cancel to return to normal mode
+    if( iMarkingModeOn )
+        {
+        SetMarkingModeOff();
+        }
     MCELOGGER_LEAVEFN("CMceMessageListView::DoActivateL()");
     }
 
@@ -554,33 +560,7 @@ void CMceMessageListView::HandleCommandL( TInt aCommand )
                 iMceUi->GoOfflineL( iMsgListContainer->FolderEntry().iServiceId );
                 }
             break;
-            }
-        case EAknCmdMark:
-            {
-            iMsgListContainer->AddCurrentItemToSelectionL();
-            SetMSKButtonL();
-            break;
-            }
-        case EAknCmdUnmark:
-            {
-            iMsgListContainer->RemoveCurrentItemFromSelection();
-            SetMSKButtonL();
-            break;
-            }
-        case EAknUnmarkAll:
-            {
-            iMsgListContainer->ClearSelection();
-            SetMSKButtonL();
-            break;
-            }
-
-        case EAknMarkAll:
-            {
-            iMsgListContainer->AddAllToSelectionL();
-            SetMSKButtonL();
-            break;
-            }
-            
+            }          
         case  EAknCmdMarkReadMsgs:
             {
             FindAllReadMsgAndMarkL();
@@ -1031,10 +1011,6 @@ void CMceMessageListView::DynInitMenuPaneL(
     switch ( aResourceId )
         {
         case R_MCE_FOLDER_MENU:
-            if(!listPopulated)
-                {
-            	aMenuPane->SetItemDimmed( EMceCmdEditList, ETrue );
-                }
             aMenuPane->SetItemDimmed( EAknCmdHelp,
                 !FeatureManager::FeatureSupported( KFeatureIdHelp ) );
 
@@ -1105,9 +1081,7 @@ void CMceMessageListView::DynInitMenuPaneL(
                 }
             
             break;
-        case R_MCE_EDIT_MENU:
-            EditMenuL( aMenuPane );
-            break;
+
         case R_MCE_FETCH_MENU:
             FetchMenuL( aMenuPane );
             break;        
@@ -1446,12 +1420,12 @@ void CMceMessageListView::FolderMenuL( CEikMenuPane* aMenuPane )
 		}
     if ( iFolderId == KMsvGlobalOutBoxIndexEntryId )
         {
-        aMenuPane->SetItemDimmed( EMceCmdEditList, ETrue );
+        aMenuPane->SetItemDimmed( EAknCmdMarkingModeEnter, ETrue );
         }
     else if ( count > 0 && totalCount == subfolderCount )
         {
         // only folders in the list, then "Edit" submenu would be empty so delete it
-        aMenuPane->SetItemDimmed( EMceCmdEditList, ETrue );
+        aMenuPane->SetItemDimmed( EAknCmdMarkingModeEnter, ETrue );
         aMenuPane->SetItemDimmed( EMceCmdSort, ETrue );  
         }
 
@@ -1595,7 +1569,7 @@ void CMceMessageListView::FolderMenuL( CEikMenuPane* aMenuPane )
 void CMceMessageListView::FolderMenuNoItemsL( CEikMenuPane* aMenuPane ) const
     {
     aMenuPane->SetItemDimmed( EAknCmdOpen, ETrue );
-    aMenuPane->SetItemDimmed( EMceCmdEditList, ETrue );
+    aMenuPane->SetItemDimmed( EAknCmdMarkingModeEnter, ETrue );
     aMenuPane->SetItemDimmed( EMceCmdDelete, ETrue );
     aMenuPane->SetItemDimmed( EMceCmdUndelete, ETrue );
     aMenuPane->SetItemDimmed( EMceCmdMove, ETrue );
@@ -2240,7 +2214,7 @@ void CMceMessageListView::FolderMenuSyncMLMain( CEikMenuPane *aMenuPane )
 	aMenuPane->SetItemDimmed( EMceCmdNewFolder, ETrue );
 	aMenuPane->SetItemDimmed( EMceCmdRenameFolder, ETrue );
 	aMenuPane->SetItemDimmed( EMceCmdCopy, ETrue );
-	aMenuPane->SetItemDimmed( EMceCmdEditList, ETrue );
+	aMenuPane->SetItemDimmed( EAknCmdMarkingModeEnter, ETrue );
 	aMenuPane->SetItemDimmed( EMceCmdMailboxSettings, ETrue );
 	// + MessageDetails
 	}
@@ -2304,7 +2278,7 @@ void CMceMessageListView::FolderMenuSyncMLFolderL( CEikMenuPane *aMenuPane )
 	// SyncML Outbox
 	if ( SyncMlOutboxInbox( KMsvGlobalOutBoxIndexEntryIdValue ) )
 		{		
-		aMenuPane->SetItemDimmed( EMceCmdEditList, ETrue );
+		aMenuPane->SetItemDimmed( EAknCmdMarkingModeEnter, ETrue );
 		aMenuPane->SetItemDimmed( EAknCmdOpen, ETrue );
 		aMenuPane->SetItemDimmed( EMceCmdFetch, ETrue );
 		aMenuPane->SetItemDimmed( EMceCmdMarkAsRead, ETrue );
@@ -4255,6 +4229,46 @@ void CMceMessageListView::SetContextCommandFlag(TBool aContextCommandFlag)
 void CMceMessageListView::GetLocalScreenClearer( CAknLocalScreenClearer** &aClearer )        
     {
     aClearer = &iLocalScreenClearer;
+    }
+// ----------------------------------------------------
+// CMceMessageListView::SetMarkingMode( TBool aMarkingModeOn )
+// ---------------------------------------------------- 
+
+void CMceMessageListView::SetMarkingMode( TBool aMarkingModeOn )
+    {
+    iMarkingModeOn = aMarkingModeOn;
+    }
+// ----------------------------------------------------
+// CMceMessageListView::MarkingMode() const
+// ---------------------------------------------------- 
+
+TBool CMceMessageListView::MarkingMode() const
+    {
+    return iMarkingModeOn;  
+    }	
+// ----------------------------------------------------
+// CMceMessageListView::MessageCount() const
+// ---------------------------------------------------- 
+
+TInt CMceMessageListView::MessageCount() const
+    {
+    if ( iMsgListContainer )
+        {
+        return iMsgListContainer->MessageCount();
+        }
+    return 0;
+    }
+// ----------------------------------------------------
+// CMceMessageListView::SetMarkingModeOff()
+// ---------------------------------------------------- 
+
+void CMceMessageListView::SetMarkingModeOff()
+    {
+    if( iMsgListContainer )
+        {
+        iMsgListContainer->SetMarkingModeOff();
+        }
+    iMarkingModeOn = EFalse;
     }
 
 //  End of File

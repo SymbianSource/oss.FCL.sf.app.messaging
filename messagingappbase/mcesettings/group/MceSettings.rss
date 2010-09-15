@@ -31,7 +31,7 @@ NAME    MCSE
 #include <muiusettingsarray.rh>
 #include "MceSettingsIds.hrh"
 #include <mcesettings.loc>
-#include "mcesettings_diy.loc"
+#include <mcesettings_diy.loc>
 #include <avkon.loc>
 
 // for AIW_INTEREST resource

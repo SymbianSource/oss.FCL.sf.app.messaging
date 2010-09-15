@@ -39,7 +39,7 @@ PRJ_EXPORTS
 ../rom/MceSettings.iby      CORE_APP_LAYER_IBY_EXPORT_PATH(mcesettings.iby)
 ../loc/MceSettings.loc      APP_LAYER_LOC_EXPORT_PATH(MceSettings.loc)
 ../inc/MceSettingsEmailSel.h           |../../../inc/mcesettingsemailsel.h
-../rom/MceSettingsResources.iby CORE_APP_LAYER_IBY_EXPORT_PATH(MceSettingsResources.iby)
+../rom/MceSettingsResources.iby LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(MceSettingsResources.iby)
 ../sis/Mcesettings_stub.SIS   /epoc32/data/z/system/install/mcesettings_stub.sis
 ../loc/mcesettings_diy.loc      APP_LAYER_LOC_EXPORT_PATH(mcesettings_diy.loc)
 

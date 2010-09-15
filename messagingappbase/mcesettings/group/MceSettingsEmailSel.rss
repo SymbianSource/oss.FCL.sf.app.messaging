@@ -26,7 +26,7 @@ NAME MSES
 #include <avkon.rh>
 #include <avkon.rsg>
 
-#include "mcesettings_diy.loc"    // localization file if needed
+#include <mcesettings_diy.loc>   // localization file if needed
 #include "MceSettingsEmailSel.hrh"
 
 //  CONSTANTS  

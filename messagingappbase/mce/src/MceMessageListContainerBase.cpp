@@ -21,6 +21,7 @@
 // INCLUDE FILES
 
 #include "MceMessageListContainerBase.h"
+#include "MceMessageListView.h"
 #include <bldvariant.hrh>
 
 // CONSTANTS
@@ -38,4 +39,23 @@ CMceMessageListContainerBase::~CMceMessageListContainerBase()
     {
     }
 
+// -----------------------------------------------------------------------------
+// CMceMessageListContainerBase::MarkingModeStatusChanged()
+//
+// -----------------------------------------------------------------------------
+//
+void CMceMessageListContainerBase::MarkingModeStatusChanged( TBool aActivated )
+    {
+    iOwningView.SetMarkingMode( aActivated );
+    }
+
+// -----------------------------------------------------------------------------
+// CMceMessageListContainerBase::ExitMarkingMode()
+//
+// -----------------------------------------------------------------------------
+//
+TBool CMceMessageListContainerBase::ExitMarkingMode() const
+    {
+    return ETrue;
+    }
 // End of file

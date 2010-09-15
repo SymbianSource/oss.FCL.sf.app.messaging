@@ -228,6 +228,11 @@ CMceMessageListItemArray::~CMceMessageListItemArray( )
     delete iListBoxText;
     delete iNumberOfMessagesStrings;
     delete iUiRegistry;
+    if(iMsgIndex)
+        {
+        delete iMsgIndex;
+        iMsgIndex = NULL;
+        }
     }
 
 

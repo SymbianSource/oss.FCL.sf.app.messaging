@@ -195,6 +195,7 @@ void CMceOneRowMessageListContainer::ConstructL(
     iTreeListBox->EnableTabModeFunctionIndicatorsL( ETrue );
     iTreeListBox->SetFlags( iTreeListBox->Flags() ^ KAknTreeListLooping ^ KAknTreeListMarkable );
     iTreeListBox->AddObserverL( this );
+    iTreeListBox->SetMarkingModeObserver( this );
 
     iBgContext = CAknsBasicBackgroundControlContext::NewL(
         KAknsIIDQsnBgAreaMain, iAvkonAppUi->ApplicationRect(), EFalse );
@@ -795,9 +796,14 @@ void CMceOneRowMessageListContainer::RefreshListbox()
 // CMceOneRowMessageListContainer::ItemCountChangedL
 // ----------------------------------------------------
 //
-void CMceOneRowMessageListContainer::ItemCountChangedL( TBool /* aItemsAdded */ )
+void CMceOneRowMessageListContainer::ItemCountChangedL( TBool /* aItemsAdded */,
+        CArrayFix<TInt>* /* aAddedIndexes */ )
     {
     ResetListbox();
+    if( iOwningView.MarkingMode() && iListItems->MessageCount() <= 0 )
+        {
+        SetMarkingModeOff();
+        }
     }
 
 
@@ -1224,6 +1230,10 @@ void CMceOneRowMessageListContainer::HandleMsvSessionEventL(
         default:
             break;
         };
+    if( iOwningView.MarkingMode() && iListItems->MessageCount() <= 0 )
+        {
+        SetMarkingModeOff();
+        }
     }
 
 
@@ -1332,7 +1342,8 @@ TKeyResponse CMceOneRowMessageListContainer::OfferKeyEventL(
                 return EKeyWasNotConsumed;
                 }
 
-            if ( iOwningView.MenuBar()->ItemSpecificCommandsEnabled() && aKeyEvent.iCode == EKeyBackspace )
+            
+			if ( ( GetMarkedItemsCountL() || iOwningView.MenuBar()->ItemSpecificCommandsEnabled() ) && aKeyEvent.iCode == EKeyBackspace )
                 {
                 MarkItemSelectionL();
                 SetAnchorItemIdL(
@@ -2572,4 +2583,19 @@ TBool CMceOneRowMessageListContainer::IsMailMtmTechnology( TUid aMtm )const
         }
     return isMailMtm;
     }
+// ----------------------------------------------------
+// CMceOneRowMessageListContainer::SetMarkingModeOff
+// ----------------------------------------------------
+void CMceOneRowMessageListContainer::SetMarkingModeOff()
+    {
+    RWsSession wsSession = CCoeEnv::Static()->WsSession();
+    TKeyEvent keyEvent;
+    keyEvent.iCode = EKeyCBA2;  
+    keyEvent.iScanCode = EStdKeyDevice1;
+    keyEvent.iModifiers = 0;
+    keyEvent.iRepeats = 0;
+    wsSession.SimulateKeyEvent( keyEvent );
+    wsSession.Flush();
+    }   
+
 //  End of File

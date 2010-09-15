@@ -90,6 +90,7 @@ CMceMessageListContainer::~CMceMessageListContainer()
     delete iListBox;
     delete iListItems;
     delete iSelectedEntries;
+    delete iAddedMsvIds;
     }
 
 // ----------------------------------------------------
@@ -138,7 +139,7 @@ void CMceMessageListContainer::ConstructL(
     iListBox->Model()->SetOwnershipType( ELbmDoesNotOwnItemArray );
     
     iListBox->SetListBoxObserver( &iOwningView );
-
+    iListBox->SetMarkingModeObserver( this );
     iSelectedEntries = new (ELeave) CMsvEntrySelection;
     
     iListBox->CreateScrollBarFrameL( ETrue );
@@ -149,6 +150,8 @@ void CMceMessageListContainer::ConstructL(
         ->SetIconArray( aBitmapResolver.IconArray() );
     
     iPreviousInputMethod = EFalse;
+    
+    iAddedMsvIds = new (ELeave) CMsvEntrySelection;
     
     User::LeaveIfError( iQwertyModeStatusProperty.Attach( 
         KCRUidAvkon, KAknQwertyInputModeActive ));
@@ -269,15 +272,27 @@ void CMceMessageListContainer::RefreshListbox()
 // ----------------------------------------------------
 // CMceMessageListContainer::ItemCountChangedL
 // ----------------------------------------------------
-void CMceMessageListContainer::ItemCountChangedL( TBool aItemsAdded )
+void CMceMessageListContainer::ItemCountChangedL( TBool aItemsAdded,
+        CArrayFix<TInt>* aAddedIndexes )
     {
     if ( aItemsAdded )
         {
-        iListBox->HandleItemAdditionL();     
+        if( aAddedIndexes )
+            {
+            iListBox->HandleItemAdditionL( *aAddedIndexes );
+            }
+        else
+            {
+            iListBox->HandleItemAdditionL();
+            }        
         }
     else
         {
         iListBox->HandleItemRemovalL();
+        if( iOwningView.MarkingMode() && iListItems->MessageCount() <= 0 )
+            {
+            SetMarkingModeOff();
+            }
         }
     }
     
@@ -445,32 +460,9 @@ void CMceMessageListContainer::RemoveCurrentItemFromSelection()
 // ----------------------------------------------------
 // CMceMessageListContainer::RefreshSelectionIndexesL
 // ----------------------------------------------------
-void CMceMessageListContainer::RefreshSelectionIndexesL( TBool aForceUpdate )
+void CMceMessageListContainer::RefreshSelectionIndexesL( TBool /*aForceUpdate*/ )
     {
-    const CListBoxView::CSelectionIndexArray* selection = 
-        iListBox->View()->SelectionIndexes();
 
-    if ( selection->Count() > 0 || aForceUpdate )
-        {
-        CArrayFixFlat<TInt>* newSelection = new ( ELeave )
-            CArrayFixFlat<TInt>( KMceListContainerGranuality );
-        CleanupStack::PushL( newSelection );
-        const TInt count = iSelectedEntries->Count();
-        for ( TInt loop = count; loop >0; loop--)
-            {
-            TInt index = iListItems->ItemIndex( (*iSelectedEntries)[loop-1] );
-            if ( index > KErrNotFound )
-                {
-                newSelection->AppendL( index );
-                }
-            else
-                {
-                iSelectedEntries->Delete( loop-1 );
-                }
-            }
-        iListBox->SetSelectionIndexesL( newSelection );
-        CleanupStack::PopAndDestroy( newSelection );
-        }
     
     }
 
@@ -664,10 +656,15 @@ TKeyResponse CMceMessageListContainer::OfferKeyEventL(
 
             if ( aKeyEvent.iCode == EKeyLeftArrow || aKeyEvent.iCode == EKeyRightArrow )
                 {
+                if( iOwningView.MarkingMode() )
+                    {
+                    return EKeyWasConsumed;
+                    }
                 return EKeyWasNotConsumed;
                 }
 
-            if ( iOwningView.MenuBar()->ItemSpecificCommandsEnabled() && aKeyEvent.iCode == EKeyBackspace )
+            
+			if ( ( iOwningView.MenuBar()->ItemSpecificCommandsEnabled() || SelectionCount() ) && aKeyEvent.iCode == EKeyBackspace )
                 {
                 MarkItemSelectionL();
                 SetAnchorItemIdL( 
@@ -1322,6 +1319,39 @@ void CMceMessageListContainer::HandleMsvSessionEventL(
 #ifdef _DEBUG
     RDebug::Print(_L("CMceMessageListContainer2: iAnchorItemId 0x%x, iAnchorItemIndex %d"), iAnchorItemId, iAnchorItemIndex);
 #endif
+    // listitem addition handling when all the new item indexes can be resolved
+    if( iOwningView.MarkingMode() && iAddedMsvIds->Count() > 0 )
+        {
+        TBool allItemsInTheList( ETrue );
+        CArrayFix<TInt>* addedIndexes = new( ELeave ) CArrayFixFlat<TInt> (
+                KMceListContainerGranuality );
+        CleanupStack::PushL( addedIndexes );
+        for( TInt i( 0 ); i < iAddedMsvIds->Count(); i++ )
+            {
+            TMsvId msvId = (*iAddedMsvIds)[i];                 
+            TInt index = iListItems->ItemIndex( msvId );
+            if ( index > KErrNotFound )
+                {
+                addedIndexes->AppendL( index );
+                }
+            else
+                {
+                allItemsInTheList = EFalse;
+                break;
+                }
+            }
+        if( allItemsInTheList )
+            {
+            ItemCountChangedL( ETrue, addedIndexes );
+            iAddedMsvIds->Reset();
+            }
+        CleanupStack::PopAndDestroy( addedIndexes );
+        addedIndexes = NULL;
+        }
+    else if( iAddedMsvIds->Count() > 0 )
+        {
+        iAddedMsvIds->Reset();
+        }
     switch ( aEvent )
         {
         case MMsvSessionObserver::EMsvEntriesDeleted:
@@ -1356,11 +1386,31 @@ void CMceMessageListContainer::HandleMsvSessionEventL(
             }
         break;
         case MMsvSessionObserver::EMsvEntriesCreated:    
+            {
+            if( iOwningView.MarkingMode() )
+                {
+                // list item count not updated fast enough in hw so let's 
+                // collect added ids for future handling
+                for( TInt i( 0 ); i < aSelection.Count(); i++ )
+                    {
+                    TMsvId msvId = (aSelection)[ i ];
+                    if( iAddedMsvIds->Find( msvId ) == KErrNotFound  )
+                        {
+                        iAddedMsvIds->AppendL( msvId );
+                        }
+                    }
+                }
+            else
+                {
+                ItemCountChangedL( ETrue );
+                }
+            }
         case MMsvSessionObserver::EMsvEntriesChanged:
             {
-            
-            ItemCountChangedL( ETrue );
-            
+            if( aEvent == MMsvSessionObserver::EMsvEntriesChanged  )
+                {
+                ItemCountChangedL( ETrue );
+                }
             if ( iLastOperationType != EMessageListOperationConnect &&
                  iAnchorItemId != KErrNotFound )
                 {
@@ -1537,6 +1587,14 @@ void CMceMessageListContainer::SetContainerFlag( TMceContainerFlags /*aFlag*/, T
 void CMceMessageListContainer::UpdateIconArrayL()
     {
     // do nothing for two row list.
+    }
+
+void CMceMessageListContainer::SetMarkingModeOff()
+    {
+    if( iListBox )
+        {
+        iListBox->SetMarkingMode( EFalse );
+        }
     }
 
 //  End of File

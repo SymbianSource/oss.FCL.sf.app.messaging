@@ -27,7 +27,7 @@
 
 //  INCLUDES
 #include <e32base.h>
-#include <coneresloader.h>
+#include <ConeResLoader.h>
 
 
 // DATA TYPES
