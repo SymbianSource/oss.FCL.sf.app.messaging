@@ -14,6 +14,8 @@
  * Description: Widget class for Notificaiton Dialog Plugin
  *
  */
+#include <QThreadPool>
+#include <QRunnable>
 #include "debugtraces.h"
 
 #include <ccsdefs.h>
@@ -42,9 +44,7 @@ bool serviceTaskLaunched = false;
 // ServiceRequestSenderTask::ServiceRequestSenderTask
 // @see msgnotificationdialogwidget.h
 // ----------------------------------------------------------------------------   
-ServiceRequestSenderTask::ServiceRequestSenderTask(qint64 conversationId,
-        QObject* parent):
-QThread(parent),        
+ServiceRequestSenderTask::ServiceRequestSenderTask(qint64 conversationId):
 mConvId(conversationId)
      {     
      }
@@ -81,10 +81,9 @@ void ServiceRequestSenderTask::run()
      
      args << QVariant(mConvId);
      request->setArguments(args);
+     request->setSynchronous(true);
      request->send();
      delete request;
-     
-     exec();
      }
 
 void ServiceRequestSenderTask::onRequestCompleted(const QVariant& value)
@@ -92,8 +91,6 @@ void ServiceRequestSenderTask::onRequestCompleted(const QVariant& value)
 	Q_UNUSED(value);
     serviceTaskLaunched = false;
     emit serviceRequestCompleted();
-    
-    quit();
     }
 
 void ServiceRequestSenderTask::onRequestError(int errorCode, const QString& errorMessage)
@@ -102,8 +99,6 @@ void ServiceRequestSenderTask::onRequestError(int errorCode, const QString& erro
     Q_UNUSED(errorMessage);
     serviceTaskLaunched = false;
     emit serviceRequestCompleted();
-    
-    quit();
     }
 
 // ----------------------------------------------------------------------------
@@ -251,11 +246,11 @@ void MsgNotificationDialogWidget::showEvent(QShowEvent *event)
 void MsgNotificationDialogWidget::widgetActivated()
 {           
     ServiceRequestSenderTask* task = 
-            new ServiceRequestSenderTask(mConversationId,this);
+            new ServiceRequestSenderTask(mConversationId);
     connect(task,SIGNAL(serviceRequestCompleted()),
             this,SIGNAL(deviceDialogClosed()));
     serviceTaskLaunched = true;
-    task->start();
+    QThreadPool::globalInstance()->start(task);
     enableTouchActivation(false);
     
 }

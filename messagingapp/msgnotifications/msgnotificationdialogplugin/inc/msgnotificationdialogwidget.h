@@ -20,7 +20,7 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include <QThread>
+#include <QRunnable>
 #include <hbdevicedialoginterface.h>
 #include <hbdevicedialog.h>
 #include <hbnotificationdialog.h>
@@ -29,7 +29,7 @@
 /**
  * Class for sending service request
  */
-class ServiceRequestSenderTask :public QThread
+class ServiceRequestSenderTask :public QObject,public QRunnable
 {
     Q_OBJECT
     
@@ -37,7 +37,7 @@ public:
     /**
      * Constructor
      */
-    ServiceRequestSenderTask(qint64 conversationId,QObject* parent=0);
+    ServiceRequestSenderTask(qint64 conversationId);
     
     /**
      * Destructor
