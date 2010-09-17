@@ -95,3 +95,6 @@ LIBS += -lmsgs \
         -llogwrap \
         -lapgrfx \
         -lapmime
+
+
+symbian:MMP_RULES += SMPSAFE

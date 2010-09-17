@@ -102,4 +102,7 @@ DEFFILE         ../bwins/mmsserver.def
 DEFFILE         ../bmarm/mmsserver.def
 #endif
 
+SMPSAFE
+
+
 // End of File

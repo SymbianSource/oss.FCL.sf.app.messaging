@@ -26,6 +26,7 @@
 
 #include "msgmainwindow.h"
 #include "msgactivityhandler.h"
+#include "msgapplication.h"
 
 //Localised constants
 #define LOC_TITLE hbTrId("txt_messaging_title_messaging")
@@ -96,7 +97,10 @@ int main(int argc, char *argv[])
     }
     
     // Application
-    HbApplication app(argc, argv);
+    //MsgApplication class dervied from HbApplication is create in order to 
+    //emit applicationReady signal for Matti tool
+    MsgApplication app(argc, argv);
+    
 
     //TODO: Uncomment the lines when actual translation files are available in sdk and remove loading locally.
     QString locale = QLocale::system().name();
@@ -140,6 +144,7 @@ int main(int argc, char *argv[])
      
     // Main window
     QPointer<MsgMainWindow> mainWindow = new MsgMainWindow(serviceRequest,activityMsgId);
+    app.initViewReady();
     // Set the main window pointer to activity handler.
     activityHandler->setMainWindow(mainWindow);
     mainWindow->show();

@@ -23,19 +23,12 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 symbian{
 		BLD_INF_RULES.prj_exports += \
     "$${LITERAL_HASH}include <platform_paths.hrh>" \
-    "messaging.confml APP_LAYER_CONFML(messaging.confml)" \    
+    "messaging.confml APP_LAYER_CONFML(messaging.confml)" \
 		"messaging_101F87EB.crml APP_LAYER_CRML(messaging_101F87EB.crml)" \
-		"messaging_101F87EC.crml APP_LAYER_CRML(messaging_101F87EC.crml)" \
-		"messaging_101F87ED.crml APP_LAYER_CRML(messaging_101F87ED.crml)" \
-		"messaging_101F87EE.crml APP_LAYER_CRML(messaging_101F87EE.crml)" \
+		"messaging_101F87ED.crml APP_LAYER_CRML(messaging_101F87ED.crml)" \		
 		"messaging_101F87EF.crml APP_LAYER_CRML(messaging_101F87EF.crml)" \
-		"messaging_101F8873.crml APP_LAYER_CRML(messaging_101F8873.crml)" \
 		"messaging_102071F2.crml APP_LAYER_CRML(messaging_102071F2.crml)" \
-		"messaging_102072E2.crml APP_LAYER_CRML(messaging_102072E2.crml)" \
 		"messaging_102072E5.crml APP_LAYER_CRML(messaging_102072E5.crml)" \
-		"messaging_102824A0.crml APP_LAYER_CRML(messaging_102824A0.crml)" \
-		"messaging_1028281E.crml APP_LAYER_CRML(messaging_1028281E.crml)" \
-		"messaging_101F8F28.crml APP_LAYER_CRML(messaging_101F8F28.crml)" \
 		"backup_registration.xml z:/private/2001FE79/backup_registration.xml"
 		}
 

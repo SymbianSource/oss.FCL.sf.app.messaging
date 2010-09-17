@@ -1517,6 +1517,7 @@ HBufC8* CMmsEncode::CalculateAttachmentHeaderLengthL(
             // Using non-ascii characters in filename parameter is allowed
             // The filename must be encoded either using base64 or quoted printable
             HBufC8* temp = NULL;
+			// coverity[size_error][buffer_alloc]
             temp = CnvUtfConverter::ConvertFromUnicodeToUtf8L( originalName );
             CleanupStack::PushL( temp );
             // Now we have the filename in utf-8.
@@ -3332,7 +3333,8 @@ void CMmsEncode::EncodeTextStringL( const TDesC& aString )
         // we must convert to utf-8
         
         //one ucs-2 character should never produce more than 4 bytes when converted to utf-8
-        HBufC8* buffer = HBufC8::NewL( aString.Length() * KMms4 ); // paranoid.
+        // coverity[incorrect_multiplication][buffer_alloc]
+		HBufC8* buffer = HBufC8::NewL( aString.Length() * KMms4 ); // paranoid.
         // we don't leave while we need buffer
         TPtr8 buf8 = buffer->Des();
 
@@ -3545,6 +3547,7 @@ void CMmsEncode::EncodeSenderL( const TPtrC& aSender )
             // must be added
         
             // one ucs-2 character will not produce more than 4 bytes when converted to utf-8
+			// coverity[incorrect_multiplication][buffer_alloc]
             HBufC8* buffer = HBufC8::NewL( aSender.Length() * KMms4 ); // paranoid.
             // we don't need to push buffer onto cleanup stack, as we don't
             // leave while we are using it
@@ -4896,7 +4899,7 @@ TBool CMmsEncode::ProcessAndConvertAttachmentDataL( TUint aSrcCharSetMIBEnum,
         return EFalse;
         }
 
-    TInt maxLength;
+    TInt maxLength=0;
     error = attachFile.Size(maxLength);
     if( error != KErrNone || maxLength == 0 )
         {

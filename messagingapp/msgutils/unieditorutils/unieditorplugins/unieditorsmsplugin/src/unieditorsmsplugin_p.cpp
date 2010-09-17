@@ -1471,7 +1471,7 @@ void UniEditorSmsPluginPrivate::InsertSubjectL( CSmsHeader& aHeader, CRichText& 
 // ----------------------------------------------------------------------------
 void UniEditorSmsPluginPrivate::CreateVCardSMSL( RFile& aFile )
     {
-    TInt fileSize;
+    TInt fileSize = 0;
     TInt err ( aFile.Size( fileSize ) );
     User::LeaveIfError(err);
 
@@ -1503,7 +1503,7 @@ void UniEditorSmsPluginPrivate::CreateVCardSMSL( RFile& aFile )
 void UniEditorSmsPluginPrivate::CreateVCalSMSL( RFile& aFile )
     {
     TInt err (KErrNone);
-    TInt fileSize;
+    TInt fileSize = 0;
     err = aFile.Size( fileSize );
     User::LeaveIfError(err);
 

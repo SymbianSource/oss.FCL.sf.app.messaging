@@ -23,7 +23,6 @@
 #include <HbAction>
 #include <HbListView>
 #include <HbMessageBox>
-#include <HbNotificationDialog>
 #include <HbFrameBackground>
 #include <HbStaticVkbHost>
 #include <HbStyleLoader>
@@ -136,7 +135,9 @@ MsgConversationView::MsgConversationView(MsgContactCardWidget *contactCardWidget
 MsgConversationView::~MsgConversationView()
 {
     //delete the popup dialog
-    delete mDialog;
+    if (mDialog) {
+        delete mDialog;
+    }
 }
 //---------------------------------------------------------------
 // MsgConversationView::setupView
@@ -151,6 +152,7 @@ void MsgConversationView::setupView()
     }
     mConversationList->setLayoutName("custom");
     mConversationList->setItemRecycling(true);
+	mConversationList->setItemPixmapCacheEnabled(true);
     MsgConversationViewItem *item = new MsgConversationViewItem(this);
     HbFrameBackground defaultBackground;
     defaultBackground.setFrameGraphicsName(QString(""));
@@ -158,7 +160,6 @@ void MsgConversationView::setupView()
     mConversationList->setItemPrototype(item);
     mConversationList->setSelectionMode(HbListView::NoSelection);
     mConversationList->setClampingStyle(HbScrollArea::BounceBackClamping);
-    mConversationList->setScrollingStyle(HbScrollArea::PanOrFlick);
 
     mMessageModel = ConversationsEngine::instance()->getConversationsModel();
     
@@ -218,7 +219,7 @@ void MsgConversationView::setupMenu()
     // Just create dummy menu.
     // Actual menu will be created in menuAboutToShow()
     HbMenu *mainMenu = this->menu();
-    HbAction* clearConversation = mainMenu->addAction(QString());
+    mainMenu->addAction(QString());
     connect(mainMenu, SIGNAL(aboutToShow()), this, SLOT(menuAboutToShow()));
 }
 
@@ -243,17 +244,17 @@ void MsgConversationView::refreshView()
     // Hide editor in case of BT conversations.
     qint64 convId = ConversationsEngine::instance()->getCurrentConversationId();
     if (INVALID_CONVID != convId) {
-        if (KBluetoothMsgsConversationId == convId) {
+        mContactCardWidget->updateContents();
+        if (KBluetoothMsgsConversationId == convId || !(mContactCardWidget->isValidAddress())) {
             mMainLayout->removeItem(mEditorWidget);
             mEditorWidget->hide();
             mEditorWidget->setParent(this);
         }
         else {
             mMainLayout->addItem(mEditorWidget);
-            TRAP_IGNORE(mEditorWidget->setEncodingSettingsL());
             mEditorWidget->show();
         }
-        mContactCardWidget->updateContents();
+        TRAP_IGNORE(mEditorWidget->setEncodingSettingsL());
     }
 }
 
@@ -984,23 +985,22 @@ void MsgConversationView::openItem(const QModelIndex & index)
     // For suspended message both short tap and long tap needs to show the same
     // context menu.....
     if(direction == ConvergedMessage::Outgoing 
-        	&& ((sendingState == ConvergedMessage::Suspended) || (sendingState == ConvergedMessage::Failed)))
+        	&& (sendingState == ConvergedMessage::Suspended))
     {
         handleShortTap();
         return;
     }
     
-    //If message is in any other state other than 'Sent'
+    //If message is in any state other than 'Sent' or 'Failed'
     //do not open the message
     if(direction == ConvergedMessage::Outgoing 
-            && sendingState != ConvergedMessage::SentState )
+            && sendingState != ConvergedMessage::SentState 
+            && sendingState != ConvergedMessage::Failed)
            
     {
         return;
     }
 
-   
-    
     // contact Id
     qint32 contactId = index.data(ContactId).toLongLong();  
 	    
@@ -1195,7 +1195,7 @@ void MsgConversationView::vkbOpened()
         }
     
     this->setMaximumHeight(appRect.height()- cardHeight - spacing);
-    mConversationList->adjustSize();
+
     
     disconnect(mVkbHost,SIGNAL(keypadOpened()),this,SLOT(vkbOpened()));
 
@@ -1212,7 +1212,7 @@ void MsgConversationView::vkbClosed()
     scrollToBottom();
     
     this->setMaximumHeight(-1);
-    mConversationList->adjustSize();    
+    
     
     connect(mVkbHost,SIGNAL(keypadOpened()),this,SLOT(vkbOpened()));
 }

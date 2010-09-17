@@ -189,7 +189,8 @@ void CCsNotificationHandler::RequestChangeEventL()
         delete iNotificationBuffer;
         iNotificationBuffer = NULL;
         }
-    iNotificationBuffer = HBufC8::NewL(KBufferMaxLen);
+    // coverity[size_error][buffer_alloc]
+	iNotificationBuffer = HBufC8::NewL(KBufferMaxLen);
     
     if ( iNextReqIDBuffer )
         {

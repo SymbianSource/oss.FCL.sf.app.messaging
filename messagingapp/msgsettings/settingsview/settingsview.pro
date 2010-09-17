@@ -66,3 +66,4 @@ LIBS += -lSmcm \
     -lmmsgenericsettings \
     -lxqutils
     
+symbian:MMP_RULES += SMPSAFE

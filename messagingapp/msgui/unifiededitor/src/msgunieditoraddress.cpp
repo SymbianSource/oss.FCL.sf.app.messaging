@@ -27,8 +27,6 @@
 #include <telconfigcrkeys.h>        // KCRUidTelephonyConfiguration
 #include <centralrepository.h>
 #include <HbNotificationDialog>
-#include <commonphoneparser.h>      // Common phone number validity checker
-#include <xqconversions.h>
 #include <HbEditorInterface>
 
 // USER INCLUDES
@@ -37,6 +35,7 @@
 #include "msgunieditorlineedit.h"
 #include "msgunieditormonitor.h"
 #include "UniEditorGenUtils.h"
+#include "msgsendutil.h"
 
 const QString PBK_ICON("qtg_mono_contacts");
 const QString REPLACEMENT_STR("; ");
@@ -246,7 +245,8 @@ void MsgUnifiedEditorAddress::setAddresses(ConvergedMessageAddressList addrlist,
         bool isValid = false;
         if(!aSkipCheck)
         {
-            isValid = checkValidAddress(addrlist.at(i)->address());
+            QScopedPointer<MsgSendUtil> sendUtil(new MsgSendUtil());
+            isValid = sendUtil->isValidAddress(addrlist.at(i)->address());
         }
         else
         {
@@ -528,7 +528,6 @@ void MsgUnifiedEditorAddress::onMaxRecipientsReached(HbAction* action)
 // ----------------------------------------------------------------------------
 bool MsgUnifiedEditorAddress::validateContacts()
 {
-    UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
 
     // sync-up map to account for user-actions on address-field
     syncDeletionsToMap();
@@ -544,7 +543,8 @@ bool MsgUnifiedEditorAddress::validateContacts()
         // (i.e. user-inserted)
         if(mAddressMap.contains(addr))
         {
-        isValid = checkValidAddress(addr);
+            QScopedPointer<MsgSendUtil> sendUtil(new MsgSendUtil());
+            isValid = sendUtil->isValidAddress(addr);
             if(!isValid)
             {
                 mAddressEdit->highlightInvalidString(addr);
@@ -563,32 +563,6 @@ bool MsgUnifiedEditorAddress::validateContacts()
 
     return isValid;
 }
-// ----------------------------------------------------------------------------
-// MsgUnifiedEditorAddress::checkValidAddress
-// @see header
-// ----------------------------------------------------------------------------
-bool MsgUnifiedEditorAddress::checkValidAddress(const QString& addr)
-    {
-    bool isValid = false;
-    
-    HBufC *tempAddr = XQConversions::qStringToS60Desc(addr);
-    	
-    // 1. perform number validation
-    isValid = CommonPhoneParser::IsValidPhoneNumber(
-            *tempAddr,
-            CommonPhoneParser::ESMSNumber );
-
-    // 2. if number validity fails, then perform email addr validation
-    UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
-    if(!isValid)
-        { // additional check for MMS only
-        isValid = genUtils->IsValidEmailAddress(
-                    *tempAddr );
-        } 
-    delete genUtils;
-    delete tempAddr;
-    return isValid;
-    }
 
 void MsgUnifiedEditorAddress::handleInvalidContactDialog(
         HbAction* act)

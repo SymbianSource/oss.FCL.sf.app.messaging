@@ -144,8 +144,7 @@ void MsgConversationWidget::init()
     HbStyle::setItemName(headerContainer, "headerItem");
     
     HbMainWindow *mainWindow = this->mainWindow();
-    connect(mainWindow, SIGNAL(orientationChanged(Qt::Orientation)), this, 
-			SLOT(orientationchanged(Qt::Orientation)),Qt::UniqueConnection);
+    
     polishEvent();
     }
 
@@ -663,20 +662,6 @@ void MsgConversationWidget::resetProperties()
     	}
 
 //---------------------------------------------------------------
-// MsgConversationWidget::orientationchanged
-// @see header file
-//---------------------------------------------------------------
-void MsgConversationWidget::orientationchanged(Qt::Orientation orientation)
-{
-    Q_UNUSED(orientation)
-    QDEBUG_WRITE("MsgConversationWidget:orientationchanged start.")
-            
-    repolish();
-    
-    QDEBUG_WRITE("MsgConversationWidget:orientationchanged end.")    
-}
-
-//---------------------------------------------------------------
 // MsgConversationWidget::polish
 // @see header file
 //---------------------------------------------------------------
@@ -715,15 +700,5 @@ void MsgConversationWidget::polish(HbStyleParameters &params)
     HbStyle::setItemName(mTimeStampTextItem, timeStampOrig);
     HbStyle::setItemName(mPlayIconItem, playIconOrig);
 }
-
-//---------------------------------------------------------------
-// MsgConversationWidget::repolishWidget
-// @see header file
-//---------------------------------------------------------------
-void MsgConversationWidget::repolishWidget()
-    	{
-    	repolish();
-    	}
-
 
 // EOF

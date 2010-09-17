@@ -29,6 +29,7 @@
 #include <ccsdefs.h>
 #include <xqappmgr.h>
 #include <xqaiwrequest.h>
+#include <xqserviceutil.h>
 #include <sqldb.h>
 
 // USER INCLUDES
@@ -43,6 +44,7 @@
 #include "debugtraces.h"
 #include "nativemessageconsts.h"
 #include "mmsconformancecheck.h"
+#include "msgsendutil.h"
 
 // LOCAL CONSTANTS
 const QString REPLY_ICON("qtg_mono_reply");
@@ -114,16 +116,17 @@ void UnifiedViewer::createToolBar()
 
     int sendingState = mViewFeeder->sendingState();
 
-    if (mViewFeeder->sendingState() == ConvergedMessage::Failed)
-    {
-        toolbar->addAction(HbIcon(SEND_ICON), "");
-    }
-    else
+    if(mViewFeeder->sendingState() != ConvergedMessage::Failed)
     {
         // do not show reply option for multi recipient outgoing message
         if(!(!mViewFeeder->isIncoming() && mViewFeeder->recipientCount()>1))
         {
-            toolbar->addAction(HbIcon(REPLY_ICON), "", this, SLOT(handleReplyAction()));
+            QString from, alias;
+            mViewFeeder->fromAddressAndAlias(from, alias);
+            QScopedPointer<MsgSendUtil> sendUtil(new MsgSendUtil());
+            if (!(mViewFeeder->isIncoming() && !(sendUtil->isValidAddress(from)))) {
+                toolbar->addAction(HbIcon(REPLY_ICON), "", this, SLOT(handleReplyAction()));
+            }
         }
 
         if (mViewFeeder->recipientCount() > 1)
@@ -137,7 +140,12 @@ void UnifiedViewer::createToolBar()
         toolbar->addAction(HbIcon(FORWARD_ICON), "", this, SLOT(handleFwdAction()));
     }
 
-    toolbar->addAction(HbIcon(DELETE_ICON), "", this, SLOT(handleDeleteAction()));
+    // No delete action for viewer when launched as a service
+    if(!XQServiceUtil::isService())
+    {
+        toolbar->addAction(HbIcon(DELETE_ICON), "",
+                this, SLOT(handleDeleteAction()));
+    }
 }
 
 //---------------------------------------------------------------

@@ -2671,6 +2671,7 @@ void CMmsServerMtm::DecodePushedMessageL()
                 // attaData must point to the text
                 // buffer long enough for conversion
                 const TInt KMmsConversionMultiplier = 5;
+				// coverity[incorrect_multiplication][buffer_alloc]
                 HBufC8* dataContent = HBufC8::NewL(
                     iMmsHeaders->ExtendedNotification().Length() * KMmsConversionMultiplier );
                 CleanupStack::PushL( dataContent );
@@ -3862,7 +3863,7 @@ void CMmsServerMtm::CreateNotificationsL()
     HBufC8* bufferPointer = HBufC8::NewL( KMaxFileName );
     CleanupStack::PushL( bufferPointer );
     TPtr8 buffer = bufferPointer->Des();
-
+// coverity[assign_zero]
     CDir* fileList = NULL;
 
     // create notifications for local messages:
@@ -3927,6 +3928,7 @@ void CMmsServerMtm::CreateNotificationsL()
 #endif
         for (i = 0; i < count; i++ )
             {
+			// coverity[var_deref_model]
             iParse.Set( ( ( *fileList )[i] ).iName, &fileNamePtr, NULL );
             buffer.Copy( iParse.FullName() );
 

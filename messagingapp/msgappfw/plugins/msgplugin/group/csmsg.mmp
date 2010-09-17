@@ -55,3 +55,6 @@ LIBRARY         Smcm.lib
 LIBRARY         gsmu.lib
 LIBRARY         etext.lib
 LIBRARY         msgs.lib
+
+
+SMPSAFE

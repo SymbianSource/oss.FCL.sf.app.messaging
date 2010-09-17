@@ -69,6 +69,7 @@ LIBS += -lxqservice \
     -leditorgenutils \
     -lconvergedmessageutils \
     -lcentralrepository \
+    -lcommonengine \
     -lDRMHelper \
     -lmsgmedia \
     -lapmime \
@@ -77,3 +78,6 @@ LIBS += -lxqservice \
     -lefsrv
     
 
+
+
+symbian:MMP_RULES += SMPSAFE

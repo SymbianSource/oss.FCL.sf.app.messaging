@@ -641,10 +641,10 @@ void MsgUnifiedEditorBody::onTextChanged()
 }
 
 void MsgUnifiedEditorBody::EditorOperationEvent(
-    TUniEditorProcessImageOperationEvent aEvent, TFileName aFileName)
+    TUniEditorProcessImageOperationEvent aEvent, TFileName& aFileName)
 {
     delete mImageInfo;
-    mImageInfo = NULL;
+    mImageInfo = NULL; 
 
     if (aEvent == EUniEditorProcessImageOperationComplete && 
             aFileName.Length() > 0)

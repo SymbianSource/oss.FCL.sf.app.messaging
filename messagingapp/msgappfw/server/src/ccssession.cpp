@@ -843,6 +843,7 @@ void CCsSession::RequestChangeEventL(const RMessage2& aMessage)
             }
         }
 
+		// coverity[size_error][buffer_alloc]
         HBufC8* buffer = HBufC8::NewLC(4);
         TPtr8 cntPtr(buffer->Des());
         _LIT8(KFormat,"%d");

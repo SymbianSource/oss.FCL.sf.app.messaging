@@ -42,6 +42,7 @@
 #include "conversationsengine.h"
 #include "convergedmessage.h"
 #include "msgcontacthandler.h"
+#include "msgsendutil.h"
 
 // LOCAL CONSTANTS
 const QString DEFAULT_AVATAR_ICON("qtg_large_avatar");
@@ -222,6 +223,16 @@ void MsgContactCardWidget::clearContent()
 {
     setAddress("");
     setAvatar(HbIcon());
+}
+
+//---------------------------------------------------------------
+// MsgContactCardWidget::isValidAddress
+// @see header file
+//---------------------------------------------------------------
+bool MsgContactCardWidget::isValidAddress()
+{
+    QScopedPointer<MsgSendUtil> sendUtil(new MsgSendUtil());
+    return sendUtil->isValidAddress(mContactNumber);
 }
 
 //---------------------------------------------------------------

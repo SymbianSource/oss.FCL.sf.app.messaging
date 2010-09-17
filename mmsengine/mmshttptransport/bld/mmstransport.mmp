@@ -79,4 +79,8 @@ deffile         ../eabi/mmstransport.def
 deffile         ../bwinscw/mmstransport.def
 #endif
 
+
+
+SMPSAFE
+
 // End of File

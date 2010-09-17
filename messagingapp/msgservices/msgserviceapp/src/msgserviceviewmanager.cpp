@@ -17,11 +17,16 @@
 
 #include "msgserviceviewmanager.h"
 
+#include <QFileInfo>
+#include <QDir>
+#include <QFile>
 #include <QPixmap>
 #include <HbMainWindow>
 #include <HbAction>
 #include <HbApplication>
-#include <hbmessagebox.h>
+#include <HbMessageBox>
+#include <HbDeviceMessageBox>
+#include <HbSplashScreen>
 
 #include <xqserviceutil.h>
 #include <xqappmgr.h>
@@ -29,12 +34,12 @@
 #include "msgunieditorview.h"
 #include "unifiedviewer.h"
 #include "msgstorehandler.h"
-
 #include "msgsettingsview.h"
 #include "convergedmessageid.h"
 #include "ringbc.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
+#include "msgcontacthandler.h"
 
 // CONSTANTS
 static const char SEND_EFFECT[] = "sendeffect";
@@ -42,7 +47,10 @@ static const char SEND_EFFECT_FILE[] = ":/effects/sendeffect.fxml";
 
 // LOCALIZATION
 #define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
-#define LOC_DLG_SAVE_RINGTONE hbTrId("txt_conversations_dialog_save_ringing_tone")
+// TODO: LOC
+#define LOC_DELETED_MESSAGE "Message is deleted"
+#define LOC_CANNOT_OPEN_MESSAGE "Message in outbox. Cannot be opened"
+#define LOC_UNKNOWN_MSG_TYPE "Unknown Message Type"
 
 //----------------------------------------------------------------------------
 // MsgViewInterface::MsgViewInterface
@@ -52,7 +60,7 @@ MsgServiceViewManager::MsgServiceViewManager(MsgStoreHandler* storeHandler,
         HbMainWindow* mainWindow, QObject* parent) :
         QObject(parent), mMainWindow(mainWindow), mUniEditor(NULL),
         mUniViewer(NULL), mSettingsView(NULL), mBackAction(NULL),
-        mStoreHandler(storeHandler),mMessageId(-1)
+        mStoreHandler(storeHandler)
     {
     //creating back action.
     mBackAction = new HbAction(Hb::BackNaviAction, this);
@@ -146,7 +154,6 @@ void MsgServiceViewManager::switchView(const QVariantList& data)
             switchToUniEditor(editorData);
             break;
             }
-
         case MsgBaseView::MSGSETTINGS:
             {
             switchToMsgSettings(data);
@@ -177,6 +184,7 @@ void MsgServiceViewManager::send(const QString phoneNumber,
         const QString displayName)
     {
     Q_UNUSED(contactId);
+    mMainWindow->show();
     ConvergedMessage message;
     ConvergedMessageAddress address;
     address.setAddress(phoneNumber);
@@ -204,6 +212,7 @@ void MsgServiceViewManager::send(const QString phoneNumber,
         const QString alias, 
         const QString bodyText)
     {
+    mMainWindow->show();
     ConvergedMessage message;
     ConvergedMessageAddress address;
     address.setAddress(phoneNumber);
@@ -231,10 +240,9 @@ void MsgServiceViewManager::send(const QString phoneNumber,
 void MsgServiceViewManager::send(const QVariantMap addressList, 
               const QString bodyText)
     {
-    QStringList phoneNumList = addressList.keys();
- 
-    ConvergedMessageAddressList addrList; 
-	
+    mMainWindow->show();
+    QStringList phoneNumList = addressList.keys(); 
+    ConvergedMessageAddressList addrList;
     int count = phoneNumList.count();
     for( int i = 0; i < count; ++ i )
         {
@@ -267,6 +275,7 @@ void MsgServiceViewManager::send(const QVariantMap addressList,
 //----------------------------------------------------------------------------
 void MsgServiceViewManager::send(QVariant data)
     {
+    mMainWindow->show();
     ConvergedMessage message;
     ConvergedMessageAttachmentList attachmentList;
     // handle multiple files from sendUI
@@ -298,17 +307,15 @@ void MsgServiceViewManager::send(QVariant data)
 // @see header
 //----------------------------------------------------------------------------
 void MsgServiceViewManager::switchToUniEditor(const QVariantList& editorData)
-    {
+{
     // construct
-    if (!mUniEditor) {
-    mUniEditor = new MsgUnifiedEditorView();
-    mMainWindow->addView(mUniEditor);
-    mUniEditor->setNavigationAction(mBackAction);
-    connect(mUniEditor, SIGNAL(switchView(const QVariantList&)), this,
-            SLOT(switchView(const QVariantList&)));
-    // construct completion : viewReady() signal was not called when 
-    // editor is constructed first time.
-   // mUniEditor->doDelayedConstruction();
+    if (!mUniEditor)
+    {
+        mUniEditor = new MsgUnifiedEditorView();
+        mMainWindow->addView(mUniEditor);
+        mUniEditor->setNavigationAction(mBackAction);
+        connect(mUniEditor, SIGNAL(switchView(const QVariantList&)), this,
+                SLOT(switchView(const QVariantList&)));
     }
     
     // populate
@@ -317,77 +324,131 @@ void MsgServiceViewManager::switchToUniEditor(const QVariantList& editorData)
     // set current view as editor
     mMainWindow->setCurrentView(mUniEditor);
     mCurrentView = MsgBaseView::UNIEDITOR;
-    }
+}
 
 //----------------------------------------------------------------------------
 // MsgServiceViewManager::switchToMsgSettings
 // @see header
 //----------------------------------------------------------------------------
 void MsgServiceViewManager::switchToMsgSettings(const QVariantList& data)
-    {
+{
     MsgSettingsView::SettingsView view = MsgSettingsView::DefaultView;
     
     if (mCurrentView == MsgBaseView::UNIEDITOR)
     {
         view = (MsgSettingsView::SettingsView)data.at(2).toInt();
     }
-    
+
     mCurrentView = MsgBaseView::MSGSETTINGS;
 
-    if (!mSettingsView) {        
-    mSettingsView = new MsgSettingsView(view);
-    mSettingsView->setNavigationAction(mBackAction);
-    mMainWindow->addView(mSettingsView);
+    if (!mSettingsView)
+    {        
+        mSettingsView = new MsgSettingsView(view);
+        mSettingsView->setNavigationAction(mBackAction);
+        mMainWindow->addView(mSettingsView);
     }
     mMainWindow->setCurrentView(mSettingsView);
-    }
+}
+
+//----------------------------------------------------------------------------
+// MsgServiceViewManager::showPopup
+// @see header
+//----------------------------------------------------------------------------
+void MsgServiceViewManager::showPopup(const QString& dispText)
+{
+    HbDeviceMessageBox msgbox;
+    msgbox.setMessageBoxType(HbMessageBox::MessageTypeInformation);
+    msgbox.setText(dispText);
+    msgbox.setAction(NULL, HbDeviceMessageBox::AcceptButtonRole);
+    msgbox.exec();
+    msgbox.close();
+}
 
 //----------------------------------------------------------------------------
 // MsgServiceViewManager::view
 // @see header
 //----------------------------------------------------------------------------
 void MsgServiceViewManager::view(int msgId)
+{
+    // Check if the message is present in store
+    if(!mStoreHandler->exists(msgId))
     {
-    int msgType;
-    int msgSubType;
-   
-    mMessageId = msgId;
+        showPopup(LOC_DELETED_MESSAGE);
+        HbApplication::quit();
+        return;
+    }
+
+    // Check if the given message is locked for viewing
+    if(mStoreHandler->locked(msgId))
+    {
+        // if locked, then show info-note and exit
+        showPopup(LOC_CANNOT_OPEN_MESSAGE);
+        HbApplication::quit();
+        return;
+    }
+
     // Mark as read and get message type
-    mStoreHandler->markAsReadAndGetType(msgId,msgType,msgSubType);
-    
-    switch (msgType) {
+    int msgType;
+    int msgSubType;   
+    mStoreHandler->markAsRead(msgId);
+    mStoreHandler->getMsgTypeInfo(msgId,msgType,msgSubType);
+
+    // Open draft message in editor
+    if(mStoreHandler->isDraftMessage(msgId))
+    {
+        handleDraftMsg(msgId,msgType);
+        return;
+    }
+
+    switch (msgType) 
+    {
         case ConvergedMessage::Sms:
         case ConvergedMessage::Mms:
+        {
+            if (msgSubType == ConvergedMessage::VCard)
+            {
+                handleVCardMsg(msgId);
+            }
+            else
+            {
+                handleSmsMmsMsg(msgId);    
+            }
+            break;
+        }
         case ConvergedMessage::MmsNotification:
-            {
-            handleSmsMmsMsg(msgId,msgType);
+        {
+            handleMmsNotification(msgId);
             break;
-            }
+        }
         case ConvergedMessage::BioMsg:
+        {
+            if (msgSubType == ConvergedMessage::RingingTone)
             {
-            if (msgSubType == ConvergedMessage::RingingTone) {
-            handleRingtoneMsg(msgId);
+                handleRingtoneMsg(msgId);
             }
-            else if (msgSubType == ConvergedMessage::Provisioning) {
-            handleProvisoningMsg(msgId);
+            else if (msgSubType == ConvergedMessage::Provisioning)
+            {
+                handleProvisoningMsg(msgId);
+            }
+            else if (msgSubType == ConvergedMessage::VCard)
+            {
+                handleVCardMsg(msgId);
             }
             break;
-            }
+        }
         case ConvergedMessage::BT:
-            {
+        {
             handleBTMessage(msgId);
             break;
-            }
+        }
         default:
-            {
-            // for un supported message show delete option
-            HbMessageBox::question(LOC_DELETE_MESSAGE, 
-                                   this,SLOT(onDialogDeleteMsg(HbAction*)),    
-                                   HbMessageBox::Delete | HbMessageBox::Cancel);
-            break;
-            }
+        {
+            // For all remaining unsupported messages, show delete option
+            showPopup(LOC_UNKNOWN_MSG_TYPE);
+            HbApplication::quit();
+        }
     }
-    }
+}
 
 // ----------------------------------------------------------------------------
 // MsgServiceViewManager::handleKeyEvent
@@ -404,66 +465,196 @@ bool MsgServiceViewManager::handleKeyEvent(int key)
 }
 
 // ----------------------------------------------------------------------------
+// MsgServiceViewManager::handleDraftMsg
+// @see header
+// ----------------------------------------------------------------------------
+void MsgServiceViewManager::handleDraftMsg(int msgId, int msgType)
+{
+    // show the splash-screen
+    // TODO: This causes cancellation of view switching effects
+//    HbSplashScreen::start();
+    connect(mMainWindow, SIGNAL(viewReady()), this, SLOT(showOnViewReady()));
+    mCurrentView = MsgBaseView::UNIEDITOR;
+
+    // construct editor instance (keep it minimal)
+    if (!mUniEditor)
+    {
+        mUniEditor = new MsgUnifiedEditorView();
+        mMainWindow->addView(mUniEditor);
+        mUniEditor->setNavigationAction(mBackAction);
+        connect(mUniEditor, SIGNAL(switchView(const QVariantList&)), this,
+                SLOT(switchView(const QVariantList&)));
+    }
+
+    // prepare data for unieditor
+    ConvergedMessage message;
+    ConvergedMessageId convergedMsgId = ConvergedMessageId(msgId);
+    message.setMessageType((ConvergedMessage::MessageType) msgType);
+    message.setMessageId(convergedMsgId);
+    QByteArray dataArray;
+    QDataStream messageStream(&dataArray, QIODevice::WriteOnly | QIODevice::Append);
+    message.serialize(messageStream);
+    QVariantList editorData;
+    editorData << dataArray;
+
+    mMainWindow->show();
+    // populate data into editor
+    mUniEditor->openDraftsMessage(editorData);
+}
+
+// ----------------------------------------------------------------------------
+// MsgServiceViewManager::handleVCardMsg
+// @see header
+// ----------------------------------------------------------------------------
+void MsgServiceViewManager::handleVCardMsg(int msgId)
+{
+    // Extract vCard filepath
+    QString filepath;
+    UniDataModelLoader* pluginLoader = new UniDataModelLoader();
+    UniDataModelPluginInterface* pluginInterface = 
+                    pluginLoader->getDataModelPlugin(ConvergedMessage::BioMsg);
+    pluginInterface->setMessageId(msgId);
+
+    // Get attachment list
+    UniMessageInfoList attachments = pluginInterface->attachmentList();
+    if(attachments.count() > 0)
+    {
+        filepath = attachments.at(0)->path();    
+    }
+
+    // Cleanup
+    foreach(UniMessageInfo* attachmentInfo,attachments)
+    {
+        delete attachmentInfo;
+    }
+    delete pluginLoader;
+
+    // Get vCard display name
+    QString displayName = MsgContactHandler::getVCardDisplayName(filepath);
+    // TODO: use displayname to create a localized string to show in dialog
+    QString loc_str = QString("Save to contacts: ").append(displayName);
+    bool viewVCard = HbDeviceMessageBox::question(loc_str,
+                         HbMessageBox::Ok|HbMessageBox::Cancel);
+    if(!viewVCard)
+    {
+        HbApplication::quit();
+        return;
+    }
+
+    // copy private-vCard file to public location for contacts access
+    QDir tempDir;
+    QString sharedFilePath(QDir::toNativeSeparators(tempDir.tempPath()));
+    sharedFilePath.append(QDir::separator());
+    QFileInfo fInfo(filepath);
+    sharedFilePath.append(fInfo.fileName());
+    QFile::copy(filepath, sharedFilePath);
+
+    // Launch vCard viewer service
+    QString service("phonebookservices");
+    QString interface("com.nokia.symbian.IContactsEdit");
+    QString operation("editCreateNewFromVCard(QString)");
+    XQApplicationManager appManager;
+    // embedded launch
+    XQAiwRequest* request = 
+            appManager.create(service, interface, operation, true);
+    if(request)
+    {
+        QList<QVariant> args;
+        args << sharedFilePath;
+        request->setArguments(args);
+        QVariant retValue;
+        bool res = request->send(retValue);
+        delete request;
+    }
+
+    // Delete shared file now
+    QFile::remove(sharedFilePath);
+    HbApplication::quit();
+}
+
+// ----------------------------------------------------------------------------
 // MsgServiceViewManager::handleSmsMmsMsg
 // @see header
 // ----------------------------------------------------------------------------
-void MsgServiceViewManager::handleSmsMmsMsg(int msgId,int msgType)
+void MsgServiceViewManager::handleSmsMmsMsg(int msgId)
 {
-    if(mStoreHandler->isDraftMessage(msgId))
+    // show the splash-screen
+    // TODO: This causes cancellation of view switching effects
+//    HbSplashScreen::start();
+    connect(mMainWindow, SIGNAL(viewReady()), this, SLOT(showOnViewReady()));
+    mCurrentView = MsgBaseView::UNIVIEWER;
+
+    // construct viewer instance (keep it minimal)
+    if(!mUniViewer)
     {
-        ConvergedMessageId convergedMsgId = ConvergedMessageId(msgId);
-        ConvergedMessage message;
-        message.setMessageType((ConvergedMessage::MessageType) msgType);
-        message.setMessageId(convergedMsgId);
+        mUniViewer = new UnifiedViewer(msgId);
+        mMainWindow->addView(mUniViewer);
+        mUniViewer->setNavigationAction(mBackAction);
+        connect(mUniViewer, SIGNAL(switchView(const QVariantList&)),
+                        this, SLOT(switchView(const QVariantList&)));
+    }
 
-        // Launch uni-editor view
-        QByteArray dataArray;
-        QDataStream messageStream(&dataArray, QIODevice::WriteOnly | QIODevice::Append);
-        message.serialize(messageStream);
+    // populate the viewer
+    mUniViewer->populateContent(msgId, true, 1);
+    mMainWindow->show();
+}
 
-        QVariantList params;
-        params << MsgBaseView::UNIEDITOR; // target view
-        params << MsgBaseView::SERVICE; // source view
+// ----------------------------------------------------------------------------
+// MsgServiceViewManager::handleMmsNotification
+// @see header
+// ----------------------------------------------------------------------------
+void MsgServiceViewManager::handleMmsNotification(int msgId)
+{
+    // set context to current entry
+    if( KErrNone != mStoreHandler->setNotificationMessageId(msgId))
+    {
+        return;
+    }
 
-        params << dataArray;
-        
-        // except first 2 parameters pass other parameters
-        QVariantList editorData;
-        for(int a = 2; a < params.length(); ++a)
+    // notification state e.g. waiting, retrieving etc
+    QString statusStr;
+    int status;
+    mStoreHandler->notificationStatus(status, statusStr);
+
+    QString displayTxt;
+    displayTxt.append(mStoreHandler->notificationSubject());
+    displayTxt.append(QChar::LineSeparator);
+    displayTxt.append(mStoreHandler->notificationMsgSize());
+    displayTxt.append(QChar::LineSeparator);
+    displayTxt.append(mStoreHandler->notificationClass());
+    displayTxt.append(QChar::LineSeparator);
+    displayTxt.append(mStoreHandler->notificationExpiryDate());
+    if(!statusStr.isEmpty())
+    {
+        displayTxt.append(QChar::LineSeparator);
+        displayTxt.append(statusStr);
+    }    
+    HbDeviceMessageBox::information(displayTxt);
+    HbApplication::quit();
+}
+
+// ----------------------------------------------------------------------------
+// MsgServiceViewManager::showOnViewReady
+// @see header
+// ----------------------------------------------------------------------------
+void MsgServiceViewManager::showOnViewReady()
+{
+    switch(mCurrentView)
+    {
+        case MsgBaseView::UNIVIEWER:
         {
-            editorData << params.at(a);
+            mMainWindow->setCurrentView(mUniViewer);
+            break;
         }
-        // construct
-          if (!mUniEditor) {
-          mUniEditor = new MsgUnifiedEditorView();
-          mMainWindow->addView(mUniEditor);
-          mUniEditor->setNavigationAction(mBackAction);
-          connect(mUniEditor, SIGNAL(switchView(const QVariantList&)), this,
-                  SLOT(switchView(const QVariantList&)));
-          }
-          
-          // check if additional data for unieditor's consumption is available
-          mUniEditor->openDraftsMessage(editorData);
-
-          mMainWindow->setCurrentView(mUniEditor);
-          mCurrentView = MsgBaseView::UNIEDITOR;
-    }
-    else
-    {
-        if (!mUniViewer) {
-            mUniViewer = new UnifiedViewer(msgId);
-            mUniViewer->setNavigationAction(mBackAction);
-            mMainWindow->addView(mUniViewer);
-            connect(mUniViewer, SIGNAL(switchView(const QVariantList&)), this,
-                SLOT(switchView(const QVariantList&)));
+        case MsgBaseView::UNIEDITOR:
+        {
+            mMainWindow->setCurrentView(mUniEditor);
+            break;
         }
-        mUniViewer->populateContent(msgId, true, 1);
-
-        mMainWindow->setCurrentView(mUniViewer);
-
-        // set current view as viewer
-        mCurrentView = MsgBaseView::UNIVIEWER;
+        default:
+            break;
     }
+    disconnect(mMainWindow, SIGNAL(viewReady()), this, SLOT(showOnViewReady()));
 }
 
 // ----------------------------------------------------------------------------
@@ -471,12 +662,41 @@ void MsgServiceViewManager::handleSmsMmsMsg(int msgId,int msgType)
 // @see header
 // ----------------------------------------------------------------------------
 void MsgServiceViewManager::handleRingtoneMsg(int msgId)
+{
+    // Extract rintone filepath
+    UniDataModelLoader* pluginLoader = new UniDataModelLoader();
+    UniDataModelPluginInterface* pluginInterface = 
+                        pluginLoader->getDataModelPlugin(ConvergedMessage::BioMsg);
+    pluginInterface->setMessageId(msgId);
+
+    // Get attachment list
+    UniMessageInfoList attachments = pluginInterface->attachmentList();
+    QString filepath;
+    if(attachments.count() > 0)
     {
-    mMessageId = msgId;
-    HbMessageBox::question(LOC_DLG_SAVE_RINGTONE, this,
-                           SLOT(onDialogSaveTone(HbAction*)),
-                           HbMessageBox::Save | HbMessageBox::Cancel);
+        filepath = attachments.at(0)->path();
     }
+
+    // Cleanup
+    foreach(UniMessageInfo* attachmentInfo,attachments)
+    {
+        delete attachmentInfo;
+    }
+    delete pluginLoader;
+
+    RingBc* ringBc = new RingBc();
+    QString filename = ringBc->toneTitle(filepath);
+    // TODO: use filename to create a localized string to show in dialog
+    QString loc_str = QString("Save ringtone? ").append(filename);
+    bool save = HbDeviceMessageBox::question(loc_str,
+                    HbMessageBox::Save | HbMessageBox::Cancel);
+    if(save)
+    {
+        ringBc->saveTone(filepath);
+    }
+    delete ringBc;
+    HbApplication::quit();
+}
 
 // ----------------------------------------------------------------------------
 // MsgServiceViewManager::handleProvisoningMsg
@@ -539,53 +759,6 @@ void MsgServiceViewManager::handleBTMessage(int msgId)
     // close the application once its handled
     HbApplication::quit();
     }
-
-//-----------------------------------------------------------------------------
-//MsgServiceViewManager::onDialogDeleteMsg()
-//@see header
-//-----------------------------------------------------------------------------
-void MsgServiceViewManager::onDialogDeleteMsg(HbAction* action)
-{
-    HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
-    if (action == dlg->actions().at(0)) {
-        mStoreHandler->deleteMessage(mMessageId);
-    }
-    HbApplication::quit(); // exit after handling
-}
-
-//-----------------------------------------------------------------------------
-//MsgServiceViewManager::onDialogSaveTone()
-//@see header
-//-----------------------------------------------------------------------------
-
-void MsgServiceViewManager::onDialogSaveTone(HbAction* action)
-    {
-        HbMessageBox *dlg = qobject_cast<HbMessageBox*> (sender());
-        if (action == dlg->actions().at(0)) {
-
-            UniDataModelLoader* pluginLoader = new UniDataModelLoader();
-            UniDataModelPluginInterface* pluginInterface = pluginLoader->getDataModelPlugin(
-                ConvergedMessage::BioMsg);
-            pluginInterface->setMessageId(mMessageId);
-            UniMessageInfoList attachments = pluginInterface->attachmentList();
-
-            QString attachmentPath = attachments.at(0)->path();
-
-            RingBc* ringBc = new RingBc();
-            ringBc->saveTone(attachmentPath);
-
-            // clear attachement list : its allocated at data model
-            while (!attachments.isEmpty()) {
-                delete attachments.takeFirst();
-            }
-
-            delete ringBc;
-            delete pluginLoader;
-        }
-
-        // close the application once its handled
-        HbApplication::quit();
-}
 
 //-----------------------------------------------------------------------------
 //MsgServiceViewManager::startAnimation
@@ -715,10 +888,10 @@ QString MsgServiceViewManager::getAnimationFile(QString effectEvent)
 
 void MsgServiceViewManager::send(ConvergedMessage message)
     {
+    mMainWindow->show();    
     QVariantList param;
     QByteArray dataArray;
     QDataStream messageStream(&dataArray, QIODevice::WriteOnly | QIODevice::Append);
-    
     message.serialize(messageStream);
     param << dataArray;
 

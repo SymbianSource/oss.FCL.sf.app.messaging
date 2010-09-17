@@ -63,3 +63,6 @@ SOURCES += src/unidatamodelloader.cpp
     
 LIBS += -lQtCore
 
+
+
+symbian:MMP_RULES += SMPSAFE

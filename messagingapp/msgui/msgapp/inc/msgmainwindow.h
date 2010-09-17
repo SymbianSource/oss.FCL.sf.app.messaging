@@ -66,6 +66,14 @@ private:
     MsgServiceInterface* mMsgSI;
     MsgSendServiceInterface* mMsgSendSI;
     MsgViewManager* mViewManager;
+    
+    /**
+     * Unit Testing
+     */
+    #ifdef MSGUI_UNIT_TEST
+      friend class TestMsgMainWindow;
+    #endif
+    
 };
 
 #endif // MSG_MAIN_WINDOW_H

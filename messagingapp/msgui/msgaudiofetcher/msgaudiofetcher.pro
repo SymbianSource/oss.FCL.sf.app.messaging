@@ -75,3 +75,6 @@ LIBS += -lxqutils \
         -lecom \
         -lxqservice \
         -lapgrfx
+
+
+symbian:MMP_RULES += SMPSAFE

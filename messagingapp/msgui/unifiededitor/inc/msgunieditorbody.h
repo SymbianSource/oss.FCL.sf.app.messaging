@@ -105,9 +105,9 @@ public:
     /**
      * from MUniEditorProcessImageOperationObserver  
      * @see MUniEditorProcessImageOperationObserver
-     */
+     */ 
     void EditorOperationEvent( TUniEditorProcessImageOperationEvent aEvent,
-                               TFileName aFileName );
+                               TFileName& aFileName );
     /**
 	 * Function which tells whether the image resize process is in progress
 	 */

@@ -158,13 +158,6 @@ private:
      * Reset the addresslist to previous list
      */
     void resetToPrevious();
-    
-    /**
-     * checks if the passed sting is a valid address or not.
-     * @param addr
-     * @retunr true/false based on valid/invalid.
-     */
-    bool checkValidAddress(const QString& addr);
 
 private:
 

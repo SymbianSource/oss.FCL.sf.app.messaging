@@ -99,8 +99,8 @@ LIBRARY                         bafl.lib
 LIBRARY                         estor.lib 
 LIBRARY                         euser.lib
 LIBRARY                         flogger.lib
-LIBRARY                         stiftestinterface.lib
-LIBRARY                         stiftestengine.lib
+LIBRARY                         StifTestInterface.lib
+LIBRARY                         StifTestEngine.lib
 LIBRARY                         imcm.lib
 LIBRARY                         msgs.lib
 LIBRARY                         charconv.lib
@@ -119,3 +119,6 @@ LIBRARY         charconv.lib
 LIBRARY         centralrepository.lib
 LIBRARY         MsgMedia.lib
 
+
+
+SMPSAFE

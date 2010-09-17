@@ -124,6 +124,7 @@ void CMmsBaseOperation::ConstructL( CMmsSettings* aMmsSettings )
     // expand size is arbitrary. It is not used, we
     // always allocate the amount we need
     iEncodeBuffer = CBufFlat::NewL( 0x100 );
+	// coverity[size_error][buffer_alloc]
     iMmsSession = CMmsSession::NewL( KMmsActiveObjectPriority, iSocketServ, iConnection );
     iRemoteParties = new ( ELeave )CDesCArrayFlat( KMmsArrayAllocationNumber );
     // observe backup/restore event ends

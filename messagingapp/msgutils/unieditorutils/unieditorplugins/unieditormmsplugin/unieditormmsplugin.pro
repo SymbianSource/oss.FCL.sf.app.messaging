@@ -73,3 +73,6 @@ plugin.path = \resource\qt\plugins\messaging\editorplugins
 DEPLOYMENT += plugin
 
 
+
+
+symbian:MMP_RULES += SMPSAFE

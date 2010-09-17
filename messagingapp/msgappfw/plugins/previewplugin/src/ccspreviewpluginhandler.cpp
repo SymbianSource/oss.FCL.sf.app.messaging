@@ -881,7 +881,7 @@ void CCsPreviewPluginHandler::BindBodyText(RSqlStatement& sqlStmt,
     CleanupClosePushL(file);
 
     //read file contents to buffer
-    TInt length;
+    TInt length = 0;
     file.Size(length);
     HBufC8* bodyText = HBufC8::NewLC(length);
     TPtr8 textBuffer = bodyText->Des();

@@ -18,10 +18,14 @@
 #ifndef MSG_MEDIA_UTIL_H
 #define MSG_MEDIA_UTIL_H
 
-#ifdef BUILD_MSGUI_UTILS_DLL
-#define MSGUI_UTILS_DLL_EXPORT Q_DECL_EXPORT
+#ifdef MSGUI_UNIT_TEST
+ #define MSGUI_UTILS_DLL_EXPORT
 #else
-#define MSGUI_UTILS_DLL_EXPORT Q_DECL_IMPORT
+#ifdef BUILD_MSGUI_UTILS_DLL
+ #define MSGUI_UTILS_DLL_EXPORT Q_DECL_EXPORT
+#else
+ #define MSGUI_UTILS_DLL_EXPORT Q_DECL_IMPORT
+#endif
 #endif
 
 /**
@@ -57,6 +61,13 @@ private: //internal methods
      * @return media duration in miliseconds
      */
     TInt mediaDurationL(const TDesC& mediaFile);
+    
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgMediaUtil;
+#endif
     };
     
 #endif // MSG_MEDIA_UTIL_H

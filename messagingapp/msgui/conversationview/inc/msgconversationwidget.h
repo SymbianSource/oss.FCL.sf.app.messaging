@@ -278,11 +278,6 @@ public:
      */
     void resetProperties();
 
-    /**
-     * Function to repolish widget.
-     */
-    void repolishWidget();
-
 protected:
     
     /*
@@ -290,14 +285,6 @@ protected:
      */
     virtual void polish(HbStyleParameters &params);
     
-private slots:
-	
-    /*
-     * Handler for orientation changed
-     * @param orientation Qt::Orientation
-     */
-	void orientationchanged(Qt::Orientation orientation);
-		
 private:
 
     /**

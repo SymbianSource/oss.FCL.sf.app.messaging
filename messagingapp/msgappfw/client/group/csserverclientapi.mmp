@@ -45,3 +45,6 @@ LIBRARY	      bafl.lib
 LIBRARY       csutils.lib
 LIBRARY       eCom.lib
 
+
+
+SMPSAFE

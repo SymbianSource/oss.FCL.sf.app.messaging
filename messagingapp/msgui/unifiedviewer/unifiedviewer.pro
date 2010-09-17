@@ -108,3 +108,5 @@ LIBS = -letext \
        -lthumbnailmanagerqt \
        -lxqserviceutil \
        -lsqldb
+
+symbian:MMP_RULES += SMPSAFE

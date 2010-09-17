@@ -131,7 +131,6 @@ void MsgConversationViewItem::updateChildItems()
             << index.data(ConvergedMsgId).toInt();
 #endif
 
-    repolish();
     HbListViewItem::updateChildItems();
     }
 
@@ -184,9 +183,6 @@ void MsgConversationViewItem::updateSmsTypeItem(const QModelIndex& index,
         bodyText.replace('\r', QChar::LineSeparator);
         mConversation->setBodyText(bodyText);
         }
-    
-    //repolish
-    mConversation->repolishWidget();
     }
 
 //---------------------------------------------------------------
@@ -377,8 +373,6 @@ void MsgConversationViewItem::updateMmsTypeItem(const QModelIndex& index,
         mConversation->setBodyText(bodyText);
         }
     
-    //repolish widget
-    mConversation->repolishWidget();
     }
 
 //---------------------------------------------------------------
@@ -433,6 +427,8 @@ bool MsgConversationViewItem::isIncoming()
 void MsgConversationViewItem::setMessageStateIcon(int messageState)
 {
     HbIconAnimator& iconAnimator = mOutgoingMsgStateIconItem->animator();
+	// Register for animation progressed signal to update the pixmap cache 
+	connect (&iconAnimator, SIGNAL(animationProgressed()), this, SLOT(updatePixmapCache()));
 
     switch (messageState)
     {
@@ -479,6 +475,8 @@ void MsgConversationViewItem::setMessageStateIcon(int messageState)
 void MsgConversationViewItem::setNotificationStateIcon(int notificationState)
 {
     HbIconAnimator& iconAnimator = mIncomingMsgStateIconItem->animator();
+	// Register for animation progressed signal to update the pixmap cache 
+	connect (&iconAnimator, SIGNAL(animationProgressed()), this, SLOT(updatePixmapCache()));
     HbIconAnimationManager* iconAnimationManager =
             HbIconAnimationManager::global();
     switch (notificationState)
@@ -532,9 +530,6 @@ void MsgConversationViewItem::init()
 
     HbMainWindow *mainWindow = hbInstance->allMainWindows()[0];
 
-    connect(mainWindow, SIGNAL(orientationChanged(Qt::Orientation)), this,
-        SLOT(orientationchanged(Qt::Orientation)), Qt::UniqueConnection);
-
     // Force polish to get all the sub-item properties right.
     polishEvent();
 }
@@ -566,20 +561,6 @@ QString MsgConversationViewItem::getMsgTimeStamp(const QModelIndex& index)
         msgTimeStamp = timeStampStr;
     }
     return msgTimeStamp;
-}
-
-//---------------------------------------------------------------
-// MsgConversationViewItem::orientationchanged
-// @see header file
-//---------------------------------------------------------------
-void MsgConversationViewItem::orientationchanged(Qt::Orientation orientation)
-{
-    Q_UNUSED(orientation)
-    QDEBUG_WRITE("MsgConversationViewItem:orientationchanged start.")
-
-    repolish();
-
-    QDEBUG_WRITE("MsgConversationViewItem:orientationchanged end.")
 }
 
 // EOF

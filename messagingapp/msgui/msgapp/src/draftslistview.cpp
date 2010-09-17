@@ -98,9 +98,9 @@ void DraftsListView::setupMenu()
     QAbstractItemModel *model = mListView->model();
 
     // Menu items are added/removed based on the item count.
-    connect(mListView->model(), SIGNAL(rowsInserted(QModelIndex, int, int)), this,
+    connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), this,
         SLOT(handleModelChanged()), Qt::UniqueConnection);
-    connect(mListView->model(), SIGNAL(rowsRemoved(QModelIndex, int, int)), this,
+    connect(model, SIGNAL(rowsRemoved(QModelIndex, int, int)), this,
         SLOT(handleModelChanged()), Qt::UniqueConnection);
 }
 
@@ -158,7 +158,6 @@ void DraftsListView::setupListView()
         // Create List View.
         mListView = new HbListView(this);
 
-        mListView->setScrollingStyle(HbScrollArea::PanOrFlick);
         mListView->setItemRecycling(true);
         mListView->setUniformItemSizes(true);
         mListView->setClampingStyle(HbScrollArea::BounceBackClamping);

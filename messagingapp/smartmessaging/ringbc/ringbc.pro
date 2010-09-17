@@ -69,3 +69,6 @@ LIBS += -lplatformenv \
         -lxqutils \
         -lefsrv
 		     
+
+
+symbian:MMP_RULES += SMPSAFE

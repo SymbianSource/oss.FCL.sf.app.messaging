@@ -172,6 +172,13 @@ private:
      */
     MsgUnifiedEditorUtils *mEditorUtils;
 
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgUnifiedEditorAttachment;
+#endif
+
     };
 
 typedef QList<MsgUnifiedEditorAttachment*> MsgUnifiedEditorAttachmentList;

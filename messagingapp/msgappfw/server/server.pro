@@ -91,3 +91,6 @@ LIBS += -leuser \
         -lxqutils 
         
         
+
+
+symbian:MMP_RULES += SMPSAFE

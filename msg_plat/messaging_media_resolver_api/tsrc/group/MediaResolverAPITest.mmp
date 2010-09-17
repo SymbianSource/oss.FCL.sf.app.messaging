@@ -47,8 +47,8 @@ SOURCE          MediaResolverAPITestBlocks.cpp
 //RESOURCE        resource_file2
 
 LIBRARY         euser.lib
-LIBRARY         stiftestinterface.lib
-LIBRARY         stiftestengine.lib
+LIBRARY         StifTestInterface.lib
+LIBRARY         StifTestEngine.lib
 LIBRARY			MsgMedia.lib
 LIBRARY			apmime.lib
 LIBRARY			efsrv.lib
@@ -76,5 +76,8 @@ END
 */
 // DEFFILE ?filename
 // AIF ?filename
+
+
+SMPSAFE
 
 // End of File

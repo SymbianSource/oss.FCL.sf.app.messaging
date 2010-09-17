@@ -47,8 +47,8 @@ SOURCE          MMSConformanceAPITestBlocks.cpp
 //RESOURCE        resource_file2
 
 LIBRARY         euser.lib
-LIBRARY         stiftestinterface.lib
-LIBRARY         stiftestengine.lib
+LIBRARY         StifTestInterface.lib
+LIBRARY         StifTestEngine.lib
 LIBRARY			efsrv.lib
 LIBRARY         apmime.lib
 LIBRARY			MsgMedia.lib
@@ -77,4 +77,8 @@ END
 // DEFFILE ?filename
 // AIF ?filename
 
+
+SMPSAFE
+
 // End of File
+

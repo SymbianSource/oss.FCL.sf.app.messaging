@@ -602,7 +602,9 @@ EXPORT_C void CCSRequestHandler::GetConversationListL()
         delete iListResultsBuffer;
         iListResultsBuffer = NULL;
         }
-    iListResultsBuffer = HBufC8::NewL(KBufferMaxLen);
+    
+	// coverity[size_error][buffer_alloc]
+	iListResultsBuffer = HBufC8::NewL(KBufferMaxLen);
     
     // Send the ASYNC request
     iSession.GetConversationListL(iListResultsBuffer->Des(), 

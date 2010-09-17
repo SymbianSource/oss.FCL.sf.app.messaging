@@ -67,3 +67,6 @@ deffile ../bwins/wins.def
 #elif defined( MARM )
 deffile ../bmarm/marm.def
 #endif
+
+
+SMPSAFE

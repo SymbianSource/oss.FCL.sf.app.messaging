@@ -23,6 +23,8 @@
 // general editor utilities
 #include "UniEditorGenUtils.h"
 
+#include <xqconversions.h>
+#include <commonphoneparser.h> // commonengine
 
 //---------------------------------------------------------------
 // MsgSendUtil::MsgSendUtil
@@ -101,6 +103,32 @@ int MsgSendUtil::send(ConvergedMessage& msg)
 
     QDEBUG_WRITE("END MsgSendUtil::send");
     return retValue;
+}
+
+//---------------------------------------------------------------
+// MsgSendUtil::isValidAddress
+// @see header file
+//--------------------------------------------------------------
+bool MsgSendUtil::isValidAddress(const QString &address)
+{
+    bool isValid = false;
+    if (!address.isEmpty()) {
+
+        HBufC *tempAddr = XQConversions::qStringToS60Desc(address);
+
+        // 1. perform number validation
+        isValid = CommonPhoneParser::IsValidPhoneNumber(*tempAddr, CommonPhoneParser::ESMSNumber);
+
+        // 2. if number validity fails, then perform email addr validation
+        if (!isValid) {
+            // additional check for MMS only
+            UniEditorGenUtils* genUtils = q_check_ptr(new UniEditorGenUtils);
+            isValid = genUtils->IsValidEmailAddress(*tempAddr);
+            delete genUtils;
+        }
+        delete tempAddr;
+    }
+    return isValid;
 }
 
 //---------------------------------------------------------------

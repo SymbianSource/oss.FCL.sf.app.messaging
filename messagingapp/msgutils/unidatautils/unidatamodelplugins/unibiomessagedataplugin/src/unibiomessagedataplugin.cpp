@@ -133,7 +133,7 @@ UniMessageInfoList UniBioMessageDataPlugin::attachmentList()
 
     QString path;
     QString mimetype;
-    int size;
+    int size = 0;
 
     TFileName fullName;
     qt_symbian_throwIfError(file.FullName(fullName));

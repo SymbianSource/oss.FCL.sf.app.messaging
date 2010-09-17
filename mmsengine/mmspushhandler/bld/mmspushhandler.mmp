@@ -54,3 +54,6 @@ LIBRARY         mmsgenutils.lib
 LIBRARY         efsrv.lib
 LIBRARY		estor.lib
 DEBUGLIBRARY    flogger.lib
+
+
+SMPSAFE

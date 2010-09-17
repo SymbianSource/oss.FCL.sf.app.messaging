@@ -20,6 +20,7 @@
 #include <pathinfo.h>
 #include <f32file.h>
 #include <hbmessagebox.h>
+#include <HbDeviceMessageBox>
 
 // USER INCLUDES
 #include "ringbc_p.h"
@@ -27,9 +28,12 @@
 #include <xqconversions.h>
 #include "debugtraces.h"
 
-//CONSTANTS 
-_LIT(KRingingToneFileExtension,".rng");
-
+// LOCALIZATION
+// TODO: Get localized strings
+#define LOC_RINGTONE_CORRUPTED "Ringing Tone Corrupted"
+#define LOC_OUT_OF_MEMORY "No memory to save"
+#define LOC_RINGTONE_SAVING_ERROR "Error in Saving"
+#define LOC_RINGTONE_SAVED "Saved succesfully"
 
 // ----------------------------------------------------------------------------
 // RingBcPrivate::RingBcPrivate
@@ -77,36 +81,38 @@ void RingBcPrivate::initL()
 void RingBcPrivate::saveTone(const QString &path)
     {
     QDEBUG_WRITE("RingBcPrivate::saveTone : Enter")
-
-    int error(KErrNone);
-
-    TRAP(error, saveToneL(path));
+    QString statusStr;
+    TRAPD(error, saveToneL(path));
     if (error)
         {
         QDEBUG_WRITE_FORMAT("RingBcPrivate::saveTone Error code =",error)
-        
         if(error == KErrCorrupt)
             {
-            HbMessageBox::information("Ringing Tone Corrupted", 0, 0, HbMessageBox::Ok);
+            statusStr = LOC_RINGTONE_CORRUPTED;
             QDEBUG_WRITE("RingBcPrivate::saveTone : Ringing tone corrupted")
             }
         else if(error == KErrNoMemory || error == KErrDiskFull)
             {
-            HbMessageBox::information("No memory to save", 0, 0, HbMessageBox::Ok);
+            statusStr = LOC_OUT_OF_MEMORY;
             QDEBUG_WRITE("RingBcPrivate::saveTone : Low memory")
             }
         else
             {
-            HbMessageBox::information("Error in Saving", 0, 0, HbMessageBox::Ok);
+            statusStr = LOC_RINGTONE_SAVING_ERROR;
             QDEBUG_WRITE("RingBcPrivate::saveTone : Error in Saving")
             }
         }
     else
         {
-        HbMessageBox::information("Saved succesfully", 0, 0, HbMessageBox::Ok);
+        statusStr = LOC_RINGTONE_SAVED;
         QDEBUG_WRITE("RingBcPrivate::saveTone : Ringing tone saved successfully")
         }
-
+    
+    HbDeviceMessageBox msgbox;
+    msgbox.setMessageBoxType(HbMessageBox::MessageTypeInformation);
+    msgbox.setText(statusStr);
+    msgbox.setAction(NULL, HbDeviceMessageBox::AcceptButtonRole);
+    msgbox.show();
     QDEBUG_WRITE("RingBcPrivate::saveTone : Exit")
     }
 
@@ -133,7 +139,7 @@ void RingBcPrivate::saveToneL(const QString& path)
             EFileShareReadersOnly));
 
     CleanupClosePushL(file);
-    TInt size;
+    TInt size=0;
     User::LeaveIfError(file.Size(size));
     
     HBufC8* dataBuf = HBufC8::NewLC(size);
@@ -217,7 +223,7 @@ QString RingBcPrivate::titleL(const TDesC& aFileName)
         if (error == KErrNone)
             {
             CleanupClosePushL(file);
-            TInt size;
+            TInt size=0;
             User::LeaveIfError(file.Size(size));
             if (size)
                 {

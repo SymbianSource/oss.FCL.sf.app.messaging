@@ -268,7 +268,8 @@ EXPORT_C CMDXMLDocument* CUniSmilModel::ComposeL()
 
     // Create smil node
     TPtrC name( KSMILWREleSmil );
-    CMDXMLElement* root = CMDXMLElement::NewLC( ETrue, dom, name );
+    // coverity[size_error][buffer_alloc]
+	CMDXMLElement* root = CMDXMLElement::NewLC( ETrue, dom, name );
     // Append
     dom->DocumentElement()->AppendChild( root ); // Ownership to dom
     CleanupStack::Pop( root );
@@ -1318,7 +1319,8 @@ void CUniSmilModel::CreateHeadL( CMDXMLDocument* aDom, CMDXMLElement* aRoot )
 
     TPtrC name( KSMILWREleHead );
     // Create Head node
-    CMDXMLElement* ele = CMDXMLElement::NewLC( ETrue, aDom, name );
+    // coverity[size_error][buffer_alloc]
+	CMDXMLElement* ele = CMDXMLElement::NewLC( ETrue, aDom, name );
     // Append Head in Root node
     aRoot->AppendChild( ele );
 
@@ -1483,6 +1485,7 @@ void CUniSmilModel::CreateLayoutL( CMDXMLDocument* aDom,
     // Create Layout node
     if ( !aLayout )
         {
+		// coverity[size_error][buffer_alloc]
         aLayout = CMDXMLElement::NewLC( ETrue, aDom, name );
         // Append Layout in Head
         aRoot->InsertBefore( NULL, aLayout );
@@ -1986,6 +1989,7 @@ void CUniSmilModel::CreateBodyL( CMDXMLDocument* aDom, CMDXMLElement* aRoot )
     {
     TPtrC name( KSMILWREleBody );
     // Create Body node
+	// coverity[size_error][buffer_alloc]
     CMDXMLElement* body = CMDXMLElement::NewLC( ETrue, aDom, name );
     // Append
     aRoot->AppendChild( body );

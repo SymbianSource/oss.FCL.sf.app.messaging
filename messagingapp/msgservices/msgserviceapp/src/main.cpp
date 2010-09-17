@@ -78,10 +78,11 @@ void debugInit(QtMsgType type, const char *msg)
 
 int main(int argc, char **argv)
 {
-    // if else loop to launch the splash screen based on the service called.
-    
+    // Need splashScreen at construction time itself?
+    bool needImmdSplashScreen = true;
+
+    // Decision logic to launch the splash screen based on the service called
     QString serviceName = XQServiceUtil::interfaceName( argc, argv);
-    
     if( !serviceName.compare( QString( "com.nokia.symbian.IMessageSend") ) )
         {
         HbSplashScreen::setScreenId( "sendservice" );
@@ -89,11 +90,14 @@ int main(int argc, char **argv)
     else if ( !serviceName.compare( "com.nokia.symbian.IMessageView") )
         {
         HbSplashScreen::setScreenId( "viewservice" );
+        needImmdSplashScreen = false;
         }
-    
-    HbApplication app( argc, argv );
-    
-   //installing translator.
+
+    // Appropriate HbApplication initialization
+    HbApplication app( argc, argv,
+            needImmdSplashScreen? Hb::DefaultApplicationFlags : Hb::NoSplash);
+
+    // Install translator.
     QString locale = QLocale::system().name();
     QTranslator translator;
     QTranslator translator_comm;
@@ -101,12 +105,13 @@ int main(int argc, char **argv)
     translator_comm.load(TRANSLATOR_FILE_PATH + QString("common_") + locale);
     app.installTranslator(&translator);
     app.installTranslator(&translator_comm);
-
     app.setApplicationName(LOC_TITLE);
-    
+
+    // Create mainwindow, but don't show it just yet.
+    // We shall show the mainwindow at appropriate places later in the code.
     QPointer<MsgServiceWindow> window = new MsgServiceWindow();
-    window->show();
-    
+
+    // Start event-loop
     int rv = app.exec();
     delete window;
     return rv;

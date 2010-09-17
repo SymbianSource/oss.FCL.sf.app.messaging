@@ -151,6 +151,13 @@ private:
      * Pixmap file path being set.
      */
     QString mPixmapPath;
+    
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestUniViewerPixmapWidget;
+#endif
 };
 
 #endif /* UNI_VIEWER_PIXMAP_WIDGET_H */

@@ -83,3 +83,6 @@ LIBS += -lsmcm \
         -letel \
         -lmuiuutils
 
+
+
+symbian:MMP_RULES += SMPSAFE

@@ -22,10 +22,14 @@
 #include <QObject>
 #include "convergedmessage.h"
 
-#ifdef BUILD_MSGUI_UTILS_DLL
-#define MSGUI_UTILS_DLL_EXPORT Q_DECL_EXPORT
+#ifdef MSGUI_UNIT_TEST
+ #define MSGUI_UTILS_DLL_EXPORT
 #else
-#define MSGUI_UTILS_DLL_EXPORT Q_DECL_IMPORT
+#ifdef BUILD_MSGUI_UTILS_DLL
+ #define MSGUI_UTILS_DLL_EXPORT Q_DECL_EXPORT
+#else
+ #define MSGUI_UTILS_DLL_EXPORT Q_DECL_IMPORT
+#endif
 #endif
 
 
@@ -67,6 +71,13 @@ public:
      *         KErrGeneral for other cases
      */
     int send(ConvergedMessage& msg);
+
+    /**
+     * Checks for valid phone number and email address.
+     * @param address Address to be checked.
+     * @return true if valid address else false.
+     */
+    bool isValidAddress(const QString &address);
 
 private:
     /**
@@ -133,6 +144,13 @@ private:
      * Own
      */
     UniEditorGenUtils* mUniEditorGenUtils;
+
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgSendUtil;
+#endif    
 };
 
 #endif // MSG_SEND_UTIL_H

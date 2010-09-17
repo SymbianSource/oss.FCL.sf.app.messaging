@@ -84,6 +84,13 @@ public:
      */
     void clearContent();
 
+    /**
+     * Checks if the address displayed in valid
+     * phone number or email id.
+     * @return true if valid else false
+     */
+    bool isValidAddress();
+
 signals:
 
     /**

@@ -121,6 +121,13 @@ private:
      * True if valid media duration else false.
      */
     bool mValidMediaDuration;
+    
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgUniFiedEditorAudioWidget;
+#endif
 };
 
 #endif //MSG_UNIFIED_EDITOR_AUDIO_WIDGET_H

@@ -91,4 +91,7 @@ start resource 10005948.rss
 TARGET		mmswatcher.rsc
 end
 
+SMPSAFE
+
+
 // End of file

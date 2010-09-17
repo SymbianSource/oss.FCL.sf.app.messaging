@@ -62,3 +62,6 @@ MMP_RULES += defBlock
 LIBS += -lcsserverclientapi \
         -lcsutils \
         -lxqutils
+
+
+symbian:MMP_RULES += SMPSAFE

@@ -101,3 +101,6 @@ LIBS += -lcsserverclientapi \
         -lmsguiutils
 
 
+
+
+symbian:MMP_RULES += SMPSAFE

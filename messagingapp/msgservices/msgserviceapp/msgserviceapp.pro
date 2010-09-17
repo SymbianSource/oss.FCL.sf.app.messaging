@@ -62,7 +62,11 @@ LIBS += -lxqservice \
         -lunidatamodelloader \
         -lunifiedviewer \
         -lunifiededitor \
-        -lsettingsview
+        -lsettingsview \
+        -lmmsserversettings \
+        -lxqutils \
+        -lQtContacts \
+        -lQtVersit
 	
 
 BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
@@ -71,3 +75,6 @@ BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
     "resources/messagingsendservice.docml /epoc32/data/z/resource/hb/splashml/messagingsendservice.docml" \
     "resources/messagingviewservice.splashml /epoc32/data/z/resource/hb/splashml/messagingviewservice.splashml" \
     "resources/messagingviewservice.docml /epoc32/data/z/resource/hb/splashml/messagingviewservice.docml"
+    
+symbian:MMP_RULES += SMPSAFE
+

@@ -58,3 +58,6 @@ deffile ../bwins/mmsapplicationadapter.def
 #elif defined( MARM )
 deffile ../bmarm/mmsapplicationadapter.def
 #endif
+
+
+SMPSAFE

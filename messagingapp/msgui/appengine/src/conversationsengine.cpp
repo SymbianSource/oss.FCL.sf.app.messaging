@@ -180,7 +180,7 @@ void ConversationsEngine::deleteAllDraftMessages()
 //---------------------------------------------------------------
 bool ConversationsEngine::markConversationRead(qint64 conversationId)
 {
-    int error;
+    int error = 0;
     TRAP(error,d_ptr->markConversationReadL(conversationId));
     return (error!=KErrNone) ? false : true; 
 }

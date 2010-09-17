@@ -39,3 +39,6 @@ LIBRARY       euser.lib
 LIBRARY       estor.lib
 //LIBRARY       VPbkEng.lib
 LIBRARY         flogger.lib
+
+
+SMPSAFE

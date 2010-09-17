@@ -23,10 +23,14 @@
 #include <MsgMediaInfo.h>
 #include <qstring.h>
 
-#ifdef BUILD_MSGUI_UTILS_DLL
-#define MSGUI_UTILS_DLL_EXPORT Q_DECL_EXPORT
+#ifdef MSGUI_UNIT_TEST
+ #define MSGUI_UTILS_DLL_EXPORT
 #else
-#define MSGUI_UTILS_DLL_EXPORT Q_DECL_IMPORT
+#ifdef BUILD_MSGUI_UTILS_DLL
+ #define MSGUI_UTILS_DLL_EXPORT Q_DECL_EXPORT
+#else
+ #define MSGUI_UTILS_DLL_EXPORT Q_DECL_IMPORT
+#endif
 #endif
 
 class CMmsConformance;
@@ -110,6 +114,12 @@ private:
      * Conformance status
      */
     TUint32 iConfStatus;
-
+    
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMmsConformanceCheck;
+#endif    
 };
 #endif //MMS_CONFORMANCE_CHECK_OPERATION_H

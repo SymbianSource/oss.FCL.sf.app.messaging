@@ -114,15 +114,7 @@ private:
      * @return Timestamp string to be set.
      */
     QString getMsgTimeStamp(const QModelIndex& index);
-
-private slots:    
-
-    /*
-     * Handler for orientation changed
-     * @param orientation Qt::Orientation
-     */
-    void orientationchanged(Qt::Orientation orientation);
-    
+  
 protected:
 
     /**

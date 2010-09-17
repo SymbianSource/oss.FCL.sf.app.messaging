@@ -56,3 +56,6 @@ BLD_INF_RULES.prj_exports += \
  		 -lcsserverclientapi \
          -lcsutils \
          -lxqutils
+
+
+symbian:MMP_RULES += SMPSAFE

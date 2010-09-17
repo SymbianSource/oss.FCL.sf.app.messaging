@@ -56,4 +56,8 @@ LIBRARY         flogger.lib
 DEBUGLIBRARY    flogger.lib
 #endif
 
+
+
+SMPSAFE
+
 //  End of File

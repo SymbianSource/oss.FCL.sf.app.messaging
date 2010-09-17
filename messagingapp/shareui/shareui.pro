@@ -60,3 +60,6 @@ TRANSLATIONS = share.ts
 
 LIBS += -lxqservice \
         -lxqserviceutil
+
+
+symbian:MMP_RULES += SMPSAFE

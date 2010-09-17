@@ -106,3 +106,5 @@ LIBS += -lappengine \
     -lmsgaudiofetcher \
     -lmsgs
 
+
+symbian:MMP_RULES += SMPSAFE

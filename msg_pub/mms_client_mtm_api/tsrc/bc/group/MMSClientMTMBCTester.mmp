@@ -56,7 +56,7 @@ APP_LAYER_SYSTEMINCLUDE
 
 
 LIBRARY         euser.lib
-LIBRARY         stiftestinterface.lib
+LIBRARY         StifTestInterface.lib
 LIBRARY			msgs.lib
 LIBRARY			efsrv.lib
 LIBRARY			charconv.lib
@@ -70,6 +70,10 @@ LIBRARY			mmsserversettings.lib
 
 
 LANG            SC
+
+
+
+SMPSAFE
 
 
 // End of file: MMSClientMTMBCTester.mmp

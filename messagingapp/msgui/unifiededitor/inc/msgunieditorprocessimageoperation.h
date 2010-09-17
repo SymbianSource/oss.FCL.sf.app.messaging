@@ -61,7 +61,7 @@ class MUniEditorProcessImageOperationObserver
         */
         virtual void EditorOperationEvent( 
             TUniEditorProcessImageOperationEvent aEvent,
-            TFileName aFileName) = 0;
+            TFileName& aFileName) = 0;
     };
 
 /**

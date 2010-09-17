@@ -24,7 +24,7 @@
 //...LOGGING...
 //MACRO           __MSGMEDIA_DEBUG    // Logging
 //MACRO           USE_RDEBUG    // RDebug vs. file logging
-//LIBRARY         Flogger.lib   // RFileLogger, debug logging
+//LIBRARY         flogger.lib   // RFileLogger, debug logging
 //...LOGGING...
 
 TARGET          MsgMedia.dll
@@ -70,9 +70,9 @@ LIBRARY         bafl.lib
 LIBRARY         cone.lib
 LIBRARY         charconv.lib
 LIBRARY         centralrepository.lib
-LIBRARY         ImageConversion.lib
-LIBRARY         MediaClientAudio.lib
-LIBRARY         MediaClientVideo.lib
+LIBRARY         imageconversion.lib
+LIBRARY         mediaclientaudio.lib
+LIBRARY         mediaclientvideo.lib
 LIBRARY         ws32.lib
 LIBRARY         FeatMgr.lib
 LIBRARY         DRMHelper.lib
@@ -86,5 +86,9 @@ deffile         ./wins.DEF
 #else
 deffile         ./marm.def
 #endif
+
+
+
+SMPSAFE
 
 /* End of File */

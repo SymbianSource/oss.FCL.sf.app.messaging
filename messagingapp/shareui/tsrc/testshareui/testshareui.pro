@@ -47,3 +47,6 @@ SOURCES += main.cpp \
 
 # Libs
 LIBS += -lshareui		
+
+
+symbian:MMP_RULES += SMPSAFE

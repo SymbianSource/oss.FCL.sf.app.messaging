@@ -74,4 +74,8 @@ deffile       ../eabi/mmsmessage.def
 DEFFILE       ../bwins/wins.def
 #endif
 
+
+
+SMPSAFE
+
 //  End of File

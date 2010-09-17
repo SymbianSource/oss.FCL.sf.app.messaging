@@ -106,3 +106,6 @@ symbian: {
 	-lbifu
 	
 
+
+
+symbian:MMP_RULES += SMPSAFE

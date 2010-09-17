@@ -76,8 +76,8 @@ USERINCLUDE     ..\..\..\..\..\..\..\..\mw\messagingmw\messagingfw\msgtest\testu
 APP_LAYER_SYSTEMINCLUDE
 
 LIBRARY         euser.lib
-LIBRARY         stiftestinterface.lib
-LIBRARY         stiftestengine.lib
+LIBRARY         StifTestInterface.lib
+LIBRARY         StifTestEngine.lib
 LIBRARY efsrv.lib
 
 
@@ -94,5 +94,10 @@ LIBRARY         sendas2.lib
 
 LANG            SC
 
+
+
+
+
+SMPSAFE
 
 // End of File

@@ -68,3 +68,6 @@ LIBS += -leuser \
     -lavkon \
     -lefsrv 
 
+
+
+symbian:MMP_RULES += SMPSAFE

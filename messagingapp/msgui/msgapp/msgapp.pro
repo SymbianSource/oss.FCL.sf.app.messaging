@@ -69,7 +69,8 @@ HEADERS += msgmainwindow.h \
      msgbaseview.h \
      msgsendserviceinterface.h \
      msgserviceinterface.h \
-     msgactivityhandler.h
+     msgactivityhandler.h \
+     msgapplication.h
 
 SOURCES += main.cpp \
      msgmainwindow.cpp \
@@ -80,7 +81,8 @@ SOURCES += main.cpp \
      msgviewmanager.cpp \
      msgsendserviceinterface.cpp \
      msgserviceinterface.cpp \
-     msgactivityhandler.cpp
+     msgactivityhandler.cpp \
+     msgapplication.cpp
 
 RESOURCES += msgapp.qrc
 
@@ -104,3 +106,6 @@ LIBS += -lappengine \
         -lafservice \
         -lunidatamodelloader 
 
+
+
+symbian:MMP_RULES += SMPSAFE

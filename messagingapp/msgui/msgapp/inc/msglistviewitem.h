@@ -72,16 +72,8 @@ public:
      * @return bool
      */
     bool hasUnReadMsg();    
-   
-private slots:    
-
-    /*
-     * Handler for orientation changed
-     * @param orientation Qt::Orientation
-     */
-    void orientationchanged(Qt::Orientation orientation);
-    
-private:
+ 
+ private:
 
     /**
      * Create permanent items.

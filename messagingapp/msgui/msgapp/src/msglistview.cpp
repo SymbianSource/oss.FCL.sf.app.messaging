@@ -263,11 +263,11 @@ void MsgListView::setupListView()
     HbStyleLoader::registerFilePath(":/clv");
 
     mMsgList = new HbListView(this);
-    mMsgList->setScrollingStyle(HbScrollArea::PanOrFlick);
     mMsgList->setClampingStyle(HbScrollArea::BounceBackClamping);
 
     mMsgList->setLayoutName("custom");
     mMsgList->setItemRecycling(true);
+	mMsgList->setItemPixmapCacheEnabled(true);
     mMsgList->setUniformItemSizes(true);
 
     MsgListViewItem *prototype = new MsgListViewItem(this);

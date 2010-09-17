@@ -14,8 +14,6 @@
  * Description: Widget class for Notificaiton Dialog Plugin
  *
  */
-#include <QThreadPool>
-#include <QRunnable>
 #include "debugtraces.h"
 
 #include <ccsdefs.h>
@@ -38,11 +36,15 @@ const int ParameterError = 10000;
 
 static const char NEW_MSG_ICON[] = "qtg_large_new_message";
 
+bool serviceTaskLaunched = false; 
+
 // ----------------------------------------------------------------------------
 // ServiceRequestSenderTask::ServiceRequestSenderTask
 // @see msgnotificationdialogwidget.h
 // ----------------------------------------------------------------------------   
-ServiceRequestSenderTask::ServiceRequestSenderTask(qint64 conversationId):
+ServiceRequestSenderTask::ServiceRequestSenderTask(qint64 conversationId,
+        QObject* parent):
+QThread(parent),        
 mConvId(conversationId)
      {     
      }
@@ -71,12 +73,38 @@ void ServiceRequestSenderTask::run()
          {
          return;       
          }
+     connect(request,SIGNAL(requestOk(const QVariant&)),
+             this,SLOT(onRequestCompleted(const QVariant&)));
+     
+     connect(request,SIGNAL(requestError(int, const QString&)),
+             this,SLOT(onRequestError(int, const QString&)));
+     
      args << QVariant(mConvId);
      request->setArguments(args);
      request->send();
      delete request;
+     
+     exec();
      }
 
+void ServiceRequestSenderTask::onRequestCompleted(const QVariant& value)
+    {
+	Q_UNUSED(value);
+    serviceTaskLaunched = false;
+    emit serviceRequestCompleted();
+    
+    quit();
+    }
+
+void ServiceRequestSenderTask::onRequestError(int errorCode, const QString& errorMessage)
+    {
+    Q_UNUSED(errorCode);
+    Q_UNUSED(errorMessage);
+    serviceTaskLaunched = false;
+    emit serviceRequestCompleted();
+    
+    quit();
+    }
 
 // ----------------------------------------------------------------------------
 // MsgNotificationDialogWidget::MsgNotificationDialogWidget
@@ -170,12 +198,16 @@ void MsgNotificationDialogWidget::closeDeviceDialog(bool byClient)
     // Close device dialog
     Q_UNUSED(byClient);
     close();
-    // If show event has been received, close is signalled from hide event. If not,
-    // hide event does not come and close is signalled from here.
-    if (!mShowEventReceived) {
-        emit deviceDialogClosed();
-    }
-    
+
+    if (serviceTaskLaunched == false)
+        {
+        // If show event has been received, close is signalled from hide event. If not,
+        // hide event does not come and close is signalled from here.
+        if (!mShowEventReceived)
+            {
+            emit deviceDialogClosed();
+            }
+        }
 }
 
 // ----------------------------------------------------------------------------
@@ -196,7 +228,10 @@ HbDialog *MsgNotificationDialogWidget::deviceDialogWidget() const
 void MsgNotificationDialogWidget::hideEvent(QHideEvent *event)
 {
     HbNotificationDialog::hideEvent(event);
-    emit deviceDialogClosed();
+    if (serviceTaskLaunched == false)
+        {
+        emit deviceDialogClosed();
+        }
 }
 
 // ----------------------------------------------------------------------------
@@ -214,10 +249,15 @@ void MsgNotificationDialogWidget::showEvent(QShowEvent *event)
 // @see msgnotificationdialogwidget.h
 // ----------------------------------------------------------------------------
 void MsgNotificationDialogWidget::widgetActivated()
-{
-QThreadPool::globalInstance()->start(
-        	new ServiceRequestSenderTask(mConversationId));
-    enableTouchActivation(false);  
+{           
+    ServiceRequestSenderTask* task = 
+            new ServiceRequestSenderTask(mConversationId,this);
+    connect(task,SIGNAL(serviceRequestCompleted()),
+            this,SIGNAL(deviceDialogClosed()));
+    serviceTaskLaunched = true;
+    task->start();
+    enableTouchActivation(false);
+    
 }
 
 // ----------------------------------------------------------------------------

@@ -78,3 +78,6 @@ LIBS += -lcsserverclientapi \
 	    -lssmcmn \
 	    -lhwrmvibraclient
         
+
+
+symbian:MMP_RULES += SMPSAFE

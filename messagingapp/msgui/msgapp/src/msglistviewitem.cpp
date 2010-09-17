@@ -335,7 +335,6 @@ void MsgListViewItem::setUnreadCountStatus()
             mUnReadMsg = true;
             mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(
                     NEW_ITEM_FRAME);
-            repolish();
             // Needed for colour group changes to be visible
             QCoreApplication::postEvent(this, new HbEvent(
                     HbEvent::ThemeChanged));
@@ -348,7 +347,6 @@ void MsgListViewItem::setUnreadCountStatus()
             mUnReadMsg = false;
             mNewMsgIndicatorItem->frameDrawer().setFrameGraphicsName(
                     QString());
-            repolish();
             // Needed for colour group changes to be visible
             QCoreApplication::postEvent(this, new HbEvent(
                     HbEvent::ThemeChanged));
@@ -366,15 +364,5 @@ void MsgListViewItem::setCommonIndicator(const QString& string)
         mMsgCommonIndicatorItem->setIconName(string);
         mMsgCommonIndicatorItem->show();
     }
-
-//---------------------------------------------------------------
-// MsgListViewItem::orientationchanged
-// @see header file
-//---------------------------------------------------------------
-void MsgListViewItem::orientationchanged(Qt::Orientation orientation)
-{
-    Q_UNUSED(orientation)
-    repolish();
-}
 
 //EOF

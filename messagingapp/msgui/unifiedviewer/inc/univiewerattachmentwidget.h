@@ -150,6 +150,13 @@ private:
      * Mime type of media.
      */
     QString mMimeType;
+    
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestUniViewerAttachmentWidget;
+#endif
 };
 
 #endif // UNI_VIEWER_ATTACHMENT_WIDGET_H

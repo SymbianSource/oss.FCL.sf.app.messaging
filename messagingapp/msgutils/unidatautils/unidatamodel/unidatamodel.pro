@@ -127,3 +127,6 @@ LIBS += -lcone \
     -lQtCore \
     -leditorgenutils
 
+
+
+symbian:MMP_RULES += SMPSAFE

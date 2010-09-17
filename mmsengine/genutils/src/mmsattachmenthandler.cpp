@@ -330,6 +330,7 @@ EXPORT_C void CMmsAttachmentHandler::CreateTextAttachmentL(
         }
     
     const TInt KMmsMaxBytesPerCharacter = 4;    
+	// coverity[incorrect_multiplication][buffer_alloc]
     HBufC8* buffer = HBufC8::NewL( text.Length() * KMmsMaxBytesPerCharacter ); // paranoid.
     CleanupStack::PushL( buffer );
     TPtr8 buf8 = buffer->Des();

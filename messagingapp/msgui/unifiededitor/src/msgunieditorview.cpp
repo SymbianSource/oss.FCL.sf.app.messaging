@@ -75,6 +75,10 @@ const QString SEND_ICON("qtg_mono_send");
 const QString ATTACH_ICON("qtg_mono_attach");
 // temporary folder for unieditor
 const QString UNIFIED_EDITOR_TEMP_FOLDER("unifiededitor");
+// invalid chars in vcard
+const QString INVALID_FILENAME_CHARS("[?*<>/\"|\\:]");
+// replacement char for invalid char
+const QChar REPLACE_CHAR('_');
 
 const int INVALID_MSGID = -1;
 // vcard file extn.
@@ -1346,7 +1350,10 @@ int MsgUnifiedEditorView::createVCards(
         {
             // generate file name
             QString displayLabel = contactList.at(i).displayLabel();
+            displayLabel.replace(QRegExp(INVALID_FILENAME_CHARS), REPLACE_CHAR);
             QString filepath = generateFileName(displayLabel);
+            
+            // create file
             QFile file(filepath);
             if(file.open(QIODevice::WriteOnly))
             {

@@ -2146,6 +2146,8 @@ HBufC16* CMmsDecode::GetEncodedTextStringL()
         // (includes empty strings)
         // Keep quote because these are strange strings that may contain any
         // number of quotes all over the place
+
+		// coverity[size_error][buffer_alloc]
         buffer = GetSimpleTextStringL( ETrue );
         // check if this looks like it needs decoding of MIME stuff (RFC2047)
         if ( buffer->Des().FindF( KEqualsQuestion16 ) == KErrNotFound )
@@ -2281,7 +2283,8 @@ HBufC16* CMmsDecode::GetEncodedTextStringL()
         }
 
     stringLength--; // remove the terminating zero
-    buffer = HBufC16::NewL( stringLength * KMms2 );
+    // coverity[incorrect_multiplication][buffer_alloc]
+	buffer = HBufC16::NewL( stringLength * KMms2 );
 
     if ( stringLength == 0 )
         {
@@ -3404,7 +3407,7 @@ void CMmsDecode::DecodeOneContentHeaderL()
             {
             // I hope this is a simple text string. we cannot handle
             // different character sets in this context.
-
+			// coverity[size_error][buffer_alloc]
             buffer = GetSimpleTextStringL(); // we might try to convert from utf8 to unicode
             CleanupStack::PushL( buffer );
             iMimeHeaders->SetContentLocationL( buffer->Des() );
@@ -4379,7 +4382,8 @@ void CMmsDecode::FinishL()
                     }
                 else
                     {
-                    CBufFlat* shortBuffer = CBufFlat::NewL( KMms2 );
+                    // coverity[size_error][buffer_alloc]
+					CBufFlat* shortBuffer = CBufFlat::NewL( KMms2 );
                     CleanupStack::PushL( shortBuffer );
                     shortBuffer->ResizeL( KMms2 );
                     // no need to put it into cleanupstack... we don't leave before we delete it
@@ -6297,7 +6301,8 @@ void CMmsDecode::DecodeElementDescriptorL()
         }
     TUint endPosition = iPosition + size;
     HBufC16* buffer = NULL;
-    buffer = GetSimpleTextStringL(); // I hope this is correct.
+    // coverity[size_error][buffer_alloc]
+	buffer = GetSimpleTextStringL(); // I hope this is correct.
     CleanupStack::PushL( buffer );
     iMmsHeaders->ElementDescriptorL().SetContentReferenceL( buffer->Des() );
 #ifndef _NO_MMSS_LOGGING_
@@ -6356,6 +6361,7 @@ void CMmsDecode::DecodeExtNotifTextL()
     HBufC16* buffer = NULL;
     byteString.Set( GetUtf8String() );
     // There will be at most one unicode character per one utf-8 character
+	// coverity[incorrect_multiplication][buffer_alloc]
     buffer = HBufC16::NewL( byteString.Length() * KMms2 );
     TPtr16 pointer16 = buffer->Des();
     CleanupStack::PushL( buffer );
@@ -6378,7 +6384,8 @@ void CMmsDecode::DecodeExtNotifTextL()
 void CMmsDecode::DecodeExtNotifEolL()
     {
     HBufC16* buffer = NULL;
-    buffer = GetSimpleTextStringL();
+	// coverity[size_error][buffer_alloc]
+	buffer = GetSimpleTextStringL();
     CleanupStack::PushL( buffer );
     iMmsHeaders->SetMessageComplete( ( buffer->Des() )[0] );
 #ifndef _NO_MMSS_LOGGING_
@@ -6474,6 +6481,8 @@ void CMmsDecode::DecodeAdaptationAllowed()
 void CMmsDecode::DecodeApplicationIdL()
     {
     HBufC16* buffer = NULL;
+	
+	// coverity[size_error][buffer_alloc]
     buffer = GetSimpleTextStringL();
     CleanupStack::PushL( buffer );
     iMmsHeaders->SetApplicIdL( buffer->Des() );
@@ -6492,7 +6501,9 @@ void CMmsDecode::DecodeApplicationIdL()
 void CMmsDecode::DecodeReplyApplicationIdL()
     {
     HBufC16* buffer = NULL;
-    buffer = GetSimpleTextStringL();
+	
+	// coverity[size_error][buffer_alloc]
+	buffer = GetSimpleTextStringL();
     CleanupStack::PushL( buffer );
     iMmsHeaders->SetReplyApplicIdL( buffer->Des() );
 #ifndef _NO_MMSS_LOGGING_

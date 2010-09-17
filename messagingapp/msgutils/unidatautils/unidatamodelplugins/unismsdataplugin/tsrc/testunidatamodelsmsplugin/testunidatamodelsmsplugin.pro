@@ -90,3 +90,6 @@ default_deployment.pkg_prerules =	packageheader \
 	-lunidatamodelloader\
 	-lQtCore
 	
+
+
+symbian:MMP_RULES += SMPSAFE

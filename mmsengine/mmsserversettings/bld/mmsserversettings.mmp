@@ -56,4 +56,7 @@ deffile         ../eabi/mmsserversettings.def
 deffile         ../bwinscw/mmsserversettings.def
 #endif
 
+
+SMPSAFE
+
 //  End of File

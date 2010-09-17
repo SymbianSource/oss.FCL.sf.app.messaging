@@ -20,7 +20,7 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include <QRunnable>
+#include <QThread>
 #include <hbdevicedialoginterface.h>
 #include <hbdevicedialog.h>
 #include <hbnotificationdialog.h>
@@ -29,13 +29,15 @@
 /**
  * Class for sending service request
  */
-class ServiceRequestSenderTask : public QRunnable
+class ServiceRequestSenderTask :public QThread
 {
+    Q_OBJECT
+    
 public:
     /**
      * Constructor
      */
-    ServiceRequestSenderTask(qint64 conversationId);
+    ServiceRequestSenderTask(qint64 conversationId,QObject* parent=0);
     
     /**
      * Destructor
@@ -47,6 +49,26 @@ public:
      */
      void run();
 
+private slots:
+
+    /**
+     * Slot invoked after Conversation view is launched.
+     */
+     void onRequestCompleted(const QVariant& value);
+     
+    /**
+     * Slot invoked if error occurred during launch of CV.
+     */
+     void onRequestError(int errorCode, const QString& errorMessage);
+          
+signals:
+
+	/**
+	* Signal is emitted to indicate that Notification Dialog 
+	* can now be closed.
+	*/
+     void serviceRequestCompleted();
+     
 private: 
      qint64 mConvId;
 };

@@ -113,3 +113,4 @@ LIBS += -lconvergedmessageutils \
         -lmsgaudiofetcher
 
         
+symbian:MMP_RULES += SMPSAFE

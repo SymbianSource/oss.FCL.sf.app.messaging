@@ -116,10 +116,35 @@ private:
     void switchToMsgSettings(const QVariantList& data);
 
     /**
-     * Handle sms and mms messge
-     * @param msgId message id
+     * Show information popup dialog
+     * @param dispText, text to be displayed
      */
-    void handleSmsMmsMsg(int msgId,int msgType);
+    void showPopup(const QString& dispText);
+
+    /**
+     * Handle Draft messages
+     * @param msgId, message id
+     * @param msgType, type of message e.g. sms or mms etc
+     */
+    void handleDraftMsg(int msgId, int msgType);
+
+    /**
+     * Handle Business Card messages (for view)
+     * @param msgId, message id
+     */
+    void handleVCardMsg(int msgId);
+
+    /**
+     * Handle sms and mms message
+     * @param msgId, message id
+     */
+    void handleSmsMmsMsg(int msgId);
+
+    /**
+     * Handle MMS notification message
+     * @param msgId, message id
+     */
+    void handleMmsNotification(int msgId);
 
     /**
      * Handle ringtone message
@@ -138,7 +163,7 @@ private:
      * @param msgId message id
      */
     void handleBTMessage(int msgId);
-    
+
     /**
      * Start a custom effect animation
      * e.g. editor's send effect
@@ -167,7 +192,7 @@ private:
      * @return QString, animation definition file path
      */
     QString getAnimationFile(QString effectEvent);
-    
+
 private slots:
     /**
      * This slot is called on mainwindows back action.
@@ -179,18 +204,12 @@ private slots:
      * @param data data required to switch the views.
      */
     void switchView(const QVariantList& data);
-    
-	/**
-     * This slot is called delete message dialog launched.
-     * @param action selected action (yes or no).
-     */
-    void onDialogDeleteMsg(HbAction* action);
 
     /**
-     * This slot is called save tone dialog launched.
-     * @param action selected action (yes or no)
+     * This slot sets the current view on view-ready signal of mainwindow.
+     * This is needed to show the default transitions correctly.
      */
-    void onDialogSaveTone(HbAction* action);
+    void showOnViewReady();
     
     /**
      * Handle a custom effect animation complete signal
@@ -239,12 +258,7 @@ private:
     /**
      * Current view value.
      */
-    int mCurrentView;
-    
-	/**
-	 * message Id
-	 */
-    int mMessageId;    
+    int mCurrentView;    
 };
 
 #endif /* MSGSERVICEVIEWMANAGER_H_ */

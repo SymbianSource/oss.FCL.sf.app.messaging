@@ -90,4 +90,5 @@ DEFFILE       ../bwins/mmscodec.def
 DEFFILE       ../bmarm/mmscodec.def
 #endif
 
+SMPSAFE
 //  End of File

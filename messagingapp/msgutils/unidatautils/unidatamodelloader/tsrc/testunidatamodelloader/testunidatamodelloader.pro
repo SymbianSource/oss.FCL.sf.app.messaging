@@ -98,3 +98,4 @@ symbian: {
 	DEPLOYMENT += addP2	
 	}
 	
+symbian:MMP_RULES += SMPSAFE

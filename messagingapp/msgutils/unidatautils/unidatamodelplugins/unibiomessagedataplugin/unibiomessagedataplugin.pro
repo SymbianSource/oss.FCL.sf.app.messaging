@@ -67,3 +67,6 @@ plugin.path = \resource\qt\plugins\messaging\datamodel
 DEPLOYMENT += plugin
 
 
+
+
+symbian:MMP_RULES += SMPSAFE

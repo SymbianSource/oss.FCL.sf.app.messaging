@@ -19,10 +19,14 @@
 #ifndef MSGCONTACTSUTIL_H_
 #define MSGCONTACTSUTIL_H_
 
-#ifdef BUILD_MSGUI_UTILS_DLL
-#define MSGUI_UTILS_DLL_EXPORT Q_DECL_EXPORT
+#ifdef MSGUI_UNIT_TEST
+ #define MSGUI_UTILS_DLL_EXPORT
 #else
-#define MSGUI_UTILS_DLL_EXPORT Q_DECL_IMPORT
+#ifdef BUILD_MSGUI_UTILS_DLL
+ #define MSGUI_UTILS_DLL_EXPORT Q_DECL_EXPORT
+#else
+ #define MSGUI_UTILS_DLL_EXPORT Q_DECL_IMPORT
+#endif
 #endif
 
 /**
@@ -38,6 +42,13 @@ public:
 private:
     static QString copyVCardToTemp(const QString& filepath);
     static void deleteVCardFromTemp(const QString& filepath);
+    
+#ifdef MSGUI_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgContactsUtil;
+#endif
 };
 
 #endif /* MSGCONTACTSUTIL_H_ */

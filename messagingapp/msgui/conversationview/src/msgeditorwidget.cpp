@@ -65,8 +65,8 @@ QGraphicsItem* FOCUSITEM = 0;
 // @see header
 //---------------------------------------------------------------
 MsgEditorWidget::MsgEditorWidget(QGraphicsItem *parent) :
-    HbWidget(parent), mMsgEditor(NULL),
-    mSendButton(NULL),mPluginLoader(NULL)
+    HbWidget(parent), mMsgEditor(0), mSendButton(0), mPluginInterface(0), mPluginLoader(0),
+        mSmsCharLimitReached(false)
 {
     //setting background.
     HbFrameItem* backGround = new HbFrameItem(this);
@@ -200,9 +200,9 @@ void MsgEditorWidget::onTextChanged(const QString& str)
     
     //Check done for optimization
     //Only if content is deleted we need to call encodingsettings again
-    if(mPrevBuffer.isEmpty() || str.size() <= mPrevBuffer.size())
+    if (mPrevBuffer.isEmpty() || str.size() <= mPrevBuffer.size())
     {
-    mPluginInterface->setEncodingSettings(EFalse,ESmsEncodingNone,mCharSupportType);
+        mPluginInterface->setEncodingSettings(EFalse,ESmsEncodingNone,mCharSupportType);
     }
     
     TInt numOfRemainingChars;

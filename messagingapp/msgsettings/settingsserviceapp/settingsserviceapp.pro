@@ -48,3 +48,6 @@ LIBS += -lxqservice \
 
 BLD_INF_RULES.prj_exports += "$${LITERAL_HASH}include <platform_paths.hrh>" \
                              ".\rom\settingsserviceapp.iby CORE_APP_LAYER_IBY_EXPORT_PATH(settingsserviceapp.iby)"
+
+
+symbian:MMP_RULES += SMPSAFE

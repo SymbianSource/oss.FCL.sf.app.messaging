@@ -58,3 +58,6 @@ defBlock = \
              "$${LITERAL_HASH}endif"
 	
 MMP_RULES += defBlock
+
+
+symbian:MMP_RULES += SMPSAFE

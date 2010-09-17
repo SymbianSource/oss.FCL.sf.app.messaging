@@ -124,3 +124,4 @@ symbian: {
 	DEPLOYMENT += addFile3
 	}
 	
+symbian:MMP_RULES += SMPSAFE
