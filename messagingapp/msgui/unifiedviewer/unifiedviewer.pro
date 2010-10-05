@@ -65,7 +65,6 @@ HEADERS += inc/unifiedviewer.h \
            inc/univiewslidewidget.h \
            inc/uniscrollarea.h \
            ../inc/msgbaseview.h \
-           inc/univiewerutils.h \
            inc/univiewerbodywidget.h \
            inc/univiewerdetailswidget.h \
            inc/univieweraddresswidget.h \
@@ -82,7 +81,6 @@ SOURCES += src/unifiedviewer.cpp \
            src/univiewerfeeder_p.cpp \
            src/univiewslidewidget.cpp \
            src/uniscrollarea.cpp \
-           src/univiewerutils.cpp \
            src/univiewerbodywidget.cpp \
            src/univiewerdetailswidget.cpp \
            src/univieweraddresswidget.cpp \

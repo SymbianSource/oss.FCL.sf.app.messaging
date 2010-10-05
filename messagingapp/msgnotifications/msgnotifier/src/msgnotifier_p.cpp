@@ -371,38 +371,42 @@ void MsgNotifierPrivate::displayFailedNote(MsgInfo info)
 // ----------------------------------------------------------------------------
 bool MsgNotifierPrivate::showNotification(int receivedMsgConvId)
 {
-    bool showNotification = true;
+    bool showNotification = false;
     
     RWsSession wsSession ;
-    wsSession.Connect();
+    int err = wsSession.Connect();
 
-    TApaTaskList taskList( wsSession );
-    TApaTask task = taskList.FindApp(KMsgAppUid); // find msgapp is running
-
-    if(task.Exists())
+    if ( KErrNone == err )
         {
-        TApaTask foregndtask =   taskList.FindByPos(0) ;  // foreground app
-        // compare  window group id  
-        // if application is in foregorund, then check the currently
-        // opened conversation is same as received one.
-        if(task.WgId() == foregndtask.WgId() )
-            {
-            // get the current conversation ID
-            XQPublishAndSubscribeSettingsKey convIdKey( KMsgCVIdProperty, 
-                    KMsgCVIdKey);
-            QVariant value = mSettingsManager->readItemValue(convIdKey, 
-                    XQSettingsManager::TypeInt);
+        showNotification = true;
+        TApaTaskList taskList(wsSession);
+        TApaTask task = taskList.FindApp(KMsgAppUid); // find msgapp is running
 
-            int openedConvId  = value.toInt();
-            if( openedConvId == receivedMsgConvId)
+        if (task.Exists())
+            {
+            TApaTask foregndtask = taskList.FindByPos(0); // foreground app
+            // compare  window group id  
+            // if application is in foregorund, then check the currently
+            // opened conversation is same as received one.
+            if (task.WgId() == foregndtask.WgId())
                 {
-                showNotification = false;
-                QDEBUG_WRITE("processListEntry : Notification not shown")
+                // get the current conversation ID
+                XQPublishAndSubscribeSettingsKey convIdKey(KMsgCVIdProperty,
+                        KMsgCVIdKey);
+                QVariant value = mSettingsManager->readItemValue(convIdKey,
+                        XQSettingsManager::TypeInt);
+
+                int openedConvId = value.toInt();
+                if (openedConvId == receivedMsgConvId)
+                    {
+                    showNotification = false;
+                    QDEBUG_WRITE("processListEntry : Notification not shown")
+                    }
                 }
             }
-        }
 
-    wsSession.Close();
+        wsSession.Close();
+        }
     return showNotification;
 }
 // ----------------------------------------------------------------------------

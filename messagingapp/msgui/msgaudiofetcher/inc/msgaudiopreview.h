@@ -205,6 +205,12 @@ private:
 
     // plugin for playing 3D effects
     C3DRingingToneInterface* i3dRingingTonePlugin;
+#ifdef AUDIO_FETCHER_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgAudioPreview;
+#endif
 
 };
 

@@ -23,12 +23,14 @@
 #include <QObject>
 #include <QString>
 #include <QQueue>
+#include <QVariantMap>
 #include "msginfodefs.h"
 
 // CLASS DECLARATION
 class MsgNotifierPrivate;
 class MsgSimNumDetector;
 class MsgErrorWatcher;
+class HbDeviceDialog;
 
 /**
  * Stores the data required for notification.
@@ -117,6 +119,15 @@ public:
      */
     void updateOutboxIndications(MsgInfo& indicatorData);
 
+private slots:
+
+    /**
+     * handleDataReceived
+     * Handler for data recevied signal from HbDeviceDialog
+     * @param data 
+     */
+    void handleDataReceived(QVariantMap data);
+
 private:
     
     /**
@@ -144,6 +155,12 @@ private:
      * Own
      */
    MsgErrorWatcher* mErrorWatcher;
+   
+   /**
+    * Pointer to HbDeviceDialog
+    * Own
+    */
+   HbDeviceDialog* mDeviceDialog;
 };
 
 #endif // MSGNOTIFIER_H

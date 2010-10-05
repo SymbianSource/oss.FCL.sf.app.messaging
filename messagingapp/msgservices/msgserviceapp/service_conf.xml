@@ -17,7 +17,7 @@
      <customproperty key="aiw_action_text_file">messaging</customproperty>
      <customproperty key="aiw_action_text">txt_share_dblist_message</customproperty>
      <customproperty key="aiw_action_icon">qtg_large_message</customproperty>
-     <customproperty key="blocked_mime_types">video/*</customproperty>
+     <customproperty key="allowed_mime_types">audio/amr,audio/x-amr,audio/sp-midi,image/gif,image/jpeg,image/jpg,image/png,image/vnd.wap.wbmp,text/calendar,text/plain,text/x-vCalendar,text/x-vCard,video/3gpp</customproperty>     
   </interface>
   <interface>
       <name>com.nokia.symbian.IMessageSend</name>

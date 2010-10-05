@@ -32,6 +32,7 @@ static const struct {
 // Constants
 const int NoError = 0;
 
+
 // ----------------------------------------------------------------------------
 // MsgNotificationDialogPlugin::MsgNotificationDialogPlugin
 // @see msgnotificationdialogplugin.h
@@ -46,6 +47,7 @@ MsgNotificationDialogPlugin::MsgNotificationDialogPlugin()
 // ----------------------------------------------------------------------------
 MsgNotificationDialogPlugin::~MsgNotificationDialogPlugin()
 {
+ 
 }
 
 // ----------------------------------------------------------------------------

@@ -14,8 +14,6 @@
  * Description: Widget class for Notificaiton Dialog Plugin
  *
  */
-#include <QThreadPool>
-#include <QRunnable>
 #include "debugtraces.h"
 
 #include <ccsdefs.h>
@@ -24,9 +22,7 @@
 #include <QList>
 #include <hbicon.h>
 #include <hbpopup.h>
-#include <xqservicerequest.h>
-#include <xqaiwrequest.h>
-#include <xqappmgr.h>
+
 
 #include "convergedmessage.h"
 
@@ -38,69 +34,6 @@ const int ParameterError = 10000;
 
 static const char NEW_MSG_ICON[] = "qtg_large_new_message";
 
-bool serviceTaskLaunched = false; 
-
-// ----------------------------------------------------------------------------
-// ServiceRequestSenderTask::ServiceRequestSenderTask
-// @see msgnotificationdialogwidget.h
-// ----------------------------------------------------------------------------   
-ServiceRequestSenderTask::ServiceRequestSenderTask(qint64 conversationId):
-mConvId(conversationId)
-     {     
-     }
-
-// ----------------------------------------------------------------------------
-// ServiceRequestSenderTask::~ServiceRequestSenderTask
-// @see msgnotificationdialogwidget.h
-// ----------------------------------------------------------------------------   
-ServiceRequestSenderTask::~ServiceRequestSenderTask()
-     {     
-     }
-     
-// ----------------------------------------------------------------------------
-// ServiceRequestSenderTask::run
-// @see msgnotificationdialogwidget.h
-// ----------------------------------------------------------------------------   
-void ServiceRequestSenderTask::run()
-     {
-     QList<QVariant> args;
-     QString serviceName("com.nokia.services.hbserviceprovider");
-     QString operation("open(qint64)");
-     XQAiwRequest* request;
-     XQApplicationManager appManager;
-     request = appManager.create(serviceName, "conversationview", operation, false); // not embedded
-     if ( request == NULL )
-         {
-         return;       
-         }
-     connect(request,SIGNAL(requestOk(const QVariant&)),
-             this,SLOT(onRequestCompleted(const QVariant&)));
-     
-     connect(request,SIGNAL(requestError(int, const QString&)),
-             this,SLOT(onRequestError(int, const QString&)));
-     
-     args << QVariant(mConvId);
-     request->setArguments(args);
-     request->setSynchronous(true);
-     request->send();
-     delete request;
-     }
-
-void ServiceRequestSenderTask::onRequestCompleted(const QVariant& value)
-    {
-	Q_UNUSED(value);
-    serviceTaskLaunched = false;
-    emit serviceRequestCompleted();
-    }
-
-void ServiceRequestSenderTask::onRequestError(int errorCode, const QString& errorMessage)
-    {
-    Q_UNUSED(errorCode);
-    Q_UNUSED(errorMessage);
-    serviceTaskLaunched = false;
-    emit serviceRequestCompleted();
-    }
-
 // ----------------------------------------------------------------------------
 // MsgNotificationDialogWidget::MsgNotificationDialogWidget
 // @see msgnotificationdialogwidget.h
@@ -108,14 +41,21 @@ void ServiceRequestSenderTask::onRequestError(int errorCode, const QString& erro
 MsgNotificationDialogWidget::MsgNotificationDialogWidget(
                                                 const QVariantMap &parameters)
 : HbNotificationDialog(),
+mConversationId(-1),
 mLastError(NoError),
-mShowEventReceived(false),
-mConversationId(-1)
+mShowEventReceived(false)
 {
     constructDialog(parameters);
 }
 
-                                                
+// ----------------------------------------------------------------------------
+// MsgNotificationDialogWidget::~MsgNotificationDialogWidget
+// @see msgnotificationdialogwidget.h
+// ----------------------------------------------------------------------------                                                
+MsgNotificationDialogWidget::~MsgNotificationDialogWidget()
+{
+}
+
 // ----------------------------------------------------------------------------
 // MsgNotificationDialogWidget::setDeviceDialogParameters
 // @see msgnotificationdialogwidget.h
@@ -194,14 +134,11 @@ void MsgNotificationDialogWidget::closeDeviceDialog(bool byClient)
     Q_UNUSED(byClient);
     close();
 
-    if (serviceTaskLaunched == false)
+    // If show event has been received, close is signalled from hide event. If not,
+    // hide event does not come and close is signalled from here.
+    if (!mShowEventReceived)
         {
-        // If show event has been received, close is signalled from hide event. If not,
-        // hide event does not come and close is signalled from here.
-        if (!mShowEventReceived)
-            {
-            emit deviceDialogClosed();
-            }
+        emit deviceDialogClosed();
         }
 }
 
@@ -223,10 +160,7 @@ HbDialog *MsgNotificationDialogWidget::deviceDialogWidget() const
 void MsgNotificationDialogWidget::hideEvent(QHideEvent *event)
 {
     HbNotificationDialog::hideEvent(event);
-    if (serviceTaskLaunched == false)
-        {
-        emit deviceDialogClosed();
-        }
+    emit deviceDialogClosed();
 }
 
 // ----------------------------------------------------------------------------
@@ -245,14 +179,11 @@ void MsgNotificationDialogWidget::showEvent(QShowEvent *event)
 // ----------------------------------------------------------------------------
 void MsgNotificationDialogWidget::widgetActivated()
 {           
-    ServiceRequestSenderTask* task = 
-            new ServiceRequestSenderTask(mConversationId);
-    connect(task,SIGNAL(serviceRequestCompleted()),
-            this,SIGNAL(deviceDialogClosed()));
-    serviceTaskLaunched = true;
-    QThreadPool::globalInstance()->start(task);
-    enableTouchActivation(false);
-    
+    //Emit data to be used by msgnotifier
+    QVariantMap data;
+    data.insert(KConversationIdKey,mConversationId);
+    emit deviceDialogData(data);
+    enableTouchActivation(false);    
 }
 
 // ----------------------------------------------------------------------------

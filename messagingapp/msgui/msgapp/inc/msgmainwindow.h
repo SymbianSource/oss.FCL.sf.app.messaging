@@ -40,8 +40,7 @@ public:
     /**
      * Constructor
      */
-    MsgMainWindow(bool serviceRequest, 
-                  int activityMsgId = -1,
+    MsgMainWindow(bool serviceRequest,
                    QWidget *parent = 0);
 
     /**
@@ -53,7 +52,7 @@ public:
      * Returns view manager.
      */
     MsgViewManager* viewManager();
-
+    
 protected:
 
     /**
@@ -61,7 +60,13 @@ protected:
      * @see QGraphicsItem
      */
     void keyPressEvent(QKeyEvent *event);
-
+    
+private:
+    /**
+     * This initializes the member objects
+     */
+    void initialize(bool serviceRequest);
+    
 private:
     MsgServiceInterface* mMsgSI;
     MsgSendServiceInterface* mMsgSendSI;

@@ -24,28 +24,33 @@
 #include <mmssettings.h>
 #include <xqconversions.h> // from xqutils
 #include <mmsconst.h>
+#include <HbExtendedLocale>
 #include <QDateTime>
 #include <hbglobal.h>
 
 #include "msgstorehandler.h"
 #include "msgbiouids.h"
 #include "convergedmessage.h"
+#include "msgcontacthandler.h"
 
 // CONSTANTS
 _LIT(KUnixEpoch, "19700000:000000.000000");
 #define BYTES_TO_KBYTES_FACTOR 1024
 
+// @see hbi18ndef.h
+static const char DATE_FORMAT[] = r_qtn_date_short_with_zero;
+static const char TIME_FORMAT[] = r_qtn_time_usual_with_zero;
+
 // LOCALIZATION
-// TODO : use dialog localizations
-#define LOC_MESSAGE_SIZE hbTrId("txt_messaging_list_size")
-#define LOC_CLASS_ADVERTISEMENT hbTrId("txt_messaging_list_advertisement")
-#define LOC_CLASS_INFORMATIONAL hbTrId("txt_messaging_list_informational")
-#define LOC_CLASS_PERSONAL hbTrId("txt_messaging_list_personal")
+#define LOC_MESSAGE_SIZE hbTrId("txt_messages_dialog_size")
+#define LOC_CLASS_ADVERTISEMENT hbTrId("txt_messages_dialog_class_advertisement")
+#define LOC_CLASS_INFORMATIONAL hbTrId("txt_messages_dialog_class_informational")
+#define LOC_CLASS_PERSONAL hbTrId("txt_messages_dialog_class_personal")
 #define LOC_MMS_RETRIEVAL_FAILED hbTrId("txt_messaging_dialog_mms_retrieval_failed")
 #define LOC_MMS_NOTIF_EXPIRED hbTrId("txt_messaging_list_message_expired")  
-#define LOC_MMS_WAITING hbTrId("txt_wireframe_list_multimedia_message_waiting")
+#define LOC_MMS_WAITING hbTrId("txt_messages_dialog_multimedia_message_waiting")
 #define LOC_MMS_RETRIEVING hbTrId("txt_messaging_list_retrieving_message")   
-#define LOC_MMS_EXPIRY_DATE hbTrId("txt_messaging_list_expiry_date")
+#define LOC_MMS_EXPIRY_DATE hbTrId("txt_messages_dialog_expiry_date")
 
 //----------------------------------------------------------------------------
 // MsgStoreHandler::MsgStoreHandler
@@ -448,6 +453,67 @@ TBool MsgStoreHandler::OperationFinished(
     return (    aEntry.iMtmData2 & KMmsOperationFinished
             &&  !( aEntry.iMtmData2 & KMmsOperationOngoing ) );
     }
+
+// ---------------------------------------------------------
+// MsgStoreHandler::notificationSender
+// @see header
+// ---------------------------------------------------------
+QString MsgStoreHandler::notificationSender()
+{
+    QString retVal;
+    QString sender;
+    if(iNotificationClient)
+    {
+        TPtrC sndr = iNotificationClient->Sender();
+        sender = XQConversions::s60DescToQString(sndr);
+    }
+    
+    QString displayName;
+    int count;
+    if(-1 != MsgContactHandler::resolveContactDisplayName(
+            sender, displayName, count))
+    {
+        retVal = QString("%1(%2)").arg(displayName).arg(sender);
+    }
+    else
+    {
+        retVal = sender;
+    }
+
+    return retVal;
+}
+
+//---------------------------------------------------------------
+// MsgStoreHandler::notificationTimeStamp
+// @see header
+//---------------------------------------------------------------
+QString MsgStoreHandler::notificationTimeStamp()
+{
+    // Null Check
+    if(!iNotificationClient)
+    {
+        return QString();
+    }
+
+    TMsvEntry entry = iNotificationClient->Entry().Entry();
+    TTime unixEpoch(KUnixEpoch);
+    TTimeIntervalSeconds seconds;
+    TTime timeStamp(entry.iDate.Int64());
+    timeStamp.SecondsFrom(unixEpoch, seconds);
+    
+    QDateTime dateTime;
+    dateTime.setTime_t(seconds.Int());
+    HbExtendedLocale locale = HbExtendedLocale::system();
+
+    QString timeStampStr;
+    if (dateTime.date() == QDateTime::currentDateTime().date()) {
+        timeStampStr = locale.format(dateTime.time(), TIME_FORMAT);
+    }
+    else {
+        timeStampStr = locale.format(dateTime.date(), DATE_FORMAT);
+    }
+    return timeStampStr;
+}
 
 //---------------------------------------------------------------
 // MsgStoreHandler::notificationSubject

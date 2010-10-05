@@ -23,7 +23,7 @@
 #include <MsgMediaInfo.h>
 #include <qstring.h>
 
-#ifdef MSGUI_UNIT_TEST
+#ifdef MSGUIUTILS_UNIT_TEST
  #define MSGUI_UTILS_DLL_EXPORT
 #else
 #ifdef BUILD_MSGUI_UTILS_DLL
@@ -115,7 +115,7 @@ private:
      */
     TUint32 iConfStatus;
     
-#ifdef MSGUI_UNIT_TEST
+#ifdef MSGUIUTILS_UNIT_TEST
     /**
      * Unit Testing
      */

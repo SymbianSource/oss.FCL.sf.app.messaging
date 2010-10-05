@@ -68,6 +68,11 @@ public:
      */
     int parseActivityData(const QVariant &activityData);
     
+    /**
+     * This return the Af activity storage instance 
+     */
+    AfActivityStorage*  activitiyStorage();
+    
 private:
     /**
      * main window reference not owned.

@@ -20,6 +20,9 @@
 #include <hbdevicedialog.h>
 #include <hbindicator.h>
 #include <qfileinfo.h>
+#include <xqservicerequest.h>
+#include <xqaiwrequest.h>
+#include <xqappmgr.h>
 
 //USER INCLUDES
 #include "msgnotifier.h"
@@ -52,7 +55,7 @@ const QString NotificationPluginId("com.nokia.messaging.newmsgnotificationdialog
 // @see MsgNotifier.h
 // ----------------------------------------------------------------------------
 MsgNotifier::MsgNotifier(QObject* parent) :
-    QObject(parent)
+    QObject(parent),mDeviceDialog(NULL)
 {
     QDEBUG_WRITE("MsgNotifier::MsgNotifier : Enter")
 
@@ -75,6 +78,7 @@ MsgNotifier::~MsgNotifier()
     delete d_ptr;
     delete mSimHandler;
 	delete mErrorWatcher;
+	delete mDeviceDialog;
 
     QDEBUG_WRITE("MsgNotifier::~MsgNotifier : Enter")
 }
@@ -138,9 +142,15 @@ void MsgNotifier::displayNewMessageNotification(NotificationData& data)
     notificationData[QString(KMessageSubjectKey)] = description;
     notificationData[QString(KContactAddressKey)] = data.mContactNum;
 
-    // call device dialog to show notification
-    HbDeviceDialog deviceDialog ;
-    deviceDialog.show(NotificationPluginId,notificationData);
+    if(mDeviceDialog == NULL)
+        {
+        // call device dialog to show notification
+        mDeviceDialog = new HbDeviceDialog;
+        connect(mDeviceDialog,SIGNAL(dataReceived(QVariantMap)),
+                this,SLOT(handleDataReceived(QVariantMap)));        
+        }
+    
+    mDeviceDialog->show(NotificationPluginId,notificationData);    
     
     QDEBUG_WRITE("MsgNotifier::displayNewMessageNotification : Exit")
     }
@@ -205,5 +215,37 @@ void MsgNotifier::updateOutboxIndications(MsgInfo& data)
 
     QDEBUG_WRITE("MsgNotifier::updateOutboxIndications  Exit")
 }
+
+// ----------------------------------------------------------------------------
+// MsgNotifier::handleDataReceived
+// @see MsgNotifier.h
+// ----------------------------------------------------------------------------
+void MsgNotifier::handleDataReceived(QVariantMap data)
+    {
+    qint64 conversationId = data.value(KConversationIdKey).toLongLong(); 
+
+    QList<QVariant> args;
+    QString serviceName("com.nokia.services.hbserviceprovider");
+    QString operation("open(qint64)");
+    XQAiwRequest* request;
+    XQApplicationManager appManager;
+    request = appManager.create(serviceName, "conversationview", 
+            operation, false); // not embedded
+    if ( request == NULL )
+        {
+        return;       
+        }
+    connect(request,SIGNAL(requestOk(const QVariant&)),
+            this,SLOT(onRequestCompleted(const QVariant&)));
+
+    connect(request,SIGNAL(requestError(int, const QString&)),
+            this,SLOT(onRequestError(int, const QString&)));
+
+    args << QVariant(conversationId);
+    request->setArguments(args);
+    request->setSynchronous(false);
+    request->send();
+    delete request;    
+    }
 
 //EOF

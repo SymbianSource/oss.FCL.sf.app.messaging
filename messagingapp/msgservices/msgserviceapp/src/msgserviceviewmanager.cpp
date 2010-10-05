@@ -30,6 +30,7 @@
 
 #include <xqserviceutil.h>
 #include <xqappmgr.h>
+#include <xqaiwdecl.h>
 
 #include "msgunieditorview.h"
 #include "unifiedviewer.h"
@@ -39,18 +40,16 @@
 #include "ringbc.h"
 #include "unidatamodelloader.h"
 #include "unidatamodelplugininterface.h"
-#include "msgcontacthandler.h"
 
 // CONSTANTS
 static const char SEND_EFFECT[] = "sendeffect";
 static const char SEND_EFFECT_FILE[] = ":/effects/sendeffect.fxml";
 
 // LOCALIZATION
-#define LOC_DELETE_MESSAGE hbTrId("txt_messaging_dialog_delete_message")
-// TODO: LOC
-#define LOC_DELETED_MESSAGE "Message is deleted"
-#define LOC_CANNOT_OPEN_MESSAGE "Message in outbox. Cannot be opened"
-#define LOC_UNKNOWN_MSG_TYPE "Unknown Message Type"
+#define LOC_DELETED_MESSAGE hbTrId("txt_messages_dialog_message_has_been_deleted")
+#define LOC_CANNOT_OPEN_MESSAGE hbTrId("txt_messages_dialog_message_is_outgoingcannot_be")
+#define LOC_UNKNOWN_MSG_TYPE hbTrId("txt_messages_dialog_unsupported_message_type")
+#define LOC_SAVE_RINGTONE hbTrId("txt_conversations_dialog_save_ringing_tone")
 
 //----------------------------------------------------------------------------
 // MsgViewInterface::MsgViewInterface
@@ -465,13 +464,25 @@ bool MsgServiceViewManager::handleKeyEvent(int key)
 }
 
 // ----------------------------------------------------------------------------
+// MsgServiceViewManager::saveContentToDraft
+// @see header
+// ----------------------------------------------------------------------------
+void MsgServiceViewManager::saveContentToDraft()
+{
+    if(mUniEditor)
+    {
+      mUniEditor->saveContentToDrafts();
+    }
+}
+
+// ----------------------------------------------------------------------------
 // MsgServiceViewManager::handleDraftMsg
 // @see header
 // ----------------------------------------------------------------------------
 void MsgServiceViewManager::handleDraftMsg(int msgId, int msgType)
 {
     // show the splash-screen
-    // TODO: This causes cancellation of view switching effects
+    // Note: This causes cancellation of view switching effects
 //    HbSplashScreen::start();
     connect(mMainWindow, SIGNAL(viewReady()), this, SLOT(showOnViewReady()));
     mCurrentView = MsgBaseView::UNIEDITOR;
@@ -529,18 +540,6 @@ void MsgServiceViewManager::handleVCardMsg(int msgId)
     }
     delete pluginLoader;
 
-    // Get vCard display name
-    QString displayName = MsgContactHandler::getVCardDisplayName(filepath);
-    // TODO: use displayname to create a localized string to show in dialog
-    QString loc_str = QString("Save to contacts: ").append(displayName);
-    bool viewVCard = HbDeviceMessageBox::question(loc_str,
-                         HbMessageBox::Ok|HbMessageBox::Cancel);
-    if(!viewVCard)
-    {
-        HbApplication::quit();
-        return;
-    }
-
     // copy private-vCard file to public location for contacts access
     QDir tempDir;
     QString sharedFilePath(QDir::toNativeSeparators(tempDir.tempPath()));
@@ -550,13 +549,10 @@ void MsgServiceViewManager::handleVCardMsg(int msgId)
     QFile::copy(filepath, sharedFilePath);
 
     // Launch vCard viewer service
-    QString service("phonebookservices");
-    QString interface("com.nokia.symbian.IContactsEdit");
-    QString operation("editCreateNewFromVCard(QString)");
     XQApplicationManager appManager;
-    // embedded launch
-    XQAiwRequest* request = 
-            appManager.create(service, interface, operation, true);
+    XQAiwRequest* request = appManager.create(XQI_CONTACTS_EDIT,
+                                XQOP_CONTACTS_EDIT_CREATE_NEW_VCARD, 
+                                true); //embedded
     if(request)
     {
         QList<QVariant> args;
@@ -579,7 +575,7 @@ void MsgServiceViewManager::handleVCardMsg(int msgId)
 void MsgServiceViewManager::handleSmsMmsMsg(int msgId)
 {
     // show the splash-screen
-    // TODO: This causes cancellation of view switching effects
+    // Note: This causes cancellation of view switching effects
 //    HbSplashScreen::start();
     connect(mMainWindow, SIGNAL(viewReady()), this, SLOT(showOnViewReady()));
     mCurrentView = MsgBaseView::UNIVIEWER;
@@ -612,24 +608,57 @@ void MsgServiceViewManager::handleMmsNotification(int msgId)
     }
 
     // notification state e.g. waiting, retrieving etc
+    QString displayTxt;
     QString statusStr;
     int status;
     mStoreHandler->notificationStatus(status, statusStr);
-
-    QString displayTxt;
-    displayTxt.append(mStoreHandler->notificationSubject());
-    displayTxt.append(QChar::LineSeparator);
-    displayTxt.append(mStoreHandler->notificationMsgSize());
-    displayTxt.append(QChar::LineSeparator);
-    displayTxt.append(mStoreHandler->notificationClass());
-    displayTxt.append(QChar::LineSeparator);
-    displayTxt.append(mStoreHandler->notificationExpiryDate());
     if(!statusStr.isEmpty())
     {
-        displayTxt.append(QChar::LineSeparator);
-        displayTxt.append(statusStr);
-    }    
-    HbDeviceMessageBox::information(displayTxt);
+        displayTxt.append(statusStr).append(QChar::LineSeparator);
+    }
+    
+    QString sender = mStoreHandler->notificationSender();
+    if(!sender.isEmpty())
+    {
+        displayTxt.append(sender).append(QChar::LineSeparator);
+    }
+    
+    QString timestamp = mStoreHandler->notificationTimeStamp();
+    if(!timestamp.isEmpty())
+    {
+        displayTxt.append(timestamp).append(QChar::LineSeparator);
+    }
+
+    QString subject = mStoreHandler->notificationSubject();
+    if(!subject.isEmpty())
+    {
+        displayTxt.append(subject).append(QChar::LineSeparator);
+    }
+
+    QString msgSize = mStoreHandler->notificationMsgSize();
+    if(!msgSize.isEmpty())
+    {
+        displayTxt.append(msgSize).append(QChar::LineSeparator);
+    }
+
+    QString msgClass = mStoreHandler->notificationClass();
+    if(!msgClass.isEmpty())
+    {
+        displayTxt.append(msgClass).append(QChar::LineSeparator);
+    }
+
+    QString exprDate = mStoreHandler->notificationExpiryDate();
+    if(!exprDate.isEmpty())
+    {
+        displayTxt.append(exprDate);
+    }
+
+    HbDeviceMessageBox msgbox;
+    msgbox.setText(displayTxt);
+    msgbox.setDismissPolicy(HbPopup::NoDismiss);
+    msgbox.setTimeout(HbPopup::NoTimeout);
+    msgbox.exec();
+    msgbox.close();
     HbApplication::quit();
 }
 
@@ -686,8 +715,7 @@ void MsgServiceViewManager::handleRingtoneMsg(int msgId)
 
     RingBc* ringBc = new RingBc();
     QString filename = ringBc->toneTitle(filepath);
-    // TODO: use filename to create a localized string to show in dialog
-    QString loc_str = QString("Save ringtone? ").append(filename);
+    QString loc_str = LOC_SAVE_RINGTONE.arg(filename);
     bool save = HbDeviceMessageBox::question(loc_str,
                     HbMessageBox::Save | HbMessageBox::Cancel);
     if(save)

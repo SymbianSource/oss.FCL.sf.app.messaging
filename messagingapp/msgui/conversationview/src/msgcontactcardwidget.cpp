@@ -36,6 +36,7 @@
 #include <QTimer>
 
 #include <ccsdefs.h>
+#include <debugtraces.h>
 
 // USER INCLUDES
 #include "conversationsenginedefines.h"
@@ -49,6 +50,8 @@ const QString DEFAULT_AVATAR_ICON("qtg_large_avatar");
 const QString BT_ICON("qtg_large_bluetooth");
 const QString BG_FRAME_NORMAL("qtg_fr_groupbox_normal");
 const QString BG_FRAME_PRESSED("qtg_fr_groupbox_pressed");
+
+static const char PLUS[] = "+";
 
 // LOCALIZATION CONSTANTS
 #define LOC_RECEIVED_FILES hbTrId("txt_messaging_title_received_files")
@@ -141,11 +144,58 @@ void MsgContactCardWidget::setAddress(const QString &address)
 //---------------------------------------------------------------
 ConvergedMessageAddressList MsgContactCardWidget::address()
 {
+    QCRITICAL_WRITE("MsgContactCardWidget::address start.")
     ConvergedMessageAddressList addresses;
     QStandardItemModel* msgModel = ConversationsEngine::instance()->getConversationsModel();
+    
     const int rowCnt = msgModel->rowCount();
-    QModelIndex index = msgModel->index(rowCnt-1, 0);
-    QString addr = index.data(ConversationAddress).toString();
+    
+    QModelIndex recentIndex = msgModel->index(rowCnt-1, 0);
+    QString recentAddr = recentIndex.data(ConversationAddress).toString();
+    
+    
+    QModelIndexList indexList = msgModel->match(msgModel->index(0, 0), SendingState,
+        ConvergedMessage::SentState, -1, Qt::MatchExactly);
+
+    QString addr;
+    
+    bool found = false;
+    if(indexList.count() > 0)
+    {
+        QCRITICAL_WRITE("MsgContactCardWidget::address indexList.")
+        for (int i = indexList.count()-1; i >= 0; --i) 
+        {
+            addr = indexList[i].data(ConversationAddress).toString();
+            if (addr.length() >= recentAddr.length() && addr.endsWith(recentAddr)) 
+            {
+              QCRITICAL_WRITE("MsgContactCardWidget::address inside for indexList.")
+			  found = true; 
+              break;
+            }
+        }
+        
+    }
+    else 
+    {   
+        QCRITICAL_WRITE("MsgContactCardWidget::address inside else of indexList.")
+        for(int i=rowCnt-1; i>=0;--i)
+            {
+            QModelIndex index = msgModel->index(i, 0);
+            addr = index.data(ConversationAddress).toString();
+            if(addr.startsWith(PLUS) && addr.length() >= recentAddr.length() && addr.endsWith(recentAddr))
+                {
+                found = true; 
+                break;
+                }
+            }
+           
+    }
+    
+    if (!found) 
+    {
+        addr = recentAddr;
+    }
+    
     ConvergedMessageAddress* address = new ConvergedMessageAddress(addr);
     // resolve contact
     QString displayname;
@@ -157,6 +207,7 @@ ConvergedMessageAddressList MsgContactCardWidget::address()
         address->setAlias(displayname);
     }
     addresses.append(address);
+    QCRITICAL_WRITE("MsgContactCardWidget::address end.")
     return addresses;
 }
 

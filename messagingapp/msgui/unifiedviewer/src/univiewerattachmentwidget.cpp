@@ -30,7 +30,7 @@
 #include <QTimer>
 
 // USER INCLUDES
-#include "univiewerutils.h"
+#include "msgservicelaunchutil.h"
 #include "unidatamodelplugininterface.h"
 
 // LOCAL CONSTANTS
@@ -172,13 +172,15 @@ void UniViewerAttachmentWidget::handleOpen()
     this->ungrabGesture(Qt::TapGesture);
     
     if (!mViewerUtils) {
-        mViewerUtils = new UniViewerUtils(this);
+        mViewerUtils = new MsgServiceLaunchUtil(this);
     }
     mViewerUtils->launchContentViewer(mMimeType, mMediaPath);
     
     //fire timer to regrab gesture after some delay.
     QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
+
+
 
 //----------------------------------------------------------------------------
 // UniViewerAttachmentWidget::handleShortTap

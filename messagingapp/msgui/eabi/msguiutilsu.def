@@ -40,10 +40,27 @@ EXPORTS
 	_ZN19MmsConformanceCheckD0Ev @ 39 NONAME
 	_ZN19MmsConformanceCheckD1Ev @ 40 NONAME
 	_ZN19MmsConformanceCheckD2Ev @ 41 NONAME
-	_ZNK11MsgSendUtil10metaObjectEv @ 42 NONAME
-	_ZNK19MmsConformanceCheck10metaObjectEv @ 43 NONAME
-	_ZTI11MsgSendUtil @ 44 NONAME
-	_ZTI19MmsConformanceCheck @ 45 NONAME
-	_ZTV11MsgSendUtil @ 46 NONAME
-	_ZTV19MmsConformanceCheck @ 47 NONAME
+	_ZN20MsgServiceLaunchUtil11handleErrorEiRK7QString @ 42 NONAME
+	_ZN20MsgServiceLaunchUtil11qt_metacallEN11QMetaObject4CallEiPPv @ 43 NONAME
+	_ZN20MsgServiceLaunchUtil11qt_metacastEPKc @ 44 NONAME
+	_ZN20MsgServiceLaunchUtil16staticMetaObjectE @ 45 NONAME DATA 16
+	_ZN20MsgServiceLaunchUtil19getStaticMetaObjectEv @ 46 NONAME
+	_ZN20MsgServiceLaunchUtil19launchContentViewerERK7QStringS2_ @ 47 NONAME
+	_ZN20MsgServiceLaunchUtil19launchContentViewerEi @ 48 NONAME
+	_ZN20MsgServiceLaunchUtil21launchViaSharableFileERK7QString @ 49 NONAME
+	_ZN20MsgServiceLaunchUtil8handleOkERK8QVariant @ 50 NONAME
+	_ZN20MsgServiceLaunchUtilC1EP7QObject @ 51 NONAME
+	_ZN20MsgServiceLaunchUtilC2EP7QObject @ 52 NONAME
+	_ZN20MsgServiceLaunchUtilD0Ev @ 53 NONAME
+	_ZN20MsgServiceLaunchUtilD1Ev @ 54 NONAME
+	_ZN20MsgServiceLaunchUtilD2Ev @ 55 NONAME
+	_ZNK11MsgSendUtil10metaObjectEv @ 56 NONAME
+	_ZNK19MmsConformanceCheck10metaObjectEv @ 57 NONAME
+	_ZNK20MsgServiceLaunchUtil10metaObjectEv @ 58 NONAME
+	_ZTI11MsgSendUtil @ 59 NONAME
+	_ZTI19MmsConformanceCheck @ 60 NONAME
+	_ZTI20MsgServiceLaunchUtil @ 61 NONAME
+	_ZTV11MsgSendUtil @ 62 NONAME
+	_ZTV19MmsConformanceCheck @ 63 NONAME
+	_ZTV20MsgServiceLaunchUtil @ 64 NONAME
 

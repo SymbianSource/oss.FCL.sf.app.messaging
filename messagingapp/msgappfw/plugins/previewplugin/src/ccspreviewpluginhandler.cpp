@@ -353,20 +353,20 @@ void CCsPreviewPluginHandler::HandleMMSEntryL(const TMsvEntry& aEntry)
     iMmsMtm->SwitchCurrentEntryL(msgId);
     iMmsMtm->LoadMessageL();
 
-    CUniDataModel* iUniDataModel = CUniDataModel::NewL(ifsSession, *iMmsMtm);
-    CleanupStack::PushL(iUniDataModel);
-    iUniDataModel->RestoreL(*this, ETrue);
+    CUniDataModel* uniDataModel = CUniDataModel::NewL(ifsSession, *iMmsMtm);
+    CleanupStack::PushL(uniDataModel);
+    uniDataModel->RestoreL(*this, ETrue);
     
     //msg property
     TInt msgProperty = 0;
-    if (iUniDataModel->AttachmentList().Count() > 0)
+    if (uniDataModel->AttachmentList().Count() > 0)
         {
         msgProperty |= EPreviewAttachment;
         }
 
     //check for msg forward
     //Validate if the mms msg can be forwarded or not
-    if (ValidateMsgForForward(iUniDataModel))
+    if (ValidateMsgForForward(uniDataModel))
         {
         msgProperty |= EPreviewForward;
         }
@@ -375,7 +375,7 @@ void CCsPreviewPluginHandler::HandleMMSEntryL(const TMsvEntry& aEntry)
     TPtrC imagePath;
 
     // preview parsing
-    TInt slideCount = iUniDataModel->SmilModel().SlideCount();
+    TInt slideCount = uniDataModel->SmilModel().SlideCount();
     TBool isBodyTextSet = EFalse;
     TBool isImageSet = EFalse;
     TBool isAudioSet = EFalse;
@@ -383,10 +383,10 @@ void CCsPreviewPluginHandler::HandleMMSEntryL(const TMsvEntry& aEntry)
 
     for (int i = 0; i < slideCount; i++)
         {
-        int slideobjcount = iUniDataModel->SmilModel().SlideObjectCount(i);
+        int slideobjcount = uniDataModel->SmilModel().SlideObjectCount(i);
         for (int j = 0; j < slideobjcount; j++)
             {
-            CUniObject *obj = iUniDataModel->SmilModel(). GetObjectByIndex(i,
+            CUniObject *obj = uniDataModel->SmilModel(). GetObjectByIndex(i,
                     j);
             CMsgMediaInfo *mediaInfo = obj->MediaInfo();
 

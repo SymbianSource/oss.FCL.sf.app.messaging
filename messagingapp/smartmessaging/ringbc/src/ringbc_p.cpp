@@ -20,7 +20,7 @@
 #include <pathinfo.h>
 #include <f32file.h>
 #include <hbmessagebox.h>
-#include <HbDeviceMessageBox>
+#include <hbdevicenotificationdialog.h>
 
 // USER INCLUDES
 #include "ringbc_p.h"
@@ -29,11 +29,7 @@
 #include "debugtraces.h"
 
 // LOCALIZATION
-// TODO: Get localized strings
-#define LOC_RINGTONE_CORRUPTED "Ringing Tone Corrupted"
-#define LOC_OUT_OF_MEMORY "No memory to save"
-#define LOC_RINGTONE_SAVING_ERROR "Error in Saving"
-#define LOC_RINGTONE_SAVED "Saved succesfully"
+#define LOC_RINGTONE_SAVED hbTrId("txt_messages_dpopinfo_ringing_tone_saved")
 
 // ----------------------------------------------------------------------------
 // RingBcPrivate::RingBcPrivate
@@ -83,36 +79,11 @@ void RingBcPrivate::saveTone(const QString &path)
     QDEBUG_WRITE("RingBcPrivate::saveTone : Enter")
     QString statusStr;
     TRAPD(error, saveToneL(path));
-    if (error)
+    if(error == KErrNone)
         {
-        QDEBUG_WRITE_FORMAT("RingBcPrivate::saveTone Error code =",error)
-        if(error == KErrCorrupt)
-            {
-            statusStr = LOC_RINGTONE_CORRUPTED;
-            QDEBUG_WRITE("RingBcPrivate::saveTone : Ringing tone corrupted")
-            }
-        else if(error == KErrNoMemory || error == KErrDiskFull)
-            {
-            statusStr = LOC_OUT_OF_MEMORY;
-            QDEBUG_WRITE("RingBcPrivate::saveTone : Low memory")
-            }
-        else
-            {
-            statusStr = LOC_RINGTONE_SAVING_ERROR;
-            QDEBUG_WRITE("RingBcPrivate::saveTone : Error in Saving")
-            }
-        }
-    else
-        {
-        statusStr = LOC_RINGTONE_SAVED;
-        QDEBUG_WRITE("RingBcPrivate::saveTone : Ringing tone saved successfully")
+        HbDeviceNotificationDialog::notification(QString(), LOC_RINGTONE_SAVED);
         }
     
-    HbDeviceMessageBox msgbox;
-    msgbox.setMessageBoxType(HbMessageBox::MessageTypeInformation);
-    msgbox.setText(statusStr);
-    msgbox.setAction(NULL, HbDeviceMessageBox::AcceptButtonRole);
-    msgbox.show();
     QDEBUG_WRITE("RingBcPrivate::saveTone : Exit")
     }
 

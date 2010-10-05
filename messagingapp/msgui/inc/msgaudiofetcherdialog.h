@@ -19,10 +19,14 @@
 #ifndef MSGAUDIOFETCHERDIALOG_H
 #define MSGAUDIOFETCHERDIALOG_H
 
-#ifdef BUILD_MSGAUDIOFETCHER_DLL
-#define MSGAUDIOFETCHER_DLL_EXPORT Q_DECL_EXPORT
+#ifdef AUDIO_FETCHER_UNIT_TEST
+ #define MSGAUDIOFETCHER_DLL_EXPORT
 #else
-#define MSGAUDIOFETCHER_DLL_EXPORT Q_DECL_IMPORT
+ #ifdef  BUILD_MSGAUDIOFETCHER_DLL
+  #define MSGAUDIOFETCHER_DLL_EXPORT Q_DECL_EXPORT
+ #else
+  #define MSGAUDIOFETCHER_DLL_EXPORT Q_DECL_IMPORT
+ #endif
 #endif
 
 // SYSTEM INCLUDES
@@ -138,6 +142,12 @@ private:
      * This to enable the left action in dialog
      */
     bool mSelected;
+#ifdef AUDIO_FETCHER_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgAudioFetcherDialog;
+#endif
 };
 
 #endif /* MSGAUDIOFETCHERVIEW_H */

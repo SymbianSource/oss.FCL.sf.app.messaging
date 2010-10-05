@@ -14,7 +14,7 @@
  * Description: Message services manages all messaging Qt highway services. 
  *
  */
-
+#include <hbapplication.h>
 #include "msgservicewindow.h"
 
 #include "msgviewinterface.h"
@@ -56,6 +56,10 @@ mViewManager(NULL)
     mViewInterface = new MsgViewInterface(mViewManager);
     mUriInterface = new MsgUriHandlerInterface(mViewManager);
     mShareUiInterface = new MsgShareUiInterface(mViewManager);
+    
+    // connect to aboutToQuit signal to save drafts content
+    QObject::connect(qApp, SIGNAL(aboutToQuit()), 
+                this, SLOT(saveDraftContents()));
     }
 
 // ----------------------------------------------------------------------------
@@ -111,5 +115,14 @@ void MsgServiceWindow::keyPressEvent(QKeyEvent *event)
         HbMainWindow::keyPressEvent(event);
     }
 
+}
+
+//---------------------------------------------------------------
+// MsgServiceWindow::saveActivity
+// @see header
+//---------------------------------------------------------------
+void MsgServiceWindow::saveDraftContents()
+{
+    mViewManager->saveContentToDraft();
 }
 // EOF

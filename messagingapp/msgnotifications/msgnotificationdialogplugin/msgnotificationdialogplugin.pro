@@ -44,8 +44,6 @@ symbian: {
 BLD_INF_RULES.prj_exports += \
   "$${LITERAL_HASH}include <platform_paths.hrh>" \
   "rom/msgnotificationdialogplugin.iby             CORE_APP_LAYER_IBY_EXPORT_PATH(msgnotificationdialogplugin.iby)"
-  
-LIBS += -lxqservice
 
 
 symbian:MMP_RULES += SMPSAFE

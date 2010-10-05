@@ -27,7 +27,7 @@
 #include <thumbnailmanager_qt.h>
 
 // USER INCLUDES
-#include "univiewerutils.h"
+#include "msgservicelaunchutil.h"
 #include "unidatamodelplugininterface.h"
 
 // LOCAL CONSTANTS
@@ -162,13 +162,15 @@ void UniViewerPixmapWidget::handleOpen()
     this->ungrabGesture(Qt::TapGesture);
 
     if (!mViewerUtils) {
-        mViewerUtils = new UniViewerUtils(this);
+        mViewerUtils = new MsgServiceLaunchUtil(this);
     }
     mViewerUtils->launchContentViewer(mMimeType, mPixmapPath);
 
     //fire timer to regrab gesture after some delay.
     QTimer::singleShot(300,this,SLOT(regrabGesture()));
 }
+
+
 
 //---------------------------------------------------------------
 // UniViewerPixmapWidget::regrabGesture

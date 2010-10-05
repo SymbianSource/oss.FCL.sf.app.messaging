@@ -21,7 +21,7 @@
 #include <HbIconItem>
 
 // FORWARD DECLARATIONS
-class UniViewerUtils;
+class MsgServiceLaunchUtil;
 class UniMessageInfo;
 class ThumbnailManager;
 
@@ -131,10 +131,10 @@ private:
     UniMessageInfo *mInfo;
 
     /**
-     * UniViewerUtils object.
+     * MsgServiceLaunchUtil object.
      * Own
      */
-    UniViewerUtils *mViewerUtils;
+    MsgServiceLaunchUtil *mViewerUtils;
 
     /**
      * ThumbnailManager

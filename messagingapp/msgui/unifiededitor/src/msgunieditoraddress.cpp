@@ -43,6 +43,8 @@ const QString COMMA_SEPERATOR(",");
 
 // Constants
 const int KDefaultGsmNumberMatchLength = 7;  //matching unique ph numbers
+
+#define LOC_TITLE hbTrId("txt_messaging_title_messaging")
 #define LOC_SMS_RECIPIENT_LIMIT_REACHED hbTrId("txt_messaging_dialog_number_of_recipients_exceeded")
 #define LOC_MMS_RECIPIENT_LIMIT_REACHED hbTrId("txt_messaging_dpopinfo_unable_to_add_more_recipien")
 #define LOC_DIALOG_OK hbTrId("txt_common_button_ok")
@@ -99,33 +101,41 @@ void MsgUnifiedEditorAddress::fetchContacts()
     QString service("phonebookservices");
     QString interface("com.nokia.symbian.IContactsFetch");
     QString operation("multiFetch(QString,QString)");
-    XQAiwRequest* request;
     XQApplicationManager appManager;
-    request = appManager.create(service, interface, operation, true); // embedded
+    XQAiwRequest* request = appManager.create(service, interface, operation, true); // embedded
+	
     if ( request == NULL )
         {
-        return;
+        	return;
         }
-
+		
+    request->setSynchronous(false);
+	
     // Result handlers
     connect (request, SIGNAL(requestOk(const QVariant&)), this, SLOT(handleOk(const QVariant&)));
     connect (request, SIGNAL(requestError(int,const QString&)), this, SLOT(handleError(int,const QString&)));
 
     QList<QVariant> args;
-    args << QString(tr("Phonebook"));
-    args << KCntActionAll;
+    args << LOC_TITLE;
+    args << KCntActionSms;
     args << KCntFilterDisplayAll;
 
     request->setArguments(args);
     request->send();
-    delete request;
-
+    
     //unblock click signal after some delay.
     QTimer::singleShot(250,this,SLOT(unblockSignals()));
 }
 
 void MsgUnifiedEditorAddress::handleOk(const QVariant& value)
 {
+    // delete the request
+    XQAiwRequest* request = qobject_cast<XQAiwRequest*>(this->sender());
+    if(request)
+    {
+        delete request;        
+    }
+	
    CntServicesContactList contactList =
            qVariantValue<CntServicesContactList>(value);
     int count = contactList.count();
@@ -147,12 +157,19 @@ void MsgUnifiedEditorAddress::handleOk(const QVariant& value)
         addrlist << address;
     }
     setAddresses(addrlist);
+    
 }
 
 void MsgUnifiedEditorAddress::handleError(int errorCode, const QString& errorMessage)
 {
     Q_UNUSED(errorMessage)
     Q_UNUSED(errorCode)
+	
+    XQAiwRequest* request = qobject_cast<XQAiwRequest*>(this->sender());
+    if(request)
+    {
+       delete request;      
+    }
 }
 
 // ----------------------------------------------------------------------------

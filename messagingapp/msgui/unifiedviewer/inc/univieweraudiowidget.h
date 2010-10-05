@@ -19,7 +19,7 @@
 #define UNI_VIEWER_AUDIO_WIDGET_H
 
 // FORWARD DECLARATIONS
-class UniViewerUtils;
+class MsgServiceLaunchUtil;
 class UniMessageInfo;
 
 #include <HbPushButton>
@@ -97,10 +97,10 @@ private slots:
 private:
 
     /**
-     * UniViewerUtils object.
+     * MsgServiceLaunchUtil object.
      * Own
      */
-    UniViewerUtils *mViewerUtils;
+    MsgServiceLaunchUtil *mViewerUtils;
 
     /**
      * Media file path.

@@ -56,12 +56,17 @@ MMP_RULES += defBlock
 HEADERS += msgsendutil.h \
            mmsconformancecheck.h \
            msgmediautil.h \
-           msgcontactsutil.h
+           msgcontactsutil.h \
+           msgservicelaunchutil.h \
+           msgservicelaunchutilprivate.h
            
 SOURCES += msgsendutil.cpp \
            mmsconformancecheck.cpp \
            msgmediautil.cpp \
-           msgcontactsutil.cpp
+           msgcontactsutil.cpp \
+           msgservicelaunchutil.cpp \
+           msgservicelaunchutilprivate.cpp
+           
     
 # Libs
 LIBS += -lxqservice \
@@ -75,7 +80,10 @@ LIBS += -lxqservice \
     -lapmime \
     -lunidatamodelloader \
     -lxqutils \
-    -lefsrv
+    -lefsrv \
+    -lxqserviceutil \
+    -lmsgs \
+    -lapgrfx
     
 
 

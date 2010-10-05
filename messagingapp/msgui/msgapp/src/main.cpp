@@ -25,7 +25,6 @@
 #include <HbSplashScreen>
 
 #include "msgmainwindow.h"
-#include "msgactivityhandler.h"
 #include "msgapplication.h"
 
 //Localised constants
@@ -124,29 +123,10 @@ int main(int argc, char *argv[])
     qInstallMsgHandler(debugInit);
 #endif
     
-   
-    
-     MsgActivityHandler* activityHandler = new MsgActivityHandler(&app);
-     // connect to aboutToQuit signal to save activity
-     QObject::connect(&app, SIGNAL(aboutToQuit()), 
-                      activityHandler, SLOT(saveActivity()));
-     
-    int activityMsgId = INVALID_MSGID;
-    if(app.activateReason() == Hb::ActivationReasonActivity) {
-          // restoring an activity, not a fresh startup or a service
-          QVariant data = app.activateData();
-          activityMsgId = activityHandler->parseActivityData(data);
-          // set service request to false , since its a activity launch
-          serviceRequest = false; 
-        }
-    // clear the old activities
-     activityHandler->clearActivities();
-     
     // Main window
-    QPointer<MsgMainWindow> mainWindow = new MsgMainWindow(serviceRequest,activityMsgId);
-    app.initViewReady();
-    // Set the main window pointer to activity handler.
-    activityHandler->setMainWindow(mainWindow);
+    QPointer<MsgMainWindow> mainWindow = 
+            new MsgMainWindow(serviceRequest);
+    app.initViewReady();    
     mainWindow->show();
 
     // Event loop

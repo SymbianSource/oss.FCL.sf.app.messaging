@@ -26,7 +26,7 @@ class HbTextItem;
 class HbIconItem;
 class HbIcon;
 class HbFrameItem;
-class UniViewerUtils;
+class MsgServiceLaunchUtil;
 class UniMessageInfo;
 
 /**
@@ -136,10 +136,10 @@ private:
     HbFrameItem *mFrameItem;
 
     /**
-     * UniViewerUtils object.
+     * MsgServiceLaunchUtil object.
      * Own
      */
-    UniViewerUtils *mViewerUtils;
+    MsgServiceLaunchUtil *mViewerUtils;
 
     /**
      * Media file path.

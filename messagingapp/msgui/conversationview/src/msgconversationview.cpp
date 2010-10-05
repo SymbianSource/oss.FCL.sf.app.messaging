@@ -60,9 +60,12 @@
 #include "unieditorpluginloader.h"
 #include "unieditorplugininterface.h"
 #include "msgaudiofetcherdialog.h"
+#include "msgservicelaunchutil.h"
+
+// LOCALIZATION
+#define LOC_TITLE hbTrId("txt_messaging_title_messaging")
 
 //Item specific menu.
-
 #define LOC_COMMON_OPEN hbTrId("txt_common_menu_open")
 #define LOC_COMMON_DELETE hbTrId("txt_common_menu_delete")
 #define LOC_COMMON_FORWARD hbTrId("txt_common_menu_forward")
@@ -246,11 +249,16 @@ void MsgConversationView::refreshView()
     if (INVALID_CONVID != convId) {
         mContactCardWidget->updateContents();
         if (KBluetoothMsgsConversationId == convId || !(mContactCardWidget->isValidAddress())) {
+            this->menu()->clearActions();
             mMainLayout->removeItem(mEditorWidget);
             mEditorWidget->hide();
             mEditorWidget->setParent(this);
         }
         else {
+            HbMenu *mainMenu = this->menu();
+            if(mainMenu->isEmpty()) {
+               mainMenu->addAction(QString());
+            }
             mMainLayout->addItem(mEditorWidget);
             mEditorWidget->show();
         }
@@ -536,6 +544,9 @@ void MsgConversationView::fetchContacts()
     if(!action)
         return;
 
+    QList<QVariant> args;
+    args << LOC_TITLE;
+
     QString service("phonebookservices");
     QString interface("com.nokia.symbian.IContactsFetch");
     QString operation("multiFetch(QString,QString)");
@@ -551,22 +562,20 @@ void MsgConversationView::fetchContacts()
     
     if( VCARD_INSERTION_MODE == mode) //vcard-insert mode
     {
+        args << KCntActionAll;
         connect(request, SIGNAL(requestOk(const QVariant&)),
             this, SLOT(contactsFetchedForVCards(const QVariant&)));      
     }
     else  //contact-insert mode
     {
+        args << KCntActionSms;
         connect(request, SIGNAL(requestOk(const QVariant&)),
             this, SLOT(contactsFetched(const QVariant&)));
     }
     connect (request, SIGNAL(requestError(int,const QString&)), 
         this, SLOT(serviceRequestError(int,const QString&)));
 
-    QList<QVariant> args;
-    args << QString(tr("Phonebook")); 
-    args << KCntActionAll;
     args << KCntFilterDisplayAll;
-
     request->setArguments(args);
     request->send();
     delete request;
@@ -836,24 +845,12 @@ void MsgConversationView::launchBtDisplayService(const QModelIndex & index)
 {
     qint32 messageId = index.data(ConvergedMsgId).toLongLong();
 
-    QList<QVariant> args;
-    QString serviceName("com.nokia.services.btmsgdispservices");
-    QString operation("displaymsg(int)");
-    XQAiwRequest* request;
-    XQApplicationManager appManager;
-    request = appManager.create(serviceName, "displaymsg", operation, false); // embedded
+    // launch using msgservicelaunchutils
     
-    if ( request == NULL )
-        {
-        return;
-        }
-
-    args << QVariant(messageId);
-    request->setSynchronous(true);
-    request->setEmbedded(true);
-    request->setArguments(args);
-    request->send();
-    delete request;    
+    MsgServiceLaunchUtil serviceLaunchUtil;
+    
+    serviceLaunchUtil.launchContentViewer(messageId);
+   
 }
 
 //---------------------------------------------------------------
@@ -866,26 +863,22 @@ void MsgConversationView::menuAboutToShow()
     HbMenu *mainMenu = this->menu();
     mainMenu->clearActions();
 
-    // Message type specific menu items
-    QModelIndex index = ConversationsEngine::instance()->getConversationsModel()->index(0, 0);
-    if (ConvergedMessage::BT != index.data(MessageType).toInt())
-    {
-        // Attach sub-menu
-        HbMenu *attachSubMenu = mainMenu->addMenu(LOC_ATTACH);
-        
-        attachSubMenu->addAction(LOC_PHOTO,this, SLOT(fetchImages()));
-        attachSubMenu->addAction(LOC_SOUND,this, SLOT(fetchAudio()));
-		
-        HbAction* addVCard = attachSubMenu->addAction(LOC_VCARD);
-        addVCard->setData(VCARD_INSERTION_MODE);        
-        connect(addVCard, SIGNAL(triggered()),this,SLOT(fetchContacts()));
+    // Attach sub-menu
+    HbMenu *attachSubMenu = mainMenu->addMenu(LOC_ATTACH);
+    
+    attachSubMenu->addAction(LOC_PHOTO,this, SLOT(fetchImages()));
+    attachSubMenu->addAction(LOC_SOUND,this, SLOT(fetchAudio()));
+    
+    HbAction* addVCard = attachSubMenu->addAction(LOC_VCARD);
+    addVCard->setData(VCARD_INSERTION_MODE);        
+    connect(addVCard, SIGNAL(triggered()),this,SLOT(fetchContacts()));
 
-        HbAction *addRecipients = mainMenu->addAction(LOC_ADD_RECIPIENTS);
-        addRecipients->setData(CONTACT_INSERTION_MODE);        
-        connect(addRecipients, SIGNAL(triggered()), this, SLOT(fetchContacts()));
+    HbAction *addRecipients = mainMenu->addAction(LOC_ADD_RECIPIENTS);
+    addRecipients->setData(CONTACT_INSERTION_MODE);        
+    connect(addRecipients, SIGNAL(triggered()), this, SLOT(fetchContacts()));
 
-        mainMenu->addAction(LOC_ADD_SUBJECT,this, SLOT(addSubject()));
-    }
+    mainMenu->addAction(LOC_ADD_SUBJECT,this, SLOT(addSubject()));
+
 }
 
 //---------------------------------------------------------------
@@ -1046,9 +1039,12 @@ void MsgConversationView::launchUniEditor(const QVariantList& data)
         message.setBodyText(mEditorWidget->content());
 
         // add address from contact-card to to-field
+        ConvergedMessageAddressList addresses;
+        addresses = mContactCardWidget->address();
+        
         ConvergedMessageAddress address;
-        address.setAlias(mContactCardWidget->address().at(0)->alias());
-        address.setAddress(mContactCardWidget->address().at(0)->address());
+        address.setAlias(addresses.at(0)->alias());
+        address.setAddress(addresses.at(0)->address());
         message.addToRecipient(address);
 
         if(editorOperation == MsgBaseView::ADD_PHOTO ||
@@ -1508,10 +1504,14 @@ void MsgConversationView::onAudioSelected(QString& filePath)
 
     ConvergedMessage message;
     message.setBodyText(mEditorWidget->content());
-    // add address from contact-card to to-field
+   
+    // add address from contact-card to to-field    
+    ConvergedMessageAddressList addresses;
+    addresses = mContactCardWidget->address();
+    
     ConvergedMessageAddress address;
-    address.setAlias(mContactCardWidget->address().at(0)->alias());
-    address.setAddress(mContactCardWidget->address().at(0)->address());
+    address.setAlias(addresses.at(0)->alias());
+    address.setAddress(addresses.at(0)->address());
     message.addToRecipient(address);
     
     //add the attachment as selected from audio picker

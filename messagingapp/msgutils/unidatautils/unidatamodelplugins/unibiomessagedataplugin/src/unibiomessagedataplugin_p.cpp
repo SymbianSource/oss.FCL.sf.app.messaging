@@ -50,7 +50,7 @@ UniBioMessageDataPluginPrivate::~UniBioMessageDataPluginPrivate()
 {
     q_ptr = NULL;
     
-    if(attachmentProcessed == EFalse && iAttachmentCount == 1)
+    if(attachmentProcessed == EFalse && iAttachmentCount == 1 && iMsvEntry)
     {
        TRAP_IGNORE( CMsvStore* store = iMsvEntry->EditStoreL();
         CleanupStack::PushL(store);

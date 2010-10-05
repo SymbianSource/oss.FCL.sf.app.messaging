@@ -53,7 +53,8 @@ protected:
      * reimplemented from base class.
      */
     void focusInEvent(QFocusEvent *event);    
-    void focusOutEvent(QFocusEvent * event);
+    void focusOutEvent(QFocusEvent *event);
+    void inputMethodEvent(QInputMethodEvent *event);
     
 signals:  
     /**

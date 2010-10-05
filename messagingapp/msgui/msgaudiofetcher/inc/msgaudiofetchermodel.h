@@ -122,6 +122,13 @@ private:
      * audio selection engine
      */
     MsgAudioSelectionEngine* mSelectionEngine;
+#ifdef AUDIO_FETCHER_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgAudioFetcherModel;
+#endif
+    
 };
 
 #endif /* MsgAudioFetcherModel_H_ */

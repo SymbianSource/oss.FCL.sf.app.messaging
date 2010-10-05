@@ -19,7 +19,7 @@
 #ifndef MSGCONTACTSUTIL_H_
 #define MSGCONTACTSUTIL_H_
 
-#ifdef MSGUI_UNIT_TEST
+#ifdef MSGUIUTILS_UNIT_TEST
  #define MSGUI_UTILS_DLL_EXPORT
 #else
 #ifdef BUILD_MSGUI_UTILS_DLL
@@ -43,7 +43,7 @@ private:
     static QString copyVCardToTemp(const QString& filepath);
     static void deleteVCardFromTemp(const QString& filepath);
     
-#ifdef MSGUI_UNIT_TEST
+#ifdef MSGUIUTILS_UNIT_TEST
     /**
      * Unit Testing
      */

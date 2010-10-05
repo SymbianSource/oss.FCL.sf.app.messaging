@@ -20,58 +20,9 @@
 
 #include <QObject>
 #include <QVariantMap>
-#include <QRunnable>
 #include <hbdevicedialoginterface.h>
 #include <hbdevicedialog.h>
 #include <hbnotificationdialog.h>
-
-
-/**
- * Class for sending service request
- */
-class ServiceRequestSenderTask :public QObject,public QRunnable
-{
-    Q_OBJECT
-    
-public:
-    /**
-     * Constructor
-     */
-    ServiceRequestSenderTask(qint64 conversationId);
-    
-    /**
-     * Destructor
-     */
-    ~ServiceRequestSenderTask();
-     
-    /**
-     * create and send service request
-     */
-     void run();
-
-private slots:
-
-    /**
-     * Slot invoked after Conversation view is launched.
-     */
-     void onRequestCompleted(const QVariant& value);
-     
-    /**
-     * Slot invoked if error occurred during launch of CV.
-     */
-     void onRequestError(int errorCode, const QString& errorMessage);
-          
-signals:
-
-	/**
-	* Signal is emitted to indicate that Notification Dialog 
-	* can now be closed.
-	*/
-     void serviceRequestCompleted();
-     
-private: 
-     qint64 mConvId;
-};
 
 /**
  * Message notification widget class. 
@@ -90,6 +41,11 @@ public:
      * @param parameters variant map list
      */
     MsgNotificationDialogWidget(const QVariantMap &parameters);
+    
+    /** 
+     * Destructor 
+     */
+    ~MsgNotificationDialogWidget();
 
     /**
      * @see HbDeviceDialogInterface
@@ -160,20 +116,20 @@ signals:
 private:
     Q_DISABLE_COPY(MsgNotificationDialogWidget)
 
-     /**
+    /**
+      * Current conversation id.
+      */
+    qint64 mConversationId;
+     
+    /**
       * Hold the last error 
       */
      int mLastError;
-    
+
      /**
       * Show event has come or not
       */
-     bool mShowEventReceived;
-    
-     /**
-      * Current conversation id.
-      */
-     qint64 mConversationId;
+     bool mShowEventReceived;     
 };
 
 #endif // MSGNOTIFICATIONDIALOGWIDGET_P_H

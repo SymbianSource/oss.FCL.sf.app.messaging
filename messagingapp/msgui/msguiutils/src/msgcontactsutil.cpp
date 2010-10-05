@@ -65,7 +65,9 @@ bool MsgContactsUtil::launchVCardViewer(const QString& filepath)
     {
 	    QList<QVariant> args;
         args << newfilepath;
-       request->setArguments(args);
+        request->setArguments(args);
+        request->setEmbedded(true);
+        request->setSynchronous(true);
         QVariant retValue;
         bool res = request->send(retValue);
         delete request;

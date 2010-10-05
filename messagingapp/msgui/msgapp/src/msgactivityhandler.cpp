@@ -128,3 +128,12 @@ void  MsgActivityHandler::setMainWindow(MsgMainWindow* mainWindow)
 {
     mMainWindow = mainWindow;
 }
+
+//-----------------------------------------------------------------------------
+// MsgActivityHandler::activitiyStorage
+// @see header
+//-----------------------------------------------------------------------------
+AfActivityStorage*  MsgActivityHandler::activitiyStorage()
+{
+    return mActivityStorage;
+}

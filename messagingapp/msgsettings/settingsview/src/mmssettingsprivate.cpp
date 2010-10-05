@@ -34,7 +34,7 @@
 /**
  * Message Server session event handler 
  */
-class CEventHandler : public MMsvSessionObserver
+class CEventHandler : public CBase, public MMsvSessionObserver
 {
 public:
     void HandleSessionEvent(TMsvSessionEvent aEvent, TAny* aArg1, TAny* aArg2,
@@ -95,8 +95,8 @@ void MmsSettingsPrivate::createRepositoryL()
     CEventHandler* pObserver = new (ELeave) CEventHandler();
     CleanupStack::PushL(pObserver);
 
-    CMsvSession* iMsvSession = CMsvSession::OpenSyncL(*pObserver);
-    CleanupStack::PushL(iMsvSession);
+    CMsvSession* msvSession = CMsvSession::OpenSyncL(*pObserver);
+    CleanupStack::PushL( msvSession);
 
     CMmsSettings* mmsSetting = CMmsSettings::NewL();
     CleanupStack::PushL(mmsSetting);
@@ -105,7 +105,7 @@ void MmsSettingsPrivate::createRepositoryL()
 
     TMsvId entryToBeKilled = KMsvNullIndexEntryId;
     // Get access to root index
-    CMsvEntry* cEntry = iMsvSession->GetEntryL(KMsvRootIndexEntryId);
+    CMsvEntry* cEntry = msvSession->GetEntryL(KMsvRootIndexEntryId);
     CleanupStack::PushL(cEntry);
 
     entryToBeKilled = mmsSetting->Service();
@@ -114,7 +114,7 @@ void MmsSettingsPrivate::createRepositoryL()
                                                ETrue));
     if (entryToBeKilled == KMsvNullIndexEntryId)
     {
-        mmsSetting->CreateNewServiceL(*iMsvSession);
+        mmsSetting->CreateNewServiceL(*msvSession);
     }
 
     CleanupStack::PopAndDestroy(); // cEntry          

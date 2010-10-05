@@ -40,7 +40,8 @@ SYMBIAN_PLATFORMS = WINSCW ARMV5
 BLD_INF_RULES.prj_exports += \
      "$${LITERAL_HASH}include <platform_paths.hrh>" \
      "sis/shareui_stub.sis   /epoc32/data/z/system/install/shareui_stub.sis" \
-     "rom/shareui.iby  CORE_APP_LAYER_IBY_EXPORT_PATH(shareui.iby)" 
+     "rom/shareui.iby  CORE_APP_LAYER_IBY_EXPORT_PATH(shareui.iby)" \
+      "rom/shareuiresources.iby LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(shareuiresources.iby)" \
      
 defBlock = \      
 	  "$${LITERAL_HASH}if defined(EABI)" \

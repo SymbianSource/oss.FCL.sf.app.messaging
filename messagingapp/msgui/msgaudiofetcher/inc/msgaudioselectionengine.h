@@ -131,6 +131,12 @@ private:
 
     // query error
     TInt iQueryError;
+#ifdef AUDIO_FETCHER_UNIT_TEST
+    /**
+     * Unit Testing
+     */
+    friend class TestMsgAudioSelectionEngine;
+#endif
 };
 #endif /* MSGAUDIOSELECTIONENGINE_H */
 

@@ -102,6 +102,11 @@ public:
      * @return true if key event handled else false.
      */
     bool handleKeyEvent(int key);
+    
+    /**
+     * Save editor contents to drafts
+     */
+    void saveContentToDraft();
 
 private:
     /*

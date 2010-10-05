@@ -42,6 +42,13 @@ public:
      * Destructor
      */
     ~MsgServiceWindow();
+
+private slots:
+
+    /**
+     * Calls activity handler save drafts contents
+     */
+    void saveDraftContents(); 
     
 protected:
 

@@ -95,6 +95,18 @@ public:
     int setNotificationMessageId(int msgId);
 
     /**
+     * Seeker method for getting sender information
+     * @return QString, sender address
+     */
+    QString notificationSender();
+
+    /**
+     * Seeker method for getting notification time-stamp
+     * @return formatted string of notification time-stamp
+     */
+    QString notificationTimeStamp();
+
+    /**
      * Seeker method for getting mms notification's subject line
      * @return QString, subject of mms notification
      */

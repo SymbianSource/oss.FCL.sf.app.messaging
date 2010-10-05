@@ -401,6 +401,19 @@ void MsgEditor::focusOutEvent(QFocusEvent * event)
     }
 
 //---------------------------------------------------------------
+// MsgEditor::inputMethodEvent
+// @see header
+//---------------------------------------------------------------
+void MsgEditor::inputMethodEvent(QInputMethodEvent *event)
+{
+    /*
+     * HbLineEdit is replacing '\n' chars hence
+     * calling base class handler.
+     */
+    HbAbstractEdit::inputMethodEvent(event);
+}
+
+//---------------------------------------------------------------
 // MsgEditor::onSmsCharLimitReached
 // @see header
 //---------------------------------------------------------------

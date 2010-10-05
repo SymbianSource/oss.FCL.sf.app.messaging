@@ -88,6 +88,7 @@ const QString FILE_EXTN(".vcf");
 const int MAX_VCARDS(1000);
 
 // LOCALIZED CONSTANTS
+#define LOC_TITLE hbTrId("txt_messaging_title_messaging")
 //To,Cc.Bcc
 #define LOC_TO  hbTrId("txt_messaging_formlabel_to")
 #define LOC_CC hbTrId("txt_messaging_formlabel_cc")
@@ -244,7 +245,7 @@ void MsgUnifiedEditorView::initView()
 void MsgUnifiedEditorView::addMenu()
 {
     //Create Menu Options
-    HbMenu* mainMenu = new HbMenu();
+    HbMenu* mainMenu = this->menu();
     mainMenu->setFocusPolicy(Qt::NoFocus);
 	
     //if subject field / cc,bcc fields are already present don't add corresponding actions.
@@ -278,7 +279,6 @@ void MsgUnifiedEditorView::addMenu()
     connect(lowPriorityAction, SIGNAL(triggered()), this, SLOT(changePriority()));
     connect(deleteMsgAction,SIGNAL(triggered()),this, SLOT(deleteMessage()));
 
-    setMenu(mainMenu);
 }
 
 void MsgUnifiedEditorView::openDraftsMessage(const QVariantList& editorData)
@@ -1478,15 +1478,18 @@ void MsgUnifiedEditorView::fetchContacts()
     QString service("phonebookservices");
     QString interface("com.nokia.symbian.IContactsFetch");
     QString operation("multiFetch(QString,QString)");
-    XQAiwRequest* request;
-    XQApplicationManager appManager;
-    request = appManager.create(service, interface, operation, true); //embedded
+  
+    XQApplicationManager appManager;   
+    XQAiwRequest* request = appManager.create(service, interface, operation, true); //embedded
+	
     if ( request == NULL )
     {
         QCRITICAL_WRITE("AIW-ERROR: NULL request");
         return;
     }
-
+	
+    request->setSynchronous(false); // synchronous
+	
     // Result handlers
     connect (request, SIGNAL(requestOk(const QVariant&)),
         this, SLOT(contactsFetched(const QVariant&)));
@@ -1494,7 +1497,7 @@ void MsgUnifiedEditorView::fetchContacts()
         this, SLOT(serviceRequestError(int,const QString&)));
 
     QList<QVariant> args;
-    args << QString(tr("Phonebook"));
+    args << LOC_TITLE;
     args << KCntActionAll;
     args << KCntFilterDisplayAll;
 
@@ -1503,7 +1506,6 @@ void MsgUnifiedEditorView::fetchContacts()
     {
         QDEBUG_WRITE_FORMAT("AIW-ERROR: Request Send failed:",request->lastError());
     }
-    delete request;
 }
 
 //---------------------------------------------------------------
@@ -1515,17 +1517,14 @@ void MsgUnifiedEditorView::fetchImages()
     QString service("photos");
     QString interface("com.nokia.symbian.IImageFetch");
     QString operation("fetch()");
-    XQAiwRequest* request = NULL;
     XQApplicationManager appManager;
-    request = appManager.create(service,interface, operation, true);//embedded
-  
+    XQAiwRequest* request = appManager.create(service,interface, operation, true);//embedded
     if(!request)
     {     
         QCRITICAL_WRITE("AIW-ERROR: NULL request");
         return;
     }
-    
-    request->setSynchronous(true); // synchronous
+    request->setSynchronous(false); // synchronous
 
     connect(request, SIGNAL(requestOk(const QVariant&)),
         this, SLOT(imagesFetched(const QVariant&)));
@@ -1537,7 +1536,6 @@ void MsgUnifiedEditorView::fetchImages()
     {
         QDEBUG_WRITE_FORMAT("AIW-ERROR: Request Send failed:" , request->lastError());
     }  
-    delete request;
 }
 
 //---------------------------------------------------------------
@@ -1566,6 +1564,12 @@ void MsgUnifiedEditorView::fetchAudio()
 //---------------------------------------------------------------
 void MsgUnifiedEditorView::contactsFetched(const QVariant& value)
 {
+    XQAiwRequest* request = qobject_cast<XQAiwRequest*>(this->sender());
+    if(request)
+    {
+        delete request;
+    }
+
     // create a vcard for each contact fetched and add as attachment
     QStringList attachmentList;
     if(createVCards(value, attachmentList) == KErrNone)
@@ -1580,6 +1584,12 @@ void MsgUnifiedEditorView::contactsFetched(const QVariant& value)
 //---------------------------------------------------------------
 void MsgUnifiedEditorView::imagesFetched(const QVariant& result )
 {
+    XQAiwRequest* request = qobject_cast<XQAiwRequest*>(this->sender());
+    if(request)
+    {
+        delete request;        
+    }
+	
     if(result.canConvert<QStringList>())
     {
         QStringList fileList = result.value<QStringList>();
@@ -1598,6 +1608,14 @@ void MsgUnifiedEditorView::imagesFetched(const QVariant& result )
 void MsgUnifiedEditorView::serviceRequestError(int errorCode, const QString& errorMessage)
 {
     QDEBUG_WRITE_FORMAT(errorMessage,errorCode);
+    Q_UNUSED(errorCode)
+    Q_UNUSED(errorMessage)
+
+    XQAiwRequest* request = qobject_cast<XQAiwRequest*>(this->sender());
+    if(request)
+    {
+        delete request;	
+    }
 }
 
 //---------------------------------------------------------------

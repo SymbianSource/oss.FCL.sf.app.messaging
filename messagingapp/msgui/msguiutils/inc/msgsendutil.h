@@ -22,7 +22,7 @@
 #include <QObject>
 #include "convergedmessage.h"
 
-#ifdef MSGUI_UNIT_TEST
+#ifdef MSGUIUTILS_UNIT_TEST
  #define MSGUI_UTILS_DLL_EXPORT
 #else
 #ifdef BUILD_MSGUI_UTILS_DLL
@@ -145,7 +145,7 @@ private:
      */
     UniEditorGenUtils* mUniEditorGenUtils;
 
-#ifdef MSGUI_UNIT_TEST
+#ifdef MSGUIUTILS_UNIT_TEST
     /**
      * Unit Testing
      */
