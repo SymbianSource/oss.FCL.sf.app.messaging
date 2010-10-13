@@ -364,8 +364,7 @@ void CMceMainViewListView::CreateContainerAndActivateL()
         iMceUi->ResetResourceChange();
         }
     listBox->SetListBoxObserver(this);
- 	//To observe scrollbar events
-    listBox->ScrollBarFrame()->SetScrollBarFrameObserver( this );
+
     iMsgListContainer->ActivateL();
     if ( !iListViewFlags.MceFlag( EMceUiFlagsContainerAddedToStack ) )
         {
@@ -455,11 +454,9 @@ void CMceMainViewListView::HandleListBoxEventL(
                 iMsgListContainer->SetMskL();                
                 }
         break;
-        case EEventPanningStarted:
         case EEventFlickStarted:
             iFlick = ETrue;
             break;        
-        case EEventPanningStopped:
         case EEventFlickStopped:
             iFlick = EFalse;
             break;
@@ -1220,31 +1217,5 @@ TInt CMceMainViewListView::GetMceDefaultViewL()
        {
        return KErrNotFound;
        }
-    }
-// ---------------------------------------------------------
-// CMceMainViewListView::HandleScrollEventL
-// To take old bitmapindex for list items When 
-// stylus is down on scroll bar thumb and dragged
-// Calculate new bitmapindex when scrollbar thumb drag is stopped
-// ---------------------------------------------------------
-//
-void CMceMainViewListView::HandleScrollEventL(CEikScrollBar* aScrollBar,
-        TEikScrollEvent aEventType)
-    {
-    switch (aEventType)
-        {
-        case EEikScrollThumbDragVert:
-            iFlick = ETrue;
-            break;
-        case EEikScrollThumbReleaseVert:
-            iFlick = EFalse;
-            break;
-        default:
-            break;
-        }
-    CAknDoubleLargeStyleListBox* listBox =
-            REINTERPRET_CAST( CAknDoubleLargeStyleListBox*,
-                    iMsgListContainer->ListBox() );
-    listBox->HandleScrollEventL( aScrollBar, aEventType );
     }
 //  End of File

@@ -634,6 +634,46 @@ class CMsgEditorView : public CCoeControl,
          */
          void DoScrollViewL( TInt& aPixelsToScroll, 
                              TMsgScrollDirection aDirection );
+		/**
+		* Handle text scrolling from pointer event.
+		* 
+		* @param aPointerEvent Current pointer event received from HandlePointerEventL.
+		*/					 
+		TBool HandleScrollEventL(const TPointerEvent& aPointerEvent);
+		
+		/**
+		* Throw the pointer event (which is not consumed by text scrolling) to other handler. 
+		* 
+		* @param aPointerEvent Current pointer event received from HandlePointerEventL.
+		*/
+		
+    	void ThrowOutPointerEventL(const TPointerEvent& aPointerEvent);
+		
+		/**
+		* Move current view up or down with screen height. 
+		* 
+		* @param aOffset Offset positive/negative will indicate the direction.
+		*/
+		
+    	void ScrollPartL(TInt aOffset);
+		
+		/**
+		* Change to the previous or the next part(slide) if possible. 
+		* 
+		* @param aOffset Offset positive/negative will indicate the direction.
+		*/
+		
+    	void ScrollPageL(TInt aOffset);
+		
+		/**
+		* Scroll text in current part (slide).  This will not trigger part change.
+		* 
+		* @param aScrolledPixels Pixels wanted to be scrolled.
+		*
+		* @return Pixels scrolled.
+		*/
+		
+    	TInt ScrollL(TInt aScrolledPixels);
 
         
     private:
@@ -664,6 +704,10 @@ class CMsgEditorView : public CCoeControl,
     	RConeResourceLoader  iResourceLoader;
     	TMsgFocus            iPrevFocus; 
     	TBool                iMoveUpDownEvent; 
+    	TBool                iHaveScrolled;
+    	TPoint               iScrollPos;
+    	TPointerEvent        iFirstPointerDown;
+    	TBool                iIsScrolling;
     };
 
 #include <MsgEditorView.inl>

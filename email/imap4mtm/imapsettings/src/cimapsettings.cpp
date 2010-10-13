@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -170,7 +170,7 @@ resource file is defined by KImEngineResourceFile in miuthdr.h
 void CImapSettings::ReadResourceFileL()
 	{
 	RFs fs;
-	User::LeaveIfError(fs.Connect());
+	fs.Connect();
 	CleanupClosePushL(fs);
 	
 	//	NB need to check on all drives - won't necessarily be on

@@ -94,6 +94,17 @@ class CUniEditorLaunchOperation : public CUniEditorOperation,
         * Detach slide loader object
         */
         inline CUniSlideLoader* DetachSlideLoader();
+        
+        /**
+        * get header object
+        */
+        inline CUniEditorHeader* GetHeader();
+
+        /**
+        * get slide loader object
+        */
+        inline CUniSlideLoader* GetSlideLoader();
+
 
         /**
         * Return parse result

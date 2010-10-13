@@ -133,8 +133,7 @@ class  CMceOneRowMessageListContainer :
         /**
         * From CMceMessageListContainerBase
         */
-        virtual void ItemCountChangedL( TBool aItemsAdded,
-                CArrayFix<TInt>* aAddedIndexes = 0 );
+        virtual void ItemCountChangedL( TBool aItemsAdded );
 
         /**
         * From CMceMessageListContainerBase
@@ -334,11 +333,6 @@ class  CMceOneRowMessageListContainer :
         * From CMceMessageListContainerBase 
         */
         void UpdateIconArrayL( );
-		
-        /**
-        * From CMceMessageListContainerBase 
-        */
-        void SetMarkingModeOff();
 
     public:     // Functions from base classes
 

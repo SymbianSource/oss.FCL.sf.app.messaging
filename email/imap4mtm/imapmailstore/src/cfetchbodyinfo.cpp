@@ -34,6 +34,7 @@ EXPORT_C CFetchBodyInfo*  CFetchBodyInfo::NewL(TMsvId aPartId)
 CFetchBodyInfo::CFetchBodyInfo(TMsvId aPartId)
  : iPartId(aPartId)
 	{
+		iEmbed = EFalse;
 	}	
 
 CFetchBodyInfo::~CFetchBodyInfo()

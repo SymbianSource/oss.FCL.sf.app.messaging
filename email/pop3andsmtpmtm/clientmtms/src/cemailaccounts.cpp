@@ -2307,8 +2307,9 @@ void CEmailAccounts::DoLoadPopSettingsL(TUint32 aAccountId, CImPop3Settings& aPo
 	aPopSettings.Reset();	
 	CRepository& popRepository = PopRepositoryL();
 
-	TInt temp = 0;
-	TBuf<KMaxSettingStringLength> tempDesc;			
+	TInt temp = 0;			
+	HBufC* heapBuf = HBufC::NewLC( KMaxSettingStringLength );
+	TPtr tempDesc(heapBuf->Des());
 	TInt error = popRepository.Get(aAccountId + EPOPServerAddressId, tempDesc);
 	if (error == KErrNone)
 		{		
@@ -2322,6 +2323,8 @@ void CEmailAccounts::DoLoadPopSettingsL(TUint32 aAccountId, CImPop3Settings& aPo
 		{
 		User::Leave(error);
 		}
+	
+	CleanupStack::PopAndDestroy( heapBuf );
 
 	error = popRepository.Get(aAccountId + EPOPPortNumberId, temp);	
 	if (error == KErrNone)
@@ -2340,7 +2343,9 @@ void CEmailAccounts::DoLoadPopSettingsL(TUint32 aAccountId, CImPop3Settings& aPo
 	User::LeaveIfError(popRepository.Get(aAccountId + EPOPFlagsId, temp));	
 	aPopSettings.SetSettingsFlags(static_cast<TUint32>(temp));
 		
-	TBuf8<KMaxSettingStringLength> tempDesc8;			
+	HBufC8* heapBuf8 = HBufC8::NewLC( KMaxSettingStringLength );
+	TPtr8 tempDesc8(heapBuf8->Des());
+	
 	error = popRepository.Get(aAccountId + EPOPLoginNameId, tempDesc8);	
 	if (error == KErrNone)
 		{		
@@ -2392,6 +2397,8 @@ void CEmailAccounts::DoLoadPopSettingsL(TUint32 aAccountId, CImPop3Settings& aPo
 			aPopSettings.SetTlsSslDomainL(tempDesc8);
 			}
 		}
+	CleanupStack::PopAndDestroy( heapBuf8 );
+	
 	}
 
 void CEmailAccounts::DoLoadSmtpSettingsL(TUint32 aAccountId, CImSmtpSettings& aSmtpSettings)
@@ -2400,7 +2407,9 @@ void CEmailAccounts::DoLoadSmtpSettingsL(TUint32 aAccountId, CImSmtpSettings& aS
 	CRepository& smtpRepository = SmtpRepositoryL();
 
 	TInt temp = 0;
-	TBuf<KMaxSettingStringLength> tempDesc;			
+	HBufC* heapBuf = HBufC::NewLC( KMaxSettingStringLength );
+	TPtr tempDesc( heapBuf->Des() );
+	
 	TInt error = smtpRepository.Get(aAccountId + ESMTPServerAddressId, tempDesc);	
 	if (error == KErrNone)
 		{		
@@ -2488,6 +2497,8 @@ void CEmailAccounts::DoLoadSmtpSettingsL(TUint32 aAccountId, CImSmtpSettings& aS
 		User::Leave(error);
 		}
 
+	CleanupStack::PopAndDestroy( heapBuf );
+	
 	User::LeaveIfError(smtpRepository.Get(aAccountId + ESMTPBodyEncodingId, temp));	
 	aSmtpSettings.SetBodyEncoding(static_cast<TMsgOutboxBodyEncoding>(temp));
 
@@ -2499,8 +2510,9 @@ void CEmailAccounts::DoLoadSmtpSettingsL(TUint32 aAccountId, CImSmtpSettings& aS
 
 	User::LeaveIfError(smtpRepository.Get(aAccountId + ESMTPSendMessageOptionId, temp));	
 	aSmtpSettings.SetSendMessageOption(static_cast<TImSMTPSendMessageOption>(temp));
-
-	TBuf8<KMaxSettingStringLength> tempDesc8;			
+	HBufC8* heapBuf8 = HBufC8::NewLC(KMaxSettingStringLength);
+	TPtr8 tempDesc8( heapBuf8->Des() );
+	
 	error = smtpRepository.Get(aAccountId + ESMTPLoginNameId, tempDesc8);	
 	if (error == KErrNone)
 		{		
@@ -2557,6 +2569,9 @@ void CEmailAccounts::DoLoadSmtpSettingsL(TUint32 aAccountId, CImSmtpSettings& aS
 			aSmtpSettings.SetTlsSslDomainL(tempDesc8);
 			}
 		}	
+	
+	CleanupStack::PopAndDestroy( heapBuf8 );
+	
 	}
 
 void CEmailAccounts::DoLoadImapSettingsL(TUint32 aAccountId, CImImap4Settings& aImapSettings)
@@ -2565,7 +2580,9 @@ void CEmailAccounts::DoLoadImapSettingsL(TUint32 aAccountId, CImImap4Settings& a
 	CRepository& imapRepository = ImapRepositoryL();
 
 	TInt temp = 0;
-	TBuf<KMaxSettingStringLength> tempDesc;			
+	HBufC* heapBuf = HBufC::NewLC( KMaxSettingStringLength );
+	TPtr tempDesc(heapBuf->Des());
+	
 	TInt error = imapRepository.Get(aAccountId + EIMAPServerAddressId, tempDesc);	
 	if (error == KErrNone)
 		{		
@@ -2580,6 +2597,8 @@ void CEmailAccounts::DoLoadImapSettingsL(TUint32 aAccountId, CImImap4Settings& a
 		User::Leave(error);
 		}
 
+	CleanupStack::PopAndDestroy( heapBuf );
+	
 	error = imapRepository.Get(aAccountId + EIMAPPortNumberId, temp);	
 	if (error == KErrNone)
 		{		
@@ -2597,7 +2616,9 @@ void CEmailAccounts::DoLoadImapSettingsL(TUint32 aAccountId, CImImap4Settings& a
 	User::LeaveIfError(imapRepository.Get(aAccountId + EIMAPFlagsId, temp));	
 	aImapSettings.SetSettingsFlags(static_cast<TUint32>(temp));
 		
-	TBuf8<KMaxSettingStringLength> tempDesc8;			
+	HBufC8* heapBuf8 = HBufC8::NewLC( KMaxSettingStringLength );
+	TPtr8 tempDesc8( heapBuf8->Des() );
+	
 	error = imapRepository.Get(aAccountId + EIMAPLoginNameId, tempDesc8);	
 	if (error == KErrNone)
 		{		
@@ -2682,6 +2703,9 @@ void CEmailAccounts::DoLoadImapSettingsL(TUint32 aAccountId, CImImap4Settings& a
 			aImapSettings.SetTlsSslDomainL(tempDesc8);
 			}
 		}
+	
+	CleanupStack::PopAndDestroy( heapBuf8 );
+	
 	}
 
 void CEmailAccounts::LoadIAPPrefSettingsL(TUint32 aAccountId, CImIAPPreferences& aIAP, CRepository& aRepository)

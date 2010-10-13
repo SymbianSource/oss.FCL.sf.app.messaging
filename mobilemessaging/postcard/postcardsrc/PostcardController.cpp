@@ -457,13 +457,13 @@ void CPostcardController::LoadIconsL( )
         EMbmPostcardQgn_prop_mms_postcard_address_inactive_mask
         );
 
-    iUpperArrow = DoLoadIconL(
+    iUpperArrow = DoLoadIconforUpandDownarrowL(
         KAknsIIDQgnIndiMmsPostcardUp,
         fileName, 
         EMbmPostcardQgn_indi_mms_postcard_up,
         EMbmPostcardQgn_indi_mms_postcard_up_mask
         );
-    iLowerArrow = DoLoadIconL(
+    iLowerArrow = DoLoadIconforUpandDownarrowL(
         KAknsIIDQgnIndiMmsPostcardDown,
         fileName, 
         EMbmPostcardQgn_indi_mms_postcard_down,
@@ -482,14 +482,51 @@ CGulIcon* CPostcardController::DoLoadIconL(
                                 const TInt aFileBitmapId,
                                 const TInt aFileMaskId  )
     {
+    
+    
     CGulIcon* icon = NULL;
+    
+   
     icon = AknsUtils::CreateGulIconL(
         AknsUtils::SkinInstance(),
         aId,
         aFileName,
         aFileBitmapId,
         aFileMaskId
-        );
+        );  
+    
+    return icon;
+     
+    }
+
+// ---------------------------------------------------------
+// CPostcardController::DoLoadIconforUpandDownarrowL()
+// ---------------------------------------------------------
+//
+CGulIcon* CPostcardController::DoLoadIconforUpandDownarrowL( 
+                                const TAknsItemID& aId,
+                                const TDesC& aFileName,
+                                const TInt aFileBitmapId,
+                                const TInt aFileMaskId  )
+    {
+    
+    CFbsBitmap* bitmap = NULL;
+    CFbsBitmap* mask = NULL;
+
+   
+    AknsUtils::CreateColorIconLC( AknsUtils::SkinInstance(), 
+                                 aId,
+                                 KAknsIIDQsnIconColors,
+                                 EAknsCIQsnIconColorsCG6,
+                                 bitmap, 
+                                 mask,
+                                 aFileName, 
+                                 aFileBitmapId,
+                                 aFileMaskId,
+                                 KRgbBlack); 
+  
+    CGulIcon* icon = CGulIcon::NewL( bitmap, mask );
+    CleanupStack::Pop( 2 ); // bitmap, mask
 
     return icon;
     }

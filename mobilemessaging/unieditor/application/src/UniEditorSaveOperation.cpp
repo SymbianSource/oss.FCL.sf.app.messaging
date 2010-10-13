@@ -341,20 +341,12 @@ void CUniEditorSaveOperation::DoSaveChecksL()
 //
 void CUniEditorSaveOperation::DoSaveObjectL()
     {
-    if ( iDocument.BodyModified() )
-        {
-        // Processing will continue from CUniEditorSaveOperation::ObjectSaveReady when
-        // save has been performed
-        iDocument.DataModel()->ObjectList().SaveAll( *this, CMsvAttachment::EMsvFile );    
-        // TODO: Pass edit store as a parameter to objectlist
-        //iDocument.DataModel()->ObjectList().SaveAll( *this, *iEditStore, CMsvAttachment::EMsvFile );    
-        SetPending();
-        }
-    else
-        {
-        iOperationState = EUniEditorSaveAttachment;
-        CompleteSelf( KErrNone );
-        }
+    // Processing will continue from CUniEditorSaveOperation::ObjectSaveReady when
+    // save has been performed
+    iDocument.DataModel()->ObjectList().SaveAll( *this, CMsvAttachment::EMsvFile );    
+    // TODO: Pass edit store as a parameter to objectlist
+    //iDocument.DataModel()->ObjectList().SaveAll( *this, *iEditStore, CMsvAttachment::EMsvFile );    
+    SetPending();
     }
 
 // ---------------------------------------------------------

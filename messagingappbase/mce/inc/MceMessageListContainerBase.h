@@ -24,7 +24,6 @@
 //  INCLUDES
 #include <coecntrl.h> // CCoeControl
 #include <msvapi.h>
-#include <aknmarkingmodeobserver.h>
 //#include "MceListContainer.h"
 //#include "MceMessageListContTimer.h"
 
@@ -58,8 +57,7 @@ enum TMceContainerFlags
 */
 class  CMceMessageListContainerBase :
     public CCoeControl,
-    public MEikCommandObserver,
-    public MAknMarkingModeObserver
+    public MEikCommandObserver
     {
     public:  // Constructors and destructor
 
@@ -67,24 +65,6 @@ class  CMceMessageListContainerBase :
         * Destructor.
         */
         virtual ~CMceMessageListContainerBase();
-		
-    public: // From MAknMarkingModeObserver 
-            
-        /**
-         * This method is called when marking mode is activated or deactivated.
-         * 
-         * @param aActivated @c ETrue if marking mode was activate, @c EFalse
-         *                   		  if marking mode was deactivated.
-         */
-        void MarkingModeStatusChanged( TBool aActivated );
-
-        /**
-         * This method is called just before marking mode is closed. Client can 
-         * either accept or decline closing.
-         * 
-         * @return @c ETrue if marking mode should be closed, otherwise @c EFalse.
-         */
-        TBool ExitMarkingMode() const;           
 
     public:
     
@@ -201,8 +181,7 @@ class  CMceMessageListContainerBase :
         /**
         * TODO: that is not needed if container would be msv session observer
         */
-        virtual void ItemCountChangedL( TBool aItemsAdded, CArrayFix<TInt>*
-                aAddedIndexes = 0 ) = 0;
+        virtual void ItemCountChangedL( TBool aItemsAdded ) = 0;
         
         /**
         * Redraw the listbox.
@@ -480,12 +459,6 @@ class  CMceMessageListContainerBase :
         *  Updates icon array in case MTM is released (one row list)
         */
         virtual void UpdateIconArrayL() = 0;
-		
-        /**
-        *  Sets Marking mode Off
-        */
-       
-        virtual void SetMarkingModeOff() = 0;
         
     protected:
     

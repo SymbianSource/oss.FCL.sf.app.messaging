@@ -27,7 +27,6 @@
 #include <msvapi.h>
 #include <AiwServiceHandler.h>
 #include <coemain.h>
-#include <eiklbo.h>
 
 #include "MceMessageListContainer.h" 
 
@@ -634,29 +633,6 @@ public:
          *  screen. aClearer is used in CMceUi::HandleGainingForeground() when returning from viewers.
          */
         void  GetLocalScreenClearer( CAknLocalScreenClearer** &aClearer );
-        /**
-        * Set the iMarkingModeOn variable if MarkingMode is switched on
-        * @aValue: The value to be set to iMarkingModeOn variable
-        * Since 9.2
-        */
-        void SetMarkingMode( TBool aMarkingModeOn );
-		/**
-        * Get the iMarkingModeOn variable
-        * @return: the value of iMarkingModeOn
-        * Since 9.2
-        */
-        TBool MarkingMode() const;
-		/**
-        * Get iMsgListContainer->MessageCount() variable
-        * @return: The value of MessageCount()
-        * Since 9.2
-        */
-        TInt MessageCount() const;
-		/**
-        * Set the MarkingMode off and inform the same to container
-        * Since 9.2
-        */
-		void SetMarkingModeOff();
             
     private:    // Data
 
@@ -702,8 +678,6 @@ public:
 		TBool 						iReadUnread; 
 		//Variable for context command
 		TBool                       iContextCommand;
-		//To indicate if marking mode is on/off
-		TBool                       iMarkingModeOn;
     };
 
 inline void CMceMessageListView::UpdateViewL()

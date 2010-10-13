@@ -37,7 +37,6 @@
 #include "SmilPlayerIndicatorController.h"
 #include "SmilPlayerPresentationController.h"
 #include "SmilPlayerVolumeIndicatorController.h"
-#include "SmilPlayerPauseIndicatorTimer.h"
 #include "SmilPlayerTimeIndicatorTimer.h"
 
 // CONSTANTS
@@ -100,8 +99,6 @@ void CSmilPlayerIndicatorController::ConstructL( const CCoeControl* aParent,
                               KAknsIIDQgnIndiMmsPlay,
                               EMbmSmilplayerQgn_indi_mms_play,
                               EMbmSmilplayerQgn_indi_mms_play_mask );
-
-    iPauseTimer = CSmilPlayerPauseIndicatorTimer::NewL( this );
     
     MakeVisible( EFalse );
     }
@@ -140,7 +137,6 @@ CSmilPlayerIndicatorController::~CSmilPlayerIndicatorController()
         
     delete iTimeModel;
     delete iPauseIndicator;
-    delete iPauseTimer;
 
     delete iPlayIndicator;
 
@@ -228,7 +224,6 @@ CCoeControl* CSmilPlayerIndicatorController::ComponentControl( TInt aIndex ) con
 //
 void CSmilPlayerIndicatorController::Stop()
     {
-    iPauseTimer->Cancel();    
     iPauseIndicator->MakeVisible( EFalse );
     
     iPlayIndicator->MakeVisible( EFalse );
@@ -243,10 +238,8 @@ void CSmilPlayerIndicatorController::Stop()
 //
 void CSmilPlayerIndicatorController::Start()
     {
-    iPauseTimer->Cancel();    
-    iPauseIndicator->MakeVisible( EFalse );
-
-    iPlayIndicator->MakeVisible( ETrue );
+    iPauseIndicator->MakeVisible( ETrue );
+    iPlayIndicator->MakeVisible( EFalse );
         
     iTimeModel->Start();
     }
@@ -259,9 +252,10 @@ void CSmilPlayerIndicatorController::Start()
 //
 void CSmilPlayerIndicatorController::Pause()
     {
-    iPlayIndicator->MakeVisible( EFalse );
     
-    SetPauseIndicatorBlinking( ETrue );
+    iPlayIndicator->MakeVisible( ETrue );
+    iPauseIndicator->MakeVisible( EFalse );
+    DrawDeferred();
     
     iTimeModel->Pause();
     }
@@ -276,9 +270,10 @@ void CSmilPlayerIndicatorController::Pause()
 void CSmilPlayerIndicatorController::Resume()
     {
     iTimeModel->Resume();
-    SetPauseIndicatorBlinking( EFalse );
+    iPauseIndicator->MakeVisible( ETrue );
+    iPlayIndicator->MakeVisible( EFalse );
+    DrawDeferred();
     
-    iPlayIndicator->MakeVisible( ETrue );    
     }
 
         
@@ -293,29 +288,6 @@ void CSmilPlayerIndicatorController::EndReached()
     iPlayIndicator->MakeVisible( EFalse );
     
     iTimeModel->EndReached();
-    }
-
-// ----------------------------------------------------------------------------
-// CSmilPlayerIndicatorController::SetPauseIndicatorBlinking
-// Controls pause indicator blinking. State changes are notified to volume
-// controller (if present) so that volume indicator's left arrow state can
-// be changed accordingly if needed.
-// ----------------------------------------------------------------------------
-//
-void CSmilPlayerIndicatorController::SetPauseIndicatorBlinking( TBool aValue )
-    {        
-    iPauseIndicator->MakeVisible( aValue );
-    
-    if( aValue )
-        {        
-        //start blinking timer
-        iPauseTimer->StartTimer();
-        }
-    else
-        {
-        //stop blinking timer
-        iPauseTimer->Cancel();
-        }
     }
 
 // ----------------------------------------------------------------------------
@@ -404,18 +376,6 @@ TBool CSmilPlayerIndicatorController::IsDurationFinite() const
     }
 
 // ----------------------------------------------------------------------------
-// CSmilPlayerIndicatorController::TogglePauseIndicator
-// Toggles pause indicator (i.e. sets it visible if it was previous invisible and
-// other way around.
-// ----------------------------------------------------------------------------
-//
-void CSmilPlayerIndicatorController::TogglePauseIndicator() const
-    {
-    iPauseIndicator->MakeVisible( !iPauseIndicator->IsVisible() );
-    iPauseIndicator->DrawDeferred();    
-    }
-
-// ----------------------------------------------------------------------------
 // CSmilPlayerIndicatorController::HandleGainingForeground
 // Starts pause indicator blinking if presentation is on the paused state. 
 // Pause indicator blinking was stopped when player was sent to background so
@@ -424,11 +384,7 @@ void CSmilPlayerIndicatorController::TogglePauseIndicator() const
 //
 void CSmilPlayerIndicatorController::HandleGainingForeground()
     {
-    if ( iPresController->Presentation() &&
-         iPresController->Presentation()->State() == CSmilPresentation::EPaused )
-        {
-        SetPauseIndicatorBlinking( ETrue );
-        }
+
     }
 
 // ----------------------------------------------------------------------------
@@ -438,11 +394,7 @@ void CSmilPlayerIndicatorController::HandleGainingForeground()
 //
 void CSmilPlayerIndicatorController::HandleLosingForeground()
     {
-    if ( iPresController->Presentation() &&
-         iPresController->Presentation()->State() == CSmilPresentation::EPaused )
-        {
-        SetPauseIndicatorBlinking( EFalse );
-        }
+
     }
 
 // ----------------------------------------------------------------------------

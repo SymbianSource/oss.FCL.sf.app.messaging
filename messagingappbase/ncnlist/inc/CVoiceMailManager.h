@@ -99,11 +99,6 @@ class CVoiceMailManager : public CBase, public MNcnSubscribeHandler
          */
 		void NotifyAboutSIMChange();
 		
-        /**
-         * Check the KMuiuSupressAllNotificationConfiguration value
-         */		
-		TBool CheckSupressNotificationSettingL();
-		
     private:
 
         /**

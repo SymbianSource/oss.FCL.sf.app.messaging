@@ -1200,10 +1200,10 @@ TPtrC CMceMainViewListItemArray::CreateConversationsListItem( TInt aIndex ) cons
         TInt bitmapidx = EMceBitmapIndexConversation;
         if(iDefaultViewSettings == KMceConversationview )
            {
-           TInt unreadMessages = 0;
-		   //To check  whether unread message presents in inbox
-           TRAPD( err, iBitmapResolver.FindVisibleCountWithUnreadMessageL( KMsvGlobalInBoxIndexEntryId, unreadMessages ));
-           if ( err == KErrNone && unreadMessages )
+           TInt msgCount = 0;
+           TInt unreadCount = 0;                   
+           TRAPD(Errcode,iBitmapResolver.HasUnreadMessagesL(KMsvGlobalInBoxIndexEntryId,msgCount,unreadCount));         
+           if( unreadCount > 0 ) 
                {
                bitmapidx =  EMceBitmapIndexConversationNew ;
                }

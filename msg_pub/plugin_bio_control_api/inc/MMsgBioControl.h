@@ -24,7 +24,7 @@
 //  INCLUDES
 #include <e32std.h>
 #include <e32base.h>
-#include <MsgEditor.hrh>   // for enums
+#include <msgeditor.hrh>   // for enums
 
 // CONSTANTS
 

@@ -111,7 +111,7 @@ private:
 	// Header and bodystructure parsing
 	TBool ProcessBodyStructureL();
 	void PopulateImHeaderL(CImapRfc822HeaderFields& aHeaderFields, TMsvEmailEntry& aEntry, CImHeader& imHeader);
-	void BuildTreeL(TMsvId aParent, CImapBodyStructure* aBodyStructure, const TDesC8& aPath, const TMsvId aThisMessage, TInt& aAttachments, TBool& aIsMHTML, TInt& aRelatedAttachments);
+	void BuildTreeL(TMsvId aParent, CImapBodyStructure* aBodyStructure, const TDesC8& aPath, const TMsvId aThisMessage, TInt& aAttachments, TBool& aIsMHTML, TInt& aRelatedAttachments, TBool aIsEmbed = EFalse);
 	void BuildContentEntryL(const TMsvId aParent, CImapBodyStructure* aBodyStructure, const TDesC8& aPath, const TMsvId aThisMessage, TInt& aAttachments, TBool& aIsMHTML, TInt& aRelatedAttachments);
 	void ProcessTextSubtypeL(CImapBodyStructure* aBodyStructure, CImMimeHeader& aMime, TMsvEmailEntry& aMessage, TBool& aIsMHTML);
 	void ProcessParameterListL(const CImapBodyStructure::RAttributeValuePairList& aParamList, CImMimeHeader& aMime, TMsvEmailEntry& aMessage, TFileName& aAttachmentFilename);
@@ -215,6 +215,7 @@ private:
 	
 	// CAF support
 	CImCaf* iCaf;
+	TBool iEmbed;
 	};
 
 #endif	//__CIMAPOPFETCHBODY_H__

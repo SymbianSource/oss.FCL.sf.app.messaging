@@ -141,6 +141,13 @@ class CMsgSentItemsObserver : public CActive,
         * @param aSelection Enties to be deleted
         */
         void DeleteMessagesFromSentFolderL( CMsvEntrySelection* aSelection );
+		
+		/**
+        * Delete the messages specified by aSelection
+        * aSelection is expected to have count 1
+        * @param aSelection Enties to be deleted
+        */
+        void DeleteSingleEntryL(CMsvEntrySelection* aSelection);
 
     private: //from CActive
 
@@ -166,6 +173,11 @@ class CMsgSentItemsObserver : public CActive,
         CMsvOperation* iOp;
         TUint iRetryCounter;
         TInt iMsgStoreDrive;
+        
+        class CMsvEntrySelection*	iQudUPEntryBeingDeleted;
+        class CMsvEntrySelection*	iQueuedUPEntriesToBeDeleted;
+        TInt						iRetryCounterIfEntryDelFailed;
+        
     };
 
 #endif      // MSGSENTITEMSOBSERVER_H

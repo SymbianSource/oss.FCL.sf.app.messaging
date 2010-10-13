@@ -158,8 +158,7 @@ class  CMceMessageListContainer :
         /**
         * From CMceMessageListContainerBase 
         */
-        virtual void ItemCountChangedL( TBool aItemsAdded,
-                CArrayFix<TInt>* aAddedIndexes = 0 );
+        virtual void ItemCountChangedL( TBool aItemsAdded );
 
         /**
         * From CMceMessageListContainerBase 
@@ -361,11 +360,6 @@ class  CMceMessageListContainer :
         * From CMceMessageListContainerBase 
         */
         void SetContainerFlag( TMceContainerFlags aFlag, TBool aState );
-		
-        /**
-        * From CMceMessageListContainerBase 
-        */
-        void SetMarkingModeOff();
 
     public:     // Functions from base classes
 
@@ -533,8 +527,6 @@ class  CMceMessageListContainer :
         
         TMessageListOperationType   iLastOperationType;
         TBool 			            iDialerEvent ;
-        
-        CMsvEntrySelection* 		iAddedMsvIds;
         
     };
     

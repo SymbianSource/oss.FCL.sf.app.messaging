@@ -343,14 +343,7 @@ AMSLOGGER_WRITE( "CAudioMessageAppUi::~CAudioMessageAppUi" );
     delete iInsertOperation;
     if ( iWaitDialog )
     	{
-		// iWaitDialog->ProcessFinishedL is for
-		// cancellation\closing  of wait dialog is asynchronous operation. it never gets so
-		// far that dialog would be really deleted before the application terminates.
-		// so to avoid memory leak , deleting the iWaitDialog.
-    	iWaitDialog->SetCallback( NULL );
     	TRAP_IGNORE( iWaitDialog->ProcessFinishedL() );
-    	delete iWaitDialog;
-		iWaitDialog = NULL;
     	}    
     delete iIdle;
     delete iAbsorber;

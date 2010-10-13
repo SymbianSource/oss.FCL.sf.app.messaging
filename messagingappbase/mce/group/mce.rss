@@ -330,10 +330,6 @@ RESOURCE MENU_BAR r_mce_folder_menubar
             {
             txt="";
             menu_pane = r_mce_folder_menu;
-            },
-        MENU_TITLE 
-            {
-            menu_pane = R_AVKON_MENUPANE_MARK_MULTIPLE;
             }
         };
     }
@@ -546,6 +542,13 @@ RESOURCE MENU_PANE r_mce_folder_menu
             },
         MENU_ITEM
             {
+            command = EMceCmdEditList;
+            txt = qtn_mce_edit;
+            cascade=r_mce_edit_menu;
+            },
+
+        MENU_ITEM
+            {
             command = EMceCmdMailboxSettings;
             txt = qtn_mce_mail_settings;
             },
@@ -636,6 +639,48 @@ RESOURCE MENU_PANE r_mce_fetch_menu
         };
     }
 
+//----------------------------------------------------
+//
+//    r_mce_edit_menu
+//
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_mce_edit_menu
+    {
+    items=
+        {
+        MENU_ITEM
+            {
+            command = EAknCmdMark;
+            txt = qtn_mce_mark;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {
+            command = EAknCmdUnmark;
+            txt = qtn_mce_unmark;
+            flags = EEikMenuItemSpecific;
+            },
+#ifdef RD_READ_MESSAGE_DELETION
+        MENU_ITEM
+            {
+            command = EAknCmdMarkReadMsgs;
+            txt = qtn_options_list_mark_read;
+            },
+#endif //RD_READ_MESSAGE_DELETION
+        MENU_ITEM
+            {
+            command = EAknMarkAll;
+            txt = qtn_mce_mark_all;
+            },
+        MENU_ITEM
+            {
+            command = EAknUnmarkAll;
+            txt = qtn_mce_unmark_all;
+            }
+        };
+    }
 
 //----------------------------------------------------
 //

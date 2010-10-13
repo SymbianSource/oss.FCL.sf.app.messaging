@@ -22,7 +22,6 @@
 // INCLUDE FILES
 #include "MceMessageListContainer.h"
 #include "MceMessageListboxItemDrawer.h"
-#include "MceIds.h"
 
 
 // ================= MEMBER FUNCTIONS =======================
@@ -58,12 +57,7 @@ TListItemProperties CMceMessageListBoxItemDrawer::Properties(TInt aItemIndex) co
     {
     TListItemProperties properties;
     properties.SetColor( iTextColor );
-	//only for MyFolders set the Hidden Selection, no folder should be able to be selected
-    if ( iMessageListContainer.CurrentFolderId() == KMceDocumentsEntryId )
-        {
-    	properties.SetHiddenSelection( iMessageListContainer.IsItemFolder( aItemIndex )  ||
-            iMessageListContainer.SyncMlOutboxOpened() );
-	}
+
     return properties;
     }
 

@@ -132,9 +132,7 @@ const TUint32 KSmumRemoveReplyViaSameCentre			    = 0x00000017;
 const TUint32 KSmumPreviousSimSmscNumber            = 0x00000018;
 const TUint32 KSmumShowSMSCTimeStamp                = 0x00000019;
 const TUint32 KSmsSettingsDiscardUnknownPortMsgs    = 0x0000001A;
-// REQ:417-48417 Message forward with sender info
-const TUint32 KForwardWithSenderInfo                = 0x0000001B;
-// End REQ:417-48417
+
 //
 // Send UI Settings API
 const TUid KCRUidSendUi = {0x101F8873};

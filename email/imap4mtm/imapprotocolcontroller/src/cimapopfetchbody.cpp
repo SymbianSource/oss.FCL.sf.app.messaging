@@ -501,7 +501,7 @@ void CImapOpFetchBody::AddFetchItemL(CImMimeHeader& aMimeHeader, TMsvEmailEntry&
 	fetchInfo->SetRelativePathL(aMimeHeader.RelativePath()); 
 	fetchInfo->SetIsText(aIsText);
 	fetchInfo->SetContentTransferEncoding(aMimeHeader.ContentTransferEncoding());
-
+	fetchInfo->iEmbed = iEmbed;
 	if (aIsText)
 		{
 		fetchInfo->SetCharsetId(aMimeHeader.MimeCharset());
@@ -1129,7 +1129,7 @@ void CImapOpFetchBody::BuildTreeL(TMsvId aParent,
 								  const TMsvId aThisMessage, 
 								  TInt& aAttachments, 
 								  TBool& aIsMHTML, 
-								  TInt& aRelatedAttachments)
+								  TInt& aRelatedAttachments, TBool aIsEmbed)
 	{
 	__LOG_FORMAT((iSession->LogId(), "CImapOpFetchBody::BuildTreeL(message=%x, parent=%x", aThisMessage, aParent));
 
@@ -1138,10 +1138,18 @@ void CImapOpFetchBody::BuildTreeL(TMsvId aParent,
 		{
 		// Build the content entry for the message part
 		HBufC8* newpath=HBufC8::NewLC(aPath.Length()+4);
+		if(aIsEmbed && aBodyStructure->BodyStructureType() == CImapBodyStructure::ETypeText)
+            {
 		*newpath=aPath;
+		    iEmbed = ETrue;
+            }
+		else
+            {
+		    *newpath=aPath;
 		if (aPath.Length())
 			newpath->Des().Append(KIMAP_REL_PATH_SEPARATOR);
 		newpath->Des().AppendNum(1);
+            }
 		BuildContentEntryL(aParent, aBodyStructure, newpath->Des(), aThisMessage, aAttachments, aIsMHTML, aRelatedAttachments);
 		CleanupStack::PopAndDestroy(newpath);
 		}
@@ -1596,7 +1604,7 @@ void CImapOpFetchBody::BuildEmbeddedMessageL(CImapBodyStructure* aBodyStructure,
         }	
 	if (bodystructure)
 	    {
-        BuildTreeL(aMessage.Id(), bodystructure, aPath, aMessage.Id(), attachments, isMHTML, relatedAttachments);
+        BuildTreeL(aMessage.Id(), bodystructure, aPath, aMessage.Id(), attachments, isMHTML, relatedAttachments, ETrue);
 	    }
 	
 	__LOG_FORMAT((iSession->LogId(), "  Built embedded message id %x attachments %d MHTML %d", aMessage.Id(), attachments, isMHTML));

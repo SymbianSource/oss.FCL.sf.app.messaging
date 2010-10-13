@@ -895,7 +895,6 @@ void CMsgSmsViewerAppUi::DynInitMenuPaneL(
             {
             // Prepare FindItem
             iFindItemMenu = CFindItemMenu::NewL( EFindItemMenuPlaceHolder );
-            iFindItemMenu->SetCallSubMenuVisibility ( EFalse ); // Click-To-Call
             iFindItemMenu->AttachItemFinderMenuL( R_SMSV_OPTIONSMENUPANE );
             }
         }

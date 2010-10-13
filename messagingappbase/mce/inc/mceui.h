@@ -1154,8 +1154,6 @@ class CMceUi :
          * otherwise EFalse
          */
         TBool                           iIadUpdateVal;
-		//To check if simdialog is open or not
-        TBool                           iSimDialogOpen;
     };
 
 #endif

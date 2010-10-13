@@ -324,15 +324,6 @@ RESOURCE MUIU_SETTINGS_ARRAY r_sms_main_settings_items
             type = EMuiuSettingsSelectionList;
             array_id = r_sms_settings_message_conversion;
             },
-        // REQ:417-48417 Message forward with sender info
-        // must pay attention to the order: order of item in rss file is same with the enum defined in head file.
-        MUIU_SETTINGS_ITEM
-            {
-            title = qtn_mce_setting_sms_forward;
-            type = EMuiuSettingsSelectionList;
-            array_id = r_sms_settings_yes_no;
-            },
-        // End REQ:417-48417
         MUIU_SETTINGS_ITEM
             {
             title = qtn_mce_settings_sms_connection;

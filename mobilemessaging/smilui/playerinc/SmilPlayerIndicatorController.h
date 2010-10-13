@@ -23,7 +23,6 @@
 #include <coecntrl.h>
 #include <coecobs.h>
 #include "SmilPlayerTimeObserver.h"
-#include "SmilPlayerPauseObserver.h"
 
 // FORWARD DECLARATIONS
 class CSmilPlayerPresentationController;
@@ -42,8 +41,7 @@ class TAknsItemID;
 NONSHARABLE_CLASS(CSmilPlayerIndicatorController) : public CCoeControl,
                                                     public MCoeForegroundObserver,
                                                     public MCoeControlObserver,
-                                                    public MSmilPlayerTimeObserver,
-                                                    public MSmilPlayerPauseObserver
+                                                    public MSmilPlayerTimeObserver
     {
     public: // Constructors and destructor
 
@@ -109,12 +107,6 @@ NONSHARABLE_CLASS(CSmilPlayerIndicatorController) : public CCoeControl,
         * See the documentation from the SmilPlayerTimeObserver.h
         */
         TBool IsDurationFinite() const;
-        
-        /**
-        * From MSmilPlayerPauseObserver
-        * See the documentation from the SmilPlayerPauseObserver.h
-        */
-        void TogglePauseIndicator() const;
         
         /**
         * From MCoeForegroundObserver 
@@ -220,10 +212,6 @@ NONSHARABLE_CLASS(CSmilPlayerIndicatorController) : public CCoeControl,
                                       const TInt aBitmapIndex,
                                       const TInt aMaskIndex ) const;
                                       
-        /**
-        * Sets pause indicator blinking on/off.
-        */
-        void SetPauseIndicatorBlinking( TBool aValue );
         
         /**
         * Handles skin change event.
@@ -268,9 +256,6 @@ NONSHARABLE_CLASS(CSmilPlayerIndicatorController) : public CCoeControl,
         
         /** View class for play indicator. */
         CEikImage* iPlayIndicator;
-        
-        /** Timer for pause indicator. */
-        CSmilPlayerPauseIndicatorTimer* iPauseTimer;
         
         /** Specifies whether time indicator should be shown. */
         TBool iShowTimeIndicator;

@@ -54,6 +54,7 @@ public:
 	IMPORT_C CImCaf* Caf() const;
 	IMPORT_C TInt32 BytesFetched();
 	IMPORT_C void IncrementBytesFetched(TInt32 aByteCount);
+	TBool iEmbed;
 private:
 	CFetchBodyInfo(TMsvId aPartId);
 	void ConstructL();

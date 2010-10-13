@@ -150,26 +150,18 @@ void CMsgImageControl::LoadL( RFile& aFileHandle )
             
     TSize sourceSize( iSourceImage->Size() );
     TSize targetSize = TSize(
-    	Min( sourceSize.iWidth, iMaxSize.iWidth - iFrame->FrameBorderSize().iWidth ),
-		Min( sourceSize.iHeight, iMaxSize.iHeight - iFrame->FrameBorderSize().iHeight ) );
+    Min( sourceSize.iWidth, iMaxSize.iWidth - iFrame->FrameBorderSize().iWidth ),
+    Min( sourceSize.iHeight, iMaxSize.iHeight - iFrame->FrameBorderSize().iHeight ) );
 
-    // In case of KImageTypePNGUid and KImageTypeBMPUid 
-    // with and without IsAnimation, call CreateImageViewerL with
-    // Flags zero. This to avoid image corruption  when IsAnimation is flase and 
-    // Image resize happened based on control size.
-
-    TUint32 flagOptions = 0;
+    // Avoiding the usage of MIHLImageViewer::EOptionUseBilinearInterpolation
+    // because it should be only used for small images because of the memory requirements
+    // and it is much slower than the regular scaling
+    //For any type of image, nearest neighbour method(default) will be used to resize it. 
     
-    if ( !iSourceImage->IsAnimation() &&
-           iSourceImage->ImageType() == KImageTypeGIFUid )
-        {
-        	flagOptions |= MIHLImageViewer::EOptionUseBilinearInterpolation;
-      	}
- 	  iEngine = IHLViewerFactory::CreateImageViewerL( targetSize,
+    iEngine = IHLViewerFactory::CreateImageViewerL( targetSize,
                                                     *iSourceImage, 
                                                     *iDestinationBitmap, 
-                                                    *this, 
-                                                    flagOptions);                        	
+                                                    *this);                        	
     }
 
 // ---------------------------------------------------------

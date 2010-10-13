@@ -402,9 +402,13 @@ void CUniEditorLaunchOperation::DoHandleMessageL()
 //
 void CUniEditorLaunchOperation::DoPrepareHeaderL()
     {
-    // Header is always drawn and populated
-    iHeader = CUniEditorHeader::NewL( iDocument.Mtm(), iDocument, iView, iFs );
-    CompleteSelf( KErrNone );
+    if(!iHeader)
+        {
+	    // Header is always drawn and populated
+	    iHeader = CUniEditorHeader::NewL( iDocument.Mtm(), iDocument, iView, iFs );
+        }
+    if(!iOptimizedFlow)
+        CompleteSelf( KErrNone );
     }
 
 // ---------------------------------------------------------
@@ -413,21 +417,28 @@ void CUniEditorLaunchOperation::DoPrepareHeaderL()
 //
 void CUniEditorLaunchOperation::DoPrepareBodyL()
     {
-    iSlideLoader = CUniSlideLoader::NewL(
-        iControlObserver,
-        *iDocument.DataModel(),
-        iView,
-        EUniControlEditorMode );
-        
+    if(!iSlideLoader)
+        {
+     	iSlideLoader = CUniSlideLoader::NewL(
+	        iControlObserver,
+	        *iDocument.DataModel(),
+	        iView,
+	        EUniControlEditorMode );
+        }
+    
     if ( iDocument.DataModel()->SmilType() == EMmsSmil )
         {
-        if ( !iDocument.DataModel()->SmilModel().SlideCount() )
+        if(!iOptimizedFlow)
             {
-            iDocument.DataModel()->SmilModel().AddSlideL();
-            }
+	        if ( !iDocument.DataModel()->SmilModel().SlideCount() )
+	            {
+	            iDocument.DataModel()->SmilModel().AddSlideL();
+	            }
             
-        iSlideLoader->LoadSlideL( *this, 0 );
-        SetPending();
+	        iSlideLoader->LoadSlideL( *this, 0 );       
+        
+	        SetPending();
+            }
         }
     else
         {
@@ -619,6 +630,8 @@ void CUniEditorLaunchOperation::HandleOperationEvent( TUniEditorOperationType aO
             iOptimizedFlow = iSendUiOperation->IsOptimizedFlagSet();
             if(iOptimizedFlow)
                 {
+                DoPrepareHeaderL();
+                DoPrepareBodyL();
                 iObserver.EditorOperationEvent(
                             EUniEditorOperationLaunch,
                             EUniEditorOperationComplete ); 

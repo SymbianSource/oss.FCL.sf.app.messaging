@@ -55,7 +55,6 @@ class CMceMainViewListView :
     public CAknView,
     public MMceMainViewListItemArrayObserver,
     public MEikListBoxObserver,
-    public MEikScrollBarObserver,
     public MMsvSessionObserver
     {
     public:
@@ -183,15 +182,6 @@ class CMceMainViewListView :
         void HandleListBoxEventL(
             CEikListBox* aListBox,
             TListBoxEvent aEventType);
-			
-    protected:  // Functions from base classes
-
-        /**
-        * From MEikScrollBarObserver
-        */
-        void HandleScrollEventL(
-             CEikScrollBar* aScrollBar, 
-             TEikScrollEvent aEventType);
 
     private:
 

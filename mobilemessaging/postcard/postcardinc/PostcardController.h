@@ -227,6 +227,23 @@ class CPostcardController : public CCoeControl
                                 const TDesC& aFileName,
                                 const TInt aFileBitmapId,
                                 const TInt aFileMaskId = -1 );
+        
+        
+
+        /**
+        *   DoLoadIconforUpandDownarrowL
+        *   Calls AknsUtils::CreateColorIconLC to load icons defined by parameters.
+        *   Param IN aId - the id of the icon in AknsConstants.h
+        *            aFileName - the name of the file where icons are loaded
+        *            aFileBitmapId - the id of the bitmap file
+        *   Returns - icon created by the function
+        */
+        CGulIcon* DoLoadIconforUpandDownarrowL(  const TAknsItemID& aId,
+                                   const TDesC& aFileName,
+                                   const TInt aFileBitmapId,
+                                   const TInt aFileMaskId = -1 );
+        
+        
                                
     private: //Data
 

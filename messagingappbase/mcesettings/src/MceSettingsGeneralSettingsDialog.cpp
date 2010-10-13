@@ -434,12 +434,10 @@ void CMceGeneralSettingsDialog::PreLayoutDynInitL( )
             {
             if ( iMemoryInUse )
                 {
-                delete (*iMceSettingsArray)[EMceGeneralSettingsMailListType].iMuiuSettingsItemArray;
                 iMceSettingsArray->Delete(EMceGeneralSettingsMailListType);
                 }
             else
                 {
-                delete (*iMceSettingsArray)[MceGeneralSettingsMailListType].iMuiuSettingsItemArray;
                 iMceSettingsArray->Delete(MceGeneralSettingsMailListType);
                 }
             }

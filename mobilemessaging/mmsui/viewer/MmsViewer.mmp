@@ -34,7 +34,8 @@ TARGETTYPE      exe
 UID             0x100039CE 0x100058DF
 
 VENDORID        VID_DEFAULT
-CAPABILITY      CAP_APPLICATION NetworkControl
+// DRM capability is added for 9.2 onwards as there was a requirement for which this change is introduced
+CAPABILITY      CAP_APPLICATION NetworkControl DRM 
 VERSION 	10.0
 PAGED
 

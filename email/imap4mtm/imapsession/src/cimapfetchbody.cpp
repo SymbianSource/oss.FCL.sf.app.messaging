@@ -281,7 +281,7 @@ void CImapFetchBody::SendMessageL()
 	const CImapCapabilityInfo& capabilityInfo = iParent.CapabilityInfo();
 	TBool binaryCapExist = capabilityInfo.QueryFlag(CImapCapabilityInfo::EBinaryCap);	
 #endif
-	if (iRequestCount == 0)
+	if (iRequestCount == 0 && !iFetchBodyInfo.iEmbed)
 		{
 		bufLength += iFetchBodyInfo.RelativePath()->Length();
 		
@@ -347,7 +347,7 @@ void CImapFetchBody::SendMessageL()
 	delete iOutputBuffer;
 	iOutputBuffer=buffer;
 
-	if (iRequestCount == 0)
+	if (iRequestCount == 0 && !iFetchBodyInfo.iEmbed)
 		{
 		if(iPeek)
 			{
@@ -378,6 +378,7 @@ void CImapFetchBody::SendMessageL()
 		}
 	else
 		{
+		iFetchBodyInfo.iEmbed = EFalse;
 		if(iPeek)
 			{
 #if (defined SYMBIAN_EMAIL_CAPABILITY_SUPPORT)	

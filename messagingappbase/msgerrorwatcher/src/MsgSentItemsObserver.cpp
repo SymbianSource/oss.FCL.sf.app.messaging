@@ -25,6 +25,7 @@
 #include <centralrepository.h>    // link against centralrepository.lib
 #include <cenrepnotifyhandler.h>  // link against CenRepNotifHandler.lib
 #include <messaginginternalcrkeys.h> // for Central Repository keys
+#include <MSVIPC.h>
 
 #include "MsgSentItemsObserver.h"
 
@@ -35,6 +36,8 @@
 // CONSTANTS
 //const TUid KUidMceApp = { 0x100058C5 }; //needed to request shared data notifications
 const TMsvId KWatcherSentFolderId = KMsvSentEntryIdValue;
+
+// Entry deletion could fail with KErrInUse if it is being operated by MW while deleting
 const TUint KMaxRetries = 3;
 const TInt KMaxNumOfItems = 20; //Deafult value in case of error reading CommsDb
 //const TInt KMsgErrorDiskSpaceForDelete = ( 5 * 1024 ); // minimum disk space needed when deleting messages
@@ -99,6 +102,10 @@ CMsgSentItemsObserver::~CMsgSentItemsObserver()
     delete iSentItemsFolder;
     delete iEntry;
     delete iOp;
+    
+    delete iQudUPEntryBeingDeleted;
+    delete iQueuedUPEntriesToBeDeleted;
+    
     }
 
 // ---------------------------------------------------------
@@ -125,7 +132,10 @@ void CMsgSentItemsObserver::ConstructL()
     iRepository = CRepository::NewL( KCRUidMuiuSettings );
     iNotifyHandler = CCenRepNotifyHandler::NewL( *this, *iRepository );
     iNotifyHandler->StartListeningL();
-
+    
+    iQudUPEntryBeingDeleted = new(ELeave) CMsvEntrySelection;
+    iQueuedUPEntriesToBeDeleted= new(ELeave) CMsvEntrySelection;
+    
 #ifdef USE_LOGGER
     MEWLOGGER_LEAVEFN( "SentItems: ConstructL" );
 #endif
@@ -140,16 +150,6 @@ void CMsgSentItemsObserver::ConstructL()
 void CMsgSentItemsObserver::RunL()
     {
     //iSession->FileSession().ReleaseReserveAccess( iMsgStoreDrive );
-#ifdef USE_LOGGER
-    if( iStatus==KErrNone )
-        {
-        MEWLOGGER_WRITE( "SentItems: deletion successful" );
-        }
-    else
-        {
-        MEWLOGGER_WRITEF( _L("SentItems: deletion error %d"), iStatus.Int() );
-        } 
-#endif
     //Check if new messages have appeared into Sent Items while deleting
     //the previous one(s).
 #ifdef USE_LOGGER
@@ -160,6 +160,38 @@ void CMsgSentItemsObserver::RunL()
         iRetryCounter++;
         TRAP_IGNORE( DeleteOldMessagesFromSentFolderL() );
         }
+    
+    
+    const TDesC8& temp = iOp->ProgressL();
+    TMsvLocalOperationProgress* prog = ( (TMsvLocalOperationProgress*) temp.Ptr());
+
+#ifdef USE_LOGGER
+    MEWLOGGER_WRITEF( _L("SentItems: deletion iStatus %d"), iStatus.Int() );
+	// prog->iNumberFailed should be either 0(if successful) or 1(if failed) as we are deletingone entry at a time
+    MEWLOGGER_WRITEF( _L("Failed Deletions: %d"), prog->iNumberFailed );
+    MEWLOGGER_WRITEF( _L("Delete Error Code: %d"), prog->iError );
+#endif
+    
+    if(iStatus.Int() == KErrNone && prog->iNumberFailed && prog->iError == KErrInUse && iRetryCounterIfEntryDelFailed < KMaxRetries)
+        {
+        DeleteSingleEntryL(iQudUPEntryBeingDeleted);
+        iRetryCounterIfEntryDelFailed ++;
+#ifdef USE_LOGGER
+        MEWLOGGER_WRITEF( _L("iRetryCounterIfEntryDelFailed : %d"), iRetryCounterIfEntryDelFailed );
+#endif
+        return;
+        }
+    iRetryCounterIfEntryDelFailed = 0;
+    
+    if( iQueuedUPEntriesToBeDeleted->Count() )
+        {
+        iQudUPEntryBeingDeleted->Reset();
+        iQudUPEntryBeingDeleted->AppendL(iQueuedUPEntriesToBeDeleted->At(0));
+        iQueuedUPEntriesToBeDeleted->Delete(0);
+        
+        DeleteSingleEntryL(iQudUPEntryBeingDeleted);
+        }
+    
     }
 
 // ---------------------------------------------------------
@@ -324,11 +356,28 @@ void CMsgSentItemsObserver::DeleteOldMessagesFromSentFolderL()
 //
 void CMsgSentItemsObserver::DeleteMessagesFromSentFolderL( CMsvEntrySelection* aSelection )
     {
+    iQueuedUPEntriesToBeDeleted->AppendL(aSelection->Back(0), aSelection->Count());
     if ( !IsActive() )
         {
+        iQudUPEntryBeingDeleted->Reset();
+        iQudUPEntryBeingDeleted->AppendL(iQueuedUPEntriesToBeDeleted->At(0));
+        iQueuedUPEntriesToBeDeleted->Delete(0);
+        
+		// If multiple entries are sent for deletion, then it won't be possible to track
+		// the entries that failed to delete
+        DeleteSingleEntryL(iQudUPEntryBeingDeleted);
+        }
+    
+    }
+
+
+void CMsgSentItemsObserver::DeleteSingleEntryL(CMsvEntrySelection* aSelection)
+    {
+
 #ifdef USE_LOGGER
         MEWLOGGER_WRITEF( _L("SentItems: deleting %d messages from sent folder"), aSelection->Count() );
 #endif
+        
         const TMsvId id = aSelection->At( 0 );
         delete iEntry;
         iEntry = 0;
@@ -355,8 +404,9 @@ void CMsgSentItemsObserver::DeleteMessagesFromSentFolderL( CMsvEntrySelection* a
         //    {
             SetActive();
         //    }
+            
         }
-    }
+
 
 //  End of File  
 

@@ -119,7 +119,7 @@ public:
 						TRequestStatus& aStatus );
 	TBool CommandExpected();
 	const TDesC8& Progress();
-	TInt ChangeEntriesL(const CMsvEntrySelection& aSelection, TInt aMark, TRequestStatus& aStatus);
+	
 protected:
 	IMPORT_C TInt Extension_(TUint aExtensionId, TAny *&a0, TAny *a1);
 

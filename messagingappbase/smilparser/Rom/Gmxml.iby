@@ -19,7 +19,7 @@
 #define __GMXML_IBY__
 
 #include <legacyminidomparser.iby>
-file=ABI_DIR\BUILD_DIR\smildtd.dll	System\libs\smildtd.dll
+file=ABI_DIR\BUILD_DIR\SMILDTD.dll	System\libs\SMILDTD.dll
 
 
 #endif

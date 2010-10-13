@@ -22,7 +22,6 @@
 // INCLUDE FILES
 #include <bldvariant.hrh>
 #include <featmgr.h>
-#include <mtmuidef.hrh> 
 
 #include <messagingvariant.hrh>
 #include <centralrepository.h>
@@ -205,7 +204,7 @@ const TUid KMailTechnologyTypeUid = { 0x10001671 };
 _LIT( KMmsMessageDumpDirectory, "C:\\Private\\1000484b\\mmsvar");
 _LIT( KRootPath, "C:\\" );
 const TInt KMmsCodecClientChunkSize = 1024;
-#define KMtmUiFunctionSimDialog  ( KMtmFirstFreeMtmUiFunctionId + 1 )
+
 // LOCAL FUNCTION PROTOTYPES
 
 //  ==================== LOCAL FUNCTIONS ====================
@@ -233,8 +232,7 @@ CMceUi::CMceUi()
     iAnchorId( NULL ),
     iEmailClientIntegration(EFalse),
     iSelectableEmail(EFalse),
-    iEmailFramework(EFalse),
-    iSimDialogOpen(EFalse)
+    iEmailFramework(EFalse)
     {
     iMceUiFlags.SetMceFlag( EMceUiFlagsExitOnMsvMediaAvailableEvent );
     }
@@ -833,7 +831,6 @@ void CMceUi::HandleCommandL( TInt aCommand )
     switch (aCommand)
         {
         case EEikCmdExit:
-            iSimDialogOpen = EFalse;
             Exit();
             break;
         case EMceCmdExit:
@@ -4492,10 +4489,6 @@ void CMceUi::HandleMTMFunctionL(const TMsgFunctionInfo& aFunction)
     TBuf8<1> buf;
     if (!(aFunction.iFlags&EMtudAsynchronous))
         {
-        if(aFunction.iFuncId == KMtmUiFunctionSimDialog)
-            {
-            iSimDialogOpen = ETrue;
-            }
         mtmUi.InvokeSyncFunctionL(aFunction.iFuncId, *sel, buf);
         }
     else
@@ -4979,11 +4972,6 @@ void CMceUi::TabChangedL(TInt aIndex)
     TBool bOBoxOrMBox = EFalse ;
     if ( !MceViewActive( EMceMessageViewActive )
         && !MceViewActive( EMceDeliveryReportsViewActive ) )
-        {
-        return;
-        }
-    if( !MceViewActive( EMceDeliveryReportsViewActive ) &&
-            iMceListView->MarkingMode() )
         {
         return;
         }
@@ -6666,35 +6654,18 @@ void CMceUi::HideOrExit()
 // ----------------------------------------------------
 void CMceUi::ResetAndHide()
     {
-    if( MceViewActive( EMceMessageViewActive ) && iMceListView
-            && iMceListView->MarkingMode() )
-        {
-        iMceListView->SetMarkingModeOff();
-        iMceListView->SetMarkingMode( EFalse );
-        RemoveTabs();
-        delete iDecoratedTabGroup;
-        iDecoratedTabGroup = NULL;
-        delete iTabsArray;
-        iTabsArray = NULL;
-        SetCustomControl(1);    // Disable bring-to-foreground on view activation
-        TRAP_IGNORE( CAknViewAppUi::CreateActivateViewEventL( \
-            KMessagingCentreMainViewUid, \
-            TUid::Uid(KMceHideInBackground), \
-            KNullDesC8 ) ) ;
-        }    
     // Messaging was not exiting properly when "exit" is pressed from settings dialog.
     // iMceUiFlags.MceFlag( EMceUiFlagsSettingsDialogOpen ) will be true 
     // when we exit from any of the settings Dialog. 
     // Closing of Settings dialogs will be taken care by AVKON. 
-    else if (!(MceViewActive( EMceMainViewActive) && IsForeground()) ||  
-	      iMceUiFlags.MceFlag( EMceUiFlagsSettingsDialogOpen ) || iSimDialogOpen )
+    if( !(MceViewActive( EMceMainViewActive ) && IsForeground() ) ||  
+	      iMceUiFlags.MceFlag( EMceUiFlagsSettingsDialogOpen ) )
         {
         SetCustomControl(1);    // Disable bring-to-foreground on view activation
         TRAP_IGNORE( CAknViewAppUi::CreateActivateViewEventL( \
             KMessagingCentreMainViewUid, \
             TUid::Uid(KMceHideInBackground), \
             KNullDesC8 ) ) ;
-        iSimDialogOpen = EFalse;
         }
     else
         {

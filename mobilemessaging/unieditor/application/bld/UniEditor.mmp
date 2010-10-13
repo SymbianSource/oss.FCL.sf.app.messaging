@@ -131,12 +131,6 @@ LIBRARY         videoconversionapi.lib
 LIBRARY	        peninputclient.lib
 LIBRARY         cenrepnotifhandler.lib
 
-// for CEikRichTextEditor to show global warning note
-LIBRARY          eikctl.lib  
-LIBRARY         uiklaf.lib 
-LIBRARY         form.lib 
-
-
 #ifdef RD_MSG_XHTML_SUPPORT 
 LIBRARY         xhtmlparser.lib
 #endif

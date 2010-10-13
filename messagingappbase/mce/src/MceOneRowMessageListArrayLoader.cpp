@@ -142,10 +142,9 @@ CMceOneRowListItemArrayLoader::~CMceOneRowListItemArrayLoader()
     delete iFolderEntry;
     delete iEntriesToBeAdded;
     delete iEntriesReceivedDuringListCreation;
-    if ( iCmailSelectionList )
+    if ( iEmailFramework )
         {
         delete iCmailSelectionList ;
-		iCmailSelectionList = NULL;
         }
     iMarkedArray.Close();
     }
@@ -2131,12 +2130,7 @@ TTime CMceOneRowListItemArrayLoader::TodayTime ()
 // ----------------------------------------------------
 void CMceOneRowListItemArrayLoader::CreateCmailEntryIndexL() 
     {
-	if(iCmailSelectionList)
-	{
-	delete iCmailSelectionList;
-	iCmailSelectionList = NULL;
-	}
-	iCmailSelectionList = new( ELeave ) CMsvEntrySelection() ;
+    iCmailSelectionList = new( ELeave ) CMsvEntrySelection() ;
      
     //Find email messages 
     CMsvEntrySelection *smtpselection = iFolderEntry->ChildrenWithMtmL( KUidMsgTypeSMTP );

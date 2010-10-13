@@ -111,9 +111,9 @@ EXPORT_C void CMuiuSettingsArray::ConstructL( TInt aResourceId )
             item.iLabelText.Copy( *txt );
             TBool flag = EFalse;
             //If string retrived from resource is "Message sent as" 
-            CleanupStack::PushL( txt );
             flag = IsMessageSentStringL( txt );
-            CleanupStack::PopAndDestroy( txt );
+
+            delete txt;
             
             const TMuiuSettingsType type = ( TMuiuSettingsType ) reader.ReadInt16();
             item.iType = type;
@@ -127,24 +127,25 @@ EXPORT_C void CMuiuSettingsArray::ConstructL( TInt aResourceId )
             
             if ( type == EMuiuSettingsSelectionList && array_id )
                 {
-                TResourceReader arrayReader;
-                env->CreateResourceReaderLC( arrayReader, array_id );
+                CDesCArrayFlat* array = 
+                                new( ELeave ) CDesCArrayFlat( KMuiuSettingsArrayGranularity );
+                CleanupStack::PushL( array );
+                TResourceReader reader2;
+                env->CreateResourceReaderLC( reader2, array_id );
                 
-                CDesCArrayFlat* array = arrayReader.ReadDesCArrayL();
-                
-                if ( !flag && array )
+                const TInt count = reader2.ReadInt16();
+                for ( TInt loop = 0; loop < count; loop++ )
                     {
-                    item.iMuiuSettingsItemArray = array;
-                    CleanupStack::PushL( array );
-                    AppendL( item );
-                    CleanupStack::Pop( array );
+                    HBufC* txt = reader2.ReadHBufCL();
+                    CleanupStack::PushL( txt );
+                    array->AppendL( *txt );
+                    CleanupStack::PopAndDestroy(); // txt
                     }
-                else
-                    {
-                    delete array;
-                    }
-                
-                CleanupStack::PopAndDestroy();
+                CleanupStack::PopAndDestroy(); //reader2
+                item.iMuiuSettingsItemArray = array;
+                if(!flag)
+                AppendL( item );
+                CleanupStack::Pop( array ); //array
                 }
             else
                 {

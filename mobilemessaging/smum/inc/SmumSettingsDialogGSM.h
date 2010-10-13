@@ -72,11 +72,8 @@ enum TSmumMainSmsSettingsSettingLBIndex
     ESmumCharSupportInUseLBI,    //= 3
     ESmumDeliveryReportLBI,      //= 4
     ESmumValidityPeriodLBI,      //= 5
-    // REQ:417-48417 Message forward with sender info
-    ESmumForwardWithSenderInfoLBI, //= 6
-    // End REQ:417-48417
-    ESmumPreferredConnectionLBI, //= 7
-    ESmumReplyViaSameCentreLBI   //= 8
+    ESmumPreferredConnectionLBI, //= 6
+    ESmumReplyViaSameCentreLBI   //= 7
     };
 
 enum TSmumMainSmsSendingOptSettingLBIndex
@@ -332,9 +329,6 @@ NONSHARABLE_CLASS( CSmumMainSettingsDialogGSM ) : public CSmumMainSettingsDialog
         TInt 					iRemoveReplyScSetting;
         TInt					iStoreSettingsIndex;
         TInt                    iMskId;
-        // REQ:417-48417 Message forward with sender info
-        TBool                   iForwardWithSenderSupported;
-        // End REQ:417-48417
     };
 
 #endif      // SMUMSETTINGSDIALOGGSM_H   
