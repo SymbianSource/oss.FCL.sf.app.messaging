@@ -1,0 +1,215 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Contains the ID's of the setting pages
+*
+*
+*/
+
+
+#ifndef __IMAS_PAGE_IDS__
+#define __IMAS_PAGE_IDS__
+
+enum TIMAWizardSettingsId
+    {
+    // Wizard menu items
+    EIMAWProtocol = 0x00000DEB,
+    EIMAWEmailAddress,
+    EIMAWReceivingServer,
+    EIMAWSendingServer,
+    EIMAWIap,
+    EIMAWMailboxName,
+
+    // Wizard protocol radio buttons
+    EIMAWRadioButtonImap4,
+    EIMAWRadioButtonPop3,
+
+    // Wizard Access Point radio buttons
+    EIMAWRadioButtonIapAlwaysAsk,
+    EIMAWRadioButtonIapDefaultConn,
+    EIMAWRadioButtonIapCreateNew,
+    EIMAWRadioButtonIapUseExisting
+    };
+
+enum TIMASettigsId
+    {
+    // Main menu
+    EIMASMainMailbox = 0x00000FED,
+    EIMASMainUserPref,
+    EIMASMainDownloadCtrl,
+    EIMASMainAlwaysOnline,
+
+    // Mailbox menu
+    EIMASMailboxIncoming,
+    EIMASMailboxOutgoing,
+
+    // Incoming settings
+    EIMASIncomingMailboxName,
+    EIMASIncomingIap,
+    EIMASIncomingMailServer,
+    EIMASIncomingUserName,
+    EIMASIncomingUserPwd,
+    EIMASIncomingProtocol,
+    EIMASIncomingSecurity,
+    EIMASIncomingPort,
+    EIMASIncomingAPop,
+
+    // Outgoing settings
+    EIMASOutgoingIap,
+    EIMASOutgoingEmailAddress,
+    EIMASOutgoingMailServer,
+    EIMASOutgoingUserName,
+    EIMASOutgoingUserPwd,
+    EIMASOutgoingSecurity,
+    EIMASOutgoingPort,
+
+    // User Preferences
+    EIMASUserSendMsg,
+    EIMASUserUnixPath,
+    EIMASUserFolderSubscription,
+    EIMASUserSendCopy,
+    EIMASUserIncludeSignature,
+    EIMASUserOwnName,
+    EIMASUserShowHtml,
+    EIMASUserNewMailInd,
+    EIMASUserMailDeletion,
+    EIMASUserReplyTo,
+    EIMASUserEncoding,
+
+    // Retrieval limit
+    EIMASLimitInbox,
+    EIMASLimitFolders,
+
+    // Download control
+    EIMASDownloadRetrievedParts,
+    EIMASDownloadRetrievalLimit,
+    EIMASDownloadMsgsOverLimit,
+
+    // Always Online
+    EIMASMailNotifications,
+    EIMASAORolling,
+    EIMASAODays,
+    EIMASAOHours,
+    EIMASAOInterval,
+
+    // Protocol Buttons
+    EIMASBtnProtocolPop3,
+    EIMASBtnProtocolImap4,
+
+    // Incoming&Outgoing Security Buttons
+    EIMASBtnSecurityTls,
+    EIMASBtnSecuritySsl,
+    EIMASBtnSecurityOff,
+
+    // Incomint&Outgoing Port Buttons
+    EIMASBtnPortDefaultPort,
+    EIMASBtnPortUserDefined,
+
+    // User Defined Port Editor
+    EIMASPortUserDefinedEdit,
+
+    // APOP Buttons
+    EIMASBtnAPopOn,
+    EIMASBtnAPopOff,
+
+    // Send Message Buttons
+    EIMASBtnSendImmedi,
+    EIMASBtnSendNext,
+
+    // Retrieved parts Buttons
+    EIMASBtnRetrieveHeader,
+    EIMASBtnRetrieveLimit,
+    EIMASBtnRetrieveBody,
+    EIMASBtnRetrieveBodyAtt,
+
+    // Size filter Edit
+    EIMASDownloadSizeFilterEdit,
+
+    // Send copy to self
+    EIMASBtnSendCopyNo,
+    EIMASBtnSendCopyYes,
+
+    // Signature Buttons
+    EIMASBtnSignatureYes,
+    EIMASBtnSignatureNo,
+
+    // Signature edit
+    EIMASUserSignatureEdit,
+
+    // HTML support Buttons
+    EIMASBtnHtmlYes,
+    EIMASBtnHtmlNo,
+
+    // Mail Deletion Buttons
+    EIMASBtnMailDelAsk,
+    EIMASBtnMailDelPhone,
+    EIMASBtnMailDelServer,
+
+    // Mail indicators Buttons
+    EIMASBtnMailIndicatorOn,
+    EIMASBtnMailIndicatorOff,
+
+    // Default encoding
+    EIMASBtnEncodingAutomatic,
+    EIMASBtnEncodingUnicode,
+
+    // Retrieve mail Buttons
+    EIMASBtnFetchAll,
+    EIMASBtnFetchUserDefined,
+
+    // Retrieve mails userdefined
+    EIMASValueEditRetrieve,
+
+    // Message deleting buttons
+    EIMASBtnDeleteMessagesYes,
+    EIMASBtnDeleteMessagesNo,
+
+    // Always Online Buttons
+    EIMASBtnAOConnected,
+    EIMASBtnAOHome,
+    EIMASBtnAOOff,
+
+    // Mail Message Notifications
+    EIMASBtnOMAEmnOff,
+    EIMASBtnOMAEmnHome,
+    EIMASBtnOMAEmnAuto,
+
+    // Retrieve days Buttons
+    EIMASBtnAoMonday,
+    EIMASBtnAoTuesday,
+    EIMASBtnAoWednesday,
+    EIMASBtnAoThrusday,
+    EIMASBtnAoFriday,
+    EIMASBtnAoSaturday,
+    EIMASBtnAoSunday,
+
+    // Connection hours radiobuttons
+    EIMASBtnAllDay,
+    EIMASBtnBetweenHours,
+
+    // Connection hours editors
+    EIMASEditAoHoursEditor,
+    EIMASEditAoFrom,
+    EIMASEditAoTo,
+
+    // Connection interval Buttons
+    EIMASBtnAo5Min,
+    EIMASBtnAo15Min,
+    EIMASBtnAo30Min,
+    EIMASBtnAo60Min,
+    EIMASBtnAo2Hours,
+    EIMASBtnAo4Hours,
+    EIMASBtnAo6Hours
+    };
+
+#endif // __IMAS_PAGE_IDS__

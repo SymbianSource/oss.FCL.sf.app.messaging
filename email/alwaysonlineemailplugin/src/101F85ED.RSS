@@ -1,0 +1,51 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: AlwaysOnlineEmailPlugin
+*
+*/
+
+
+
+#include <ecom/registryinfo.rh>
+
+RESOURCE REGISTRY_INFO theInfo
+	{
+	// AlwaysOnlineEmailPlugin.dll UID
+	dll_uid = 0x101F85ED;
+	interfaces = 
+		{
+		INTERFACE_INFO
+			{
+			// CEComInterface interface UID
+			interface_uid = 0x101F85EC;
+			implementations = 
+				{
+				IMPLEMENTATION_INFO
+					{
+					// AlwaysOnlineManager implementation UID
+					implementation_uid = 0x101F85ED;
+					version_no = 1;
+					display_name = "Email ECom Plugin for always online manager";
+					default_data = "email";
+					// Note : opaque_data MUST have @ least a single byte of data
+					// in this instance it is an empty string.
+					opaque_data = " ";
+					}
+				// Place additional interface implementations here
+				};
+			}
+		// Place additional interfaces here
+		};
+	}
+

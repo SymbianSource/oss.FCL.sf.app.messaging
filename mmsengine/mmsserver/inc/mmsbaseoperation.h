@@ -213,7 +213,7 @@ class CMmsBaseOperation : public CMsgActive, public MBackupOperationObserver
 
         // The following functions are default implementations for all states.
         // The function names end to L to allow derived classes to 
-        // override that default functions with leaving functions.
+        // override tha default funtions with leaving functions.
         // All default implementations do not leave.
 
         /**

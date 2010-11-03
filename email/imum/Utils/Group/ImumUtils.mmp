@@ -1,0 +1,178 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+*     This is project specification file for the Imum.
+*
+*
+*/
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+// Details
+TARGET          IMUMUTILS.DLL
+TARGETTYPE      DLL
+TARGETPATH      System/Libs
+UID             0x10004845 0x102750C7
+VENDORID        VID_DEFAULT
+
+// Resource definition
+START RESOURCE  ../Data/ImumUtils.rss
+TARGETPATH      RESOURCE_FILES_DIR
+HEADER
+LANGUAGE_IDS
+END
+
+// Def file
+DEFFILE         imumutils.def
+
+// Path definition
+SOURCEPATH      ../Src
+USERINCLUDE     ../Inc
+USERINCLUDE     ../../Mtms/Inc
+USERINCLUDE     ../Data
+USERINCLUDE     ../../DomainApi/inc
+USERINCLUDE     ../../logging
+
+APP_LAYER_SYSTEMINCLUDE
+SYSTEMINCLUDE	../../../../inc
+
+// Common Code
+SOURCE      ComDbUtl.cpp
+SOURCE      EmailFeatureUtils.cpp
+SOURCE      EmailUtils.cpp
+SOURCE      ImumMBoxServiceDeletion.cpp
+
+// Settings UI
+SOURCE      IMASCenRepControl.cpp
+SOURCE      IMASAccountControl.cpp
+SOURCE      IMSSettingsUi.cpp
+SOURCE      IMSSettingsBaseUi.cpp
+SOURCE      IMSSettingsNoteUi.cpp
+SOURCE      IMSSettingsDialog.cpp
+SOURCE      IMSSettingsWizard.cpp
+SOURCE      IMSWTextEditorPage.cpp
+SOURCE      IMSWRadiobuttonPage.cpp
+SOURCE      IMSWCheckBoxPage.cpp
+SOURCE      IMSSettingsItemApprover.cpp
+SOURCE      IMSSettingsItemAccessPoint.cpp
+SOURCE      IMSSoftkeyControl.cpp
+SOURCE      IMSPageResourceControl.cpp
+SOURCE      IMSFolderListArray.cpp
+SOURCE      IMSFolderSubscription.cpp
+SOURCE      IMSWizardLauncher.cpp
+SOURCE      IMSWizardControl.cpp
+
+SOURCE ImumNaviPaneFolderIndicator.cpp
+
+// Settings Data
+SOURCE      ImumMboxManager.cpp
+SOURCE      ImumMboxSettingsCtrl.cpp
+SOURCE      ImumMboxDefaultData.cpp
+SOURCE      ImumMboxData.cpp
+SOURCE      ImumMboxDataExtension.cpp
+SOURCE      ImumMboxSymbianDataConverter.cpp
+SOURCE      ImumMboxInternalDataConverter.cpp
+SOURCE      ImumMboxScheduler.cpp
+
+// Internal API
+SOURCE      ImumInternalApiImpl.cpp
+SOURCE      ImumInMailboxServicesImpl.cpp
+SOURCE      ImumInMailboxUtilitiesImpl.cpp
+SOURCE      ImumInHealthServicesImpl.cpp
+SOURCE      ImumInSettingsDataImpl.cpp
+SOURCE      ImumInSettingsDataCollectionImpl.cpp
+SOURCE      ImumInSettingsDataArray.cpp
+SOURCE      ImumInSettingsDataCtrl.cpp
+SOURCE      ImumInSettingsDataValidator.cpp
+SOURCE      ImumInSettingsDataAttribute.cpp
+
+/// TEMPORARY
+source          MuiuDynamicSettingItemBase.cpp
+source          MuiuDynamicSettingItemEditValue.cpp
+source          MuiuDynamicSettingItemEditText.cpp
+source          MuiuDynamicSettingItemLink.cpp
+source          MuiuDynamicSettingItemExtLink.cpp
+source          MuiuDynamicSettingsDialog.cpp
+source          MuiuDynamicSettingsArray.cpp
+source          MuiuDynamicSettingsItemFinder.cpp
+
+// Documents
+SOURCEPATH  ../Inc
+DOCUMENT    IMASPageIds.hrh
+SOURCEPATH  ../Group
+DOCUMENT    bld.inf
+SOURCEPATH  ../../loc
+DOCUMENT    Imum.loc
+SOURCEPATH  ../Data
+DOCUMENT    ImumUtilsStrings.rss
+DOCUMENT    ImumUtils.rss
+DOCUMENT    ImumMailSettings.ra
+DOCUMENT    ImumMailWizard.ra
+
+// LIBRARIES
+LIBRARY     cmmanager.lib
+LIBRARY     euser.lib
+LIBRARY     cone.lib
+LIBRARY     bafl.lib
+LIBRARY     etext.lib
+LIBRARY     commdb.lib
+LIBRARY     msgs.lib
+LIBRARY     imcm.lib
+LIBRARY     mtur.lib
+LIBRARY     muiu.lib
+LIBRARY     muiu_internal.lib
+LIBRARY     eikcore.lib
+LIBRARY     eikcoctl.lib
+LIBRARY     eikdlg.lib
+LIBRARY     estor.lib
+LIBRARY     avkon.lib
+LIBRARY     ws32.lib
+LIBRARY     apsettingshandlerui.lib
+LIBRARY     CommonEngine.lib
+LIBRARY     apengine.lib
+LIBRARY     CommonUI.lib                    // CErrorUI
+LIBRARY     aknnotify.lib                   // For Global note
+LIBRARY     efsrv.lib
+LIBRARY     egul.lib
+LIBRARY     fbscli.lib
+LIBRARY     eikctl.lib
+LIBRARY     AlwaysOnlineManagerClient.lib
+LIBRARY     hlplch.lib                      // HlpLauncher
+LIBRARY     featmgr.lib                     // Feature Manager
+LIBRARY     AknSkins.lib
+LIBRARY     CentralRepository.lib
+LIBRARY     ConnectionUiUtilities.lib
+LIBRARY     CharConv.lib
+LIBRARY     ECom.lib
+LIBRARY     ETel.lib                        // RTelServer
+LIBRARY     ETelMM.lib                      // RMobilePhone
+LIBRARY     gdi.lib
+LIBRARY     ServiceHandler.lib              // AIW
+LIBRARY     policyengine.lib
+LIBRARY     AknLayout2.lib
+LIBRARY     AknLayout2Scalable.lib
+LIBRARY     CdlEngine.lib
+LIBRARY         AknIcon.lib
+
+DEBUGLIBRARY     flogger.lib
+
+//
+// Bitmap files are in muiu.mbm
+START               wins
+    BASEADDRESS     0x4A980000
+END
+
+CAPABILITY  CAP_GENERAL_DLL

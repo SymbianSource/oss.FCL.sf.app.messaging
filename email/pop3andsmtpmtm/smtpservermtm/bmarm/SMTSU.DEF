@@ -1,3 +1,0 @@
-EXPORTS
-	NewL__11CSmtpSrvMtmR17CRegisteredMtmDllP15CMsvServerEntry @ 1 NONAME R3UNUSED ; CSmtpSrvMtm::NewL(CRegisteredMtmDll &, CMsvServerEntry *)
-

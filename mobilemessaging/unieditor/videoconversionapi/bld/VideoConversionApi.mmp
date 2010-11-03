@@ -1,0 +1,41 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   ECOM Plugin API for video conversion for multimedia messages*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+TARGET          videoconversionapi.dll
+TARGETTYPE      dll
+UID             0x10004845 0x102824B6    
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_GENERAL_DLL
+VERSION 	10.0
+PAGED
+
+SOURCEPATH      ../src
+SOURCE          VideoConversionApi.cpp 
+
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+SYSTEMINCLUDE   /epoc32/include/ecom
+
+USERINCLUDE     ../inc
+USERINCLUDE     ../../inc
+
+LIBRARY         euser.lib
+LIBRARY         ecom.lib

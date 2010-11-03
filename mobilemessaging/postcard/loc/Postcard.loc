@@ -1,0 +1,390 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains the localised strings for postcard ui and postcard application 
+*
+*/
+
+
+
+//d: Default filename for attachments. Used when filename for some
+//d: reason cannot be used. Extension ie. ".txt", ".jpg" is added
+//d: to the end name in code.
+//l: list_double_large_graphic_pane_1
+//w:
+//r: 3.0
+//#define qtn_mms_no_name_for_file            	"NoName"
+
+//////////////////////////////////
+//  POSTCARD MAIN VIEW
+//////////////////////////////////
+
+//d:Character counter in navipane (current / maximum)
+//l:tabs_2_active_pane_t1/opt1
+//w:
+//r: 3.0
+#define qtn_postcard_message_length		"%0N/%1N"
+
+//d: Command in options menu.
+//d: 
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_mms_poca_edit_address     		"Edit recipient address"
+
+//d: Command in options menu.
+//d: 
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_mms_poca_add_greeting     		"Edit greeting text"
+
+//d: Command in options menu.
+//d: 
+//l: list_single_pane_t1_cp2/opt3
+//w:
+//r: 3.0
+#define qtn_mms_poca_om_insert_image     	"Insert image"
+
+//d: Command in options menu.
+//d: 
+//l: list_single_pane_t1_cp2/opt3
+//w:
+//r: 3.0
+#define qtn_mms_poca_om_replace_image     	"Replace image"
+
+//d: Command in option menu "Insert" submenu.
+//d: Insert image in postcard from Gallery
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.0
+#define qtn_mms_poca_sm_from_gallery 		"From Gallery"
+
+//d: Command in option menu "Replace" submenu.
+//d: Replace image in postcard from Gallery
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 5.0
+#define qtn_mms_poca_sm_replace_from_gallery    "From Gallery"
+
+//d: Command in option menu "Insert" submenu.
+//d: Insert image in postcard from Camera
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.0
+#define qtn_mms_poca_sm_open_camera 		"Open Camera"
+
+//d: Command in option menu "Replace" submenu.
+//d: Replace image in postcard from Camera
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 5.0
+#define qtn_mms_poca_sm_replace_open_camera "Open Camera"
+
+//d: Command in options menu.
+//d: 
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_mms_om_forward     			"Forward"
+
+//d: Command in Recipient view options menu.
+//d: 
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_msg_om_replace_recipient     	"Replace recipient"
+
+//d: Command in Recipient view options menu.
+//d: Open the insert note/template submenu
+//l: list_single_pane_t1_cp2/opt3
+//w:
+//r: 3.0
+#define qtn_mms_om_insert     	"Insert"
+
+//d: Command in options menu.
+//d: Opens messaging template text fetch dialog
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.0
+#define qtn_mms_sm_insert_template_text     "Template text"
+
+//d: Command in options menu.
+//d: Opens notepad note fetch dialog
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r: 3.0
+#define qtn_mms_sm_insert_note      "Note"
+
+//////////////////////////////////
+//  POSTCARD INFO NOTES
+//////////////////////////////////
+
+
+//d: Information note.
+//d: When exceeded the maximum number of characters in greeting text by one character.
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_poca_greeting_too_long_one	"Greeting text length exceeded. Cannot send message. Remove 1 character."
+
+//d: Information note.
+//d: When exceeded the maximum number of characters in greeting text by N characters.
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_poca_greeting_too_long_many	"Greeting text length exceeded. Cannot send message. Remove %N characters."
+
+//d: Information note.
+//d: When exceeded the maximum number of characters in address field by one character.
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_poca_address_too_long_one	"Address text length exceeded. Cannot send message. Remove 1 character."
+
+//d: Information note.
+//d: When exceeded the maximum number of characters in address field by N characters.
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_poca_address_too_long_many	"Address text length exceeded. Cannot send message. Remove %N characters."
+
+// For opening:
+
+//d: Information note.
+//d: When user tries to insert a file which format is not supported.
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_poca_info_unsupported        	"Unable to insert. Format not supported."
+
+//d: Information note.
+//d: When user tries to insert multiple files thru send via.
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_poca_info_many_files        	"Unable to insert multiple files"
+
+//d: Information note.
+//d: When user tries to insert multiple recipients thru send via
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_poca_info_many_recip        	"Unable to send postcard to multiple recipients"
+
+// For inserting stuff
+
+//d: Information note.
+//d: When user tries to insert an image which cannot be scaled/compressed to fit max size
+//l: popup_note_window
+//w:
+//r: 3.2
+#define qtn_mms_poca_image_size_exceeded		"Unable to insert. Image size exceeds the maximum allowed size."
+
+// For sending/closing
+
+//d: Information note. 
+//d: 
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_poca_cannot_send_no_image	"Cannot be sent without an image. Insert an image."
+
+//d: Information note.
+//d: 
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_poca_cannot_send_no_address	"A mandatory field %0U is empty. Add %1U."
+
+//d: Information note.
+//d: Shown when an old postcard opened from Drafts, all the content is deleted and editor is closed.
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_sms_info_deleted			"Message deleted"
+
+//d: Wait note
+//d: This is shown after user pressed send and the postcard was validated
+//l: popup_note_wait_window
+//w:
+//r: 3.0
+#define qtn_mms_wait_send_message           "Sending multimedia"
+
+//d: Wait note
+//d: This is shown when user saves a new postcard to Drafts folder
+//l: popup_note_wait_window
+//w:
+//r: 3.0
+#define qtn_wait_saving_message_new		"Saving message to Drafts"
+
+//d: Wait note
+//d: This is shown when user saves an old postcard to Drafts folder
+//l: popup_note_wait_window
+//w:
+//r: 3.0
+#define qtn_wait_saving_message		"Saving"
+
+//////////////////////////////////
+//  POSTCARD QUERIES
+//////////////////////////////////
+
+//d: Confirmation query. 
+//d: Confirmation asked when the user presses clear key on top of image
+//d: YES/NO
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_qry_mms_poca_rm_image   	"Remove image?"
+
+//d: Confirmation query. 
+//d: Confirmation asked when the user presses clear key in view mode
+//d: YES/NO
+//l: popup_note_window
+//w:
+//r: 3.0
+#define qtn_mms_quest_delete_msg   	"Delete message?"
+
+//d: Global query. 
+//d: Global query asked when the user presses send
+//d: Options keys: Send/cancel
+//d: There's no layout as the global query is scrollable
+//l: None
+//w:
+//r: 3.0
+#define qtn_qry_mms_poca_send_to   	"Recipient address is: \n\n%U"
+
+//////////////////////////////////
+//  FIELD LABELS IN RECIPIENT VIEW
+//////////////////////////////////
+
+//d: Text label in Edit recipient field
+//l: list_single_graphic_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_postcard_name_control   		"Name"
+
+//d: Text label in Edit recipient field
+//l: list_single_graphic_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_poca_extended_address_info   	"(Additional info)"
+
+//d: Text label in Edit recipient field
+//l: list_single_graphic_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_postcard_street_control   		"Street"
+
+//d: Text label in Edit recipient field
+//l: list_single_graphic_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_postcard_postal_code_control   	"Postal/Zip code"
+
+//d: Text label in Edit recipient field
+//l: list_single_graphic_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_postcard_city_control   		"City"
+
+//d: Text label in Edit recipient field
+//l: list_single_graphic_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_postcard_state_control   		"State/Province"
+
+//d: Text label in Edit recipient field
+//l: list_single_graphic_pane_t1_cp2
+//w:
+//r: 3.0
+#define qtn_postcard_country_control   		"Country/Region"
+
+//////////////////////////////////
+//  POSTCARD MESSAGE INFO
+//////////////////////////////////
+
+// d: Message info popup item.
+// d: The date postcard was created or sent
+// l: list_single_heading_pane_t2_cp2
+// w:
+// r: 3.0
+#define qtn_mms_date                    "date"
+
+// d: Message info popup item.
+// d: The time postcard was created or sent
+// l: list_single_heading_pane_t2_cp2
+// w:
+// r: 3.0
+#define qtn_mms_time                    "time"
+
+// d: Message info popup item.
+// d: The type of the message. Always: Postcard
+// l: list_single_heading_pane_t2_cp2
+// w:
+// r: 3.0
+#define qtn_mms_type                    "type"
+
+//////////////////////////////////
+// Closing query
+//////////////////////////////////
+
+// d:The heading of "Close message" list query
+// d:Shown when user presses "Close" softkey
+// l:heading_pane_t1
+// w:
+// r: 3.0
+#define qtn_msg_qry_close_title         "Closing message:"
+
+// d:An entry in "Close message" list query
+// d:Message will be saved and editor exited when this option is selected.
+// l:list_single_pane_t1_cp2
+// w:
+// r: 3.0
+#define qtn_msg_qry_save_to_drafts      "Save to drafts"
+
+// d:An entry in "Close message" list query
+// d:Message will be deleted and editor exited when this option is selected.
+// l:list_single_pane_t1_cp2
+// w:
+// r: 3.0
+#define qtn_msg_qry_delete_message      "Delete message"
+
+// Phonebook fetching..
+
+// d:Prompt text for single item fetch list query heading for field selection
+// l:heading_pane_t1
+// w:
+// r: 3.0
+#define qtn_mms_postcard_fetch_address_title     "Select address"
+
+// d:Label text for "Standard" memory entry item
+// l:list_single_graphic_pane_t1_cp2
+// w:
+// r: 3.0
+#define qtn_mms_postcard_fetch_address      "Address"
+
+// d:Label text for "Home" memory entry item
+// l:list_single_graphic_pane_t1_cp2
+// w:
+// r: 3.0
+#define qtn_mms_postcard_fetch_address_home         "Home Address"
+
+// d:Label text for "Work" memory entry item
+// l:list_single_graphic_pane_t1_cp2
+// w:
+// r: 3.0
+#define qtn_mms_postcard_fetch_address_work         "Work Address"
+
+// End of File

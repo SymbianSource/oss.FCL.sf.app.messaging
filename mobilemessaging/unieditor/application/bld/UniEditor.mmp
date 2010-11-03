@@ -1,0 +1,153 @@
+/*
+* Copyright (c) 2006-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   This is project specification file for the Uni editor.
+*
+*/
+
+
+
+#include <bldvariant.hrh>
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+// ...LOGGING - Turned on by default on debug binaries....
+//MACRO           USE_LOGGER    // UREL debugging support from code files
+//#define         USE_LOGGER    // UREL debugging support from mmp file
+//MACRO           USE_RDEBUG    // Turn on the logging via RDEBUG
+
+TARGET          unieditor.exe
+EPOCSTACKSIZE   0xA000              
+EPOCHEAPSIZE    0x1 0x800000        
+TARGETTYPE      exe
+UID             0x100039CE 0x102072D8
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_APPLICATION NetworkControl
+VERSION 	10.0
+PAGED
+
+SOURCEPATH      ../data
+
+START RESOURCE  UniEditor.rss
+HEADER
+TARGETPATH      APP_RESOURCE_DIR
+LANGUAGE_IDS
+END
+
+START RESOURCE  UniEditor_reg.rss
+DEPENDS unieditor.rsg
+TARGETPATH      /private/10003a3f/apps // Don't change the UID!
+END
+
+SOURCEPATH      ../src
+
+SOURCE          UniEditorApp.cpp
+SOURCE          UniEditorAppServer.cpp
+SOURCE          UniEditorDocument.cpp
+SOURCE          UniEditorAppUi.cpp
+SOURCE          UniEditorOperation.cpp
+SOURCE          UniEditorLaunchOperation.cpp
+SOURCE          UniEditorSaveOperation.cpp
+SOURCE          UniEditorChangeSlideOperation.cpp
+SOURCE          UniEditorInsertOperation.cpp
+SOURCE          UniEditorProcessImageOperation.cpp
+SOURCE          UniEditorSendUiOperation.cpp
+SOURCE          UniEditorSendOperation.cpp
+SOURCE          UniEditorVCardOperation.cpp
+SOURCE          UniEditorHeader.cpp
+SOURCE          UniEditorEnum.cpp
+SOURCE          UniEditorObjectsModelObserver.cpp
+SOURCE          UniEditorAddHeaderDialog.cpp
+SOURCE          UniSendingSettingsDialog.cpp
+SOURCE          UniEditorConvertVideoOperation.cpp
+
+#ifdef RD_MSG_XHTML_SUPPORT 
+SOURCE          UniEditorProcessTextOperation.cpp
+#endif
+
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+USERINCLUDE     ../inc
+USERINCLUDE     ../../inc
+USERINCLUDE     ../../mtm/inc
+USERINCLUDE     ../../pluginapi/inc
+USERINCLUDE     ../../smsplugin/inc
+
+LIBRARY         euser.lib
+LIBRARY         efsrv.lib                       // RFile 
+LIBRARY         estor.lib                       // Stream stores
+LIBRARY         bafl.lib                        // Command line parsing etc.
+LIBRARY         apparc.lib
+LIBRARY         cone.lib
+LIBRARY         eikcoctl.lib
+LIBRARY         eikcore.lib
+LIBRARY         eikdlg.lib                      // AknDialog
+LIBRARY         msgeditorappui.lib              // Messaging Editor AppUi base DLL
+LIBRARY         msgeditorview.lib               // Messaging Editor View base DLL
+LIBRARY         msgeditormodel.lib              // Messaging Editor Model base DLL
+LIBRARY         avkon.lib
+LIBRARY         msgs.lib
+LIBRARY         muiu.lib
+LIBRARY         muiu_internal.lib
+LIBRARY         apmime.lib                      // TDatatype
+LIBRARY         commonengine.lib                // Series 60 Common Component (Stringloader)
+LIBRARY         servicehandler.lib              // AIW
+LIBRARY         commonui.lib                    // DocHandler
+LIBRARY         smilplayer.lib
+LIBRARY         featmgr.lib
+LIBRARY         hlplch.lib                      // HlpLauncher
+LIBRARY         centralrepository.lib
+LIBRARY         unipluginapi.lib
+LIBRARY         ecom.lib
+LIBRARY         commsdat.lib                    // CommsDat
+LIBRARY         unidatamodel.lib
+LIBRARY         uniutils.lib
+LIBRARY         msgeditormediacontrol.lib       // Media controls
+LIBRARY         msgmedia.lib                    // Media resolver
+LIBRARY         charconv.lib            // for detecting unicode chars
+LIBRARY         aknskins.lib                    // Skin stuff
+LIBRARY         aknicon.lib                     
+LIBRARY         egul.lib                        // CGulIcon
+LIBRARY         aknlayout2scalable.lib
+LIBRARY         cdlengine.lib
+LIBRARY         xmlparser.lib                    // XMLParser
+LIBRARY         fbscli.lib                      // CFbsBitmap
+LIBRARY         vpbkeng.lib                 // Virtual Phonebook
+LIBRARY         vpbkvcardeng.lib            // Virtual Phonebook (vCard stuff)
+LIBRARY         msgcommonutils.lib
+LIBRARY         sssettings.lib                  // RCustomerServiceProfileCache (ie. CSP bits)
+LIBRARY         videoconversionapi.lib 
+LIBRARY	        peninputclient.lib
+LIBRARY         cenrepnotifhandler.lib
+
+// for CEikRichTextEditor to show global warning note
+LIBRARY          eikctl.lib  
+LIBRARY         uiklaf.lib 
+LIBRARY         form.lib 
+
+
+#ifdef RD_MSG_XHTML_SUPPORT 
+LIBRARY         xhtmlparser.lib
+#endif
+
+LIBRARY         etext.lib
+
+#ifdef USE_LOGGER
+LIBRARY                 flogger.lib
+#else
+DEBUGLIBRARY            flogger.lib
+#endif
+
+// End of file
+

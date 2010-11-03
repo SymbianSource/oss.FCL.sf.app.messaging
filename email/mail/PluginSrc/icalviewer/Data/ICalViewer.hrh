@@ -1,0 +1,42 @@
+/*
+* Copyright (c) 2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: enumerate command codes
+*
+*/
+
+
+
+#ifndef __VIEWERECOM_HRH__
+#define __VIEWERECOM_HRH__
+
+
+/** enumerate command codes */
+
+enum TViewerEcomMenuCommands
+    {
+    EResponse = 1,
+    EShowCalendar,
+    EAttendees,
+    ERemoveFromCalendar,
+	EReplyToOrganizer
+    };
+    
+enum TViewerEcomResponseCommands
+    {
+    EAccept = 100,
+    ETentative,
+    EDecline
+    };
+
+#endif      //  __AKNEXMNEU_HRH__

@@ -1,0 +1,91 @@
+/*
+* Copyright (c) 2003 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is project specification file for the SmilEngine.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+TARGET			smileng.dll
+TARGETTYPE		dll
+UID			0x1000008d 0x101F96E5
+VERSION 		10.0
+VENDORID VID_DEFAULT
+PAGED
+
+//SYSTEMRESOURCE		smil.rss
+SOURCEPATH		../core
+SOURCE			smila.cpp
+SOURCE			smilmedia.cpp
+SOURCE			smilobject.cpp
+SOURCE			smilsequence.cpp
+SOURCE			smiltime.cpp
+SOURCE			smiltimelist.cpp
+SOURCE			smiltimecontainer.cpp
+SOURCE			smilcondition.cpp
+SOURCE			smilinstancetime.cpp
+SOURCE			smilevent.cpp
+SOURCE			smilanchor.cpp
+SOURCE 			smilregion.cpp
+SOURCE 			smilrootregion.cpp
+SOURCE 			smilparallel.cpp
+SOURCE 			smilexclusive.cpp
+SOURCE 			smilpresentation.cpp
+SOURCE 			smillength.cpp
+SOURCE 			smilprefetch.cpp
+SOURCE 			smiltransition.cpp
+SOURCE 			smiltransitionfilter.cpp
+SOURCE			smilarea.cpp
+
+SOURCEPATH		../parser
+SOURCE			smilparser.cpp
+SOURCE			smilparser_dom.cpp
+
+SOURCEPATH		../checker
+SOURCE			ConformanceChecker.cpp
+
+USERINCLUDE ../inc
+
+SYSTEMINCLUDE   ../inc
+SYSTEMINCLUDE   ../../../../inc // s60 app messaging inc
+APP_LAYER_SYSTEMINCLUDE
+
+CAPABILITY CAP_GENERAL_DLL
+
+LIBRARY         	euser.lib
+LIBRARY				xmldom.lib
+
+
+#if defined (ARMCC)
+DEFFILE ../eabi/smileng.def
+
+
+#elif defined (WINSCW)
+DEFFILE ../bwinscw/smileng.def
+
+
+#elif defined (WINS)
+DEFFILE       ../group/wins.def
+
+
+#else
+DEFFILE      ../group/marm.def
+#endif
+
+
+
+

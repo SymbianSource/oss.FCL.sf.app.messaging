@@ -1,0 +1,109 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: SmtpMtmUiData.ra
+*     
+*
+*/
+
+
+#include <mtmuidef.hrh>
+#include <MtmExtendedCapabilities.hrh>
+
+// Default function array
+RESOURCE MTUD_FUNCTION_ARRAY r_smtpud_function_array
+    {
+   functions=  
+        {
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_query_send_via_email;
+            command = KMtmUiFunctionSendAs;
+            flags = EMtudCommandSendAs;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_inbox_write_email;
+            command = KMtmUiMceWriteMessageSubmenu;
+            flags = EMtudCommandTransferSend;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_pop_up_email;
+            command = KMtmUiMceWriteMessagePopup;
+            flags = EMtudCommandTransferSend;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_settings_mail;
+            command = KMtmUiMceSettings;
+            flags = EMtudCommandTransferSend;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_info;
+            command = KMtmUiFunctionMessageInfo;
+            flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+            }
+        };
+    }
+
+// Function array used when KFeatureIdFfEmailFramework is enabled
+RESOURCE MTUD_FUNCTION_ARRAY r_smtpud_function_array_ffemail
+    {
+   functions=  
+        {
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_query_send_via_email;
+            command = KMtmUiFunctionSendAs;
+            flags = EMtudCommandSendAs;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_pop_up_email;
+            command = KMtmUiMceWriteMessagePopup;
+            flags = EMtudCommandTransferSend;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_settings_mail;
+            command = KMtmUiMceSettings;
+            flags = EMtudCommandTransferSend;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_info;
+            command = KMtmUiFunctionMessageInfo;
+            flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+            }
+        };
+    }
+
+RESOURCE TBUF r_smtp_outbox_status_sending        
+    { 
+    buf = qtn_mce_outbox_status_sending; 
+    }
+
+RESOURCE TBUF r_smtp_outbox_status_suspended      
+    { 
+    buf = qtn_mce_outbox_status_suspended; 
+    }
+RESOURCE TBUF r_smtp_outbox_status_queued         
+    { 
+    buf = qtn_mce_outbox_status_queued; 
+    }
+RESOURCE TBUF r_smtp_outbox_status_failed         
+    { 
+    buf = qtn_mce_outbox_status_failed; 
+    }

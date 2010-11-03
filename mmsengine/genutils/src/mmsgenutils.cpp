@@ -28,22 +28,39 @@
 #include <barsc.h>               // resource file
 #include <bautils.h>
 #include <miutpars.h>            // e-mail utilities
-#include "cimconvertcharconv.h"
-#include "cimconvertheader.h"
+
 #include <miutconv.h>            // CharConv 
 #include <flogger.h>
 #include <e32svr.h>
 #include <e32base.h>
+#ifndef SYMBIAN_ENABLE_SPLIT_HEADERS
 #include <imcvcodc.h>
+#else
+#include <imcvcodc.h>
+#include <cimconvertheader.h>
+#endif
 #include <f32file.h>                 
 #include <UiklafInternalCRKeys.h>
-// #include <telconfigcrkeys.h>
+#include <telconfigcrkeys.h>
 #include <centralrepository.h>
 #include <CoreApplicationUIsSDKCRKeys.h>
 #include <data_caging_path_literals.hrh>
 
-
-#include "telconfigcrkeys.h"
+#include <MVPbkContactStore.h>
+#include <MVPbkContactStoreProperties.h>
+#include <MVPbkContactLink.h>
+#include <CPbk2StoreConfiguration.h>   // Contact store configuration
+#include <contactmatcher.h> // contact match wrapper
+#include <CVPbkPhoneNumberMatchStrategy.h>
+#include <CVPbkContactLinkArray.h>
+#include <CVPbkFieldTypeRefsList.h>
+#include <TVPbkFieldVersitProperty.h>
+#include <VPbkFieldType.hrh>
+#include <MVPbkStoreContactFieldCollection.h>
+#include <MVPbkStoreContact.h>
+#include <CVPbkContactStoreUriArray.h>
+#include <VPbkContactStoreUris.h>
+#include <TVPbkContactStoreUriPtr.h>
 #include "mmsgenutils.h"
 #include "MmsEnginePrivateCRKeys.h"
 
@@ -52,17 +69,16 @@
 // EXTERNAL FUNCTION PROTOTYPES  
 
 // CONSTANTS
-
-#ifdef _DEBUG
 const TInt KLogBufferLength = 256;
+#ifdef _DEBUG
 _LIT( KLogDir, "mmsc" );
 _LIT( KLogFile, "mmsc.txt" );
 #endif
-
+const TUint KMinAliasMaxLength = 14;
 const TUint KExtraSpaceForConversion10 = 10;
 const TUint KExtraSpaceForConversion30 = 30;
 
-
+const TInt KErrMultipleMatchFound = KErrGeneral;
 // MACROS
 
 // LOCAL CONSTANTS AND MACROS
@@ -419,12 +435,18 @@ EXPORT_C TInt TMmsGenUtils::GenerateDetails(
 // ---------------------------------------------------------
 //
 EXPORT_C TInt TMmsGenUtils::GetAlias( 
-    const TDesC& /*aAddress*/,
-    TDes& /*aAlias*/,
-    TInt /*aMaxLength*/,
-    RFs& /*aFs*/ )
+    const TDesC& aAddress,
+    TDes& aAlias,
+    TInt aMaxLength,
+    RFs& aFs )
     {
-    return KErrNone;
+    TInt err = KErrNone;
+    TRAP( err, DoGetAliasL( aFs, aAddress, aAlias, aMaxLength ) );
+    if ( err == KErrNotFound )
+        {
+        err = KErrNone;
+        }
+    return err;
     }
 
     
@@ -437,13 +459,59 @@ EXPORT_C TInt TMmsGenUtils::GetAlias(
 // ---------------------------------------------------------
 // 
 EXPORT_C void TMmsGenUtils::GetAliasForAllL(
-    const CDesCArray& /*aAddress*/,
-    CDesCArray& /*aAlias*/,
-    TInt /*aMaxLength*/,
-    RFs& /*aFs*/ )
+    const CDesCArray& aAddress,
+    CDesCArray& aAlias,
+    TInt aMaxLength,
+    RFs& aFs )
     {
     
-  
+    if ( aMaxLength <= 0 )
+        {
+        User::Leave( KErrArgument );
+        }
+    
+    TUint stack = 0;
+
+    //Let's find the number of digits to match
+    TInt digitsToMatch = DigitsToMatch();
+    TInt err = KErrNone;
+    
+    // Use contact wrapper to open all databases
+    CContactMatcher* contactMatcher = OpenAllStoresL( aFs );
+    CleanupStack::PushL( contactMatcher );
+    stack++;
+    
+    HBufC* helpBuffer = HBufC::NewL( aMaxLength );
+    CleanupStack::PushL( helpBuffer );
+    stack++; 
+       
+    TPtr pHelpBuffer = helpBuffer->Des();   
+   
+    for ( TInt i = 0; i < aAddress.MdcaCount(); i++  )
+        {  
+        // We trap these one by one in order to be able
+        // to continue to next match in case of error (not found)
+        
+        // make sure the alias is empty if nothing found
+        pHelpBuffer.Zero();
+        
+    	TRAP( err, DoGetAliasL( 
+            aAddress.MdcaPoint(i), 
+    	    pHelpBuffer, 
+    	    aMaxLength, 
+    	    *contactMatcher, 
+    	    digitsToMatch ) );
+
+        // if alias is not found, we'll have an empty buffer
+        // We have to insert it anyway to keep the indexes correct
+        // as we have two parallel arrays
+        aAlias.InsertL( i, pHelpBuffer );
+        }
+        
+    // closing is best effort only.    
+    TRAP_IGNORE( contactMatcher->CloseStoresL() );
+    CleanupStack::PopAndDestroy( stack, contactMatcher );  //contactMatcher, helpBuffer   
+    
     }
 
 // ---------------------------------------------------------
@@ -736,12 +804,40 @@ EXPORT_C void TMmsGenUtils::Log( TRefByValue<const TDesC> aFmt,...)
 // ---------------------------------------------------------
 //
 void TMmsGenUtils::DoGetAliasL(
-    RFs& /*aFs*/,
-    const TDesC& /*aAddress*/, 
-    TDes& /*aAlias*/, 
-    TInt /*aMaxLength*/ )
+    RFs& aFs,
+    const TDesC& aAddress, 
+    TDes& aAlias, 
+    TInt aMaxLength )
     {
-  
+    
+    //Let's find the number of digits to match
+    TInt digitsToMatch = DigitsToMatch();
+ 
+    // We have only one address and one alias to put into the array
+    CDesCArray* aliasArray = new ( ELeave )CDesCArrayFlat( 1 );
+    CleanupStack::PushL( aliasArray ); 
+
+    CDesCArray* realAddressArray = new ( ELeave )CDesCArrayFlat( 1 );
+    CleanupStack::PushL( realAddressArray ); 
+
+    realAddressArray->InsertL( 0, aAddress );
+    
+    // GetAliasForAllL opens contact matcher
+    GetAliasForAllL( *realAddressArray, *aliasArray, aMaxLength, aFs );
+    
+    TInt size = aliasArray->MdcaCount();
+    
+    if ( size > 0 )
+        {
+        // only one item in our array
+        aAlias.Copy( aliasArray->MdcaPoint( 0 ).Left( Min( aMaxLength, aAlias.MaxLength() ) ) );
+        }
+    
+    CleanupStack::PopAndDestroy( realAddressArray );
+    CleanupStack::PopAndDestroy( aliasArray );
+    
+    return;
+    
     }
 
 
@@ -750,12 +846,151 @@ void TMmsGenUtils::DoGetAliasL(
 // ---------------------------------------------------------
 //
 void TMmsGenUtils::DoGetAliasL(
-    const TDesC& /*aAddress*/, 
-    TDes& /*aAlias*/, 
-    TInt /*aMaxLength*/,
-    CContactMatcher& /*aContactMatcher*/,
-    TInt /*aDigitsToMatch*/  )
+    const TDesC& aAddress, 
+    TDes& aAlias, 
+    TInt aMaxLength,
+    CContactMatcher& aContactMatcher,
+    TInt aDigitsToMatch  )
     {
+    // It appears that with the new phonebook system with multiple phonebooks,
+    // TContactItemId type id cannot be extracted.
+    // The result contains MVPbkContactLink type objects.
+    
+    // The given descriptor has to be at least 14 in length
+    // (otherwise this method would leave later)
+    if( aAlias.MaxLength() < KMinAliasMaxLength )
+        {
+        User::Leave( KErrBadDescriptor );
+        }
+    
+    // These should be inline with each other, but if necessary,
+    // size down aMaxLength.
+    // aMaxLength, however, can be smaller than the buffer
+    if ( aMaxLength > aAlias.MaxLength() )
+        {
+        aMaxLength = aAlias.MaxLength();
+        }
+
+    if ( aMaxLength > 0 )
+        {
+        // set length of alias to 0
+        // this can be used to determine if alias was found
+        // contact id not needed or used
+        aAlias.Zero();
+        }
+
+    // Convert to real address just in case. The address should be pure already,
+    // but we are just being paranoid...
+    
+    TPtrC realAddress;
+    realAddress.Set( PureAddress( aAddress, KSepaOpen, KSepaClose ) );
+    CVPbkContactLinkArray* linkArray = CVPbkContactLinkArray::NewL();
+    CleanupStack::PushL( linkArray );
+    
+    // Check if the address is phone number or EMail address
+    if ( IsValidMMSPhoneAddress( realAddress, ETrue ) )
+        {
+        // Lookup the telephone number in the contact database
+        // For numbers shorter than 7 digits, only exact matches are returned
+        
+        aContactMatcher.MatchPhoneNumberL( realAddress, aDigitsToMatch, 
+	        CVPbkPhoneNumberMatchStrategy::EVPbkMatchFlagsNone, *linkArray );
+
+        // If more than one matches have been found,
+        // the first one will be used.
+        }
+    else if ( IsValidEmailAddress( realAddress ) )
+        {
+        // Try to match with EMail address
+                
+        TVPbkFieldVersitProperty prop;
+        CVPbkFieldTypeRefsList* fieldTypes = CVPbkFieldTypeRefsList::NewL();
+        CleanupStack::PushL( fieldTypes );
+        
+        const MVPbkFieldTypeList& fieldTypeList = aContactMatcher.FieldTypes();
+        const MVPbkFieldType* foundType = NULL;
+
+        prop.SetName( EVPbkVersitNameEMAIL );
+/*        
+        // Remove code because matching matches properies, too.
+        // We don't care about properties.
+        
+        // The phonebook should provide a function that allows mathcing name only
+        foundType = fieldTypeList.FindMatch( prop, 0 );     
+         
+        if ( foundType )
+            {
+            fieldTypes->AppendL( *foundType );   
+            }
+*/
+           
+        // The field type matching does not work because it tries to match
+        // parameters we are not interested in.
+        // We try to generate a list that has all entries with versit type EMAIL
+        
+        TInt i;
+        for ( i = 0; i < fieldTypeList.FieldTypeCount(); i++ )
+            {
+            foundType = &(fieldTypeList.FieldTypeAt( i ));
+            if ( foundType->VersitProperties().Count() > 0
+                && foundType->VersitProperties()[0].Name() == prop.Name() )
+                {
+                fieldTypes->AppendL( *foundType );
+                }
+            }
+        
+     
+        // Here we stop at first match - email addresses should be unique
+		aContactMatcher.MatchDataL( realAddress, *fieldTypes, *linkArray );
+		CleanupStack::PopAndDestroy( fieldTypes );    
+        }
+    else
+        {
+        User::Leave( KErrNotFound );
+        }
+
+    TInt nameIndex = 0; //correct index if only one match is found
+    if( linkArray->Count() == 0 )
+        {
+        Log( _L( "No match found" ) );
+        User::Leave( KErrNotFound );        
+        }
+    else if( linkArray->Count() > 1 )
+        {
+        //Multiple matches found. Get the current store single match index if any.
+        nameIndex = GetCurrentStoreIndexL( *linkArray );
+        if( nameIndex == KErrMultipleMatchFound )
+            {
+            /* No unique match in current store, Hence show the name only if all the matches have 
+             * identical names
+             */
+            if( ShowContactNameL( linkArray, nameIndex, aContactMatcher) == EFalse)
+                {
+                Log( _L( "No (Perfect) match found" ) );
+                User::Leave( KErrMultipleMatchFound );
+                }
+            }
+        }        
+    
+    // if not interested in alias, skip this
+    if ( aMaxLength > 0 )
+        {
+        HBufC* alias = GetContactNameL( linkArray->At(nameIndex), aContactMatcher );
+        if ( alias && alias->Des().Length() > 0 )
+            {
+            aAlias.Copy( alias->Des().Left( aMaxLength ) );
+            }
+        else
+            {
+            aAlias.Copy( TPtrC() );
+            }
+        delete alias;
+        alias = NULL;
+        // end of part skipped if not interested in alias
+        }
+
+    linkArray->ResetAndDestroy();
+    CleanupStack::PopAndDestroy( linkArray );
     }
 
 // ---------------------------------------------------------
@@ -1193,17 +1428,16 @@ TInt TMmsGenUtils::DigitsToMatch()
 // TMmsGenUtils::OpenAllStoresL
 //
 // ---------------------------------------------------------
-CContactMatcher* TMmsGenUtils::OpenAllStoresL( RFs& /*aFs*/ )
+CContactMatcher* TMmsGenUtils::OpenAllStoresL( RFs& aFs )
     {
     // Use contact wrapper to open all databases
-  /*  CContactMatcher* contactMatcher = CContactMatcher::NewL( &aFs );
+    CContactMatcher* contactMatcher = CContactMatcher::NewL( &aFs );
     CleanupStack::PushL( contactMatcher );
     
     contactMatcher->OpenDefaultMatchStoresL();    
     
     CleanupStack::Pop( contactMatcher );
-    return contactMatcher;*/
-    return NULL;
+    return contactMatcher;
     }
 
 // -----------------------------------------------------------------------------
@@ -1211,11 +1445,21 @@ CContactMatcher* TMmsGenUtils::OpenAllStoresL( RFs& /*aFs*/ )
 // -----------------------------------------------------------------------------
 //
 HBufC* TMmsGenUtils::GetContactNameL(
-        const MVPbkContactLink& /*aContactLink*/,
-        CContactMatcher& /*aContactMatcher*/)
+        const MVPbkContactLink& aContactLink,
+        CContactMatcher &aContactMatcher)
     {
-  
-    return NULL;
+    Log(_L( "- TMmsGenUtils::GetContactNameL  -> start" ) );
+    MVPbkStoreContact* tempContact;
+    aContactMatcher.GetStoreContactL(aContactLink, &tempContact);
+    tempContact->PushL();
+    
+    MVPbkStoreContactFieldCollection& coll = tempContact->Fields();
+    HBufC* nameBuff = aContactMatcher.GetNameL( coll );
+    
+    CleanupStack::PopAndDestroy(tempContact); // tempContact
+    
+    Log( _L( "- TMmsGenUtils::GetContactNameL <- end" ) );
+    return nameBuff;
     }
 
 // -----------------------------------------------------------------------------
@@ -1243,21 +1487,154 @@ HBufC* TMmsGenUtils::GetContactNameInLowerCaseL(
 // -----------------------------------------------------------------------------
 //
 TBool TMmsGenUtils::ShowContactNameL(
-        CVPbkContactLinkArray* /*aLinkArray*/,
-        TInt& /*aNameIndex*/,
-        CContactMatcher& /*aContactMatcher*/)
+        CVPbkContactLinkArray* aLinkArray,
+        TInt &aNameIndex,
+        CContactMatcher &aContactMatcher)
     {
-    return 0;
+    Log( _L("- TMmsGenUtils::ShowContactName -> start") );
+    Log( _L("Contact Match statistics to follow..." ) );
+    Log( _L("Match count: %d"), aLinkArray->Count() );
+    /* TODO:: compare the names upto standard
+     * 1. if all the names are same - display the name 
+     *    eg: "abcdef xyz" && "abcdef xyz"
+     * 2. find min name legth among all,(if ONLY Part-match is needed )
+     *    if this length is > standard length and matches upto standard length - display the larger name.
+     *    eg: abcdef xyz123,  abcdef xyz12, abcdef xyz and std length is 10,
+     *        since match upto 10 chars is fine, display abcdef xyz123
+     * 3. in any other case do not show name
+     *    eg: abcdef xyz , abcde xyz
+     *        abcdef xyz , abcdef xy
+     *        abcdef xyz , abcde
+     */
+    TInt i, minLength = 999, maxLength = 0, length = 0, maxLengthIndex = 0, stdLength = 14;
+    TBool retVal = ETrue ;
+    
+    for( i = 0 ; i < aLinkArray->Count(); i++ )
+        {
+        HBufC* alias = GetContactNameL( aLinkArray->At(i), aContactMatcher );
+        Log( _L(":-> %s" ), alias->Des().PtrZ());
+        length = alias->Des().Length();
+        if(minLength > length)
+            {
+            minLength = length;
+            }
+        if(maxLength < length)
+            {
+            maxLength = length;
+            maxLengthIndex = i;
+            }
+        delete alias;
+        alias = NULL;
+        }
+    
+    Log( _L( "Contact Lengths: Std Length  : %d\n MinLength   : %d\n MaxLength   : %d\n MaxLen index: %d" ),
+            stdLength,
+            minLength,
+            maxLength,
+            maxLengthIndex);
+    
+    if(minLength != maxLength)
+        {
+        //complete length match not possible
+        retVal = EFalse;
+        
+        /* NOTE:
+         * Uncomment below code if partial length(upto stdLength) match is sufficient, 
+         * ensure stdLength is correct
+         */
+        /*
+        if(minLength < stdLength)
+            {
+            retVal = EFalse;
+            }
+        */
+        }
+    
+    if( retVal )
+        {
+        TInt ret;
+        HBufC* longestName = GetContactNameInLowerCaseL( aLinkArray->At(maxLengthIndex), aContactMatcher );
+        Log( _L( "Longest name:-> %s" ), longestName->Des().PtrZ());
+        for ( i = 0; i < aLinkArray->Count() && retVal; i++ )
+            {
+            HBufC* nameI = GetContactNameInLowerCaseL( aLinkArray->At(i), aContactMatcher );
+            Log( _L( "compared with -> %s" ), nameI->Des().PtrZ());
+            ret = longestName->Find(nameI->Des());
+            if(ret == KErrNotFound || ret != 0)
+                {
+                Log( _L( "Part/Full Match error/offset: %d" ), ret);
+                retVal = EFalse;
+                }
+            delete nameI;
+            nameI = NULL;
+           }
+        delete longestName;
+        longestName = NULL;
+        }
+
+    aNameIndex = maxLengthIndex;
+
+    Log( _L( "Final Match result : %d\n Final Match index  : %d" ), retVal, maxLengthIndex);
+    Log( _L( "- TMmsGenUtils::ShowContactName <- end" ) );
+    
+    return retVal;
     }
     
 // -----------------------------------------------------------------------------
 // TMmsGenUtils::GetCurrentStoreIndexL
 // -----------------------------------------------------------------------------
 //
-TInt TMmsGenUtils::GetCurrentStoreIndexL( CVPbkContactLinkArray& /*aLinkArray*/ )
+TInt TMmsGenUtils::GetCurrentStoreIndexL( CVPbkContactLinkArray& aLinkArray )
     {
-  
-	return 0;
+    TInt curStoreIndex( KErrMultipleMatchFound );
+    TInt curStoreMatchCount = 0;
+    RArray<TInt> otherStoreMatchIndices;
+    CleanupClosePushL( otherStoreMatchIndices );
+    
+    //Get the current configured contact store array(s)
+    CPbk2StoreConfiguration* storeConfiguration = CPbk2StoreConfiguration::NewL();
+    CleanupStack::PushL( storeConfiguration );
+    CVPbkContactStoreUriArray* currStoreArray = storeConfiguration->CurrentConfigurationL();
+    CleanupStack::PopAndDestroy(storeConfiguration);
+
+    if ( currStoreArray )
+        {
+        /* Contact's store is compared against user selected stores.
+         * If contact is from such store, found index is incremented
+         * else, other store contact indices are populated into array for further use
+         */
+        for ( TInt i = 0; i < aLinkArray.Count(); i++ )
+            {
+            TVPbkContactStoreUriPtr uri = aLinkArray.At(i).ContactStore().StoreProperties().Uri();
+            if ( currStoreArray->IsIncluded( uri ) )
+                {
+                // Set index to found contact and increment the count.
+                curStoreIndex = i;
+                curStoreMatchCount++;
+                }
+            else
+                {
+                otherStoreMatchIndices.AppendL(i);
+                }
+            }
+        
+        delete currStoreArray;    
+        if ( curStoreMatchCount > 1)
+            {
+            /* Multiple matches found from current user selected store(s) 
+             * Delete match from other stores in aLinkArray. New aLinkArray should only contain 
+             * current store contact matches, so that next level pruning can be done(e.g, names can be 
+             * compared and displayed if they are identical).
+             */
+            for(TInt i = otherStoreMatchIndices.Count() - 1; i >= 0; i--)
+                {
+                aLinkArray.Delete( otherStoreMatchIndices[i] );
+                }
+            curStoreIndex = KErrMultipleMatchFound;
+            }
+        }
+    CleanupStack::PopAndDestroy( &otherStoreMatchIndices );
+    return curStoreIndex;
     }
 
 // ================= OTHER EXPORTED FUNCTIONS ==============

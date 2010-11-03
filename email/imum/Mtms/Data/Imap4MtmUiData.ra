@@ -1,0 +1,39 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: Imap4MtmUiData.ra
+*
+*
+*/
+
+
+#include "impicmds.h"
+#include "Imap4MtmUi.hrh"
+#include <MtmExtendedCapabilities.hrh>
+
+RESOURCE RSS_SIGNATURE
+    { }
+
+RESOURCE MTUD_FUNCTION_ARRAY r_imap4ud_function_array
+    {
+    functions=  
+        {
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_info;
+            command = KMtmUiFunctionMessageInfo;
+            flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+            }
+        };
+    }
+

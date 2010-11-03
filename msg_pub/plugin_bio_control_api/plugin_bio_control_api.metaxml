@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<api id="dee348708dac29f1e9b28a0499754a3e" dataversion="2.0">
+  <name>Plug-in Bio Control API</name>
+  <description>Plug-in Bio Control API</description>
+  <type>c++</type>
+  <collection>messagingappbase</collection>
+  <libs>
+    <lib name="MsgEditorUtils.lib" />
+    <lib name="RichBio.lib" />
+  </libs>
+  <release category="public" sinceversion="0"/>
+  <attributes>
+     <!-- This indicates wether the api provedes separate html documentation -->
+     <!-- or is the additional documentation generated from headers. -->
+     <!-- If you are unsuere then the value is "no" -->
+     <htmldocprovided>no</htmldocprovided>
+     <adaptation>no</adaptation>
+  </attributes>
+</api>

@@ -1,0 +1,9 @@
+EXPORTS
+	_Z9LibEntryLR13CTestModuleIf @ 1 NONAME
+	_ZTI10SmilPlayer @ 2 NONAME ; #<TI>#
+	_ZTI16SmilMediaFactory @ 3 NONAME ; #<TI>#
+	_ZTI24CDerSmilTransitionFilter @ 4 NONAME ; #<TI>#
+	_ZTV10SmilPlayer @ 5 NONAME ; #<VT>#
+	_ZTV16SmilMediaFactory @ 6 NONAME ; #<VT>#
+	_ZTV24CDerSmilTransitionFilter @ 7 NONAME ; #<VT>#
+

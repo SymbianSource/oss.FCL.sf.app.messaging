@@ -1,0 +1,183 @@
+/*
+* Copyright (c) 2002-2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Localisation file for Mceindicatorplugin application
+*
+*/
+
+
+
+
+// LOCALISATION STRINGS
+
+
+// ---[ touch support: strings for stylus activated popup ]---
+
+// d: Singular content label for stylus activated popup.
+// d: Popup is shown when user taps the message indicator (envelope).
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_new_item_in_inbox           "1 New message"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the message indicator (envelope).
+// d: %N is number of unread messages.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_new_items_in_inbox          "%N New messages"
+
+// d: Singular content label for stylus activated popup.
+// d: Popup is shown when user taps the fax indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_new_fax           "1 New Fax"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the fax indicator.
+// d: %N is number of unread faxes.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_new_faxes          "%N New Faxes"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the fax indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_ukn_amount_new_faxes          "New Faxes"
+
+// d: Singular content label for stylus activated popup.
+// d: Popup is shown when user taps the outbox indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_new_item_in_outbox          "1 message in outbox"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the outbox indicator.
+// d: %N is number of messages.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_new_items_in_outbox         "%N msgs in outbox"
+
+// d: Singular content label for stylus activated popup.
+// d: Popup is shown when user taps the other message indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_new_other_messages          "New msgs available"
+
+// d: Singular content label for stylus activated popup.
+// d: Popup is shown when user taps the email indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_new_email                   "New e-mail"
+
+// d: Singular content label for stylus activated popup.
+// d: Popup is shown when user taps the voice mail indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_voice_mail_indicator        "New voice msg"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the voice mail indicator.
+// d: %N is number of unread messages.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_voice_mails_indicator       "%N new voice msgs"
+
+// d: Singular content label for stylus activated popup.
+// d: Popup is shown when user taps the voice mail indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_ukn_amount_voice_mails_indicator    "New voice msgs"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the voice mail indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_voice_mail_on_line1         "New msg, line 1"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the voice message indicator.
+// d: %N is number of unread messages.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_voice_mail_indicator_on_line1    "%N new msgs, line 1"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the voice mail indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_voice_mails_indicator_on_line1   "New msgs, line 1"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the voice mail indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_voice_mail_on_line2         "New msg, line 2"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the voice message indicator.
+// d: %N is number of unread messages.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_voice_mail_indicator_on_line2    "%N new msgs, line 2"
+
+// d: Plural content label for stylus activated popup.
+// d: Popup is shown when user taps the voice mail indicator.
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_voice_mails_indicator_on_line2   "New msgs, line 2"
+
+// d: Singular content label for stylus activated popup.
+// d: Popup is shown when user taps the envelope indicator
+// d: and Sim memory is full
+// l: list_single_uniindi_pane_t1
+// w:
+// r:5.0
+//
+#define qtn_gen_sim_msg_full           "Sim memory full"

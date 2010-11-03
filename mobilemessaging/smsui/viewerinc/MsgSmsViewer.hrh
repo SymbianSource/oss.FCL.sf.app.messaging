@@ -1,0 +1,60 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains declarations for resources of SmsViewer.
+*     The file can be included in C++ or resource file.
+*
+*/
+
+
+
+#ifndef __MSGSMSVIEWER_HRH__
+#define __MSGSMSVIEWER_HRH__
+
+#include <MsgEditor.hrh> // EMsgFirstFreeComponentSpecificCommand
+
+
+enum TSmsMenuCommands // Menu IDs
+    {
+    ESmsViewerReply = EMsgFirstFreeComponentSpecificCommand,
+
+    ESmsViewerForward,
+    ESmsViewerCallBack,     
+    ESmsViewerDelete,        
+    ESmsViewerMessInfo,     
+    ESmsViewerMove,           
+    ESmsViewerCreateCC,
+    ESmsViewerCreateCCNew,
+    ESmsViewerCreateCCExisting,      
+    ESmsViewerFindItem,
+    ESmsViewerFindItemSub1,
+    ESmsViewerFindItemSub2,
+    ESmsViewerFindItemSub3,
+    ESmsViewerSave,
+    ESmsViewerReplyNormal,
+    ESmsViewerReplyViaMms,   
+    ESmsViewerReplyViaEmail,
+    ESmsViewerReplyViaMessage,
+    ESmsViewerReplyViaAudio,
+    ESmsViewerReplyNoSubMenu,
+    ESmsViewerSubmenuZoomCommands,
+    ESmsViewerFirstFreeCmdId, // for SendAs
+    ESmsViewerToolbarReply,       
+    ESmsViewerToolbarForward,       // 25 for S60 5.0
+    ESmsViewerToolbarDelete  
+    };
+
+#endif //__MSGSMSVIEWER_HRH__
+
+//End of file

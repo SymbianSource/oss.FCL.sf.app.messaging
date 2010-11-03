@@ -1,0 +1,113 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains the localised strings for Sms Details Plugin
+*
+*/
+
+
+
+//  LOCALISATION STRINGS
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication
+//d:Note : Max length 32!!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msg_waiting_indication_vm       "Voicemail Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication
+//d:Note : Max length 30 (including possible numbers) !!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msgs_waiting_indication_vm      "%N Voicemails Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication  
+//d:Note : Max length 32!!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msg_waiting_indication_email    "E-Mail Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication  
+//d:Note : Max length 30 (including possible numbers) !!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msgs_waiting_indication_email   "%N E-Mails Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication  
+//d:Note : Max length 32!!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msg_waiting_indication_fax      "Fax Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication  
+//d:Note : Max length 30 (including possible numbers) !!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msgs_waiting_indication_fax     "%N Faxes Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication  
+//d:Note : Max length 32!!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msg_waiting_indication_other    "Other Message Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication  
+//d:Note : Max length 30 (including possible numbers) !!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msgs_waiting_indication_other   "%N Other Messages Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication
+//d:Note : Max length 32!!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msg_waiting_indication_vidm     "Video Message Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication
+//d:Note : Max length 30 (including possible numbers) !!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msgs_waiting_indication_vidm    "%N Video Messages Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication
+//d:Note : Max length 32!!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msg_waiting_indication_evm      "Enhanced Voicemail Waiting"
+
+//d:Description of msg type
+//d:String describing certain type of message waiting indication
+//d:Note : Max length 30 (including possible numbers) !!
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msgs_waiting_indication_evm     "%N Enhanced Voicemails Waiting"
+
+//d:Description of msg type
+//d:String describing delivery raport
+//l:list_double_graphic_pane_t2_cp2
+//
+#define qtn_msg_status_report      		"Delivery report"
+
+// End of File

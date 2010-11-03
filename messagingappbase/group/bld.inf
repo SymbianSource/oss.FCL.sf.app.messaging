@@ -1,0 +1,29 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  bld.inf*
+*/
+
+
+#include "../msgavkon/group/bld.inf"
+#include "../mce/group/bld.inf"
+#include "../mceextraitems/group/bld.inf"
+#include "../mcesettings/group/bld.inf"
+#include "../msgerrorwatcher/group/bld.inf"
+#include "../ncnlist/group/bld.inf"
+#include "../schemeplugin/group/bld.inf"
+#include "../sendui/group/bld.inf"
+#include "../smilengine/group/bld.inf"
+#include "../bium/group/bld.inf"
+#include "../smartmessaging/group/bld.inf"
+#include "../msgeditor/group/bld.inf"

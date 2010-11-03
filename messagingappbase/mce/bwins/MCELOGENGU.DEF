@@ -1,0 +1,19 @@
+EXPORTS
+	??1CPhoneNumberMatcher@@UAE@XZ @ 1 NONAME ; CPhoneNumberMatcher::~CPhoneNumberMatcher(void)
+	?ClearDrListL@CMceLogEngine@@QAEXXZ @ 2 NONAME ; void CMceLogEngine::ClearDrListL(void)
+	?Count@CMceLogEngine@@QBEHXZ @ 3 NONAME ; int CMceLogEngine::Count(void) const
+	?Event@CMceLogEngine@@QAEPBVCLogEvent@@H@Z @ 4 NONAME ; class CLogEvent const * CMceLogEngine::Event(int)
+	?ForegroundGainedL@CMceLogEngine@@QAEXXZ @ 5 NONAME ; void CMceLogEngine::ForegroundGainedL(void)
+	?ForegroundLost@CMceLogEngine@@QAEXXZ @ 6 NONAME ; void CMceLogEngine::ForegroundLost(void)
+	?GetContactId@CPhoneNumberMatcher@@QAEHAAJ@Z @ 7 NONAME ; int CPhoneNumberMatcher::GetContactId(long &)
+	?GetFieldId@CPhoneNumberMatcher@@QAEHXZ @ 8 NONAME ; int CPhoneNumberMatcher::GetFieldId(void)
+	?GetStandardStrings@CMceLogEngine@@QAEXAAVTDes16@@0@Z @ 9 NONAME ; void CMceLogEngine::GetStandardStrings(class TDes16 &, class TDes16 &)
+	?GetUniqueName@CPhoneNumberMatcher@@QAE?AVTPtrC16@@XZ @ 10 NONAME ; class TPtrC16 CPhoneNumberMatcher::GetUniqueName(void)
+	?IsNumberAvailable@CMceLogEngine@@QAEHH@Z @ 11 NONAME ; int CMceLogEngine::IsNumberAvailable(int)
+	?MatchCountL@CPhoneNumberMatcher@@QAEHABVTDesC16@@@Z @ 12 NONAME ; int CPhoneNumberMatcher::MatchCountL(class TDesC16 const &)
+	?NewL@CMceLogEngine@@SAPAV1@XZ @ 13 NONAME ; class CMceLogEngine * CMceLogEngine::NewL(void)
+	?NewL@CPhoneNumberMatcher@@SAPAV1@AAVRFs@@@Z @ 14 NONAME ; class CPhoneNumberMatcher * CPhoneNumberMatcher::NewL(class RFs &)
+	?PurgeData@CMceLogEngine@@QAEHPBVCLogEvent@@PAV?$CArrayFixFlat@H@@@Z @ 15 NONAME ; int CMceLogEngine::PurgeData(class CLogEvent const *, class CArrayFixFlat<int> *)
+	?RemoveContainerObserver@CMceLogEngine@@QAEXXZ @ 16 NONAME ; void CMceLogEngine::RemoveContainerObserver(void)
+	?SetContainerObserver@CMceLogEngine@@QAEXPAVMMceLogEngObserver@@@Z @ 17 NONAME ; void CMceLogEngine::SetContainerObserver(class MMceLogEngObserver *)
+

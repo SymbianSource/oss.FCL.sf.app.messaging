@@ -1,0 +1,82 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is project specification file for the MsgErrorWatcher.
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+TARGET          msgerrorwatcher.dll
+TARGETTYPE      PLUGIN
+UID             0x10009D8D 0x100059CF
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_ECOM_PLUGIN
+VERSION 	10.0
+PAGED
+
+USERINCLUDE     ../inc
+SYSTEMINCLUDE	  /epoc32/include/ecom
+SYSTEMINCLUDE ../../../inc
+
+APP_LAYER_SYSTEMINCLUDE
+START RESOURCE  100059CF.rss
+TARGET		    msgerrorwatcher.rsc
+END
+
+START RESOURCE  MsgErrorWatcherData.rss
+TARGETPATH      RESOURCE_FILES_DIR
+HEADER
+LANGUAGE_IDS
+END
+
+SOURCEPATH      ../src
+SOURCE          MsgErrorWatcher.cpp
+SOURCE          MsgSentItemsObserver.cpp
+SOURCE          MsgErrorCommDbObserver.cpp
+SOURCE          MsgErrorConnectionObserver.cpp
+SOURCE          MsgErrorDiskSpaceObserver.cpp
+SOURCE          MsgErrorRoamingObserver.cpp
+SOURCE          MsgErrorStartupObserver.cpp
+SOURCE          MsgErrorGlobalQuery.cpp
+SOURCE          MsgErrorDisconnectDlg.cpp
+SOURCE          MsgCenRepObserver.cpp      
+SOURCE          MsgLogsObserver.cpp
+SOURCE          MsgGarbageCollection.cpp
+SOURCE	    	MsgErrorSmsDiskSpaceObserver.cpp
+SOURCE	    	MsgErrorExtSmsDiskSpaceObserver.cpp
+
+LIBRARY         ecom.lib
+LIBRARY         euser.lib
+LIBRARY         msgs.lib
+LIBRARY         commonengine.lib
+LIBRARY         efsrv.lib
+LIBRARY         etel.lib
+LIBRARY         etelmm.lib
+LIBRARY         aknnotify.lib
+LIBRARY         commdb.lib
+LIBRARY         connmon.lib
+LIBRARY         disconnectdlgclient.lib
+LIBRARY         avkon.lib
+LIBRARY         centralrepository.lib
+LIBRARY         cenrepnotifhandler.lib
+LIBRARY         logcli.lib
+LIBRARY         logwrap.lib
+DEBUGLIBRARY          flogger.lib
+
+/* End of File */
+

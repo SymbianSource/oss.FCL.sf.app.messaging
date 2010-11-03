@@ -1,0 +1,42 @@
+/*
+* Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  NcnVariant  declaration
+*
+*/
+
+/*
+* ==============================================================================
+*  Name        : NcnVariant.hrh
+*  Description :
+*
+* NCN specific build variation flags.
+*
+* ==============================================================================
+*/
+
+#ifndef NCNVARIANT_HRH
+#define NCNVARIANT_HRH
+
+// Avoid double definition of _DEBUG flag in case of UDEB build
+#ifndef _DEBUG
+
+// Debug build environment
+// #define _DEBUG
+
+// Hardware debug environment (only relevant if _DEBUG is defined)
+// #define _NCN_FLOG
+
+#endif // _DEBUG
+
+#endif // NCNVARIANT_HRH

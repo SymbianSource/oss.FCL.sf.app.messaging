@@ -1,0 +1,60 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  MsgEditor.rh*
+*/
+
+
+
+#include "MsgEditor.hrh"
+
+STRUCT MSG_EDITOR_EXPANDABLE_CONTROL
+    {
+    LTEXT prompt;                 // Label for the control e.g "Subject:"
+    LONG flags = 0;               // Control flags
+    LONG id = 0;                  // Control Id
+    LONG distance = 0;            // Distance in pixels from above control
+    LONG maxchars = 0;            // Maximum characters
+    LONG fontid = -1;             // Font id
+    AKN_EDITOR_EXTENSIONS
+    }
+
+STRUCT MSG_EDITOR_ADDRESS_CONTROL
+    {
+    LTEXT prompt;                 // Label for the control
+    LONG flags = 0;               // Control flags
+    LONG id = 0;                  // Control Id
+    LONG distance = 0;            // Distance in pixels from above control
+    LONG maxchars = 0;            // Maximum characters
+    LONG fontid = -1;             // Font id
+    AKN_EDITOR_EXTENSIONS
+    }
+
+STRUCT MSG_EDITOR_DATETIME_CONTROL
+    {
+    LTEXT dateprompt;             // Date label e.g. "Date:"
+    LTEXT timeprompt;             // Time label e.g. "Time:"
+    LONG flags = 0;               // Control flags
+    LONG id = 0;                  // Control Id
+    LONG distance = 0;            // Distance in pixels from above control
+    }
+
+STRUCT MSG_EDITOR_ATTACHMENT_CONTROL
+    {
+    LONG flags = 0;               // Control flags
+    LONG id = 0;                  // Control Id
+    LONG distance = 0;            // Distance in pixels from above control
+    LONG maxchars = 0;            // Maximum characters
+    }
+
+/* End of File */

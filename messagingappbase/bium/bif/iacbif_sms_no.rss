@@ -1,0 +1,62 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Resource definitions for BIO info file for Internet accesspoint
+*		 BIO messagetype
+*
+*/
+
+
+
+
+#ifdef __MESSAGING_API_V2__
+#include <biftool2.rh>
+#else
+#include <biftool.rh>	
+#endif // __MESSAGING_API_V2__
+	
+#include <bium.loc>
+
+NAME    IACB
+
+
+RESOURCE BIO_INFO_FILE
+	{
+	message_type_uid = 0x1000552F;
+	description = qtn_mce_message_unknown;
+	icons_filename = "none";
+	icon_zoom_levels = {1};
+
+	ids=
+		{
+		ID
+			{
+			type=ENbs;
+			confidence=ECertain;
+			text="//SIAP11";
+			},
+		ID
+			{
+			type=EWap;
+			confidence=ECertain;
+			port = 5503;
+			},
+		ID
+			{
+			type=EIana;
+			confidence=EPossible;
+			text="application/vnd.nokia.configuration-message";
+			}
+		};
+	}
+

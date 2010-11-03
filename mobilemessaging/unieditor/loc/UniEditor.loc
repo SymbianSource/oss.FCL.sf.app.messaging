@@ -1,0 +1,1158 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains the localised strings for UniEditor 
+*
+*/
+
+
+
+//d: Submenu item in mce application that starts writing
+//d: a message with Unified SMS & MMS Editor.
+//l: list_single_popup_submenu_pane_t1
+//r: 3.1u
+#define qtn_mce_write_msg               "Message"
+
+//d: Short name for application for application shell grid.
+//d: Shown also in Fast Swap list
+//l: cell_app_pane_t1
+//r: 3.1u
+#define qtn_apps_unieditor_grid         "Message Editor"    
+
+//d: Long name for application for application shell list.
+//l: list_single_large_graphic_pane_t1
+//r: 3.1u
+#define qtn_apps_unieditor_list         "Message Editor"
+
+//d: Confirmation query
+//d: When trying to open a message (for example from Drafts), that includes object
+//d: that is not IOP safe and terminal is in guided creation mode.
+//d: YES / NO
+//l: popup_note_window
+#define qtn_mms_conf_guid_incl_object    "Message includes an object that may not be supported by the receiving phone. Continue?"
+
+//d: Confirmation query
+//d: When trying to open a message (for example from Drafts), that includes objects
+//d: that are not IOP safe and terminal is in guided creation mode.
+//d: YES / NO
+//l: popup_note_window
+#define qtn_mms_conf_guid_incl_objects    "Message includes objects that may not be supported by the receiving phone. Continue?"
+
+//d: Confirmation query
+//d: When trying to create presentation
+//d: and terminal is in guided creation mode.
+//d: YES / NO
+//l: popup_note_window
+#define qtn_mms_conf_guid_present    "The receiving phone may not support presentation. Continue?"
+
+//d: Confirmation query
+//d: When trying to insert an object that is not IOP safe into MMS message
+//d: via SendAs interface and terminal is in guided creation mode.
+//d: YES / NO
+//l: popup_note_window
+#define qtn_mms_conf_guided_object    "The receiving phone may not support this object. Continue?"
+
+//d: Confirmation query
+//d: When trying to insert multiple objects that are not IOP safe into MMS message
+//d: via SendAs interface and terminal is in guided creation mode.
+//d: YES / NO
+//l: popup_note_window
+#define qtn_mms_conf_guided_objects    "Some objects may not be supported by the receiving phone. Continue?"
+
+//d: Confirmation note
+//d: Shown when user selects "Place texts first" in MMS Editor and there is
+//d: no image on the page (i.e. the user cannot see that the layout has changed).
+//l: popup_note_window
+#define qtn_mms_conf_texts_first            "Texts placed first."
+
+//d: Confirmation note
+//d: Shown when user selects "Place texts second" in MMS Editor and there is
+//d: no image on the page (i.e. the user cannot see that the layout has changed).
+//l: popup_note_window
+#define qtn_mms_conf_texts_second           "Texts placed second."
+
+
+//d: Information note
+//d: Displayed when users tries to send and there are no recipients 
+//d: or recipients are in incorrect format or when user tries to insert
+//d: recipients to message and they are in incorrect format.
+//d: %U is a phone number or an email address
+//l: popup_note_window
+#define qtn_mms_info_fail_recipient         "Invalid contact details:\n %0U %1U"
+
+//d: Information note
+//d: Note shown when message contains objects that cannot be displayed.
+//l: popup_note_window
+#define qtn_mms_info_fwd_cannot_display     "Select attachments to view attached objects."
+
+//d: Information note
+//d: Note shown when one corrupted/unsupported object is tried to be inserted in a message
+//l: popup_note_window
+#define qtn_mms_info_invalid_object    "Unable to insert. Object corrupted or format not supported."
+
+
+//d: Information note
+//d: Displayed when users tries to send a message to a recipient which doesn't
+//d: have an alias and the address is of invalid format
+//d: %U is a phone number or an email address
+//l: popup_note_window
+#define qtn_mms_info_recipient_no_alias         "Invalid contact details:\n %U"
+
+//d: Information note
+//d: This note appears, if mms creationg mode is restricted and user can change mode 
+//d: from restricted to another mode. Related note is qtn_mms_info_scaling_failed.
+//l: popup_note_window
+#define qtn_mms_info_rmode_scaling_failed   "Image scaling failed.  Inserting not possible in restricted mode."
+
+//d: Information note
+//d: This  note appears, if software is variated so that mms creation mode is restricted
+//d: and user cannot change the mode or creation mode is guided or free. 
+//d: Related note is qtn_mms_info_rmode_scaling_failed.
+//l: popup_note_window
+#define qtn_mms_info_scaling_failed         "Image scaling failed."
+
+//d: String to be shown in Objects view for empty page.
+//l: list_double_large_graphic_pane_t1_cp2
+#define qtn_mms_item_title_empty_slide      "Empty page"
+
+//d: Default filename for attachments. Used when filename for some
+//d: reason cannot be used. Extension ie. ".txt", ".jpg" is added
+//d: to the end name in code.
+//l: list_double_large_graphic_pane_t1_cp2
+#define qtn_mms_no_name_for_file            "NoName"
+
+
+//d: Command in options menu.
+//d: Opens a list query for moving pages
+//l: list_single_pane_t1_cp2
+#define qtn_mms_om_move_page             "Move page"
+
+//d: Command in options menu.
+//d: Opens dialog where all viewable and non-viewable parts of the message
+//d: are listed to user.   
+//l: list_single_pane_t1_cp2
+#define qtn_mms_om_objects              "Objects"
+
+//d: Command in options menu.
+//d: For opening the selected object in appropriate viewer application.
+//l: list_single_pane_t1_cp2
+#define qtn_mms_om_open                 "Open"
+
+//d: Command in options menu.
+//d: For changing the layout of the message. Changes text to be the
+//d: first object in each page.
+//d: Dislayed if current layout is "image (or video) first" and message has
+//d: both image (or video) and text objects.
+//l: list_single_pane_t1_cp2
+#define qtn_mms_om_order_text_first     "Place texts first"
+
+//d: Command in options menu.
+//d: For changing the image object to be the first object in message.
+//d: Dislayed if currently selected list item is image/video or text and
+//d: text is first object.
+//l: list_single_pane_t1_cp2
+#define qtn_mms_om_order_text_second    "Place texts second"
+
+//d: Command in options menu.
+//d: Opens MMS viewer / SMIL Player to display composed message as it's seen by receiver
+//l: list_single_pane_t1_cp2
+#define qtn_mms_om_preview_message      "Preview message"
+
+//d: Submenu title in options menu.
+//d: Remove submenu. 
+//l: list_single_pane_t1_cp2/opt3
+#define qtn_mms_om_remove               "Remove"
+
+//d: Command in options menu.
+//d: For saving the selected object.
+//l: list_single_pane_t1_cp2
+#define qtn_mms_om_save                 "Save"
+
+//d: Command in options menu.
+//d: Opens dialog where user can change properties that affect how message is sent.
+//l: list_single_pane_t1_cp2
+#define qtn_mms_om_sending_options      "Sending options"
+
+//d: Confirmation query
+//d: Shown when creation mode is "Warning" and the user is trying to
+//d: insert large (>640x480) image (e.g. when image size is "Original").
+//d: YES / NO
+//l: popup_note_window
+#define qtn_mms_qry_insert_large    "The receiver may not support image this large. Continue?"
+
+//d: Confirmation query. 
+//d: Confirmation asked when deleting whole message
+//d: YES/NO
+//l: popup_note_window
+#define qtn_mms_quest_delete_msg    "Delete message?"
+
+//d: Confirmation query. 
+//d: Confirmation asked when creating a new presentation when
+//d: there's already some content in the current message
+//d: YES/NO
+//l: popup_note_window
+#define qtn_mms_quest_make_presentation "Really want to make a presentation and delete all changes?"
+
+//d: Pop up prompt
+//d: An entry in "Move page" list query
+//l: list_single_pane_t1_cp2
+#define qtn_mms_quest_move_page          "Page %N"
+
+//d: Pop up prompt
+//d: The heading of "Move page" list query
+//l: heading_pane_t1
+#define qtn_mms_quest_move_title         "Move page as:"
+
+//d: Confirmation query. 
+//d: Confirmation asked when removing page
+//d: YES/NO 
+//l: popup_note_window
+#define qtn_mms_quest_remove_page       "Remove current page?"
+
+//d: Confirmation query. 
+//d: Confirmation asked when removing presentation from message
+//d: YES/NO
+//l: popup_note_window
+//w:
+//r:3.0
+#define qtn_mms_quest_remove_presentation   "Remove presentation?"
+
+
+//d: Submenu command in "Insert" submenu 
+//d: Opens notepad template text fetch dialog where user can choose
+//d: text to be inserted in message 
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_insert_template_text     "Template text"
+
+//d: Command in option menu "Remove" submenu.
+//d: Remove audio from message
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_remove_audio             "Audio"
+
+//d: Command in option menu "Remove" submenu.
+//d: Remove image from message 
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_remove_image             "Image"
+
+//d: Command in option menu "Remove" submenu.
+//d: Removes the current page
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_remove_page              "Page"
+
+//d: Command in option menu "Insert" submenu.
+//d: Insert a note from Notepad application
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mail_sm_insert_note              "Note"
+
+//d: Command in option menu "Insert" submenu.
+//d: Insert a template text
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mail_sm_insert_template_text     "Template text"
+
+//d: Command in option menu "Remove" submenu.
+//d: Remove user created presentation from message
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r:3.0
+#define qtn_mms_sm_remove_presentation    	"Presentation"
+
+//d: Command in option menu "Remove" submenu.
+//d: Remove video from message
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_remove_video             "Video"
+
+//d: Text.
+//d: Displayed in title pane when user is in "Objects" dialog.
+//l: title_pane_t2/opt12
+#define qtn_mms_title_objects           "Objects"
+
+//d: Wait note
+//d: Shown when opening a message with objects 
+//l: popup_note_wait_window
+#define qtn_mms_wait_opening_editor         "Opening..."
+
+//d: Wait note
+//d: This is shown when user is changing slide
+//d: current page / number of pages
+//l: popup_note_wait_window
+#define qtn_mms_wait_opening_page           "Opening page %0N/%1N"
+
+//d: Wait note
+//d: Shown when saving old message, ie message is already saved once, to draft folder 
+//l: popup_note_wait_window
+#define qtn_mms_wait_saving_message         "Saving message..."
+
+//d: Wait note
+//d: Shown when saving message first time to draft folder 
+//l: popup_note_wait_window
+#define qtn_mms_wait_saving_message_new     "Saving message into Drafts folder..."
+
+//d: Size of data in kilo bytes with one digit accuracy
+//d:
+//l: popup_note_window
+#define qtn_size_kb_with_one_decimal " %0N%1U%2N kB"
+
+//d:Query with two fields when sending sms without defined service centre
+//d:A data query with two lines (the one below also)
+//l:popup_query_data_window
+//
+#define qtn_sms_prmpt_enter_sc_number   "Enter service centre number:"
+
+//d:Query with two fields when sending sms without defined service centre
+//d:A data query with two lines (above also)
+//l:popup_query_data_window
+//
+#define qtn_sms_prmpt_enter_sc_name     "Enter service centre name:"
+
+//d:An text in note when given service centre number is not valid 
+//d:An information note
+//l:popup_note_window
+//
+#define qtn_info_invalid_number                 "Invalid number"
+
+//d: Setting item for Character support-setting
+//l: list_setting_pane_t1
+//w:
+//r:3.1u
+#define qtn_mce_sett_sms_chars                     "Character support"
+
+//d: Setting possibilities for Character support-setting
+//l: list_set_graphic_pane_t1
+//w:
+//r:3.1u
+#define qtn_mce_sett_sms_chars_full                 "Full"
+
+//d: Setting possibilities for Character support-setting
+//l: list_set_graphic_pane_t1
+//w:
+//r:3.1u
+#define qtn_mce_sett_sms_chars_reduced              "Reduced"
+
+//d: Setting possibilities for message conversion -setting
+//l: list_set_graphic_pane_t1
+//w:
+//r:3.1u
+#define qtn_mce_settings_sms_none               "Text"
+
+//d: Setting possibilities for message conversion -setting
+//l: list_set_graphic_pane_t1
+//w:
+//r:3.1u
+#define qtn_mce_settings_sms_fax                "Fax"
+
+//d: Setting possibilities for message conversion -setting
+//l: list_set_graphic_pane_t1
+//w:
+//r:3.1u
+#define qtn_mce_settings_sms_paging             "Paging"
+
+//d: List item in Sms Settings dialog for opening dialog for choosing correct value
+//d: A listbox text
+//l: list_setting_pane_t1
+//w:
+//r:3.1u
+#define qtn_mce_settings_sms_reply              "Reply via same centre" 
+
+//d: List item in Sms Settings dialog for opening dialog for choosing correct value
+//d: A listbox text
+//l: list_setting_pane_t1
+//w:
+//r:3.1u
+#define qtn_mce_settings_sms_validity           "Validity period"
+
+//d:An text in note when deleting old emptied message
+//d:An information note
+//l:popup_note_window
+//w:
+//r:3.1u
+#define qtn_sms_info_deleted            "Message deleted"
+
+//d:A Notification when the maximum sms message length has been reached
+//d:An information note
+//l:popup_note_window
+//w:
+//r:3.1u
+#define qtn_sms_info_max_length_reached     "Maximum message length reached."
+
+//d:A Notification when trying to send 1 character too long sms message
+//d:An information note
+//l:popup_note_window
+//w:
+//r:3.1u
+#define qtn_sms_info_too_long1	"Message too long to send. Remove 1 character."
+
+//d:These are used in length of the message identifier like 
+//d:This have to be left as short as possible, no words!
+//l: navi_text_pane_t1
+#define qtn_sms_message_length          "%0N (%1N)"
+
+//d:Note when an object (text, image, audio or svg-t) cannot be presented because it
+//d:is corrupted
+//d:Information note
+//l:popup_note_window
+//w:
+//r:3.1u
+#define qtn_mms_cannot_open_corrupted       "Cannot open. Object corrupted."
+
+//d:Command in options-menu
+//d:Plays the attached audio clip
+//l:list_single_pane_t1_cp2
+//w:
+//r:3.1u
+#define qtn_mms_om_play_audio               "Play audio"
+
+//d:Command in options-menu
+//d:Starts video playback
+//l:list_single_pane_t1_cp2
+//w:
+//r:3.1u
+#define qtn_mms_om_play_video               "Play video"
+
+//d:Command in options-menu
+//d:Shows the attached image file in PhotoAlbum
+//l:list_single_pane_t1_cp2
+//w:
+//r:3.1u
+#define qtn_mms_om_view_image               "View image"
+
+//d: Submenu command in "Remove" submenu
+//d: Removes current page in the presentation 
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r:3.1u
+#define qtn_mms_sm_remove_slide         "Page"
+
+//d: Information note.
+//d: Note shown when user has moved a page inside the message
+//d: %0N is the page number where it was moved
+//d: %1N is the number of all pages
+//l: popup_note_window
+//w:
+//r:3.1u
+#define qtn_mms_conf_page_moved "Page moved as %0N/%1N."
+
+//d:Command in options-menu
+//d:Starts presentation playback
+//l:list_single_pane_t1_cp2
+//w:
+//r:3.1u
+#define qtn_mms_om_play_presentation               "Play presentation"
+
+//d: Confirmation query. 
+//d: Confirmation asked when removing text from the current page
+//d: YES/NO 
+//l: popup_note_window
+//w:
+//r:3.1u
+#define qtn_mms_quest_remove_text      "Remove text?"
+
+//d: Submenu command in "Remove" submenu
+//d: Removes text in the current page
+//l: list_single_popup_submenu_pane_t1
+//w:
+//r:3.1u
+#define qtn_mms_sm_remove_text         "Text"
+
+//d: Unified message sending settings list item.
+//d: If chosen opens a dialog to select the type for the current message.
+//l: list_setting_pane_t1
+//w:
+//r:3.1u
+#define qtn_msg_ed_setting_msg_type "Type"
+
+//d: Unified message setting item list value.
+//d: Value shown in message type selection
+//l: list_set_graphic_pane_t1
+//w:
+//r:3.1u
+#define qtn_msg_setting_auto_type                "Automatic"
+
+//d: Unified message setting item list value.
+//d: Value shown in message type selection
+//l: list_set_graphic_pane_t1
+//w:
+//r:3.1u
+#define qtn_msg_setting_mms_type                "Multimedia message"
+
+//d: Information note.
+//d: Note shown when the maximum number of recipients reached in header fields
+//l: popup_note_window
+//w:
+//r:3.1u
+#define qtn_msg_info_max_number_recip "Maximum number of recipients reached."
+
+//d: Options menu item.
+//d: Open insert toolbar.
+//l: list_single_pane_t1_cp2
+//w:
+//r:3.1u
+#define qtn_msg_om_insert               "Insert media"
+
+//d: Options menu item.
+//d: Open insert submenu
+//l: list_single_pane_t1_cp2
+//w:
+//r:3.1u
+#define qtn_msg_om_insert_submenu       "Insert media"
+
+//d: Options menu item.
+//d: Starts sending MMS message
+//l: list_single_pane_t1_cp2
+//w:
+//r:3.1u
+#define qtn_msg_om_send_mms               "Send"
+
+//d: Options menu item.
+//d: Starts sending SMS message
+//l: list_single_pane_t1_cp2
+//w:
+//r:3.1u
+#define qtn_msg_om_send_sms               "Send"
+
+//d:A titlepane text shown when the real message type is not yet know (during the launch phase)
+//l:title_pane_t2/opt12
+//w:
+//r:3.2
+#define qtn_msg_title_message "Message"
+
+//d:A titlepane text showing message type
+//l:title_pane_t2/opt12
+//w:
+//r:3.1u
+#define qtn_msg_title_mms_message "Multimedia message"
+
+//d:A titlepane text showing message type
+//l:title_pane_t2/opt12
+//w:
+//r:3.1u
+#define qtn_msg_title_sms_message "Text message"
+
+//d: Wait note
+//d: Shown when sending a message  
+//l: popup_note_wait_window
+//w:
+//r:3.1u
+#define qtn_msg_wait_sending_mms           "Sending multimedia message"
+
+//d: Wait note
+//d: Shown when sending a message  
+//l: popup_note_wait_window
+//w:
+//r:3.1u
+#define qtn_msg_wait_sending_sms           "Sending text message"
+
+//d: Options menu item.
+//d: Edit text
+//l: list_single_pane_t1_cp2/opt3
+//w:
+//r:3.1u
+#define qtn_options_edit_text               "Edit text"
+
+//d: Popup help text for UniEditor
+//d: Shown when the message type changes to MMS
+//l: popup_preview_text_window/opt5
+//w:
+//r: 3.1u
+#define qtn_info_popup_msg_changed_mms         "Msg changed to multimedia message."
+
+//d: Popup help text for UniEditor
+//d: Shown when the message type changes to SMS
+//l: popup_preview_text_window/opt5
+//w:
+//r: 3.1u
+#define qtn_info_popup_msg_changed_sms         "Msg changed to text message."
+
+// d: Command in options list in Mce. 
+// d: Opens Message info dialog
+// d: Visible when one message selected.
+// l: list_single_pane_t1_cp2
+#define qtn_mce_info                    "Message info"
+
+// d: Message info popup item value
+// d: Type of the message.
+// l: list_single_heading_pane_t1_cp2
+#define qtn_mms_msginfo_mms             "Multimedia message"
+
+// d: Describing the type of the message
+// d: a popup listbox
+// l: list_single_heading_pane_t1_cp2
+// 
+#define qtn_sms_minfo_type_sms                  "Short message"
+
+//d: Popup query item in mce application that starts writing a unified message.
+//l: list_single_pane_t1_cp2
+//w:
+//r:3.1u
+#define qtn_mce_pop_up_message "Message"
+
+//d:A Notification when trying to send X character too long sms message
+//d:An information note
+//l:popup_note_window
+#define qtn_sms_info_too_long	"Message too long to send. Remove %N characters."
+
+// d: Title for the message sending settings dialog.
+// l: title_pane_t2/opt12
+#define qtn_mms_title_sending_options   "Sending options"
+
+// d: Multimedia message settings dialog menu item.
+// d: Change selected item.
+// l: list_single_pane_t1_cp2
+#define qtn_mce_settings_change         "Change"
+
+// d: Multimedia message setting item list value. Also a choice item in a select dialog.
+// d: Requests vality period time of one hour for sent messages.
+// l: list_set_graphic_pane_t1
+#define qtn_mce_settings_mms_1          "1 h"
+
+// d: Multimedia message setting item list value. Also a choice item in a select dialog.
+// d: Requests vality period time of six hours for sent messages.
+// l: list_set_graphic_pane_t1
+#define qtn_mce_settings_mms_6          "6 h"
+
+// d: Multimedia message setting item list value. Also a choice item in a select dialog.
+// d: Requests vality period time of 1 day for sent messages.
+// l: list_set_graphic_pane_t1
+#define qtn_mce_settings_mms_24         "24 h"
+
+// d: Multimedia message setting item list value. Also a choice item in a select dialog.
+// d: Requests vality period time of three days for sent messages.
+// l: list_set_graphic_pane_t1
+#define qtn_mce_settings_mms_3          "3 days"
+
+// d: Multimedia message setting item list value. Also a choice item in a select dialog.
+// d: Requests vality period time of one week for sent message´s.
+// l: list_set_graphic_pane_t1
+#define qtn_mce_settings_mms_week       "Week"
+
+// d: Multimedia message setting item list value. Also a choice item in a select dialog.
+// d: Requests maximum vality period time for sent messages.
+// l: list_set_graphic_pane_t1
+#define qtn_mce_settings_mms_maximum    "Maximum"
+
+// d: Multimedia message setting item list value. Also a choice item in a select dialog.
+// d: Requests delivery reports for sent messages.
+// l: list_set_graphic_pane_t1
+#define qtn_mce_settings_mms_yes        "Yes"
+
+// d: Multimedia message setting item list value. Also a choice item in a select dialog.
+// d: Does not request delivery reports for sent messages.
+// l: list_set_graphic_pane_t1
+#define qtn_mce_settings_mms_no         "No"
+
+//d:A Note shown when an attachment is added.
+//d:An information note
+//l:popup_note_window
+//w:
+//r:3.2
+#define qtn_unified_attachment_added	"Attachment added"
+
+//d:A Note shown when many attachments are added.
+//d:An information note
+//l:popup_note_window
+//w:
+//r:3.2
+#define qtn_unified_attachments_added   "Attachments added"
+
+//d: Wait note
+//d: Shown when closing the editor for the first time
+//l: popup_note_wait_window
+//w:
+//r:3.2
+#define qtn_wait_saving_message_new           "Saving message to Drafts"
+
+//d: Wait note
+//d: Shown when closing the editor for a message that is already saved to Drafts
+//l: popup_note_wait_window
+//w:
+//r:3.2
+#define qtn_wait_saving_message           "Saving"
+
+//d: Confirmation query
+//d: When trying to send message and there's one too many recipients
+//d: OK / -
+//l: popup_note_window
+//w:
+//r:3.2
+#define qtn_msg_query_remove_recipient "Too many recipients. Remove 1 recipient"
+
+//d: Confirmation query
+//d: When trying to send message and there are N too many recipients
+//d: OK / -
+//l: popup_note_window
+//w:
+//r:3.2
+#define qtn_msg_query_remove_recipients "Too many recipients. Remove %N recipient"
+
+//d:Query with two fields when sending sms-over-email without defined service centre
+//d:A data query with two lines (above also)
+//l:popup_query_data_window
+//
+#define qtn_sms_prmt_enter_mail_scentre     "E-mail service centre:"
+
+//d:Query with two fields when sending sms-over-email without defined service centre
+//d:A data query with two lines (the one below also)
+//l:popup_query_data_window
+//
+#define qtn_sms_prmpt_enter_gateway   "E-mail gateway:"
+
+//d: Confirmation query
+//d: When trying to open message from Drafts that cannot be opened in restricted mode
+//d: OK / -
+//l: popup_note_window
+//w:
+//r:3.2
+#define qtn_mms_info_rmode_cannot_open_msg  "Message includes content that cannot be edited in Restricted creation mode"
+
+//d: Confirmation query
+//d: When trying to open message from Drafts that cannot be opened in restricted mode (and mode cannot be changed).
+//d: OK / -
+//l: popup_note_window
+//w:
+//r:3.2
+#define qtn_mms_info_cannot_open_msg        "Message includes content that cannot be edited"
+
+//d: Lower row of the title if the message is an ordirary MMS
+//d: Page count in title pane
+//d: current page / number of pages
+//l: title_pane_t2/opt12
+#define qtn_mms_title_page                  "Page %0N/%1N"
+
+//d: Submenu title in options menu.
+//d: Submenu for insert functions. 
+//l: list_single_pane_t1_cp2/opt3
+#define qtn_mms_om_insert               "Insert"
+
+//d: Command in text context sensitive menu.
+//d: Open color dialog for choosing current text color
+//l: list_single_pane_t1_cp2
+#define qtn_mms_om_change_text_color    "Change text color"
+
+//d: Submenu title in options menu.
+//d: Submenu for background settings. 
+//l: list_single_pane_t1_cp2/opt3
+#define qtn_mms_om_background_settings  "Background settings"
+
+//d: Submenu title in options menu.
+//d: Submenu for transition objects. 
+//l: list_single_pane_t1_cp2/opt3
+#define qtn_mms_om_transition_settings  "Set transition"
+
+//d: Submenu command in "Insert" submenu 
+//d: Activates the current text region so that
+//d: user can start typing text in it
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_insert_text          "Text"
+
+//d: Submenu command in "Insert" submenu 
+//d: Opens text fetch dialog where user can choose 
+//d: text to be inserted in message
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_insert_note          "Note"
+
+//d: Submenu command in "Insert" submenu 
+//d: Opens image fetch dialog where user can choose
+//d: image to be inserted in message
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_insert_image         "Image"
+
+//d: Submenu command in "Insert" submenu 
+//d: Opens camera application where user can take 
+//d: new photo to be inserted in message
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_insert_new_image     "New image"
+
+//d: Submenu command in "Insert" submenu 
+//d: Opens video fetch dialog where user can choose
+//d: video to be inserted in message
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_insert_video         "Video"
+
+//d: Submenu command in "Insert" submenu 
+//d: Opens camera application where user can take 
+//d: new video to be inserted in message
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_insert_new_video     "New video"
+
+//d: Submenu command in "Insert" submenu 
+//d: Opens audio fetch dialog where user can choose 
+//d: background audio to be inserted in message
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_insert_bg_audio      "Background audio"
+
+//d: Submenu command in "Insert" submenu
+//d: Inserts a new page into the message 
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_add_slide            "Page"
+
+//d: Submenu command in "Remove" submenu
+//d: Removes background audio from the presentation 
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_sm_remove_bg_audio      "Background audio"
+
+//d: Submenu command in "Background" submenu
+//d: Opens color dialog for choosing the bg color 
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_om_set_bgcol            "Set Bg color"
+
+//d: Submenu command in "Background" submenu
+//d: Opens image fetch dialog to choose bg image 
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_om_add_bgimg            "Set Background image"
+
+//d: Submenu command in "Background" submenu
+//d: Removes the bg image 
+//l: list_single_popup_submenu_pane_t1
+#define qtn_mms_om_remove_bgimg         "Remove Bg image"
+
+//d: Query + info note icon.
+//d: Note shown when user tries to insert a gif animation as background image
+//l: popup_note_window
+#define qtn_mms_quest_animation_not_allowed        "Animations can not be inserted as background."
+
+//d: Options menu item.
+//d: Shows priority selection list
+//l: list_single_pane_t1_cp2
+//w:
+//r:3.2
+#define qtn_msg_om_priority               "Priority"
+
+//d: Setting item for SMS character support-setting
+//l: list_setting_pane_t1
+//w:
+//r:3.2
+#define qtn_msg_sett_sms_chars                     "SMS character support"
+
+//d: Title heading for priority popup 
+//l: heading_pane_t1
+//w:
+//r: 3.2
+#define qtn_msg_qry_priority                     "Message priority:"
+
+//d: Item in the priority popup
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.2
+#define qtn_msg_qry_high_priority                "High"
+
+//d: Item in the priority popup
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.2
+#define qtn_msg_qry_normal_priority                "Normal"
+
+//d: Item in the priority popup
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.2
+#define qtn_msg_qry_low_priority                "Low"
+
+//d: Heading of move page popup 
+//l: heading_pane_t1
+//w:
+//r: 3.2
+#define qtn_msg_move_page_title 		"Move page %N as:"
+
+//d:Query if sending a concatenated message.
+//d:A confirmation query
+//l:popup_note_window
+//
+#define qtn_sms_quest_send              "Maximum length of one message exceeded. Message will be sent in %N parts."
+
+// d: Confirmation query - MMS access points are either missing or contain settings that are not valid.
+// d: This query is given when starting to write a new or edit an existing multimedia message.
+// l: popup_note_window
+#define qtn_mce_conf_no_ap              "No access point defined or it is not valid. Modify now?"
+
+//d:A Notification when trying to send too long unicode sms message
+//d:An information note
+//l:popup_note_window
+//
+#define qtn_sms_info_too_long_u "Message contains special characters and therefore is too big. Please remove characters."
+
+//d:Name of the Business Card message type.
+//l:list_double_graphic_pane_t2
+//
+#define qtn_mce_inbox_type_smart_cbc "Business Card"
+
+//d:Name of the message [type].
+//l:title_pane_t2/opt12
+//
+#define qtn_mce_inbox_type_smart_vcal "Calendar"
+
+
+//d: Confirmation query
+//d: Video included succesfully. Video format changed to a supported type
+//d: OK / -
+//l: popup_note_window
+//w:
+//r:3.2
+#define qtn_unified_video_converted        "Video included succesfully. Video format changed to a supported type" 
+
+//d: Confirmation query. 
+//d: Confirmation asked during sending if message type changes 
+//D: when written contact name is matched agains phonebook.
+//d: YES/NO 
+//l: popup_note_window
+//w:
+//r:5.0
+#define qtn_msg_type_changed_continue_sending "Message type changed to multimedia. Continue sending?"
+
+//d: Information note.
+//d: Note shown when none of the selected objects cannot be inserted as 
+//d: inserting would cause [Maximum number of slides in MMS] to be exceeded.
+//l: popup_note_window
+//w:
+//r: 3.2
+#define qtn_mms_info_not_inserted_slides "Maximum number of pages %N exceeded. Inserting not possible."
+
+//d: Information note.
+//d: Note shown when some of the selected objects cannot be inserted as 
+//d: inserting would cause [Maximum number of slides in MMS] to be exceeded.
+//l: popup_note_window
+//w:
+//r: 3.2
+#define qtn_mms_info_all_not_inserted_slides "Unable to insert some objects. Maximum number of pages is %N."
+
+// d: Tooltip text for 'Send' button in the permanent touch toolbar. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_tb_tooltip_send "Send"
+
+// d: Tooltip text for 'Add recipient' button in the permanent touch toolbar. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_tb_tooltip_add_recipient "Add recipient"
+
+// d: Tooltip text for 'Insert' button in the permanent touch toolbar. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_tb_tooltip_insert "Insert"
+
+// d: Icon text for 'Image' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_image "Image"
+
+// d: Tooltip text for 'Image' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_image "Insert image from gallery"
+
+// d: Icon text for 'Video clip' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_video "Video clip"
+
+// d: Tooltip text for 'Video clip' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_video "Insert video from gallery"
+
+// d: Icon text for 'Sound clip' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_sound "Sound clip"
+
+// d: Tooltip text for 'Sound clip' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_sound "Insert sound clip from gallery"
+
+// d: Icon text for 'Take picture' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_new_image "Take picture"
+
+// d: Tooltip text for 'Take picture' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_new_image "Insert new image"
+
+// d: Icon text for 'Record video' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_new_video "Record video"
+
+// d: Tooltip text for 'Record video' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_new_video "Insert new video clip"
+
+// d: Icon text for 'Record sound' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_new_sound "Record sound"
+
+// d: Tooltip text for 'Record sound' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_new_sound "Insert new sound clip"
+
+// d: Icon text for 'Slide' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_slide "Slide"
+
+// d: Tooltip text for 'Slide' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_slide "Insert slide"
+
+// d: Icon text for 'Template' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_template "Template"
+
+// d: Tooltip text for 'Template' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_template "Insert template text"
+
+// d: Icon text for 'Note' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_note "Note"
+
+// d: Tooltip text for 'Note' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_note "Insert note as text"
+
+
+
+// d: Icon text for 'Business card' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_vcard "Business card"
+
+// d: Tooltip text for 'Business card' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_vcard "Insert business card"
+
+// d: Icon text for 'Other' button in the permanent touch toolbar extension. 
+// l: cell_tb_ext_pane_t1/opt1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_other "Other"
+
+// d: Tooltip text for 'Other' button in the permanent touch toolbar extension. 
+// l: popup_preview_text_window_t1
+// w:
+// r: 5.0
+#define qtn_msg_insert_tb_tooltip_other "Insert other"
+
+//d: An entry in an "Other" list query
+//d: For inserting "Note" as an attachment
+//l: list_single_pane_t1_cp2
+//w:
+//r: 5.0
+//
+#define qtn_msg_insert_qry_note_as_attachment "Note as attachment"
+
+//d: An entry in an "Insert" list query
+//d: For inserting a new image into message
+//l: list_single_pane_t1_cp2
+//w:
+//r: 5.0
+#define qtn_msg_insert_qry_new_image          "Take picture"
+
+//d: An entry in an "Insert" list query
+//d: For inserting a new video clip into message
+//l: list_single_pane_t1_cp2
+//w:
+//r: 5.0
+#define qtn_msg_insert_qry_new_video          "Record video"
+
+//d: An entry in an "Insert" list query
+//d: For inserting a new sound clip into message
+//l: list_single_pane_t1_cp2
+//w:
+//r: 5.0
+#define qtn_msg_insert_qry_new_sound          "Record sound"
+
+//d: An entry in an "Insert" list query
+//d: For inserting a business card into message
+//l: list_single_pane_t1_cp2
+//w:
+//r: 5.0
+#define qtn_msg_insert_qry_vcard          "Business card"
+
+//d: An entry in an "Insert" list query
+//d: For inserting a slide into message
+//l: list_single_pane_t1_cp2
+//w:
+//r: 5.0
+#define qtn_msg_insert_qry_slide          "Slide"
+
+//d: An entry in an "Insert" list query
+//d: For inserting a presentation into message
+//l: list_single_pane_t1_cp2
+//w:
+//r: 5.0
+#define qtn_msg_insert_qry_presentation_from_gallery          "Presentation from gallery"
+
+//d: Heading of select page popup 
+//l: heading_pane_t1
+//w:
+//r: 3.2
+#define qtn_msg_select_page_title         "Select page:"
+
+//d: Command in options and context sensitive menus.
+//d: Opens a list query for selecting a page
+//l: list_single_pane_t1_cp2
+//w:
+//r: 3.2
+#define qtn_msg_om_select_page             "Select page"
+
+//d: Popup note text for UniEditor
+//d: SMS size limit warning note
+//d: Shown when the message(SMS) size increases pre-defined value(80 bytes)
+//l: popup_preview_text_window/opt5
+//w:
+//r:  5.0 / 3.2 / 3.2.3 / MCL
+#define qtn_info_popup_sms_size_above_limit         "Message size is over %N bytes"
+
+//d: Popup note text for UniEditor
+//d: SMS size limit warning note
+//d: Shown when the message(SMS) size decreases pre-defined value(80 bytes)
+//l: popup_preview_text_window/opt5
+//w:
+//r: 5.0 / 3.2 / 3.2.3 / MCL
+#define qtn_info_popup_sms_size_below_limit        "Message size is %N bytes or less"
+
+// End of File

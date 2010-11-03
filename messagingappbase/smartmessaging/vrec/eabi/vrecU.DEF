@@ -1,0 +1,5 @@
+EXPORTS
+	_Z16CreateRecognizerv @ 1 NONAME
+	_ZTI5CVRec @ 2 NONAME ; #<TI>#
+	_ZTV5CVRec @ 3 NONAME ; #<VT>#
+

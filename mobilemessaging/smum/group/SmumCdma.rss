@@ -1,0 +1,365 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the CDMA resources for the module smum.
+*
+*/
+
+
+
+
+/*
+-----------------------------------------------------------------------------
+
+    r_smsi_function_array_cdma
+
+-----------------------------------------------------------------------------
+*/
+
+RESOURCE MTUD_FUNCTION_ARRAY r_smsi_function_array_cdma
+    {
+    functions=      
+        {       
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_inbox_write_sms;
+            command = KMtmUiMceWriteMessageSubmenu;
+            flags = EMtudCommandTransferSend;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_pop_up_sms;
+            command = KMtmUiMceWriteMessagePopup;
+            flags = EMtudCommandTransferSend;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_settings_sms;
+            command = KMtmUiMceSettings;
+            flags = EMtudCommandTransferSend;
+            },
+        MTUD_FUNCTION 
+            {
+            functiontext= qtn_options_send_via_sms; //SMS_M_SEND_AS_SMS;    // max 40 char.
+            command=KMtmUiFunctionSendAs;
+            flags=EMtudCommandSendAs;
+            },
+        MTUD_FUNCTION 
+            { 
+            functiontext = qtn_mce_info;
+            command = KMtmUiFunctionMessageInfo;
+            flags = EMtudContextSpecific|EMtudAsynchronous|EMtudCommandTransferReceive;
+            }
+        };
+    }
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_main_settings_items_cdma - listbox definition
+//    A setting listbox item texts
+//
+// ---------------------------------------------------------
+//
+RESOURCE MUIU_SETTINGS_ARRAY r_sms_main_settings_items_cdma
+    {
+    items = 
+        {
+/* 
+	THIS SHOULD BE
+
+	Priority: <Normal, Urgent>
+	Callback Number: <number>
+	Message Queuing: <Yes,No>
+	Delivery Report: <Yes,No>
+
+*/
+
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_priority;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_priority;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_callback;
+            type = EMuiuSettingsSelectionList;
+			array_id = r_smum_setting_page_list_callback_number; 
+            },
+		MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_queuing;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_setting_queueing;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_delivery;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_yes_no;
+            }
+        };
+    }
+//------------------------------------------------------------
+// r_sms_main_settings_items_cdma_no_delivery
+// Main settings array without delivery option
+// 
+//------------------------------------------------------------
+//
+RESOURCE MUIU_SETTINGS_ARRAY r_sms_main_settings_items_cdma_no_delivery
+    {
+    items = 
+        {
+/* 
+	THIS SHOULD BE
+
+	Priority: <Normal, Urgent>
+	Callback Number: <number>
+	Message Queuing: <Yes,No>
+*/
+
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_priority;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_priority;
+            },
+		
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_callback;
+            type = EMuiuSettingsSelectionList;
+			array_id = r_smum_setting_page_list_callback_number; 
+            },
+		MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_queuing;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_setting_queueing;
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_Queuing - listbox definition
+//    A setting listbox for message queuing yes/no selection
+//
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_sms_setting_queueing
+	{
+	items=
+		{
+		LBUF { txt = qtn_mce_settings_sms_yes; },
+		LBUF { txt = qtn_mce_settings_sms_no;  }
+		};
+	}
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_sending_options_items_cdma - listbox definition
+//    A setting listbox item texts
+//
+// ---------------------------------------------------------
+//
+RESOURCE MUIU_SETTINGS_ARRAY r_sms_sending_options_items_cdma
+    {
+    items = 
+        {
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_priority;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_priority;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_callback;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_smum_setting_page_list_callback_number; 
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_delivery;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_yes_no;
+            }
+        };
+    }
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_sending_options_items_cdma_no_delivery - listbox definition
+//    A setting listbox item texts w/o delivery option
+//
+// ---------------------------------------------------------
+//
+RESOURCE MUIU_SETTINGS_ARRAY r_sms_sending_options_items_cdma_no_delivery
+    {
+    items = 
+        {
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_priority;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_sms_settings_priority;
+            },
+        MUIU_SETTINGS_ITEM
+            {
+            title = qtn_mce_settings_sms_callback;
+            type = EMuiuSettingsSelectionList;
+            array_id = r_smum_setting_page_list_callback_number; 
+            }
+        };
+    }
+
+RESOURCE ARRAY r_sms_settings_priority
+	{
+    items=
+        {
+        LBUF {txt=  qtn_mce_setting_priority_normal; },
+        LBUF {txt=  qtn_mce_setting_priority_urgent; }
+		};
+	}
+
+
+//  RESOURCE DEFINITIONS 
+// ---------------------------------------------------------
+//   
+//    r_sms_settings_empty_callback_numbers
+//    To empty service centres listbox item
+//
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_sms_settings_empty_callback_numbers
+    {
+    items=
+        {
+        LBUF 
+            {
+            txt="\t"; 
+            }
+        };
+    }
+
+//----------------------------------------------------
+//    
+//    r_sms_callbacknumber_setting_page    
+//    Callback number editing page
+//
+//----------------------------------------------------
+//
+RESOURCE AVKON_SETTING_PAGE r_sms_callbacknumber_setting_page
+    { 
+    number = EAknSettingPageNoOrdinalDisplayed;
+    label = qtn_mce_setting_sms_cb_header;
+    softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL;
+    type = EEikCtEdwin;
+    editor_resource_id = r_smum_setting_page_edwin_callback_number;
+    menubar = R_AVKON_MENUPANE_EMPTY;
+
+    // Since we restrict input to DTMF characters, the only case
+    // that would be considered as invalid is when there is
+    // no number specified. We will enable the OK key in this
+    // case in order to reset a callback number.
+    invalid_contents_softkey_resource = R_AVKON_SOFTKEYS_OK_CANCEL;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_smum_setting_page_edwin_callback_number
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE EDWIN r_smum_setting_page_edwin_callback_number
+    {
+    flags = EEikEdwinNoHorizScrolling | EEikEdwinResizable;
+    width = 25;
+    lines = 6;
+    maxlength = 16; // length of maximum allowed callback number
+    default_input_mode = EAknEditorNumericInputMode;
+    allowed_input_modes = EAknEditorNumericInputMode;
+
+    // only allow DTMF characters: 0-9, *, +, p, w, #
+    numeric_keymap = EAknEditorStandardNumberModeKeymap;
+    }
+
+
+//----------------------------------------------------
+//    
+//    r_sms_callbacknumber_setting_dialog    
+//    Callback number dialog page
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_sms_callbacknumber_setting_query
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL;
+    items=
+        {
+        DLG_LINE
+            {
+            type =  EAknCtQuery;
+            id =    EGeneralQuery;
+            control = AVKON_DATA_QUERY
+                { 
+                layout = EPhoneLayout;
+				control = EDWIN
+					{
+					};
+                };
+            }
+        };
+	}
+
+// ---------------------------------------------------------
+//
+//    r_smum_setting_page_list_callback_number 
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE ARRAY r_smum_setting_page_list_callback_number
+    {
+	items = 
+		{
+		LBUF {txt = qtn_mce_setting_cb_add_mine; },
+		LBUF {txt = qtn_mce_setting_cb_add_contact; },
+		LBUF {txt = qtn_mce_setting_cb_manual; },
+		LBUF {txt = qtn_mce_setting_cb_none; }
+		};
+    }
+// Used texts. Notice that there is no TBUF-lengths, so usage of dynamic loading is strongly
+// recommended.
+//
+
+RESOURCE TBUF r_qtn_mce_setting_priority_urgent                 { buf = qtn_mce_setting_priority_urgent; }
+RESOURCE TBUF r_qtn_mce_setting_priority_normal                 { buf = qtn_mce_setting_priority_normal; }
+RESOURCE TBUF r_qtn_mce_setting_sms_cb_none                     { buf = qtn_mce_setting_sms_cb_none; }
+RESOURCE TBUF r_qtn_mce_setting_enter_callback		            { buf = qtn_mce_setting_enter_callback; }
+RESOURCE TBUF r_qtn_mce_outbox_status_sent		                { buf = qtn_mce_outbox_status_sent; }
+RESOURCE TBUF r_qtn_sms_detail_callback_none                    { buf = qtn_sms_detail_callback_none; }
+RESOURCE TBUF r_qtn_sms_det_priority_nom                        { buf = qtn_sms_det_priority_nom; }
+RESOURCE TBUF r_qtn_sms_det_priority_urg                        { buf = qtn_sms_det_priority_urg; }
+
+//  End of File

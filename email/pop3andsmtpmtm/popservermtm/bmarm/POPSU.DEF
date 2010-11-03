@@ -1,3 +1,0 @@
-EXPORTS
-	NewL__14CImppServerMtmR17CRegisteredMtmDllP15CMsvServerEntry @ 1 NONAME R3UNUSED ; CImppServerMtm::NewL(CRegisteredMtmDll &, CMsvServerEntry *)
-

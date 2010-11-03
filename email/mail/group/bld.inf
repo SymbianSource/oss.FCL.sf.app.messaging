@@ -1,0 +1,89 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  This file provides the information required for building the
+*
+*/
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+// Help exports
+#include "../help/group/bld.inf"
+
+PRJ_EXPORTS
+// Headers for Mail Viewer plug-in FW
+
+../inc/MMessageLoadObserver.h   |../../../inc/MMessageLoadObserver.h
+../inc/MMailMsgBaseControl.h    |../../../inc/MMailMsgBaseControl.h
+../inc/MMailMessageView.h       |../../../inc/MMailMessageView.h
+../inc/CMailMessage.inl         |../../../inc/CMailMessage.inl
+../inc/MMailAppUiInterface.h    |../../../inc/MMailAppUiInterface.h
+../inc/CMailMessageView.h       |../../../inc/CMailMessageView.h
+../inc/CMailMessageView.inl     |../../../inc/CMailMessageView.inl
+../inc/CMailMessage.h           |../../../inc/CMailMessage.h
+../inc/MailInternalCRKeys.h     |../../../inc/MailInternalCRKeys.h
+../group/msgmailviewer.hrh      |../../../inc/msgmailviewer.hrh
+
+// CR BackUP file
+../CenRep/backup_registration.xml /epoc32/data/z/private/101f4cd6/backup_registration.xml
+../CenRep/backup_registration.xml /epoc32/release/winscw/udeb/z/private/101f4cd6/backup_registration.xml
+../CenRep/backup_registration.xml /epoc32/release/winscw/urel/z/private/101f4cd6/backup_registration.xml
+
+// IBY file exports
+../rom/MailEditorViewer.iby 		CORE_APP_LAYER_IBY_EXPORT_PATH(MailEditorViewer.iby)
+../rom/MailEditorViewerResources.iby 	LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(MailEditorViewerResources.iby)
+
+// Localised loc file export
+../loc/MsgMailEditor.loc        APP_LAYER_LOC_EXPORT_PATH(MsgMailEditor.loc )
+../loc/MsgMailViewer.loc        APP_LAYER_LOC_EXPORT_PATH(MsgMailViewer.loc )
+
+// CONFML FILE EXPORTS
+../conf/s60mail.confml                        	APP_LAYER_CONFML(s60mail.confml)
+../conf/s60mail_101F8850.crml 	        	APP_LAYER_CRML(s60mail_101F8850.crml)
+
+
+PRJ_MMPFILES
+MsgMailUtils.mmp
+MsgMailEditor.mmp
+MsgMailViewer.mmp
+
+// View Plug-ins
+// plain
+../PluginSrc/MailPlainView/MailPlainView.mmp
+// html
+//#ifdef __SERIES60_NATIVE_BROWSER
+//../pluginsrc/mailhtmlview/MailHtmlView.mmp
+//#endif // __SERIES60_NATIVE_BROWSER
+// omr
+#ifdef __MEETING_REQUEST_SUPPORT
+#include "../PluginSrc/icalviewer/group/bld.inf"
+#endif // __MEETING_REQUEST_SUPPORT
+
+PRJ_EXTENSIONS
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE msgmaileditor_aif.mif
+OPTION SOURCES -c8,8 qgn_menu_mce.svg
+END
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE msgmailutils.mif
+OPTION HEADERFILE msgmailutils.mbg
+OPTION SOURCES -c8,8 qgn_prop_mce_email_title.svg
+END
+
+// End of file

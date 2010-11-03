@@ -1,0 +1,42 @@
+/*
+* Copyright (c) 2004 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   This file provides the information required for building NcnList.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+// NONE
+// See msg_dom and msg_sdk projects which export ncnlist
+// releated headers (part of API enforcement project). 
+
+../rom/Ncnlist.iby                     CORE_APP_LAYER_IBY_EXPORT_PATH(Ncnlist.iby)
+../rom/NcnlistResources.iby            LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(NcnlistResources.iby)
+
+../conf/s60ncnlist.confml              APP_LAYER_CONFML(s60ncnlist.confml)
+../conf/s60ncnlist_101F87A8.crml       APP_LAYER_CRML(s60ncnlist_101F87A8.crml)
+../sis/ncnlist_stub.sis                /epoc32/data/z/system/install/ncnlist_stub.sis
+../loc/ncn.loc                         APP_LAYER_LOC_EXPORT_PATH(ncn.loc)
+
+PRJ_MMPFILES
+../group/Ncnlist.mmp
+../group/NcnNotification.mmp
+
+// End of file

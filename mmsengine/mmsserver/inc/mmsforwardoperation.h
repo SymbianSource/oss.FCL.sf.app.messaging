@@ -93,7 +93,7 @@ class CMmsForwardOperation :public CMmsBaseOperation
         // We don't need to prohibit copy & assignment constructors here,
         // as they are in CBase already
 
-    private: // Methods representing states that are overridden
+    private: // Methods representing states that are overriden
 
         /**
         * Encode one message

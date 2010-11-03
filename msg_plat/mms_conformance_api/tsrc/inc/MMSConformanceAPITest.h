@@ -182,7 +182,7 @@ NONSHARABLE_CLASS(CMMSConformanceAPITest) : public CScriptBase
         TInt InitDataL( CStifItemParser& aItem );
         
         /*
-        * Cleans up data initialized in InitDataL
+        * Cleans up data intialized in InitDataL
         * call it after calling InitDataL...
         */
         void CleanUp();        

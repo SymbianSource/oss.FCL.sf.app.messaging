@@ -1,0 +1,70 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*	 This file provides the information required for building the
+*    	 whole of a muiu library.
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+
+
+// MUIU Internal API, General
+../inc/MessagingInternalCRKeys.h    |../../../../inc/messaginginternalcrkeys.h
+../inc/MessagingInternalPSKeys.h    |../../../../inc/messaginginternalpskeys.h
+../inc/MessagingVariant.hrh         |../../../../inc/messagingvariant.hrh
+../inc/MuiuMsgUploadParam.h         |../../../../inc/muiumsguploadparam.h
+
+// EmailTools
+../emailtools/inc/MuiuEmailTools.h |../../../../inc/muiuemailtools.h
+
+// Flagger
+../flagger/inc/MuiuFlagger.h |../../../../inc/muiuflagger.h
+../flagger/inc/MuiuFlagger.inl |../../../../inc/muiuflagger.inl
+../flagger/inc/MuiuFlags.h |../../../../inc/muiuflags.h
+../flagger/inc/MuiuFlags.inl |../../../../inc/muiuflags.inl
+
+// OperationWait
+../operationwait/inc/MsgOperationWait.h |../../../../inc/msgoperationwait.h
+
+// ServicesInternal
+../servicesinternal/inc/MuiuMsvUiServiceUtilitiesInternal.h |../../../../inc/muiumsvuiserviceutilitiesinternal.h
+../servicesinternal/inc/MuiuContactService.h |../../../../inc/muiucontactservice.h
+../servicesinternal/inc/MuiuLock.h |../../../../inc/muiulock.h
+
+// SettingsArray
+../settingsarray/inc/MuiuSettingsArray.h |../../../../inc/muiusettingsarray.h
+../settingsarray/inc/MuiuSettingsArray.hrh |../../../../inc/muiusettingsarray.hrh
+../settingsarray/inc/MuiuSettingsArray.rh |../../../../inc/muiusettingsarray.rh
+
+PRJ_EXTENSIONS
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE muiu.mif
+OPTION HEADERFILE muiu.mbg
+OPTION SOURCEFILE Iconlist_Scalable.txt
+END
+
+PRJ_MMPFILES
+./muiu_internal.mmp
+
+
+// End of File

@@ -1,0 +1,124 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is project specification file for the MMS Viewer.
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+//...LOGGING... 
+MACRO           USE_LOGGER
+LIBRARY         flogger.lib
+//...LOGGING...
+
+
+TARGET          mmsviewer.exe
+EPOCSTACKSIZE   0x5000
+EPOCHEAPSIZE    0x1 0x800000        // As KBs. Latter about 8MB
+TARGETTYPE      exe
+UID             0x100039CE 0x100058DF
+
+VENDORID        VID_DEFAULT
+// DRM capability is added for 9.2 onwards as there was a requirement for which this change is introduced
+CAPABILITY      CAP_APPLICATION NetworkControl DRM 
+VERSION 	10.0
+PAGED
+
+APP_LAYER_SYSTEMINCLUDE
+
+START RESOURCE  MmsViewer.rss
+HEADER
+TARGETPATH      APP_RESOURCE_DIR
+LANGUAGE_IDS
+END
+
+START RESOURCE  ../viewer/MmsViewer_reg.rss
+DEPENDS mmsviewer.rsg
+TARGETPATH      /private/10003a3f/apps // Don't change the UID!
+END
+
+
+SOURCEPATH      ../viewersrc
+
+SOURCE          UniMmsViewerDocument.cpp
+SOURCE          UniMmsViewerAppUi.cpp
+SOURCE          MmsViewerApp.cpp
+SOURCE          MmsViewerHeader.cpp
+SOURCE          MmsViewerOperation.cpp
+SOURCE          MmsViewerChangeSlideOperation.cpp
+SOURCE          MmsViewerLaunchOperation.cpp
+SOURCE          MmsViewerSendReadReportOperation.cpp
+SOURCE          MmsViewerAppServer.cpp
+SOURCE          UniMmsSvkEvents.cpp
+
+USERINCLUDE     ../mtminc
+USERINCLUDE     ../viewerinc
+USERINCLUDE     ../settingsinc
+
+SYSTEMINCLUDE   ../../../inc
+SYSTEMINCLUDE   /epoc32/include/mda/common
+SYSTEMINCLUDE   /epoc32/include/caf
+
+LIBRARY         euser.lib
+LIBRARY         apparc.lib
+LIBRARY         cone.lib
+LIBRARY         eikcoctl.lib
+LIBRARY         eikcore.lib
+LIBRARY         msgeditormodel.lib              // Messaging Editor Model base DLL
+LIBRARY         msgeditorappui.lib              // Messaging Editor AppUi base DLL
+LIBRARY         msgeditorview.lib               // Messaging Editor View base DLL
+LIBRARY         mmsgenutils.lib                 // ClientMTM general utilities
+LIBRARY         avkon.lib
+LIBRARY		    aknicon.lib			            // AknIconUtils
+LIBRARY         cdlengine.lib                   // Layout
+LIBRARY         aknlayout2scalable.lib
+LIBRARY         fbscli.lib              	    // CFbsBitmap
+LIBRARY		    bitgdi.lib			            // FbsBitmapdevice
+LIBRARY         msgs.lib
+LIBRARY         muiu.lib                        // Select Folder dialog
+LIBRARY         muiu_internal.lib
+LIBRARY         commonui.lib                    // FindItem
+LIBRARY         commonengine.lib                // SharedData
+LIBRARY         apmime.lib                      // TDatatype (used by Objects)
+LIBRARY         efsrv.lib                       //FileServer
+LIBRARY         etext.lib                       //CTextPlain
+LIBRARY         estor.lib                       //FileStream
+LIBRARY         bafl.lib                        //CDesC16ArrayFlat
+LIBRARY         sendui.lib                      //SendUI
+LIBRARY         smilplayer.lib
+LIBRARY         featmgr.lib
+LIBRARY         hlplch.lib                      // HlpLauncher
+LIBRARY         aknskins.lib
+LIBRARY         servicehandler.lib
+LIBRARY         centralrepository.lib
+LIBRARY         cenrepnotifhandler.lib
+LIBRARY         npdlib.lib                      // CNotepadApi
+LIBRARY         apgrfx.lib                      // RApaLsSession
+LIBRARY         remconcoreapi.lib
+LIBRARY         remconinterfacebase.lib
+LIBRARY         msgmedia.lib
+LIBRARY         msgeditormediacontrol.lib
+LIBRARY         uniutils.lib
+LIBRARY         unidatamodel.lib
+LIBRARY         xmlparser.lib
+LIBRARY         xmldom.lib
+LIBRARY         egul.lib                        // CGulIcon
+LIBRARY         ws32.lib                        // Window groups
+LIBRARY         msgcommonutils.lib              // CMsgVoipExtension
+
+// End of file

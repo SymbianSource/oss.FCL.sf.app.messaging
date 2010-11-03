@@ -1,0 +1,65 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*    BLD.INF file for all the modules in postcard directory. 
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+// Help exports
+#include "../help/group/bld.inf"
+
+PRJ_EXPORTS
+
+// export iby files
+../rom/Postcard_variant.iby CUSTOMER_APP_LAYER_IBY_EXPORT_PATH(Postcard_variant.iby)
+../rom/PostcardResources.iby LANGUAGE_APP_LAYER_IBY_EXPORT_PATH(PostcardResources.iby)
+
+// Export localised loc files
+../loc/Postcard.loc APP_LAYER_LOC_EXPORT_PATH(Postcard.loc)
+../loc/Postcard_branded.loc APP_LAYER_LOC_EXPORT_PATH(Postcard_branded.loc)
+
+// Export confml and crml files
+../Conf/postcard.confml             APP_LAYER_CONFML(postcard.confml)
+../Conf/postcard_102824AB.crml      APP_LAYER_CRML(postcard_102824ab.crml)
+
+//Stub sis
+../stub_sis/stubpostcard.sis		/epoc32/data/z/system/install/stubpostcard.sis
+
+PRJ_EXTENSIONS
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE postcard.mif
+OPTION HEADERFILE postcard.mbg
+OPTION SOURCES -c8,8 qgn_graf_mms_postcard_back -c8,8 qgn_graf_mms_postcard_front -c8,8 qgn_graf_mms_postcard_insert_image_bg -c8,8 qgn_indi_mms_postcard_down -c8,8 qgn_indi_mms_postcard_image -c8,8 qgn_indi_mms_postcard_stamp -c8,8 qgn_indi_mms_postcard_text -c8,8 qgn_indi_mms_postcard_up -c8,8 qgn_prop_mce_postcard -c8,8 qgn_prop_mce_postcard_title -c8,8 qgn_prop_mms_postcard_address_active -c8,8 qgn_prop_mms_postcard_address_inactive -c8,8 qgn_prop_mms_postcard_greeting_active -c8,8 qgn_prop_mms_postcard_greeting_inactive -c8,8 qgn_graf_mms_insert_image
+END
+
+START EXTENSION s60/mifconv
+OPTION TARGETFILE postcard_aif.mif
+OPTION SOURCES -c8,8 qgn_menu_mce_postcard
+END
+
+PRJ_MMPFILES
+
+../postcardui/PostcardUi.mmp
+../postcard/Postcard.mmp
+
+/* End of File */
+

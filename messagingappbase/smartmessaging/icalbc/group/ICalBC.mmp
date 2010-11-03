@@ -1,0 +1,62 @@
+/*
+* Copyright (c) 2005-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Project definition file for project ICalBC
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+#include <data_caging_paths.hrh>
+
+TARGET          ICalBC.dll
+TARGETTYPE      dll
+// TODO: replace 0x101F8848 with KICalBCUID3 when meetingrequestuids.hrh can be included
+UID             0x10005F5F 0x101F8848
+VERSION 	10.0
+CAPABILITY CAP_GENERAL_DLL
+PAGED
+
+TARGETPATH      system/libs
+
+SOURCEPATH      ../Src
+SOURCE          CICalBC.cpp
+
+START RESOURCE ../bif/icalbif.rss
+TARGETPATH BIOFILE_DIR
+LANGUAGE_IDS
+END
+
+USERINCLUDE     .
+USERINCLUDE     ../data
+
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+SOURCEPATH	../Data
+
+LIBRARY		MsgEditorUtils.lib
+LIBRARY		euser.lib
+LIBRARY		cone.lib
+LIBRARY		eikcoctl.lib
+LIBRARY		estor.lib //for RFileReadStream
+LIBRARY		msgs.lib
+LIBRARY		commonengine.lib // StringLoader
+LIBRARY		richbio.lib
+LIBRARY		featmgr.lib
+LIBRARY		ecom.lib
+LIBRARY		efsrv.lib // RFile functionality
+
+
+// end of file

@@ -595,7 +595,7 @@ private:
     /**
     * check DRM contents.
     */
-    TBool CheckDRMContent();
+    TBool CheckDRMContentL();
     /**
      * Dump binary data into file.
      */

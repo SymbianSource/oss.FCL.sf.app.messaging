@@ -1,0 +1,55 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   File that exports the files belonging to 
+:                SMIL Engine API
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_EXPORTS
+
+../inc/smilmediainterface.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilmediainterface.h)
+../inc/smilmediarendererinterface.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilmediarendererinterface.h)
+../inc/smilregioninterface.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilregioninterface.h)
+../inc/smilactiveinterface.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilactiveinterface.h)
+../inc/smillength.h     APP_LAYER_PLATFORM_EXPORT_PATH(smillength.h)
+../inc/smilmediafactoryinterface.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilmediafactoryinterface.h)
+../inc/smilevent.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilevent.h)
+../inc/smilplayerinterface.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilplayerinterface.h)
+../inc/smilparser.inl     APP_LAYER_PLATFORM_EXPORT_PATH(smilparser.inl)
+../inc/smilobject.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilobject.h)
+../inc/smillinkedlist.h     APP_LAYER_PLATFORM_EXPORT_PATH(smillinkedlist.h)
+../inc/smilinstancetime.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilinstancetime.h)
+../inc/smiltransition.h     APP_LAYER_PLATFORM_EXPORT_PATH(smiltransition.h)
+../inc/ConformanceChecker.h     APP_LAYER_PLATFORM_EXPORT_PATH(ConformanceChecker.h)
+../inc/smiltime.h     APP_LAYER_PLATFORM_EXPORT_PATH(smiltime.h)
+../inc/smiltransitionfactoryinterface.h     APP_LAYER_PLATFORM_EXPORT_PATH(smiltransitionfactoryinterface.h)
+../inc/smilpresentation.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilpresentation.h)
+../inc/smilanchor.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilanchor.h)
+../inc/smiltransitionfilter.h     APP_LAYER_PLATFORM_EXPORT_PATH(smiltransitionfilter.h)
+../inc/smilpresentation.inl     APP_LAYER_PLATFORM_EXPORT_PATH(smilpresentation.inl)
+../inc/smilliterals.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilliterals.h)
+../inc/smiltimecontainer.h     APP_LAYER_PLATFORM_EXPORT_PATH(smiltimecontainer.h)
+../inc/smilmedia.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilmedia.h)
+../inc/smiltextbuf.h     APP_LAYER_PLATFORM_EXPORT_PATH(smiltextbuf.h)
+../inc/smilcondition.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilcondition.h)
+../inc/smilfocusinterface.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilfocusinterface.h)
+../inc/smiltimelist.h     APP_LAYER_PLATFORM_EXPORT_PATH(smiltimelist.h)
+../inc/smilparser.h     APP_LAYER_PLATFORM_EXPORT_PATH(smilparser.h)

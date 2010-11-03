@@ -1,0 +1,71 @@
+/*
+* Copyright (c) 2002-2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Project definition file for project gmsmodel
+*
+*/
+
+
+
+#include <platform_paths.hrh>
+#include <data_caging_paths.hrh>
+
+TARGET          gmsModel.dll
+TARGETTYPE      dll
+UID             0x1000008d 0x101F4CFB
+VERSION 	10.0
+CAPABILITY CAP_GENERAL_DLL
+PAGED
+
+SOURCEPATH      ../src
+SOURCE          GmsModel.cpp
+SOURCE          GmsModelDll.cpp 
+SOURCE          CGmsWrapper.cpp
+SOURCE          CGmsPictureControl.cpp
+
+#ifdef __SMARTMSG_SMS_GMS_MESSAGE_RECEIVING
+START RESOURCE ../bif/gmsBif.rss
+TARGETPATH BIOFILE_DIR
+LANGUAGE_IDS
+END
+#else
+START RESOURCE ../bif/gmsBif_sms_no.rss
+TARGETPATH BIOFILE_DIR
+LANGUAGE_IDS
+END
+#endif
+
+USERINCLUDE     ../inc ../group
+
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+LIBRARY     euser.lib
+LIBRARY     estor.lib //for streams
+LIBRARY     apmime.lib      // TDataType
+LIBRARY     avkon.lib
+LIBRARY     MsgEditorView.lib
+LIBRARY     commonengine.lib
+LIBRARY     etext.lib
+LIBRARY     efsrv.lib
+LIBRARY     eikcoctl.lib
+LIBRARY     eikcore.lib
+LIBRARY     cone.lib
+LIBRARY     commonui.lib
+LIBRARY	    CdlEngine.lib
+LIBRARY     AknLayout2Scalable.lib
+LIBRARY	    ImageConversion.lib
+LIBRARY	    fbscli.lib
+LIBRARY	    ihl.lib
+
+// end of file

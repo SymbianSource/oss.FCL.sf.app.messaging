@@ -1,0 +1,9 @@
+EXPORTS
+	_Z24ImplementationGroupProxyRi @ 1 NONAME
+	_ZTI17CGenericMtmPlugin @ 2 NONAME DATA 40 ; #<TI>#
+	_ZTI19CSendUiTimedBlanker @ 3 NONAME DATA 12 ; #<TI>#
+	_ZTI20CSendUiIdleMtmLoader @ 4 NONAME DATA 12 ; #<TI>#
+	_ZTV17CGenericMtmPlugin @ 5 NONAME DATA 72 ; #<VT>#
+	_ZTV19CSendUiTimedBlanker @ 6 NONAME DATA 32 ; #<VT>#
+	_ZTV20CSendUiIdleMtmLoader @ 7 NONAME DATA 32 ; #<VT>#
+

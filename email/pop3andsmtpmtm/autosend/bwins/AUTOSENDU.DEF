@@ -1,3 +1,0 @@
-EXPORTS
-	?WinsMain@@YAP6AHPAX@ZXZ @ 1 NONAME ; int (__cdecl*__cdecl WinsMain(void))(void *)
-

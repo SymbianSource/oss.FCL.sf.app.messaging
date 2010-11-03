@@ -1,0 +1,3 @@
+EXPORTS
+	?NewL@CICalendarBioControl@@SAPAVCMsgBioControl@@AAVMMsgBioControlObserver@@PAVCMsvSession@@JW4TMsgBioMode@@PBVRFile@@@Z @ 1 NONAME ; class CMsgBioControl * CICalendarBioControl::NewL(class MMsgBioControlObserver &, class CMsvSession *, long, enum TMsgBioMode, class RFile const *)
+

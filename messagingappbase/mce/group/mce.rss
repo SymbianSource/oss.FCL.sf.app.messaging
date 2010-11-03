@@ -1,0 +1,1174 @@
+/*
+* Copyright (c) 2002 - 2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for the module Mce.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME MCE
+
+//  INCLUDES
+#include <data_caging_paths_strings.hrh>
+#include <eikon.rh>
+#include <avkon.rh>
+#include <avkon.loc>
+#include <eikon.rsg>
+#include <avkon.rsg>
+#include <avkon.mbg>
+#include <muiusettingsarray.hrh>
+#include <muiusettingsarray.rh>
+
+#include "MceCommands.hrh"
+#include <mce.loc>
+#include <mcesettings.loc>
+#include <muiu.mbg>
+
+#include <bldvariant.hrh>
+
+#include <appinfo.rh>
+#include <messaging.loc>
+#include <AiwCommon.rh>
+
+#include <aknsconstants.hrh>
+#include <eikon.hrh>
+
+//  CONSTANTS
+
+//  MACROS
+
+//  RESOURCE DEFINITIONS
+//----------------------------------------------------
+//
+//    RSS_SIGNATURE
+//
+//
+//----------------------------------------------------
+//
+RESOURCE RSS_SIGNATURE
+{
+}
+
+//----------------------------------------------------
+//
+//    TBUF
+//
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF
+    {
+    buf="mce";
+    }
+
+//----------------------------------------------------
+//
+//    EIK_APP_INFO
+//
+//
+//----------------------------------------------------
+//
+RESOURCE EIK_APP_INFO
+    {
+    status_pane = r_mce_status_pane;
+    }
+
+RESOURCE LOCALISABLE_APP_INFO r_mce_localisable_app_info
+    {
+    short_caption = qtn_apps_messaging_grid;
+    caption_and_icon = 
+    CAPTION_AND_ICON_INFO
+        {
+        caption = qtn_apps_messaging_list;
+#ifdef __SCALABLE_ICONS
+
+        number_of_icons = 1;
+        icon_file = APP_BITMAP_DIR"\\Mce_aif.mif";
+
+#else /* __SCALABLE_ICONS */
+
+        number_of_icons = 2;
+        icon_file = APP_BITMAP_DIR"\\Mce_aif.mbm";
+
+#endif /* __SCALABLE_ICONS */
+        };
+    }
+
+// Status pane resource
+RESOURCE STATUS_PANE_APP_MODEL r_mce_status_pane
+    {
+    layout = R_AVKON_STATUS_PANE_LAYOUT_USUAL;
+    panes=
+        {        
+        SPANE_PANE
+            {
+            id = EEikStatusPaneUidTitle;
+            type = EAknCtTitlePane;
+            resource = r_mce_app_name;
+            }
+        };
+
+    }
+
+
+//----------------------------------------------------
+//
+//    r_mce_app_name
+//
+//----------------------------------------------------
+//
+RESOURCE TITLE_PANE r_mce_app_name
+    {
+    txt = qtn_mce_title_messages;
+    }
+
+
+//----------------------------------------------------
+//
+//    r_mce_main_view
+//
+//
+//----------------------------------------------------
+//
+RESOURCE AVKON_VIEW r_mce_main_view
+    {
+    menubar=r_mce_menubar;
+    cba=r_mce_softkeys_options_exit_open;
+    }
+
+
+//----------------------------------------------------
+//
+//    r_mce_menubar
+//
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_BAR r_mce_menubar
+    {
+    titles=
+        {
+        MENU_TITLE
+            {
+            menu_pane=r_mce_main_view_menu;
+            txt="";
+            }
+        };
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_main_view_menu
+//
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_mce_main_view_menu
+    {
+    items=
+        {
+        MENU_ITEM
+            {
+            command = EAknCmdOpen;
+            txt = qtn_mce_open;
+            flags = EEikMenuItemAction;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdNewMessage;
+            txt = qtn_mce_write;
+            cascade = r_mce_new_message_menu;
+            },
+		MENU_ITEM
+			{
+			command = EMceCmdAiwPlaceholder;
+			txt = "";
+			cascade = AIW_CASCADE_ID;
+			},
+        MENU_ITEM
+            {
+            command = EMceCmdConnect;
+            txt = qtn_mce_connect;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdCloseConnection;
+            txt = qtn_mce_rm_close;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdCBSApplication;
+            txt = qtn_mce_cb;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdUSSDEditor;
+            txt = qtn_mce_service_command_editor;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdZoomMenu;
+            txt = qtn_options_text_size;
+            cascade = r_mce_local_zoom_value;
+            },            
+        MENU_ITEM   
+            { 
+            command = EMceDefaultView;    
+            txt = qtn_cv_opt_def_view; 
+            cascade = r_mce_default_view_submenu;  
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdSettings;
+            txt = qtn_mce_settings;
+            },
+        MENU_ITEM
+            {
+            command = EAknCmdHelp;
+            txt = qtn_options_help;
+            },
+
+        MENU_ITEM
+            {
+            command = EMceCmdExit;
+            txt = qtn_mce_exit;
+            }
+        };
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_new_message_menu
+//
+//
+
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_mce_new_message_menu
+    {
+    items=
+        {
+        };
+    }
+    
+    
+//----------------------------------------------------
+//
+//    r_mce_local_zoom_value
+//
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_mce_local_zoom_value
+    {
+    items=
+        {
+        MENU_ITEM
+            {
+            command = EMceCmdZoomValueAutomatic;
+            txt = qtn_options_auto;
+            flags = EEikMenuItemRadioStart;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdZoomValueLarge;
+            txt = qtn_options_large;
+            flags = EEikMenuItemRadioEnd;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdZoomValueMedium;
+            txt = qtn_options_normal;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdZoomValueSmall;
+            txt = qtn_options_small;
+            }
+        };
+    }
+    
+
+//----------------------------------------------------
+//
+//    r_mce_folder_view
+//
+//
+//----------------------------------------------------
+//
+RESOURCE AVKON_VIEW r_mce_folder_view
+    {
+    menubar=r_mce_folder_menubar;
+    cba=r_mce_softkeys_options_back_options;
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_folder_menubar
+//
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_BAR r_mce_folder_menubar
+    {
+    titles=
+        {
+        MENU_TITLE
+            {
+            txt="";
+            menu_pane = r_mce_folder_menu;
+            },
+        MENU_TITLE 
+            {
+            menu_pane = R_AVKON_MENUPANE_MARK_MULTIPLE;
+            }
+        };
+    }
+
+
+
+//----------------------------------------------------
+//
+//    r_mce_folder_menu
+//
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_mce_folder_menu
+    {
+    items=
+        {
+        MENU_ITEM
+            {
+            command = EMceHCListCmdExpand;
+            txt = qtn_options_expand;
+            flags = EEikMenuItemAction;
+            },
+        MENU_ITEM
+            {
+            command = EMceHCListCmdCollapse1;
+            txt = qtn_options_collapse;
+            flags = EEikMenuItemAction;
+            },
+        MENU_ITEM
+            {
+            command = EAknCmdOpen;
+            txt = qtn_mce_open;
+            flags = EEikMenuItemAction;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdNewMessage;
+            txt = qtn_mce_write;
+            cascade=r_mce_new_message_menu;
+            },
+		MENU_ITEM
+			{
+			command = EMceCmdAiwPlaceholder;
+			txt = "";
+			cascade = AIW_CASCADE_ID;
+			},
+		// NSS MessageReader Menu item
+		MENU_ITEM
+			{
+			command = EMceCmdAiwMessageReaderPlaceholder;
+			txt = "";
+			cascade = AIW_INTELLIGENT_CASCADE_ID;
+			flags = EEikMenuItemSpecific;
+			},
+		// NSS End of MessageReader menu item
+	MENU_ITEM
+		{
+		command = EMceCmdForward;
+		txt = qtn_mce_forward;
+            flags = EEikMenuItemSpecific;
+		},
+        MENU_ITEM
+            {
+            command = EMceCmdSendVia;
+            txt = qtn_options_send_via;
+            cascade=r_mce_sendvia_menu;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdConnect;
+            txt = qtn_mce_connect;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdCloseConnection;
+            txt = qtn_mce_rm_close;
+            },
+
+        MENU_ITEM
+            {
+            command = EMceCmdReply;
+            txt = qtn_mce_reply;            
+            flags = EEikMenuItemSpecific;
+            },       
+        MENU_ITEM
+            {
+            command = EMceHCListCmdCollapse2;
+            txt = qtn_options_collapse;
+            flags = EEikMenuItemAction;             
+            },
+		MENU_ITEM
+			{
+			command = EMceCommandMMSContentUpload;
+			txt = qtn_options_send_via;
+			},
+
+        MENU_ITEM
+            {
+            command = EMceCmdOutboxSuspend;
+            txt = qtn_mce_suspend;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdFetch; 
+            txt = qtn_mce_rm_fetch;
+            cascade = r_mce_fetch_menu;
+            },
+        MENU_ITEM 
+            {
+            command = EMceCmdOutboxStart; 
+            txt = qtn_mce_start;
+            },
+        MENU_ITEM 
+            {
+            command = EMceCmdDelete; 
+            txt = qtn_mce_delete;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM 
+            {
+            command = EMceCmdUndelete; 
+            txt = qtn_mce_undelete;
+            },
+// The original mark read/unread strings are used only for single email
+        MENU_ITEM
+            {
+            command = EMceCmdMarkAsRead;
+            txt = qtn_mce_rm_mark_read;            
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdMarkAsUnread;
+            txt = qtn_mce_rm_mark_unread;
+            flags = EEikMenuItemSpecific;
+            },
+// New mark read/unread strings
+        MENU_ITEM
+            {
+            command = EMceCmdMarkAsReadMsg;
+            txt = qtn_mce_rm_mark_read_message;            
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdMarkAsUnreadMsg;
+            txt = qtn_mce_rm_mark_unread_message;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdMarkAsReadMsgs;
+            txt = qtn_mce_rm_mark_read_messages;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdMarkAsUnreadMsgs;
+            txt = qtn_mce_rm_mark_unread_messages;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdMarkAsReadEmails;
+            txt = qtn_mce_rm_mark_read_emails;             
+            flags = EEikMenuItemSpecific;          
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdMarkAsUnreadEmails;
+            txt = qtn_mce_rm_mark_unread_emails;           
+            flags = EEikMenuItemSpecific;
+            },  
+//New mark read/unread strings ---end
+        MENU_ITEM
+            {
+            command = EMceCmdSort;
+            txt = qtn_mce_rm_sort_messages;
+            cascade=r_mce_sort_by_menu;
+            },
+
+        MENU_ITEM 
+            {
+            command = EMceCmdMove; 
+            txt = qtn_mce_move;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM 
+            {
+            command = EMceCmdOutboxMoveToDrafts; 
+            txt = qtn_mce_move_to_drafts;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM 
+            {
+            command = EMceCmdNewFolder;
+            txt = qtn_mce_org_new_folder;
+            },
+        MENU_ITEM 
+            {
+            command = EMceCmdRenameFolder;
+            txt = qtn_mce_org_rename_folder;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdCopy;
+            txt = qtn_mce_copy;
+            flags = EEikMenuItemSpecific;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdMailboxSettings;
+            txt = qtn_mce_mail_settings;
+            },
+
+        MENU_ITEM
+            {
+            command = EAknCmdHelp;
+            txt = qtn_options_help;
+            },
+
+        MENU_ITEM
+            {
+            command = EMceCmdExit;
+            txt = qtn_mce_exit;
+            }
+        };
+    }
+
+
+//----------------------------------------------------
+//
+//    r_mce_sort_by_menu
+//
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_mce_sort_by_menu
+    {
+    items=
+        {
+        MENU_ITEM
+            {
+            txt = qtn_mce_rm_sort_date;
+            command = EMceCmdSortByDate;
+            flags = EEikMenuItemRadioStart | EEikMenuItemSymbolOn;
+            },        
+        MENU_ITEM
+            {
+            txt = qtn_mce_rm_sort_recipient;
+            command = EMceCmdSortByRecipient;
+            },              
+        MENU_ITEM
+            {
+            txt = qtn_mce_rm_sort_sender;
+            command = EMceCmdSortBySender;
+            },        
+        MENU_ITEM
+            {
+            txt = qtn_mce_rm_sort_subject;
+            command = EMceCmdSortBySubject;            
+            },
+        MENU_ITEM
+            {
+            txt = qtn_mce_rm_sort_type;
+            command = EMceCmdSortByType;            
+            flags = EEikMenuItemRadioEnd;
+            }
+        };
+    }
+
+
+//----------------------------------------------------
+//
+//    r_mce_fetch_menu
+//
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_mce_fetch_menu
+    {
+    items=
+        {
+        MENU_ITEM
+            {
+            command = EMceCmdFetchNew;
+            txt = qtn_mce_rm_fetch_new;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdFetchSelected;
+            txt = qtn_mce_rm_fetch_selected;
+            },
+        MENU_ITEM
+            {
+            command = EMceCmdFetchAll;
+            txt = qtn_mce_rm_fetch_all;
+            }
+        };
+    }
+
+
+//----------------------------------------------------
+//
+//    r_mce_sendvia_menu
+//
+//
+//----------------------------------------------------
+//
+RESOURCE MENU_PANE r_mce_sendvia_menu
+    {
+    items=
+        {
+      
+        MENU_ITEM
+            {
+            command = EMceCmdSendViaIr;
+            txt = qtn_options_send_via_ir;
+            },
+
+        MENU_ITEM
+            {
+            command = EMceCmdSendViaBt;
+            txt = qtn_options_send_via_bt;
+            }
+
+        };
+    }
+
+
+//
+// "Upload" list query
+//
+RESOURCE AVKON_MULTISELECTION_LIST_QUERY r_mce_upload_list_query
+    {
+    flags = EGeneralQueryFlags;
+    softkeys = R_AVKON_SOFTKEYS_SELECT_CANCEL__SELECT;
+    items =
+        {
+        AVKON_MULTISELECTION_LIST_QUERY_DLG_LINE 
+            {
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = AVKON_LIST_QUERY_LIST
+                    {
+                    array_id = 0;
+                    };
+                heading = qtn_query_heading_send; // from "Messaging.loc"
+                };
+            }
+        };
+    }
+
+
+//----------------------------------------------------
+//
+//    r_mce_create_folder
+//
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_mce_create_folder
+    {
+    flags = EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control= AVKON_DATA_QUERY
+                {
+                layout = EDataLayout;
+                label = qtn_fldr_name_prmpt;
+                control=EDWIN
+                    {
+                    flags=EEikEdwinAutoSelection;
+                    maxlength=20;
+                    width=6;
+                    lines=1;
+                    };
+                };
+            }
+        };
+    }
+
+
+//----------------------------------------------------
+//
+//    r_mce_delete_confirmation
+//
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_mce_confirmation
+    {
+    flags = EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationQueryLayout;
+                label = "";
+                };
+            }
+        };
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_go_online_confirmation
+//
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_mce_go_online_confirmation
+    {
+    flags = EGeneralQueryFlags;
+
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationQueryLayout;
+                label = qtn_mce_conf_connect_to_server;
+                };
+            }
+        };
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_create_mbox_confirmation
+//
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_mce_create_mbox_confirmation
+    {
+    flags = EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_YES_NO__YES;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationQueryLayout;
+                label = qtn_mce_conf_no_mailboxes;
+                };
+            }
+        };
+    }
+
+
+//----------------------------------------------------
+//
+//    r_list_query
+//
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_mce_list_query
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtListQueryControl;
+            id = EListQueryControl;
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                listtype = EAknCtSinglePopupMenuListBox;
+                listbox = LISTBOX
+                    {
+                    flags = EAknListBoxMenuList;
+                    height = 3;
+                    width = 3;
+                    };
+                heading = qtn_mce_list_close; 
+                };
+            }
+        };
+    }
+
+RESOURCE DIALOG r_mce_memc_note
+    {
+    flags = EGeneralQueryFlags;  
+    buttons=R_AVKON_SOFTKEYS_OK_EMPTY__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type=EAknCtQuery;
+            id=EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationQueryLayout;  
+#ifdef RD_MULTIPLE_DRIVE
+                label = qtn_mce_memory_not_accessible;
+#else
+                label = qtn_memc_mce_note2;
+#endif //RD_MULTIPLE_DRIVE
+                bmpfile = avkon_bitmap_file;
+                bmpid = EMbmAvkonQgn_note_info;
+                bmpmask = EMbmAvkonQgn_note_info_mask;
+                animation = R_QGN_NOTE_INFO_ANIM;  
+                };
+            }
+        };
+    }
+
+
+
+//----------------------------------------------------
+//
+//    r_inbox_name
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF r_inbox_name
+// This is from imum, Not localisable
+// used to open Inbox immediately when opening imap4 mailbox
+    {
+    buf="Inbox";
+    }
+
+
+#include "../inc/MceStrings.rss"
+#include "../group/MceDeliveryReportView.rss"
+
+
+RESOURCE CONTEXT_PANE r_mce_mmc_app_icon
+    {
+	#ifndef __SCALABLE_ICONS
+    bmpfile = "\\resource\\apps\\muiu.mbm";
+	#else
+	bmpfile = "\\resource\\apps\\muiu.mif";
+	#endif
+
+	#ifndef __SCALABLE_ICONS
+    bmpid = EMbmMuiuQgn_menu_mce_mmc_cxt; 
+    bmpmask = EMbmMuiuQgn_menu_mce_mmc_cxt_mask;
+	#else
+	bmpid = EMbmMuiuQgn_menu_mce_mmc;
+    bmpmask = EMbmMuiuQgn_menu_mce_mmc_mask;
+	#endif
+    }
+
+//----------------------------------------------------
+//
+//    r_aiwmce_interest
+//
+//----------------------------------------------------
+//  
+RESOURCE AIW_INTEREST r_aiwmce_interest
+{
+    items=
+    {
+        AIW_CRITERIA_ITEM      
+		{
+		id              = EMceCmdAiwPlaceholder;
+		serviceCmd      = KAiwCmdSynchronize; 
+        serviceClass    = KAiwClassMenu;
+        contentType     = "*";
+        defaultProvider = 0x101F871F;  // AiwSyncProvider.dll uid
+		maxProviders    = 1;
+		},
+        AIW_CRITERIA_ITEM      
+		{
+		id              = EMceCmdAiwMessageReaderPlaceholder;
+		serviceCmd      = KAiwCmdView; 
+        serviceClass    = KAiwClassMenu;
+        contentType     = "message/*";
+        defaultProvider = 0x10281870;  // NssMessageReaderAiwLauncher.dll uid
+		maxProviders    = 1;
+		}
+		
+    };
+}
+
+//----------------------------------------------------
+//
+//    r_mce_softkeys_options_exit_open
+//
+//
+//----------------------------------------------------
+//
+RESOURCE CBA r_mce_softkeys_options_exit_open
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EMceCmdExit; txt = text_softkey_exit; },
+        CBA_BUTTON {id=EAknCmdOpen; txt = qtn_msk_select;}
+        };
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_softkeys_options_back_open
+//
+//----------------------------------------------------
+//
+RESOURCE CBA r_mce_softkeys_options_back_open
+    {
+    buttons =
+        {
+        CBA_BUTTON {id=EAknSoftkeyOptions; txt = text_softkey_option;},
+        CBA_BUTTON {id=EAknSoftkeyBack; txt = text_softkey_back; },
+        CBA_BUTTON {id=EAknCmdOpen; txt = qtn_msk_open;}
+        };
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_msk_button_open
+//
+//----------------------------------------------------
+//
+RESOURCE CBA_BUTTON r_mce_msk_button_open
+    {
+    id = EAknCmdOpen;
+    txt = qtn_msk_open;
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_msk_button_context_options
+//
+//----------------------------------------------------
+//
+RESOURCE CBA_BUTTON r_mce_msk_button_context_options
+		{
+		id=EAknSoftkeyContextOptions;
+		txt = text_softkey_option;
+		}
+
+//----------------------------------------------------
+//
+//    r_mce_msk_button_empty
+//
+//----------------------------------------------------
+//
+RESOURCE CBA_BUTTON r_mce_msk_button_empty
+    {
+    id = 0;
+    txt = text_softkey_empty;
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_msk_button_undelete
+//
+//----------------------------------------------------
+//
+RESOURCE CBA_BUTTON r_mce_msk_button_undelete
+    {
+    id = EMceCmdUndelete;
+    txt = qtn_msk_undelete;
+    }
+
+//----------------------------------------------------
+//
+//    r_mce_msk_button_select
+//
+//----------------------------------------------------
+//
+RESOURCE CBA_BUTTON r_mce_msk_button_select
+    {
+    id = EMceCmdSelect;
+    txt = qtn_msk_select;
+    }
+
+RESOURCE CBA_BUTTON r_mce_qtn_msk_expand
+    {
+    id = EMceHCListCmdExpand;
+    txt = qtn_options_expand;
+    }
+    
+RESOURCE CBA_BUTTON r_mce_qtn_msk_collapse
+    {
+    id = EMceHCListCmdCollapse;
+    txt = qtn_options_collapse;
+    }    
+
+#ifdef RD_MESSAGING_GENERAL_SETTINGS_RENOVATION
+//----------------------------------------------------
+//
+//    r_mce_note_settings_open_gs
+//
+//
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_mce_note_settings_open_gs
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_EMPTY;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtNote;
+            id = EGeneralNote;
+            control = AVKON_NOTE
+                {
+                layout = EGeneralLayout;
+                singular_label = qtn_mce_note_settings_open_gs;
+                animation = R_QGN_NOTE_INFO_ANIM;
+                };
+            }
+        };
+    }
+
+#endif // RD_MESSAGING_GENERAL_SETTINGS_RENOVATION
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_mce_app_toolbar_inbox_reply_state_extension
+    {
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgReply;
+    }
+    
+RESOURCE AVKON_BUTTON_STATE_EXTENSION  r_mce_app_toolbar_inbox_new_state_extension
+    {
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbMsgNew;    
+    }
+    
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_mce_app_toolbar_inbox_delete_state_extension
+    {
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiMgTbDelete;
+    }   
+        
+
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_mce_app_toolbar_mailbox_inbox_reply_state_extension
+    {
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbEmailReply;
+    }
+    
+RESOURCE AVKON_BUTTON_STATE_EXTENSION r_mce_app_toolbar_mailbox_inbox_new_state_extension
+    {
+    bmbSkinIdMajor= EAknsMajorGeneric; 
+    bmbSkinIdMinor= EAknsMinorGenericQgnIndiTbEmailNew;
+    }
+ 
+
+
+RESOURCE TBUF r_qtn_mce_markas_read   
+    { 
+    buf = qtn_mce_rm_mark_read;
+    }
+    
+RESOURCE TBUF r_qtn_mce_markas_unread    
+    { 
+    buf = qtn_mce_rm_mark_unread; 
+    }
+
+//----------------------------------------------------
+//    Ok/ Empty confirmation dialog
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_mce_ok_empty_confirmation
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_OK_EMPTY__OK;
+    items=
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                { 
+                layout = EConfirmationLayout;
+                label = "";
+                animation = R_QGN_NOTE_INFO_ANIM;
+                };
+            }
+        };
+    }
+
+// ---------------------------------------------------------
+//   
+//    R_MCE_DEFAULT_VIEW_SUBMENU 
+//    Cascading  menu items
+// ---------------------------------------------------------
+//
+
+RESOURCE MENU_PANE r_mce_default_view_submenu
+    {
+    items = 
+        {       
+        MENU_ITEM   
+            { 
+            command = EMceDefaultConversationsView;    
+            txt = qtn_cv_opt_sub_conv;  
+            flags = EEikMenuItemRadioStart; 
+            }
+        ,
+        MENU_ITEM   
+            { 
+            command = EMceDefaultInboxView;            
+            txt = qtn_cv_opt_sub_inbox;    
+            flags = EEikMenuItemRadioEnd; 
+            }       
+        };
+    }
+
+// ---------------------------------------------------------
+//   Mce Default view notifications
+// ---------------------------------------------------------
+//
+RESOURCE TBUF r_defaultview_inbox_selected            {  buf = qtn_cv_info_inbox_used;    }
+RESOURCE TBUF r_defaultview_conversation_selected     {  buf = qtn_cv_info_conv_used;    }
+   
+// End of File

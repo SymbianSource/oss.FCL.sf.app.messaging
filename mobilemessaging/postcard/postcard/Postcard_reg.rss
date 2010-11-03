@@ -1,0 +1,39 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Postcard_reg.rss*
+*/
+
+
+
+#include <appinfo.rh>
+#include <data_caging_paths_strings.hrh>
+#include <Postcard.rsg>
+#include <MuiuMsgEditorService.rh>
+#include <MuiuMsgEditorServiceConst.h>
+
+UID2 KUidAppRegistrationResourceFile
+UID3 0x10207247 // Define your application UID here
+
+RESOURCE APP_REGISTRATION_INFO
+    {
+    app_file = "Postcard";
+    localisable_resource_file = APP_RESOURCE_DIR"\\Postcard";
+    localisable_resource_id = R_POSTCARD_LOCALISABLE_APP_INFO;
+
+    hidden = KAppIsHidden;
+    embeddability = KAppEmbeddable;
+
+    }
+
+// End of File

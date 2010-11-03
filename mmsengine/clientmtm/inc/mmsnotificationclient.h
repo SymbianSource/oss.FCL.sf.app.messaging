@@ -275,7 +275,7 @@ class CMmsNotificationClientMtm : public CMmsClientMtm
 
         /**
         * Not supported. 
-        * Implementation of the base class is overridden.
+        * Implementation of the base class is overriden.
         */
         virtual CMsvOperation* SendL(
             CMsvEntrySelection& aSelection,

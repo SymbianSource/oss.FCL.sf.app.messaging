@@ -679,7 +679,7 @@ void CMmsDecode::ResetDataSink()
             TInt count = attaMan.AttachmentCount();
             TInt i;
             // delete all old attachments as we are starting from the beginning
-            for ( i = count - 1; i >= 0; --i )
+            for ( i = count - 1; i >= 0; i-- )
                {
                attaManSync.RemoveAttachmentL( i );
                }
@@ -788,7 +788,7 @@ void CMmsDecode::DoComplete( TInt& /* aStatus */ )
 void CMmsDecode::SelectNextState()
     {
 
-    // If appropriate, the functions called within the switch statement
+    // If appropiate, the functions called within the switch statement
     // will make us active again. If all is done, the asynchronous request
     // will complete
 
@@ -1301,7 +1301,7 @@ void CMmsDecode::FinalizeSinkingLastChunk()
             MMsvAttachmentManagerSync& attaManSync = iStore->AttachmentManagerExtensionsL();
             TInt count = attaMan.AttachmentCount();
             TInt i;
-            for ( i = count - 1; i > 0; --i )
+            for ( i = count - 1; i > 0; i-- )
                 {
                 attaManSync.RemoveAttachmentL( i );
                 }
@@ -1782,7 +1782,7 @@ void CMmsDecode::SkipFieldValue()
     TUint i;
     TUint8 byte;
     TBuf<1> character;
-    for ( i = iPosition; i < iPosition + length && i < iLength; ++i )
+    for ( i = iPosition; i < iPosition + length && i < iLength; i++ )
         {
         iDecodeBuffer->Read(i, &byte, 1);
         TUint16 word = byte;
@@ -2511,7 +2511,7 @@ TUint32 CMmsDecode::GetLongOrShortInteger()
     TUint i;
     TUint length;
     length = byte;
-    for ( i = 0;  i < length && iPosition < iLength; ++i)
+    for ( i = 0;  i < length && iPosition < iLength; i++)
         {
         integer <<= KMmsBitsInByte;
         iDecodeBuffer->Read(iPosition, &byte, 1);
@@ -2563,7 +2563,7 @@ TInt64 CMmsDecode::GetVeryLongInteger()
     TUint length;
     length = byte;
 
-    for ( i = 0;  i < length && iPosition < iLength; ++i)
+    for ( i = 0;  i < length && iPosition < iLength; i++)
         {
         veryLongInteger <<= KMmsBitsInByte;
         iDecodeBuffer->Read(iPosition, &byte, 1);
@@ -3656,6 +3656,10 @@ TInt CMmsDecode::GetContentHeaderName( TPtrC8& aTextHeader )
     // The header has been set to KMmsTextHeader to indicate that the field value
     // is still available.
 
+    if ( ( header < 0 ) && ( iPosition < iLength ) )
+        {
+        SkipFieldValue();
+        }
 
     return header;
     }
@@ -3792,7 +3796,7 @@ void CMmsDecode::DecodeAttachmentHeadersL()
     // The momoblock structure probably won't work correctly in chunked mode
     // but it is not supposed to be supported anyway.
     
-    // Before this function is called in the chunked mode we have checked
+    // Before this funtion is called in the chunked mode we have checked
     // that we have enough data to cover all the headers (the length of the
     // headers is given in the beginning)
     
@@ -4382,7 +4386,7 @@ void CMmsDecode::FinishL()
                     CBufFlat* shortBuffer = CBufFlat::NewL( KMms2 );
                     CleanupStack::PushL( shortBuffer );
                     shortBuffer->ResizeL( KMms2 );
-                    // no need to put it into cleanupstack... we don't leave before we delete it
+                    // no need to put it into cleanupstack... we dont't leave before we delete it
                     TUint8 byte;
                     // put little-endian BOM to buffer
                     byte = 0xFF;
@@ -4600,7 +4604,7 @@ void CMmsDecode::FinishL()
     if ( iSmilCount <= 1 && iAudioCount == 1 &&
        ( iAttaNumber == iSmilCount + iAudioCount ) )
         {
-         if(!CheckDRMContent())
+         if(!CheckDRMContentL())
              {
                 TBool audioSupported = EFalse;
                 TRAP_IGNORE(
@@ -4650,7 +4654,7 @@ void CMmsDecode::FinishL()
 // CMmsDecode::CheckDRMContent
 // ---------------------------------------------------------
 //
-TBool CMmsDecode::CheckDRMContent()
+TBool CMmsDecode::CheckDRMContentL()
     {
     CFileProtectionResolver* resolver = CFileProtectionResolver::NewLC( iFs);
 
@@ -4662,7 +4666,7 @@ TBool CMmsDecode::CheckDRMContent()
     TInt flCount = 0;
     TInt sdCount = 0;
 
-    for ( TInt i = 0; i < attaCount; ++i )
+    for ( TInt i = 0; i < attaCount; i++ )
         {
         CMsvAttachment* info = attaManager.GetAttachmentInfoL( i );
         CleanupStack::PushL( info );
@@ -4933,7 +4937,7 @@ TBool CMmsDecode::IsStringSafe( const TDesC8& aString )
 
     TInt i;
     TBool safe = ETrue;
-    for ( i = 0; i < aString.Length() && safe; ++i )
+    for ( i = 0; i < aString.Length() && safe; i++ )
         {
         if ( aString[i] < KMmsLowestAscii || aString[i] >= KMmsHighestAscii )
             {

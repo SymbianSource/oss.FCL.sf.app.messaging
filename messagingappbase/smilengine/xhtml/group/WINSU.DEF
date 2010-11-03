@@ -1,0 +1,14 @@
+EXPORTS
+	??1CXhtmlFontSpecs@@QAE@XZ @ 1 NONAME ; public: __thiscall CXhtmlFontSpecs::~CXhtmlFontSpecs(void)
+	??1CXhtmlParser@@UAE@XZ @ 2 NONAME ; public: virtual __thiscall CXhtmlParser::~CXhtmlParser(void)
+	??1CXhtmlRichText@@QAE@XZ @ 3 NONAME ; public: __thiscall CXhtmlRichText::~CXhtmlRichText(void)
+	?ContentL@CXhtmlParser@@QBEHAAVTDesC16@@@Z @ 4 NONAME ; public: int __thiscall CXhtmlParser::ContentL(class TDesC16 &)const 
+	?DTDEntityToText@CXhtmlEntityConverter@@MAEHAAVTDes16@@@Z @ 5 NONAME ; protected: virtual int __thiscall CXhtmlEntityConverter::DTDEntityToText(class TDes16 &)
+	?NewL@CXhtmlFontSpecs@@SAPAV1@XZ @ 6 NONAME ; public: static class CXhtmlFontSpecs * __cdecl CXhtmlFontSpecs::NewL(void)
+	?NewL@CXhtmlParser@@SAPAV1@XZ @ 7 NONAME ; public: static class CXhtmlParser * __cdecl CXhtmlParser::NewL(void)
+	?NewL@CXhtmlRichText@@SAPAV1@PAVCParaFormatLayer@@PAVCCharFormatLayer@@@Z @ 8 NONAME ; public: static class CXhtmlRichText * __cdecl CXhtmlRichText::NewL(class CParaFormatLayer *,class CCharFormatLayer *)
+	?NewL@DOMXhtmlParserPrivate@@SAPAV1@PAVCXhtmlParser@@@Z @ 9 NONAME ; public: static class DOMXhtmlParserPrivate * __cdecl DOMXhtmlParserPrivate::NewL(class CXhtmlParser *)
+	?OutputComposedTextL@CXhtmlEntityConverter@@UAEHPAVCMDXMLComposer@@ABVTDesC16@@@Z @ 10 NONAME ; public: virtual int __thiscall CXhtmlEntityConverter::OutputComposedTextL(class CMDXMLComposer *,class TDesC16 const &)
+	?ParseL@CXhtmlParser@@QAEXPAVCXhtmlRichText@@PBVCMDXMLDocument@@@Z @ 11 NONAME ; public: void __thiscall CXhtmlParser::ParseL(class CXhtmlRichText *,class CMDXMLDocument const *)
+	?SetFontL@CXhtmlParser@@QAEXHPBVCFont@@@Z @ 12 NONAME ; public: void __thiscall CXhtmlParser::SetFontL(int,class CFont const *)
+

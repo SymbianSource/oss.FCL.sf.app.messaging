@@ -1,0 +1,4 @@
+EXPORTS
+	??1CUniEditorPlugin@@UAE@XZ @ 1 NONAME ; CUniEditorPlugin::~CUniEditorPlugin(void)
+	?NewL@CUniEditorPlugin@@SAPAV1@ABVTUid@@AAVCMsvSession@@AAVCUniClientMtm@@@Z @ 2 NONAME ; class CUniEditorPlugin * CUniEditorPlugin::NewL(class TUid const &, class CMsvSession &, class CUniClientMtm &)
+

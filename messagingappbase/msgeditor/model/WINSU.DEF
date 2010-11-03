@@ -1,0 +1,110 @@
+EXPORTS
+	??0CMsgAttachmentInfo@@IAE@AAVCMsgAttachmentModel@@ABV?$TBuf@$0BAA@@@HHH@Z @ 1 NONAME ; CMsgAttachmentInfo::CMsgAttachmentInfo(class CMsgAttachmentModel &, class TBuf<256> const &, int, int, int)
+	??0CMsgAttachmentModel@@IAE@H@Z @ 2 NONAME ; CMsgAttachmentModel::CMsgAttachmentModel(int)
+	??0CMsgEditorDocument@@IAE@AAVCEikApplication@@@Z @ 3 NONAME ; CMsgEditorDocument::CMsgEditorDocument(class CEikApplication &)
+	??0TMsgEditorFlags@@QAE@ABV0@@Z @ 4 NONAME ; TMsgEditorFlags::TMsgEditorFlags(class TMsgEditorFlags const &)
+	??0TMsgEditorFlags@@QAE@K@Z @ 5 NONAME ; TMsgEditorFlags::TMsgEditorFlags(unsigned long)
+	??0TMsgEditorFlags@@QAE@XZ @ 6 NONAME ; TMsgEditorFlags::TMsgEditorFlags(void)
+	??1CMsgAttachmentInfo@@UAE@XZ @ 7 NONAME ; CMsgAttachmentInfo::~CMsgAttachmentInfo(void)
+	??1CMsgAttachmentModel@@UAE@XZ @ 8 NONAME ; CMsgAttachmentModel::~CMsgAttachmentModel(void)
+	??1CMsgEditorDocument@@UAE@XZ @ 9 NONAME ; CMsgEditorDocument::~CMsgEditorDocument(void)
+	??4TMsgEditorFlags@@QAEAAV0@ABV0@@Z @ 10 NONAME ; class TMsgEditorFlags & TMsgEditorFlags::operator=(class TMsgEditorFlags const &)
+	?AddAttachmentL@CMsgAttachmentModel@@QAEPAVCMsgAttachmentInfo@@ABVTDesC16@@HIHABVTDataType@@H@Z @ 11 NONAME ; class CMsgAttachmentInfo * CMsgAttachmentModel::AddAttachmentL(class TDesC16 const &, int, unsigned int, int, class TDataType const &, int)
+	?AddAttachmentL@CMsgAttachmentModel@@QAEPAVCMsgAttachmentInfo@@ABVTDesC16@@HIHABVTDataType@@W4TDRMDataType@2@H@Z @ 12 NONAME ; class CMsgAttachmentInfo * CMsgAttachmentModel::AddAttachmentL(class TDesC16 const &, int, unsigned int, int, class TDataType const &, enum CMsgAttachmentInfo::TDRMDataType, int)
+	?AddAttachmentL@CMsgAttachmentModel@@QAEPAVCMsgAttachmentInfo@@ABVTDesC16@@HIHH@Z @ 13 NONAME ; class CMsgAttachmentInfo * CMsgAttachmentModel::AddAttachmentL(class TDesC16 const &, int, unsigned int, int, int)
+	?AddSingleOperationL@CMsgEditorDocument@@QAEXPAVCMsvOperation@@PAVCMsvSingleOpWatcher@@@Z @ 14 NONAME ; void CMsgEditorDocument::AddSingleOperationL(class CMsvOperation *, class CMsvSingleOpWatcher *)
+	?AttachmentId@CMsgAttachmentInfo@@QBEIXZ @ 15 NONAME ; unsigned int CMsgAttachmentInfo::AttachmentId(void) const
+	?AttachmentInfoAt@CMsgAttachmentModel@@QBEAAVCMsgAttachmentInfo@@H@Z @ 16 NONAME ; class CMsgAttachmentInfo & CMsgAttachmentModel::AttachmentInfoAt(int) const
+	?AttachmentModel@CMsgEditorDocument@@QBEAAVCMsgAttachmentModel@@XZ @ 17 NONAME ; class CMsgAttachmentModel & CMsgEditorDocument::AttachmentModel(void) const
+	?BitmapForFileL@CMsgAttachmentModel@@QAEPAVCGulIcon@@AAVCMsgAttachmentInfo@@@Z @ 18 NONAME ; class CGulIcon * CMsgAttachmentModel::BitmapForFileL(class CMsgAttachmentInfo &)
+	?ChangeContextL@CMsgEditorDocument@@MAEJABVTEditorParameters@@@Z @ 19 NONAME ; long CMsgEditorDocument::ChangeContextL(class TEditorParameters const &)
+	?Clear@TMsgEditorFlags@@QAEXK@Z @ 20 NONAME ; void TMsgEditorFlags::Clear(unsigned long)
+	?CombineIconsL@MsgAttachmentUtils@@SAPAVCFbsBitmap@@PBV2@00@Z @ 21 NONAME ; class CFbsBitmap * MsgAttachmentUtils::CombineIconsL(class CFbsBitmap const *, class CFbsBitmap const *, class CFbsBitmap const *)
+	?ConstructL@CMsgAttachmentInfo@@IAEXABVTDataType@@W4TDRMDataType@1@@Z @ 22 NONAME ; void CMsgAttachmentInfo::ConstructL(class TDataType const &, enum CMsgAttachmentInfo::TDRMDataType)
+	?ConstructL@CMsgAttachmentModel@@IAEXXZ @ 23 NONAME ; void CMsgAttachmentModel::ConstructL(void)
+	?ConstructL@CMsgEditorDocument@@IAEXXZ @ 24 NONAME ; void CMsgEditorDocument::ConstructL(void)
+	?CreateForwardL@CMsgEditorDocument@@UAEPAVCMsvOperation@@JIAAVTRequestStatus@@@Z @ 25 NONAME ; class CMsvOperation * CMsgEditorDocument::CreateForwardL(long, unsigned int, class TRequestStatus &)
+	?CreateNewAttachmentModelL@CMsgEditorDocument@@EAEPAVCMsgAttachmentModel@@H@Z @ 26 NONAME ; class CMsgAttachmentModel * CMsgEditorDocument::CreateNewAttachmentModelL(int)
+	?CreateReplyL@CMsgEditorDocument@@UAEPAVCMsvOperation@@JIAAVTRequestStatus@@@Z @ 27 NONAME ; class CMsvOperation * CMsgEditorDocument::CreateReplyL(long, unsigned int, class TRequestStatus &)
+	?CurrentEntry@CMsgEditorDocument@@QBEAAVCMsvEntry@@XZ @ 28 NONAME ; class CMsvEntry & CMsgEditorDocument::CurrentEntry(void) const
+	?DRMDataType@CMsgAttachmentInfo@@QBEHXZ @ 29 NONAME ; int CMsgAttachmentInfo::DRMDataType(void) const
+	?DataType@CMsgAttachmentInfo@@QBEABVTDataType@@XZ @ 30 NONAME ; class TDataType const & CMsgAttachmentInfo::DataType(void) const
+	?DeleteAttachment@CMsgAttachmentModel@@QAEXH@Z @ 31 NONAME ; void CMsgAttachmentModel::DeleteAttachment(int)
+	?EditorViewHeigth@MsgEditorCommons@@SAHXZ @ 32 NONAME ; int MsgEditorCommons::EditorViewHeigth(void)
+	?EditorViewWidth@MsgEditorCommons@@SAHXZ @ 33 NONAME ; int MsgEditorCommons::EditorViewWidth(void)
+	?Entry@CMsgEditorDocument@@QBEABVTMsvEntry@@XZ @ 34 NONAME ; class TMsvEntry const & CMsgEditorDocument::Entry(void) const
+	?ExternalizeL@TMsgEditorFlags@@QBEXAAVRWriteStream@@@Z @ 35 NONAME ; void TMsgEditorFlags::ExternalizeL(class RWriteStream &) const
+	?FetchFileL@MsgAttachmentUtils@@SAHW4TMsgAttachmentFetchType@1@AAV?$TBuf@$0BAA@@@AAVCDesC16Array@@HHPAVMMGFetchVerifier@@@Z @ 36 NONAME ; int MsgAttachmentUtils::FetchFileL(enum MsgAttachmentUtils::TMsgAttachmentFetchType, class TBuf<256> &, class CDesC16Array &, int, int, class MMGFetchVerifier *)
+	?FetchFileL@MsgAttachmentUtils@@SAHW4TMsgAttachmentFetchType@1@AAV?$TBuf@$0BAA@@@ABVTUid@@H@Z @ 37 NONAME ; int MsgAttachmentUtils::FetchFileL(enum MsgAttachmentUtils::TMsgAttachmentFetchType, class TBuf<256> &, class TUid const &, int)
+	?FetchFileL@MsgAttachmentUtils@@SAHW4TMsgAttachmentFetchType@1@AAV?$TBuf@$0BAA@@@H@Z @ 38 NONAME ; int MsgAttachmentUtils::FetchFileL(enum MsgAttachmentUtils::TMsgAttachmentFetchType, class TBuf<256> &, int)
+	?FetchFileL@MsgAttachmentUtils@@SAHW4TMsgAttachmentFetchType@1@AAVCDesC16Array@@PAVCAiwGenericParamList@@HHPAVMMGFetchVerifier@@@Z @ 39 NONAME ; int MsgAttachmentUtils::FetchFileL(enum MsgAttachmentUtils::TMsgAttachmentFetchType, class CDesC16Array &, class CAiwGenericParamList *, int, int, class MMGFetchVerifier *)
+	?FileName@CMsgAttachmentInfo@@QBEABV?$TBuf@$0BAA@@@XZ @ 40 NONAME ; class TBuf<256> const & CMsgAttachmentInfo::FileName(void) const
+	?FileSizeToStringL@MsgAttachmentUtils@@SAXAAVTDes16@@HH@Z @ 41 NONAME ; void MsgAttachmentUtils::FileSizeToStringL(class TDes16 &, int, int)
+	?GetAttachmentFileL@CMsgAttachmentModel@@QAE?AVRFile@@H@Z @ 42 NONAME ; class RFile CMsgAttachmentModel::GetAttachmentFileL(int)
+	?GetAttachmentFileL@CMsgEditorDocument@@EAE?AVRFile@@I@Z @ 43 NONAME ; class RFile CMsgEditorDocument::GetAttachmentFileL(unsigned int)
+	?GetFileNameFromBuffer@MsgAttachmentUtils@@SAXAAV?$TBuf@$0BAA@@@ABVTDesC16@@HPBV3@@Z @ 44 NONAME ; void MsgAttachmentUtils::GetFileNameFromBuffer(class TBuf<256> &, class TDesC16 const &, int, class TDesC16 const *)
+	?GetMsgEditorTempPath@MsgAttachmentUtils@@SAXAAV?$TBuf@$0BAA@@@PBVTDesC16@@@Z @ 45 NONAME ; void MsgAttachmentUtils::GetMsgEditorTempPath(class TBuf<256> &, class TDesC16 const *)
+	?GetOperId@CMsgEditorDocument@@SAJAAVCMsvOperation@@@Z @ 46 NONAME ; long CMsgEditorDocument::GetOperId(class CMsvOperation &)
+	?HasModel@CMsgEditorDocument@@QBEHXZ @ 47 NONAME ; int CMsgEditorDocument::HasModel(void) const
+	?Icon@CMsgAttachmentInfo@@QBEPAVCGulIcon@@XZ @ 48 NONAME ; class CGulIcon * CMsgAttachmentInfo::Icon(void) const
+	?InternalizeL@TMsgEditorFlags@@QAEXAAVRReadStream@@@Z @ 49 NONAME ; void TMsgEditorFlags::InternalizeL(class RReadStream &)
+	?IsAttachedThisSession@CMsgAttachmentInfo@@QBEHXZ @ 50 NONAME ; int CMsgAttachmentInfo::IsAttachedThisSession(void) const
+	?IsFetched@CMsgAttachmentInfo@@QBEHXZ @ 51 NONAME ; int CMsgAttachmentInfo::IsFetched(void) const
+	?IsFileAttached@CMsgAttachmentModel@@QBEHABVTDesC16@@@Z @ 52 NONAME ; int CMsgAttachmentModel::IsFileAttached(class TDesC16 const &) const
+	?IsIdAttached@CMsgAttachmentModel@@QBEHI@Z @ 53 NONAME ; int CMsgAttachmentModel::IsIdAttached(unsigned int) const
+	?IsModified@CMsgAttachmentModel@@QBEHXZ @ 54 NONAME ; int CMsgAttachmentModel::IsModified(void) const
+	?IsReadOnly@CMsgAttachmentModel@@QAEHXZ @ 55 NONAME ; int CMsgAttachmentModel::IsReadOnly(void)
+	?IsSeparator@CMsgAttachmentInfo@@QBEHXZ @ 56 NONAME ; int CMsgAttachmentInfo::IsSeparator(void) const
+	?IsSet@TMsgEditorFlags@@QBEHK@Z @ 57 NONAME ; int TMsgEditorFlags::IsSet(unsigned long) const
+	?IsSupported@CMsgAttachmentInfo@@QBEHXZ @ 58 NONAME ; int CMsgAttachmentInfo::IsSupported(void) const
+	?LaunchParametersL@CMsgEditorDocument@@QAEXABVTEditorParameters@@@Z @ 59 NONAME ; void CMsgEditorDocument::LaunchParametersL(class TEditorParameters const &)
+	?LoadResourcesL@CMsgAttachmentModel@@QAEXXZ @ 60 NONAME ; void CMsgAttachmentModel::LoadResourcesL(void)
+	?MaxBodyHeight@MsgEditorCommons@@SAHXZ @ 61 NONAME ; int MsgEditorCommons::MaxBodyHeight(void)
+	?MediaAvailable@CMsgEditorDocument@@QBEHXZ @ 62 NONAME ; int CMsgEditorDocument::MediaAvailable(void) const
+	?MsgBaseLineDelta@MsgEditorCommons@@SAHXZ @ 63 NONAME ; int MsgEditorCommons::MsgBaseLineDelta(void)
+	?MsgBaseLineOffset@MsgEditorCommons@@SAHXZ @ 64 NONAME ; int MsgEditorCommons::MsgBaseLineOffset(void)
+	?MsgBodyPane@MsgEditorCommons@@SA?AVTRect@@XZ @ 65 NONAME ; class TRect MsgEditorCommons::MsgBodyPane(void)
+	?MsgDataPane@MsgEditorCommons@@SA?AVTRect@@XZ @ 66 NONAME ; class TRect MsgEditorCommons::MsgDataPane(void)
+	?MsgHeaderPane@MsgEditorCommons@@SA?AVTRect@@XZ @ 67 NONAME ; class TRect MsgEditorCommons::MsgHeaderPane(void)
+	?MsgMainPane@MsgEditorCommons@@SA?AVTRect@@XZ @ 68 NONAME ; class TRect MsgEditorCommons::MsgMainPane(void)
+	?Mtm@CMsgEditorDocument@@QBEAAVCBaseMtm@@XZ @ 69 NONAME ; class CBaseMtm & CMsgEditorDocument::Mtm(void) const
+	?MtmUi@CMsgEditorDocument@@QBEAAVCBaseMtmUi@@XZ @ 70 NONAME ; class CBaseMtmUi & CMsgEditorDocument::MtmUi(void) const
+	?MtmUiData@CMsgEditorDocument@@QBEAAVCBaseMtmUiData@@XZ @ 71 NONAME ; class CBaseMtmUiData & CMsgEditorDocument::MtmUiData(void) const
+	?NewL@CMsgAttachmentModel@@SAPAV1@H@Z @ 72 NONAME ; class CMsgAttachmentModel * CMsgAttachmentModel::NewL(int)
+	?NotifyChanges@CMsgEditorDocument@@EAEXW4TMsgAttachmentCommand@MMsgAttachmentModelObserver@@PAVCMsgAttachmentInfo@@@Z @ 73 NONAME ; void CMsgEditorDocument::NotifyChanges(enum MMsgAttachmentModelObserver::TMsgAttachmentCommand, class CMsgAttachmentInfo *)
+	?NumberOfItems@CMsgAttachmentModel@@QBEHXZ @ 74 NONAME ; int CMsgAttachmentModel::NumberOfItems(void) const
+	?OpCompleted@CMsgEditorDocument@@EAEXAAVCMsvSingleOpWatcher@@H@Z @ 75 NONAME ABSENT ; void CMsgEditorDocument::OpCompleted(class CMsvSingleOpWatcher &, int)
+	?PrepareContextL@CMsgEditorDocument@@MAEJJ@Z @ 76 NONAME ; long CMsgEditorDocument::PrepareContextL(long)
+	?PrepareMtmL@CMsgEditorDocument@@QAEXVTUid@@@Z @ 77 NONAME ; void CMsgEditorDocument::PrepareMtmL(class TUid)
+	?PrepareToLaunchL@CMsgEditorDocument@@QAEXPAVMMsgEditorLauncher@@@Z @ 78 NONAME ; void CMsgEditorDocument::PrepareToLaunchL(class MMsgEditorLauncher *)
+	?Reset@CMsgAttachmentModel@@QAEXXZ @ 79 NONAME ; void CMsgAttachmentModel::Reset(void)
+	?RestoreL@CMsgEditorDocument@@UAEXABVCStreamStore@@ABVCStreamDictionary@@@Z @ 80 NONAME ; void CMsgEditorDocument::RestoreL(class CStreamStore const &, class CStreamDictionary const &)
+	?ScreenHeigth@MsgEditorCommons@@SAHXZ @ 81 NONAME ; int MsgEditorCommons::ScreenHeigth(void)
+	?ScreenWidth@MsgEditorCommons@@SAHXZ @ 82 NONAME ; int MsgEditorCommons::ScreenWidth(void)
+	?Session@CMsgEditorDocument@@QBEAAVCMsvSession@@XZ @ 83 NONAME ; class CMsvSession & CMsgEditorDocument::Session(void) const
+	?Set@TMsgEditorFlags@@QAEXK@Z @ 84 NONAME ; void TMsgEditorFlags::Set(unsigned long)
+	?SetAttachedThisSession@CMsgAttachmentInfo@@QAEXH@Z @ 85 NONAME ; void CMsgAttachmentInfo::SetAttachedThisSession(int)
+	?SetAttachmentId@CMsgAttachmentInfo@@QAEXI@Z @ 86 NONAME ; void CMsgAttachmentInfo::SetAttachmentId(unsigned int)
+	?SetDRMDataType@CMsgAttachmentInfo@@QAEXW4TDRMDataType@1@@Z @ 87 NONAME ; void CMsgAttachmentInfo::SetDRMDataType(enum CMsgAttachmentInfo::TDRMDataType)
+	?SetDataType@CMsgAttachmentInfo@@QAEXABVTDataType@@@Z @ 88 NONAME ; void CMsgAttachmentInfo::SetDataType(class TDataType const &)
+	?SetEditorModelObserver@CMsgEditorDocument@@QAEXPAVMMsgEditorModelObserver@@@Z @ 89 NONAME ; void CMsgEditorDocument::SetEditorModelObserver(class MMsgEditorModelObserver *)
+	?SetEntryL@CMsgEditorDocument@@QAEXJ@Z @ 90 NONAME ; void CMsgEditorDocument::SetEntryL(long)
+	?SetEntryWithoutNotificationL@CMsgEditorDocument@@QAEXJ@Z @ 91 NONAME ; void CMsgEditorDocument::SetEntryWithoutNotificationL(long)
+	?SetFetched@CMsgAttachmentInfo@@QAEXH@Z @ 92 NONAME ; void CMsgAttachmentInfo::SetFetched(int)
+	?SetFileName@CMsgAttachmentInfo@@QAEXABV?$TBuf@$0BAA@@@@Z @ 93 NONAME ; void CMsgAttachmentInfo::SetFileName(class TBuf<256> const &)
+	?SetModified@CMsgAttachmentModel@@QAEXH@Z @ 94 NONAME ; void CMsgAttachmentModel::SetModified(int)
+	?SetObserver@CMsgAttachmentModel@@QAEXPAVMMsgAttachmentModelObserver@@@Z @ 95 NONAME ; void CMsgAttachmentModel::SetObserver(class MMsgAttachmentModelObserver *)
+	?SetSeparator@CMsgAttachmentInfo@@QAEXH@Z @ 96 NONAME ; void CMsgAttachmentInfo::SetSeparator(int)
+	?SetSupported@CMsgAttachmentInfo@@QAEXH@Z @ 97 NONAME ; void CMsgAttachmentInfo::SetSupported(int)
+	?Size@CMsgAttachmentInfo@@QBEHXZ @ 98 NONAME ; int CMsgAttachmentInfo::Size(void) const
+	?SizeString@CMsgAttachmentInfo@@QBE?AV?$TBuf@$0CA@@@XZ @ 99 NONAME ; class TBuf<32> CMsgAttachmentInfo::SizeString(void) const
+	?ViewAttachmentL@CMsgAttachmentModel@@QAEXH@Z @ 100 NONAME ; void CMsgAttachmentModel::ViewAttachmentL(int)
+	?FetchAnyFileL@MsgAttachmentUtils@@SAHAAV?$TBuf@$0BAA@@@AAVCCoeEnv@@PAVMAknFileSelectionObserver@@PAVMAknFileFilter@@@Z @ 101 NONAME
+	?IsSaved@CMsgAttachmentInfo@@QBEHXZ @ 102 NONAME ; int CMsgAttachmentInfo::IsSaved(void) const
+	?SetSaved@CMsgAttachmentInfo@@QAEXH@Z @ 103 NONAME ; void CMsgAttachmentInfo::SetSaved(int)
+	?MtmUiDataL@CMsgEditorDocument@@QBEAAVCBaseMtmUiData@@XZ @ 104 NONAME ; class CBaseMtmUiData & CMsgEditorDocument::MtmUiDataL(void) const
+	?MtmUiL@CMsgEditorDocument@@QBEAAVCBaseMtmUi@@XZ @ 105 NONAME ; class CBaseMtmUi & CMsgEditorDocument::MtmUiL(void) const
+	?RoundToNextLine@MsgEditorCommons@@SAXAAHH@Z @ 106 NONAME ; void MsgEditorCommons::RoundToNextLine(int &, int)
+	?RoundToPreviousLine@MsgEditorCommons@@SAXAAHH@Z @ 107 NONAME ; void MsgEditorCommons::RoundToPreviousLine(int &, int)
+	?OpCompleted@CMsgEditorDocument@@MAEXAAVCMsvSingleOpWatcher@@H@Z @ 108 NONAME ; void CMsgEditorDocument::OpCompleted(class CMsvSingleOpWatcher &, int)
+

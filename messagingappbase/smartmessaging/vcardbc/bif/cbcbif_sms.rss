@@ -1,0 +1,60 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     Bio Info File resource for vcardbc.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+
+NAME    VCDC
+
+//  INCLUDES
+#include <biftool2.rh>
+#include <vcardbc.loc>
+
+//  RESOURCE DEFINITIONS
+
+RESOURCE BIO_INFO_FILE
+    {
+    message_type_uid    = 0x10005531;
+	message_parser_name = "gfp.dll";
+	message_appctrl_name = "vcardbc.dll";       // vCard Bio Control
+    message_app_uid     = KUidUseDefaultApp;
+    
+    file_extension      = ".cbc";
+    description         = qtn_mce_inbox_type_smart_cbc;
+    icons_filename      = "none";
+    icon_zoom_levels    = {1};
+    ids=
+        {
+        ID
+            {
+            type = ENbs;
+            confidence = ECertain;
+            text = "Business Card";
+            },
+
+        ID
+            {
+            type = EWap;
+            confidence = ECertain;
+            port = 5501;
+            }
+        };
+    }
+
+// end of file

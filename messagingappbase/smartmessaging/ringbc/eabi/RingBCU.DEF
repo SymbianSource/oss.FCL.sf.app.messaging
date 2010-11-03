@@ -1,0 +1,5 @@
+EXPORTS
+	_ZN22CRingingToneBioControl4NewLER22MMsgBioControlObserverP11CMsvSessionl11TMsgBioModePK5RFile @ 1 NONAME
+	_ZTI22CRingingToneBioControl @ 2 NONAME ; #<TI>#
+	_ZTV22CRingingToneBioControl @ 3 NONAME ; #<VT>#
+

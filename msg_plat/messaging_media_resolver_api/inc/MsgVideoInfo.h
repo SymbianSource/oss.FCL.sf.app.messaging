@@ -27,7 +27,7 @@
 #include <w32std.h>
 
 // VideoPlayerUtility API
-#include <VideoPlayer.h>
+#include <videoplayer.h>
 
 // Base Class
 #include <MsgMediaInfo.h>

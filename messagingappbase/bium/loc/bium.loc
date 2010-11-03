@@ -1,0 +1,83 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is a localisation file for BIUM.
+*  -------------------------------------------------------------------
+*
+*/
+
+
+
+
+//d:A title for showing information about message's details
+//d:This same string is defined also in other applications, so this is a duplicate because of architecture.
+//l:list_single_pane_t1_cp2
+//
+#define qtn_mce_info   "Message Info"
+
+//d:Informs of the failure to open a smart message. The failure can be caused
+//d:either by corrupt data content in the message, or if the smart message variation
+//d:is not supported.
+//l:popup_note_window
+//
+#define qtn_mce_info_message_not_opened "Invalid message, can't be opened"
+
+//d:Unknown message type. This is shown in MCE inbox when received unsupported message type.
+//l:list_double_graphic_pane_t2
+//
+#define qtn_mce_message_unknown "Unknown message type"
+
+// MESSAGE INFO TYPES
+
+//d: Message info type for Picture message
+//l:list_single_heading_pane_t1
+//
+#define qtn_sm_info_gms "Picture message"
+
+//d: Message info type for Calendar entry
+//l:list_single_heading_pane_t1
+//
+#define qtn_sm_info_calendar "Calendar entry"
+
+//d: Message info type for Business card
+//l:list_single_heading_pane_t1
+//
+#define qtn_sm_info_business_card "Business card"
+
+//d: Message info type for Configuration message
+//l:list_single_heading_pane_t1
+//
+#define qtn_sm_title_configuration "Configuration message"
+
+//d: Message info type for Ringing tone
+//l:list_single_heading_pane_t1
+//
+#define qtn_sm_info_ringing_tone "Ringing tone"
+
+//d: Message info type for Operator logo
+//l:list_single_heading_pane_t1
+//
+#define qtn_sm_info_operator_logo "Operator logo"
+
+//d: Message info type for Email notification
+//l:list_single_heading_pane_t1
+//
+#define qtn_sm_info_email_notification "Email notification"
+
+//d: Message info type for Sync profile
+//l:list_single_heading_pane_t1
+//
+#define qtn_sm_info_sync_profile "Sync profile"
+
+// end of file

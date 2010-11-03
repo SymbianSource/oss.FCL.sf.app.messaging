@@ -172,16 +172,14 @@ void CMmsPushHandler::HandleMessageL( CPushMessage* aPushMsg )
     // If memory runs out, tough luck..
     //
     TPtrC8 messageBodyPtr;
-    if ( iPushMsg->GetMessageBody( messageBodyPtr ) )
+    iPushMsg->GetMessageBody( messageBodyPtr );
+    iBody = messageBodyPtr.Alloc();
+    if ( !iBody )
         {
-        iBody = messageBodyPtr.Alloc();
-        if ( !iBody )
-            {
-        	LOGTEXT( _L("HandleMessageL(): Out of memory when allocating body buffer") );
-        	// Commit suicide - the caller expects it even if we leave
-        	iPluginKiller->KillPushPlugin();
-        	User::Leave( KErrNoMemory );
-            }
+        LOGTEXT( _L("HandleMessageL(): Out of memory when allocating body buffer") );
+        // Commit suicide - the caller expects it even if we leave
+        iPluginKiller->KillPushPlugin();
+        User::Leave( KErrNoMemory );
         }
     
     //
@@ -755,7 +753,7 @@ TMsvId CMmsPushHandler::FindMMSFolderL()
     // They should be at the end of the list
     TInt count = selection->Count();
     TInt i;
-    for ( i = count - 1; i >= 0; --i )
+    for ( i = count - 1; i >= 0; i-- )
         {
         if ( selection->At( i ) <= KMsvDeletedEntryFolderEntryId )
             {
@@ -767,7 +765,7 @@ TMsvId CMmsPushHandler::FindMMSFolderL()
     // Check if anything left.
     count = selection->Count();
     // Loop through the rest and find possible correct folder
-    for ( i = 0; i < count && mmsFolderId == KMsvNullIndexEntryId; ++i )
+    for ( i = 0; i < count && mmsFolderId == KMsvNullIndexEntryId; i++ )
         {
         cMsvEntry->SetEntryL( selection->At( i ) );
         // must be exact match

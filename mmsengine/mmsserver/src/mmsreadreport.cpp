@@ -39,7 +39,7 @@ CMmsReadReport::CMmsReadReport( RFs& aFs ):
     CMmsBaseOperation( aFs )
     {
     //
-    // members that get initial value 0, need not be initialized here
+    // members that get initial value 0, need not be intialized here
     //
     }
 

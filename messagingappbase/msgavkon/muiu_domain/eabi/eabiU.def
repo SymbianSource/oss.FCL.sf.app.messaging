@@ -1,0 +1,163 @@
+EXPORTS
+	_ZN11TUidNameKeyC1E11TKeyCmpText @ 1 NONAME
+	_ZN11TUidNameKeyC2E11TKeyCmpText @ 2 NONAME
+	_ZN12TUidNameInfoC1E4TUidRK7TDesC16 @ 3 NONAME
+	_ZN12TUidNameInfoC2E4TUidRK7TDesC16 @ 4 NONAME
+	_ZN13CUidNameArray4SortE11TKeyCmpText @ 5 NONAME
+	_ZN13CUidNameArrayC1Ei @ 6 NONAME
+	_ZN13CUidNameArrayC2Ei @ 7 NONAME
+	_ZN13CUidNameArrayD0Ev @ 8 NONAME
+	_ZN13CUidNameArrayD1Ev @ 9 NONAME
+	_ZN13CUidNameArrayD2Ev @ 10 NONAME
+	_ZN16CMessageIterator14SetNextMessageEv @ 11 NONAME
+	_ZN16CMessageIterator18SetCurrentMessageLERK9TMsvEntry @ 12 NONAME
+	_ZN16CMessageIterator18SetPreviousMessageEv @ 13 NONAME
+	_ZN16CMessageIterator19OpenCurrentMessageLER14TRequestStatusi @ 14 NONAME
+	_ZN16CMessageIterator26SetMessageIteratorObserverEP24MMessageIteratorObserver @ 15 NONAME
+	_ZN16CMessageIterator4NewLER11CMsvSessionRK9TMsvEntry @ 16 NONAME
+	_ZN16CMessageIteratorD0Ev @ 17 NONAME
+	_ZN16CMessageIteratorD1Ev @ 18 NONAME
+	_ZN16CMessageIteratorD2Ev @ 19 NONAME
+	MUIU_ABSENT20 @ 20 NONAME ABSENT
+	MUIU_ABSENT21 @ 21 NONAME ABSENT
+	_ZN17MsgEditorLauncher24LaunchEditorApplicationLER11CMsvSession4TUidR14TRequestStatusRK17TEditorParametersRK7TDesC16PK6TDesC8 @ 22 NONAME
+	_ZN17MsgEditorLauncher24LaunchEditorApplicationLER11CMsvSession4TUidR14TRequestStatusRK17TEditorParametersRK7TDesC16RK6TDesC8PSC_ @ 23 NONAME
+	_ZN18CMuiuOperationWait5NewLCEi @ 24 NONAME
+	_ZN18CMuiuOperationWait5StartEv @ 25 NONAME
+	_ZN18CMuiuOperationWaitD0Ev @ 26 NONAME
+	_ZN18CMuiuOperationWaitD1Ev @ 27 NONAME
+	_ZN18CMuiuOperationWaitD2Ev @ 28 NONAME
+	_ZN18MsvFactorySettings6ResetLE24TMsvFactorySettingsLevel @ 29 NONAME
+	_ZN19CMsvSingleOpWatcher12SetOperationEP13CMsvOperation @ 30 NONAME
+	_ZN19CMsvSingleOpWatcher4NewLER19MMsvSingleOpWatcher @ 31 NONAME
+	_ZN19CMsvSingleOpWatcher5NewLCER19MMsvSingleOpWatcher @ 32 NONAME
+	_ZN19CMsvSingleOpWatcherD0Ev @ 33 NONAME
+	_ZN19CMsvSingleOpWatcherD1Ev @ 34 NONAME
+	_ZN19CMsvSingleOpWatcherD2Ev @ 35 NONAME
+	_ZN20CMtmStoreMtmReleaser21CleanupReleaseMtmUiLCER9CMtmStore4TUid @ 36 NONAME
+	_ZN20MsvUiEditorUtilities19ResolveAppFileNameLE4TUid @ 37 NONAME
+	_ZN21MsvUiServiceUtilities14IsValidDomainLERK7TDesC16 @ 38 NONAME
+	_ZN21MsvUiServiceUtilities18CallToSenderQueryLERK7TDesC16S2_i @ 39 NONAME
+	_ZN21MsvUiServiceUtilities18GetListOfAccountsLER11CMsvSessioni @ 40 NONAME
+	_ZN21MsvUiServiceUtilities20IsValidEmailAddressLERK7TDesC16 @ 41 NONAME
+	_ZN21MsvUiServiceUtilities21DefaultServiceForMTMLER11CMsvSession4TUidi @ 42 NONAME
+	_ZN21MsvUiServiceUtilities25GetListOfAccountsWithMTMLER11CMsvSession4TUidi @ 43 NONAME
+	_ZN21MsvUiServiceUtilities26InternetCallToSenderQueryLERK7TDesC16S2_i @ 44 NONAME
+	_ZN21MsvUiServiceUtilities28DiskSpaceBelowCriticalLevelLER11CMsvSessioni @ 45 NONAME
+	_ZN21MsvUiServiceUtilities40DiskSpaceBelowCriticalLevelWithOverheadLER11CMsvSessionii @ 46 NONAME
+	_ZN25CMsgFolderSelectionDialog13SelectFolderLERlR7TDesC16 @ 47 NONAME
+	_ZN25CMsgInfoMessageInfoDialog4NewLEv @ 48 NONAME
+	_ZN25CMsgInfoMessageInfoDialog9ExecuteLDER23TMsgInfoMessageInfoDataNS_16TMessageInfoTypeE @ 49 NONAME
+	_ZN27CMsgEditorWatchingOperation19SetProgressPackageLERK6TDesC8 @ 50 NONAME ABSENT
+	_ZN27CMsgEditorWatchingOperationC1ER11CMsvSessioniR14TRequestStatus4TUid @ 51 NONAME ABSENT
+	_ZN27CMsgEditorWatchingOperationC2ER11CMsvSessioniR14TRequestStatus4TUid @ 52 NONAME ABSENT
+	_ZN27CMsgEditorWatchingOperationD0Ev @ 53 NONAME ABSENT
+	_ZN27CMsgEditorWatchingOperationD1Ev @ 54 NONAME ABSENT
+	_ZN27CMsgEditorWatchingOperationD2Ev @ 55 NONAME ABSENT
+	_ZN27CMsvRemoteOperationProgress4NewLER35MMsvRemoteOperationProgressObserveri @ 56 NONAME
+	_ZN27CMsvRemoteOperationProgress4NewLER35MMsvRemoteOperationProgressObserverii @ 57 NONAME
+	_ZN28CMuiuMsgEditorServiceSessionC1Ev @ 58 NONAME
+	_ZN28CMuiuMsgEditorServiceSessionC2Ev @ 59 NONAME
+	_ZN29CMsvProgressReporterOperation10SetSeedingEi @ 60 NONAME
+	_ZN29CMsvProgressReporterOperation13RequestStatusEv @ 61 NONAME
+	_ZN29CMsvProgressReporterOperation13SetAnimationLEi @ 62 NONAME
+	_ZN29CMsvProgressReporterOperation13SetCanCancelLEi @ 63 NONAME
+	_ZN29CMsvProgressReporterOperation13SetOperationLEP13CMsvOperation @ 64 NONAME
+	_ZN29CMsvProgressReporterOperation14SetHelpContextERK15TCoeHelpContext @ 65 NONAME
+	_ZN29CMsvProgressReporterOperation18SetProgressDecoderER19MMsvProgressDecoder @ 66 NONAME
+	_ZN29CMsvProgressReporterOperation20MakeProgressVisibleLEi @ 67 NONAME
+	_ZN29CMsvProgressReporterOperation20UnsetProgressDecoderEv @ 68 NONAME
+	_ZN29CMsvProgressReporterOperation26SetProgressVisibilityDelayEi @ 69 NONAME
+	_ZN29CMsvProgressReporterOperation4NewLER11CMsvSessionR14TRequestStatus @ 70 NONAME
+	_ZN29CMsvProgressReporterOperation4NewLER11CMsvSessionR14TRequestStatusi @ 71 NONAME
+	_ZN29CMsvProgressReporterOperation4NewLER11CMsvSessionR14TRequestStatusi4TUid @ 72 NONAME
+	_ZN29CMsvProgressReporterOperation4NewLEiR11CMsvSessionR14TRequestStatus @ 73 NONAME
+	_ZN29CMsvProgressReporterOperation4NewLEiR11CMsvSessionR14TRequestStatusi @ 74 NONAME
+	_ZN29CMsvProgressReporterOperation4NewLEiiR11CMsvSessionR14TRequestStatusi @ 75 NONAME
+	_ZN29CMsvProgressReporterOperation8MtmStoreEv @ 76 NONAME
+	_ZN29CMsvProgressReporterOperation9ProgressLEv @ 77 NONAME
+	_ZN29CMsvProgressReporterOperation9SetTitleLERK7TDesC16 @ 78 NONAME
+	_ZN29CMsvProgressReporterOperation9SetTitleLEi @ 79 NONAME
+	_ZN29CMsvProgressReporterOperationD0Ev @ 80 NONAME
+	_ZN29CMsvProgressReporterOperationD1Ev @ 81 NONAME
+	_ZN29CMsvProgressReporterOperationD2Ev @ 82 NONAME
+	_ZN33CMsgEditorServerWatchingOperation4NewLER11CMsvSessioniR14TRequestStatus4TUid17TEditorParameters @ 83 NONAME
+	_ZN33CMsgEditorServerWatchingOperationC1ER11CMsvSessioniR14TRequestStatus4TUid @ 84 NONAME
+	_ZN33CMsgEditorServerWatchingOperationC2ER11CMsvSessioniR14TRequestStatus4TUid @ 85 NONAME
+	_ZN33CMsgEditorServerWatchingOperationD0Ev @ 86 NONAME
+	_ZN33CMsgEditorServerWatchingOperationD1Ev @ 87 NONAME
+	_ZN33CMsgEditorServerWatchingOperationD2Ev @ 88 NONAME
+	_ZN9CMtmStore10GetMtmUiLCE4TUid @ 89 NONAME
+	_ZN9CMtmStore10MtmUiDataLE4TUid @ 90 NONAME
+	_ZN9CMtmStore11ClaimMtmUiLE4TUid @ 91 NONAME
+	_ZN9CMtmStore12ReleaseMtmUiE4TUid @ 92 NONAME
+	_ZN9CMtmStore16ReleaseMtmUiDataE4TUid @ 93 NONAME
+	_ZN9CMtmStore23GetMtmUiAndSetContextLCERK9TMsvEntry @ 94 NONAME
+	_ZN9CMtmStore24ClaimMtmUiAndSetContextLERK9TMsvEntry @ 95 NONAME
+	_ZN9CMtmStore4NewLER11CMsvSession @ 96 NONAME
+	_ZN9CMtmStoreD0Ev @ 97 NONAME
+	_ZN9CMtmStoreD1Ev @ 98 NONAME
+	_ZN9CMtmStoreD2Ev @ 99 NONAME
+	_ZNK13CUidNameArray9MdcaCountEv @ 100 NONAME
+	_ZNK13CUidNameArray9MdcaPointEi @ 101 NONAME
+	_ZNK16CMessageIterator13CurrentParentEv @ 102 NONAME
+	_ZNK16CMessageIterator14CurrentMessageEv @ 103 NONAME
+	_ZNK16CMessageIterator16MessagesInFolderEv @ 104 NONAME
+	_ZNK16CMessageIterator17NextMessageExistsEv @ 105 NONAME
+	_ZNK16CMessageIterator19CurrentMessageIndexEv @ 106 NONAME
+	_ZNK16CMessageIterator21PreviousMessageExistsEv @ 107 NONAME
+	_ZNK19CMsvSingleOpWatcher9OperationEv @ 108 NONAME
+	_ZTI11TUidNameKey @ 109 NONAME ; #<TI>#
+	_ZTI13CUidNameArray @ 110 NONAME ; #<TI>#
+	_ZTI14CMtmUiInfoItem @ 111 NONAME ; #<TI>#
+	_ZTI14CMtmUsageTimer @ 112 NONAME ; #<TI>#
+	_ZTI16CMessageIterator @ 113 NONAME ; #<TI>#
+	_ZTI18CMuiuOperationWait @ 114 NONAME ; #<TI>#
+	_ZTI19CMsvSingleOpWatcher @ 115 NONAME ; #<TI>#
+	_ZTI21CMuiuMsgEditorService @ 116 NONAME ; #<TI>#
+	_ZTI21RMuiuMsgEditorService @ 117 NONAME ; #<TI>#
+	_ZTI25CMsgFolderSelectionDialog @ 118 NONAME ; #<TI>#
+	_ZTI25CMsgInfoMessageInfoDialog @ 119 NONAME ; #<TI>#
+	_ZTI27CMsgEditorWatchingOperation @ 120 NONAME ABSENT ; #<TI>#
+	_ZTI27CMsvRemoteOperationProgress @ 121 NONAME ; #<TI>#
+	_ZTI27CMsvWrappableProgressDialog @ 122 NONAME ; #<TI>#
+	_ZTI28CMsgFolderSelectionListArray @ 123 NONAME ; #<TI>#
+	_ZTI28CMuiuMsgEditorServiceSession @ 124 NONAME ; #<TI>#
+	_ZTI29CMsvProgressReporterOperation @ 125 NONAME ; #<TI>#
+	_ZTI33CMsgEditorServerWatchingOperation @ 126 NONAME ; #<TI>#
+	_ZTI9CMtmStore @ 127 NONAME ; #<TI>#
+	_ZTV11TUidNameKey @ 128 NONAME ; #<VT>#
+	_ZTV13CUidNameArray @ 129 NONAME ; #<VT>#
+	_ZTV14CMtmUiInfoItem @ 130 NONAME ; #<VT>#
+	_ZTV14CMtmUsageTimer @ 131 NONAME ; #<VT>#
+	_ZTV16CMessageIterator @ 132 NONAME ; #<VT>#
+	_ZTV18CMuiuOperationWait @ 133 NONAME ; #<VT>#
+	_ZTV19CMsvSingleOpWatcher @ 134 NONAME ; #<VT>#
+	_ZTV21CMuiuMsgEditorService @ 135 NONAME ; #<VT>#
+	_ZTV21RMuiuMsgEditorService @ 136 NONAME ; #<VT>#
+	_ZTV25CMsgFolderSelectionDialog @ 137 NONAME ; #<VT>#
+	_ZTV25CMsgInfoMessageInfoDialog @ 138 NONAME ; #<VT>#
+	_ZTV27CMsgEditorWatchingOperation @ 139 NONAME ABSENT ; #<VT>#
+	_ZTV27CMsvRemoteOperationProgress @ 140 NONAME ; #<VT>#
+	_ZTV27CMsvWrappableProgressDialog @ 141 NONAME ; #<VT>#
+	_ZTV28CMsgFolderSelectionListArray @ 142 NONAME ; #<VT>#
+	_ZTV28CMuiuMsgEditorServiceSession @ 143 NONAME ; #<VT>#
+	_ZTV29CMsvProgressReporterOperation @ 144 NONAME ; #<VT>#
+	_ZTV33CMsgEditorServerWatchingOperation @ 145 NONAME ; #<VT>#
+	_ZTV9CMtmStore @ 146 NONAME ; #<VT>#
+	_ZThn24_N13CUidNameArrayD0Ev @ 147 NONAME ; #<thunk>#
+	_ZThn24_N13CUidNameArrayD1Ev @ 148 NONAME ; #<thunk>#
+	_ZThn24_NK13CUidNameArray9MdcaCountEv @ 149 NONAME ; #<thunk>#
+	_ZThn24_NK13CUidNameArray9MdcaPointEi @ 150 NONAME ; #<thunk>#
+	_ZThn48_N29CMsvProgressReporterOperation13SetAnimationLEi @ 151 NONAME ; #<thunk>#
+	_ZThn48_N29CMsvProgressReporterOperation13SetCanCancelLEi @ 152 NONAME ; #<thunk>#
+	_ZThn48_N29CMsvProgressReporterOperation14SetHelpContextERK15TCoeHelpContext @ 153 NONAME ; #<thunk>#
+	_ZThn48_N29CMsvProgressReporterOperation18SetProgressDecoderER19MMsvProgressDecoder @ 154 NONAME ; #<thunk>#
+	_ZThn48_N29CMsvProgressReporterOperation20MakeProgressVisibleLEi @ 155 NONAME ; #<thunk>#
+	_ZThn48_N29CMsvProgressReporterOperation20UnsetProgressDecoderEv @ 156 NONAME ; #<thunk>#
+	_ZThn48_N29CMsvProgressReporterOperation8MtmStoreEv @ 157 NONAME ; #<thunk>#
+	_ZThn48_N29CMsvProgressReporterOperation9SetTitleLERK7TDesC16 @ 158 NONAME ; #<thunk>#
+	_ZThn48_N29CMsvProgressReporterOperation9SetTitleLEi @ 159 NONAME ; #<thunk>#
+	_ZN21MsvUiServiceUtilities20InternetCallServiceLERK7TDesC16S2_S2_P9CEikonEnv @ 160 NONAME
+	_ZN29CMsvProgressReporterOperation17PublishNewDialogLEi4TUid @ 161 NONAME
+

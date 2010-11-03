@@ -135,13 +135,8 @@ void CMmsMmboxList::StartL(
     // When iError not equal to KErrNone, the operation will complete after running through RunL
     if ( iError == KErrNone )
         {
-        TInt err;
-        err = iServerEntry->GetChildrenWithMtm( KUidMsgMMSNotification, *iOldNotifications );
-        if (err != KErrNone)
-            {
-            return;
-            }
-			iOldQuotaEntryId = OldQuotaEntryL();
+        iServerEntry->GetChildrenWithMtm( KUidMsgMMSNotification, *iOldNotifications );
+        iOldQuotaEntryId = OldQuotaEntryL();
         }
     else
         {

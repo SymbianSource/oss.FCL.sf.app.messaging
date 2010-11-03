@@ -1,0 +1,227 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     Resource file for Messaging UI Utilities domain Dll MUIU_DOMAIN.
+*
+*/
+
+
+
+//  RESOURCE IDENTIFIER
+NAME MUIE
+
+//  INCLUDES
+#include <bldvariant.hrh>
+#include <eikon.rh>
+#include <avkon.rh>
+#include <avkon.rsg>
+#include <avkon.loc>  //qtn_find_number_call_send_key; qtn_find_call_to_sender
+#include <muiu.loc>
+#include "opprgdlg.hrh"
+
+
+//----------------------------------------------------
+//
+//    RSS_SIGNATURE
+//
+//
+//----------------------------------------------------
+//
+RESOURCE RSS_SIGNATURE
+    { 
+    }
+
+
+//----------------------------------------------------
+//
+//    TBUF
+//
+//
+//----------------------------------------------------
+//
+RESOURCE TBUF16 
+    { 
+    buf=""; 
+    }
+    
+    
+//Note: RSS_SIGNATURE and TBUF must be above includes below.
+//Otherwise can not open muiu resources
+#include "../messageinfo/data/muiumessageinfo.ra"
+#include "../messageinfo/data/muiumessageinfoCDMA.ra"
+
+
+//----------------------------------------------------
+//
+//    r_muiu_folder_selection_list_query
+//
+//----------------------------------------------------
+//
+RESOURCE DIALOG r_muiu_folder_selection_list_query
+    {
+    flags=EGeneralQueryFlags;
+    buttons=R_AVKON_SOFTKEYS_OK_CANCEL__OK;
+    items=
+        {
+        DLG_LINE 
+            {
+            type = EAknCtListQueryControl;
+            id = EListQueryControl;
+            control = AVKON_LIST_QUERY_CONTROL
+                {
+                heading = " "; // needed, otherwise heading is not created at all!
+                listtype = EAknCtSingleGraphicPopupMenuListBox;
+                listbox = LISTBOX
+                    {
+                    flags = EAknListBoxMenuList; 
+                    height = 3;
+                    width = 3;
+                    };
+                };
+            }
+        };
+    }
+
+
+// ---------------------------------------------------------
+//
+//    r_muiu_progress_dialog_buttons
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE CBA r_muiu_progress_dialog_buttons
+    {
+    buttons =
+        {
+        CBA_BUTTON {id = EAknSoftkeyEmpty; txt = text_softkey_empty;},
+        CBA_BUTTON {id = EMuiuProgressDialogButtonCancelId; txt = text_softkey_cancel; }
+        };
+    }
+
+
+
+// ---------------------------------------------------------
+//
+//    r_operation_progress_dialog
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_operation_progress_dialog
+    {
+    flags = EEikDialogFlagNoTitleBar | EEikDialogFlagNotifyEsc
+            | EEikDialogFlagCbaButtons; // N.B. No waiting
+    title = "";
+    buttons = r_muiu_progress_dialog_buttons;
+    items =
+        {
+        DLG_LINE
+            {
+            type=EAknCtNote;
+            id=EOpPrgDlgCIDProgress;
+            control= AVKON_NOTE
+                {
+                layout = EProgressLayout;
+                singular_label = ""; // these are updated dynamically
+                plural_label = "";
+                };
+            }
+        };
+    }
+
+
+// ---------------------------------------------------------
+//
+//    r_operation_waitanimation_dialog
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE DIALOG r_operation_waitanimation_dialog
+    {
+    flags = EEikDialogFlagNoTitleBar | EEikDialogFlagNotifyEsc
+            | EEikDialogFlagCbaButtons; // N.B. No waiting
+    title = "";
+    buttons = r_muiu_progress_dialog_buttons;
+    items =
+        {
+        DLG_LINE
+            {
+            type=EAknCtNote;
+            id=EOpPrgDlgCIDProgress;
+            control= AVKON_NOTE
+                {
+                layout = EWaitLayout;
+                singular_label = ""; // these are updated dynamically
+                plural_label = "";
+                };
+            }
+        };
+    }
+
+
+// ---------------------------------------------------------
+//
+//    r_muiu_local_progress_moving_1
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE TBUF64 r_muiu_local_progress_moving_1
+    {
+    buf = qtn_mce_wait_move;
+    }
+
+// ---------------------------------------------------------
+//
+//    r_muiu_local_progress_moving_x
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE TBUF64 r_muiu_local_progress_moving_x
+    {
+    buf = qtn_mce_wait_move_many;
+    }
+
+
+// ---------------------------------------------------------
+//
+//   r_muiu_local_progress_deleting_1
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE TBUF64 r_muiu_local_progress_deleting_1
+    {
+    buf = qtn_mce_wait_delete;
+    }
+
+
+
+// ---------------------------------------------------------
+//
+//   r_muiu_local_progress_deleting_x
+//
+//
+// ---------------------------------------------------------
+//
+RESOURCE TBUF64 r_muiu_local_progress_deleting_x
+    {
+    buf = qtn_mce_wait_delete_many;
+    }
+
+
+// End of File

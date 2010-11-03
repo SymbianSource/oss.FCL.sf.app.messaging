@@ -208,7 +208,7 @@ NONSHARABLE_CLASS( CMmsConformance ) : public CBase
         * Set maximum send size for a multimedia message
         * 
         * The default max send size (in MMS Settings) can 
-        * be overridden with this function.
+        * be overriden with this function.
         *
         * NOTICE! There is no guarantee that the message can
         *         be sent if the size is defined bigger than
@@ -239,7 +239,7 @@ NONSHARABLE_CLASS( CMmsConformance ) : public CBase
         * Set MMS creation mode
         * 
         * The default creation mode (in MMS Settings) can 
-        * be overridden with this function.
+        * be overriden with this function.
         *
         * @param    aFree ETrue, Set creation mode to "free"
         *                 EFalse, Set creation mode to "restricted"
@@ -250,7 +250,7 @@ NONSHARABLE_CLASS( CMmsConformance ) : public CBase
         * Set image size setting
         * 
         * The default image size setting (in MMS Settings) can 
-        * be overridden with this function.
+        * be overriden with this function.
         *
         * NOTICE! There is no guarantee that the message can
         *         be sent if the size is defined bigger than

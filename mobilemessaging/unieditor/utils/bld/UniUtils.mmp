@@ -1,0 +1,116 @@
+/*
+* Copyright (c) 2005-2007 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   Project file for Unified Editor Utilities DLL.
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+// ...LOGGING - Turned on by default on debug binaries....
+//MACRO           USE_LOGGER    // UREL debugging support from code files
+//#define         USE_LOGGER    // UREL debugging support from mmp file
+//MACRO           USE_RDEBUG    // Turn on the logging via RDEBUG
+
+TARGET              uniutils.dll
+TARGETTYPE          dll
+UID                 0x1000008D 0x102072D7
+VENDORID            VID_DEFAULT
+CAPABILITY          CAP_GENERAL_DLL
+VERSION 	    10.0
+PAGED
+
+START RESOURCE      ../data/UniUtils.rss
+TARGETPATH          RESOURCE_FILES_DIR
+HEADER
+LANGUAGE_IDS
+END
+
+USERINCLUDE         ../inc
+USERINCLUDE         ../../inc
+
+SYSTEMINCLUDE       ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+SOURCEPATH          ../src
+
+SOURCE              UniAddressHandler.cpp
+SOURCE              UniBaseHeader.cpp
+SOURCE              UniImageProcessor.cpp
+SOURCE              UniObjectsInfo.cpp
+SOURCE              UniObjectsModel.cpp
+SOURCE              UniObjectsListArray.cpp
+SOURCE              UniObjectsViewDialog.cpp
+SOURCE              UniSlideLoader.cpp
+
+LIBRARY             euser.lib
+LIBRARY             efsrv.lib
+LIBRARY             etext.lib
+LIBRARY             estor.lib
+
+LIBRARY             apparc.lib
+LIBRARY             apgrfx.lib
+LIBRARY             apmime.lib                  // TDataType
+LIBRARY             cone.lib
+LIBRARY             eikcore.lib
+LIBRARY             eikdlg.lib
+LIBRARY             eikcoctl.lib
+LIBRARY             bafl.lib
+
+LIBRARY             avkon.lib
+LIBRARY             aknskins.lib
+LIBRARY             cdlengine.lib
+LIBRARY             aknlayout2scalable.lib
+LIBRARY             servicehandler.lib
+
+LIBRARY             muiu.lib
+LIBRARY             muiu_internal.lib
+LIBRARY             msgeditorappui.lib
+LIBRARY             msgeditormodel.lib
+LIBRARY             msgeditorview.lib
+LIBRARY             msgeditormediacontrol.lib
+LIBRARY             mmsgenutils.lib             // TUniGenUtils methods
+
+LIBRARY             unidatamodel.lib
+
+LIBRARY             fbscli.lib                  // CFbsBitmap
+LIBRARY             imageconversion.lib
+LIBRARY             bitmaptransforms.lib
+
+LIBRARY             msgs.lib
+LIBRARY             sendui.lib 
+LIBRARY             featmgr.lib
+LIBRARY             npdlib.lib
+LIBRARY             hlplch.lib                  // HlpLauncher
+LIBRARY             commonui.lib
+LIBRARY             commonengine.lib
+LIBRARY             centralrepository.lib
+LIBRARY             biodb.lib
+LIBRARY             drmserverinterfaces.lib
+
+#ifdef USE_LOGGER
+LIBRARY                 flogger.lib
+#else
+DEBUGLIBRARY            flogger.lib
+#endif
+
+#if defined( ARMCC )
+deffile         ../eabi/eabi.def
+#elif defined( WINS )
+deffile         ../bwins/wins.def
+#endif
+
+/* End of File */

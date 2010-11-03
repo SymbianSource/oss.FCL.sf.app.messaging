@@ -1,0 +1,77 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains all the resources for CMsgConfirmSendNotifier.
+*
+*/
+
+
+
+// ========== RESOURCE IDENTIFIER ==========================
+
+NAME    MCSD // 4 letter ID
+
+// ========== INCLUDE FILES ================================
+
+#include <eikon.rh>
+#include <eikon.rsg>
+#include <avkon.rsg>
+#include <avkon.rh>
+#include <avkon.loc>
+
+#include <msgnotifiers.loc>
+
+// ========== RESOURCE DEFINITIONS =========================
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF { buf = ""; }
+
+RESOURCE DIALOG r_confirm_query
+    {
+    flags = EGeneralQueryFlags | EEikDialogFlagNoBorder | EEikDialogFlagNoShadow;
+    buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+    items=
+        {
+        DLG_LINE 
+            {
+            type = EAknCtPopupHeadingPane;
+            id = EAknMessageQueryHeaderId;
+            control = AVKON_HEADING
+                {
+                label = qtn_sn_prompt_messaging;
+                };
+            },
+        DLG_LINE
+            {
+            type = EAknCtMessageQuery;
+            id = EAknMessageQueryContentId;
+            control = AVKON_MESSAGE_QUERY
+                {
+                };
+            }
+        };
+    }
+    
+RESOURCE TBUF r_confirm_unknown_app { buf = qtn_sn_msg_unknown_application; }
+
+RESOURCE TBUF r_confirm_unknown_mtm { buf = qtn_sn_msg_unknown_message; }
+
+RESOURCE TBUF r_confirm_send_one { buf = qtn_sn_msg_notification; }
+
+RESOURCE TBUF r_confirm_send_many_recip { buf = qtn_sn_msg_note_to_many; }
+
+RESOURCE TBUF r_confirm_send_many_msg { buf = qtn_sn_msg_note_multi; }
+
+// End of File

@@ -200,7 +200,7 @@ TInt CMmsCodecClientApiTest::AddMMTestL()
     TRAPD(error2, iCodecClient->AddMML(*iEncodeBuffer, folder, flags, unread, messageId, iWait->iStatus ) );
     if(error2 != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error for the call made to AddMML before calling CreateNewMessageEntry()"));
+        iLog->Log(_L("AddMMTestL returned Errror for the call made to AddMML before calling CreateNewMessageEntry()"));
         }
     else
         {
@@ -258,7 +258,7 @@ TInt CMmsCodecClientApiTest::AddMMTestL()
     TRAPD(error3, iCodecClient->AddMML(*iEncodeBuffer, folder, flags, unread, messageId, iWait->iStatus ) );
     if(error3 != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error3);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error3);
         
         }
     else
@@ -303,7 +303,7 @@ TInt CMmsCodecClientApiTest::RelaceMMTestL()
     
     if(error1 != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error1);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error1);
         returnValue = error1;
         }
     else
@@ -371,7 +371,7 @@ TInt CMmsCodecClientApiTest::RelaceMMTestL()
   	
     if(error3 != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error1);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error1);
         
         }
     else
@@ -434,7 +434,7 @@ TInt CMmsCodecClientApiTest::RetreiveMMTestL()
     
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error1);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error1);
         returnValue = error1;
         }
     else
@@ -500,7 +500,7 @@ TInt CMmsCodecClientApiTest::SendMMTestL()
     
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error1);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error1);
         
         }
     else
@@ -568,7 +568,7 @@ TInt CMmsCodecClientApiTest::MoveMMTestL()
     
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -625,7 +625,7 @@ TInt CMmsCodecClientApiTest::MoveMMTestL()
     
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error1);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error1);
         
         }
     else
@@ -684,7 +684,7 @@ TInt CMmsCodecClientApiTest::SetFlagsTestL()
 	
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -699,7 +699,7 @@ TInt CMmsCodecClientApiTest::SetFlagsTestL()
 	
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -754,7 +754,7 @@ TInt CMmsCodecClientApiTest::InitializeChunkedRetrievingTestL()
 	
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -814,7 +814,7 @@ TInt CMmsCodecClientApiTest::InitializeChunkedRetrievingTestL()
 	TRAP(error, iCodecClient->AddMML(*iEncodeBuffer, folder, flags, unread, messageId, iWait->iStatus ) );
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -912,7 +912,7 @@ TInt CMmsCodecClientApiTest::InitializeChunkedAddingTestL()
 	TRAP(error, iCodecClient->AddMML(*iEncodeBuffer, folder, flags, unread, messageId, iWait->iStatus ) );
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -943,7 +943,7 @@ TInt CMmsCodecClientApiTest::InitializeChunkedAddingTestL()
 	TRAP(error, iCodecClient->AddMML(*iEncodeBuffer, folder, flags, unread, messageId, iWait->iStatus ) );
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -1002,7 +1002,7 @@ TInt CMmsCodecClientApiTest::InitializeChunkedReplacingTestL()
 	TRAP(error, iCodecClient->AddMML(*iEncodeBuffer, outBox, flags, unread, messageId, iWait->iStatus ) );
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -1027,7 +1027,7 @@ TInt CMmsCodecClientApiTest::InitializeChunkedReplacingTestL()
 	TRAP(error, iCodecClient->AddMML(*iEncodeBuffer, folder, flags, unread, messageId, iWait->iStatus ) );
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -1055,7 +1055,7 @@ TInt CMmsCodecClientApiTest::InitializeChunkedReplacingTestL()
 	TRAP(error, iCodecClient->AddMML(*iEncodeBuffer, folder, flags, unread, messageId, iWait->iStatus ) );
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -1113,7 +1113,7 @@ TInt CMmsCodecClientApiTest::DeleteMMTestL()
 	TRAP(error, iCodecClient->AddMML(*iEncodeBuffer, folder, flags, unread, messageId, iWait->iStatus ) );
     if(error != KErrNone)
         {
-        iLog->Log(_L("AddMMTestL returned error %d "),error);
+        iLog->Log(_L("AddMMTestL returned Errror %d "),error);
         }
     else
         {
@@ -1250,7 +1250,7 @@ void CMmsCodecClientApiTest::CleanBoxL(TMsvId aBoxId, CMsvSession& aSession)
     CleanupStack::PopAndDestroy(); // selection
 
     int i;
-    for (i = 0; i < msvEntrySelection->Count(); ++i)
+    for (i = 0; i < msvEntrySelection->Count(); i++)
         {
         CMsvEntry* entry = aSession.GetEntryL( msvEntrySelection->At(i) );
         CleanupStack::PushL( entry );

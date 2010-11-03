@@ -1,0 +1,3 @@
+EXPORTS
+	?NewL@CRingingToneBioControl@@SAPAVCMsgBioControl@@AAVMMsgBioControlObserver@@PAVCMsvSession@@JW4TMsgBioMode@@PBVRFile@@@Z @ 1 NONAME ; class CMsgBioControl * CRingingToneBioControl::NewL(class MMsgBioControlObserver &, class CMsvSession *, long, enum TMsgBioMode, class RFile const *)
+

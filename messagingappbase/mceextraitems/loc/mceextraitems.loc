@@ -1,0 +1,48 @@
+/*
+* Copyright (c) 2005 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This file contains the localised strings for mceextraitems,
+*			i.e. the shortcuts in the main view of the messaging application.
+*
+*/
+
+
+
+//  LOCALISATION STRINGS
+
+// d: First shortcut in the main view. Opens an application or URL
+// l: list_single_large_graphic_pane_t1
+//
+#define qtn_mce_shortcut1 "Shortcut 1"
+
+// d: Second shortcut in the main view. Opens an application or URL
+// l: list_single_large_graphic_pane_t1
+//
+#define qtn_mce_shortcut2 "Shortcut 2"
+
+// d: Third shortcut in the main view. Opens an application or URL
+// l: list_single_large_graphic_pane_t1
+//
+#define qtn_mce_shortcut3 "Shortcut 3"
+
+// d: Conversation application shortcut in the main view. Opens an conversation application 
+// l: list_double_large_graphic_pane_t1
+//
+#define qtn_mce_conversations "Conversations"
+// d: Displayed as the second line for conversations item in Mce main view
+// l: list_double_large_graphic_pane_t2
+
+
+#define qtn_mce_own_cvs "My conversations"
+// End of File

@@ -226,7 +226,7 @@ void TMmsScheduleSettingsUtils::LoadErrorSettingsL(
 		
 	TUint32 errorActionId = aErrorActionBase;
 	LOG2(_L("- loading %d error actions"), count);
-	for( TInt counter = 0; counter < count; ++counter )
+	for( TInt counter = 0; counter < count; counter++ )
 		{
 		LoadErrorActionL( errorActionId, action, aRepository );
 		aErrorActions.AddSendErrorActionL( action );		
@@ -309,7 +309,7 @@ void TMmsScheduleSettingsUtils::LoadImmediateFailuresL(
     
     TInt i = 0;
 	LOG2(_L("- loading %d immediate failures error"), count);
-    for (i = 0; i < count; ++i )
+    for (i = 0; i < count; i++ )
         {
         User::LeaveIfError( aRepository.Get( KMmsImmediateFailureErrorBase + i, temp ) );
         action.iError = temp;

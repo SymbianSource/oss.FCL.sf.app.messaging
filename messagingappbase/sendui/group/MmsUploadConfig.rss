@@ -1,0 +1,59 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:   This file contains configurable resources
+*				 for the MmsDirectUpload and MmsIndirect services.
+*
+*/
+
+
+
+
+//  INCLUDES
+#include "SendingServiceConfig.rh"
+
+//  RESOURCE DEFINITIONS 
+// -----------------------------------------------------------------------------
+//   
+// r_mms_upload_service_names
+// Service names for MMS upload services.
+// -----------------------------------------------------------------------------
+//
+RESOURCE SERVICE_NAME_ARRAY r_mms_upload_service_names
+	{
+	serviceNames=
+		{
+		SERVICE_NAMES
+			{
+			service_name =			"";
+			service_menu_name =		"";
+			},
+		SERVICE_NAMES
+			{
+			service_name =			"";
+			service_menu_name =		"";
+			},
+		SERVICE_NAMES
+			{
+			service_name =			"";
+			service_menu_name =		"";
+			},
+		SERVICE_NAMES
+			{
+			service_name =			"";
+			service_menu_name =		"";
+			}
+		};
+	}
+
+// End of File

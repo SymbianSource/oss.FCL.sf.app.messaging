@@ -1,0 +1,64 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  Local variation constants
+*
+*/
+
+
+#ifndef __MAILUILOCALVARIATIONFLAGS_HRH
+#define __MAILUILOCALVARIATIONFLAGS_HRH
+
+
+// DATA TYPES
+/**
+* Local variation flags for Mail UI.
+* Default values:
+* 3.common: 1
+* >= 3.1: 7
+*/
+enum TMailUiLocalVariantFlags
+    {
+    /**
+ 	 * Mail additional headers / bcc field variation.
+ 	 * Default values:
+     * 3.x: enabled
+     */
+    EMailAdditionalHeaders = 0x00000001,
+
+    /**
+	 * Attachment field control.
+ 	 * Default values:
+     * >= 3.1: enabled
+     */
+	EMailAttachmentFieldNew = 0x00000002,
+
+    /**
+	 * Sending options supports encoding setting.
+ 	 * Default values:
+     * >= 3.1: enabled
+     */
+	EMailEncodingSetting = 0x00000004,
+    
+    /**
+	 * Insert toolbar control.
+ 	 * Default values: disabled
+     */
+	EMailInsertToolBar = 0x00000008	
+	};
+	
+
+
+#endif // __MAILUILOCALVARIATIONFLAGS_HRH
+
+// End of File

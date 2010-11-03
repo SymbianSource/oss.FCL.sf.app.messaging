@@ -1,0 +1,66 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     Bio Info File resource.
+*
+*/
+
+
+
+#include <biftool2.rh>
+#include <oplogobc.loc>
+
+RESOURCE BIO_INFO_FILE
+	{
+	message_type_uid=0x10005536; //KUidBIOOperatorLogoMsg   bitsids.h
+	message_parser_name = "gfp.dll";
+	message_appctrl_name = "oplogobc.dll"; 
+	message_app_uid=KUidUseDefaultApp;
+	
+
+	description=qtn_mce_inbox_type_smart_ol; 
+
+	icons_filename="none";
+	file_extension=".olp";
+	
+	icon_zoom_levels={1};
+        ids=
+		{
+		ID	
+			{
+			type=EWap;
+			confidence=ECertain;
+			port=5506;				//SCKL1582
+			character_set=KCharSetDefault;	// default is ISO-8859-1
+			},
+
+		ID
+			{
+			type=ENbs;
+			confidence=ECertain;
+			//port=5506;
+			text="//SCKL1582";
+			character_set=KCharSetDefault;	// default is ISO-8859-1
+			},
+		ID
+			{
+			type=EIana;
+			confidence=EPossible;
+			character_set=KCharSetDefault;	// default is ISO-8859-1
+			text="application/vnd.nokia.operator-logo";
+			}
+		};
+	}
+
+// End of file

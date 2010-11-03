@@ -1,0 +1,52 @@
+/*
+* Copyright (c) 2006 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*       SmsDetailsPlugin data resource file.  
+*
+*/
+
+
+
+NAME    SMDP
+
+//#include "smss.hrh"
+#include <eikon.rh>
+#include <smsdetailsplugin.loc>
+
+RESOURCE RSS_SIGNATURE { }
+
+
+RESOURCE TBUF r_msg_type_status_report          {buf = qtn_msg_status_report; }
+
+//Special Message Indication
+//
+// Do not change the order of msg indication resources!
+//
+RESOURCE TBUF r_msg_indication_voicemail_one	{buf = qtn_msg_waiting_indication_vm;}
+RESOURCE TBUF r_msg_indication_voicemail_many	{buf = qtn_msgs_waiting_indication_vm;}
+
+RESOURCE TBUF r_msg_indication_email_one	    {buf = qtn_msg_waiting_indication_email;}
+RESOURCE TBUF r_msg_indication_email_many	    {buf = qtn_msgs_waiting_indication_email;}
+
+RESOURCE TBUF r_msg_indication_fax_one	        {buf = qtn_msg_waiting_indication_fax;}
+RESOURCE TBUF r_msg_indication_fax_many	        {buf = qtn_msgs_waiting_indication_fax;}
+
+RESOURCE TBUF r_msg_indication_other_one	    {buf = qtn_msg_waiting_indication_other;}
+RESOURCE TBUF r_msg_indication_other_many	    {buf = qtn_msgs_waiting_indication_other;}
+
+RESOURCE TBUF r_msg_indication_videomessage_one	        {buf = qtn_msg_waiting_indication_vidm;}
+RESOURCE TBUF r_msg_indication_videomessage_many	{buf = qtn_msgs_waiting_indication_vidm;}
+
+RESOURCE TBUF r_msg_indication_enhanced_voicemail_one	{buf = qtn_msg_waiting_indication_evm;}
+RESOURCE TBUF r_msg_indication_enhanced_voicemail_many	{buf = qtn_msgs_waiting_indication_evm;}

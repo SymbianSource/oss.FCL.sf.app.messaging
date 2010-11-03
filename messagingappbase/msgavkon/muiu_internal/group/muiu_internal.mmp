@@ -1,0 +1,113 @@
+/*
+* Copyright (c) 2002 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description:  
+*     This is project specification file for the Muiu_internal.
+*
+*/
+
+
+
+#include <data_caging_paths.hrh>
+#include <platform_paths.hrh>
+
+target          muiu_internal.dll
+targettype      dll
+UID             0x1000008d 0x1028256A
+VENDORID        VID_DEFAULT
+CAPABILITY      CAP_GENERAL_DLL
+VERSION 	10.0
+PAGED
+
+SOURCEPATH      .
+
+START RESOURCE ../data/muiu_internal.rss
+HEADER
+TARGETPATH   RESOURCE_FILES_DIR
+LANGUAGE_IDS
+END
+
+#if defined(ARMCC)
+deffile ../eabi/eabi.def
+#elif defined( WINSCW )
+deffile ../bwinscw/winscwu.def
+#endif
+
+userinclude     ../../inc
+userinclude     ../inc
+userinclude     ../emailtools/inc
+userinclude     ../flagger/inc
+userinclude     ../operationwait/inc
+userinclude     ../servicesinternal/inc
+userinclude     ../settingsarray/inc
+
+SYSTEMINCLUDE   ../../../../inc
+APP_LAYER_SYSTEMINCLUDE
+
+// Generic
+sourcepath      .
+source          muiuinternalpan.cpp
+
+// EmailTools
+sourcepath      ../emailtools/src
+source          MuiuEmailTools.cpp
+
+// Flagger
+sourcepath      ../flagger/src
+source          MuiuFlags.cpp
+source          MuiuFlagger.cpp
+
+// OperationWait
+sourcepath      ../operationwait/src
+source          MsgOperationWait.cpp
+
+// ServicesInternal
+sourcepath      ../servicesinternal/src
+source          MuiuCallCmd.cpp
+source          MuiuListQueryDialog.cpp
+source          MuiuMsvUiServiceUtilitiesInternal.cpp
+source          MuiuSendKeyAcceptingQueryDialog.cpp
+source          MuiuContactAddressMatcher.cpp
+source          MuiuContactService.cpp
+source          MuiuLock.cpp
+
+// SettingsArray
+sourcepath      ../settingsarray/src
+source          MuiuSettingsArray.cpp
+
+
+library         euser.lib
+library         cone.lib
+library         bafl.lib
+library         efsrv.lib
+library         msgs.lib
+library         mtur.lib
+library         eikcore.lib
+library         eikdlg.lib
+library         eikcoctl.lib
+library         avkon.lib
+library         eikctl.lib
+library         commonengine.lib
+library         ws32.lib
+library         servicehandler.lib
+LIBRARY         centralrepository.lib
+LIBRARY         featmgr.lib         // Feature Manager
+LIBRARY         imcm.lib
+LIBRARY         msgcommonutils.lib  // CMsgVoIPExtension
+LIBRARY         muiu.lib            // MsvUiServiceUtilities
+LIBRARY         vpbkeng.lib         // pbk2
+LIBRARY         commonui.lib
+LIBRARY         aiwdialdata.lib
+
+
+//End of file

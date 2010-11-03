@@ -1,0 +1,33 @@
+<!--Legacy MMS  depending on EAllowVideoTag, EAllowAllAttributes and EAllowNonMilliseconds  -->
+<!--Expected behaviour: Tree slides should appear one by one, each containing one image and under some text.--> 
+<!--Caution: test case must be checked in following situation:
+    1. EAllowVideoTag, EAllowNonMilliseconds, EAllowAllAttributes are set. Expected behavior: Legacy.
+    2. EAllowVideoTag and EAllowNonMilliseconds are set, EAllowAllAttributes is unset. Expected behavior: Not legacy.
+    3. EAllowVideoTag, EAllowNonMilliseconds, EAllowAllAttributes are unset. Expected behavior: Not legacy.
+    4. EAllowVideoTag and EAllowNonMilliseconds are unset, EAllowAllAttributes is set. Expected behavior: Not legacy.
+-->
+
+
+<smil>
+	<head>
+		
+		<meta name="title" content=" " />
+		<meta name="author" content=" " />
+		<meta name="copyright" content=" " />	
+
+		<layout>  
+
+    </layout>  		
+
+	</head>
+
+	
+</smil>
+
+
+
+
+
+
+
+
