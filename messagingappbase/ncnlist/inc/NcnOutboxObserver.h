@@ -125,7 +125,12 @@ class CNcnOutboxObserver :
         /**
         *   Delete session, outbox observer and outbox sender.
         */
-        void EndSessions();       
+        void EndSessions(); 
+		
+	   /**
+        *  Checks for any message in outbox that is in sending state
+        */      
+        void CheckOutboxForSendingMessageL(CMsvSession& aMsvSession);
 
     private:    // Data
 

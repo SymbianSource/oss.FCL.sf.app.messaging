@@ -281,6 +281,16 @@ TBool CImapAtomParser::ProcessLineL(const TDesC8& aLine)
 				iGotEscape=EFalse;
 				break;
 
+			case '<':	
+                // Start new atom in buffer
+                iAtomStart=iBuffer->Length();
+                BufferAppendL(octet);
+                iParserState=EStateInAtom;
+                iParserQuoted=EFalse;
+                iParserContentId = ETrue;
+                iGotEscape=EFalse;
+                break;
+                
 			default:
 				// Start new atom in buffer
 				iAtomStart=iBuffer->Length();
@@ -327,6 +337,45 @@ TBool CImapAtomParser::ProcessLineL(const TDesC8& aLine)
 						}
 					}
 				}
+			else if(iParserContentId)
+			    {
+            // Look for another quote
+               if (octet=='>')
+                   {
+                       // Add the character
+                    BufferAppendL(octet);
+                    AddAtomL();
+                    iParserState=EStateAtomWait;
+                    iParserContentId = EFalse;                  
+                   }
+               else
+                   {
+                   // Escape character?
+                   if (!iGotEscape && octet=='\\')
+                       {
+                       TChar nextOctect = aLine[pos+1];
+                       if(nextOctect=='\\')
+                           {
+                           // Got one
+                           iGotEscape=ETrue;
+                           }
+                       else
+                           {
+                           // Add to buffer
+                           BufferAppendL(octet);
+                           iGotEscape=EFalse;                       
+                           }
+
+                       }
+                   else
+                       {
+                       // Add to buffer
+                       BufferAppendL(octet);
+                       iGotEscape=EFalse;
+                       }
+                   }
+
+			    }
 			else
 				{
 				switch(octet)

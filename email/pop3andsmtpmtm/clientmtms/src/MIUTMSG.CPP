@@ -2911,6 +2911,11 @@ void CImStoreMessagePart::SelectNextStateL()
 		SetAttachmentEntryCreated(ETrue);
 		iAttachmentId = McliUtils::GetProgressIdL(*iMsvOperation);
 		iMsvEntry.SetEntryL(iAttachmentId);
+		TMsvEntry entry = iMsvEntry.Entry();
+  		
+		entry.SetInPreparation(EFalse);
+  		iMsvEntry.ChangeL(entry);
+		
 		// we only need to store the attachment if the path is provided - otherwise, only 
 		// the entry needs to be created so that the actual attachment can be added later.
 		if(iIsAddByFileHandle || iAttachmentFullName->Length())	

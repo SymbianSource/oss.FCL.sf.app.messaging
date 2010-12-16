@@ -392,6 +392,8 @@ class CMsgImageControl : public CMsgMediaControl,
         
         // Loop delay timer.
         CPeriodic*          iLoopTimer;
+        
+        TInt                iMsgMainPaneHeight;
     };
     
 #include <msgimagecontrol.inl>

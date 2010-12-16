@@ -514,5 +514,18 @@ void CNcnModelBase::CheckIfSimSCShouldBeRead()
 		
 	NCN_RDEBUG_INT(_L("CNcnModelBase::CheckIfSimSCShouldBeRead: reading SMS SC from SIM %d" ), ( iNcnStatusBits & KNcnReadSimSc ) ? ETrue : EFalse );		
 	}
-    
+	
+// ---------------------------------------------------------
+// CNcnModelBase::CheckIfBootPhase
+// ---------------------------------------------------------
+//
+TBool CNcnModelBase::CheckIfBootPhase()
+    {
+   
+    NCN_RDEBUG(_L("CNcnModelBase::CheckIfBootPhase:" ) );         
+    TBool bootPhase = EFalse;
+    bootPhase = (iNcnStatusBits & KNcnBootPhase);    
+    NCN_RDEBUG_INT(_L("CNcnModelBase::CheckIfBootPhase: value %d" ), bootPhase );
+    return bootPhase;
+    }
 //  End of File

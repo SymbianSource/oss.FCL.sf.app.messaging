@@ -20,8 +20,8 @@
 // INCLUDE FILES
 #include    <e32def.h>
 #include    <msvids.h>              // Entry Ids
-#include	<e32property.h>
-#include	<PSVariables.h>
+#include    <e32property.h>
+#include    <PSVariables.h>
 
 #include    <NcnListInternalPSKeys.h>
 #include    <NcnListInternalCRKeys.h>
@@ -33,7 +33,8 @@
 #include    "NcnModelBase.h"
 #include    "CNcnMsvSessionHandler.h"
 #include    "CNcnMobileSignalStrengthHandler.h"
-#include <miutset.h>
+#include    <miutset.h>
+#include    <smut.h>
 
 const TUid KUidMsgTypeCmailMtmVal = {0x2001F406};
 // ================= MEMBER FUNCTIONS =======================
@@ -161,9 +162,45 @@ void CNcnOutboxObserver::CheckOutboxAndNotifyL()
         // If no messages in outbox, remove indicator
         iModel->NotifyPublishAndSubscribe(
             KUidSystemCategory,
-            KPSNcnOutboxStatus,
-            ENcnOutboxEmpty );
+            KPSNcnOutboxStatus, ENcnOutboxEmpty);
         }
+
+    }
+
+
+// ---------------------------------------------------------
+// CNcnOutboxObserver::CheckOutboxForSendingMessageL
+// ---------------------------------------------------------
+//
+void CNcnOutboxObserver::CheckOutboxForSendingMessageL(CMsvSession& aMsvSession)
+    {
+    CMsvEntrySelection *smsSelection = NULL;
+    smsSelection = iOutboxFolder ->ChildrenWithMtmL(KUidMsgTypeSMS);
+    CleanupStack::PushL(smsSelection);
+    
+    // Get count of messages in queue
+    TInt count = smsSelection->Count();
+
+    CMsvEntry* msvEntry = aMsvSession.GetEntryL(KMsvGlobalOutBoxIndexEntryId);
+    CleanupStack::PushL(msvEntry);
+
+    // Go through all messages
+    while (count--)
+        {
+        // Select message
+        msvEntry->SetEntryL(smsSelection->At(count));
+        TMsvEntry entry(msvEntry->Entry());
+
+        if (entry.Connected())
+            {
+            NCN_RDEBUG_INT2(_L("MarkFailed: entry was in send/failed or suspended state: state %d, error %d" ), entry.SendingState(), entry.iError );
+            entry.SetConnected(EFalse);
+			TInt err = KErrNone;
+            TRAP(err, msvEntry->ChangeL(entry));
+            NCN_RDEBUG_INT2(_L("MarkFailed: entry Changed with error state %d, error %d" ), entry.SendingState(), err );			
+            }
+        }
+    CleanupStack::PopAndDestroy(2);
     }
 
 // ---------------------------------------------------------
@@ -236,6 +273,10 @@ void CNcnOutboxObserver::StartSessionsL( CMsvSession& aMsvSession )
         
     // Check if there are messages in the OutBox.
     CheckOutboxAndNotifyL();
+    if (iModel->CheckIfBootPhase())
+        {
+        CheckOutboxForSendingMessageL(aMsvSession);
+        }
     }
 
 // ---------------------------------------------------------

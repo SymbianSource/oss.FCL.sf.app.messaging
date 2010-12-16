@@ -48,7 +48,8 @@ class CItemFinder;
 * Defines a body control for message editors/viewers.
 */
 class CMsgBodyControl : public CMsgExpandableTextEditorControl, 
-                        public MCoeCaptionRetrieverForFep 
+                        public MCoeCaptionRetrieverForFep, 
+                        public MItemFinderObserver
     {
     public:
         
@@ -151,6 +152,7 @@ class CMsgBodyControl : public CMsgExpandableTextEditorControl,
         * For handling dynamic layout switch.
         */
         void HandleResourceChange( TInt aType );
+        
     public:  // from MCoeCaptionRetrieverForFep
     
         /**
@@ -158,6 +160,14 @@ class CMsgBodyControl : public CMsgExpandableTextEditorControl,
         * @param aCaption On return, contains the caption(ICF prompt text) of body control.
         */
         void GetCaptionForFep( TDes &aCaption ) const;
+        
+    public: // from MItemFinderObserver
+
+        /**
+        * HandleParsingComplete
+        */
+        void HandleParsingComplete();
+        
     protected:  // from CMsgBaseControl
 
         /**

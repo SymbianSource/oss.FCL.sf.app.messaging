@@ -91,8 +91,10 @@ CMsgVideoControl::CMsgVideoControl( MMsgBaseControlObserver& aBaseControlObserve
 void CMsgVideoControl::ConstructL( CMsgEditorView& aParent, MMsgAsyncControlObserver* aObserver )
     {
     BaseConstructL( aParent, aObserver );
-        
-    SetRect( iMaxVideoArea );
+
+    TRect rect = iMaxVideoArea;
+    rect.Move(0xFFFF, 0); // Init the loading animation out of the screen.
+    SetRect( rect );
     
     iTimer = CPeriodic::NewL( EPriorityLow );
     }
@@ -434,6 +436,12 @@ void CMsgVideoControl::Cancel()
         {
         iVideoPlayer->Close();
         
+        if(IsReadOnly()) // Set the video icon visible again for restart.
+            {
+            SetIconVisible( ETrue );
+            iVideoAreaControl->MakeVisible( EFalse );
+            }
+        
         SetState( EMsgAsyncControlStateIdle );
         }
     }
@@ -546,6 +554,12 @@ void CMsgVideoControl::Stop()
         
         // Enable backlight to turn on after video playback has been stopped.
         iTimer->Cancel();
+        
+        if(IsReadOnly()) // Set the video icon visible again for restart.
+            {
+            SetIconVisible( ETrue );
+            iVideoAreaControl->MakeVisible( EFalse );
+            }
         
         SetState( EMsgAsyncControlStateStopped );
         }
@@ -734,6 +748,12 @@ void CMsgVideoControl::MvpuoPlayComplete( TInt aError )
     iTimer->Cancel();
     
     HandleCallback( aError, EMsgAsyncControlStateStopped );
+    
+    if(IsReadOnly()) // Set the video icon visible again for restart.
+        {
+        SetIconVisible( ETrue );
+        iVideoAreaControl->MakeVisible( EFalse );
+        }
     
     MSGMEDIACONTROLLOGGER_LEAVEFN( "MsgVideoControl : MvpuoPlayComplete()" );
     }

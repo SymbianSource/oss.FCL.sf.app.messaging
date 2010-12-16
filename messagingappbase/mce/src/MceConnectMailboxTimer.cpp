@@ -97,5 +97,14 @@ void CMceConnectMailboxTimer::DoCancel()
     iTimer.Cancel();
     }
 
+// ----------------------------------------------------
+// CMceConnectMailboxTimer::RunError
+// ----------------------------------------------------
+TInt CMceConnectMailboxTimer::RunError( TInt /*aError*/ )
+    {
+    // Just ignore any error and continue without
+    // any handling to allow smooth execution. 
+    return KErrNone; 
+    }
 
 //  End of File

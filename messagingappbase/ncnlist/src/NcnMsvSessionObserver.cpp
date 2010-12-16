@@ -175,6 +175,7 @@ void CNcnMsvSessionObserver::HandleMsvSessionReadyL( CMsvSession& aMsvSession )
 		}
 	else
 		{
+	    CNcnMsvSessionObserverBase::HandleMsvSessionReReadyL(aMsvSession);
 		iUnhandledMessages->Reset();
 		}
     NCN_RDEBUG( _L( "CNcnMsvSessionObserver::HandleMsvSessionReadyL <<" ) );

@@ -14,7 +14,7 @@
 * Description:  
 *      GMS picture viewer control which is compatible with Editor Base.
 *      It is based very much on the CMmsImageControl.
-*  %version: bh1cfmsg#16 %
+*  %version: bh1cfmsg#17 %
 *
 */
 
@@ -411,24 +411,28 @@ TBool CGmsPictureControl::ScaleIfPossibleL( TSize aSize )
         return EFalse;
     }
     
-    else
+    else if( iScaledBitmap && 
+             iScaledBitmap->SizeInPixels()==aSize )
     {
-        if ( !iScalingAO->IsActive() )
-        {
-        	// Scaling is possible, it is done asynchronously
-        	delete iScaledBitmap;
-        	iScaledBitmap = NULL;        
-        	iScaledBitmap = new( ELeave ) CFbsBitmap;
-                    
-	        User::LeaveIfError( iScaler->Scale( iScalingAO->iStatus, 
-    	                                        *iBitmap, 
-        	                                    TRect(iBitmap->SizeInPixels()),
-            	                                *iScaledBitmap,
-                	                            TRect(aSize) ) );
-        	iScalingAO->SetItActive();            
-        	return ETrue;
-        }
+        return ETrue;
     }
+
+    else if ( !iScalingAO->IsActive() )
+    {
+        // Scaling is possible, it is done asynchronously
+        delete iScaledBitmap;
+        iScaledBitmap = NULL;        
+        iScaledBitmap = new( ELeave ) CFbsBitmap;
+                
+        User::LeaveIfError( iScaler->Scale( iScalingAO->iStatus, 
+                                            *iBitmap, 
+                                            TRect(iBitmap->SizeInPixels()),
+                                            *iScaledBitmap,
+                                            TRect(aSize) ) );
+        iScalingAO->SetItActive();            
+        return ETrue;
+    }
+
     return EFalse;            
 }
 

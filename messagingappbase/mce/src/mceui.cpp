@@ -4118,6 +4118,12 @@ void CMceUi::AddMTMFunctionsL(CEikMenuPane& aMenuPane, TInt aMenuCommandId)
                  ( foundOpenedEntry && !CheckCommandAvailableL( sendCmd, openedEntry ) )
                 )
                 {
+                // Enable Item Specific Flag
+                if(functionInfo.iFlags & EMtudCommandItemSpecific)
+		    {
+                    data.iFlags |= EEikMenuItemSpecific;
+		    }
+                
                 if ( functionInfo.iFuncId == KMtmUiFunctionMessageInfo )
                     {
 					sendCmd++;
@@ -4163,10 +4169,14 @@ void CMceUi::AddMTMFunctionsL(CEikMenuPane& aMenuPane, TInt aMenuCommandId)
                     HBufC* markasUnRead = ownEikonEnvmak->AllocReadResourceLC( R_QTN_MCE_MARKAS_UNREAD );
                     TBufC<30> bufUnread(markasUnRead->Des());
                     CleanupStack::PopAndDestroy(2); //markasUnRead, markasRead
-                    if(functionInfo.iFuncId == KMtmUiFunctionMarkAsRead)
+
+                    // Compare the function Caption with buffered value
+                    if ( functionInfo.iCaption.FindF(bufread) == KErrNone 
+                       || functionInfo.iCaption.FindF(bufUnread) == KErrNone )
                         {
                         iMceListView->SetMarkReadUnread( ETrue );
                         }
+
                     aMenuPane.AddMenuItemL( data, aMenuCommandId );
                     }
                 }
@@ -4175,6 +4185,11 @@ void CMceUi::AddMTMFunctionsL(CEikMenuPane& aMenuPane, TInt aMenuCommandId)
             {
             if ( MceViewActive( EMceMainViewActive ) && !CheckMTMFunctionL( functionInfo, selectedEntry ) )
                 {
+                // Enable Item Specific Flag
+                if(functionInfo.iFlags & EMtudCommandItemSpecific)
+	            {
+                    data.iFlags |= EEikMenuItemSpecific;
+                    }
                 aMenuPane.AddMenuItemL( data, aMenuCommandId );
                 }
             }

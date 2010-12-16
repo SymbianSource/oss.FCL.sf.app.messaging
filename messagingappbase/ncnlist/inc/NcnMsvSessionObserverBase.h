@@ -63,6 +63,8 @@ class CNcnMsvSessionObserverBase :
     
         virtual void HandleMsvSessionReadyL( CMsvSession& aMsvSession );
         virtual void HandleMsvSessionClosedL();
+		//If new msvsession starts
+        void HandleMsvSessionReReadyL(CMsvSession& aMsvSession);
         
     public: // Functions from base classes
 

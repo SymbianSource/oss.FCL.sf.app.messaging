@@ -75,7 +75,7 @@ void CMsgDummyHeaderCleaner::Draw(const TRect& /*aRect*/) const
     TRect rectLabel(
         0,
         0,
-        iDashBar.Rect( ).iTl.iX-1,
+        rect.iBr.iX,//iDashBar.Rect( ).iTl.iX-1,
         MsgEditorCommons::MsgBaseLineOffset( ) );
 
     TRect rectField(

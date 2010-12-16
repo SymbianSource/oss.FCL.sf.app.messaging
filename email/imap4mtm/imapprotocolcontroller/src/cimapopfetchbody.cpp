@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1140,15 +1140,15 @@ void CImapOpFetchBody::BuildTreeL(TMsvId aParent,
 		HBufC8* newpath=HBufC8::NewLC(aPath.Length()+4);
 		if(aIsEmbed && aBodyStructure->BodyStructureType() == CImapBodyStructure::ETypeText)
             {
-		*newpath=aPath;
+            *newpath=aPath;
 		    iEmbed = ETrue;
             }
 		else
             {
 		    *newpath=aPath;
-		if (aPath.Length())
-			newpath->Des().Append(KIMAP_REL_PATH_SEPARATOR);
-		newpath->Des().AppendNum(1);
+		    if (aPath.Length())
+		    newpath->Des().Append(KIMAP_REL_PATH_SEPARATOR);
+		    newpath->Des().AppendNum(1);		                
             }
 		BuildContentEntryL(aParent, aBodyStructure, newpath->Des(), aThisMessage, aAttachments, aIsMHTML, aRelatedAttachments);
 		CleanupStack::PopAndDestroy(newpath);
@@ -1766,7 +1766,7 @@ TBool CImapOpFetchBody::FetchPartL()
 		//						implicitly when the message is downloaded,
 		//						- i.e. peek should be EFalse too.			
 		TBool peek = iImapSettings.UpdatingSeenFlags();
-		
+		iFetchList[0]->SetPartialDownload(iFetchPartialMail);		
 		iSession->FetchBodyL(iStatus, iMessageUid, peek, *(iFetchList[0]), *iFetchBodyResponse);
  		}
  	return ETrue;

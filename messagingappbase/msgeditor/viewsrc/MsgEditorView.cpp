@@ -42,6 +42,8 @@
 #include <MsgEditorAppUi.rsg>
 #include <StringLoader.h>
 
+#include <touchfeedback.h>
+
 #include "MsgEditorCommon.h"               //
 #include "MsgEditorView.h"                 // for CMsgEditorView
 #include "MsgEditorObserver.h"             // for MMsgEditorObserver
@@ -65,12 +67,8 @@
 
 // ========== LOCAL CONSTANTS AND MACROS ===================
 
-const TInt KMsgControlIndexHeader = 0;
-const TInt KMsgControlIndexBody = 1;
-const TInt KMsgNumberOfControls = 2;
 
 const TInt KMsgMaximumScrollPartLength = 64;
-const TInt KSelectionOffset = 50;
 _LIT( KMsgEditorAppUiResourceFileName, "msgeditorappui.rsc" );
 
 // ========== MODULE DATA STRUCTURES =======================
@@ -95,8 +93,7 @@ CMsgEditorView::CMsgEditorView( MMsgEditorObserver& aObserver,
     iLineHeight( MsgEditorCommons::MsgBaseLineDelta() ),
     iBaseLineOffset( MsgEditorCommons::MsgBaseLineOffset() ),
     iResourceLoader( *iCoeEnv ),
-    iPrevFocus( EMsgNoneFocused ), 
-    iMoveUpDownEvent( EFalse) 
+    iPrevFocus( EMsgNoneFocused )
     {
     }
 
@@ -144,9 +141,22 @@ void CMsgEditorView::ConstructL()
     // on window server.
     Window().SetBackgroundColor();    
     
+    // for slide flow
+    iSlideFlowIsEnable = IsReadOnly();
+    iSlideFlowLoadingIndex = 0; // The first slide loading will be launched from the observer side.
+    iScrollParts = 1;           // Mms will at least have 1 slide, so BodyCount() will be able to return 1.
+    
+    iMotionEngineTimer = CPeriodic::NewL(CActive::EPriorityUserInput);
+    iSlideFlowInitTimer = CPeriodic::NewL(CActive::EPriorityIdle);
+
     CreateScrollBarL();
     CreateHeaderL();
     CreateBodyL();
+
+    GetTextFontHeight();
+    iMsgBodyPane = MsgEditorCommons::MsgBodyPane();
+    iMsgHeaderPane = MsgEditorCommons::MsgHeaderPane();
+
     }
 
 // ---------------------------------------------------------
@@ -158,9 +168,12 @@ void CMsgEditorView::ConstructL()
 EXPORT_C CMsgEditorView::~CMsgEditorView()
     {
     iEikonEnv->EikAppUi()->RemoveFromStack( this );
+    
+    delete iSlideFlowInitTimer;
+    delete iMotionEngineTimer;
 
     delete iHeader;
-    delete iBody;
+    DestroyAllBodies();
     delete iScrollBar;
     delete iBgContext;
     
@@ -207,17 +220,26 @@ EXPORT_C MObjectProvider* CMsgEditorView::MopNext()
 EXPORT_C void CMsgEditorView::ExecuteL( const TRect& aRect,
                                         TInt aControlIdForFocus )
     {
+    iEditorObserver.EditorObserver( MMsgEditorObserver::EMsgScrollParts,
+                                    &iScrollParts,
+                                    NULL,
+                                    NULL );
+
     TRect rect( aRect );
     rect.iBr.iY = rect.iTl.iY + MsgEditorCommons::EditorViewHeigth();
+    SetViewRect( rect );
+    iSize = rect.Size();
+
+    TSize editorSize( rect.Size() );
+
+    // control's size must be set before AdjustComponentDistances
+    // or the distance will have some problem
+    SetAndGetSizeL( editorSize, ETrue );
 
     AdjustComponentDistances();
 
-    SetViewRect( rect );
-    iSize = rect.Size();
-    
     // Set initial size for controls.
-    TSize editorSize( rect.Size() );
-    SetAndGetSizeL( editorSize, ETrue ); 
+    SetAndGetSizeL( editorSize, ETrue );
     
     // Enable here so that size affecting events are processed 
     // from header & body controls after this point.
@@ -225,13 +247,6 @@ EXPORT_C void CMsgEditorView::ExecuteL( const TRect& aRect,
     
     SizeChanged();
     ActivateL();
-    
-    iScrollParts = 1;
-
-    iEditorObserver.EditorObserver( MMsgEditorObserver::EMsgScrollParts,
-                                    &iScrollParts,
-                                    NULL,
-                                    NULL );
     
     if ( aControlIdForFocus != EMsgComponentIdNull )
         {
@@ -280,6 +295,8 @@ EXPORT_C void CMsgEditorView::ExecuteL( const TRect& aRect,
     
     DrawNow();
     iCoeEnv->WsSession().Flush();
+    
+    LoadNextSlideLaterL();
     }
 
 // ---------------------------------------------------------
@@ -429,6 +446,13 @@ EXPORT_C CMsgBaseControl* CMsgEditorView::RemoveControlL( TInt aControlId )
     {
     __ASSERT_DEBUG( iHeader != NULL, Panic( EMsgHeaderNotExists ) );
     __ASSERT_DEBUG( iBody != NULL, Panic( EMsgBodyNotExists ) );
+    
+    if(IsSlideFlowEnable() && SlideFlowIsLoading())
+        {
+        // in old framework, new slide loading will delete old slide
+        // so we will not response this delete action in slide flow.
+        return NULL;
+        }
 
     if ( iStateFlags & EMsgStateInitialized ) // Control is removed on run-time.
         {
@@ -496,6 +520,10 @@ EXPORT_C CMsgBaseControl* CMsgEditorView::RemoveControlL( TInt aControlId )
 //
 EXPORT_C void CMsgEditorView::DeleteControlL( TInt aControlId )
     {
+    if(IsSlideFlowEnable() && SlideFlowIsLoading()) return;
+    
+    MotionEngineStop();
+
     CMsgBaseControl* baseControl = RemoveControlL( aControlId );
     delete baseControl;
     }
@@ -666,134 +694,165 @@ EXPORT_C void CMsgEditorView::SetControlsModified( TBool aFlag )
 EXPORT_C TKeyResponse CMsgEditorView::OfferKeyEventL( const TKeyEvent& aKeyEvent,
                                                       TEventCode aType )
     {
-    CMsgBaseControl* ctrl = FocusedControl();
-
-    // Is this needed?
-    if ( ctrl && ctrl->ControlType() == EMsgAddressControl && aType == EEventKeyUp )
+    if(IsSlideFlowEnable())
         {
-        return ctrl->OfferKeyEventL( aKeyEvent, aType );
-        }    
-    
-    if ( ( !( iStateFlags & EMsgStateInitialized ) ) || ( aType != EEventKey ) )
-        {
-        return EKeyWasNotConsumed;
-        }
-
-    TKeyResponse keyResp( EKeyWasNotConsumed );
-    TBool focusRotated = EFalse;
-    TBool forceScrollUp = EFalse;
-    MMsgEditorObserver::TMsgFocusEvent focusEvent = MMsgEditorObserver::EMsgFocusNone;
-
-    switch ( aKeyEvent.iCode )
-        {
-        case EKeyUpArrow:
+        if(aType != EEventKey)
             {
-            if ( ctrl )
-                {
-                // No focus change allowed if selection is ongoing.
-                if ( !( aKeyEvent.iModifiers & EModifierShift ) &&
-                     ctrl->IsFocusChangePossible( EMsgFocusUp ) )
-                    {
-                    if ( RotateFocusL( EMsgFocusUp, focusEvent ) )
-                        {
-                        focusRotated = ETrue;
-                        keyResp = EKeyWasConsumed; // focus changed.
-                        }
-                    else
-                        {
-                        // the cursor is in the topmost control.
-                        TInt delta = -iFormOffset;
-                        ScrollForm( delta, ETrue );
-                        
-                        keyResp = EKeyWasNotConsumed;
-                        }
-                    }
-                }
-            else
-                {
-                // no focused control: set focus event if many parts.
-                if ( iScrollParts > 1 )
-                    {
-                    focusEvent = MMsgEditorObserver::EMsgFocusAtTop;
-                    }
-                }
-            break;
-            }
-        case EKeyDownArrow:
-            {
-            if ( ctrl )
-                {
-                // No focus change allowed if selection is ongoing.
-                if ( !( aKeyEvent.iModifiers & EModifierShift ) &&
-                     ctrl->IsFocusChangePossible( EMsgFocusDown ) )
-                    {
-                    if ( RotateFocusL( EMsgFocusDown, focusEvent ) )
-                        {
-                        focusRotated = ETrue;
-                        keyResp = EKeyWasConsumed;
-                        }
-                    else
-                        {
-                        keyResp = EKeyWasNotConsumed;
-                        }
-                    }
-                }
-            else
-                {
-                // no focused control: set focus event if many parts.
-                if ( iScrollParts > 1 )
-                    {
-                    focusEvent = MMsgEditorObserver::EMsgFocusAtBottom;
-                    }
-                }
-            break;
-            }
-        default:
-            {
-            break;
-            }
-        }
-
-    if ( ctrl && keyResp == EKeyWasNotConsumed )
-        {
-        keyResp = ctrl->OfferKeyEventL( aKeyEvent, aType );
-        }
-
-    if ( focusEvent != MMsgEditorObserver::EMsgFocusNone )
-        {
-        MMsgEditorObserver::TMsgAfterFocusEventFunc after =
-            MMsgEditorObserver::EMsgAfterFocusNone;
-
-#ifdef RD_SCALABLE_UI_V2
-        if ( focusEvent == MMsgEditorObserver::EMsgFocusAtTop )
-            {
-            iVisiblePart--;
-            }
-        else if ( focusEvent == MMsgEditorObserver::EMsgFocusAtBottom )
-            {
-            iVisiblePart++;
+            return EKeyWasNotConsumed;
             }
         
-        iVisiblePart = Max( 0, Min( iScrollParts - 1, iVisiblePart ) );
-#endif
-        iEditorObserver.EditorObserver( MMsgEditorObserver::EMsgHandleFocusChange,
-                                        &focusEvent,
-                                        &after,
-                                        &iVisiblePart );
-        
-        if ( after != MMsgEditorObserver::EMsgAfterFocusNone )
+        switch(aKeyEvent.iCode)
             {
-            forceScrollUp = SetAfterFocusL( after );
+            case EKeyUpArrow:
+                {
+                HandleScrollPageEventL(EFalse);
+                return EKeyWasConsumed;
+                }
+                
+            case EKeyDownArrow:
+                {
+                HandleScrollPageEventL(ETrue);
+                return EKeyWasConsumed;
+                }
+                
+            default:
+                {
+                return EKeyWasNotConsumed;
+                }
             }
         }
-    
-    iMoveUpDownEvent = ETrue; 
-    EnsureCorrectFormPosition( ( aKeyEvent.iCode == EKeyDownArrow ) && focusRotated, forceScrollUp );
-    iMoveUpDownEvent = EFalse; 
+    else
+        {
+        CMsgBaseControl* ctrl = FocusedControl();
 
-    UpdateScrollBarL();
+        // Is this needed?
+        if ( ctrl && ctrl->ControlType() == EMsgAddressControl && aType == EEventKeyUp )
+            {
+            return ctrl->OfferKeyEventL( aKeyEvent, aType );
+            }    
+        
+        if ( ( !( iStateFlags & EMsgStateInitialized ) ) || ( aType != EEventKey ) )
+            {
+            return EKeyWasNotConsumed;
+            }
 
-    return keyResp;
+        TKeyResponse keyResp( EKeyWasNotConsumed );
+        TBool focusRotated = EFalse;
+        TBool forceScrollUp = EFalse;
+        MMsgEditorObserver::TMsgFocusEvent focusEvent = MMsgEditorObserver::EMsgFocusNone;
+
+        switch ( aKeyEvent.iCode )
+            {
+            case EKeyUpArrow:
+                {
+                if ( ctrl )
+                    {
+                    // No focus change allowed if selection is ongoing.
+                    if ( !( aKeyEvent.iModifiers & EModifierShift ) &&
+                         ctrl->IsFocusChangePossible( EMsgFocusUp ) )
+                        {
+                        if ( RotateFocusL( EMsgFocusUp, focusEvent ) )
+                            {
+                            focusRotated = ETrue;
+                            keyResp = EKeyWasConsumed; // focus changed.
+                            }
+                        else
+                            {
+                            // the cursor is in the topmost control.
+                            TInt delta = -iFormOffset;
+                            ScrollForm( delta, ETrue );
+                            
+                            keyResp = EKeyWasNotConsumed;
+                            }
+                        }
+                    }
+                else
+                    {
+                    // no focused control: set focus event if many parts.
+                    if ( iScrollParts > 1 )
+                        {
+                        focusEvent = MMsgEditorObserver::EMsgFocusAtTop;
+                        }
+                    }
+                break;
+                }
+            case EKeyDownArrow:
+                {
+                if ( ctrl )
+                    {
+                    // No focus change allowed if selection is ongoing.
+                    if ( !( aKeyEvent.iModifiers & EModifierShift ) &&
+                         ctrl->IsFocusChangePossible( EMsgFocusDown ) )
+                        {
+                        if ( RotateFocusL( EMsgFocusDown, focusEvent ) )
+                            {
+                            focusRotated = ETrue;
+                            keyResp = EKeyWasConsumed;
+                            }
+                        else
+                            {
+                            keyResp = EKeyWasNotConsumed;
+                            }
+                        }
+                    }
+                else
+                    {
+                    // no focused control: set focus event if many parts.
+                    if ( iScrollParts > 1 )
+                        {
+                        focusEvent = MMsgEditorObserver::EMsgFocusAtBottom;
+                        }
+                    }
+                break;
+                }
+            default:
+                {
+                break;
+                }
+            }
+
+        if ( ctrl && keyResp == EKeyWasNotConsumed )
+            {
+            keyResp = ctrl->OfferKeyEventL( aKeyEvent, aType );
+            }
+
+        if ( focusEvent != MMsgEditorObserver::EMsgFocusNone )
+            {
+            MMsgEditorObserver::TMsgAfterFocusEventFunc after =
+                MMsgEditorObserver::EMsgAfterFocusNone;
+
+    #ifdef RD_SCALABLE_UI_V2
+            if ( focusEvent == MMsgEditorObserver::EMsgFocusAtTop )
+                {
+                iVisiblePart--;
+                }
+            else if ( focusEvent == MMsgEditorObserver::EMsgFocusAtBottom )
+                {
+                iVisiblePart++;
+                }
+            
+            iVisiblePart = Max( 0, Min( iScrollParts - 1, iVisiblePart ) );
+    #endif
+
+            iEditorObserver.EditorObserver( MMsgEditorObserver::EMsgHandleFocusChange,
+                                            &focusEvent,
+                                            &after,
+                                            &iVisiblePart );
+            
+            if ( after != MMsgEditorObserver::EMsgAfterFocusNone )
+                {
+                forceScrollUp = SetAfterFocusL( after );
+                }
+            }
+        
+        iMoveUpDownEvent = ETrue; 
+        EnsureCorrectFormPosition( ( aKeyEvent.iCode == EKeyDownArrow ) && focusRotated, forceScrollUp );
+        iMoveUpDownEvent = EFalse; 
+
+        UpdateScrollBarL();
+
+        return keyResp;
+        }
     }
 
 // ---------------------------------------------------------
@@ -807,26 +866,13 @@ void CMsgEditorView::HandlePointerEventL( const TPointerEvent& aPointerEvent )
     {
     if ( AknLayoutUtils::PenEnabled() )
         {
-        TBool handled( EFalse );
-
-        if( IsReadOnly() )
+        if( IsSlideFlowEnable() )
             {
-            handled = HandleScrollEventL(aPointerEvent);
+            HandlePointerEventForTextScrollingL(aPointerEvent);
             }
-
-        if ( !handled && IsFocused() )
+        else
             {
-            TPointerEvent pointerEvent( aPointerEvent );
-                         
-            iEditorObserver.EditorObserver( MMsgEditorObserver::EMsgControlPointerEvent, 
-            ControlFromPosition( aPointerEvent.iPosition, ETrue ),
-            &pointerEvent, 
-            &handled );
-	}
-
-        if ( !handled )
-            {
-            CCoeControl::HandlePointerEventL( aPointerEvent );
+            HandlePointerEventForConrolsL(aPointerEvent);
             }
         }
     }
@@ -836,36 +882,161 @@ void CMsgEditorView::HandlePointerEventL( const TPointerEvent& /*aPointerEvent*/
     }
 #endif // RD_SCALABLE_UI_V2
 
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
 // ---------------------------------------------------------
-// CMsgEditorView::HandleScrollEventL
+// CMsgEditorView::EditorInControl
 //
-// Handle text scrolling from pointer event
+// Get rich text editor from msg base control. 
 // ---------------------------------------------------------
 //
 
-TBool CMsgEditorView::HandleScrollEventL(const TPointerEvent& aPointerEvent)
+CEikRichTextEditor* CMsgEditorView::EditorInControl(CMsgBaseControl* aControl)
     {
-    TBool handled = EFalse;
+    CEikRichTextEditor* editor = NULL;
+    
+    if(aControl)
+        {
+        switch(aControl->ControlType())
+            {
+            case EMsgExpandableControl:
+            case EMsgAddressControl:
+                editor = &static_cast<CMsgExpandableControl*>(aControl)->Editor();
+                break;
+                
+            case EMsgBodyControl:
+            case EMsgXhtmlBodyControl:
+                editor = &static_cast<CMsgBodyControl*>(aControl)->Editor();
+                break;
+                
+            default:
+                break;
+            }
+        }
+    
+    if((TInt)editor < 0x00100000) // to fix a wrong ptr 0x00000020, I think this is caused by a wrong type conversion
+        {
+        editor = NULL;
+        }
 
+    return editor;
+    }
+
+
+// ---------------------------------------------------------
+// CMsgEditorView::IsSlideFlowEnable
+//
+// Whether Slide Flow is enable or not.
+// ---------------------------------------------------------
+//
+
+EXPORT_C TBool CMsgEditorView::IsSlideFlowEnable() const
+    {
+    return iSlideFlowIsEnable;
+    }
+
+
+// ---------------------------------------------------------
+// CMsgEditorView::SetFindModeL
+//
+// Sets the find mode for all the bodies in slideflow.
+// ---------------------------------------------------------
+//
+
+EXPORT_C void CMsgEditorView::SetFindModeL(TInt aFindFlags)
+    {
+    if(IsSlideFlowEnable())
+        {
+        const TInt focusedIndex = iCurrentBodyIndex;
+        
+        // if FindFlags keeps still, that means only set a new slide the current flag
+        SetBodyFindModeL(focusedIndex, aFindFlags);
+
+        // if FindFlags change, that is caused by user's operation
+        // we must notify all of the item finders
+        if(iCurrentFindFlags != aFindFlags)
+            {
+            const TInt halfCount = BodyCount() / 2;
+            for(TInt i=0; i<halfCount; i++)
+                {
+                SetBodyFindModeL(focusedIndex-i, aFindFlags);
+                SetBodyFindModeL(focusedIndex+i, aFindFlags);
+                }
+
+            iCurrentFindFlags = aFindFlags;
+            }
+        }
+    }
+
+void CMsgEditorView::SetBodyFindModeL(TInt aSlideIndex, TInt aFindFlags)
+    {
+    CItemFinder* finder = ItemFinder(Body(aSlideIndex));
+    if(finder)
+        {
+        finder->SetFindModeL(aFindFlags);
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::PrepareToExit
+// ---------------------------------------------------------
+//
+
+EXPORT_C void CMsgEditorView::PrepareToExit()
+    {
+    iSlideFlowInitTimer->Cancel();
+    iPrepareToExit = ETrue;
+    }
+
+//////////////////////////////////////////////////////////////////////////////////
+
+const TInt KSelectionStartingXOffset = 80;
+const TInt KScrollingStartingYOffset = 30;
+
+// ---------------------------------------------------------
+// CMsgEditorView::HandlePointerEventForTextScrollingL
+// Handle pointer event for text scrolling mode.
+// This will handle text scrolling and selection. 
+// Send also the the pointer event to controls according to the status.
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::HandlePointerEventForTextScrollingL(const TPointerEvent& aPointerEvent)
+    {
     if ( IsFocused() )
         {
+        DelayNextSlideLoad();
+
         switch(aPointerEvent.iType)
             {
             case TPointerEvent::EButton1Down:
                 {
-                if(!iScrollBar->VerticalScrollBar()->Rect().Contains(aPointerEvent.iPosition))
-                    {
-                    iIsScrolling = ETrue;
-                    
-                    iHaveScrolled = EFalse;
-                    iFirstPointerDown = aPointerEvent;
-                    iScrollPos = aPointerEvent.iPosition;
+                TRect scrollBarRect = iScrollBar->VerticalScrollBar()->Rect();
+                iNeedHandleTextScrolling = !scrollBarRect.Contains(aPointerEvent.iPosition);
 
-                    handled = ETrue;
+                if(iNeedHandleTextScrolling)
+                    {
+                    SetFocusBodyAndControlFromPositionL(aPointerEvent.iPosition);
+                    
+                    // do not perform a press down event when kinetic scrolling
+                    // this press down will just stop scrolling firstly
+                    if(!MotionEngineIsPlaying())
+                        {
+                        HandlePointerEventForConrolsL(aPointerEvent);
+                        }
+
+                    iTextHaveScrolled = EFalse;
+                    iPointerDownEvent = aPointerEvent;
+                    iTextDraggingPos = aPointerEvent.iPosition.iY;
+                    MotionEngineReset(aPointerEvent.iPosition);
                     }
                 else
                     {
-                    iIsScrolling = EFalse;
+                    iScrollBar->DrawBackground(ETrue, EFalse);
+                    HandlePointerEventForConrolsL(aPointerEvent);
+                    ClearTextSelectionL();
                     }
                 }
                 break;
@@ -873,180 +1044,1149 @@ TBool CMsgEditorView::HandleScrollEventL(const TPointerEvent& aPointerEvent)
             case TPointerEvent::EDrag:
                 {
 
-                if(iIsScrolling)
+                if(iNeedHandleTextScrolling)
                     {
-                    if(!iHaveScrolled)
+                    const TInt yOffset = aPointerEvent.iPosition.iY - iTextDraggingPos;
+                    if(!iTextHaveScrolled)
                         {
-                        TInt xOffset = aPointerEvent.iPosition.iX - iScrollPos.iX;
-                        if(Abs(xOffset) > KSelectionOffset) // this is a selection
+                        if(Abs(yOffset) < KScrollingStartingYOffset)
                             {
-                            iIsScrolling = EFalse;
-                            ThrowOutPointerEventL(iFirstPointerDown);
-                            break;
-                            }
-                        }
-
-                    TInt yOffset = aPointerEvent.iPosition.iY - iScrollPos.iY;
-                    if(Abs(yOffset) > iLineHeight)
-                        {
-                        TInt scrolled = ScrollL(yOffset);
-                        if(scrolled)
-                            {
-                            iScrollPos.iY += scrolled;
+                            TInt xOffset = aPointerEvent.iPosition.iX - iPointerDownEvent.iPosition.iX;
+                            if(Abs(xOffset) > KSelectionStartingXOffset)
+                                {
+                                // switch to selection mode
+                                iNeedHandleTextScrolling = EFalse;
+                                
+                                // transfer this pointer event to control (editor)
+                                // text scrolling will not handle event any more
+                                HandlePointerEventForConrolsL(aPointerEvent);
+                                }
                             }
                         else
                             {
-                            ScrollPageL(yOffset);
-                            iScrollPos.iY = aPointerEvent.iPosition.iY;
+                            // switch to scrolling mode
+                            iTextHaveScrolled = ETrue;
+                            
+                            iTextDraggingPos = aPointerEvent.iPosition.iY;
+
+                            StopHandlePointerEventForConrolsL();
                             }
-                        
-                        iHaveScrolled = ETrue;
                         }
-                    
-                    handled = ETrue;
+                    else
+                        {
+                        TInt pixelsToScroll = yOffset;
+                        if(BorderExceededPixels() != 0) pixelsToScroll /= 2;
+                        ScrollL(pixelsToScroll);
+                        iTextDraggingPos += yOffset;
+                        
+                        DrawNow();
+                        MotionEngineTrack(aPointerEvent.iPosition);
+                        }
+                    }
+                else
+                    {
+                    HandlePointerEventForConrolsL(aPointerEvent);
+                    ScrollForTextSelectionL();
                     }
                 }
                 break;
                 
             case TPointerEvent::EButton1Up:
                 {
-                if(iIsScrolling)
+                if(iNeedHandleTextScrolling)
                     {
-                    iIsScrolling = EFalse;
-                    
-                    if(!iHaveScrolled) // mainly perform a click
-                        {
-                        ThrowOutPointerEventL(iFirstPointerDown);
+                    iNeedHandleTextScrolling = EFalse;
 
-                        iFirstPointerDown.iType = TPointerEvent::EDrag;
-                        ThrowOutPointerEventL(iFirstPointerDown);
-                        
-                        ThrowOutPointerEventL(aPointerEvent);
+                    MotionEnginePlayL();
+                    if(iTextHaveScrolled)
+                        {
+                        break; // All pointer event handlers have been disabled when text scrolling started.
                         }
-                    
-                    handled = ETrue;
                     }
+
+                HandlePointerEventForConrolsL(aPointerEvent);
                 }
                 break;
-                
+
             default:
                 break;
             }
         }
-
-    return handled;
     }
-	
-	// ---------------------------------------------------------
-// CMsgEditorView::ThrowOutPointerEventL
-//
-//
-// Throw the pointer event to the other handler
+
+// ---------------------------------------------------------
+// CMsgEditorView::HandlePointerEventForConrolsL
+// Handle pointer event for controls.
 // ---------------------------------------------------------
 //
 
-void CMsgEditorView::ThrowOutPointerEventL(const TPointerEvent& aPointerEvent)
+void CMsgEditorView::HandlePointerEventForConrolsL(const TPointerEvent& aPointerEvent)
     {
-    TBool lastPosHandled = EFalse;
-    
-    TPointerEvent pointerEvent( aPointerEvent );
-    iEditorObserver.EditorObserver( MMsgEditorObserver::EMsgControlPointerEvent, 
-                                    ControlFromPosition( aPointerEvent.iPosition, ETrue ), 
-                                    &pointerEvent, &lastPosHandled );
+    TBool handled = EFalse;
 
-    if ( !lastPosHandled )
+    if(IsFocused())
         {
-        CCoeControl::HandlePointerEventL( aPointerEvent );
+        TPointerEvent pointerEvent(aPointerEvent);
+        iEditorObserver.EditorObserver(MMsgEditorObserver::EMsgControlPointerEvent, 
+                                       ControlFromPosition(aPointerEvent.iPosition, ETrue),
+                                       &pointerEvent, 
+                                       &handled);
+        }
+
+    if(!handled)
+        {
+        CCoeControl::HandlePointerEventL(aPointerEvent);
         }
     }
-	
-	
-	// ---------------------------------------------------------
-// CMsgEditorView::ScrollPartL
-//
-// Move current view up or down with screen height. 
-//
+
+// ---------------------------------------------------------
+// CMsgEditorView::StopHandlePointerEventForConrolsL
+// We will send pointer ButtonDown/Drag event to contols.
+// But just after scrolling happends, controls do not need to handle event any more.
+// Simulate a buttonup event for notify controls finger event is over.
 // ---------------------------------------------------------
 //
 
-void CMsgEditorView::ScrollPartL(TInt aOffset)
+void CMsgEditorView::StopHandlePointerEventForConrolsL()
     {
-    TKeyEvent keyEvent;
-    keyEvent.iModifiers = 0;
-    if(aOffset < 0)
+    // perform a pointer event
+    // disable all pointer event handlers which are activted from TPointerEvent::EButton1Down
+
+    ClearTextSelectionL();
+    
+    TPointerEvent pointerEvent = iPointerDownEvent;
+    pointerEvent.iPosition.iX = 0xFFFF;
+    pointerEvent.iType = TPointerEvent::EButton1Up;
+    HandlePointerEventForConrolsL(pointerEvent);
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------
+// CMsgEditorView::ScrollL
+// scroll the view (all slides) by a offset
+// ---------------------------------------------------------
+//
+
+TInt CMsgEditorView::ScrollL(TInt aOffset)
+    {
+    if(aOffset == 0) return 0;
+    const TMsgScrollDirection direction = (aOffset>0) ? EMsgScrollUp : EMsgScrollDown;
+    
+    // scroll view
+    const TInt currentfocusPos = iViewFocusPosition;
+    ScrollViewL( Abs( aOffset ), direction, ETrue );
+    const TInt scrolled = currentfocusPos - iViewFocusPosition;
+
+    // load next slide if border is exceeded when scrolling down
+    if(IsSlideFlowEnable())
         {
-        keyEvent.iCode = EKeyDownArrow;
-        keyEvent.iScanCode = EStdKeyDownArrow;
+        const TBool isMovingDown = (aOffset < 0);
+        if(isMovingDown && !AllSlidesLoaded())
+            {
+            const TBool isBottomExceeded = (BorderExceededPixels() < 0);
+            if(isBottomExceeded)
+                {
+                DoLoadNextSlideL();
+                }
+            }
+        }
+
+    return scrolled;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::ScrollForTextSelectionL
+// scroll the view when text selection reach to the screen edge.
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::ScrollForTextSelectionL()
+    {
+    CEikRichTextEditor* editor = EditorInControl(FocusedControl());
+    if(editor)
+        {
+        TCursorSelection selection = editor->Selection();
+        if(selection.Length())
+            {
+            TPoint point;
+            editor->TextLayout()->PosInBand(selection.iCursorPos, point);
+            point.iY += editor->Position().iY;
+            
+            const TInt topPos = iLineHeight;
+            const TInt bottomPos = iViewRect.Height() - iLineHeight;
+
+            if(point.iY < topPos)
+                {
+                TInt delta = topPos - point.iY;
+                MsgEditorCommons::RoundToNextLine(delta, iLineHeight);
+                ScrollL(delta);
+                DrawNow();
+                }
+            else if(point.iY > bottomPos)
+                {
+                TInt delta = bottomPos - point.iY;
+                MsgEditorCommons::RoundToNextLine(delta, iLineHeight);
+                ScrollL(delta);
+                DrawNow();
+                }
+            }
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::ClearTextSelectionL
+// clear the text selection in focus slide.
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::ClearTextSelectionL()
+    {
+    CEikRichTextEditor* editor = EditorInControl(FocusedControl());
+    if(editor)
+        {
+        TCursorSelection selection = editor->Selection();
+        if(selection.Length())
+            {
+            editor->ClearSelectionL();
+            }
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::GotoPartL
+// Jump the view to the slide you want.
+// ---------------------------------------------------------
+//
+
+TBool CMsgEditorView::GotoPartL(TInt aPart)
+    {
+    if(aPart<0 || aPart>=iScrollParts || aPart==iVisiblePart)
+        {
+        return EFalse;
+        }
+    else if(IsSlideFlowEnable())
+        {
+        GotoPositionL(DistanceAboveBody(aPart));
+        SetFocusBodyByIndex(aPart);
+        LoadSlideL(aPart);
+        return ETrue;
         }
     else
         {
-        keyEvent.iCode = EKeyUpArrow;
-        keyEvent.iScanCode = EStdKeyUpArrow;
+        MMsgEditorObserver::TMsgFocusEvent focusEvent = MMsgEditorObserver::EMsgFocusNone;
+        
+        if ( aPart > iVisiblePart )
+            {
+            focusEvent = MMsgEditorObserver::EMsgFocusAtBottom;
+            }
+        else
+            {
+            focusEvent = MMsgEditorObserver::EMsgFocusAtTop;
+            }
+        
+        MMsgEditorObserver::TMsgAfterFocusEventFunc after = MMsgEditorObserver::EMsgAfterFocusNone;
+
+        iVisiblePart = aPart;
+        iEditorObserver.EditorObserver( MMsgEditorObserver::EMsgHandleFocusChange,
+                                        &focusEvent,
+                                        &after,
+                                        &iVisiblePart );
+        
+        if ( after != MMsgEditorObserver::EMsgAfterFocusNone )
+            {
+            SetAfterFocusL( after );
+            }
+
+        iMoveUpDownEvent = ETrue; 
+        EnsureCorrectFormPosition( EFalse, EFalse );
+        iMoveUpDownEvent = EFalse;
+        
+        UpdateScrollBarL();
+
+        return ETrue;
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::GotoPositionL
+// Jump the view to the position you want.
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::GotoPositionL(TInt aPosition)
+    {
+    iFormOffset = -aPosition;
+    SizeChanged();
+
+    SetFocusBodyByIndex(BodyIndexByOffset(aPosition));
+    ResolveLayoutForAllVisibleSlidesL();
+    UpdateScrollBarL();
+    DrawDeferred();
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::HandleScrollPageEventL
+// Hnadle a page up/down event.
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::HandleScrollPageEventL(TBool aIsSrollDown)
+    {
+    if(BorderExceededPixels())
+        {
+        // do not scroll when border is exceeded
+        return;
+        }
+
+    DelayNextSlideLoad();
+    MotionEngineStop();
+
+    iScrollBar->DrawBackground(ETrue, EFalse);              // don't draw now
+    iScrollBar->SetVFocusPosToThumbPos(iViewFocusPosition); // roll the thumb back to current pos
+    
+    const TInt windowSize(iViewRect.Height() - iBaseLineOffset);
+    const TInt scrollUnit = iLineHeight * 2; // scroll 2 lines per tick
+
+    // pixels left to scroll
+    TInt scrollablePixels(0);
+    if(aIsSrollDown)
+        {
+        TInt height(0), pos(0);
+        GetVirtualFormHeightAndPos(height, pos);
+        scrollablePixels = Max(0, height-windowSize) + iFormOffset;
+        }
+    else
+        {
+        scrollablePixels = -iFormOffset;
+        }
+
+    scrollablePixels = Max(scrollablePixels, 0);
+
+    // pixels to scroll
+    TInt linesToScroll = windowSize / iLineHeight - 1;
+    TInt pixelsToScroll = Min(linesToScroll*iLineHeight, scrollablePixels);
+
+    // do the scroll by scroll unit
+    while(pixelsToScroll > 0)
+        {
+        TInt toScroll = Min(pixelsToScroll, scrollUnit);
+        pixelsToScroll -= toScroll;
+        
+        if(aIsSrollDown) toScroll = -toScroll;
+        ScrollL(toScroll);
+        DrawNow();
         }
     
-    OfferKeyEventL(keyEvent, EEventKeyDown);
-    OfferKeyEventL(keyEvent, EEventKey);
-    OfferKeyEventL(keyEvent, EEventKeyUp);
-    
-    
-    CItemFinder* finder = ItemFinder();
-    if(finder) 
-		{
-		finder->ResetCurrentItem();
-		}
+    // for border exceeded pixels
+    MotionEnginePlayL();
     }
-	
+
 // ---------------------------------------------------------
-// CMsgEditorView::ScrollPageL
-//
-// Change to the previous or the next part(slide) if possible. 
-//
+// CMsgEditorView::HandleScrollThumbDragVertEventL
+// Handle scroll thumb drag vert event.
 // ---------------------------------------------------------
 //
 
-void CMsgEditorView::ScrollPageL(TInt aOffset)
+void CMsgEditorView::HandleScrollThumbDragVertEventL(CEikScrollBar* aScrollBar)
     {
-    CMsgBaseControl* headerFocus = iHeader ? iHeader->FocusedControl() : NULL;
-    CMsgBaseControl* bodyFocus = iBody ? iBody->FocusedControl() : NULL;
+    MotionEngineStop();
 
-    if(aOffset < 0)
+    TInt focusPos = AknScrollBarModel()->FocusPosition();
+    GotoPositionL(focusPos);
+
+    if(iScrollParts > 1) // slide is more than one page
         {
-        if ( iCurrentFocus == EMsgHeaderFocused )
+        TInt currentPart(CurrentScrollPart(focusPos));
+        ShowScrollPopupInfoTextL(static_cast<CAknDoubleSpanScrollBar*>(aScrollBar), currentPart+1);
+        iScrollBar->DrawScrollBarsNow();
+        }
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------
+// CMsgEditorView::LoadSlideL
+// Load a slide specified.
+// ---------------------------------------------------------
+//
+
+TBool CMsgEditorView::LoadSlideL(TInt aSlideIndex)
+    {
+    if(SlideFlowIsLoading()) return EFalse;
+    if(iPrepareToExit) return EFalse;
+
+    CMsgBody* body = Body(aSlideIndex);
+    TInt componentCount = body ? body->CountComponentControls() : 0;
+    if(aSlideIndex>=0 && aSlideIndex<iScrollParts && !componentCount)
+        {
+        iSlideFlowIsLoading = ETrue;
+        iSlideFlowLoadingIndex = aSlideIndex;
+
+        if(!body)
             {
-            iCurrentFocus = EMsgBodyFocused;
+            CreateBodyL(aSlideIndex);
             }
-        if(headerFocus) 
-			{
-			headerFocus->NotifyViewEvent( EMsgViewEventPrepareFocusTransitionDown, 0 );
-			}
-        if(bodyFocus)
+        
+        TInt index = aSlideIndex;
+
+        iBody = Body(aSlideIndex);
+        if(iBody)
             {
-            TBool isFocused = bodyFocus->IsFocused();
-            bodyFocus->SetFocus(ETrue);
-            bodyFocus->NotifyViewEvent( EMsgViewEventPrepareFocusTransitionDown, 0 );
-            bodyFocus->SetFocus(isFocused);
+            // notify observer load the slide
+            MMsgEditorObserver::TMsgFocusEvent focusEvent = MMsgEditorObserver::EMsgFocusAtTop;
+            MMsgEditorObserver::TMsgAfterFocusEventFunc after = MMsgEditorObserver::EMsgAfterFocusNone;
+            iEditorObserver.EditorObserver(MMsgEditorObserver::EMsgHandleFocusChange, &focusEvent, &after, &index);
+
+            if(index != aSlideIndex)
+                {
+                index = aSlideIndex;
+                focusEvent = MMsgEditorObserver::EMsgFocusAtBottom;
+                iEditorObserver.EditorObserver(MMsgEditorObserver::EMsgHandleFocusChange, &focusEvent, &after, &index);
+                }
+            
+            // notify observer current body index
+            iEditorObserver.EditorObserver(MMsgEditorObserver::EMsgHandleFocusedSlideChange,
+                                           &iCurrentBodyIndex, 0, 0);
+            }
+
+        iBody = Body(iCurrentBodyIndex);
+        iSlideFlowIsLoading = EFalse;
+        
+        if(index == aSlideIndex) // loaded
+            {
+            RefreshViewL();
+            return ETrue;
+            }
+        }
+    
+    return EFalse;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::LoadNextSlideLaterL
+// Start the loading timer for load next slide later.
+// ---------------------------------------------------------
+//
+
+#ifdef __WINS__
+    const TInt KLoadingDelayTime = 2*1000*1000;
+#else
+    const TInt KLoadingDelayTime = 50*1000;
+#endif
+
+void CMsgEditorView::LoadNextSlideLaterL()
+    {
+    iSlideFlowLoadingPause = EFalse;
+
+    if(!iSlideFlowInitTimer->IsActive())
+        {
+        iSlideFlowInitTimer->Start(KLoadingDelayTime, KLoadingDelayTime, TCallBack(LoadNextSlideCallbackL,this));
+        }
+    }
+
+
+// ---------------------------------------------------------
+// CMsgEditorView::DelayNextSlideLoad
+// Delay the loading if the loading timer is active.
+// The delay makes system have time to do other thing. (User input etc.)
+// ---------------------------------------------------------
+//
+
+const TInt KDelayTimeWhenActive = 500*1000;
+void CMsgEditorView::DelayNextSlideLoad()
+    {
+    if(iSlideFlowInitTimer->IsActive())
+        {
+        iSlideFlowInitTimer->Cancel();
+        iSlideFlowInitTimer->Start(KDelayTimeWhenActive, KLoadingDelayTime, TCallBack(LoadNextSlideCallbackL,this));
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::StopNextSlideLoad
+// Stop the loading timer.
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::StopNextSlideLoad()
+    {
+    iSlideFlowInitTimer->Cancel();
+    iSlideFlowLoadingPause = ETrue;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::LoadNextSlideCallbackL
+// loading timer callback.
+// ---------------------------------------------------------
+//
+
+TInt CMsgEditorView::LoadNextSlideCallbackL(TAny* aPtr)
+    {
+    ((CMsgEditorView*)aPtr)->DoLoadNextSlideL();
+    return KErrNone;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::DoLoadNextSlideL
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::DoLoadNextSlideL()
+    {
+    iSlideFlowInitTimer->Cancel();
+    TBool loaded = LoadSlideL(iSlideFlowLoadingIndex+1);
+
+    if(loaded && 
+       !iSlideFlowLoadingPause && 
+       !AllSlidesLoaded())
+        {
+        LoadNextSlideLaterL();
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::AllSlidesLoaded
+// ---------------------------------------------------------
+//
+
+TBool CMsgEditorView::AllSlidesLoaded() const
+    {
+    return (iSlideFlowLoadingIndex+1 >= iScrollParts);
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------
+// CMsgEditorView::ResolveLayoutForAllVisibleSlidesL
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::ResolveLayoutForAllVisibleSlidesL()
+    {
+    if(IsSlideFlowEnable())
+        {
+        SetAnchor(); // set a page anchor for retrieving position after resizing
+
+        TBool sizeChanged = EFalse;
+        TInt index = BodyIndexByOffset(-iFormOffset); // first slide in window
+        while(index>=0 && index<BodyCount())
+            {
+            if(Rect().Intersects(BodyRect(index)))
+                {
+                CMsgBody* body = Body(index);
+                if(NeedLayoutForm(body, iMsgBodyPane.Size()))
+                    {
+                    sizeChanged = ETrue;
+
+                    // for header, header is part of 1st body
+                    if(index == 0)
+                        {
+                        TSize size = iMsgHeaderPane.Size();
+                        ((CCoeControl*)iHeader)->HandleResourceChange(KEikDynamicLayoutVariantSwitch);
+                        iHeader->SetAndGetSizeL(size, ETrue);
+                        iHeader->GetTextFontHeight();
+                        }
+
+                    // for body
+                    TSize size = iMsgBodyPane.Size();
+                    if(body->TextFontHeight() != iTextFontHeight)
+                        {
+                        size.iWidth = 0; // this will force a resize for body
+                        }
+                    
+                    ((CCoeControl*)body)->HandleResourceChange(KEikDynamicLayoutVariantSwitch);
+                    body->SetAndGetSizeL(size, ETrue);
+                    body->GetTextFontHeight();
+                    
+                    GotoAnchor();   // set formoffset
+                    SizeChanged();  // layout page according to formoffset
+                    }
+                }
+            else
+                {
+                break;
+                }
+            
+            index++;
+            }
+
+        if(sizeChanged)
+            {
+            DrawDeferred();
+            UpdateScrollBarL();
+            }
+        
+        ClearAnchor();
+        }
+    }
+
+
+// ---------------------------------------------------------
+// CMsgEditorView::GetTextFontHeight
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::GetTextFontHeight()
+    {
+    TAknLayoutRect msgTextPane;
+    msgTextPane.LayoutRect( MsgEditorCommons::MsgDataPane(),
+                            AknLayoutScalable_Apps::msg_text_pane( 0 ).LayoutLine() );
+                            
+    TAknLayoutRect msgHeaderPane;
+    msgHeaderPane.LayoutRect( msgTextPane.Rect(),
+                              AknLayoutScalable_Apps::msg_header_pane().LayoutLine() );
+    
+    TAknLayoutText textLayout;                              
+    textLayout.LayoutText( msgHeaderPane.Rect(),
+                           AknLayoutScalable_Apps::msg_header_pane_t2( 0 ).LayoutLine() );
+
+    iTextFontHeight = textLayout.Font()->HeightInPixels();
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::NeedLayoutSelf
+// ---------------------------------------------------------
+//
+
+TBool CMsgEditorView::NeedLayoutSelf()
+    {
+    if(iViewRect.Width() != MsgEditorCommons::MsgMainPane().Width())
+        {
+        // size chnaged
+        return ETrue;
+        }
+
+    const TInt currentTextFontHeight = iTextFontHeight;
+    GetTextFontHeight();
+
+    if(currentTextFontHeight != iTextFontHeight)
+        {
+        // font height changed
+        return ETrue;
+        }
+    
+    return EFalse;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::NeedLayoutForm
+// ---------------------------------------------------------
+//
+
+TBool CMsgEditorView::NeedLayoutForm(CMsgFormComponent* aFormComponent, const TSize& aSize)
+    {
+    if(aFormComponent)
+        {
+        if(aFormComponent->TextFontHeight() != iTextFontHeight)
+            {
+            // font height changed
+            return ETrue;
+            }
+
+        if(aFormComponent->Size().iWidth != aSize.iWidth)
+            {
+            // size changed
+            return ETrue;
+            }
+        }
+
+    return EFalse;
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------
+// CMsgEditorView::SetAnchor
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::SetAnchor()
+    {
+    iAnchorIsAvailable = ETrue;
+    iAnchorSlideIndex = BodyIndexByOffset(-iFormOffset);
+    const TRect rect = BodyRect(iAnchorSlideIndex);
+    TInt height = rect.Height();
+    if(height)
+        {
+        iAnchorSlideOffsetRatio = -rect.iTl.iY;
+        iAnchorSlideOffsetRatio /= height;
+        }
+    else
+        {
+        iAnchorSlideOffsetRatio = 0;
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::ClearAnchor
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::ClearAnchor()
+    {
+    iAnchorIsAvailable = EFalse;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::GotoAnchor
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::GotoAnchor()
+    {
+    if(iAnchorIsAvailable)
+        {
+        TInt aboveOffset = DistanceAboveBody(iAnchorSlideIndex);
+        TInt innerOffset = BodyRect(iAnchorSlideIndex).Height() * iAnchorSlideOffsetRatio;
+        iFormOffset = -(aboveOffset + innerOffset);        
+        }
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------
+// CMsgEditorView::DestroyAllBodies
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::DestroyAllBodies()
+    {
+    if(IsSlideFlowEnable())
+        {
+        for(TInt i=0; i<KMaxSlideFlowBodyCount; i++)
+            {
+            delete iSlideFlowBody[i];
+            }
+        
+        Mem::FillZ(iSlideFlowBody, sizeof(iSlideFlowBody));
+        
+        iSlideFlowLoadingIndex = 0;
+        }
+    else
+        {
+        delete iBody;
+        iBody = NULL;
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::Body
+// ---------------------------------------------------------
+//
+
+CMsgBody* CMsgEditorView::Body(TInt aIndex) const
+    {
+    if(IsSlideFlowEnable())
+        {
+        if(aIndex>=0 && aIndex<BodyCount())
+            {
+            return iSlideFlowBody[aIndex];
+            }
+        else
+            {
+            return NULL;
             }
         }
     else
         {
-        if(bodyFocus)
+        return iBody;
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::VisibleBodyCount
+// ---------------------------------------------------------
+//
+
+TInt CMsgEditorView::VisibleBodyCount() const
+    {
+    if(IsSlideFlowEnable())
+        {
+        TInt bodyCount(0);
+        for(TInt i=0; i<BodyCount(); i++)
             {
-            TBool isFocused = bodyFocus->IsFocused();
-            bodyFocus->SetFocus(ETrue);
-            bodyFocus->NotifyViewEvent( EMsgViewEventPrepareFocusTransitionUp, 0 );
-            bodyFocus->SetFocus(isFocused);
+            CMsgBody* body = Body(i);
+            if(body && Rect().Intersects(body->Rect()))
+                {
+                bodyCount++;
+                }
             }
-        if(headerFocus) 
-			{
-			headerFocus->NotifyViewEvent( EMsgViewEventPrepareFocusTransitionUp, 0 );
-			}
-        if ( iCurrentFocus==EMsgBodyFocused && 0==iVisiblePart)
+
+        return bodyCount;
+        }
+    else
+        {
+        return 1;
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::VisibleBody
+// ---------------------------------------------------------
+//
+
+CMsgBody* CMsgEditorView::VisibleBody(TInt aIndex) const
+    {
+    if(IsSlideFlowEnable())
+        {
+        for(TInt i=0; i<BodyCount(); i++)
             {
-            iCurrentFocus = EMsgHeaderFocused;
+            CMsgBody* body = Body(i);
+            if(body && Rect().Intersects(body->Rect()))
+                {
+                if(!aIndex) return body;
+                else aIndex--;
+                }
+            }
+
+        return NULL;
+        }
+    else
+        {
+        return iBody;
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::IsBodyVisible
+// ---------------------------------------------------------
+//
+
+TBool CMsgEditorView::IsBodyVisible(CMsgBody* aBody) const
+    {
+    return (aBody && Rect().Intersects(aBody->Rect()));
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::BodyHeight
+// ---------------------------------------------------------
+//
+
+TInt CMsgEditorView::BodyHeight(TInt aIndex) const
+    {
+    CMsgBody* body = Body(aIndex);
+    TInt height = body ? body->Size().iHeight : 0;
+    if(aIndex == 0) height += iHeader->Size().iHeight;
+    return height;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::BodyRect
+// ---------------------------------------------------------
+//
+
+TRect CMsgEditorView::BodyRect(TInt aIndex) const
+    {
+    CMsgBody* body = Body(aIndex);
+    if(body)
+        {
+        if(aIndex == 0)
+            {
+            TRect rect = body->Rect();
+            rect.iTl.iY = iHeader->Position().iY;
+            return rect;
+            }
+        else
+            {
+            return body->Rect();
             }
         }
+    else
+        {
+        TRect rect;
+        for(TInt i=0; i<=aIndex; i++)
+            {
+            CMsgBody* body = Body(i);
+            if(body)
+                {
+                rect = body->Rect();
+                }
+            }
+        return rect;
+        }
+    }
 
-    ScrollPartL(aOffset);
+// ---------------------------------------------------------
+// CMsgEditorView::DistanceAboveBody
+// ---------------------------------------------------------
+//
+
+TInt CMsgEditorView::DistanceAboveBody(TInt aIndex) const
+    {
+    TInt height = 0;
+    if(aIndex > BodyCount()) aIndex = BodyCount();
+    for(TInt i=0; i<aIndex; i++)
+        {
+        height += BodyHeight(i);
+        }
+    return height;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::BodyIndexByOffset
+// ---------------------------------------------------------
+//
+
+TInt CMsgEditorView::BodyIndexByOffset(TInt aOffsetFromTop)
+    {
+    TInt height = 0;
+    for(TInt i=0; i<BodyCount(); i++)
+        {
+        height += BodyHeight(i);
+        if(height > aOffsetFromTop) return i;
+        }
+
+    return BodyCount() - 1;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::SetFocusBodyByIndex
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::SetFocusBodyByIndex(TInt aIndex)
+    {
+    __ASSERT_DEBUG( (aIndex>=0 && aIndex<BodyCount()), Panic( EMsgInvalidEntryNumber ) );
+
+    CMsgBody* originalBody = iBody;
+    
+    iBody = iSlideFlowBody[aIndex];
+    iCurrentBodyIndex = aIndex;
+    iVisiblePart = aIndex;
+
+    if(iBody && originalBody!=iBody)
+        {
+        originalBody->SetFocus(EFalse);
+        iEditorObserver.EditorObserver(MMsgEditorObserver::EMsgHandleFocusedSlideChange,
+                                       &aIndex,
+                                       0,
+                                       0);
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::SetFocusBodyFromPosition
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::SetFocusBodyFromPosition(const TPoint& aPosition)
+    {
+    if ( IsSlideFlowEnable() )
+        {
+        for(TInt i=0; i<BodyCount(); i++)
+            {
+            CMsgBody* body = iSlideFlowBody[i];
+            if(body && body->Rect().Contains(aPosition))
+                {
+                SetFocusBodyByIndex(i);
+                break;
+                }
+            }
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::SetFocusBodyAndControlFromPositionL
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::SetFocusBodyAndControlFromPositionL(const TPoint& aPosition)
+    {
+    SetFocusBodyFromPosition(aPosition);
+    CMsgBaseControl* control = ControlFromPosition(aPosition, EFalse);
+    if(control) SetFocusByControlIdL(control->ControlId(), EFalse);
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+// ---------------------------------------------------------
+// CMsgEditorView::BorderExceededPixels
+// ---------------------------------------------------------
+//
+
+TInt CMsgEditorView::BorderExceededPixels()
+    {
+    if(iFormOffset > 0)
+        {
+        // top exceeded > 0
+        return iFormOffset;
+        }
+
+    TInt height(0), pos(0);
+    GetVirtualFormHeightAndPos(height, pos);
+    TInt windowSize(iViewRect.Height() - iBaseLineOffset);
+
+    const TInt scrollableHeight = Max(0, height-windowSize);
+    TInt bottomOffset = iFormOffset + scrollableHeight;
+    if(bottomOffset < 0)
+        {
+        // bottom exceeded < 0
+        return bottomOffset;
+        }
+    
+    // no exceeded
+    return 0;
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+const TInt KOneSecond = 1000*1000;
+const TInt KMotionEngineFPS = 25;
+const TInt KMotionEngineInterval = 1000;
+
+const TInt KAttenuationRatio = 18;
+const TInt KBounceGravitation = 2;
+
+const TInt KMaxAttenuationPerTick = 50;
+const TInt KMinAttenuationPerTick = 8;
+const TInt KMaxOffsetPerTick = 50;
+
+const TInt KMaxTrackTime = 500*1000;
+
+// ---------------------------------------------------------
+// CMsgEditorView::MotionEngineReset
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::MotionEngineReset(const TPoint& aPos)
+    {
+    MotionEngineStop();
+    iMotionEngineTimeStamp.HomeTime();
+    iMotionEnginePos = aPos;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::MotionEngineTrack
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::MotionEngineTrack(const TPoint& aPos)
+    {
+    TTime now;
+    now.HomeTime();
+    TInt64 microSeconds = now.MicroSecondsFrom(iMotionEngineTimeStamp).Int64();
+    TInt instantSpeed = (aPos.iY - iMotionEnginePos.iY) * KOneSecond / microSeconds;
+
+    if(microSeconds < KMaxTrackTime)
+        {
+        iMotionEngineSpeed = (iMotionEngineSpeed + instantSpeed) / 2;
+        }
+    else
+        {
+        iMotionEngineSpeed = instantSpeed;
+        }
+
+    iMotionEngineTimeStamp.HomeTime();
+    iMotionEnginePos = aPos;
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::MotionEnginePlayL
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::MotionEnginePlayL()
+    {
+    iMotionEngineTimer->Cancel();
+
+    TInt pixelsToScroll(0);
+    const TInt borderExceededPixels = BorderExceededPixels();
+    TBool needRestart = ETrue;
+
+    if(borderExceededPixels != 0)
+        {
+        // calculate speed
+        TInt acceleration = borderExceededPixels * KBounceGravitation;
+        iMotionEngineSpeed -= acceleration;
+        pixelsToScroll = iMotionEngineSpeed / KMotionEngineFPS;
+
+        // check whether reach or across the border after scroll
+        TInt offsetAfterScroll = borderExceededPixels + pixelsToScroll;
+        if((offsetAfterScroll==0) ||                                // reach to border
+           (offsetAfterScroll<0 && borderExceededPixels>0) ||       // top exceeded and regress
+           (offsetAfterScroll>0 && borderExceededPixels<0))         // bottom exceeded and regress
+            {
+            // stop here
+            pixelsToScroll = -borderExceededPixels;
+            needRestart = EFalse;
+            MotionEngineStop();
+            
+            // vibrate
+            MTouchFeedback* feedback = MTouchFeedback::Instance();
+            if(feedback) feedback->InstantFeedback(NULL, ETouchFeedbackBoundaryList, ETouchFeedbackVibra, TPointerEvent());
+            }
+        }
+    else
+        {
+        // calculate speed
+        TInt acceleration = Abs(iMotionEngineSpeed / KAttenuationRatio);
+        if(acceleration > KMaxAttenuationPerTick) acceleration = KMaxAttenuationPerTick;
+        else if(acceleration < KMinAttenuationPerTick) acceleration = KMinAttenuationPerTick;
+
+        if(iMotionEngineSpeed > 0) iMotionEngineSpeed -= acceleration;
+        else if(iMotionEngineSpeed < 0) iMotionEngineSpeed += acceleration;
+
+        pixelsToScroll = iMotionEngineSpeed / KMotionEngineFPS;
+
+        // max offset : user will not feel good in vision with big offset
+        if(pixelsToScroll > KMaxOffsetPerTick) pixelsToScroll = KMaxOffsetPerTick;
+        else if(pixelsToScroll < -KMaxOffsetPerTick) pixelsToScroll = -KMaxOffsetPerTick;
+        else if(!pixelsToScroll)
+            {
+            needRestart = EFalse;
+            MotionEngineStop();
+            }
+        }
+    
+    // do scroll
+    ScrollL(pixelsToScroll);
+    DrawDeferred();
+    
+    // start next tick
+    if(needRestart)
+        {
+        iMotionEngineTimer->Start(KMotionEngineInterval, KMotionEngineInterval, TCallBack(MotionEnginePlayCallbackL,this));
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::MotionEngineStop
+// ---------------------------------------------------------
+//
+
+void CMsgEditorView::MotionEngineStop()
+    {
+    iMotionEngineSpeed = 0;
+    if(iMotionEngineTimer) iMotionEngineTimer->Cancel();
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::MotionEngineIsPlaying
+// ---------------------------------------------------------
+//
+
+TBool CMsgEditorView::MotionEngineIsPlaying() const
+    {
+    return (iMotionEngineSpeed != 0);
+    }
+
+// ---------------------------------------------------------
+// CMsgEditorView::MotionEnginePlayCallbackL
+// ---------------------------------------------------------
+//
+
+TInt CMsgEditorView::MotionEnginePlayCallbackL(TAny* aPtr)
+    {
+    ((CMsgEditorView*)aPtr)->MotionEnginePlayL();
+    return KErrNone;
     }
 
 
@@ -1102,22 +2242,37 @@ TBool CMsgEditorView::HandleBaseControlEventRequestL( CMsgBaseControl* aControl,
         case EMsgCheckIfFocusIsAboveThis:
             {
             TBool isAbove = EFalse;
-            TInt componentIndex = iHeader->ComponentIndexFromId( aControl->ControlId() );
-            if ( componentIndex != KErrNotFound )
+
+            if(IsSlideFlowEnable())
                 {
-                // control found in header.
-                isAbove = iCurrentFocus == EMsgHeaderFocused
-                    ? iHeader->CurrentFocus() < componentIndex
-                    : EFalse;
+                TInt offset = aDelta - iFormOffset;
+                TInt bodyIndex = BodyIndexByOffset(offset);
+                if(Body(bodyIndex))
+                    {
+                    SetFocusBodyByIndex(bodyIndex);
+                    isAbove = ETrue;
+                    }
                 }
             else
                 {
-                // control found in body.
-                componentIndex = iBody->ComponentIndexFromId( aControl->ControlId() );
-                isAbove = iCurrentFocus == EMsgBodyFocused
-                    ? iBody->CurrentFocus() < componentIndex
-                    : ETrue;
+                TInt componentIndex = iHeader->ComponentIndexFromId( aControl->ControlId() );
+                if ( componentIndex != KErrNotFound )
+                    {
+                    // control found in header.
+                    isAbove = iCurrentFocus == EMsgHeaderFocused
+                        ? iHeader->CurrentFocus() < componentIndex
+                        : EFalse;
+                    }
+                else
+                    {
+                    // control found in body.
+                    componentIndex = iBody->ComponentIndexFromId( aControl->ControlId() );
+                    isAbove = iCurrentFocus == EMsgBodyFocused
+                        ? iBody->CurrentFocus() < componentIndex
+                        : ETrue;
+                    }
                 }
+
             return isAbove;
             }
 
@@ -1175,6 +2330,12 @@ TBool CMsgEditorView::HandleBaseControlEventRequestL( CMsgBaseControl* aControl,
                 
                 done = ETrue;
                 }
+            else if(IsSlideFlowEnable())
+                {
+                iFormOffset = 0;
+                RefreshViewL();
+                done = ETrue;
+                }
             else
                 {
                 done = HandleHeightChangedL( aControl, aDelta );
@@ -1202,7 +2363,10 @@ TBool CMsgEditorView::HandleBaseControlEventRequestL( CMsgBaseControl* aControl,
             }
         }
 
-    done = EnsureCorrectFormPosition( EFalse );
+    if(!IsSlideFlowEnable())
+        {
+        done = EnsureCorrectFormPosition( EFalse );
+        }
     
     if ( iStateFlags & EMsgStateRefreshing ||
          iStateFlags & EMsgStateInitializing )
@@ -1210,7 +2374,10 @@ TBool CMsgEditorView::HandleBaseControlEventRequestL( CMsgBaseControl* aControl,
         return done;
         }
 
-    UpdateScrollBarL();
+    if(!IsSlideFlowEnable())
+        {
+        UpdateScrollBarL();
+        }
 
     return done;
     }
@@ -1317,7 +2484,7 @@ TInt CMsgEditorView::CountComponentControls() const
         countScrollBarComponents = iScrollBar->CountComponentControls();
         }
         
-    return KMsgNumberOfControls + countScrollBarComponents;
+    return 1 + VisibleBodyCount() + countScrollBarComponents;
     }
 
 // ---------------------------------------------------------
@@ -1330,39 +2497,29 @@ CCoeControl* CMsgEditorView::ComponentControl( TInt aIndex ) const
     {
     __ASSERT_DEBUG( iHeader != NULL, Panic( EMsgHeaderNotExists ) );
     __ASSERT_DEBUG( iBody != NULL, Panic( EMsgBodyNotExists ) );
-
-    TInt countScrollBarComponents( 0 );
     
+    if(aIndex < 1)
+        {
+        return iHeader;
+        }
+    aIndex -= 1;
+    
+    if(aIndex < VisibleBodyCount())
+        {
+        return VisibleBody(aIndex);
+        }
+    aIndex -= VisibleBodyCount();
+
     if ( iScrollBar )
         {
-        countScrollBarComponents = iScrollBar->CountComponentControls();
-        }
-        
-    switch ( aIndex )
-        {
-        case KMsgControlIndexHeader:
+        if(aIndex < iScrollBar->CountComponentControls())
             {
-            return iHeader;
-            }
-        case KMsgControlIndexBody:
-            {
-            return iBody;
-            }
-        default:
-            {
-            if ( iScrollBar &&  
-                 aIndex >= KMsgNumberOfControls &&  
-                 aIndex < countScrollBarComponents + KMsgNumberOfControls )
-                {
-                return iScrollBar->ComponentControl( aIndex - KMsgNumberOfControls );
-                }
-            else
-                {
-                __ASSERT_DEBUG( EFalse, Panic( EMsgIncorrectComponentIndex ) );
-                }
-            return NULL;
+            return iScrollBar->ComponentControl(aIndex);
             }
         }
+    
+    __ASSERT_DEBUG( EFalse, Panic( EMsgIncorrectComponentIndex ) );
+    return NULL;
     }
 
 // ---------------------------------------------------------
@@ -1384,15 +2541,35 @@ void CMsgEditorView::SizeChanged()
     __ASSERT_DEBUG( iHeader != NULL, Panic( EMsgHeaderNotExists ) );
     __ASSERT_DEBUG( iBody != NULL, Panic( EMsgBodyNotExists ) );
 
-    TPoint bodyPosition( MsgEditorCommons::MsgBodyPane().iTl.iX, 0 );
-    TPoint headerPosition( MsgEditorCommons::MsgHeaderPane().iTl.iX, iFormOffset );
+    TPoint bodyPosition( iMsgBodyPane.iTl.iX, 0 );
+    TPoint headerPosition( iMsgHeaderPane.iTl.iX, iFormOffset );
 
     //MEBLOGGER_WRITEF(_L("MEB: CMsgEditorView::SizeChanged: header height %d "), iHeader->Size().iHeight);
     //MEBLOGGER_WRITEF(_L("MEB: CMsgEditorView::SizeChanged: body   height %d "), iBody->Size().iHeight);
 
     iHeader->SetExtent( headerPosition, iHeader->Size() );
-    bodyPosition.iY = iHeader->Rect().iBr.iY /* + 1 */;
-    iBody->SetExtent( bodyPosition, iBody->Size() );
+    bodyPosition.iY = iHeader->Rect().iBr.iY;
+    
+    if(IsSlideFlowEnable())
+        {
+        for(TInt i=0; i<iScrollParts; i++)
+            {
+            CMsgBody* body = Body(i);
+            if(body)
+                {
+                body->SetExtent( bodyPosition, body->Size() );
+                bodyPosition.iY += body->Size().iHeight;
+                }
+            else
+                {
+                bodyPosition.iY += iViewRect.Height();
+                }
+            }
+        }
+    else
+        {
+        iBody->SetExtent( bodyPosition, iBody->Size() );
+        }
 
     MEBLOGGER_LEAVEFN( "CMsgEditorView::SizeChanged" );
     }
@@ -1421,11 +2598,14 @@ void CMsgEditorView::FocusChanged( TDrawNow /*aDrawNow*/ )
         
         if ( IsFocused() )
             {
-            NotifyControlsForEvent( EMsgViewEventViewFocusGain, 0 );
+            LoadNextSlideLaterL();
+            DelayNextSlideLoad();
+            if(!SlideFlowIsLoading()) NotifyControlsForEvent( EMsgViewEventViewFocusGain, 0 );
             }
         else
             {
-            NotifyControlsForEvent( EMsgViewEventViewFocusLost, 0 );
+            StopNextSlideLoad();
+            if(!SlideFlowIsLoading()) NotifyControlsForEvent( EMsgViewEventViewFocusLost, 0 );
             }
         }
     }
@@ -1438,36 +2618,77 @@ void CMsgEditorView::FocusChanged( TDrawNow /*aDrawNow*/ )
 //
 void CMsgEditorView::HandleResourceChange( TInt aType )
     {
-    // Updates child control layouts. Must be called before
-    // layout switch is handled here as AdjustComponentDistances 
-    // expects controls to have correct height. Child control
-    // height may vary if layout is using different font.
-    CCoeControl::HandleResourceChange( aType ); 
-    
+    if(IsSlideFlowEnable() && aType==KEikDynamicLayoutVariantSwitch)
+        {
+        if(!NeedLayoutSelf()) return;
+
+        GetTextFontHeight();
+        CCoeControl::HandleResourceChange( aType );
+        MotionEngineStop();
+        }
+    else
+        {
+        // Updates child control layouts. Must be called before
+        // layout switch is handled here as AdjustComponentDistances 
+        // expects controls to have correct height. Child control
+        // height may vary if layout is using different font.
+        CCoeControl::HandleResourceChange( aType );
+        }
+
     if ( aType == KEikDynamicLayoutVariantSwitch )
         {
-        iScrollBar->SetScrollBarFrameObserver( this );
-        
-        TInt invisibleLines( iFormOffset / iLineHeight );
-        
-        iLineHeight = MsgEditorCommons::MsgBaseLineDelta();
-        iBaseLineOffset = MsgEditorCommons::MsgBaseLineOffset();
-        
-        // Correct the form offset to be multiple of current line height
-        iFormOffset = invisibleLines * iLineHeight;
-        
+        // set view rect
         TRect mainPane = MsgEditorCommons::MsgMainPane();
         SetViewRect( mainPane );
         iSize = mainPane.Size();
-        
+
+        // layout scrollbar
+        iScrollBar->SetScrollBarFrameObserver( this );
         AknLayoutUtils::LayoutVerticalScrollBar(
             iScrollBar,
             TRect( TPoint( 0, 0 ), mainPane.Size() ),
             AknLayoutScalable_Apps::scroll_pane_cp017().LayoutLine() );
-            
-        TRAP_IGNORE( RefreshViewL() );
         
-        EnsureCorrectViewPosition();
+        iMsgBodyPane = MsgEditorCommons::MsgBodyPane();
+        iMsgHeaderPane = MsgEditorCommons::MsgHeaderPane();
+
+        if(IsSlideFlowEnable())
+            {
+            iLineHeight = MsgEditorCommons::MsgBaseLineDelta();
+            iBaseLineOffset = MsgEditorCommons::MsgBaseLineOffset();
+            AdjustComponentDistances();
+
+            SetAnchor();    // record current pos
+            SizeChanged();  // do handle size changes here, then all the slides's height will change
+            GotoAnchor();   // set formoffset
+            SizeChanged();  // layout all the slides according to formoffset
+            ClearAnchor();
+            UpdateScrollBarL();
+
+            // handle border exceeded, in the case that - 
+            // over all height is less than view height but there had been some offset in the last layout
+            TInt borderExceededPixels = BorderExceededPixels();
+            if(borderExceededPixels != 0)
+                {
+                iFormOffset -= borderExceededPixels;
+                SizeChanged();
+                }
+            
+            TRAP_IGNORE(ResolveLayoutForAllVisibleSlidesL());
+
+            DrawDeferred();
+            }
+        else
+            {
+            // Correct the form offset to be multiple of current line height
+            TInt invisibleLines( iFormOffset / iLineHeight );
+            iLineHeight = MsgEditorCommons::MsgBaseLineDelta();
+            iBaseLineOffset = MsgEditorCommons::MsgBaseLineOffset();
+            iFormOffset = invisibleLines * iLineHeight;
+
+            TRAP_IGNORE( RefreshViewL() );
+            EnsureCorrectViewPosition();            
+            }
         }
     }
 
@@ -1553,19 +2774,30 @@ void CMsgEditorView::CreateHeaderL()
 // Creates the body. Creates also the default body control if requested.
 // ---------------------------------------------------------
 //
-void CMsgEditorView::CreateBodyL()
+void CMsgEditorView::CreateBodyL(TInt aIndex)
     {
-    __ASSERT_DEBUG( iBody == NULL, Panic( EMsgBodyAlreadyExists ) );
+    __ASSERT_DEBUG( iSlideFlowBody[aIndex] == NULL, Panic( EMsgBodyAlreadyExists ) );
 
     TMargins margins;
-
     margins.iLeft = 0;
     margins.iRight = 0;
     margins.iTop = 0;
     margins.iBottom = 0;
 
-    iBody = CMsgBody::NewL( *this, margins );
-    iBody->SetObserver( this );
+    if(IsSlideFlowEnable() && aIndex>0) // for gap between slides
+        {
+        margins.iTop = iLineHeight;
+        }
+    
+    CMsgBody* body = CMsgBody::NewL(*this, margins);
+    body->SetObserver(this);
+    body->SetBodyIndex(aIndex);
+    iSlideFlowBody[aIndex] = body;
+
+    if(!iBody)
+        {
+        iBody = body;
+        }
 
     if ( !( iEditorModeFlags & EMsgDoNotUseDefaultBodyControl ) )
         {
@@ -1621,27 +2853,28 @@ void CMsgEditorView::CreateScrollBarL()
 // ---------------------------------------------------------
 //
 void CMsgEditorView::UpdateScrollBarL()
-    {   
-    TInt height( 0 );
-    TInt pos( 0 );
-    TInt windowSize( iViewRect.Height() - iBaseLineOffset );
-    
-    // Round height up to the next full line height.
-    MsgEditorCommons::RoundToNextLine( windowSize, iLineHeight );    
-    
+    {
+    TInt height( 0 ), pos( 0 );
     GetVirtualFormHeightAndPos( height, pos );
-    
-    // Round height up to the next full line height.
-    MsgEditorCommons::RoundToNextLine( height, iLineHeight );    
-    
-    if ( pos < iLineHeight )
+    TInt windowSize( iViewRect.Height() - iBaseLineOffset );
+
+    if ( !IsSlideFlowEnable() )
         {
-        pos = 0;
+        if( pos < iLineHeight )
+            {
+            pos = 0;
+            }
+
+        // Round height up to the next full line height.
+        MsgEditorCommons::RoundToNextLine( windowSize, iLineHeight );    
+
+        // Round height up to the next full line height.
+        MsgEditorCommons::RoundToNextLine( height, iLineHeight ); 
+
+        // Round position up to the next full line height.
+        MsgEditorCommons::RoundToNextLine( pos, iLineHeight );
         }
-    
-    // Round position up to the next full line height.
-    MsgEditorCommons::RoundToNextLine( pos, iLineHeight );
-    
+
 #ifdef _DEBUG
     // CAknScrollIndicator::SetPosition has an __ASSERT_DEBUG
     // for range check even if the control handles out-of-range
@@ -1653,12 +2886,11 @@ void CMsgEditorView::UpdateScrollBarL()
 
     if ( iScrollBar->TypeOfVScrollBar() == CEikScrollBarFrame::EDoubleSpan )
         {
+        pos = Max( 0, Min( height - windowSize, pos ) );
+        
         TAknDoubleSpanScrollBarModel vDsSbarModel;
         vDsSbarModel.SetScrollSpan( height );
-        vDsSbarModel.SetWindowSize( windowSize );       
-        
-        pos = Max( 0, Min( height - windowSize, pos ) );  
-        
+        vDsSbarModel.SetWindowSize( windowSize );
         vDsSbarModel.SetFocusPosition( pos );
         
         TEikScrollBarFrameLayout layout;
@@ -1689,8 +2921,8 @@ void CMsgEditorView::UpdateScrollBarL()
         
         iViewFocusPosition = vertModel.iThumbPosition;
         }
-    
-    MsgEditorCommons::RoundToNextLine( iViewFocusPosition, iLineHeight );    
+
+    MsgEditorCommons::RoundToNextLine( iViewFocusPosition, iLineHeight );  
     }
 
 
@@ -1706,101 +2938,109 @@ void CMsgEditorView::UpdateScrollBarL()
 //
 void CMsgEditorView::GetVirtualFormHeightAndPos( TInt& aHeight, TInt& aPos )
     {
-    TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
-    
-    TInt scrollPartsHeight( 0 );
-    TInt abovePartHeight( 0 );
-    
-    TInt bodyHeight( iBody->VirtualHeight() );
-    
-    TInt headerHeight( 0 );
-    
-    TBool headerLoaded( iHeader->CountMsgControls() );
-    if ( headerLoaded )
+    if(IsSlideFlowEnable())
         {
-        // Header loaded so get header height and subtract base line offset
-        // from it as header first control contains it and it is not scrollable
-        // area.
-        headerHeight = iHeader->VirtualHeight() - iBaseLineOffset;
+        aHeight = DistanceAboveBody(BodyCount());
+        aPos = -iFormOffset;
         }
     else
         {
-        // No header so baseline offset is added to the first body control's distance.
-        // Baseline offset is not scrollable area so it must be subtracted from body height.
-        bodyHeight -= iBaseLineOffset;
-        }
-    
-    iVisiblePartHeight = bodyHeight + headerHeight;
-    
-    // Visible height is always at least one screen height.
-    iVisiblePartHeight = Max( screenHeight, iVisiblePartHeight );
-    
-    // Calculate total scroll parts high excluding visible part and 
-    // height of the scroll parts above visible part.
-    TInt singlePartHeight = Max( screenHeight, iVisiblePartHeight / 10 );
-    for ( TInt current = 0; current < iScrollParts; current++ )
-        {
-        if ( current != iVisiblePart )
-            {
-            scrollPartsHeight += singlePartHeight;
-            
-            if ( current < iVisiblePart )
-                {
-                abovePartHeight = scrollPartsHeight;
-                }
-            }
-        }
-    
-    aHeight = iVisiblePartHeight + scrollPartsHeight;
-
-    if ( iCurrentFocus == EMsgBodyFocused )
-        {
-        TInt bodyExt = abovePartHeight + iBody->VirtualExtension();
+        TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
         
+        TInt scrollPartsHeight( 0 );
+        TInt abovePartHeight( 0 );
+        
+        TInt bodyHeight( iBody->VirtualHeight() );
+        
+        TInt headerHeight( 0 );
+        
+        TBool headerLoaded( iHeader->CountMsgControls() );
         if ( headerLoaded )
             {
-            // Remove visible header pixels from header height.
-            TInt visiblePixels( iHeader->Position().iY + iHeader->Size().iHeight - iBaseLineOffset );
-            if (  visiblePixels > 0 )
-                {
-                headerHeight -= visiblePixels;
-                }
+            // Header loaded so get header height and subtract base line offset
+            // from it as header first control contains it and it is not scrollable
+            // area.
+            headerHeight = iHeader->VirtualHeight() - iBaseLineOffset;
             }
         else
             {
             // No header so baseline offset is added to the first body control's distance.
-            // Baseline offset is not scrollable area so it must be subtracted from body extension.
-            bodyExt -= iBaseLineOffset;
+            // Baseline offset is not scrollable area so it must be subtracted from body height.
+            bodyHeight -= iBaseLineOffset;
             }
         
-        aPos = headerHeight + bodyExt;
-
-        if ( iVisiblePart == ( iScrollParts - 1 ) )
+        iVisiblePartHeight = bodyHeight + headerHeight;
+        
+        // Visible height is always at least one screen height.
+        iVisiblePartHeight = Max( screenHeight, iVisiblePartHeight );
+        
+        // Calculate total scroll parts high excluding visible part and 
+        // height of the scroll parts above visible part.
+        TInt singlePartHeight = Max( screenHeight, iVisiblePartHeight / 10 );
+        for ( TInt current = 0; current < iScrollParts; current++ )
             {
-            // This ensures that if we at the end of the scroll area then scroll position is also
-            // at the end.
-            CMsgBaseControl* ctrl = FocusedControl();
-            
-            if ( ctrl && 
-                 ctrl->IsCursorLocation( EMsgBottom ) &&
-                 NextFocusableFormControl( iBody, 
-                         iBody->CurrentFocus() + 1, 
-                         EMsgFocusDown ) == KErrNotFound )
+            if ( current != iVisiblePart )
                 {
-                // Further scrolling (down) not possible.
-                aPos = aHeight;
+                scrollPartsHeight += singlePartHeight;
                 
-                if ( iScrollBar->TypeOfVScrollBar() == CEikScrollBarFrame::EDoubleSpan )
+                if ( current < iVisiblePart )
                     {
-                    // Focus position is top of the view.
-                    aPos -= screenHeight;
+                    abovePartHeight = scrollPartsHeight;
                     }
                 }
             }
-        }
-    else
-        {
-        aPos = abovePartHeight + iHeader->VirtualExtension() - iBaseLineOffset;
+        
+        aHeight = iVisiblePartHeight + scrollPartsHeight;
+
+        if ( iCurrentFocus == EMsgBodyFocused )
+            {
+            TInt bodyExt = abovePartHeight + iBody->VirtualExtension();
+            
+            if ( headerLoaded )
+                {
+                // Remove visible header pixels from header height.
+                TInt visiblePixels( iHeader->Position().iY + iHeader->Size().iHeight - iBaseLineOffset );
+                if (  visiblePixels > 0 )
+                    {
+                    headerHeight -= visiblePixels;
+                    }
+                }
+            else
+                {
+                // No header so baseline offset is added to the first body control's distance.
+                // Baseline offset is not scrollable area so it must be subtracted from body extension.
+                bodyExt -= iBaseLineOffset;
+                }
+            
+            aPos = headerHeight + bodyExt;
+
+            if ( iVisiblePart == ( iScrollParts - 1 ) )
+                {
+                // This ensures that if we at the end of the scroll area then scroll position is also
+                // at the end.
+                CMsgBaseControl* ctrl = FocusedControl();
+                
+                if ( ctrl && 
+                     ctrl->IsCursorLocation( EMsgBottom ) &&
+                     NextFocusableFormControl( iBody, 
+                             iBody->CurrentFocus() + 1, 
+                             EMsgFocusDown ) == KErrNotFound )
+                    {
+                    // Further scrolling (down) not possible.
+                    aPos = aHeight;
+                    
+                    if ( iScrollBar->TypeOfVScrollBar() == CEikScrollBarFrame::EDoubleSpan )
+                        {
+                        // Focus position is top of the view.
+                        aPos -= screenHeight;
+                        }
+                    }
+                }
+            }
+        else
+            {
+            aPos = abovePartHeight + iHeader->VirtualExtension() - iBaseLineOffset;
+            }
         }
     }
 
@@ -1824,20 +3064,40 @@ void CMsgEditorView::SetAndGetSizeL( TSize& aSize, TBool aInit )
         iStateFlags |= EMsgStateInitializing;
         }
 
-    TSize editorSize( aSize );
-    TSize headerSize( 0, 0 );
-    TSize bodySize( 0, 0 );
+    TInt height = 0;
 
-    headerSize = aSize;
+    TSize headerSize = aSize;
     iHeader->SetAndGetSizeL( headerSize, aInit );
+    height += headerSize.iHeight;
 
-    bodySize = aSize;
-    iBody->SetAndGetSizeL( bodySize, aInit );
-
-    editorSize.iHeight = headerSize.iHeight + bodySize.iHeight;
+    if(IsSlideFlowEnable())
+        {
+        for(TInt i=0; i<iScrollParts; i++)
+            {
+            CMsgBody* body = Body(i);
+            if(body)
+                {
+                TSize bodySize = aSize;
+                body->SetAndGetSizeL(bodySize, aInit);
+                height += bodySize.iHeight;
+                }
+            else
+                {
+                height += iViewRect.Height();
+                }
+            }
+        
+        GotoAnchor();
+        }
+    else
+        {
+        TSize bodySize = aSize;
+        iBody->SetAndGetSizeL( bodySize, aInit );
+        height += bodySize.iHeight;
+        }
 
     // View size must always be the size of client rect. Don't change "iSize"!
-    aSize = editorSize;
+    aSize.iHeight = height;
     
     if ( aInit && iStateFlags & EMsgStateInitialized )
         {
@@ -1873,7 +3133,10 @@ void CMsgEditorView::RefreshViewL()
 
     iStateFlags &= ~EMsgStateRefreshing;
 
-    EnsureCorrectFormPosition( EFalse );
+    if(!IsSlideFlowEnable())
+        {
+        EnsureCorrectFormPosition( EFalse );
+        }
     }
 
 // ---------------------------------------------------------
@@ -2093,33 +3356,11 @@ void CMsgEditorView::DoAddControlL( CMsgBaseControl* aControl,
     aControl->SetObserver( this );
     aControl->SetBaseControlObserver( *this );
     
-    if ( iEdwinObserver )
+    CEikRichTextEditor* editor = EditorInControl(aControl);
+    if ( editor && iEdwinObserver )
         {
-        CEikRichTextEditor* editor = NULL;
-    
-        if ( aControl->ControlType() == EMsgExpandableControl ||
-             aControl->ControlType() == EMsgAddressControl )
-            {
-            editor = &static_cast<CMsgExpandableControl*>( aControl )->Editor();
-            }
-        else if ( aControl->ControlType() == EMsgBodyControl ||
-                  aControl->ControlType() == EMsgXhtmlBodyControl )
-            {
-            editor = &static_cast<CMsgBodyControl*>( aControl )->Editor();
-            }
-        
-        if ( editor )
-            {
-            editor->AddEdwinObserverL( iEdwinObserver );
-            }
+        editor->AddEdwinObserverL( iEdwinObserver );
         }
-    
-    aControl->MakeVisible( ETrue );
-    aControl->ActivateL();
-    
-    // this calls PrepareForReadOnly and sets flags again
-    // but it doesn't matter.
-    aControl->SetReadOnly( flags & EMsgControlModeReadOnly );
 
     if ( aFormComponent == EMsgHeader )
         {
@@ -2127,7 +3368,8 @@ void CMsgEditorView::DoAddControlL( CMsgBaseControl* aControl,
         }
     else if ( aFormComponent == EMsgBody )
         {
-        iBody->AddControlL( aControl, aControlId, aIndex );
+        CMsgBody* body = Body(iSlideFlowLoadingIndex);
+        if(body) body->AddControlL( aControl, aControlId, aIndex );
 
         if ( iHeader->CountMsgControls() == 0 )
             {
@@ -2139,14 +3381,21 @@ void CMsgEditorView::DoAddControlL( CMsgBaseControl* aControl,
         __ASSERT_DEBUG( EFalse, Panic( EMsgIncorrectFormComponent ) );
         }
     
+    aControl->MakeVisible( ETrue );
+    aControl->ActivateL();
+ 
+    // this calls PrepareForReadOnly and sets flags again
+    // but it doesn't matter.
+    aControl->SetReadOnly( flags & EMsgControlModeReadOnly );
+    
     if ( aControl->UniqueHandle() == KErrNotFound )
         {
         // Control added first time. Set unique handle.
         aControl->SetUniqueHandle( iUniqueHandlePool );
         iUniqueHandlePool++;
         }
-    
-    if ( iStateFlags & EMsgStateInitialized )  // Control is added on run-time.
+
+    if ( iStateFlags&EMsgStateInitialized && !IsSlideFlowEnable() )  // Control is added on run-time.
         {
         TRAPD( err, RefreshViewL() );
 
@@ -2160,7 +3409,7 @@ void CMsgEditorView::DoAddControlL( CMsgBaseControl* aControl,
                 }
             else if ( aFormComponent == EMsgBody )
                 {
-                iBody->RemoveControlL( aControlId ); // does not leave.
+                Body(iSlideFlowLoadingIndex)->RemoveControlL( aControlId ); // does not leave.
                 }
 
             User::Leave( err );
@@ -2387,46 +3636,28 @@ TBool CMsgEditorView::RotateFocusL( TMsgFocusDirection aDirection,
             if ( aDirection == EMsgFocusDown && 
                  iVisiblePart == iScrollParts - 1 )
                 {
-                if ( focusedControl->ControlType() == EMsgBodyControl ||
-                     focusedControl->ControlType() == EMsgXhtmlBodyControl )
+                CEikRichTextEditor* editor = EditorInControl(focusedControl);
+                if(editor)
                     {
-                    CEikRichTextEditor& editor = static_cast<CMsgBodyControl*>( focusedControl )->Editor();
-                    editor.SetCursorPosL( editor.TextLength(), EFalse );
-                    }
-                else if ( focusedControl->ControlType() == EMsgExpandableControl ||
-                          focusedControl->ControlType() == EMsgAddressControl )
-                    {
-                    CEikRichTextEditor& editor = 
-                                static_cast<CMsgExpandableControl*>( focusedControl )->Editor();
-                    editor.SetCursorPosL( editor.TextLength(), EFalse );
-                    
-                    if ( focusedControl->ControlType() == EMsgAddressControl )
+                    editor->SetCursorPosL(editor->TextLength(), EFalse);
+                    if(focusedControl->ControlType() == EMsgAddressControl)
                         {
                         // Update the address field highlighting
-                        static_cast<CMsgAddressControlEditor&>( editor ).CheckHighlightingL();
+                        static_cast<CMsgAddressControlEditor*>(editor)->CheckHighlightingL();
                         }
                     }
                 }
             else if ( aDirection == EMsgFocusUp &&
                       iVisiblePart == 0)
                 {
-                if ( focusedControl->ControlType() == EMsgBodyControl ||
-                     focusedControl->ControlType() == EMsgXhtmlBodyControl )
+                CEikRichTextEditor* editor = EditorInControl(focusedControl);
+                if(editor)
                     {
-                    CEikRichTextEditor& editor = static_cast<CMsgBodyControl*>( focusedControl )->Editor();
-                    editor.SetCursorPosL( 0, EFalse );
-                    }
-                else if ( focusedControl->ControlType() == EMsgExpandableControl ||
-                          focusedControl->ControlType() == EMsgAddressControl )
-                    {
-                    CEikRichTextEditor& editor = 
-                            static_cast<CMsgExpandableControl*>( focusedControl )->Editor();
-                    editor.SetCursorPosL( 0, EFalse );
-                    
-                    if ( focusedControl->ControlType() == EMsgAddressControl )
+                    editor->SetCursorPosL(0, EFalse);
+                    if(focusedControl->ControlType() == EMsgAddressControl)
                         {
                         // Update the address field highlighting
-                        static_cast<CMsgAddressControlEditor&>( editor ).CheckHighlightingL();
+                        static_cast<CMsgAddressControlEditor*>(editor)->CheckHighlightingL();
                         }
                     }
                 }
@@ -2459,6 +3690,8 @@ TBool CMsgEditorView::RotateFocusL( TMsgFocusDirection aDirection,
 //
 TBool CMsgEditorView::EnsureCorrectFormPosition( TBool /*aScrollDown*/, TBool /*aScrollUp*/ )
     {
+    if(IsSlideFlowEnable()) return EFalse;
+
     CMsgBaseControl* ctrl = FocusedControl();
     if ( !ctrl )
         {
@@ -2591,15 +3824,23 @@ TBool CMsgEditorView::ScrollForm( TInt aDelta, TBool aUpdateScrollBarPos )
     {
     TBool result( ETrue );
     
-    if ( iFormOffset + aDelta > 0 )
+    if(IsSlideFlowEnable())
         {
-        // Scrolling form given amount of pixels would result form to go above
-        // it's uppermost position.
-        aDelta = -iFormOffset;
         
-        result = EFalse;
         }
-        
+    else
+        {
+        if ( iFormOffset + aDelta > 0 )
+            {
+            // Scrolling form given amount of pixels would result form to go above
+            // it's uppermost position.
+            aDelta = -iFormOffset;
+            
+            result = EFalse;
+            }
+        }
+    
+    
     if ( aDelta != 0 )
         {    
         iFormOffset += aDelta;
@@ -2608,7 +3849,7 @@ TBool CMsgEditorView::ScrollForm( TInt aDelta, TBool aUpdateScrollBarPos )
         SizeChanged();
         
         // Do not redraw the screen if we are in the middle of state refreshing. 
-        if ( !( iStateFlags & EMsgStateRefreshing ) )
+        if ( !( iStateFlags & EMsgStateRefreshing ) && !IsSlideFlowEnable() )
             {
             DrawNow();
             }
@@ -2910,14 +4151,27 @@ TBool CMsgEditorView::SetAfterFocusL( MMsgEditorObserver::TMsgAfterFocusEventFun
 //
 EXPORT_C CItemFinder* CMsgEditorView::ItemFinder()
     {   
-    if ( iBody )
+    return ItemFinder(iBody);
+    }
+
+
+// ---------------------------------------------------------
+// CMsgEditorView::ItemFinder
+//
+// Returns used item finder pointer if any.
+// ---------------------------------------------------------
+//
+
+CItemFinder* CMsgEditorView::ItemFinder(CMsgBody* aBody)
+    {
+    if ( aBody )
         {
         CMsgBaseControl* ctrl;
-        TInt countBody = iBody->CountMsgControls();
+        TInt countBody = aBody->CountMsgControls();
 
         for ( TInt i = 0; i < countBody; i++ )
             {
-            ctrl = iBody->MsgControl( i );
+            ctrl = aBody->MsgControl( i );
             if ( ctrl &&
                  ( ctrl->ControlType() == EMsgBodyControl ||
                    ctrl->ControlType() == EMsgXhtmlBodyControl ) )
@@ -2953,18 +4207,7 @@ EXPORT_C void CMsgEditorView::SetEdwinObserverL( MEikEdwinObserver* aObserver )
             control = iBody->MsgControl( controlIndex - headerControlCount );
             }
         
-        CEikRichTextEditor* editor = NULL;
-        if ( control->ControlType() == EMsgExpandableControl ||
-             control->ControlType() == EMsgAddressControl )
-            {
-            editor = &static_cast<CMsgExpandableControl*>( control )->Editor();
-            }
-        else if ( control->ControlType() == EMsgBodyControl ||
-                  control->ControlType() == EMsgXhtmlBodyControl )
-            {
-            editor = &static_cast<CMsgBodyControl*>( control )->Editor();
-            }
-        
+        CEikRichTextEditor* editor = EditorInControl(control);
         if ( editor )
             {
             editor->RemoveEdwinObserver( iEdwinObserver );
@@ -3090,7 +4333,7 @@ void CMsgEditorView::HandleScrollEventL( CEikScrollBar* aScrollBar,
         case EEikScrollThumbReleaseVert:
             {
             iScrollBar->DrawBackground( ETrue, ETrue );
-            
+
             EnsureCorrectScrollPartL( AknScrollBarModel()->FocusPosition() );
             iPopUpPart = -1;
             break;
@@ -3099,105 +4342,105 @@ void CMsgEditorView::HandleScrollEventL( CEikScrollBar* aScrollBar,
         case EEikScrollPageDown:
             {
             TInt scrolledPixels = iViewFocusPosition - AknScrollBarModel()->FocusPosition();
-            
-            if( IsReadOnly() )
-                {
-                TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
-
-                if(scrolledPixels > screenHeight)
-                    {
-                    scrolledPixels = screenHeight;
-                    }
-                else if(scrolledPixels < -screenHeight)
-                    {
-                    scrolledPixels = -screenHeight;
-                    }
-                }
-
-            // Round to the previous full line.
-            MsgEditorCommons::RoundToPreviousLine( scrolledPixels, iLineHeight );
-        
             if ( scrolledPixels != 0 )
                 {
-                ScrollViewL( Abs( scrolledPixels ), 
-                             scrolledPixels > 0 ? EMsgScrollUp :
-                                                  EMsgScrollDown,
-                             EFalse );
-                
-                EnsureCorrectScrollPartL( AknScrollBarModel()->FocusPosition() );
-                
-                iScrollBar->DrawScrollBarsNow();
-                }
-            break;
-            }
-        case EEikScrollThumbDragVert:
-            {
-            TInt currentPart( CurrentScrollPart( AknScrollBarModel()->FocusPosition() ) );
-            
-            if ( currentPart == iVisiblePart )
-                {
-                if ( iPopUpPart != -1 )
+                if( IsSlideFlowEnable() )
                     {
-                    // Hide the popup if visible
-                    static_cast<CAknDoubleSpanScrollBar*>( aScrollBar )->SetScrollPopupInfoTextL( KNullDesC );
-                    iPopUpPart = -1;
-                    }    
-                }
-            
-            if ( iPopUpPart == -1 )
-                {
-                TInt scrolledPixels = iViewFocusPosition - AknScrollBarModel()->FocusPosition();
-            
-                // Round to the previous full line.
-                MsgEditorCommons::RoundToPreviousLine( scrolledPixels, iLineHeight );
-            
-                if ( scrolledPixels != 0 )
+                    HandleScrollPageEventL(scrolledPixels < 0);
+                    }
+                else
                     {
+                    // Round to the previous full line.
+                    MsgEditorCommons::RoundToPreviousLine( scrolledPixels, iLineHeight );
+
                     ScrollViewL( Abs( scrolledPixels ), 
                                  scrolledPixels > 0 ? EMsgScrollUp :
                                                       EMsgScrollDown,
                                  EFalse );
+                    
+                    EnsureCorrectScrollPartL( AknScrollBarModel()->FocusPosition() );
+                    iScrollBar->DrawScrollBarsNow();
                     }
                 }
+            break;
+            }
             
-            TInt pixelsScrolled = iViewFocusPosition - AknScrollBarModel()->FocusPosition();
-            TMsgScrollDirection scrollDirection = pixelsScrolled > 0 ? EMsgScrollUp : EMsgScrollDown;
-
-            // If scrolled position is outside of visible part, then there is no need to 
-            // reset thumb position and no page number pop-up need be shown.
-            if ( ( currentPart != iVisiblePart ) &&
-                 EnsureVisiblePartScrollComplete ( AknScrollBarModel()->FocusPosition(), scrollDirection ) )
+        case EEikScrollThumbDragVert:
+            {
+            if(IsSlideFlowEnable())
                 {
-                // Thumb position is forced to the top most position of currently scrolled slide.
-                TInt currentHeight( 0 );
-                TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
-                TInt singlePartHeight = Max( screenHeight, iVisiblePartHeight / 10 );
-
-                for ( TInt current = 0; current < currentPart; current++ )
-                    {
-                    if ( current == iVisiblePart )
-                        {
-                        currentHeight += iVisiblePartHeight;
-                        }
-                    else
-                        {
-                        currentHeight += singlePartHeight;
-                        }
-                    }
-                
-                iScrollBar->DrawBackground( ETrue, EFalse );
-                iScrollBar->SetVFocusPosToThumbPos( currentHeight + screenHeight/20 );
-                
-                if ( currentPart != iPopUpPart )
-                    {
-                    ShowScrollPopupInfoTextL( static_cast<CAknDoubleSpanScrollBar*>( aScrollBar ), 
-                                              currentPart + 1 );
-                    iPopUpPart = currentPart;
-                    }
+                HandleScrollThumbDragVertEventL(aScrollBar);
                 }
             else
                 {
-                iScrollBar->DrawScrollBarsNow();
+                TInt currentPart( CurrentScrollPart( AknScrollBarModel()->FocusPosition() ) );
+                
+                if ( currentPart == iVisiblePart )
+                    {
+                    if ( iPopUpPart != -1 )
+                        {
+                        // Hide the popup if visible
+                        static_cast<CAknDoubleSpanScrollBar*>( aScrollBar )->SetScrollPopupInfoTextL( KNullDesC );
+                        iPopUpPart = -1;
+                        }    
+                    }
+                
+                if ( iPopUpPart == -1 )
+                    {
+                    TInt scrolledPixels = iViewFocusPosition - AknScrollBarModel()->FocusPosition();
+                
+                    // Round to the previous full line.
+                    MsgEditorCommons::RoundToPreviousLine( scrolledPixels, iLineHeight );
+                
+                    if ( scrolledPixels != 0 )
+                        {
+                        ScrollViewL( Abs( scrolledPixels ), 
+                                     scrolledPixels > 0 ? EMsgScrollUp :
+                                                          EMsgScrollDown,
+                                     EFalse );
+                        }
+                    }
+                
+                TInt pixelsScrolled = iViewFocusPosition - AknScrollBarModel()->FocusPosition();
+                TMsgScrollDirection scrollDirection = pixelsScrolled > 0 ? EMsgScrollUp : EMsgScrollDown;
+
+                // If scrolled position is outside of visible part, then there is no need to 
+                // reset thumb position and no page number pop-up need be shown.
+                if ( ( currentPart != iVisiblePart ) &&
+                     EnsureVisiblePartScrollComplete ( AknScrollBarModel()->FocusPosition(), scrollDirection ) )
+                    {
+                    // Thumb position is forced to the top most position of currently scrolled slide.
+                    TInt currentHeight( 0 );
+                    //TInt screenHeight = iViewRect.Height() - iBaseLineOffset;
+                    TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
+                    TInt singlePartHeight = Max( screenHeight, iVisiblePartHeight / 10 );
+
+                    for ( TInt current = 0; current < currentPart; current++ )
+                        {
+                        if ( current == iVisiblePart )
+                            {
+                            currentHeight += iVisiblePartHeight;
+                            }
+                        else
+                            {
+                            currentHeight += singlePartHeight;
+                            }
+                        }
+                    
+                    iScrollBar->DrawBackground( ETrue, EFalse );
+                    iScrollBar->SetVFocusPosToThumbPos( currentHeight + screenHeight/20 );
+                    
+                    if ( currentPart != iPopUpPart )
+                        {
+                        ShowScrollPopupInfoTextL( static_cast<CAknDoubleSpanScrollBar*>( aScrollBar ), 
+                                                  currentPart + 1 );
+                        iPopUpPart = currentPart;
+                        }
+                    }
+                else
+                    {
+                    iScrollBar->DrawScrollBarsNow();
+                    }
                 }
             break;
             }
@@ -3213,84 +4456,6 @@ void CMsgEditorView::HandleScrollEventL( CEikScrollBar* /*aScrollBar*/,
     {
     }
 #endif // RD_SCALABLE_UI_V2
-
-// ---------------------------------------------------------
-// CMsgEditorView::ScrollL
-//
-// Scroll text in current part (slide)
-// ---------------------------------------------------------
-//
-TInt CMsgEditorView::ScrollL(TInt aScrolledPixels)
-    {
-    TInt scrolledPixels = aScrolledPixels;
-    TInt focusPos = iViewFocusPosition;
-    TInt currentPart( CurrentScrollPart( AknScrollBarModel()->FocusPosition() ) );
-
-    if ( currentPart == iVisiblePart )
-        {
-        if ( iPopUpPart != -1 )
-            {
-            // Hide the popup if visible
-            static_cast<CAknDoubleSpanScrollBar*>( iScrollBar->VerticalScrollBar() )->SetScrollPopupInfoTextL( KNullDesC );
-            iPopUpPart = -1;
-            }    
-        }
-
-    if ( iPopUpPart == -1 )
-        {
-        // Round to the previous full line.
-        MsgEditorCommons::RoundToPreviousLine( scrolledPixels, iLineHeight );
-    
-        if ( scrolledPixels != 0 )
-            {
-            ScrollViewL( Abs( scrolledPixels ), scrolledPixels>0?EMsgScrollUp:EMsgScrollDown, EFalse );
-            EnsureCorrectScrollPartL( AknScrollBarModel()->FocusPosition() );
-            }
-        }
-    
-    TInt pixelsScrolled = iViewFocusPosition - AknScrollBarModel()->FocusPosition();
-    TMsgScrollDirection scrollDirection = pixelsScrolled > 0 ? EMsgScrollUp : EMsgScrollDown;
-
-    // If scrolled position is outside of visible part, then there is no need to 
-    // reset thumb position and no page number pop-up need be shown.
-    if ( (currentPart!=iVisiblePart) && EnsureVisiblePartScrollComplete ( AknScrollBarModel()->FocusPosition(), scrollDirection ) )
-        {
-        // Thumb position is forced to the top most position of currently scrolled slide.
-        TInt currentHeight( 0 );
-        //TInt screenHeight = iViewRect.Height() - iBaseLineOffset;
-        TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
-        TInt singlePartHeight = Max( screenHeight, iVisiblePartHeight / 10 );
-
-        for ( TInt current = 0; current < currentPart; current++ )
-            {
-            if ( current == iVisiblePart )
-                {
-                currentHeight += iVisiblePartHeight;
-                }
-            else
-                {
-                currentHeight += singlePartHeight;
-                }
-            }
-        
-        iScrollBar->DrawBackground( ETrue, EFalse );
-        iScrollBar->SetVFocusPosToThumbPos( currentHeight );
-        
-        if ( currentPart != iPopUpPart )
-            {
-            ShowScrollPopupInfoTextL( static_cast<CAknDoubleSpanScrollBar*>( iScrollBar->VerticalScrollBar() ), 
-                                      currentPart + 1 );
-            iPopUpPart = currentPart;
-            }
-        }
-    else
-        {
-        iScrollBar->SetVFocusPosToThumbPos( iViewFocusPosition );
-        iScrollBar->DrawScrollBarsNow();
-        }
-
-    return (focusPos - iViewFocusPosition);
-    }
 
 // ---------------------------------------------------------
 // CMsgEditorView::Draw
@@ -3363,18 +4528,18 @@ void CMsgEditorView::ReportFocusMovement( TInt aFocusEvent )
 CMsgBaseControl* CMsgEditorView::ControlFromPosition( TPoint aPosition, 
                                                       TBool aEvaluateHitTest ) const
     {
-    CMsgBaseControl* control = NULL;
-    
     if ( iHeader->Rect().Contains( aPosition ) )
         {
-        control = iHeader->ControlFromPosition( aPosition, aEvaluateHitTest );
+        return iHeader->ControlFromPosition( aPosition, aEvaluateHitTest );
+        }
+    else if( iBody->Rect().Contains( aPosition ) )
+        {
+        return iBody->ControlFromPosition( aPosition, aEvaluateHitTest );
         }
     else
         {
-        control = iBody->ControlFromPosition( aPosition, aEvaluateHitTest );
+        return NULL;
         }
-        
-    return control;
     }
 
 // ---------------------------------------------------------
@@ -3387,28 +4552,44 @@ TBool CMsgEditorView::EnsureVisiblePartScrollComplete( TInt aFocusPosition,
                                                        TMsgScrollDirection aDirection )
     {
     MEBLOGGER_ENTERFN( "CMsgEditorView::EnsureVisiblePartScrollComplete" );
-    TInt scrollTillPosition( 0 );
+
     TBool result = ETrue;
-    
-    TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
-    TInt singlePartHeight = Max( screenHeight, iVisiblePartHeight / 10 );
 
-    for ( TInt current = 0; current < iVisiblePart ; current++ )
-        scrollTillPosition += singlePartHeight;
-    
-    if ( aDirection == EMsgScrollDown )
+    if(IsSlideFlowEnable())
         {
-        scrollTillPosition += iVisiblePartHeight;
-
-        if ( aFocusPosition < scrollTillPosition )
-            result = EFalse;
+        TRect rect(iBody->Rect());
+        if(aDirection == EMsgScrollDown)
+            {
+            return (rect.iBr.iY <= iViewRect.Height());
+            }
+        else
+            {
+            return (rect.iTl.iY >= 0);
+            }
         }
     else
         {
-        if ( aFocusPosition > scrollTillPosition )
-            result = EFalse;
-        }
+        TInt scrollTillPosition( 0 );
+        TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
+        TInt singlePartHeight = Max( screenHeight, iVisiblePartHeight / 10 );
     
+        for ( TInt current = 0; current < iVisiblePart ; current++ )
+            scrollTillPosition += singlePartHeight;
+        
+        if ( aDirection == EMsgScrollDown )
+            {
+            scrollTillPosition += iVisiblePartHeight;
+    
+            if ( aFocusPosition < scrollTillPosition )
+                result = EFalse;
+            }
+        else
+            {
+            if ( aFocusPosition > scrollTillPosition )
+                result = EFalse;
+            }
+        }
+
     MEBLOGGER_LEAVEFN( "CMsgEditorView::EnsureVisiblePartScrollComplete" );
     return result;
     }
@@ -3431,47 +4612,43 @@ void CMsgEditorView::ScrollViewL( TInt aPixelsToScroll,
     
     const TAknDoubleSpanScrollBarModel* model = AknScrollBarModel();
     
-    // Maximum value for thumb [0..scrollSpan]
-    TInt scrollSpan = model->ScrollSpan();
-    
-    // Position of the topmost part of the thumb
-    TInt thumbTopPos = iViewFocusPosition;
-    
-    // Position of the downmost part of the thumb
-    TInt thumbDownPos = thumbTopPos + model->WindowSize();
-    
-    // Bound check
-    if ( ( aDirection == EMsgScrollUp && thumbTopPos <= 0 ) ||
-         ( aDirection == EMsgScrollDown && thumbDownPos >= scrollSpan ) )
+    if(!IsSlideFlowEnable())
         {
-        return;
-        }
-    
-    if ( CurrentScrollPart( iViewFocusPosition ) != iVisiblePart )
-        {
-        // No need to perform scrolling, if the visible part is completely
-        // scrolled and the new scroll position is outside the visible part
-        if ( EnsureVisiblePartScrollComplete ( iViewFocusPosition, aDirection ) )
+        // Maximum value for thumb [0..scrollSpan]
+        TInt scrollSpan = model->ScrollSpan();
+        
+        // Position of the topmost part of the thumb
+        TInt thumbTopPos = iViewFocusPosition;
+        
+        // Position of the downmost part of the thumb
+        TInt thumbDownPos = thumbTopPos + model->WindowSize();
+        
+        // Bound check
+        if ( ( aDirection == EMsgScrollUp && thumbTopPos <= 0 ) ||
+             ( aDirection == EMsgScrollDown && thumbDownPos >= scrollSpan ) )
+            {
             return;
+            }
+
+        if ( CurrentScrollPart( iViewFocusPosition ) != iVisiblePart )
+            {
+            // No need to perform scrolling, if the visible part is completely
+            // scrolled and the new scroll position is outside the visible part
+            if ( EnsureVisiblePartScrollComplete ( iViewFocusPosition, aDirection ) )
+                {
+                return;
+                }
+            }
         }
     
     DoScrollViewL( aPixelsToScroll, aDirection );
             
     if ( aMoveThumb )
         {
-        // Scroll bar thumb is moved only if caller requests it. Scroll bar seems to
-        // add/subtract 1 pixel depending of direction.
-        TInt directionMultiplier( -1 );
-        if ( aDirection == EMsgScrollDown )
-            {
-            directionMultiplier = 1;
-            }
-        
-        iScrollBar->SetVFocusPosToThumbPos( model->FocusPosition() - 
-                                                directionMultiplier * 1 + 
-                                                directionMultiplier * aPixelsToScroll );
+        iScrollBar->DrawBackground(ETrue, EFalse);
+        iScrollBar->SetVFocusPosToThumbPos(-iFormOffset);
         }
-    
+
     MEBLOGGER_LEAVEFN( "CMsgEditorView::ScrollViewL" );
     }
 
@@ -3523,38 +4700,7 @@ void CMsgEditorView::EnsureCorrectCursorPosition()
 //
 void CMsgEditorView::EnsureCorrectScrollPartL( TInt aFocusPosition )
     {
-    TInt currentPart( CurrentScrollPart( aFocusPosition ) );
-    if ( currentPart != iVisiblePart )
-        {
-        MMsgEditorObserver::TMsgFocusEvent focusEvent = MMsgEditorObserver::EMsgFocusNone;
-        
-        if ( currentPart > iVisiblePart )
-            {
-            focusEvent = MMsgEditorObserver::EMsgFocusAtBottom;
-            }
-        else
-            {
-            focusEvent = MMsgEditorObserver::EMsgFocusAtTop;
-            }
-        
-        MMsgEditorObserver::TMsgAfterFocusEventFunc after = 
-                                        MMsgEditorObserver::EMsgAfterFocusNone;
-        
-        iVisiblePart = currentPart;
-        iEditorObserver.EditorObserver( MMsgEditorObserver::EMsgHandleFocusChange,
-                                        &focusEvent,
-                                        &after,
-                                        &iVisiblePart );
-        
-        if ( after != MMsgEditorObserver::EMsgAfterFocusNone )
-            {
-            SetAfterFocusL( after );
-            }
-    
-        EnsureCorrectFormPosition( EFalse, EFalse );
-
-        UpdateScrollBarL();
-        }
+    GotoPartL( CurrentScrollPart( aFocusPosition ) );
     }
 
 // ---------------------------------------------------------
@@ -3569,63 +4715,75 @@ void CMsgEditorView::EnsureCorrectScrollPartL( TInt aFocusPosition )
 //
 TInt CMsgEditorView::CurrentScrollPart( TInt aFocusPosition )
     {
-    TInt result( 0 );
-    
-    TInt currentHeight( 0 );
-    TInt topPart( -1 );
-    TInt bottomPart( -1 );
-    
-    TInt topPosition( aFocusPosition );
-    
-    TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
-    TInt singlePartHeight = Max( screenHeight, iVisiblePartHeight / 10 );
-
-    for ( TInt current = 0; current < iScrollParts; current++ )
+    if(IsSlideFlowEnable())
         {
-        if ( current == iVisiblePart )
-            {
-            currentHeight += iVisiblePartHeight;
-            bottomPart = current;
-            }
-        else
-            {
-            currentHeight += singlePartHeight;
-            }
-        
-        if ( topPart == -1 &&
-             topPosition < currentHeight )
-            {
-            topPart = current;
-            }
-        
-        }
-    
-    if ( topPart == -1 )
-        {
-        topPart = iScrollParts - 1;
-        }
-    
-    if ( bottomPart == -1 )
-        {
-        bottomPart = iScrollParts - 1;
-        }
-    
-    if ( topPart == bottomPart )
-        {
-        result = topPart;
+        return BodyIndexByOffset(aFocusPosition);
         }
     else
         {
-        if ( topPart != iVisiblePart )
+        TInt result( 0 );
+        TInt currentHeight( 0 );
+        TInt topPart( -1 );
+        TInt bottomPart( -1 );
+
+        TInt topPosition( aFocusPosition );
+        TInt bottomPosition ( topPosition + iViewRect.Height() - iBaseLineOffset );
+
+        TInt screenHeight = MsgEditorCommons::EditorViewHeigth() - iBaseLineOffset;
+        TInt singlePartHeight = Max( screenHeight, iVisiblePartHeight / 10 );
+
+        for ( TInt current = 0; current < iScrollParts; current++ )
+            {
+            if ( current == iVisiblePart )
+                {
+                currentHeight += iVisiblePartHeight;
+                }
+            else
+                {
+                currentHeight += singlePartHeight;
+                }
+
+            if ( topPart == -1 &&
+                 topPosition < currentHeight )
+                {
+                topPart = current;
+                }
+            
+            if ( bottomPart == -1 &&
+                 bottomPosition <= currentHeight )
+                {
+                bottomPart = current;
+                }
+            }
+        
+        if ( topPart == -1 )
+            {
+            topPart = iScrollParts - 1;
+            }
+        
+        if ( bottomPart == -1 )
+            {
+            bottomPart = iScrollParts - 1;
+            }
+        
+        if ( topPart == bottomPart )
             {
             result = topPart;
             }
         else
             {
-            result = bottomPart;
+            if ( topPart != iVisiblePart )
+                {
+                result = topPart;
+                }
+            else
+                {
+                result = bottomPart;
+                }
             }
+        
+        return result;
         }
-    return result;
     }  
 
 // ---------------------------------------------------------
@@ -3822,71 +4980,72 @@ void CMsgEditorView::DoScrollViewL( TInt& aPixelsToScroll,
     while ( pixelsLeftToScroll > 0 )
         {
         MEBLOGGER_WRITEF(_L("MEB: CMsgEditorView::DoScrollViewL: pixelsLeftToScroll %d "), pixelsLeftToScroll );
-        
-        CMsgBaseControl* scrolledControl = NULL;
-       
-        if ( aDirection == EMsgScrollUp )
+
+        if(!IsSlideFlowEnable())
             {
-            // Control located at first visible line
-            scrolledControl = ControlFromPosition( TPoint( iViewRect.Width() / 2, iLineHeight / 2 + iBaseLineOffset ), EFalse );
-            }
-        else
-            {
-            // Control located at last visible line
-            scrolledControl = ControlFromPosition( TPoint( iViewRect.Width() / 2, iViewRect.Height() - iLineHeight / 2 ), EFalse );
-            }
-    
-        if ( scrolledControl )
-            {
-            // Assumption: Control will make internal scrolling only if
-            // it's height is greater or equal to view height.
-            if ( !ControlFullyVisible( scrolledControl ) )
-                {   
-                // Calculate how many pixels needs to be scrolled in order
-                // to control be fully visible.
-                TInt controlPixels( Abs( scrolledControl->Position().iY ) );
-                
-                if ( aDirection == EMsgScrollDown )
-                    {
-                    // Round to the previous full line.
-                    MsgEditorCommons::RoundToPreviousLine( controlPixels, iLineHeight );
-                    }
-                else 
-                    {
-                    // Round to the next full line.
-                    MsgEditorCommons::RoundToNextLine( controlPixels, iLineHeight );
-                    }
-                
-                // Scroll form so that control is fully visible or
-                // at minimum one line height and at maximum pixels left to scroll.
-                TInt scrollFormByPixels = Max( iLineHeight, Min( pixelsLeftToScroll, 
-                                                                 controlPixels ) );                    
-                
-                TInt oldYPos( scrolledControl->Position().iY );
-                
-                // To disable drawing in the middle of scrolling.
-                iStateFlags |= EMsgStateRefreshing;
-                
-                if ( CurrentScrollPart( iViewFocusPosition - aPixelsToScroll + pixelsLeftToScroll + directionMultiplier * scrollFormByPixels ) != iVisiblePart )
-                    {
-                    // Do not scroll form if scrolling would make scroll part change.
-                    break;
-                    }
-                
-                ScrollForm( -directionMultiplier * scrollFormByPixels, EFalse );
-                
-                // Substract the pixels really moved.
-                pixelsLeftToScroll -= Abs( oldYPos - scrolledControl->Position().iY );
-                
-                MEBLOGGER_WRITEF(_L("MEB: CMsgEditorView::DoScrollViewL: pixelsLeftToScroll after fully visible %d "), pixelsLeftToScroll );
-                }
-            
-            if ( pixelsLeftToScroll > 0 )
+            CMsgBaseControl* scrolledControl = NULL;
+           
+            if ( aDirection == EMsgScrollUp )
                 {
-                // Perform internal scrolling for the control if there is still pixels left to scroll.
-                pixelsLeftToScroll -= scrolledControl->ScrollL( pixelsLeftToScroll, aDirection );
+                // Control located at first visible line
+                scrolledControl = ControlFromPosition( TPoint( iViewRect.Width() / 2, iLineHeight / 2 + iBaseLineOffset ), EFalse );
+                }
+            else
+                {
+                // Control located at last visible line
+                scrolledControl = ControlFromPosition( TPoint( iViewRect.Width() / 2, iViewRect.Height() - iLineHeight / 2 ), EFalse );
+                }
+        
+            if ( scrolledControl )
+                {
+                // Assumption: Control will make internal scrolling only if
+                // it's height is greater or equal to view height.
+                if ( !ControlFullyVisible( scrolledControl ) )
+                    {   
+                    // Calculate how many pixels needs to be scrolled in order
+                    // to control be fully visible.
+                    TInt controlPixels( Abs( scrolledControl->Position().iY ) );
+                    
+                    if ( aDirection == EMsgScrollDown )
+                        {
+                        // Round to the previous full line.
+                        MsgEditorCommons::RoundToPreviousLine( controlPixels, iLineHeight );
+                        }
+                    else 
+                        {
+                        // Round to the next full line.
+                        MsgEditorCommons::RoundToNextLine( controlPixels, iLineHeight );
+                        }
+                    
+                    // Scroll form so that control is fully visible or
+                    // at minimum one line height and at maximum pixels left to scroll.
+                    TInt scrollFormByPixels = Max( iLineHeight, Min( pixelsLeftToScroll, controlPixels ) );
+                    TInt oldYPos( scrolledControl->Position().iY );
+                    
+                    // To disable drawing in the middle of scrolling.
+                    iStateFlags |= EMsgStateRefreshing;
+
+                    if ( CurrentScrollPart( iViewFocusPosition - aPixelsToScroll + pixelsLeftToScroll + directionMultiplier * scrollFormByPixels ) != iVisiblePart )
+                        {
+                        // Do not scroll form if scrolling would make scroll part change.
+                        break;
+                        }
+                    
+                    ScrollForm( -directionMultiplier * scrollFormByPixels, EFalse );
+                    
+                    // Substract the pixels really moved.
+                    pixelsLeftToScroll -= Abs( oldYPos - scrolledControl->Position().iY );
+                    
+                    MEBLOGGER_WRITEF(_L("MEB: CMsgEditorView::DoScrollViewL: pixelsLeftToScroll after fully visible %d "), pixelsLeftToScroll );
+                    }
                 
-                MEBLOGGER_WRITEF(_L("MEB: CMsgEditorView::DoScrollViewL: pixelsLeftToScroll after internal scrolling %d "), pixelsLeftToScroll );
+                if ( pixelsLeftToScroll > 0 )
+                    {
+                    // Perform internal scrolling for the control if there is still pixels left to scroll.
+                    pixelsLeftToScroll -= scrolledControl->ScrollL( pixelsLeftToScroll, aDirection );
+                    
+                    MEBLOGGER_WRITEF(_L("MEB: CMsgEditorView::DoScrollViewL: pixelsLeftToScroll after internal scrolling %d "), pixelsLeftToScroll );
+                    }
                 }
             }
         
@@ -3898,44 +5057,46 @@ void CMsgEditorView::DoScrollViewL( TInt& aPixelsToScroll,
             // fully visible. Also do not scroll form if scrolling would make scroll part change.
             
             TBool needScroll = EFalse;
-            TInt height = iViewRect.Height(); 
+            TInt h = iViewRect.Height(); 
 
             if(aDirection == EMsgScrollDown)
                 {
-                TInt length = lastControl->Rect().iBr.iY;
-                needScroll = (length > height);
+                TInt y = lastControl->Rect().iBr.iY;
+                needScroll = (y > h);
                 }
             else
                 {
-                TInt length = firstControl->Rect().iTl.iY;
-                needScroll = (length < height);
+                TInt y = firstControl->Rect().iTl.iY;
+                needScroll = (y < h);
                 }
             
             TBool isCurrent = (CurrentScrollPart( iViewFocusPosition - aPixelsToScroll + pixelsLeftToScroll + directionMultiplier * iLineHeight ) == iVisiblePart);
 
-            if ( needScroll && isCurrent )
+            if(IsSlideFlowEnable())
                 {
-                
-                if ( pixelsLeftToScroll > 0 )
-                    {
-                    // To disable drawing in the middle of scrolling.
-                    iStateFlags |= EMsgStateRefreshing;
-                    
-                    ScrollForm( -directionMultiplier * iLineHeight, EFalse );
-                    pixelsLeftToScroll -= iLineHeight;
-                    
-                    MEBLOGGER_WRITEF(_L("MEB: CMsgEditorView::DoScrollViewL: pixelsLeftToScroll after single scrolling %d "), pixelsLeftToScroll );
-                    
-                    }
+                ScrollForm( -directionMultiplier * pixelsLeftToScroll, EFalse );
+                pixelsLeftToScroll = 0;
                 }
-            else                
+            else if ( needScroll && isCurrent )
+                {
+                // To disable drawing in the middle of scrolling.
+                iStateFlags |= EMsgStateRefreshing;
+                
+                ScrollForm( -directionMultiplier * iLineHeight, EFalse );
+                pixelsLeftToScroll -= iLineHeight;
+
+                MEBLOGGER_WRITEF(_L("MEB: CMsgEditorView::DoScrollViewL: pixelsLeftToScroll after single scrolling %d "), pixelsLeftToScroll );
+                }
+            else
                 {
                 break;                    
                 }
             }
         }
-        
+
     iViewFocusPosition += directionMultiplier * ( aPixelsToScroll - pixelsLeftToScroll );
+    
+    ResolveLayoutForAllVisibleSlidesL();
     
     if ( iStateFlags & EMsgStateRefreshing )
         {

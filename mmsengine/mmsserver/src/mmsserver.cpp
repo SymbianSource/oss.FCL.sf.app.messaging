@@ -4712,6 +4712,11 @@ void CMmsServerMtm::GcOutBoxMessagesL()
                         break;
                     }
                 }
+            if(entry.Connected())
+                {
+                entry.SetConnected(EFalse);
+                iServerEntry->ChangeEntry(entry);
+                }
             }
         CleanupStack::PopAndDestroy( selection );
         iCommand = EMmsSend;

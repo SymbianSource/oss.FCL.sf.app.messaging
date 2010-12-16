@@ -126,6 +126,12 @@ void CSmilPresentation::DoCancel()
 	iTimer.Cancel();
 	}
 
+TInt CSmilPresentation::RunError( TInt /*aError*/ )
+    {
+    // Just ignore any error and continue without
+    // any handling to allow smooth execution. 
+    return KErrNone;
+    }
 void CSmilPresentation::AfterL(MSmilActive* aActive, const TSmilTime& aDelay, TBool aLazy)
 	{
 	TSmilTime at = iClock + aDelay;

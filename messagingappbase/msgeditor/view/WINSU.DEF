@@ -214,4 +214,7 @@ EXPORTS
 	?VirtualVisibleTop@CMsgExpandableTextEditorControl@@UAEHXZ @ 213 NONAME ; int CMsgExpandableTextEditorControl::VirtualVisibleTop(void)
 	?HandleEdwinSizeEventL@CMsgExpandableTextEditorControl@@UAEHPAVCEikEdwin@@W4TEdwinSizeEvent@MEikEdwinSizeObserver@@VTSize@@@Z @ 214 NONAME ; int CMsgExpandableTextEditorControl::HandleEdwinSizeEventL(class CEikEdwin *, enum MEikEdwinSizeObserver::TEdwinSizeEvent, class TSize)
 	?HandleEdwinEventL@CMsgExpandableTextEditorControl@@UAEXPAVCEikEdwin@@W4TEdwinEvent@MEikEdwinObserver@@@Z @ 215 NONAME ; void CMsgExpandableTextEditorControl::HandleEdwinEventL(class CEikEdwin *, enum MEikEdwinObserver::TEdwinEvent)
+	?IsSlideFlowEnable@CMsgEditorView@@QBEHXZ @ 216 NONAME ; int CMsgEditorView::IsSlideFlowEnable(void) const
+	?SetFindModeL@CMsgEditorView@@QAEXH@Z @ 217 NONAME ; void CMsgEditorView::SetFindModeL(int)
+	?PrepareToExit@CMsgEditorView@@QAEXXZ @ 218 NONAME ; void CMsgEditorView::PrepareToExit(void)
 

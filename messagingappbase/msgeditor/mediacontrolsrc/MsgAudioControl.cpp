@@ -74,7 +74,11 @@ void CMsgAudioControl::ConstructL( CMsgEditorView& aParent, MMsgAsyncControlObse
     {
     BaseConstructL( aParent, aObserver );
     
-    SetRect( MsgEditorCommons::MsgDataPane() );
+    TRect rect = MsgEditorCommons::MsgDataPane();
+    rect.Move(0xFFFF, 0); // Init the loading animation out of the screen.
+    SetRect( rect );
+
+    HandleResourceChange( KEikDynamicLayoutVariantSwitch ); // init layout.
     }
 
 

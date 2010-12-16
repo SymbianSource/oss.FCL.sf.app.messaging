@@ -203,18 +203,21 @@ void CMmsViewerChangeSlideOperation::DoFinalizeL()
     iView.SetCurrentPart( iNextNum );
     iDocument.SetCurrentSlide( iNextNum );
 
-    if ( iNextNum )
+    if(!iView.IsSlideFlowEnable()) // don't remove control for slide flow
         {
-        // without this change Japanese pictographs in subject field 
-        // appear on slides 2,...
-        iHeader.RemoveSubjectContentL();
-        iHeader.RemoveFromViewL();
-        }
-    else
-        {
-        // restore mms subject, as it has been removed, if changing slide 2->1.
-        iHeader.RestoreSubjectContentL();
-        iHeader.AddToViewL();
+        if ( iNextNum )
+            {
+            // without this change Japanese pictographs in subject field 
+            // appear on slides 2,...
+            iHeader.RemoveSubjectContentL();
+            iHeader.RemoveFromViewL();
+            }
+        else
+            {
+            // restore mms subject, as it has been removed, if changing slide 2->1.
+            iHeader.RestoreSubjectContentL();
+            iHeader.AddToViewL();
+            }
         }
 
     iNextState = EMmsViewerChangeSlideEnd;

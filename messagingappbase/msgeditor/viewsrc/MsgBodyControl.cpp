@@ -118,7 +118,8 @@ void CMsgBodyControl::ConstructL()
 
     iEditor = new ( ELeave ) CMsgBodyControlEditor( this, 
                                                     iControlModeFlags, 
-                                                    iBaseControlObserver );
+                                                    iBaseControlObserver,
+                                                    this );
     iEditor->ConstructL();
     
     iEditor->SetControlType(iControlType);   
@@ -195,6 +196,15 @@ EXPORT_C void CMsgBodyControl::SetTextContentL( CRichText& aText )
         }
         
     iControlModeFlags |= EMsgControlModeModified;
+
+    // for sent box navi MMS from navi pane with one slide messaging
+    // iWidth!=0 means this control has been created already.
+    if(IsReadOnly() && Size().iWidth)
+        {
+        TSize size = Size();
+        SetAndGetSizeL(size);
+        iBaseControlObserver->HandleBaseControlEventRequestL(this, EMsgHeightChanged);
+        }
     }
 
 // ---------------------------------------------------------
@@ -360,6 +370,18 @@ EXPORT_C void CMsgBodyControl::SetAndGetSizeL( TSize& aSize )
         }
     else
         {
+        if(IsReadOnly())
+            {
+            iMaxBodyHeight = MsgEditorCommons::ScreenHeigth();
+            iEditor->SetMaximumHeight(iMaxBodyHeight);
+            iEditor->SetUpperFullFormattingLength(0xFFFFFFF);   // full text formating
+            
+            if(iEditor->Size().iWidth != aSize.iWidth) // if eidtor size is not correct, then set it.
+                {
+                iEditor->SetSize(aSize);
+                }
+            }
+        
         if ( iEditor->TextLayout() )
             {
             if ( iEditor->TextLayout()->IsFormattingBand() )
@@ -370,6 +392,11 @@ EXPORT_C void CMsgBodyControl::SetAndGetSizeL( TSize& aSize )
                 // change. This is the reason we can safely use 
                 // max body height with it.
                 bodySize.iHeight = iMaxBodyHeight;
+                
+                if(IsReadOnly())
+                    {
+                    iEditor->SetSize(bodySize);                 // format all text at once
+                    }
                 }
             else
                 {
@@ -379,14 +406,19 @@ EXPORT_C void CMsgBodyControl::SetAndGetSizeL( TSize& aSize )
                     {
                     iEditor->TextView()->FinishBackgroundFormattingL();
                     }
-                    
-                bodySize.iHeight = iEditor->TextLayout()->NumFormattedLines() * iLineHeight;
-                }    
-           }
+
+                bodySize.iHeight = iEditor->VirtualHeight();
+                }
+            }
         }
 
-    iEditor->SetAndGetSizeL( bodySize );
-    
+    iEditor->SetAndGetSizeL( bodySize ); // format all text here
+
+    if(IsReadOnly())
+        {
+        bodySize.iHeight = iEditor->VirtualHeight();
+        }
+
     MsgEditorCommons::RoundToNextLine( bodySize.iHeight, iLineHeight );
         
     SetSizeWithoutNotification( bodySize );
@@ -553,9 +585,73 @@ void CMsgBodyControl::SizeChanged()
         }
     else
         {
-        TPoint editorPosition( Position() );
+        TPoint editorPosition(Position());
         editorPosition.iY += iEditorTop;
-        iEditor->SetExtent( editorPosition, iEditor->Size() );
+        TRect editorRect(editorPosition, iEditor->Size());
+
+        if(!IsReadOnly())
+            {
+            iEditor->SetRect( editorRect );
+            }
+        else
+            {
+            // for avoiding from re-formating and doing draw works which are out of screen, 
+            // do not use SetRect here
+            
+            TRect drawingRect;
+            if(editorRect.Height() < iEditor->MaximumHeight())
+                {
+                // less than max height
+                drawingRect = iEditor->Border().InnerRect(editorRect);
+                drawingRect = iEditor->Margins().InnerRect(drawingRect);
+                }
+            else
+                {
+                // top and bottom y pos
+                const TPoint screenTlPos = PositionRelativeToScreen() - Position();
+                const TInt topY = -screenTlPos.iY;
+                const TInt bottomY = Min(iMaxBodyHeight+topY, Rect().iBr.iY);
+
+                // calculate editor rect : according to its size and pos
+                // make sure editor rect in screen
+                TInt topOffset = editorRect.iTl.iY - topY;
+                if(topOffset < 0)
+                    {
+                    editorRect.Move(-TPoint(0,topOffset));
+                    }
+
+                if(editorRect.iBr.iY > bottomY)
+                    {
+                    editorRect.iBr.iY = bottomY;
+                    if(editorRect.iBr.iY <= editorRect.iTl.iY)
+                        {
+                        editorRect.iBr.iY = editorRect.iTl.iY + 1;
+                        }
+                    }
+
+                // for optimizing editor drawing performance
+                // only draw the texts which are in screen
+                drawingRect = iEditor->Border().InnerRect(editorRect);
+                drawingRect = iEditor->Margins().InnerRect(drawingRect);
+
+                // handle inner text offset
+                CTextLayout* layout = iEditor->TextLayout();
+                layout->RestrictScrollToTopsOfLines(EFalse);
+                TInt pixelsAboveBand = layout->PixelsAboveBand();
+                TInt pixelsToScroll(pixelsAboveBand + editorPosition.iY - drawingRect.iTl.iY);
+                if(pixelsToScroll)
+                    {
+                    layout->ChangeBandTopNoLimitBorderL(pixelsToScroll);
+                    }
+                }
+
+            // ensure editor pos is same with the viewrect tl
+            // or find-item will have a worng coordinate system
+            TPoint editorTl = editorRect.iTl;
+            editorTl.iY = drawingRect.iTl.iY;
+            iEditor->SetPosition(editorTl);
+            iEditor->TextView()->SetViewRect(drawingRect);
+            }
     
         AknsUtils::RegisterControlPosition( this );
         AknsUtils::RegisterControlPosition( iEditor );
@@ -691,10 +787,10 @@ void CMsgBodyControl::ResolveFontMetrics()
                            textLineLayout );
                            
     iEditorTop = textLayout.TextRect().iTl.iY - msgBodyPane.Rect().iTl.iY;
-    
+
     // Set editor alignment
     iEditor->SetAlignment( textLineLayout.iJ );
-    
+
     iEditor->SetMaximumHeight( MsgEditorCommons::MaxBodyHeight() - iEditorTop );
     }
 
@@ -722,6 +818,18 @@ void CMsgBodyControl::GetCaptionForFep( TDes& aCaption ) const
         aCaption.Copy( ptr ); 
         }                   
     }
+
+// ---------------------------------------------------------
+// CMsgBodyControl::HandleParsingComplete
+// ItemFinder will move editor offset without authorization when parsing.
+// We will need to set focus to correct position.
+// ---------------------------------------------------------
+//
+void CMsgBodyControl::HandleParsingComplete()
+    {
+    SizeChanged();
+    }
+
 // ---------------------------------------------------------
 // CMsgBodyControl::SetIcfPromptTextL()
 // Loads ICF Prompt text of Message Body control

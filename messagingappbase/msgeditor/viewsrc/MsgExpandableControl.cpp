@@ -389,7 +389,7 @@ EXPORT_C void CMsgExpandableControl::SetAndGetSizeL( TSize& aSize )
         }
     else
         {
-        thisSize.iHeight = iSize.iHeight;
+        thisSize.iHeight = editorSize.iHeight;
         }
     
     // Control height is always atleast one line height

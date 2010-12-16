@@ -39,7 +39,7 @@ inline TInt CMsgAudioControl::Volume()
 inline TInt CMsgAudioControl::MaxVolume()
     {
     TInt volume( 0 );
-    if ( iAudioPlayer )
+    if ( iAudioPlayer && iState>=EMsgAsyncControlStateReady )
         {
         volume = iAudioPlayer->MaxVolume( );
         }

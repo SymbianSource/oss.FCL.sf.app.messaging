@@ -894,14 +894,15 @@ void CMsgExpandableControlEditor::DoLayoutEdwin( const TRect& aEdwinParent,
                                                  const TAknTextLineLayout& aLayout )
     {
     TPoint position( iPosition );
-    
+    TInt msgBaseLineDelta( MsgEditorCommons::MsgBaseLineDelta() );
+
     // Layout edwin as two lines to get the base line delta override activated.
     TInt lineNumber( 0 );
     AknLayoutUtils::LayoutEdwin( this,
                                  aEdwinParent,
                                  aLayout,
                                  2,
-                                 MsgEditorCommons::MsgBaseLineDelta(),
+                                 msgBaseLineDelta,
                                  EAknsCIQsnTextColorsCG6,
                                  lineNumber );
     
@@ -911,7 +912,7 @@ void CMsgExpandableControlEditor::DoLayoutEdwin( const TRect& aEdwinParent,
     AknLayoutUtils::GetEdwinVerticalPositionAndHeightFromLines( 
                                                 aEdwinParent.Size().iHeight,
                                                 aLayout,
-                                                MsgEditorCommons::MsgBaseLineDelta(),
+                                                msgBaseLineDelta,
                                                 iNumberOfLines,
                                                 notUsed,
                                                 height );
@@ -1217,27 +1218,24 @@ void CMsgExpandableControlEditor::OuterAndInnerRects( TRect& aOuter, TRect& aInn
 //
 void CMsgExpandableControlEditor::ResolveLayouts()
     {
+    const TRect dataPane = MsgEditorCommons::MsgDataPane();
+    
     TAknLayoutRect msgTextPane;
-    msgTextPane.LayoutRect( MsgEditorCommons::MsgDataPane(),
-                            AknLayoutScalable_Apps::msg_text_pane( 0 ).LayoutLine() );
+    msgTextPane.LayoutRect( dataPane, AknLayoutScalable_Apps::msg_text_pane( 0 ).LayoutLine() );
                             
     TAknLayoutRect msgHeaderPane;
-    msgHeaderPane.LayoutRect( msgTextPane.Rect(),
-                              AknLayoutScalable_Apps::msg_header_pane().LayoutLine() );
+    msgHeaderPane.LayoutRect( msgTextPane.Rect(), AknLayoutScalable_Apps::msg_header_pane().LayoutLine() );
                               
-    iTextLayout.LayoutText( msgHeaderPane.Rect(),
-                            AknLayoutScalable_Apps::msg_header_pane_t2( 0 ).LayoutLine() );
-        TRect dataPane = MsgEditorCommons::MsgDataPane();
+    iTextLayout.LayoutText( msgHeaderPane.Rect(), AknLayoutScalable_Apps::msg_header_pane_t2( 0 ).LayoutLine() );
 
+    TAknTextLineLayout editorLineLayout;                          
+    editorLineLayout = AknLayoutScalable_Apps::msg_header_pane_t2( 0 ).LayoutLine();
 
-        TAknTextLineLayout editorLineLayout;
-        TAknLayoutText    editorLayout;
-                                                                  
-        editorLineLayout = AknLayoutScalable_Apps::msg_header_pane_t2( 0 ).LayoutLine();
-        
-        editorLayout.LayoutText( msgHeaderPane.Rect(), editorLineLayout );
+    TAknLayoutText editorLayout;
+    editorLayout.LayoutText( msgHeaderPane.Rect(), editorLineLayout );
 
-       iEditortop = editorLayout.TextRect().iTl.iY - msgHeaderPane.Rect().iTl.iY;       
+    iEditortop = editorLayout.TextRect().iTl.iY - msgHeaderPane.Rect().iTl.iY;  
+   
     if ( iCustomDraw )
         {
             iCustomDraw->ResolveLayouts();

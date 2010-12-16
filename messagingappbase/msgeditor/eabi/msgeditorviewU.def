@@ -288,4 +288,6 @@ EXPORTS
 	_ZThn144_N31CMsgExpandableTextEditorControl21HandleEdwinSizeEventLEP9CEikEdwinN21MEikEdwinSizeObserver15TEdwinSizeEventE5TSize @ 287 NONAME ; #<thunk>#
 	_ZN31CMsgExpandableTextEditorControl17HandleEdwinEventLEP9CEikEdwinN17MEikEdwinObserver11TEdwinEventE @ 288 NONAME
 	_ZThn148_N31CMsgExpandableTextEditorControl17HandleEdwinEventLEP9CEikEdwinN17MEikEdwinObserver11TEdwinEventE @ 289 NONAME ; #<thunk>#
-
+	_ZN14CMsgEditorView12SetFindModeLEi @ 290 NONAME
+	_ZNK14CMsgEditorView17IsSlideFlowEnableEv @ 291 NONAME
+	_ZN14CMsgEditorView13PrepareToExitEv @ 292 NONAME

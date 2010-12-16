@@ -186,6 +186,17 @@ class CMsgFormComponent : public CEikBorderedControl
         * @return
         */
         CMsgBaseControl* MsgControl( TInt aIndex ) const;
+        
+        /**
+        * Returns the height of text font in controls (editor etc.)
+        * @return font height
+        */
+        TInt TextFontHeight() const { return iTextFontHeight; }
+        
+        /**
+        * Record font height from current layout for editor. 
+        */
+        void GetTextFontHeight();
 
     public:  // pure virtuals
 
@@ -264,6 +275,8 @@ class CMsgFormComponent : public CEikBorderedControl
         CMsgControlArray* iControls;     // control arrays
         TInt              iCurrentFocus;
         TMargins          iMargins;
+        TInt              iTextFontHeight;
+
     };
 
 #endif // CMSGFORMCOMPONENT_H

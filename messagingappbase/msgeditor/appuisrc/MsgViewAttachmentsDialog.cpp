@@ -224,6 +224,7 @@ EXPORT_C void CMsgViewAttachmentsDialog::ProcessCommandL( TInt aCommandId )
 
                 TDataType datatype( attInfo.DataType() );
                 RFile file = iAttachmentModel.GetAttachmentFileL( index );
+                CleanupClosePushL( file );
                 
                 TInt ret( KErrNone );
                                                
@@ -232,7 +233,6 @@ EXPORT_C void CMsgViewAttachmentsDialog::ProcessCommandL( TInt aCommandId )
                                         
                     TInt charset( attInfo.CharacterSet() );
                     
-                    CleanupClosePushL( file );
                     
                     // file handle ownership transferred.
                     ret = CNotepadApi::ExecFileViewerL( file, 
@@ -241,11 +241,9 @@ EXPORT_C void CMsgViewAttachmentsDialog::ProcessCommandL( TInt aCommandId )
                                                         charset != KErrNotFound ? EFalse : ETrue,
                                                         charset );
                     
-                    CleanupStack::Pop( &file );
                     }
                 else
                     {
-                    CleanupClosePushL( file );
                     
                     if ( iOpenParamList )
                         {
@@ -256,10 +254,9 @@ EXPORT_C void CMsgViewAttachmentsDialog::ProcessCommandL( TInt aCommandId )
                         TRAP( ret,iDocHandler->OpenFileEmbeddedL( file, datatype ) );
                         }
                     
-                    CleanupStack::PopAndDestroy( &file );
                     }
                 // sets iBusy to EFalse.
-               CleanupStack::PopAndDestroy(); // CleanupPointer
+               CleanupStack::PopAndDestroy(2); // file , CleanupPointer
                 
                 switch ( ret )
                     {

@@ -330,6 +330,8 @@ EXPORT_C void CMsgEditorAppUi::HandleWsEventL( const TWsEvent& aEvent,CCoeContro
 //
 EXPORT_C void CMsgEditorAppUi::NextMessageL( TBool aForward )
     {
+    if(iIsChangingSlide) return;
+    
     // Next is ETrue if layout is EAknLayoutIdABRW,
     // EFalse if EAknLayoutIdELAF or EAknLayoutIdAPAC
     if ( AknLayoutUtils::LayoutMirrored() )
@@ -1572,6 +1574,8 @@ EXPORT_C TBool CMsgEditorAppUi::IsLockedEntry() const
 //
 EXPORT_C void CMsgEditorAppUi::Exit( TInt aReason /*= EEikCmdExit*/ )
 	{
+    TerminateTaskToExit();
+
 #ifdef RD_MSG_FAST_PREV_NEXT
     // Communicate message id via publish and subscribe to MCE
     RProperty::Set( KPSUidMuiu, KMuiuKeyCurrentMsg,

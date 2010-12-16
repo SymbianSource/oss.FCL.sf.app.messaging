@@ -401,7 +401,8 @@ protected:
 
 	virtual void RunL();
 	virtual void DoCancel();
-
+	virtual TInt RunError( TInt /*aError*/ );
+	
 	void PauseInternal();
 
 	TBool iSlideModeEnabled;

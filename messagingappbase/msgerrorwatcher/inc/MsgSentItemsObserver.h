@@ -171,7 +171,6 @@ class CMsgSentItemsObserver : public CActive,
         CRepository* iRepository;
         TInt8 iCleanupFlags;
         CMsvOperation* iOp;
-        TUint iRetryCounter;
         TInt iMsgStoreDrive;
         
         class CMsvEntrySelection*	iQudUPEntryBeingDeleted;

@@ -985,6 +985,13 @@ class CMmsViewerAppUi :
         * Callback for CPeriodic
         */        
         static TInt DelayedExitL( TAny* aThis );
+        
+    private: // from CMsgEditorAppUi
+        
+		/**
+        * Notification for app exit.
+        */   
+        virtual void TerminateTaskToExit();
                             
     private:     // Data
 
@@ -1141,6 +1148,10 @@ class CMmsViewerAppUi :
       * Own. 
       */  
         CAknStylusPopUpMenu* iEmbeddedObjectStylusPopup;
+        
+        // for mms exit
+        TBool                       iIsHandlingDoForward;
+
     };
 
 #endif      //  MMSVIEWERAPPUI_H

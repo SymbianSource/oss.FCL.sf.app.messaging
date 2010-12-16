@@ -846,11 +846,12 @@ TUid CMsgAttachmentModel::AppUidFromGameFileL(
     RFs& fs = CEikonEnv::Static()->FsSession();
 
     User::LeaveIfError( file.Open( fs, aFileName, EFileRead ) );
+    CleanupClosePushL(file);
     RFileReadStream reader( file );
+    CleanupClosePushL(reader);
     TInt32 gameId = reader.ReadInt32L();
     
-    reader.Close();
-    file.Close();
+    CleanupStack::PopAndDestroy(2,&file); //reader , file 
 
     if ( gameId > KMaxGameEngineDataID )
         {

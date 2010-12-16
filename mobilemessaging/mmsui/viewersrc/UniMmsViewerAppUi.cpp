@@ -500,6 +500,8 @@ CMmsViewerDocument* CMmsViewerAppUi::Document( ) const
 //
 void CMmsViewerAppUi::DoMsgSaveExitL( )
     {
+    if(iIsChangingSlide) return;
+    if(iView) iView->PrepareToExit();
     MediaStop( );
     iExitMode = MApaEmbeddedDocObserver::TExitMode(CMsgEmbeddedEditorWatchingOperation::EMsgExternalExit);
     Exit( );
@@ -585,6 +587,9 @@ void CMmsViewerAppUi::DoLaunchViewL()
 //
 void CMmsViewerAppUi::ChangeSlideL( TInt aSlideNumber, TBool aScreenClearer )
     {
+    if(iIsChangingSlide) return;
+    iIsChangingSlide = ETrue;
+
     if ( aSlideNumber < 0 || aSlideNumber >= iSmilModel->SlideCount( ) )
         {
         User::Leave( KErrArgument );
@@ -645,6 +650,9 @@ void CMmsViewerAppUi::ChangeSlideL( TInt aSlideNumber, TBool aScreenClearer )
     
     // TODO: Get rid of active wait!
     BeginActiveWait( iChangeSlideOperation );
+    
+    iIsChangingSlide = EFalse;
+    DeactivateInputBlocker();
     }
 
 // ---------------------------------------------------------
@@ -1329,6 +1337,8 @@ void CMmsViewerAppUi::DynInitMenuPaneL( TInt aMenuId, CEikMenuPane* aMenuPane )
 //
 void CMmsViewerAppUi::UploadL( )
     {
+    if(iIsChangingSlide) return;
+
     TInt count = iUploadServices.Count( );
     
     TInt selectedIndex = 0;
@@ -1357,6 +1367,7 @@ void CMmsViewerAppUi::UploadL( )
         // Pack upload parameters
         TPckgBuf<TMsgUploadParameters> param( uploadParams );
 
+        if(iView) iView->PrepareToExit();
         MediaStop( );
         ResetViewL( );
 
@@ -1536,14 +1547,18 @@ void CMmsViewerAppUi::DoHandleCommandL( TInt aCommand )
             break;
 
         case EAknSoftkeyBack:
-            MediaStop( );
-            Exit( EAknSoftkeyClose );                
+            if(!iIsChangingSlide)
+                {
+                MediaStop( );
+                Exit( EAknSoftkeyClose );
+                }
             break;
         case EEikCmdExit:
-            {
-            DoMsgSaveExitL( );
+            if(!iIsChangingSlide)
+                {
+                DoMsgSaveExitL( );
+                }
             break;
-            }
         default:
             break;
         }
@@ -1896,11 +1911,14 @@ TBool CMmsViewerAppUi::ShowOutOfDiskNoteIfBelowCriticalLevelL( TInt aSize )
 //
 void CMmsViewerAppUi::DoReplyL( TBool aReplyToSender )
     {
+    if(iIsChangingSlide) return;
+
     iViewerState = EBusy;
     TRAPD ( error,
         {
         if ( !(iEditorBaseFeatures & EStayInViewerAfterReply )) 
             {
+            if(iView) iView->PrepareToExit();
         	MediaStop( );
             ResetViewL( );
             }
@@ -1947,6 +1965,11 @@ void CMmsViewerAppUi::DoReplyL( TBool aReplyToSender )
 //
 void CMmsViewerAppUi::DoForwardL( )
     {
+	if(iIsChangingSlide) return;
+
+    if(iIsHandlingDoForward) return;
+    iIsHandlingDoForward = ETrue;
+    
     TInt resourceId = 0;
     Document()->DataModel().FinalizeMediaParse();
     if ( !CanForwardL( resourceId ) )
@@ -1965,6 +1988,7 @@ void CMmsViewerAppUi::DoForwardL( )
             {
             if ( !(iEditorBaseFeatures & EStayInViewerAfterReply )) 
 	            {
+                if(iView) iView->PrepareToExit();
 	            MediaStop( );
 	            ResetViewL( );
 	            }
@@ -2002,6 +2026,8 @@ void CMmsViewerAppUi::DoForwardL( )
             User::Leave( error );
             }
         }
+    
+    iIsHandlingDoForward = EFalse;
     }
 
 // ---------------------------------------------------------
@@ -2515,7 +2541,7 @@ void CMmsViewerAppUi::DoShowPresentationL( )
         
         if ( !IsAppShutterRunning() )
             {
-            ReloadSlideL( );
+            //ReloadSlideL( ); // please don't reload here, for slide flow
             }
         else
             {    
@@ -2629,6 +2655,8 @@ void CMmsViewerAppUi::DoMessageInfoL( )
 //
 void CMmsViewerAppUi::DoDeleteAndExitL( )
     {
+    if(iIsChangingSlide) return;
+
     // Confirm from user deletion of message and delete if needed.
     if ( ShowConfirmationQueryL( R_MMSVIEWER_QUEST_DELETE_MESSAGE ) )
         {
@@ -2641,6 +2669,9 @@ void CMmsViewerAppUi::DoDeleteAndExitL( )
         // create delay, because every media object is not necessary closed immediately
         Document( )->DeleteModel( );
         User::After(50000);
+        
+        TerminateTaskToExit();
+        
         DeleteAndExitL( );
         }
     }
@@ -2652,6 +2683,8 @@ void CMmsViewerAppUi::DoDeleteAndExitL( )
 //
 void CMmsViewerAppUi::DoMoveMessageL( )
     {
+    if(iIsChangingSlide) return;
+    
     //ask folder with a dialog (from muiu)
     TMsvId target = Document( )->Entry( ).Parent( );
     HBufC* title = StringLoader::LoadLC( R_MMSVIEWER_MOVE_TEXT, iCoeEnv );
@@ -2659,6 +2692,7 @@ void CMmsViewerAppUi::DoMoveMessageL( )
     CleanupStack::PopAndDestroy( title ); 
     if (success)
         {
+        if(iView) iView->PrepareToExit();
         MediaStop( );
         iViewerState = EReseted;
         ResetViewL( );
@@ -2784,6 +2818,8 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                 static_cast<TMsgAfterFocusEventFunc*>( aArg2 );
             TInt* currPart =
                 static_cast<TInt*>( aArg3 );
+            
+            TBool screenClearer = !iView->IsSlideFlowEnable();
 
             switch (event)
                 {
@@ -2798,7 +2834,7 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                             moveToSlide = slides - 1;
                             }
                         
-                        ChangeSlideL( moveToSlide, ETrue );
+                        ChangeSlideL( moveToSlide, screenClearer );
                         *after = EMsgCursorToBodyBeginning;
                         }
                     else
@@ -2809,7 +2845,7 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
 #else
                     if ( multiSlide && Document( )->CurrentSlide( ) + 1 < slides )
                         {
-                        ChangeSlideL( Document( )->CurrentSlide( ) + 1, ETrue);
+                        ChangeSlideL( Document( )->CurrentSlide( ) + 1, screenClearer);
                         *after = EMsgCursorToBodyBeginning;
                         *currPart = Document( )->CurrentSlide( );
                         }
@@ -2826,7 +2862,7 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
                             moveToSlide = 0;
                             }
                         
-                        ChangeSlideL( moveToSlide, ETrue);
+                        ChangeSlideL( moveToSlide, screenClearer);
                         *after = EMsgCursorToBodyEnd;
                         }
                     else
@@ -2837,7 +2873,7 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
 #else
                     if ( multiSlide && Document( )->CurrentSlide( ) > 0 )
                         {
-                        ChangeSlideL( Document( )->CurrentSlide( ) - 1, ETrue);
+                        ChangeSlideL( Document( )->CurrentSlide( ) - 1, screenClearer);
                         *after = EMsgCursorToBodyEnd;
                         *currPart = Document( )->CurrentSlide( );
                         }
@@ -2955,6 +2991,15 @@ void CMmsViewerAppUi::DoEditorObserverL(TMsgEditorObserverFunc aFunc, TAny* aArg
 #endif // RD_SCALABLE_UI_V2
             break;
             }
+            
+        case EMsgHandleFocusedSlideChange:
+            {
+            TInt slideNum = *( static_cast<TInt*>( aArg1 ) );
+            Document()->SetCurrentSlide(slideNum);
+            DoViewerOperationEventL(EMmsViewerOperationChangeSlide, EMmsViewerOperationComplete);
+            break;
+            }
+
         default:
             break;
         }
@@ -3440,7 +3485,15 @@ void CMmsViewerAppUi::SetFindModeL( TBool aEnable )
                 CItemFinder::EUrlAddress |
                 CItemFinder::EEmailAddress :
                 CItemFinder::ENoneSelected;
-            iView->ItemFinder( )->SetFindModeL( findMode );
+            
+            if(iView->IsSlideFlowEnable())
+                {
+                iView->SetFindModeL( findMode );
+                }
+            else
+                {
+                iView->ItemFinder( )->SetFindModeL( findMode );
+                }
             }
         CMsgBaseControl* fromControl = iView->ControlById( EMsgComponentIdFrom );
         if ( fromControl && iMtm->Sender( ).Length( ) )
@@ -3907,7 +3960,7 @@ void CMmsViewerAppUi::DoViewerOperationEventL(
             }
         case EMmsViewerOperationReadReport:
             // free resources
-            DeactivateInputBlocker();
+            if(!iIsChangingSlide) DeactivateInputBlocker();
             delete iSendReadReportOperation;
             iSendReadReportOperation = NULL;
             // Viewer is already running normally
@@ -5210,6 +5263,21 @@ TInt CMmsViewerAppUi::DelayedExitL( TAny* aThis )
     viewer->DoMsgSaveExitL();
     return KErrNone;
     }
+
+// ---------------------------------------------------------
+// Terminate Task To Exit
+// Notification from inherited class CMsgEditorAppUi.
+// ---------------------------------------------------------
+//
+void CMmsViewerAppUi::TerminateTaskToExit()
+    {
+    delete iView;
+    iView = NULL;
+    
+    delete iSlideLoader;
+    iSlideLoader = NULL;
+    }
+
 // ---------------------------------------------------------
 // IsVideoCall
 // ---------------------------------------------------------

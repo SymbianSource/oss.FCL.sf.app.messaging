@@ -82,6 +82,7 @@ CWaitingObserver::~CWaitingObserver()
     MSGPLUGINLOGGER_WRITE_FORMAT( "Destructor: this 0x%x", 
     	this );
     Cancel();
+    iTelServer.Close();
     }
     
 // ---------------------------------------------------------------------------

@@ -63,6 +63,10 @@ class CMceConnectMailboxTimer : public CActive
         * Calls MceUi's GoOnlineL function.
         */
         virtual void RunL();
+        /** 
+        * From CActive
+        */
+        TInt RunError(TInt /*aError*/);
 
        /**
         * C++ constructor.

@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -182,6 +182,8 @@ private:
 	TBool iSendFetch;
 	// When server responses with no body length, iUnexpectedFormat is set to ETrue.
 	TBool iUnexpectedFormat;
+	// Flag to check if we are partially/fully downloading the mail.
+	TBool iPartialFetch;
 	};
 
 #endif // __CIMAPFETCHBODY_H__

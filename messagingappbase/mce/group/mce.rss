@@ -496,12 +496,14 @@ RESOURCE MENU_PANE r_mce_folder_menu
         MENU_ITEM
             {
             command = EMceCmdMarkAsReadEmails;
-            txt = qtn_mce_rm_mark_read_emails;            
+            txt = qtn_mce_rm_mark_read_emails;             
+            flags = EEikMenuItemSpecific;          
             },
         MENU_ITEM
             {
             command = EMceCmdMarkAsUnreadEmails;
-            txt = qtn_mce_rm_mark_unread_emails;
+            txt = qtn_mce_rm_mark_unread_emails;           
+            flags = EEikMenuItemSpecific;
             },  
 //New mark read/unread strings ---end
         MENU_ITEM

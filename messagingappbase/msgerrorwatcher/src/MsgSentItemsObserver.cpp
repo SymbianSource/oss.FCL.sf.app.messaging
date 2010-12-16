@@ -152,15 +152,9 @@ void CMsgSentItemsObserver::RunL()
     //iSession->FileSession().ReleaseReserveAccess( iMsgStoreDrive );
     //Check if new messages have appeared into Sent Items while deleting
     //the previous one(s).
-#ifdef USE_LOGGER
-    MEWLOGGER_WRITEF( _L("SentItems: Retries: %d"), iRetryCounter );
-#endif
-    if ( iRetryCounter < KMaxRetries )
-        {
-        iRetryCounter++;
-        TRAP_IGNORE( DeleteOldMessagesFromSentFolderL() );
-        }
-    
+   
+    // No need to call DeleteOldMessagesFromSentFolderL() till KMaxRetries.
+    // Incase of entry deletion failed calling DeleteSingleEntryL again depending on progress info.
     
     const TDesC8& temp = iOp->ProgressL();
     TMsvLocalOperationProgress* prog = ( (TMsvLocalOperationProgress*) temp.Ptr());
@@ -220,7 +214,6 @@ void CMsgSentItemsObserver::HandleNotifyInt( TUint32 aId, TInt aNewValue )
     if ( ( aId == KMuiuSentItemsInUse && aNewValue != 0 ) ||
          ( aId == KMuiuSentItemsCount && SentFolderIsBeingUsed() ) )
         {
-        iRetryCounter = 0;
         //This is non-leaving function...
         TRAPD( dummy, DeleteOldMessagesFromSentFolderL() );
         dummy=dummy; //Prevent arm5 build warning
@@ -263,13 +256,11 @@ void CMsgSentItemsObserver::HandleEntryEventL( TMsvEntryEvent aEvent, TAny* aArg
                 //not taking ownership
                 CMsvEntrySelection* selection =
                     static_cast<CMsvEntrySelection*>( aArg1 );
-                iRetryCounter = 0;
                 DeleteMessagesFromSentFolderL( selection );
                 return;
                 }
             if( iSentItemsFolder->Count() > SentFolderUpperLimit() )
                 {
-                iRetryCounter = 0;
                 DeleteOldMessagesFromSentFolderL();
                 return;
                 }

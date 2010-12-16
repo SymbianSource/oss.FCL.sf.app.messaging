@@ -4230,17 +4230,22 @@ void CUniEditorAppUi::DoStartInsertL( TBool aAddSlide, TBool aAddAsAttachment )
        }
    else
        {
-        if ( !iInsertOperation )
+	   //for png reusing iInsertOperation corrupts heap, so delete iInsertOperation and recreate again.
+        if ( (iInsertOperation) &&(iInsertingMedia->MimeType() == KMsgMimeImagePng) )
             {
-            iInsertOperation = CUniEditorInsertOperation::NewL(
-                *this,
-                *Document(),
-                *iHeader,
-                *iSlideLoader,
-                *iView,
-                FsSession() );
+            delete iInsertOperation;
+            iInsertOperation = NULL;
             }
-        
+		if(!iInsertOperation)
+		{
+        	iInsertOperation = CUniEditorInsertOperation::NewL(
+            	*this,
+            	*Document(),
+            	*iHeader,
+            	*iSlideLoader,
+            	*iView,
+            	FsSession() );
+        }
         if ( aAddSlide )
             {
             iEditorFlags |= EInsertAddsSlide;
@@ -8131,16 +8136,7 @@ void CUniEditorAppUi::CheckSmsSizeAndUnicodeL()
         TBool westernText = ETrue;
 
         CCnvCharacterSetConverter* conv = doc->CharConverter();    
-        CCnvCharacterSetConverter::TAvailability  availability;
-        availability = conv->PrepareToConvertToOrFromL(KCharacterSetIdentifierExtendedSms7Bit, FsSession());
-        if (availability == CCnvCharacterSetConverter::ENotAvailable)
-            {
-                availability = conv->PrepareToConvertToOrFromL(KCharacterSetIdentifierSms7Bit, FsSession());
-                if (availability == CCnvCharacterSetConverter::ENotAvailable)
-                    {
-                    UNILOGGER_WRITE( "CCnvCharacterSetConverter -> KCharacterSetIdentifierSms7Bit is not available" );
-                    }
-            }
+   
         if ( conv )
             { 
             for( TInt index = 0; index < KUniEdNumberOfEditors; index++ )

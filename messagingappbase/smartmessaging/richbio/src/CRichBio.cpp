@@ -111,6 +111,11 @@ TBool CRichBio::CEdwinSizeObserver::HandleEdwinSizeEventL(
     TEdwinSizeEvent aEventType,
     TSize aDesirableEdwinSize)
     {
+    if(iRichBio.iEditor->IsReadOnly()) // for slide flow
+        {
+        return EFalse;
+        }
+
     if (aEventType == EEventSizeChanging)
         {
         TSize thisSize(iRichBio.Size());
@@ -303,10 +308,14 @@ TKeyResponse CRichBio::OfferKeyEventL(
 EXPORT_C void CRichBio::SetAndGetSizeL(TSize& aSize)
     {
     TInt maxHeight( MsgEditorCommons::MaxBodyHeight() );
+    if(iEditor->IsReadOnly())       // for slide flow
+        {
+        maxHeight = 0xFFFFFF;
+        iEditor->SetSize(aSize);    // format all text at once
+        }
+    
     iEditor->SetMaximumHeight( maxHeight );
-    
     iEditor->SetAndGetSizeL( aSize );
-    
 
     if ( aSize.iHeight > maxHeight )
         {
@@ -519,12 +528,11 @@ EXPORT_C TInt CRichBio::ScrollL( TInt aPixelsToScroll, TMsgScrollDirection aDire
     if ( aDirection == EMsgScrollDown )
         {
         TInt pixelsAboveBand( textLayout->PixelsAboveBand() );
-        TInt bandHeight( textLayout->BandHeight() );
         TInt virtualHeight( iEditor->VirtualHeight() );
 
-        if ( pixelsAboveBand + bandHeight + aPixelsToScroll >= virtualHeight )
+        if ( pixelsAboveBand + aPixelsToScroll >= virtualHeight )
             {
-            pixelsToScroll = -( virtualHeight - ( pixelsAboveBand + bandHeight ) );
+            pixelsToScroll = -( virtualHeight - pixelsAboveBand );
 
             if ( pixelsToScroll != 0 )
                 {
@@ -546,10 +554,10 @@ EXPORT_C TInt CRichBio::ScrollL( TInt aPixelsToScroll, TMsgScrollDirection aDire
     if ( pixelsToScroll != 0 )
         {
 		//scrolling to be restricted to full lines
-		//so there will not be any clipping of text on view        
-        textLayout->RestrictScrollToTopsOfLines( ETrue );
-        iEditor->TextView()->ScrollDisplayPixelsL( pixelsToScroll );
-
+		//so there will not be any clipping of text on view
+        textLayout->RestrictScrollToTopsOfLines( EFalse );
+        textLayout->ChangeBandTopNoLimitBorderL( pixelsToScroll + 30 );
+        DrawNow();
         }
 
     return Abs( pixelsToScroll ) + marginPixels;

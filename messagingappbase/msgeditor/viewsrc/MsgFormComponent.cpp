@@ -20,6 +20,8 @@
 // ========== INCLUDE FILES ================================
 #include <AknUtils.h>                      // for AknUtils
 #include <AknDef.h>
+#include <aknlayoutscalable_apps.cdl.h>
+#include <aknlayoutscalable_avkon.cdl.h>
 
 #include "MsgFormComponent.h"              // for CMsgFormComponent
 #include "MsgControlArray.h"               // for CMsgControlArray
@@ -82,6 +84,8 @@ void CMsgFormComponent::BaseConstructL( const CCoeControl& aParent )
     {
     SetContainerWindowL( aParent );
     iControls = new ( ELeave ) CMsgControlArray( KComponentArrayGranularity );
+
+    GetTextFontHeight();
     }
 
 // ---------------------------------------------------------
@@ -485,22 +489,40 @@ CCoeControl* CMsgFormComponent::ComponentControl( TInt aIndex ) const
 //
 void CMsgFormComponent::SizeChanged()
     {
-    TPoint componentPosition(
-        Position().iX + iMargins.iLeft,
-        Position().iY + iMargins.iTop );
-    CMsgBaseControl* component;
+    TPoint componentPosition( Position().iX+iMargins.iLeft, Position().iY+iMargins.iTop );
+
     TInt components( iControls->Count() );
     TSize componentSize;
 
+    const TRect KEditorViewRect(MsgEditorCommons::MsgMainPane().Size());
+
     for ( TInt cc = 0; cc < components; cc++ )
         {
-        component = (*iControls)[cc];
+        CMsgBaseControl* component = (*iControls)[cc];
         componentPosition.iY += component->DistanceFromComponentAbove();
         componentSize = component->Size();
-        // SetPosition cannot be used here
-        component->SetExtent( componentPosition, componentSize );
-        componentSize = component->Size();
-        componentPosition.iY += componentSize.iHeight;
+        
+        if(component->IsReadOnly()) // Only set the controls that visibility changed or position changed.
+            {
+            const TRect currentRect(component->Rect());
+            const TRect wantedRect(componentPosition, componentSize);
+            const TBool wasVisible = KEditorViewRect.Intersects(currentRect);
+            const TBool isVisible = KEditorViewRect.Intersects(wantedRect);
+            
+            const TBool hasShowOrHide = (isVisible != wasVisible);
+            const TBool positionChanged = (isVisible && wantedRect!=currentRect);
+            if(hasShowOrHide || positionChanged)
+                {
+                component->SetRect(wantedRect);
+                }
+            }
+        else
+            {
+            // SetPosition cannot be used here
+            component->SetExtent( componentPosition, componentSize );
+            }
+
+        componentPosition.iY += component->Size().iHeight;
         }
     }
 
@@ -518,6 +540,30 @@ void CMsgFormComponent::HandleResourceChange( TInt aType )
         SizeChanged();
         }
 	}
+
+// ---------------------------------------------------------
+// CMsgFormComponent::GetTextFontHeight
+// 
+// Record editor font height from current layout.
+// ---------------------------------------------------------
+//
+void CMsgFormComponent::GetTextFontHeight()
+    {
+    // get current font height
+    TAknLayoutRect msgTextPane;
+    msgTextPane.LayoutRect( MsgEditorCommons::MsgDataPane(),
+                            AknLayoutScalable_Apps::msg_text_pane( 0 ).LayoutLine() );
+                            
+    TAknLayoutRect msgHeaderPane;
+    msgHeaderPane.LayoutRect( msgTextPane.Rect(),
+                              AknLayoutScalable_Apps::msg_header_pane().LayoutLine() );
+    
+    TAknLayoutText textLayout;                              
+    textLayout.LayoutText( msgHeaderPane.Rect(),
+                           AknLayoutScalable_Apps::msg_header_pane_t2( 0 ).LayoutLine() );
+
+    iTextFontHeight = textLayout.Font()->HeightInPixels();
+    }
 
 // ---------------------------------------------------------
 // CMsgFormComponent::FocusChanged

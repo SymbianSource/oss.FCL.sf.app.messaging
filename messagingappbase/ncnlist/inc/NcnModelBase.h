@@ -264,8 +264,12 @@ class CNcnModelBase : public CActive
          * @return A reference to Voicemail Manager.
          */   
          CVoiceMailManager& VoiceMailManager();
-         
-
+		 
+        /**
+         * Returns true if we are in boot phase
+         * @return ETrue OR EFalse
+         */ 
+         TBool CheckIfBootPhase();
     public: // Virtual functions
 
         /**

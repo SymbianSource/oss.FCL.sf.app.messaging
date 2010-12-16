@@ -841,12 +841,18 @@ void CUniEditorDocument::CreateCharConverterL( TUniMessageCharSetSupport aMode )
         {
         // For Reduced support we use converter plug-in
         // provided by Symbian
-        available = iCharConverter->PrepareToConvertToOrFromL( KCharacterSetIdentifierSms7Bit,
-                                                               iFs );
+        available = iCharConverter->PrepareToConvertToOrFromL(KCharacterSetIdentifierExtendedSms7Bit, iFs);
+        if (available == CCnvCharacterSetConverter::ENotAvailable)
+          {
+            available = iCharConverter->PrepareToConvertToOrFromL(KCharacterSetIdentifierSms7Bit,iFs);
+           
+          }
+     
         }
     
     if ( available == CCnvCharacterSetConverter::ENotAvailable )
         {
+		  UNILOGGER_WRITE( "CCnvCharacterSetConverter -> KCharacterSetIdentifierSms7Bit is not available" );
         __ASSERT_DEBUG( EFalse, Panic( EUniCharConvNotFound ) );
         User::Leave( KErrNotFound );
         }

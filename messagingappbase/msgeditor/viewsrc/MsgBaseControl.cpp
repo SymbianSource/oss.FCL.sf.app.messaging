@@ -409,6 +409,7 @@ EXPORT_C void CMsgBaseControl::HandleResourceChange( TInt aType )
         {
         iLineHeight = MsgEditorCommons::MsgBaseLineDelta();
         iMaxBodyHeight = MsgEditorCommons::MaxBodyHeight();
+        iSize.iWidth++; // for point out this control's size has changed
         }
     
     CCoeControl::HandleResourceChange( aType );

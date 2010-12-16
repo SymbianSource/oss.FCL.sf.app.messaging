@@ -92,6 +92,10 @@ class CMceRemoveNewFlag :
         * From CActive
         */
         void RunL();
+        /** 
+        * From CActive
+        */
+        TInt RunError(TInt /*aError*/);
 
    private:
         /**

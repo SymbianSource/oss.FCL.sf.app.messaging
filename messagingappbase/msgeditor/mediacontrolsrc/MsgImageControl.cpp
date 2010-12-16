@@ -93,10 +93,17 @@ void CMsgImageControl::ConstructL( CMsgEditorView& aParent, MMsgAsyncControlObse
         // Set rect to screen size.
         rect.SetRect( TPoint(), iMaxSize );
         }
-
+    
+    // For avoiding drawing image loading animation before it has been set to a right position.
+    // 1 pixel will keep it in screen, so that it would be handled when parent resizing only care
+    // the controls which are in screen.
+    rect.Move(0, 1 - rect.iBr.iY);
+    
     SetRect( rect );
     
     iLoopTimer = CPeriodic::NewL( EPriorityNormal );
+    
+    iMsgMainPaneHeight = MsgEditorCommons::MsgMainPane().Height();
     }
 
 // ---------------------------------------------------------
@@ -424,6 +431,8 @@ void CMsgImageControl::SizeChanged()
         iEngine->SetZoomRatio( zoomRatio );
         }
     
+    iMsgMainPaneHeight = MsgEditorCommons::MsgMainPane().Height();
+    
     // Size updated at the ViewerBitmapChanged when image scaling is done.
     iBitmapControl->SetPosition( Position() + CalculateImagePosition() );
         
@@ -431,14 +440,24 @@ void CMsgImageControl::SizeChanged()
          iDestinationBitmap->IsCreated() )
         {
         iFrame->SetImageSize( iDestinationBitmap->Bitmap().SizeInPixels() );
+        
+        if(IsReadOnly() && !IsOffScreen())
+            {
+			// Animation will stop after it moves out of the screen.
+			// Restart the animation when it comes into screen again.
+            TRAP_IGNORE(PlayL());
+            }
         }
     
-    if ( iState == EMsgAsyncControlStatePlaying )
+    if(!IsReadOnly())
         {
-        // Start animation if needed on playing state.
-        StartAnimation( 0 );
+        if ( iState == EMsgAsyncControlStatePlaying )
+            {
+            // Start animation if needed on playing state.
+            StartAnimation( 0 );
+            }
         }
-        
+
     CMsgMediaControl::SizeChanged();
     }
 
@@ -588,16 +607,8 @@ TBool CMsgImageControl::IsOffScreen() const
     {
     TRect rect( Position() + CalculateImagePosition(),
                 iDestinationBitmap->Bitmap().SizeInPixels() );
-    
-    TBool result( EFalse );
-    
-    if ( rect.iTl.iY < 0 || 
-         rect.iBr.iY >  MsgEditorCommons::MsgMainPane().Height() )
-        {
-        result = ETrue;
-        }
-        
-    return result;
+
+    return (rect.iTl.iY<0 || rect.iBr.iY>iMsgMainPaneHeight);
     }
 
 

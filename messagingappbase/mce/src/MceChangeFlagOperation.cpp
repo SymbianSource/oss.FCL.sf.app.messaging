@@ -253,4 +253,19 @@ TInt CMceRemoveNewFlag::DecodeProgress(
     return KErrNone;
     }
 
+// ----------------------------------------------------
+// CMceRemoveNewFlag::RunError
+// Handles a leave occurring in the request completion event handler RunL().
+// ----------------------------------------------------
+TInt CMceRemoveNewFlag::RunError( TInt /*aError*/ )
+    {
+    // Error occured while processing, so complete the observer with current status
+    TRequestStatus* status = &iObserverRequestStatus;
+    User::RequestComplete( status, iStatus.Int() );
+        
+        // Just ignore any error and continue without
+    // any handling to allow smooth execution.
+    return KErrNone;    
+    }
+
 // End of file

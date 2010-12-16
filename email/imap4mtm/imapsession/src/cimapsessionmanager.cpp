@@ -576,10 +576,13 @@ void CImapSessionManager::DoCancel()
 			// Just in case the HandleConnectError() routine does get called
 			// we will set the iSocketConnector to NULL to indicate that the
 			// request has been cancelled
-			MSocketConnector* socketConnector(iSocketConnector);
-			iSocketConnector = NULL;
-			socketConnector->StopConnect();
-			CompleteSelf(KErrCancel);
+	        if(iSocketConnector)
+	            {
+	            MSocketConnector* socketConnector(iSocketConnector);
+	            iSocketConnector = NULL;
+	            socketConnector->StopConnect();
+	            CompleteSelf(KErrCancel);
+	            }
 			break;
 			}
 

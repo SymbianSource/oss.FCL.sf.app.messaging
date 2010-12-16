@@ -216,6 +216,14 @@ void CMsgEditorCustomDraw::DrawEditorLines( const TParam& aParam ) const
     {
     TRect currentRect( iFirstLineRect );
     
+    if(iParentControl->IsReadOnly())
+        {
+		// Set the line to a correct position for scrolling.
+		// But not just lineheight aligned.
+        TInt offset = aParam.iDrawRect.iBr.iY - currentRect.iBr.iY;
+        currentRect.Move(0, offset);
+        }
+    
     while ( currentRect.iBr.iY <= aParam.iDrawRect.iBr.iY )
         {
         if ( currentRect.iTl.iY >= aParam.iDrawRect.iTl.iY  )

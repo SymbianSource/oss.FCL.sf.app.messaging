@@ -478,6 +478,13 @@ class CMsgEditorAppUi : public CMsgEditorBaseUi,
         IMPORT_C virtual TBool CanFastOpenL( const CMessageIterator& aIterator );
         
     protected:
+
+        /**
+         * Notify derived class that app will exit.
+         */
+        virtual void TerminateTaskToExit() {}
+        
+    protected:
     
         CAknNavigationDecorator*           iNaviDecorator;
         CMessageIterator*                  iIterator;
@@ -511,6 +518,11 @@ class CMsgEditorAppUi : public CMsgEditorBaseUi,
     protected :
         // SMS navigation direction(0:Prev, 1:Next, -1:None)
         TInt iMsgNaviDirection;
+        
+    protected:
+        // MMS changing slide
+        TBool iIsChangingSlide;
+
         };
 
 

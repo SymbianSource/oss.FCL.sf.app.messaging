@@ -34,6 +34,8 @@
 
 // ========== FORWARD DECLARATIONS =========================
 
+class CGulIcon;
+
 // ========== CLASS DECLARATION ============================
 
 /**
@@ -69,6 +71,13 @@ public:  // from CMsgFormComponent
      * @param aInit
      */
     void SetAndGetSizeL(TSize& aSize, TBool aInit);
+    
+    /**
+     * Set body index.
+     *
+     * @param aIndex
+     */
+    void SetBodyIndex(TInt aIndex);
 
 public:  // from CCoeControl
 
@@ -92,6 +101,18 @@ protected:  // from CCoeControl
      */
     void SizeChanged();
 
+    /**
+     * Draw from CCoeControl.
+     * @param aRect
+     */
+    void Draw(const TRect& aRect) const;
+    
+    /**
+     * HandleResourceChange from CCoeControl.
+     * @param aType
+     */
+    void HandleResourceChange(TInt aType);
+
 private:
 
     /**
@@ -112,6 +133,15 @@ private:
      * Constructor (not available).
      */
     CMsgBody();
+    
+    /**
+     * SkinChanged
+     */
+    void SkinChanged();
+    
+private:
+    TInt        iIndex;
+    CGulIcon*   iBoundary;
 
 };
 

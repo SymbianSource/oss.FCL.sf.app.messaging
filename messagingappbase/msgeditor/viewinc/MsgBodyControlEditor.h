@@ -57,7 +57,8 @@ class CMsgBodyControlEditor : public CMsgExpandableControlEditor,
         CMsgBodyControlEditor(
             const CCoeControl*       aParent,
             TUint32&                 aFlags,
-            MMsgBaseControlObserver* aBaseControlObserver );
+            MMsgBaseControlObserver* aBaseControlObserver, 
+            MItemFinderObserver* aItemFinderObserver=NULL );
 
         /**
         * Destructor.
@@ -202,6 +203,8 @@ class CMsgBodyControlEditor : public CMsgExpandableControlEditor,
         
         TInt iPreviousItemStart;
         TInt iPreviousItemLength;
+        
+        MItemFinderObserver* iItemFinderObserver;
     };
 
 #endif // CMSGBODYCONTROLEDITOR_H

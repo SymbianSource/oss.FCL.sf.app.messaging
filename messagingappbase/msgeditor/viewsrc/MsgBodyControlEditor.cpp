@@ -68,10 +68,12 @@ const TInt KBodyFullFormattingLength = 500;
 //
 CMsgBodyControlEditor::CMsgBodyControlEditor( const CCoeControl* aParent,
                                               TUint32& aFlags,
-                                              MMsgBaseControlObserver* aBaseControlObserver ) :
+                                              MMsgBaseControlObserver* aBaseControlObserver,
+                                              MItemFinderObserver* aItemFinderObserver ) :
     CMsgExpandableControlEditor( aParent, aFlags, aBaseControlObserver ),
     iPreviousItemStart( -1 ),
-    iPreviousItemLength( -1 )
+    iPreviousItemLength( -1 ),
+    iItemFinderObserver(aItemFinderObserver)
     {
     }
 
@@ -440,6 +442,8 @@ TBool CMsgBodyControlEditor::IsFocusChangePossibleL(
 //
 void CMsgBodyControlEditor::SetupAutomaticFindAfterFocusChangeL( TBool aBeginning )
     {
+    if(IsReadOnly()) return;
+    
     iInitTop = aBeginning;
     if ( !iTextParsed )
         {
@@ -617,31 +621,40 @@ void CMsgBodyControlEditor::HandleParsingComplete()
 void CMsgBodyControlEditor::DoHandleParsingCompleteL()
     {
     iTextParsed = ETrue;
-    // this needs to be changed so that bottom init can also be set
-    if ( iFocusChangedBeforeParseFinish )
+    
+    if(IsReadOnly())
         {
-        iFocusChangedBeforeParseFinish = EFalse; // just to make sure this is done only once
-        if ( iInitTop )
-            {
-            SetHighlightL( 0, EMsgFocusDown, ETrue ); 
-            }
-        else
-            {
-            SetHighlightL( TextLength(), EMsgFocusUp, ETrue ); 
-            }
-        
-        if ( iBaseControlObserver )
-            {
-            iBaseControlObserver->HandleBaseControlEventRequestL( NULL, 
-                                                                  EMsgUpdateScrollbar );
-            }
+		// Handle editor focus position by observer.
+        if(iItemFinderObserver) iItemFinderObserver->HandleParsingComplete();
         }
     else
         {
-        // In some cases the text view is left to some
-        // strange state. Make sure the view is in sync
-        // with cursor position.
-        SetCursorPosL( CursorPos(), EFalse );
+        // this needs to be changed so that bottom init can also be set
+        if ( iFocusChangedBeforeParseFinish )
+            {
+            iFocusChangedBeforeParseFinish = EFalse; // just to make sure this is done only once
+            if ( iInitTop )
+                {
+                SetHighlightL( 0, EMsgFocusDown, ETrue ); 
+                }
+            else
+                {
+                SetHighlightL( TextLength(), EMsgFocusUp, ETrue ); 
+                }
+            
+            if ( iBaseControlObserver )
+                {
+                iBaseControlObserver->HandleBaseControlEventRequestL( NULL, 
+                                                                      EMsgUpdateScrollbar );
+                }
+            }
+        else
+            {
+            // In some cases the text view is left to some
+            // strange state. Make sure the view is in sync
+            // with cursor position.
+            SetCursorPosL( CursorPos(), EFalse );
+            }
         }
     }
 

@@ -20,6 +20,10 @@
 // ========== INCLUDE FILES ================================
 
 #include <AknUtils.h>                      // for AknUtils
+#include <AknsUtils.h>
+#include <gulicon.h>
+#include <AknIconUtils.h>
+#include <msgeditor.mbg>
 
 #include "MsgEditorCommon.h"               //
 #include "MsgBody.h"                       // for CMsgBody
@@ -64,6 +68,8 @@ CMsgBody::CMsgBody( const TMargins& aMargins )
 //
 CMsgBody::~CMsgBody()
     {
+    delete iBoundary;
+    iBoundary = NULL;
     }
 
 // ---------------------------------------------------------
@@ -92,6 +98,7 @@ CMsgBody* CMsgBody::NewL( const CCoeControl& aParent, const TMargins& aMargins )
 void CMsgBody::ConstructL( const CCoeControl& aParent )
     {
     CMsgFormComponent::BaseConstructL( aParent );
+    SkinChanged();
     }
 
 // ---------------------------------------------------------
@@ -104,30 +111,48 @@ void CMsgBody::ConstructL( const CCoeControl& aParent )
 //
 void CMsgBody::SetAndGetSizeL( TSize& aSize, TBool aInit )
     {
+    TBool fontChanged = (aSize.iWidth==0);
+
     aSize = MsgEditorCommons::MsgBodyPane().Size();
 
     TInt marginsDeltaHeight = iMargins.iTop + iMargins.iBottom;
     TInt marginsDeltaWidth = iMargins.iLeft + iMargins.iRight;
     
     TSize bodySize( aSize.iWidth, marginsDeltaHeight );
+
     TSize controlSize( 0, 0 );
-
     controlSize.iWidth = aSize.iWidth - marginsDeltaWidth;
-    CMsgBaseControl* control;
-    TInt controls( iControls->Count() );
 
+    TInt controls( iControls->Count() );
     for ( TInt cc = 0; cc < controls; cc++ )
         {
         controlSize.iHeight = aSize.iHeight;
-        control = (*iControls)[cc];
+        CMsgBaseControl* control = (*iControls)[cc];
 
-        if ( aInit )
+        if(control->IsReadOnly())
             {
-            control->SetAndGetSizeL( controlSize );
+            TSize currentSize = control->Size();
+            TBool widthChanged = (currentSize.iWidth!=controlSize.iWidth);
+            
+            if ( aInit && (widthChanged || fontChanged) ) // Just for needed controls.
+                {
+                control->SetAndGetSizeL( controlSize );
+                }
+            else
+                {
+                controlSize = control->Size();
+                }
             }
         else
             {
-            controlSize = control->Size();
+            if ( aInit )
+                {
+                control->SetAndGetSizeL( controlSize );
+                }
+            else
+                {
+                controlSize = control->Size();
+                }
             }
 
         bodySize.iHeight += control->DistanceFromComponentAbove() + controlSize.iHeight;
@@ -136,8 +161,23 @@ void CMsgBody::SetAndGetSizeL( TSize& aSize, TBool aInit )
         }
 
     SetSizeWithoutNotification( bodySize );
+    
+    // resize boundary
+    TSize size = TSize(Size().iWidth, 2);
+    AknIconUtils::SetSize(iBoundary->Bitmap(), size, EAspectRatioNotPreserved);
 
     aSize = bodySize;
+    }
+
+// ---------------------------------------------------------
+// CMsgBody::SetBodyIndex
+//
+// Set body index.
+// ---------------------------------------------------------
+//
+void CMsgBody::SetBodyIndex(TInt aIndex)
+    {
+    iIndex = aIndex;
     }
 
 // ---------------------------------------------------------
@@ -175,6 +215,69 @@ void CMsgBody::SizeChanged()
     CMsgFormComponent::SizeChanged();
 
     MEBLOGGER_LEAVEFN("CMsgBody::SizeChanged");
+    }
+
+// ---------------------------------------------------------
+// CMsgBody::Draw
+//
+// Draw from CCoeControl.
+// ---------------------------------------------------------
+//
+void CMsgBody::Draw(const TRect& aRect) const
+    {
+    // Index will be always 0 when it is editing.
+    // Boundary will be needed when it is read only and not the first slide.
+    // Boundary will be drawn at the top of the body
+    if(iIndex > 0)
+        {
+        CWindowGc& gc = SystemGc();
+        
+        TPoint pos = Position()+TPoint(0,iMargins.iTop/2);
+        TSize size = TSize(Size().iWidth, 1);
+        gc.DrawBitmapMasked(TRect(pos, size),
+                            iBoundary->Bitmap(), 
+                            TRect(size), 
+                            iBoundary->Mask(),
+                            ETrue);
+        
+        CMsgFormComponent::Draw(aRect);
+        }
+    }
+
+// ---------------------------------------------------------
+// CMsgBody::HandleResourceChange
+//
+// ---------------------------------------------------------
+//
+void CMsgBody::HandleResourceChange( TInt aType )
+    {
+    CMsgFormComponent::HandleResourceChange( aType );
+    
+    switch( aType )
+        {
+        case KAknsMessageSkinChange:
+            SkinChanged();
+            break;
+
+        case KEikDynamicLayoutVariantSwitch:
+            iSize.iWidth++; // for point out this control's size has changed
+            break;
+
+        default:
+            break;
+        }
+    }
+
+
+void CMsgBody::SkinChanged()
+    {    
+    delete iBoundary;
+    iBoundary = NULL;
+    TRAP_IGNORE(iBoundary = AknsUtils::CreateGulIconL(AknsUtils::SkinInstance(),
+                                                      KAknsIIDQgnGrafLineMessageHorizontal,
+                                                      KMsgEditorMbm,
+                                                      EMbmMsgeditorQgn_graf_line_message_horizontal,
+                                                      EMbmMsgeditorQgn_graf_line_message_horizontal_mask));
     }
 
 //  End of File

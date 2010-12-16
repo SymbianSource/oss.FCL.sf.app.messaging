@@ -185,6 +185,13 @@ EXPORT_C void CMsgExpandableTextEditorControl::ActivateL()
         {
         SetCursorPosL( iCursorPos );
         }
+
+    // slide flow
+    if(IsReadOnly())
+        {
+        // avoid scroll to 0 pos after init
+        SetCursorPosL(KCursorPosNotSet);
+        }
     }
 
 // ---------------------------------------------------------
@@ -444,6 +451,12 @@ EXPORT_C TBool CMsgExpandableTextEditorControl::HandleEdwinSizeEventL( CEikEdwin
         {
         MEBLOGGER_ENTERFN("CMsgExpandableTextEditorControl::HandleEdwinSizeEventL");
         
+        // slide flow
+        if(IsReadOnly())
+            {
+            return EFalse;
+            }
+
         aDesirableEdwinSize.iHeight = Min( aDesirableEdwinSize.iHeight, iMaxBodyHeight );
         
         TInt delta = aDesirableEdwinSize.iHeight - iEditor->Size().iHeight;

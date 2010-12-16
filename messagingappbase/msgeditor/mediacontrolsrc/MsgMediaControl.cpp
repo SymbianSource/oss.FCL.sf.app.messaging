@@ -667,7 +667,16 @@ void CMsgMediaControl::SetAnimationBackGroundFrameL()
             CleanupStack::Pop( bitmap );
             
             // Make the change effective
-            iAnimation->StartAnimationL();
+            if(!IsReadOnly())
+                {
+                iAnimation->StartAnimationL();
+                }
+            else
+                {
+                RBitmapAnim& animation = iAnimation->Animation();
+                animation.SetBitmapAnimDataL(*iAnimation->BitmapAnimData());
+                animation.SetPositionL(iAnimation->Position());
+                }
             }
         else
             {

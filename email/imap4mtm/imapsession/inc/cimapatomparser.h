@@ -86,6 +86,7 @@ private:
 
 	TParserState			iParserState;
 	TBool					iParserQuoted;
+	TBool                   iParserContentId;
 	TBool					iGotEscape;
 	TInt					iLiteralLength;
 	TInt 					iLiteralSkip;

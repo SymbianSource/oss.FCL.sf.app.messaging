@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -68,6 +68,7 @@ CImapFetchBody::CImapFetchBody(CImapFolderInfo* aSelectedFolderData, TInt aLogId
 	iFetchBodyResponse(aFetchBodyResponse),
 	iSendFetch(ETrue)
 	{
+    iPartialFetch=iFetchBodyInfo.PartialDownload();
 	}
 	
 CImapFetchBody::~CImapFetchBody()
@@ -268,6 +269,12 @@ void CImapFetchBody::SendMessageL()
 	// calclulate the size to fetch in this request,
 	// default to max fetch size.
 	TUint sizeToFetch = iMaxFetchSize;
+	
+	if(iPartialFetch)
+	    {
+        if ((iRequestCount == (iTotalRequests-1)) && (iSizeToFetch<iMaxFetchSize))
+            sizeToFetch = iSizeToFetch;
+	    }
 	
 	TInt bufLength = 0;
 	bufLength += iFetchBodyInfo.RelativePath()->Length();

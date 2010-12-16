@@ -343,4 +343,18 @@ void CMceIdleMtmLoader::ChangeMsgTypeTopL( CUidNameArray& aArray, TUid aMsgType 
         }
     }
 
+
+// ----------------------------------------------------
+// CMceIdleMtmLoader::RunError
+// Handles a leave occurring in the request completion event handler RunL().
+// ----------------------------------------------------
+TInt CMceIdleMtmLoader::RunError( TInt /*aError*/ )
+    {
+    MCELOGGER_WRITE( "CMceIdleMtmLoader::RunError" );
+    // Just ignore any error and continue without
+    // any handling to allow smooth execution. 
+    return KErrNone;    
+    }
+
+
 //  End of File

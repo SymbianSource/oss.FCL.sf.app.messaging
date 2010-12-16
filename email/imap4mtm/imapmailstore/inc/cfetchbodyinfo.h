@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2006-2010 Nokia Corporation and/or its subsidiary(-ies).
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -54,7 +54,11 @@ public:
 	IMPORT_C CImCaf* Caf() const;
 	IMPORT_C TInt32 BytesFetched();
 	IMPORT_C void IncrementBytesFetched(TInt32 aByteCount);
-	TBool iEmbed;
+	inline TBool PartialDownload();
+	inline void SetPartialDownload(TBool aFlag);
+public:
+	TBool iEmbed;	
+
 private:
 	CFetchBodyInfo(TMsvId aPartId);
 	void ConstructL();
@@ -78,7 +82,18 @@ private:
 	CImCaf* iCaf;
 	//A count of the bytes that have been fetched.
 	TInt32 iBytesFetched;
+   //Flag to indicate whether we are downloading the mail, partially or fully ..
+   TBool iPartialDownload;
 	};
 
+inline TBool CFetchBodyInfo::PartialDownload()
+    {
+    return iPartialDownload;
+    }
+
+inline void CFetchBodyInfo::SetPartialDownload(TBool aFlag)
+    {
+    iPartialDownload =aFlag;
+    }
 
 #endif // __CFETCHBODYINFO_H__

@@ -83,7 +83,12 @@ class MMsgEditorObserver
             // arg1 = CMsgBaseControl (IN) - destination control. Will not be NULL.
             // arg2 not used currently
             // arg3 not used currently
-            EMsgButtonEvent
+            EMsgButtonEvent,
+            
+            // arg1 = TInt (IN/OUT) - Specifies the scroll part that is wanted to be changed.
+            // arg2 not used currently
+            // arg3 not used currently
+            EMsgHandleFocusedSlideChange
             };
 
         enum TMsgFocusEvent

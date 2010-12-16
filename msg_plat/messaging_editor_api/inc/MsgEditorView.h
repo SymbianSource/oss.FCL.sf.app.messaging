@@ -220,6 +220,16 @@ class CMsgEditorView : public CCoeControl,
         IMPORT_C CItemFinder* ItemFinder();
         
         /**
+        * Returns used item finder pointer if any.
+        *
+        * @param aBody
+        *
+        * @return CItemFinder pointer if item finder is used.
+        *         NULL otherwise
+        */   
+        CItemFinder* ItemFinder(CMsgBody* aBody);
+        
+        /**
         * Sets edwin observer.
         * Edwin observer is added to every text editor control that currently exists
         * or is added after this call to the view.
@@ -384,8 +394,9 @@ class CMsgEditorView : public CCoeControl,
         /**
         * Creates the body. Creates also the default body control if requested
         * in editor mode flags in constructor.
+        * @param aIndex
         */
-        void CreateBodyL();
+        void CreateBodyL(TInt aIndex=0);
 
         /**
         * Creates the scroll bar.
@@ -634,48 +645,37 @@ class CMsgEditorView : public CCoeControl,
          */
          void DoScrollViewL( TInt& aPixelsToScroll, 
                              TMsgScrollDirection aDirection );
-		/**
-		* Handle text scrolling from pointer event.
-		* 
-		* @param aPointerEvent Current pointer event received from HandlePointerEventL.
-		*/					 
-		TBool HandleScrollEventL(const TPointerEvent& aPointerEvent);
-		
-		/**
-		* Throw the pointer event (which is not consumed by text scrolling) to other handler. 
-		* 
-		* @param aPointerEvent Current pointer event received from HandlePointerEventL.
-		*/
-		
-    	void ThrowOutPointerEventL(const TPointerEvent& aPointerEvent);
-		
-		/**
-		* Move current view up or down with screen height. 
-		* 
-		* @param aOffset Offset positive/negative will indicate the direction.
-		*/
-		
-    	void ScrollPartL(TInt aOffset);
-		
-		/**
-		* Change to the previous or the next part(slide) if possible. 
-		* 
-		* @param aOffset Offset positive/negative will indicate the direction.
-		*/
-		
-    	void ScrollPageL(TInt aOffset);
-		
-		/**
-		* Scroll text in current part (slide).  This will not trigger part change.
-		* 
-		* @param aScrolledPixels Pixels wanted to be scrolled.
-		*
-		* @return Pixels scrolled.
-		*/
-		
-    	TInt ScrollL(TInt aScrolledPixels);
+         
+    private:
+         /**
+          * Get rich text editor from msg base control. 
+          * 
+          * @param aControl : control of type EMsgExpandableControl / EMsgAddressControl / EMsgBodyControl / EMsgXhtmlBodyControl
+          * 
+          * @return CEikRichTextEditor in the control
+          */
+         CEikRichTextEditor* EditorInControl(CMsgBaseControl* aControl);
+         
+    public:
+         
+         /**
+         * Whether Slide Flow is enable or not.
+         * @return ETrue / EFalse.
+         */
+         IMPORT_C TBool IsSlideFlowEnable() const;
+         
+         /**
+         * Sets the find mode for all the bodies in slideflow.
+         *
+         * @param    aFindFlags      Any combination of (EUrlAddress|EEmailAddress|EPhoneNumber)
+         */
+         IMPORT_C void SetFindModeL(TInt aFindFlags);
+         
+         /**
+         * Prepare to exit.
+         */
+         IMPORT_C void PrepareToExit();
 
-        
     private:
 
         MMsgEditorObserver& iEditorObserver;
@@ -694,20 +694,331 @@ class CMsgEditorView : public CCoeControl,
     	TInt                iLineHeight;
         TInt                iBaseLineOffset;    	
     	TInt                iViewFocusPosition;
-    	
+
     	CArrayFixFlat<TInt>* iScrollPartArray;
     	HBufC*               iScrollPopText;   
     	TInt                 iPopUpPart; 
     	TInt                 iVisiblePartHeight;
-    	
+
     	MEikEdwinObserver*   iEdwinObserver;
     	RConeResourceLoader  iResourceLoader;
-    	TMsgFocus            iPrevFocus; 
-    	TBool                iMoveUpDownEvent; 
-    	TBool                iHaveScrolled;
-    	TPoint               iScrollPos;
-    	TPointerEvent        iFirstPointerDown;
-    	TBool                iIsScrolling;
+    	TMsgFocus            iPrevFocus;
+
+    private: // for text scrolling
+	     /**
+         * Handle pointer event for text scrolling mode.
+         * This will handle text scrolling and selection. 
+		 * Send also the the pointer event to controls according to the status.
+         * @param aPointerEvent
+         */
+    	void HandlePointerEventForTextScrollingL(const TPointerEvent& aPointerEvent);
+		
+		 /**
+         * Handle pointer event for controls.
+         * @param aPointerEvent
+         */
+    	void HandlePointerEventForConrolsL(const TPointerEvent& aPointerEvent);
+		
+		 /**
+		 * We will send pointer ButtonDown/Drag event to contols.
+		 * But just after scrolling happends, controls do not need to handle event any more.
+         * Simulate a buttonup event for notify controls finger event is over.
+         */
+    	void StopHandlePointerEventForConrolsL();
+
+    private:
+		 /**
+		 * scroll the view (all slides) by a offset
+         */
+    	TInt ScrollL(TInt aOffset);
+		
+		 /**
+		 * scroll the view when text selection reach to the screen edge.
+         */
+    	void ScrollForTextSelectionL();
+		
+		/**
+		 * clear the text selection in focus slide.
+         */
+    	void ClearTextSelectionL();
+		
+		/**
+		 * Jump the view to the slide you want.
+		 * @param aPart is a slide num.
+         */
+    	TBool GotoPartL(TInt aPart);
+		
+		 /**
+		 * Jump the view to the position you want.
+		 * @param aPostion is a global offset.
+         */
+    	void GotoPositionL(TInt aPostion);
+		
+		/**
+		 * Hnadle a page up/down event.
+		 * @param aIsSrollDown
+         */
+        void HandleScrollPageEventL(TBool aIsSrollDown);
+		
+		 /**
+		 * Handle scroll thumb drag vert event.
+		 * @param 
+         */
+        void HandleScrollThumbDragVertEventL(CEikScrollBar* aScrollBar);
+
+    	TBool                iNeedHandleTextScrolling;
+    	TBool                iTextHaveScrolled;
+    	TPointerEvent        iPointerDownEvent;
+    	TInt                 iTextDraggingPos;
+    	
+    private: // for slide flow
+	     /**
+		 * Load a slide specified.
+		 * @param a slide index [0,...]
+		 * @return ETrue / EFalse. If the slide is not loaded return ETrue. Else EFalse.
+         */
+    	TBool LoadSlideL(TInt aSlideIndex);
+		
+		 /**
+		 * Start the loading timer for load next slide later.
+         */
+        void LoadNextSlideLaterL();
+		
+		 /**
+		 * Delay the loading if the loading timer is active.
+		 * The delay makes system have time to do other thing. (User input etc.)
+         */
+        void DelayNextSlideLoad();
+		
+		 /**
+		 * Stop the loading timer.
+         */
+        void StopNextSlideLoad();
+		
+		 /**
+		 * loading timer callback.
+         */
+        static TInt LoadNextSlideCallbackL(TAny* aPtr);
+		
+		 /**
+		 * do load next slide.
+         */
+        void DoLoadNextSlideL();
+		
+	     /**
+		 * Slide Flow Is Loading.
+		 * @return ETrue / EFalse.
+         */
+        TBool SlideFlowIsLoading() const { return iSlideFlowIsLoading; }
+
+		 /**
+		 * All Slides Loaded.
+		 * @return ETrue / EFalse.
+         */
+        TBool AllSlidesLoaded() const;
+
+        TBool                iSlideFlowIsEnable;
+        TBool                iSlideFlowIsLoading;
+        TInt                 iSlideFlowLoadingIndex;
+        CPeriodic*           iSlideFlowInitTimer;
+        TBool                iSlideFlowLoadingPause;
+        TBool                iPrepareToExit;
+        
+    private: // layout utils
+	
+	    /**
+		 * Resolve Layout For All Visible Slides.
+		 * All the visible slides with wrong size or font height will be resized.
+		 * Wrong size and font height are caused by rotation and font change.
+         */
+        void ResolveLayoutForAllVisibleSlidesL();
+		
+	    /**
+		 * Record current font height from layout.
+         */
+        void GetTextFontHeight();
+		
+		 /**
+		 * To check whether should it handle a layout change event.
+		 * @return ETrue / EFalse.
+         */
+        TBool NeedLayoutSelf();
+		
+		 /**
+		 * To check whether should the form handle a layout change event.
+		 * @param aFormComponent
+		 * @param aSize : the new size you want.
+         */
+        TBool NeedLayoutForm(CMsgFormComponent* aFormComponent, const TSize& aSize);
+
+        TInt                 iTextFontHeight;
+        TRect                iMsgHeaderPane;
+        TRect                iMsgBodyPane;
+
+    private: // anchor
+	     /**
+		 * Set an anchor base on the view index and the offset in it.
+         */
+        void SetAnchor();
+		
+	     /**
+		 * Disable current anchor.
+         */
+        void ClearAnchor();
+		
+		 /**
+		 * Jump the view to the position record by the anchor.
+         */
+        void GotoAnchor();
+
+        TBool                iAnchorIsAvailable;
+        TInt                 iAnchorSlideIndex;
+        TReal                iAnchorSlideOffsetRatio;
+
+    private: // muilti-body
+		 /**
+		 * Destroy All Bodies.
+         */
+        void DestroyAllBodies();
+		
+		/**
+		 * Body Count.
+		 * @return body count
+         */
+        TInt BodyCount() const { return iScrollParts; }
+		
+		/**
+		 * Body pointer from an index.
+		 * @param body index
+		 * @return body pointer or NULL
+         */
+        CMsgBody* Body(TInt aIndex) const;
+		
+		/**
+		 * VisibleBodyCount.
+		 * @return VisibleBodyCount
+         */
+        TInt VisibleBodyCount() const;
+		
+		/**
+		 * VisibleBody from an index.
+		 * @return body pointer or NULL
+         */
+        CMsgBody* VisibleBody(TInt aIndex) const;
+		
+		 /**
+		 * IsBodyVisible.
+		 * @param aBody
+		 * @return ETrue / EFalse.
+         */
+        TBool IsBodyVisible(CMsgBody* aBody) const;
+		
+		 /**
+		 * BodyHeight from an index.
+		 * @return BodyHeight
+         */
+        TInt BodyHeight(TInt aIndex) const;
+		
+		 /**
+		 * BodyRect from an index
+		 * @return BodyRect
+         */
+        TRect BodyRect(TInt aIndex) const;
+		
+		 /**
+		 * DistanceAboveBody. Return the height of all the bodies above the specified body by index.
+		 * @param aIndex
+		 * @return Distance
+         */
+        TInt DistanceAboveBody(TInt aIndex) const;
+		
+		 /**
+		 * BodyIndexByOffset. Return the body index with an offset from the top of first body.
+		 * @param aOffsetFromTop
+		 * @return BodyIndex
+         */
+        TInt BodyIndexByOffset(TInt aOffsetFromTop);
+		
+		 /**
+		 * SetFocusBodyByIndex
+		 * @param aIndex
+         */
+        void SetFocusBodyByIndex(TInt aIndex);
+
+		 /**
+		 * SetFocusBodyFromPosition
+		 * @param aPosition
+         */
+        void SetFocusBodyFromPosition(const TPoint& aPosition);
+		
+		 /**
+		 * SetFocusBodyAndControlFromPositionL
+		 * @param aPosition
+         */
+        void SetFocusBodyAndControlFromPositionL(const TPoint& aPosition);
+        
+        enum { KMaxSlideFlowBodyCount=40 };
+        CMsgBody*            iSlideFlowBody[KMaxSlideFlowBodyCount];
+        TInt                 iCurrentBodyIndex;
+        
+    private:
+	     /**
+		 * Set FindMode for the specified body.
+		 * @param aSlideIndex
+		 * @param aFindFlags
+         */
+        void SetBodyFindModeL(TInt aSlideIndex, TInt aFindFlags);
+        TInt iCurrentFindFlags;
+
+    private:
+	     /**
+		 * Border exceeded pixels. Positive(from top) / 0(not any) / Negative(from bottom)
+		 * @return Positive / 0 / Negative
+         */
+        TInt BorderExceededPixels();
+        
+    private: // single dimension motion engine
+	     /**
+		 * Make scrolling stop and restart from a position.
+		 * @param aPos
+         */
+        void MotionEngineReset(const TPoint& aPos);
+		
+		/**
+		 * Trace user finger pos to calculate instant speed.
+		 * @param aPos
+         */
+        void MotionEngineTrack(const TPoint& aPos);
+		
+		/**
+		 * Play kinetic scrolling base on the traced speed.
+         */
+        void MotionEnginePlayL();
+		
+		/**
+		 * Stop scrolling at once.
+         */
+        void MotionEngineStop();
+		
+		/**
+		 * MotionEngineIsPlaying.
+		 * @return ETrue / EFalse
+         */
+        TBool MotionEngineIsPlaying() const;
+		
+		 /**
+		 * MotionEngine timer callback.
+         */
+    	static TInt MotionEnginePlayCallbackL(TAny* aPtr);
+
+    	CPeriodic*           iMotionEngineTimer;
+    	TPoint               iMotionEnginePos;
+    	TTime                iMotionEngineTimeStamp;
+    	TInt                 iMotionEngineSpeed;
+    	
+    private:
+    	TBool                iMoveUpDownEvent;
+
     };
 
 #include <MsgEditorView.inl>

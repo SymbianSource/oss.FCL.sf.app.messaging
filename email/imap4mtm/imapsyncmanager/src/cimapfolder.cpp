@@ -93,6 +93,7 @@ Destructor
 */
 CImapFolder::~CImapFolder()
 	{
+    Cancel();
 	iMatchingMessageIds.Reset();
 	iDeletedMessageIds.Reset();
 	iMissingMessageIds.Reset();

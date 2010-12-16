@@ -84,7 +84,8 @@ CEMNHandler::~CEMNHandler()
 
 	delete iMessage;
     delete iBody;
-    
+	// Try to call Close if ProcessPushMsgL leave at iAOClient.RelayCommandL
+    iAOClient.Close();
     KEMNLOGGER_FN2("CEMNHandler::~CEMNHandler()");
 	}
 

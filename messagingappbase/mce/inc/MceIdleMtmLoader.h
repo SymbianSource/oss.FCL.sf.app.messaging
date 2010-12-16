@@ -83,6 +83,10 @@ class CMceIdleMtmLoader : public CActive
         * From CActive
         */
         virtual void RunL();
+        /** 
+        * From CActive
+        */
+        TInt RunError(TInt /*aError*/);
 
     private: // New functions
 

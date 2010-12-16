@@ -152,5 +152,25 @@ void CNcnMsvSessionObserverBase::HandleMsvSessionClosedL()
         }
     NCN_RDEBUG( _L("CNcnMsvSessionObserverBase::HandleMsvSessionClosedL <<") );
     }    
-    
+	
+// ---------------------------------------------------------
+// NcnMsvSessionObserverBase::HandleMsvSessionReReadyL
+// ---------------------------------------------------------
+//
+void CNcnMsvSessionObserverBase::HandleMsvSessionReReadyL(
+     CMsvSession& aMsvSession )
+    {
+    if(iInboxFolder)
+        {
+        delete iInboxFolder;
+        iInboxFolder = NULL;
+        }
+        // get inbox folder
+    iInboxFolder =  
+           CMsvEntry::NewL( 
+               aMsvSession,
+               KMsvGlobalInBoxIndexEntryId,
+               TMsvSelectionOrdering( KMsvNoGrouping, EMsvSortByDateReverse, ETrue ) );        
+    iInboxFolder->AddObserverL( *this );      
+    }
 // End of file

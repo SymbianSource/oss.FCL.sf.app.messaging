@@ -1283,7 +1283,7 @@ void COperatorLogoBioControl::Panic( TInt aCode )
     User::Panic( KPanicOplogoBC, aCode );
     }
 
-void COperatorLogoBioControl::Draw( const TRect& aRect ) const
+void COperatorLogoBioControl::Draw( const TRect& /*aRect*/ ) const
     {
     // Ensure that scaled bitmap exists and that no scaling is
     // currently ongoing.
@@ -1297,11 +1297,9 @@ void COperatorLogoBioControl::Draw( const TRect& aRect ) const
         TAknWindowComponentLayout layout =
         	AknLayoutScalable_Apps::mce_image_pane_g2();
         TAknLayoutRect LayoutRect;
-		LayoutRect.LayoutRect( aRect, layout.LayoutLine() );
+		LayoutRect.LayoutRect( Rect(), layout.LayoutLine() );
 		bitmapRect = LayoutRect.Rect();
 
-		TInt yAxisOffset = aRect.iTl.iY - bitmapRect.iTl.iY;
-		bitmapRect.Move(0,yAxisOffset);
 		gc.DrawBitmap(bitmapRect,iScaledBitmap);
         }
     }
@@ -1313,16 +1311,16 @@ TBool COperatorLogoBioControl::ScaleIfPossibleL( TSize aSize )
         // Image hasn't been loaded, cannot scale
         return EFalse;
         }
+	
+   else if ( iScaledBitmap && 
+             iScaledBitmap->SizeInPixels() == aSize )
+        {
+        return ETrue;
+        }
 
-    else
+    else if ( !iScalingAO->IsActive() )
         {
         // Scaling is possible, it is done asynchronously
-
-        if ( iScalingAO->IsActive() )
-            { // In this case scaling was already ongoing, but it is cancelled
-              // due to overriding request.
-            iScalingAO->Cancel();
-            }
 
         delete iScaledBitmap;
         iScaledBitmap = NULL;
@@ -1340,6 +1338,8 @@ TBool COperatorLogoBioControl::ScaleIfPossibleL( TSize aSize )
         iScalingAO->SetItActive();
         return ETrue;
         }
+
+	return EFalse;
     }
 
 //  End of File
